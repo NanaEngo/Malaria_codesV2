@@ -1,0 +1,99 @@
+%% ============================================================================
+%% Supplementary Material: Paper 2 — Resistance-Informed MD Validation
+%% Target: JCIM Supplementary Information
+%% ============================================================================
+
+\documentclass[11pt,a4paper]{article}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs, tabularx, array, multirow}
+\usepackage[table]{xcolor}
+\usepackage[hypertexnames=false,colorlinks=true]{hyperref}
+\usepackage{cleveref}
+\usepackage{xr}
+\externaldocument[MAIN-]{Polypharmacology_MD_Validation_V2607}
+\usepackage{siunitx}
+\DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
+\DeclareSIUnit\angstrom{\text{\AA}}
+
+\graphicspath{{../Graphics/}}
+
+\title{Supplementary Information for \\ ``Resistance-Resilient Polypharmacological Antimalarials \\
+from African Natural Products: Molecular Dynamics \\
+Validation Against Resistance Mutants''}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+% Table S0: Docking Validation
+% ============================================================================
+\input{Table_S0_Docking_Validation.tex}
+
+% ============================================================================
+% Figure S1: MPO Sensitivity Heatmap
+% ============================================================================
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{Figure_S1_MPO_sensitivity.pdf}
+\caption{MPO sensitivity analysis heatmap. Each cell shows the Jaccard similarity of the top-20 hit list when the corresponding MPO weight is varied by $\pm \qty{20}{\percent}$. Green ($1.00$) indicates the hit list is unchanged; red ($0.50$) indicates substantial reordering.}
+\label{fig:s1_mpo_sensitivity}
+\end{figure}
+
+% ============================================================================
+% Figure S2: VAE Latent Space
+% ============================================================================
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{VAE_latent_space.pdf}
+\caption{Position of the top-20 candidates in the Paper~1 VAE latent space. High-ACSI compounds cluster in distinct regions.}
+\label{fig:s2_vae_latent}
+\end{figure}
+
+% ============================================================================
+% Table S3: MM-GBSA WT results and mutant exclusion status
+% ============================================================================
+\begin{table}[htbp]
+\centering
+\caption{MM-GBSA binding free energies ($\Delta G_{\mathrm{bind}}$, \si{\kcalmol}) for the polypharmacological candidates against wild-type targets. Mean $\pm$ standard deviation from 101 snapshots. Due to GAFF2/CHARMM36 parameter conversion limitations (bond energy overflow errors), mutant calculations were computationally unfeasible; docking-based RRS is used as the primary validation metric.}
+\label{tab:s3_mmgbsa_mutants}
+\begin{tabular}{l l S[table-format=-2.2] S[table-format=1.2] l}
+\toprule
+Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Status / RRS Class \\
+\midrule
+164 & PfClpP-WT & -8.35 & 2.54 & Validated (Class C) \\
+201 & PfDHFR-WT & -24.74 & 4.63 & Allosteric$^\ddagger$ (Class A*) \\
+214 & PfCRT-WT & -18.25 & 0.40 & Validated (gmx\_MMPBSA) (Class B) \\
+438 & PfATP4-WT & {--} & {--} & Excluded$^\S$ (Class A) \\
+87 & PfDHFR-WT & {--} & {--} & Not simulated (Class C) \\
+\bottomrule
+\multicolumn{5}{l}{$^\ddagger$Binds to allosteric site (NADPH-domain interface), not catalytic site.} \\
+\multicolumn{5}{l}{$^\S$Excluded due to two-chain topology incompatibility with CHARMM36-to-AMBER conversion.} \\
+\end{tabular}
+\end{table}
+
+% ============================================================================
+% Table S5: ADMET Cross-Validation
+% ============================================================================
+\input{Table_S5_ADMET_CrossValidation.tex}
+
+% ============================================================================
+% Table S6: ACSI Weight Sensitivity
+% ============================================================================
+\input{Table_S6_ACSI_Weight_Sensitivity.tex}
+
+% ============================================================================
+% Figure S4: RRS Radar Plots
+% ============================================================================
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{rrs_radar_profiles.pdf}
+\caption{Per-compound RRS profiles across all six resistance mutations, shown as radar plots for the 14 polypharmacological leads. Each axis represents one mutation; concentric rings indicate \qty{25}{\percent}, \qty{50}{\percent}, \qty{75}{\percent}, and \qty{100}{\percent} RRS. Class A* and Class A compounds fill the outer region.}
+\label{fig:s4_rrs_radar}
+\end{figure}
+
+\end{document}
