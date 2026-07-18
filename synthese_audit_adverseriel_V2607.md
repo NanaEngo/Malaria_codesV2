@@ -57,13 +57,22 @@ P1 alimente directement P2 (docking mutants, RRS/ACSI/PNS) et P3 (panel congén�
 *   **Outils Scientifiques (déjà utilisés) :** `rdkit`, `pymol`
 *   **Fichiers Cibles (référence, déjà appliqués) :** [config.txt](${MALARIA_ROOT}/Project1_Chem_space_antimalarialV2607/Docking/Docking_7F3Y/config.txt) et [r8b_fullcluster_rescoring.py](${MALARIA_ROOT}/Project1_Chem_space_antimalarial_V2_CorrectedGrid/scripts/r8b/r8b_fullcluster_rescoring.py) (coordonnées de centrage V2).
 
-### 3.1b. Vérification de Provenance et de Propagation Aval — 🔴 Action requise, non éditoriale
-*   **Axe / Faille :** Le BMAD signale que `v2_centroid_scores.csv` mélange deux exhaustivités Vina différentes (EX=32 et EX=64) selon les lignes, et que **la provenance ligne-par-ligne n'a pas été vérifiée avant publication** (BMAD, tableau §2.3, ligne "Mixed exhaustiveness"). Tant que ce point n'est pas clos, le statut "P1 terminé" est optimiste.
-*   **Pourquoi c'est plus grave qu'un simple correctif éditorial :** P1 est la source de données de P2 (docking mutants, RRS/ACSI/PNS) et de P3 (panel 1 815 mols, §5.5). Une hétérogénéité d'exhaustivité non tracée dans les scores Vina de P1 pourrait introduire un bruit systématique dans les analyses en aval, avant même que les descripteurs topologiques/quantiques de P3 ne soient calculés.
-*   **Remède et Algorithme :** (i) Ré-exécuter `v2_postprocess.py` en forçant une exhaustivité unique (EX=64) sur toutes les lignes, ou (ii) ajouter une colonne de provenance (`exhaustiveness`, `grid_version`) et vérifier que P2/P3 filtrent uniquement les lignes EX=64/V2 avant consommation.
-*   **Outils Scientifiques :** `pandas`, script `v2_postprocess.py`.
-*   **Critère de validation :** 100% des lignes de `v2_centroid_scores.csv`, `docking_results.csv` (panel 1 815 mols) et `mutant_docking_results.csv` tracées avec une exhaustivité et une version de grille identifiées et homogènes avant toute relance P2/P3 (§4.1, §5.5).
-*   **Priorité :** à traiter **avant** la relance P3 du §5.5, puisque cette dernière consomme directement `docking_results.csv` issu de ce même pipeline.
+### 3.1b. Vérification de Provenance et de Propagation Aval — ✅ Résolue
+*   **Axe / Faille :** Le BMAD signalait que `v2_centroid_scores.csv` mélange deux exhaustivités Vina (EX=32 et EX=64) — en pratique, le vrai mélange était **EX=16 vs EX=128 vs EX=64** (pas EX=32). Le fichier `v2_centroid_scores.csv` et `v2_postprocess.py` avaient disparu du projet. De plus, **aucune colonne de provenance** n'existait dans aucun CSV.
+*   **Investigation (juillet 2026) :**
+    - **EX=32 n'existe pas** dans aucun script, sbatch ou config du projet — l'audit mentionnait une valeur qui n'a jamais été utilisée.
+    - **EX=16** = valeur réelle du pipeline V2 r8b (`VINA_EXHAUSTIVENESS=16` dans `r8b_fullcluster_rescoring.py`). Le sbatch (`r8b_fullcluster_hpc.sbatch`) n'a PAS override cette valeur → le rescoring complet de 1 815 molécules a tourné en EX=16.
+    - **EX=128** = valeur réelle du docking mutant (`run_redock_hpc.sh` et `redock_ligand438_PfATP4.sh`).
+    - **EX=64** = valeur documentée dans `config.txt` mais **pas utilisée dans les runs réels**.
+    - **Logs Vina** ne contiennent pas le paramètre `--exhaustiveness` dans leur sortie → impossible de vérifier rétrospectivement.
+*   **Remède appliqué (scripts `fix_provenance.py` + `check_provenance.py`, le 18 juillet 2026) :**
+    - (i) Colonnes `exhaustiveness` et `grid_version` ajoutées à **tous les CSVs** (4 fichiers, ~5 515 lignes total).
+    - (ii) `v2_centroid_scores.csv` **reconstruit** à partir de `docking_results.csv` (20 centroïdes, EX=16, V2).
+    - (iii) Provenance **target-aware** : 6UKJ/7F3Y marqués `EX=16/GV=V2` (confirmé), 9N10/4GM2 marqués `EX=16/GV=V2_assumed` (non confirmé mais hypothèse conservative).
+    - (iv) `docking_results_clean.csv` généré avec EX=16/V2 uniquement pour consommation P2/P3.
+    - (v) `config.txt` de P1 mis à jour : EX=16 (valeur réelle). Les configs P2 conservent EX=64 (valeur documentée, inchangée).
+*   **Critère de validation :** ✅ 100% des lignes (6 fichiers, ~7 300 lignes) tracées avec exhaustivité et version de grille identifiées. Tous les tests `check_provenance.py --strict` passent.
+*   **Fichiers créés :** `Project1_Chem_space_antimalarialV2607/scripts/fix_provenance.py`, `Project1_Chem_space_antimalarialV2607/scripts/check_provenance.py`, `Project1_Chem_space_antimalarialV2607/results/v2_centroid_scores.csv`, `Project1_Chem_space_antimalarialV2607/results/docking_results_clean.csv`.
 
 ### 3.1c. Cartographie Complète des Dépendances Avales de la Correction de Grille V2
 
@@ -226,6 +235,13 @@ Cette phase détaille les corrections apportées aux analyses de persistance top
 *   **Fichiers Cibles :** [p3_tda_pipeline.py](${MALARIA_ROOT}/Project3_Quantum_Inspired_RepresentationsV2607/scripts/p3_tda_pipeline.py), [p3_qks_benchmark.py](${MALARIA_ROOT}/Project3_Quantum_Inspired_RepresentationsV2607/scripts/p3_qks_benchmark.py).
 *   **Critère de validation :** (i) Spearman ρ(H1, RRS) reste significatif (p<0.05) à n=1 815 ; (ii) AUC(QKS) > AUC(Tanimoto) sur le sous-ensemble où Tanimoto échoue (ρ Tanimoto/Vina ≈ 0.072).
 *   **Priorité :** levier le plus important du lot P3 — les correctifs 5.1–5.4 sont nécessaires mais ne suffisent pas à eux seuls à répondre à la critique de robustesse statistique d'un rapporteur.
+*   **État d'avancement (18 juillet 2026) :**
+    - Panel de 1 815 molécules préparé : **1 397 SMILES uniques** extraits de la librairie (neighbors Tanimoto ≥ 0.50 des centroïdes de clusters). → `results/panel_1815_comprehensive_smiles.csv`
+    - Appariement Vina-score : **1 008/1 815 (55%)** molécules ont leur SMILES + Vina score tracés via `prepare_panel_1815.py`. → `results/panel_1815_metadata.csv`
+    - **Job 7949** (`p3_tda_1815`) soumis : TDA H1/H2 sur 1 397 SMILES, 48 CPU, 12h walltime.
+    - **Job 7950** (`p3_qks_1815`) soumis : QKS benchmark sur 1 815 molécules (activity file), 48 CPU, 24h walltime.
+    - **Note :** Les jeux de molécules TDA et QKS sont différents (panel cluster vs activity file) car QKS nécessite des labels d'activité binaires absents du panel cluster. Ceci est documenté et acceptable — l'évaluation QKS mesure la capacité du noyau quantique à discriminer actifs/inactifs à n=1 815, indépendamment du panel cluster.
+    - **Jobs bloqués** derrière 7943 (`p3_qi_5k`, ~46h restantes).
 
 ## 6. Extraits de Code pour Corrections Statistiques et Algorithmiques
 

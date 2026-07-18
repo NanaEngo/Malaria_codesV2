@@ -3,6 +3,33 @@
 
 ---
 
+## Literature Validation (Updated July 18)
+
+### Summary of External Evidence
+
+To validate the computational findings, we surveyed the published literature on **(i)** flavonoid-DHFR interactions, **(ii)** the C59R mutation in PfDHFR, and **(iii)** structure-activity relationships (SAR) governing flavonoid binding.
+
+**Key finding 1: No flavonoid-DHFR cocrystal structure exists.**
+PDB entries 2W3M and 1DLS are human DHFR structures co-crystallized with classical antifolates (methotrexate, NADPH). Flavonoid binding models are derived from **molecular docking simulations**, not solved experimentally. The binding mode predictions in our study are therefore consistent with the broader field — there is no atomic-resolution structural reference for flavonoid-DHFR complexes [Sánchez-del-Campo 2009; Navarro-Perán 2005].
+
+**Key finding 2: C59R is a validated resistance mutation with known structural impact.**
+Literature on pyrimethamine resistance establishes that C59R (often combined with S108N, N51I, I164L in quadruple mutants):
+- Alters the active site to create a **larger, more flexible volume**
+- Causes **steric clashes with rigid inhibitors** (pyrimethamine, cycloguanil)
+- Is most disruptive to **planar, π-conjugated scaffolds** [PMC6295868; PMC7070769]
+- Flexible inhibitors (WR99210) can adapt and retain binding — consistent with our finding that sp³-rich, flexible ligands maintain C59R resilience
+
+**Key finding 3: Flavonoid-DHFR binding SAR is well-characterized.**
+- Flavonoids bind in the **folate pocket** (not NADPH pocket)
+- Gallate/carbohydrate moieties modulate affinity critically
+- Methylation of hydroxyl groups (as in PP-11: 7-OMe, 3'-OMe) **reduces** inhibitory potency compared to the parent polyhydroxylated flavonoid [Sánchez-del-Campo 2009]
+- PP-11 (7,3'-O-dimethylquercetin) has not been specifically assayed against PfDHFR — this is a **novel finding**
+
+**Key finding 4: The rigid-scaffold vulnerability pattern is known in antimalarial drug design.**
+C59R is one of several mutations that collectively restructure the binding pocket. Rigid, planar inhibitors fail to adapt, while flexible inhibitors accommodate the altered geometry — a well-established principle in antifolate drug design that directly supports our steric clash hypothesis [PMC6295868].
+
+---
+
 ## Executive Summary
 
 **PP-11** (7,3'-O-dimethylquercetin, a naturally occurring methylated quercetin) exhibits an extraordinary resistance profile: **near-complete loss of binding at PfDHFR-C59R** (RRS = 0.37%), while showing **enhanced binding at all other mutants** (RRS 126–155%). This pattern — single-mutant knockout with supra-WT binding at all other mutants — is pharmacologically unprecedented in this library and warrants detailed investigation.
@@ -19,10 +46,12 @@
 | **MW** | 330.1 Da |
 | **Class** | Flavonol (methylated quercetin) |
 | **Natural source** | Afromalaria DB (African flora) |
+| **Reported DHFR inhibition** | Quercetin glycosides: $K_D \sim 0.6$ µM (human DHFR) |
+| **EGCG $K_i$ (reference)** | $\sim 0.1$ µM (bovine liver DHFR) [Navarro-Perán 2005] |
 | **LogP** | 2.62 |
 | **TPSA** | 105.5 Å² |
 | **H-bond donors** | 3 (5-OH, 7-OH, 4'-OH) |
-| **H-bond acceptors** | 7 (C4=O, O1, 3'-OMe, 5'-OMe, 3×OH) |
+| **H-bond acceptors** | 7 (C4=O, O1, 7-OMe, 3'-OMe, 3×OH) |
 
 ### Structure in Flavonoid Numbering
 ```
@@ -32,7 +61,7 @@
   |
 C ring (C3-OH, C4=O)
   |
-A ring (5-OH, 7-OH, 5'-OCH₃)
+A ring (5-OH, 7-OH, 7-OMe)
 ```
 
 ---
@@ -144,9 +173,10 @@ The **C3-OH group** (pKa ~8.5, partially deprotonated at pH 7.4) may interact fa
 - Alter the local electrostatic potential enough to shift the preferred binding pose
 
 **Supporting evidence:**
-- Quercetin derivatives are known to bind DHFR through a combination of H-bonds and π-stacking
-- The C3-OH is critical for DHFR binding in multiple flavonoid-DHFR crystal structures (PDB 2W3M, etc.)
+- Quercetin derivatives are known to bind DHFR through a combination of H-bonds and π-stacking in the folate pocket [Sánchez-del-Campo 2009]
+- The C3-OH/C4=O motif is critical for DHFR binding in computational models of flavonoid-DHFR complexes
 - RRS > 100% at other mutants suggests PP-11 binds particularly well to the WT pocket — the electrostatic complementarity is highly specific
+- EGCG (gallated catechin) shows $K_i \approx 0.12$ µM against bovine liver DHFR, validating that polyphenols can achieve potent DHFR inhibition [Navarro-Perán 2005]
 
 ### Hypothesis C: Binding Mode Shift (Modulating Factor)
 
@@ -206,3 +236,10 @@ The pattern suggests that **planar, π-conjugated scaffolds** (flavonoids, ligna
 1. Would re-docking with a different grid box center (shifted to explore alternative binding modes) recover binding?
 2. Does PP-02 (the other C59R outlier, also planar) share a similar binding mode?
 3. Would a flexible flavonoid (e.g., chalcone, open C-ring) retain C59R resilience?
+4. Does the PP-11 methylation pattern (7-OMe, 3'-OMe) contribute to the C59R sensitivity? The literature suggests methylation reduces DHFR affinity generally — would the parent quercetin (3,5,7,3',4'-pentahydroxy) be more resilient?
+
+### Literature References
+1. Sánchez-del-Campo L, et al. (2009). *Binding of Natural and Synthetic Polyphenols to Human Dihydrofolate Reductase*. PMC2802001.
+2. Navarro-Perán E, et al. (2005). *Kinetics of the Inhibition of Bovine Liver Dihydrofolate Reductase by Tea Catechins*. Biochemistry, 44(20):7512–25.
+3. *Hybrid Inhibitors of Malarial Dihydrofolate Reductase with Dual Binding Modes*. PMC6295868.
+4. *Understanding the Pyrimethamine Drug Resistance Mechanism via Combined Molecular Dynamics*. PMC7070769.
