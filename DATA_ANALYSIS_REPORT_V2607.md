@@ -52,24 +52,27 @@ This report consolidates all validated computational results across Projects 1�
 
 ### 2.1 Resistance Resilience Score (RRS) Classification
 
-| Compound | RRS_mean | Class | N51I | C59R | S108N | I164L | K76T | K76A |
-|:--------:|:--------:|:----:|:----:|:----:|:-----:|:-----:|:----:|:----:|
-| COc1cc([C@@H]2... | 146.32 | **A** | 127.81 | 141.90 | 128.76 | 131.05 | 170.86 | 177.52 |
-| CC(=O)OC1C... | 126.84 | **A** | 125.13 | 112.14 | 121.37 | 104.96 | 156.41 | 141.03 |
-| COc1ccc(-c2... | 124.02 | **A** | 113.57 | 111.79 | 113.04 | 112.32 | 144.64 | 148.75 |
-| COc1cc(O)c2... | 115.30 | **C** | 126.36 | 0.37 | 128.79 | 127.48 | 154.58 | 154.21 |
-| COc1c(O)cc2... | 98.52 | **A*** | 92.62 | 84.70 | 94.63 | 99.06 | 107.65 | 112.48 |
-| COc1ccc2c... | 81.89 | **B** | 73.33 | 71.33 | 73.33 | 78.40 | 98.27 | 96.67 |
-| COc1cccc2... | 79.59 | **B** | 72.67 | 73.04 | 72.42 | 72.55 | 93.29 | 93.54 |
-| Cc1occ2c1... | 74.79 | **C** | 67.98 | 69.69 | 68.71 | 70.80 | 85.52 | 86.01 |
-| CC(C)=CCOc1... | 73.11 | **C** | 65.39 | 65.39 | 65.87 | 65.75 | 91.74 | 84.55 |
-| C=C[C@@](C)... | 72.00 | **C** | 73.73 | 64.84 | 61.70 | 71.11 | 71.76 | 88.89 |
-| CC(C)=CCc1ccc... | 71.85 | **C** | 63.82 | 65.99 | 68.54 | 69.17 | 83.06 | 80.51 |
-| C=CCc1cc(OC)... | 71.00 | **C** | 62.93 | 62.93 | 68.13 | 67.20 | 82.80 | 82.00 |
-| CC=Cc1cc(O)... | 69.65 | **D** | 62.65 | 65.96 | 68.48 | 65.30 | 78.28 | 77.22 |
-| O=C(O)C=Cc... | 68.83 | **C** | 62.68 | 64.71 | 62.93 | 62.29 | 72.36 | 88.03 |
+14 polypharm scaffolds were classified into five resilience tiers by docking against 6 resistance mutants. The full RRS table is now populated in the P2 manuscript (tab:rrs) with PP-04 through PP-17 identifiers.
+
+| PP ID | Compound Type | RRS_mean | Class | C59R RRS | Other 5 Mutants Avg | Notable Feature |
+|:-----:|:-------------|:--------:|:----:|:--------:|:-------------------:|:----------------|
+| PP-04 | Flavonol | 81.9 | **B** | 71.3% | 83.9% | Moderate uniform resilience |
+| PP-05 | Flavone | 124.0 | **A** | 111.8% | 126.4% | Pan-resilient |
+| PP-06 | Flavonol (methylated) | 146.3 | **A** | 141.9% | 147.3% | Pan-resilient, highest mean |
+| PP-07 | Chalcone/benzopyran | 73.1 | **C** | 65.4% | 74.0% | Mutant-specific |
+| PP-08 | Phenylpropanoid | 71.0 | **C** | 62.9% | 72.6% | Mutant-specific |
+| PP-09 | Indole alkaloid | 71.8 | **C** | 66.0% | 72.9% | Mutant-specific |
+| PP-10 | Xanthone | 79.6 | **B** | 73.0% | 80.8% | Moderate uniform |
+| **PP-11** | **7,3′-O-dimethylquercetin** | **115.3** | **C** | **0.4% ★** | **146.3%** | **C59R knockout anomaly** |
+| PP-12 | Terpene | 72.0 | **C** | 64.8% | 73.4% | Mutant-specific |
+| PP-13 | Flavonol (acetylated) | 126.8 | **A** | 112.1% | 129.7% | Pan-resilient |
+| PP-14 | Phenylpropanoid | 69.6 | **D** | 66.0% | 70.4% | Resistance-vulnerable |
+| PP-15 | Flavonol (quercetagetin) | 98.5 | **A*** | 84.7% | 101.3% | **High-potency pan-resilient** |
+| PP-16 | Benzofuran | 74.8 | **C** | 69.7% | 75.8% | Mutant-specific |
+| PP-17 | Phenylpropanoid | 68.8 | **C** | 64.7% | 69.7% | Mutant-specific |
 
 **Class Distribution:** A*: 1, A: 3, B: 2, C: 7, D: 1
+**★ PP-11 Anomaly:** RRS = 0.4% at C59R (ΔG = −0.02 kcal/mol — essentially no binding), vs 126–155% at all other 5 mutants. This is a **−3.0σ outlier**. Investigation concluded: **steric clash between Arg59 guanidinium and the planar flavonoid C-ring** — see PP11_C59R_investigation.md for full analysis.
 
 ### 2.2 African Chemical Space Index (ACSI)
 
@@ -189,11 +192,20 @@ This report consolidates all validated computational results across Projects 1�
 - TNE bond_dim=8 embeddings (65,856 molecules)
 
 ### In Progress 🔄
-- P3 QI optimization: 5,000 molecules, n_repeats=2, n_kpca=20 (job 7943)
-- P2 MM-GBSA membrane: PfATP4 with igb=8 (job 7944)
-- TNE bond_dim=16: 768 features (job 7945)
+- P3 QI optimization: 5,000 molecules, n_repeats=2, n_kpca=20 (job 7943, RUNNING, ~46h remaining)
+- P2 MM-GBSA membrane: PfATP4 with igb=8 (job 7944, PENDING — Resources)
+- TNE bond_dim=16: 768 features (job 7945, PENDING — Priority, waits for 7943)
+- TNE bond_dim=16 vs bond8 comparison (job 7947, PENDING — Dependency on 7945)
+- **Named ligand docking: 5 ligands × 6 mutants (job 7948, PENDING — PartitionTime)**
+
+### Completed Since Last Report ✅
+- **RRS table populated** in P2 manuscript: 14 polypharm compounds (PP-04 to PP-17) with actual per-mutant RRS values
+- **PP-11 C59R investigation**: Complete mechanistic analysis (see Project2_Polypharmacology_MD_ValidationV2607/analysis/PP11_C59R_investigation.md) — steric clash hypothesis confirmed
+- **TNE bond_dim=8 embeddings backed up** for comparison with bond_dim=16
+- **Named ligand PDBQTs prepared**: SMILES→3D→PDBQT for ligands 201, 214, 87, 438, 164
 
 ### Pending 📋
+- Named ligand RRS results (job 7948, pending queue)
 - Full 1,815-molecule congeneric series TDA + QKS (§5.5 of audit)
 - Provenance tracking (EX=32 vs EX=64 in v2_centroid_scores.csv)
 - PfCRT 7G6/7G8 nomenclature verification

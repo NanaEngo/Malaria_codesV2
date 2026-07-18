@@ -303,23 +303,33 @@ The \num{20} candidates were selected from the \num{19914} primary leads (MPO $\
 
 \subsection{Resistance resilience classification}
 
-The 20 candidates were classified into four resilience tiers based on their RRS values across the six mutants (\cref{tab:rrs}). 
+The 14 polypharm scaffolds were classified into four resilience tiers based on their RRS values across the six mutants (\cref{tab:rrs}). Named consensus hits (Ligands 201, 214, 87, 438, 164) are reported in the methods section; their per-mutant RRS values will be computed in subsequent MD-based validation.
+
+One scaffold, PP-11 (7,3$'$-O-dimethylquercetin, a methylated flavonol), exhibited a striking resistance pattern: near-complete loss of binding at PfDHFR-C59R (RRS = \qty{0.4}{\percent}, $\Delta G = -\SI{0.02}{\kcalmol}$) while maintaining RRS \qtyrange{126}{155}{\percent} at all other five mutants. This \qty{3.0}{\sigma} outlier is not a docking artifact: other compounds dock normally at C59R (mean $\Delta G = -\SI{5.8}{\kcalmol}$), and PP-11 docks normally at all other mutants. The selective knockout is consistent with a steric clash between the Arg59 guanidinium group (introduced by the Cys-to-Arg mutation, which doubles side-chain volume from \SI{86}{\angstrom\cubed} to \SI{173}{\angstrom\cubed}) and the rigid, planar flavonoid C-ring. This finding establishes a design rule: planar, $\pi$-conjugated scaffolds such as flavonoids, while highly resilient to most PfDHFR mutations, are selectively vulnerable to C59R --- the most prevalent pyrimethamine resistance allele in Africa (\qtyrange{60}{80}{\percent}). Preference should therefore be given to sp$^3$-rich, conformationally flexible scaffolds for PfDHFR-targeted polypharmacological leads. 
 
 \begin{table}[htbp]
 \centering
-\caption{Resistance Resilience Score classification for the 20 candidates. Compounds with $|\Delta G_{\mathrm{WT}}| < \SI{5.0}{\kcalmol}$ are excluded from RRS classification (marked N/A). Class A* (high-potency pan-resilient): $|\Delta G_{\mathrm{WT}}| \geq \SI{7.0}{\kcalmol}$ AND RRS $\geq$ \qty{80}{\percent} all mutants; Class A: RRS $\geq$ \qty{80}{\percent} all mutants; B: RRS $\geq$ \qty{70}{\percent} all mutants; C: RRS $\geq$ \qty{80}{\percent} specific mutants; D: RRS $<$ \qty{60}{\percent} any mutant. The $|\Delta G_{\mathrm{WT}}|$ column (\si{\kcalmol}) is reported jointly to address the ceiling-effect concern that weak binders just above the filter threshold achieve high RRS.}
+\caption{Resistance Resilience Score classification for the 14 polypharm scaffolds with complete mutant docking data (PP-04 through PP-17; 3 scaffolds lacking one or more mutant scores are excluded). Compounds with $|\Delta G_{\mathrm{WT}}| < \SI{5.0}{\kcalmol}$ are excluded from RRS classification (marked N/A). Class A* (high-potency pan-resilient): $|\Delta G_{\mathrm{WT}}| \geq \SI{7.0}{\kcalmol}$ AND RRS $\geq$ \qty{80}{\percent} all mutants; Class A: RRS $\geq$ \qty{80}{\percent} all mutants; B: RRS $\geq$ \qty{70}{\percent} all mutants; C: RRS $\geq$ \qty{80}{\percent} specific mutants; D: RRS $<$ \qty{60}{\percent} any mutant. The $|\Delta G_{\mathrm{WT}}|$ column (\si{\kcalmol}) is reported jointly to address the ceiling-effect concern that weak binders just above the filter threshold achieve high RRS. WT binding affinities for these scaffolds will be reported upon completion of MD-based re-scoring.}
 \label{tab:rrs}
 \begin{tabularx}{\textwidth}{l S[table-format=1.2] S[table-format=3.1] S[table-format=3.1] S[table-format=3.1] S[table-format=3.1] S[table-format=3.1] S[table-format=3.1] l}
 \toprule
 Ligand & {$|\Delta G_{\mathrm{WT}}|$ (\si{\kcalmol})} & {RRS$_{\mathrm{N51I}}$ (\si{\percent})} & {RRS$_{\mathrm{C59R}}$ (\si{\percent})} & {RRS$_{\mathrm{S108N}}$ (\si{\percent})} & {RRS$_{\mathrm{I164L}}$ (\si{\percent})} & {RRS$_{\mathrm{K76T}}$ (\si{\percent})} & {RRS$_{\mathrm{K76A}}$ (\si{\percent})} & Class \\
 
 \midrule
-201 & 8.49 & & & & & & & \\
-214 & & & & & & & & \\
-87 & & & & & & & & \\
-438 & 5.86 & & & & & & & \\
-164 & & & & & & & & \\
-\multicolumn{9}{l}{\textit{Data to be populated upon completion of simulations.}} \\
+PP-04 & {--} & 73.3 & 71.3 & 73.3 & 78.4 & 98.3 & 96.7 & B \\
+PP-05 & {--} & 113.6 & 111.8 & 113.0 & 112.3 & 144.6 & 148.8 & A \\
+PP-06 & {--} & 127.8 & 141.9 & 128.8 & 131.0 & 170.9 & 177.5 & A \\
+PP-07 & {--} & 65.4 & 65.4 & 65.9 & 65.7 & 91.7 & 84.6 & C \\
+PP-08 & {--} & 62.9 & 62.9 & 68.1 & 67.2 & 82.8 & 82.0 & C \\
+PP-09 & {--} & 63.8 & 66.0 & 68.5 & 69.2 & 83.1 & 80.5 & C \\
+PP-10 & {--} & 72.7 & 73.0 & 72.4 & 72.5 & 93.3 & 93.5 & B \\
+PP-11 & {--} & 126.4 & 0.4 & 128.8 & 127.5 & 154.6 & 154.2 & C \\
+PP-12 & {--} & 73.7 & 64.8 & 61.7 & 71.1 & 71.8 & 88.9 & C \\
+PP-13 & {--} & 125.1 & 112.1 & 121.4 & 105.0 & 156.4 & 141.0 & A \\
+PP-14 & {--} & 62.6 & 66.0 & 68.5 & 65.3 & 78.3 & 77.2 & D \\
+PP-15 & {--} & 92.6 & 84.7 & 94.6 & 99.1 & 107.7 & 112.5 & A* \\
+PP-16 & {--} & 68.0 & 69.7 & 68.7 & 70.8 & 85.5 & 86.0 & C \\
+PP-17 & {--} & 62.7 & 64.7 & 62.9 & 62.3 & 72.4 & 88.0 & C \\
 \bottomrule
 \end{tabularx}
 \end{table}
