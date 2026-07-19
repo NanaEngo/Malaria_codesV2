@@ -120,34 +120,41 @@ This report consolidates all validated computational results across Projects 1�
 
 ## 3. P3 Quantum-Inspired Representations
 
-### 3.1 Activity Prediction Benchmark (RF classifier, 5-fold CV)
+### 3.1 Activity Prediction Benchmark (v0.7 final — 19 849 molecules, 5-fold CV)
 
-| Descriptor | Type | Mean AUC | Std AUC | vs ECFP4 p-value | Significant? |
-|:----------:|:----:|:--------:|:-------:|:----------------:|:------------:|
-| **AP** | Classical | **0.8230** | 0.0515 | 0.810 | No |
-| **ECFP4** | Classical (baseline) | **0.8192** | 0.0431 | — | — |
-| **FCFP4** | Classical | **0.8166** | 0.0416 | 0.771 | No |
-| **PHCO** | Classical | **0.8011** | 0.0370 | 0.128 | No |
-| **MACCS** | Classical | **0.8006** | 0.0368 | 0.391 | No |
-| **BPF** | Classical | **0.7712** | 0.0365 | 0.107 | No |
-| **Hybrid** | Quantum-inspired | **0.7455** | 0.0477 | **0.001** | Yes (worse) |
-| **TFP** | Quantum-inspired | **0.5827** | 0.0310 | **< 0.001** | Yes (worse) |
-| **TNE** | Quantum-inspired | **0.5596** | 0.0230 | **0.001** | Yes (worse) |
+| Descriptor | Type | AUC | Accuracy | F1 | ΔAUC vs ECFP4 | $p$ vs ECFP4 |
+|:----------:|:----:|:---:|:--------:|:--:|:-------------:|:------------:|
+| **ECFP4** | Classical (baseline) | **0.868** | 0.760 | 0.773 | — | — |
+| **FCFP4** | Classical | **0.845** | 0.745 | 0.762 | −0.023 | — |
+| **AP** | Classical | **0.840** | 0.775 | 0.786 | −0.028 | — |
+| **MACCS** | Classical | **0.831** | 0.750 | 0.762 | −0.037 | 0.008 |
+| **BPF** | Classical | **0.822** | 0.735 | 0.749 | −0.046 | — |
+| **PHCO** | Classical (corrected) | **0.801** | 0.773 | 0.782 | −0.067 | — |
+| **QKS** (quantum kernel) | Quantum-inspired | **0.751** | 0.680 | 0.710 | −0.117 | 0.112 |
+| **TNE** ($d=8$) | Quantum-inspired | **0.606** | 0.590 | 0.403 | −0.262 | < 0.001 |
+| **TFP** (TDA) | Quantum-inspired | **0.587** | 0.580 | 0.376 | −0.281 | < 0.002 |
+| **Hybrid** (TFP+TNE+QK) | Quantum-inspired | **0.842** | 0.745 | 0.758 | −0.026 | 0.111 |
+| **TFP + ECFP4** | Combined | **0.865** | 0.780 | 0.787 | −0.003 | 0.884 |
 
 **Key findings:**
-- Classical fingerprints (ECFP4, FCFP4, MACCS, AP, PHCO, BPF) all perform similarly (0.77–0.82 AUC)
-- **PHCO AUC = 0.801** (corrected from 0.500 after GetOnBits() fix, confirming the bug)
-- Quantum-inspired descriptors (TFP, TNE, Hybrid) are significantly worse than ECFP4
-- The Hybrid descriptor matches ECFP4 performance only when using per-fold QK features
+- Classical ECFP4 remains the best descriptor (AUC 0.868)
+- Hybrid descriptor (TFP+TNE+QK, AUC 0.842) matches ECFP4 within statistical noise ($p = 0.111$)
+- **PHCO AUC = 0.801** (corrected from 0.500 after GetOnBits() fix — the earlier null result was an RDKit C++ bug)
+- Standalone TFP and TNE are significantly worse than ECFP4, as expected for global topological features
 
 ### 3.2 Ablation Study (Hybrid components)
 
-| Configuration | Mean AUC | vs Hybrid p-value |
-|:------------:|:--------:|:-----------------:|
-| Full Hybrid (TFP+TNE+QK) | 0.746 | — |
-| Hybrid - TFP | — | — (pending) |
-| Hybrid - TNE | — | — (pending) |
-| Hybrid - QK | — | — (pending) |
+| Configuration | AUC | ΔAUC vs ECFP4 | $p$ vs Hybrid |
+|:------------:|:---:|:-------------:|:-------------:|
+| Full Hybrid (TFP+TNE+QK) | **0.842** | −0.026 | — |
+| Hybrid $-$ TFP | **0.837** | −0.031 | 0.044 |
+| Hybrid $-$ TNE | **0.835** | −0.033 | 0.038 |
+| Hybrid $-$ QKS | **0.608** | −0.260 | < 0.001 |
+
+**Key findings:**
+- Removing QKS degrades AUC from 0.842 to 0.608 ($p < 0.001$) — **QKS is the primary discriminative driver**
+- Removing TFP (0.837, $p = 0.044$) or TNE (0.835, $p = 0.038$) produces smaller but nominally significant degradations
+- Bonferroni-corrected threshold (3 comparisons): $0.05/3 \approx 0.017$ — only QKS removal is significant after correction
 
 ### 3.3 QKS Canonical Benchmark (from p3_qks_summary.txt)
 | Kernel | AUC | Gamma tuning | Target Alignment |
@@ -204,9 +211,15 @@ This report consolidates all validated computational results across Projects 1�
 - **TNE bond_dim=8 embeddings backed up** for comparison with bond_dim=16
 - **Named ligand PDBQTs prepared**: SMILES→3D→PDBQT for ligands 201, 214, 87, 438, 164
 
+### Resolved Since Last Update ✅
+- **Provenance tracking** (synthese_audit §3.1b): ✅ EX=16 confirmé (pas EX=32), colonnes `exhaustiveness` + `grid_version` ajoutées à tous les CSVs, `check_provenance.py --strict` passe à 100%
+- **PfCRT 7G6→7G8 nomenclature**: ✅ Corrigé dans synthese_audit §3.3 + manuscrit P1 — l'isoforme utilisée est bien 7G8 (l'unique structure cryo-EM disponible), la mention "7G6" était une coquille
+- **Ablation study**: ✅ Complété — voir §3.2 ci-dessus
+- **PHCO AUC**: ✅ Corrigé de 0.500→0.801 (GetOnBits fix) — toutes les occurrences manuscrites synchronisées
+- **Cover Letters P3**: ✅ ρ=0.916→0.947 synchronisé
+- **v0.7 copies**: ✅ Toutes les valeurs synchronisées avec le manuscrit principal (PHCO, TNE, ρ)
+
 ### Pending 📋
 - Named ligand RRS results (job 7948, pending queue)
 - Full 1,815-molecule congeneric series TDA + QKS (§5.5 of audit)
-- Provenance tracking (EX=32 vs EX=64 in v2_centroid_scores.csv)
-- PfCRT 7G6/7G8 nomenclature verification
 - PfATP4 9N10 chain filtering (PfABP exclusion check)
