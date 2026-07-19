@@ -1,0 +1,75 @@
+% ============================================================================
+% Cover Letter — Paper 3
+% Target: Journal of Cheminformatics
+% ============================================================================
+\documentclass[11pt,a4paper]{letter}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+\signature{Nana Engo Taamangtchu \\ \small Corresponding Author}
+\address{%
+  University of Ngaound\'{e}r\'{e} \\
+  Department of Biochemistry \\
+  Cameroon \\
+  \href{mailto:nanaengo@univ-ndere.cm}{nanaengo@univ-ndere.cm}
+}
+
+\begin{document}
+
+\begin{letter}{%
+  The Editors-in-Chief \\
+  \textit{Journal of Cheminformatics} \\
+  BioMed Central \\
+  London, UK
+}
+
+\opening{Dear Editors,}
+
+We are pleased to submit our manuscript, \textbf{``Quantum-Inspired Molecular Representations for African Natural Product Chemical Space: Topological Fingerprints, Tensor Network Embeddings, and Quantum Kernel Scores''}, for consideration as an \textbf{Original Research Article} in the \textit{Journal of Cheminformatics}.
+
+\medskip
+\textbf{Scientific contribution.} This work introduces three novel molecular descriptors---the Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)---and benchmarks them rigorously against classical fingerprints on a library of 19,849 African natural product-derived antimalarial candidates. We believe this manuscript makes four specific contributions of interest to the \textit{Journal of Cheminformatics} readership:
+
+\begin{enumerate}[leftmargin=*, itemsep=4pt]
+  \item \textbf{First systematic TDA + tensor + quantum benchmark on African natural product space.}  
+  We apply persistent homology (TDA), Tucker decomposition (TNE), and quantum circuit-based kernels (QKS) to the same chemical library under identical cross-validation conditions, enabling direct comparison with ECFP4, MACCS, FCFP4, AP, PHCO, and BPF baselines.
+
+  \item \textbf{Resolution of the scaffold paradox via persistent homology.}  
+  We demonstrate mathematically why a generative AI model simultaneously achieves 92.6\% Tanimoto novelty and 69.3\% scaffold recovery---a counterintuitive result that classical fingerprints cannot explain. TFP shows that H$_1$ ring topology (scaffold identity) is preserved while H$_0$ connectivity (atom arrangement) diverges, providing the first use of persistent homology to resolve a chemical space data inconsistency.
+
+  \item \textbf{Practical compression for resource-limited settings.}  
+  TNE compresses molecular tensors to a 192-element core descriptor at 5.9$\times$ real compression (15.6$\times$ padded), processed in under 30 minutes on a standard workstation. This has direct practical value for African and other resource-constrained research settings where GPU clusters and large-scale virtual screening infrastructure may be unavailable.
+
+  \item \textbf{Honest negative results and precise scope.}  
+  While classical ECFP4 remains superior for primary screening (AUC 0.868 vs.\ hybrid AUC 0.842, $p = 0.111$, ns), the hybrid framework matches ECFP4 performance without sacrificing accuracy. Critically, we demonstrate that an earlier apparent quantum advantage (QK AUC 0.936 vs.\ RBF 0.105, $p < 0.001$) was an artifact of untuned RBF hyperparameters; after proper gamma optimisation, all kernels are statistically indistinguishable. We report this negative result prominently, consistent with the open science values of the \textit{Journal of Cheminformatics}.
+\end{enumerate}
+
+\medskip
+\textbf{Cross-paper validation.} A new cross-paper analysis (conducted in preparation for this submission) demonstrates that H$_1$ total persistence is a strong predictor of resistance resilience in the companion polypharmacology study (Spearman $\rho = 0.947$, $p < 0.0001$, $n = 14$ leads), establishing that ring topology is a structural determinant of clinical relevance---a finding that ECFP4 obscures.
+
+\medskip
+\textbf{Open science and reproducibility.} All TFP matrices, TNE embeddings, quantum kernel matrices, benchmark CSV files, and analysis scripts are deposited on Zenodo (DOI to be finalized prior to submission) and mirrored on GitHub (\url{https://github.com/Vital-Sao/Malaria_codes}) under the MIT licence. The computational protocol is fully reproducible on a standard CPU workstation.
+
+\medskip
+\textbf{Fit with \textit{Journal of Cheminformatics}.} This manuscript directly addresses the journal's core scope: novel molecular representation methods, rigorous benchmarking with classical baselines, applicability domain analysis, and open-source tool development. The African natural product focus also aligns with the journal's equity and diversity mission, as underrepresentation of African chemical diversity in public databases is an acknowledged challenge in computational drug discovery.
+
+\medskip
+\textbf{Confirmation.} This work is original, has not been published, and is not under consideration elsewhere. All authors have approved the submission. There are no conflicts of interest to declare.
+
+\closing{We thank you for your consideration and look forward to your response.}
+
+\ps{%
+\textbf{Suggested reviewers:}\\
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+  \item Prof.\ Bing Wang (topological methods in drug discovery)
+  \item Dr.\ Guillaume Godin (RDKit, natural product cheminformatics)
+  \item Prof.\ Gisbert Schneider (generative molecular design)
+\end{itemize}
+}
+
+\end{letter}
+\end{document}

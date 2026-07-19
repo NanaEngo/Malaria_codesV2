@@ -1,0 +1,73 @@
+% ============================================================================
+% Cover Letter — Paper 3
+% Target: Journal of Cheminformatics
+% Updated: July 2026 — aligned with manuscript v0.8 corrections
+% ============================================================================
+\documentclass[11pt,a4paper]{letter}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+\signature{Myke-Vital Temgoua Sao \\ \small Corresponding Author}
+\address{%
+  University of Yaound\'{e} I \\
+  Department of Physics, Faculty of Science \\
+  P.O. Box 812, Yaound\'{e}, Cameroon \\
+  \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm}
+}
+
+\begin{document}
+
+\begin{letter}{%
+  The Editors-in-Chief \\
+  \textit{Journal of Cheminformatics} \\
+  BioMed Central \\
+  London, UK
+}
+
+\opening{Dear Editors,}
+
+We are pleased to submit our manuscript, \textbf{``Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antimalarial Candidates: A Topological and Tensor-Network Fingerprinting Study''}, for consideration as an \textbf{Original Research Article} in the \textit{Journal of Cheminformatics}.
+
+\medskip
+\textbf{Scientific contribution.} This work benchmarks three quantum-inspired molecular representations---Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)---against classical fingerprints on a library of 19,849 African natural product-derived antimalarial candidates. We make four specific contributions of interest to the \textit{Journal of Cheminformatics} readership:
+
+\begin{enumerate}[leftmargin=*, itemsep=4pt]
+  \item \textbf{Systematic TDA--tensor--quantum benchmark on African natural product space.}  
+  We apply persistent homology (TDA), Tucker decomposition (TNE), and quantum circuit-based kernels (QKS) to the same chemical library under identical cross-validation conditions, enabling direct comparison with ECFP4, MACCS, FCFP4, AP, PHCO, and BPF baselines. We show rigorously that classical ECFP4 (AUC 0.868) remains the recommended primary screening baseline; the hybrid descriptor (AUC 0.842, $p = 0.111$) matches it without significantly exceeding it. An apparent quantum advantage in an early benchmark (QK AUC 0.936 vs.\ RBF 0.105) is shown to be an artefact of an untuned RBF gamma parameter; after proper gamma optimisation on a 500-molecule representative subsample, the corrected benchmark shows Quantum AUC 0.751 vs.\ RBF AUC 0.701 ($p = 0.088$, ns), confirming all kernels are statistically indistinguishable. We report these negative results prominently, consistent with the open science values of the \textit{Journal of Cheminformatics}.
+
+  \item \textbf{Resolution of the scaffold paradox via persistent homology.}  
+  We demonstrate mathematically why a generative AI model simultaneously achieves 92.6\% Tanimoto novelty and 69.3\% scaffold recovery---a counterintuitive result that classical fingerprints cannot explain. TFP shows that H$_1$ ring topology (scaffold identity) is preserved while H$_0$ connectivity (atom arrangement) diverges, providing a systematic application of persistent homology to resolve a chemical space data inconsistency.
+
+  \item \textbf{Practical compression for resource-limited settings.}  
+  TNE compresses molecular tensors to a 192-element core descriptor at 5.9$\times$ real-atom compression (based on 38 mean atoms per molecule; the padded ratio of 15.6$\times$ is an upper bound), processed in under 30 minutes on a standard workstation. This has direct practical value for African and other resource-constrained research settings where GPU clusters and large-scale virtual screening infrastructure may be unavailable.
+
+  \item \textbf{Topological predictor of resistance tolerance---a dimension invisible to classical fingerprints.}  
+  Our most novel finding is that H$_1$ topological persistence predicts resistance tolerance across antimalarial candidates (Spearman $\rho = 0.947$, $p < 0.0001$, $n = 14$; see Figure~6 in the manuscript). This cross-paper result---linking Paper~3 TFP features with Paper~2 molecular dynamics resistance classification---demonstrates that persistent homology captures structural determinants of resistance tolerance that neither ECFP4 nor any classical descriptor can access. While the small sample size (Class~A: $n=3$, Class~D: $n=1$) means this finding is hypothesis-generating rather than confirmatory, it establishes a computationally inexpensive topological screening criterion for prioritising resistance-resilient candidates.
+\end{enumerate}
+
+\medskip
+\textbf{Open science and reproducibility.} All TFP matrices, TNE embeddings, quantum kernel matrices, benchmark CSV files, and analysis scripts are deposited on Zenodo (DOI to be minted upon acceptance) and mirrored on GitHub (\url{https://github.com/NanaEngo/Malaria_codesV2}) under the MIT licence. The computational protocol is fully reproducible on a standard CPU workstation.
+
+\medskip
+\textbf{Fit with \textit{Journal of Cheminformatics}.} This manuscript directly addresses the journal's core scope: new molecular representation methods, rigorous benchmarking with classical baselines, applicability domain analysis, and open-source tool development. The African natural product focus also aligns with the journal's equity and diversity mission, as underrepresentation of African chemical diversity in public databases is an acknowledged challenge in computational drug discovery. The honest reporting of negative results---including the debunking of an apparent quantum advantage and the demonstration that TFP alone does not outperform ECFP4 for activity prediction---reflects the journal's commitment to scientific rigour.
+
+\medskip
+\textbf{Confirmation.} This work is original, has not been published, and is not under consideration elsewhere. All authors have approved the submission. There are no conflicts of interest to declare.
+
+\closing{We thank you for your consideration and look forward to your response.}
+
+\ps{%
+\textbf{Suggested reviewers:}\\
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+  \item Prof.\ Bing Wang (topological methods in drug discovery)
+  \item Dr.\ Guillaume Godin (RDKit, natural product cheminformatics)
+  \item Prof.\ Gisbert Schneider (generative molecular design)
+\end{itemize}
+}
+
+\end{letter}
+\end{document}
