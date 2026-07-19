@@ -8,6 +8,9 @@ This report consolidates all validated computational results across Projects 1�
 
 ## 1. P1 Chemical Space & Docking Results
 
+> **Working directory canonique :** `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/`
+> (l'ancien dossier `Project1_Chem_space_antimalarialV2607` est déprécié, archivé le 17 juillet 2026)
+
 ### 1.1 Library Statistics
 | Metric | Value | Source |
 |--------|-------|--------|
