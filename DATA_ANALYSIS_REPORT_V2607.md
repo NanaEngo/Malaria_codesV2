@@ -8,8 +8,16 @@ This report consolidates all validated computational results across Projects 1�
 
 ## 1. P1 Chemical Space & Docking Results
 
-> **Working directory canonique :** `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/`
-> (l'ancien dossier `Project1_Chem_space_antimalarialV2607` est déprécié, archivé le 17 juillet 2026)
+> **⚠️ ATTENTION — WORKING DIRECTORY P1**
+> 
+> **Le dossier canonique P1 est :** `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/`
+> 
+> Ce dossier contient les **résultats complets** : grilles V2, EX=64, 484 centroïdes, docking par cible (pfDHFR/pfCRT/pfATP4/pfClpP),
+> scores centreux (`v2_centroid_scores.csv`), rescoring R8B (`r8b/fullcluster_rescoring/docking_results.csv`).
+> 
+> **L'ancien dossier `Project1_Chem_space_antimalarialV2607` est DÉPRÉCIÉ** (archivé le 17 juillet 2026).
+> Les fichiers qu'il contient (EX=16, 20 centroïdes simplifiés) sont des exports créés par l'audit provenance
+> pour la consommation P2/P3 uniquement. Ne pas l'utiliser comme source de référence.
 
 ### 1.1 Library Statistics
 | Metric | Value | Source |

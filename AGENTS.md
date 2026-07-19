@@ -1,3 +1,14 @@
+> **⚠️ IMPORTANT — P1 WORKING DIRECTORY**
+> 
+> **Le dossier canonique de Project 1 (P1) est :**
+> `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/`
+> 
+> Ce dossier contient les résultats complets avec les grilles V2 (EX=64, 484 centroïdes, 4 cibles).
+> 
+> **Le dossier `Project1_Chem_space_antimalarialV2607` dans `${MALARIA_ROOT}` est DÉPRÉCIÉ** (archivé le 17 juillet 2026). Ne pas l'utiliser pour de nouveaux calculs ou analyses.
+> 
+> Le dossier `Project1_Chem_space_antimalarial_V2607_CorrectedGrid` dans `${MALARIA_ROOT}` est une copie git-trackée partielle (manuscrits + scripts uniquement, pas de données de docking complètes).
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
