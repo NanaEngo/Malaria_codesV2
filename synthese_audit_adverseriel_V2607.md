@@ -78,7 +78,7 @@ P1 alimente directement P2 (docking mutants, RRS/ACSI/PNS) et P3 (panel congén�
 *   **Fichiers de provenance créés (18 juillet 2026) :**
     - **Scripts (`fix_provenance.py`, `check_provenance.py`) :** `Project1_Chem_space_antimalarialV2607/scripts/` (dossier déprécié uniquement — scripts de rattrapage one-shot ; le dossier canonique a son propre système de provenance intégré dans `v2_postprocess.py`)
         > Exemple : `ls ${MALARIA_ROOT}/Project1_Chem_space_antimalarialV2607/scripts/check_provenance.py`
-    - **Résultats centreux complets (dossier canonique) :**
+    - **Résultats complets (dossier canonique) :**
         - `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/v2_centroid_scores.csv` (EX=64, 484 centroïdes)
         - Résultats de docking par cible : `results/v2_docking/{pfDHFR,pfCRT,pfATP4,pfClpP}/` (~13 000 fichiers PDBQT)
         - Résultats R8B : `results/r8b/fullcluster_rescoring/docking_results.csv` (brut, 1 815 mols)
