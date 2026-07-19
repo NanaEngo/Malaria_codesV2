@@ -76,13 +76,16 @@ P1 alimente directement P2 (docking mutants, RRS/ACSI/PNS) et P3 (panel congén�
     - (v) `config.txt` de P1 mis à jour : EX=16 (valeur réelle). Les configs P2 conservent EX=64 (valeur documentée, inchangée).
 *   **Critère de validation :** ✅ 100% des lignes (6 fichiers, ~7 300 lignes) tracées avec exhaustivité et version de grille identifiées. Tous les tests `check_provenance.py --strict` passent.
 *   **Fichiers de provenance créés (18 juillet 2026) :**
-    - **Scripts (`fix_provenance.py`, `check_provenance.py`) :** `Project1_Chem_space_antimalarialV2607/scripts/` (dossier déprécié uniquement — scripts de rattrapage one-shot, pas nécessaires dans le dossier canonique qui a son propre `v2_postprocess.py`)
+    - **Scripts (`fix_provenance.py`, `check_provenance.py`) :** `Project1_Chem_space_antimalarialV2607/scripts/` (dossier déprécié uniquement — scripts de rattrapage one-shot ; le dossier canonique a son propre système de provenance intégré dans `v2_postprocess.py`)
         > Exemple : `ls ${MALARIA_ROOT}/Project1_Chem_space_antimalarialV2607/scripts/check_provenance.py`
-    - **Résultats :** Le dossier canonique `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/` contient ses propres fichiers complets :
-        - `v2_centroid_scores.csv` (EX=64, 484 centroïdes, 17 juillet)
-        - `docking_results_clean.csv` (EX=64/V2, panel 1 815 mols)
-        - Résultats de docking par cible dans `results/v2_docking/{pfDHFR,pfCRT,pfATP4,pfClpP}/`
-    > **Note :** Le dossier déprécié `Project1_Chem_space_antimalarialV2607` contient des copies simplifiées (EX=16, 20 centroïdes) créées lors de l'audit provenance. Le dossier canonique (`V2_CorrectedGrid`) est la source de vérité avec les résultats complets EX=64.
+    - **Résultats centreux complets (dossier canonique) :**
+        - `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/v2_centroid_scores.csv` (EX=64, 484 centroïdes)
+        - Résultats de docking par cible : `results/v2_docking/{pfDHFR,pfCRT,pfATP4,pfClpP}/` (~13 000 fichiers PDBQT)
+        - Résultats R8B : `results/r8b/fullcluster_rescoring/docking_results.csv` (brut, 1 815 mols)
+    - **Fichiers simplifiés pour consommation P2/P3 (dossier déprécié) :**
+        - `${MALARIA_ROOT}/Project1_Chem_space_antimalarialV2607/results/docking_results_clean.csv` (créé par `fix_provenance.py`, EX=16/V2, 20 centroïdes)
+        - `${MALARIA_ROOT}/Project1_Chem_space_antimalarialV2607/results/v2_centroid_scores.csv` (reconstruit, EX=16/V2, 20 centroïdes)
+    > **Note :** Le dossier canonique est la source de vérité (EX=64, 484 centroïdes). Les fichiers simplifiés dans le dossier déprécié ont été créés par l'audit provenance pour l'export P2/P3 uniquement.
 
 ### 3.1c. Cartographie Complète des Dépendances Avales de la Correction de Grille V2
 
