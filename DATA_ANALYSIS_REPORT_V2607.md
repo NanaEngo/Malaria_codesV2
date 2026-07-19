@@ -193,7 +193,7 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 
 ### 3.4 Quantum Parameter Optimization
 
-> **Observation:** Current quantum parameters (`n_repeats=2`, `n_kpca=20`, `bond_dim=8`) were chosen by default without systematic search. Hybrid AUCs (0.842 at n=19,849, 0.746 at n=5K) do not yet demonstrate a decisive advantage for the quantum kernel. (`n_repeats=2`, `n_kpca=20`, `bond_dim=8`) ont été choisis par défaut sans recherche systématique. Les AUC hybrides (0.842 à n=19 849, 0.746 à n=5K) ne démontrent pas encore un avantage décisif du noyau quantique.
+> **Observation:** Current quantum parameters (`n_repeats=2`, `n_kpca=20`, `bond_dim=8`) were chosen by default without systematic search. Hybrid AUCs (0.842 at n=19,849, 0.746 at n=5K) do not yet demonstrate a decisive advantage for the quantum kernel.
 
 #### Hyperparameters to Explore
 
@@ -212,7 +212,7 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 
 > **⚠️ Important:** P3 manuscript conclusions are provisional until quantum parameter optimization is completed. The first step — re-running QKS on the original **n=500 subsample** with NumPy 2.4.6 — will reveal whether the corrected environment changes QKS discriminability before scaling up.
 >
-> **Status:** Phase 1 (n=500) not yet executed — see Pipeline Status below.
+> **Status:** Phase 1 (n=500) launched but crashed during fold 1/5 (joblib semlock leak). Needs retry with reduced parallelism.
 
 ### 3.5 TNE Compression
 | Metric | Value |
@@ -254,7 +254,8 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 - P2 MM-GBSA membrane: PfATP4 with igb=8 (job 7944, PENDING — Resources)
 - TNE bond_dim=16: 768 features (job 7945, PENDING — Priority)
 - TNE bond_dim=16 vs bond8 comparison (job 7947, PENDING — Dependency on 7945)
-- **Named ligand docking: 5 ligands × 6 mutants (job 7948, PENDING — PartitionTime, switched to production)
+- **Named ligand docking: 5 ligands × 6 mutants (job 7948, PENDING — switched to production)
+- **TNE bond_dim=16 (job 7945), bond16 vs bond8 comparison (job 7947)**: PENDING — on hold until production partition frees
 
 ### Completed Since Last Report ✅
 - **RRS table populated** in P2 manuscript: 14 polypharm compounds (PP-04 to PP-17) with actual per-mutant RRS values
@@ -262,7 +263,7 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 - **TNE bond_dim=8 embeddings backed up** for comparison with bond_dim=16
 - **Named ligand PDBQTs prepared**: SMILES→3D→PDBQT for ligands 201, 214, 87, 438, 164
 - **Job 7943 killed** (blocked by PennyLaneDeprecationWarning, NumPy 1.26.4 incompatible)
-- **NumPy upgraded** 1.26.4 → 2.4.6 in malaria_md environment — no more PennyLane warnings
+- **NumPy upgraded** 1.26.4 → 2.4.6 — resolved PennyLaneDeprecationWarning
 - **Job 7952 completed**: 5K benchmark with NumPy 2.4.6 (PHCO=0.801 ✅ confirmed)
 - **PHCO AUC = 0.801 validated** at n=5,000 (identical to n=19,849)
 - **RDKit upgraded**: 2023.09.6 (PyPI) → 2025.03.6 (conda-forge) — fixes `_ARRAY_API` conflict with NumPy 2.x
@@ -276,8 +277,7 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 - **PHCO AUC**: ✅ Corrigé de 0.500→0.801 (GetOnBits fix) — toutes les occurrences manuscrites synchronisées
 - **Cover Letters P3**: ✅ ρ=0.916→0.947 synchronisé
 - **v0.7 copies**: ✅ Toutes les valeurs synchronisées avec le manuscrit principal (PHCO, TNE, ρ)
-- **NumPy 2.4.6 upgrade**: ✅ Resolved PennyLaneDeprecationWarning
-- **RDKit 2025.03.6 upgrade**: ✅ Resolved `_ARRAY_API` conflict — RDKit now compatible with NumPy 2.x (conda-forge build)
+- **RDKit 2025.03.6 upgrade**: ✅ Resolved _ARRAY_API conflict — RDKit now compatible with NumPy 2.x (conda-forge)
 
 ### Pending 📋
 - **QKS Phase 1 (n=500) à relancer**: échec fold 1/5 (joblib semlock). Réduire n_jobs ou mémoire.
