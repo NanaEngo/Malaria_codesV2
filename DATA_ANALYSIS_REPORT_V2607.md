@@ -210,7 +210,9 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 2. **Phase 2 — n=5,000 (validation):** Re-run 5 best configurations on 5,000 molecules.
 3. **Phase 3 — n=19,849 (final):** Once the best configuration is identified, re-run the full benchmark on the entire library.
 
-> **Not yet executed — Phase 1 (n=500) is pending.** See Pipeline Status below.
+> **⚠️ Important:** P3 manuscript conclusions are provisional until quantum parameter optimization is completed. The first step — re-running QKS on the original **n=500 subsample** with NumPy 2.4.6 — will reveal whether the corrected environment changes QKS discriminability before scaling up.
+>
+> **Status:** Phase 1 (n=500) not yet executed — see Pipeline Status below.
 
 ### 3.5 TNE Compression
 | Metric | Value |
