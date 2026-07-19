@@ -122,7 +122,7 @@ This report consolidates all validated computational results across Projects 1�
 
 ### 3.1 Activity Prediction Benchmark
 
-#### 3.1a Benchmark final (v0.7 — 19 849 molecules, 5-fold CV)
+#### 3.1.1 Final benchmark (v0.7 — 19,849 molecules, 5-fold CV)
 
 | Descriptor | Type | AUC | Accuracy | F1 | ΔAUC vs ECFP4 | $p$ vs ECFP4 |
 |:----------:|:----:|:---:|:--------:|:--:|:-------------:|:------------:|
@@ -144,29 +144,29 @@ This report consolidates all validated computational results across Projects 1�
 - **PHCO AUC = 0.801** (corrected from 0.500 after GetOnBits() fix — the earlier null result was an RDKit C++ bug)
 - Standalone TFP and TNE are significantly worse than ECFP4, as expected for global topological features
 
-#### 3.1b Benchmark à n=5 000 (job 7952, 19 juillet 2026) — Nouveaux paramètres quantiques
+#### 3.1.2 Benchmark at n=5,000 (job 7952, 2026-07-19) — New quantum parameters
 
-Suite à l'upgrade NumPy 1.26.4 → 2.4.6 (résolution des PennyLaneDeprecationWarning, §5), le benchmark hybride a été relancé sur **5 000 molécules** avec les mêmes paramètres quantiques initiaux : `n_repeats=2`, `n_kpca=20`, `block_size=200`.
+Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarning, §5), the hybrid benchmark was re-run on **5,000 molecules** with the same initial quantum parameters: `n_repeats=2`, `n_kpca=20`, `block_size=200`.
 
-| Descripteur | AUC (n=5K) | AUC (n=19 849) | Δ | Note |
-|:-----------:|:----------:|:--------------:|:-:|:-----|
-| **AP** | 0.823 ± 0.052 | 0.840 | −0.017 | Sous-échantillon 5K |
-| **ECFP4** | 0.819 ± 0.043 | 0.868 | −0.049 | Perte de signal attendue à n réduit |
+| Descriptor | AUC (n=5K) | AUC (n=19,849) | Δ | Note |
+|:----------:|:----------:|:--------------:|:-:|:-----|
+| **AP** | 0.823 ± 0.052 | 0.840 | −0.017 | 5K subsample |
+| **ECFP4** | 0.819 ± 0.043 | 0.868 | −0.049 | Expected signal loss at reduced n |
 | **FCFP4** | 0.817 ± 0.042 | 0.845 | −0.028 | Stable |
-| **PHCO** | **0.801 ± 0.037** | **0.801** | **0.000** | ✅ **Parfaitement stable** — correction GetOnBits() validée |
+| **PHCO** | **0.801 ± 0.037** | **0.801** | **0.000** | ✅ **Perfectly stable** — GetOnBits() fix validated |
 | **MACCS** | 0.801 ± 0.037 | 0.831 | −0.030 | Stable |
-| **BPF** | 0.771 ± 0.037 | 0.822 | −0.051 | Légère perte |
-| **Hybrid** | **0.746 ± 0.048** | **0.842** | **−0.096** | ⚠️ QK fold sensible au sous-échantillonnage |
+| **BPF** | 0.771 ± 0.037 | 0.822 | −0.051 | Slight loss |
+| **Hybrid** | **0.746 ± 0.048** | **0.842** | **−0.096** | ⚠️ QK fold sensitive to subsampling |
 | **TFP** | 0.583 ± 0.031 | 0.587 | −0.004 | Stable |
-| **TNE** | 0.560 ± 0.023 | 0.606 | −0.046 | Perte attendue |
+| **TNE** | 0.560 ± 0.023 | 0.606 | −0.046 | Expected loss |
 
-**⚠️ Problème détecté : incompatibilité RDKit + NumPy 2.4.6**
-- Erreurs `AttributeError: _ARRAY_API not found` dans le calcul de certains descripteurs
-- Causé par un conflit entre RDKit (compilé avec NumPy < 2.0 ABI) et NumPy 2.4.6
-- Impact potentiel sur les scores SVM (non RF) — les AUC Random Forest sont considérées fiables
-- **Solution :** Upgrader RDKit vers une version compatible NumPy 2.x
+**⚠️ Issue detected: RDKit + NumPy 2.4.6 incompatibility**
+- `AttributeError: _ARRAY_API not found` errors during descriptor computation
+- Caused by RDKit (compiled with NumPy < 2.0 ABI) vs NumPy 2.4.6 conflict
+- Potential impact on SVM scores (not RF) — Random Forest AUCs are considered reliable
+- **Fix:** Upgrade RDKit to a NumPy 2.x-compatible version
 
-**Conclusion provisoire :** Les AUC à n=5K confirment les tendances du manuscrit mais les valeurs absolues diffèrent de −0.03 à −0.10 selon les descripteurs. Le PHCO corrigé (0.801) est remarquablement stable. **L'optimisation des paramètres quantiques (n_repeats, n_kpca, bond_dim) est nécessaire avant de tirer des conclusions définitives.**
+**Provisional conclusion:** n=5K AUCs confirm manuscript trends but absolute values differ by −0.03 to −0.10 across descriptors. Corrected PHCO (0.801) is remarkably stable. **Quantum parameter optimization (n_repeats, n_kpca, bond_dim) is required before drawing definitive conclusions.**
 
 ### 3.2 Ablation Study (Hybrid components)
 
@@ -190,9 +190,10 @@ Suite à l'upgrade NumPy 1.26.4 → 2.4.6 (résolution des PennyLaneDeprecationW
 
 **Canonical result:** QKS (0.751) outperforms tuned RBF (0.701). The previously reported 0.936 vs 0.105 result used default (unoptimized) RBF gamma and should be disregarded.
 
-### 3.4 Vers l'Optimisation des Paramètres Quantiques
 
-> **Constat :** Les paramètres quantiques actuels (`n_repeats=2`, `n_kpca=20`, `bond_dim=8`) ont été choisis par défaut sans recherche systématique. Les AUC hybrides (0.842 à n=19 849, 0.746 à n=5K) ne démontrent pas encore un avantage décisif du noyau quantique.
+### 3.4 Quantum Parameter Optimization
+
+> **Observation:** Current quantum parameters (`n_repeats=2`, `n_kpca=20`, `bond_dim=8`) were chosen by default without systematic search. Hybrid AUCs (0.842 at n=19,849, 0.746 at n=5K) do not yet demonstrate a decisive advantage for the quantum kernel. (`n_repeats=2`, `n_kpca=20`, `bond_dim=8`) ont été choisis par défaut sans recherche systématique. Les AUC hybrides (0.842 à n=19 849, 0.746 à n=5K) ne démontrent pas encore un avantage décisif du noyau quantique.
 
 #### Hyperparamètres à explorer
 
@@ -203,15 +204,15 @@ Suite à l'upgrade NumPy 1.26.4 → 2.4.6 (résolution des PennyLaneDeprecationW
 | `block_size` | 200 | {100, 200, 500} | Taille des blocs pour la matrice QK chunkée — impact sur la stabilité numérique |
 | `bond_dim` (TNE) | 8 | {8, 16, 32} | Dimension de lien MPS — plus grand = plus expressif mais plus coûteux |
 
-#### Stratégie de recherche
+#### Search Strategy
 
-1. **Phase 1 — n=500 (sous-échantillon rapide) :** Tester toutes les combinaisons de `n_repeats` × `n_kpca` × `bond_dim` sur 500 molécules (~30 min par combinaison). Identifier le top-5 des configurations par AUC hybride.
-2. **Phase 2 — n=5 000 (validation) :** Relancer les 5 meilleures configurations sur 5 000 molécules.
-3. **Phase 3 — n=19 849 (final) :** Une fois la meilleure configuration identifiée, relancer le benchmark complet sur la librairie entière.
+1. **Phase 1 — n=500 (fast subsample):** Test all `n_repeats` × `n_kpca` × `bond_dim` combinations on 500 molecules (~30 min each). Identify top-5 configurations by hybrid AUC.
+2. **Phase 2 — n=5,000 (validation):** Re-run 5 best configurations on 5,000 molecules.
+3. **Phase 3 — n=19,849 (final):** Once the best configuration is identified, re-run the full benchmark on the entire library.
 
-> **⚠️ Important :** Les conclusions du manuscrit P3 sont provisoires tant que cette optimisation n'est pas réalisée. Les AUC rapportées (Hybrid = 0.842, QKS = 0.751) pourraient être améliorées par un réglage systématique des hyperparamètres quantiques.
+> **⚠️ Important:** P3 manuscript conclusions are provisional until this optimization is completed. Reported AUCs (Hybrid = 0.842, QKS = 0.751) may be improved by systematic quantum hyperparameter tuning.
 
-### 3.4 TNE Compression
+### 3.5 TNE Compression
 | Metric | Value |
 |--------|-------|
 | Bond dimension | 8 |
