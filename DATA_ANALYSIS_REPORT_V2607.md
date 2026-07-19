@@ -195,14 +195,14 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 
 > **Observation:** Current quantum parameters (`n_repeats=2`, `n_kpca=20`, `bond_dim=8`) were chosen by default without systematic search. Hybrid AUCs (0.842 at n=19,849, 0.746 at n=5K) do not yet demonstrate a decisive advantage for the quantum kernel. (`n_repeats=2`, `n_kpca=20`, `bond_dim=8`) ont été choisis par défaut sans recherche systématique. Les AUC hybrides (0.842 à n=19 849, 0.746 à n=5K) ne démontrent pas encore un avantage décisif du noyau quantique.
 
-#### Hyperparamètres à explorer
+#### Hyperparameters to Explore
 
-| Paramètre | Valeur actuelle | Proposition de grille | Justification |
+| Parameter | Current value | Proposed grid | Justification |
 |:----------|:---------------:|:---------------------|:--------------|
-| `n_repeats` (IQPEmbedding depth) | 2 | {2, 4, 6, 8} | Plus de répétitions = circuit plus profond = plus d'expressivité quantique, mais aussi plus de bruit |
-| `n_kpca` (KPCA components) | 20 | {10, 20, 50, 100} | Plus de composantes = plus de signal retenu du kernel, mais risque de surajustement |
-| `block_size` | 200 | {100, 200, 500} | Taille des blocs pour la matrice QK chunkée — impact sur la stabilité numérique |
-| `bond_dim` (TNE) | 8 | {8, 16, 32} | Dimension de lien MPS — plus grand = plus expressif mais plus coûteux |
+| `n_repeats` (IQPEmbedding depth) | 2 | {2, 4, 6, 8} | More repeats = deeper circuit = more quantum expressivity, but also more noise |
+| `n_kpca` (KPCA components) | 20 | {10, 20, 50, 100} | More components = more signal retained from kernel, but risk of overfitting |
+| `block_size` | 200 | {100, 200, 500} | Chunk size for QK matrix — impact on numerical stability |
+| `bond_dim` (TNE) | 8 | {8, 16, 32} | MPS bond dimension — larger = more expressive but more expensive |
 
 #### Search Strategy
 
@@ -210,7 +210,7 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 2. **Phase 2 — n=5,000 (validation):** Re-run 5 best configurations on 5,000 molecules.
 3. **Phase 3 — n=19,849 (final):** Once the best configuration is identified, re-run the full benchmark on the entire library.
 
-> **⚠️ Important:** P3 manuscript conclusions are provisional until this optimization is completed. Reported AUCs (Hybrid = 0.842, QKS = 0.751) may be improved by systematic quantum hyperparameter tuning.
+> **Not yet executed — Phase 1 (n=500) is pending.** See Pipeline Status below.
 
 ### 3.5 TNE Compression
 | Metric | Value |
@@ -258,10 +258,10 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 - **PP-11 C59R investigation**: Complete mechanistic analysis (see Project2_Polypharmacology_MD_ValidationV2607/analysis/PP11_C59R_investigation.md) — steric clash hypothesis confirmed
 - **TNE bond_dim=8 embeddings backed up** for comparison with bond_dim=16
 - **Named ligand PDBQTs prepared**: SMILES→3D→PDBQT for ligands 201, 214, 87, 438, 164
-- **Job 7943 killed** (bloqué par PennyLaneDeprecationWarning, NumPy 1.26.4 incompatible)
-- **NumPy upgraded** 1.26.4 → 2.4.6 dans l'environnement malaria_md — plus de warnings PennyLane
-- **Job 7952 complété** : benchmark 5K molécules avec NumPy 2.4.6 (PHCO=0.801 ✅ confirmé)
-- **PHCO AUC = 0.801 validé** à n=5 000 (identique à n=19 849)
+- **Job 7943 killed** (blocked by PennyLaneDeprecationWarning, NumPy 1.26.4 incompatible)
+- **NumPy upgraded** 1.26.4 → 2.4.6 in malaria_md environment — no more PennyLane warnings
+- **Job 7952 completed**: 5K benchmark with NumPy 2.4.6 (PHCO=0.801 ✅ confirmed)
+- **PHCO AUC = 0.801 validated** at n=5,000 (identical to n=19,849)
 
 ### Resolved Since Last Update ✅
 - **Provenance tracking** (synthese_audit §3.1b): ✅ EX=16 confirmé (pas EX=32), colonnes `exhaustiveness` + `grid_version` ajoutées à tous les CSVs, `check_provenance.py --strict` passe à 100%
@@ -270,7 +270,7 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 - **PHCO AUC**: ✅ Corrigé de 0.500→0.801 (GetOnBits fix) — toutes les occurrences manuscrites synchronisées
 - **Cover Letters P3**: ✅ ρ=0.916→0.947 synchronisé
 - **v0.7 copies**: ✅ Toutes les valeurs synchronisées avec le manuscrit principal (PHCO, TNE, ρ)
-- **NumPy 2.4.6 upgrade**: ✅ Résout les PennyLaneDeprecationWarning, mais ⚠️ introduit un conflit RDKit (_ARRAY_API)
+- **NumPy 2.4.6 upgrade**: ✅ Resolved PennyLaneDeprecationWarning, but ⚠️ introduced RDKit conflict (_ARRAY_API)
 
 ### Pending 📋
 - Optimisation des paramètres quantiques (n_repeats, n_kpca, bond_dim) — phase 1 sur n=500 (§3.4)
