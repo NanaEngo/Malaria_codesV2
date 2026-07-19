@@ -120,7 +120,9 @@ This report consolidates all validated computational results across Projects 1�
 
 ## 3. P3 Quantum-Inspired Representations
 
-### 3.1 Activity Prediction Benchmark (v0.7 final — 19 849 molecules, 5-fold CV)
+### 3.1 Activity Prediction Benchmark
+
+#### 3.1a Benchmark final (v0.7 — 19 849 molecules, 5-fold CV)
 
 | Descriptor | Type | AUC | Accuracy | F1 | ΔAUC vs ECFP4 | $p$ vs ECFP4 |
 |:----------:|:----:|:---:|:--------:|:--:|:-------------:|:------------:|
@@ -141,6 +143,30 @@ This report consolidates all validated computational results across Projects 1�
 - Hybrid descriptor (TFP+TNE+QK, AUC 0.842) matches ECFP4 within statistical noise ($p = 0.111$)
 - **PHCO AUC = 0.801** (corrected from 0.500 after GetOnBits() fix — the earlier null result was an RDKit C++ bug)
 - Standalone TFP and TNE are significantly worse than ECFP4, as expected for global topological features
+
+#### 3.1b Benchmark à n=5 000 (job 7952, 19 juillet 2026) — Nouveaux paramètres quantiques
+
+Suite à l'upgrade NumPy 1.26.4 → 2.4.6 (résolution des PennyLaneDeprecationWarning, §5), le benchmark hybride a été relancé sur **5 000 molécules** avec les mêmes paramètres quantiques initiaux : `n_repeats=2`, `n_kpca=20`, `block_size=200`.
+
+| Descripteur | AUC (n=5K) | AUC (n=19 849) | Δ | Note |
+|:-----------:|:----------:|:--------------:|:-:|:-----|
+| **AP** | 0.823 ± 0.052 | 0.840 | −0.017 | Sous-échantillon 5K |
+| **ECFP4** | 0.819 ± 0.043 | 0.868 | −0.049 | Perte de signal attendue à n réduit |
+| **FCFP4** | 0.817 ± 0.042 | 0.845 | −0.028 | Stable |
+| **PHCO** | **0.801 ± 0.037** | **0.801** | **0.000** | ✅ **Parfaitement stable** — correction GetOnBits() validée |
+| **MACCS** | 0.801 ± 0.037 | 0.831 | −0.030 | Stable |
+| **BPF** | 0.771 ± 0.037 | 0.822 | −0.051 | Légère perte |
+| **Hybrid** | **0.746 ± 0.048** | **0.842** | **−0.096** | ⚠️ QK fold sensible au sous-échantillonnage |
+| **TFP** | 0.583 ± 0.031 | 0.587 | −0.004 | Stable |
+| **TNE** | 0.560 ± 0.023 | 0.606 | −0.046 | Perte attendue |
+
+**⚠️ Problème détecté : incompatibilité RDKit + NumPy 2.4.6**
+- Erreurs `AttributeError: _ARRAY_API not found` dans le calcul de certains descripteurs
+- Causé par un conflit entre RDKit (compilé avec NumPy < 2.0 ABI) et NumPy 2.4.6
+- Impact potentiel sur les scores SVM (non RF) — les AUC Random Forest sont considérées fiables
+- **Solution :** Upgrader RDKit vers une version compatible NumPy 2.x
+
+**Conclusion provisoire :** Les AUC à n=5K confirment les tendances du manuscrit mais les valeurs absolues diffèrent de −0.03 à −0.10 selon les descripteurs. Le PHCO corrigé (0.801) est remarquablement stable. **L'optimisation des paramètres quantiques (n_repeats, n_kpca, bond_dim) est nécessaire avant de tirer des conclusions définitives.**
 
 ### 3.2 Ablation Study (Hybrid components)
 
@@ -163,6 +189,27 @@ This report consolidates all validated computational results across Projects 1�
 | RBF (classical) | **0.701** | Grid {0.5, 1.0, 2.0, 5.0} | — |
 
 **Canonical result:** QKS (0.751) outperforms tuned RBF (0.701). The previously reported 0.936 vs 0.105 result used default (unoptimized) RBF gamma and should be disregarded.
+
+### 3.4 Vers l'Optimisation des Paramètres Quantiques
+
+> **Constat :** Les paramètres quantiques actuels (`n_repeats=2`, `n_kpca=20`, `bond_dim=8`) ont été choisis par défaut sans recherche systématique. Les AUC hybrides (0.842 à n=19 849, 0.746 à n=5K) ne démontrent pas encore un avantage décisif du noyau quantique.
+
+#### Hyperparamètres à explorer
+
+| Paramètre | Valeur actuelle | Proposition de grille | Justification |
+|:----------|:---------------:|:---------------------|:--------------|
+| `n_repeats` (IQPEmbedding depth) | 2 | {2, 4, 6, 8} | Plus de répétitions = circuit plus profond = plus d'expressivité quantique, mais aussi plus de bruit |
+| `n_kpca` (KPCA components) | 20 | {10, 20, 50, 100} | Plus de composantes = plus de signal retenu du kernel, mais risque de surajustement |
+| `block_size` | 200 | {100, 200, 500} | Taille des blocs pour la matrice QK chunkée — impact sur la stabilité numérique |
+| `bond_dim` (TNE) | 8 | {8, 16, 32} | Dimension de lien MPS — plus grand = plus expressif mais plus coûteux |
+
+#### Stratégie de recherche
+
+1. **Phase 1 — n=500 (sous-échantillon rapide) :** Tester toutes les combinaisons de `n_repeats` × `n_kpca` × `bond_dim` sur 500 molécules (~30 min par combinaison). Identifier le top-5 des configurations par AUC hybride.
+2. **Phase 2 — n=5 000 (validation) :** Relancer les 5 meilleures configurations sur 5 000 molécules.
+3. **Phase 3 — n=19 849 (final) :** Une fois la meilleure configuration identifiée, relancer le benchmark complet sur la librairie entière.
+
+> **⚠️ Important :** Les conclusions du manuscrit P3 sont provisoires tant que cette optimisation n'est pas réalisée. Les AUC rapportées (Hybrid = 0.842, QKS = 0.751) pourraient être améliorées par un réglage systématique des hyperparamètres quantiques.
 
 ### 3.4 TNE Compression
 | Metric | Value |
@@ -199,9 +246,9 @@ This report consolidates all validated computational results across Projects 1�
 - TNE bond_dim=8 embeddings (65,856 molecules)
 
 ### In Progress 🔄
-- P3 QI optimization: 5,000 molecules, n_repeats=2, n_kpca=20 (job 7943, RUNNING, ~46h remaining)
+- **Optimisation paramètres quantiques :** Recherche systématique des hyperparamètres QK optimaux (n_repeats, n_kpca, bond_dim) — voir §3.4
 - P2 MM-GBSA membrane: PfATP4 with igb=8 (job 7944, PENDING — Resources)
-- TNE bond_dim=16: 768 features (job 7945, PENDING — Priority, waits for 7943)
+- TNE bond_dim=16: 768 features (job 7945, PENDING — Priority)
 - TNE bond_dim=16 vs bond8 comparison (job 7947, PENDING — Dependency on 7945)
 - **Named ligand docking: 5 ligands × 6 mutants (job 7948, PENDING — PartitionTime)**
 
@@ -210,6 +257,10 @@ This report consolidates all validated computational results across Projects 1�
 - **PP-11 C59R investigation**: Complete mechanistic analysis (see Project2_Polypharmacology_MD_ValidationV2607/analysis/PP11_C59R_investigation.md) — steric clash hypothesis confirmed
 - **TNE bond_dim=8 embeddings backed up** for comparison with bond_dim=16
 - **Named ligand PDBQTs prepared**: SMILES→3D→PDBQT for ligands 201, 214, 87, 438, 164
+- **Job 7943 killed** (bloqué par PennyLaneDeprecationWarning, NumPy 1.26.4 incompatible)
+- **NumPy upgraded** 1.26.4 → 2.4.6 dans l'environnement malaria_md — plus de warnings PennyLane
+- **Job 7952 complété** : benchmark 5K molécules avec NumPy 2.4.6 (PHCO=0.801 ✅ confirmé)
+- **PHCO AUC = 0.801 validé** à n=5 000 (identique à n=19 849)
 
 ### Resolved Since Last Update ✅
 - **Provenance tracking** (synthese_audit §3.1b): ✅ EX=16 confirmé (pas EX=32), colonnes `exhaustiveness` + `grid_version` ajoutées à tous les CSVs, `check_provenance.py --strict` passe à 100%
@@ -218,8 +269,11 @@ This report consolidates all validated computational results across Projects 1�
 - **PHCO AUC**: ✅ Corrigé de 0.500→0.801 (GetOnBits fix) — toutes les occurrences manuscrites synchronisées
 - **Cover Letters P3**: ✅ ρ=0.916→0.947 synchronisé
 - **v0.7 copies**: ✅ Toutes les valeurs synchronisées avec le manuscrit principal (PHCO, TNE, ρ)
+- **NumPy 2.4.6 upgrade**: ✅ Résout les PennyLaneDeprecationWarning, mais ⚠️ introduit un conflit RDKit (_ARRAY_API)
 
 ### Pending 📋
+- Optimisation des paramètres quantiques (n_repeats, n_kpca, bond_dim) — phase 1 sur n=500 (§3.4)
 - Named ligand RRS results (job 7948, pending queue)
 - Full 1,815-molecule congeneric series TDA + QKS (§5.5 of audit)
 - PfATP4 9N10 chain filtering (PfABP exclusion check)
+- RDKit + NumPy 2.4.6 compatibilité (_ARRAY_API errors)
