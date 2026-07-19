@@ -55,8 +55,10 @@ P1 alimente directement P2 (docking mutants, RRS/ACSI/PNS) et P3 (panel congén�
 *   **Justification Q1 :** L'évaluation de l'affinité sur PfDHFR-TS avec la grille V1 allostérique introduisait un biais majeur. L'alignement sur le site catalytique réel V2 garantit la pertinence biologique des énergies libres de docking estimées.
 *   **État réel (BMAD §1.15) :** le redocking complet avec les grilles V2 a **déjà été exécuté** — les 4 cibles sont marquées "✅ Corrigé / Re-centré" dans `Project1_..._V2_CorrectedGrid/results/`, y compris le panel de 1 815 molécules et les 484 centroïdes utilisés en §5.5. Il ne s'agit donc plus d'un calcul à relancer mais d'une **mise à jour du manuscrit** pour refléter ces résultats déjà produits (BMAD §3.1, F1 : "no new simulations").
 *   **Outils Scientifiques (déjà utilisés) :** `rdkit`, `pymol`
-*   **Fichiers Cibles (référence, déjà appliqués) :** [config.txt](${MALARIA_ROOT}/Project1_Chem_space_antimalarial_V2607_CorrectedGrid/Docking/Docking_7F3Y/config.txt) et [r8b_fullcluster_rescoring.py](/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/scripts/r8b/r8b_fullcluster_rescoring.py) (coordonnées de centrage V2).
-    > **Note :** Le dossier canonique P1 est `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/` (hors `${MALARIA_ROOT}`). Le dossier `Project1_Chem_space_antimalarial_V2607_CorrectedGrid` dans `${MALARIA_ROOT}` est la copie git-tracked. L'ancien dossier `Project1_Chem_space_antimalarialV2607` est déprécié (archivé).
+*   **Fichiers Cibles (référence, déjà appliqués) :**
+    - **config.txt :** `Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_7F3Y/config.txt` (canonique : `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_7F3Y/config.txt`)
+    - **r8b_fullcluster_rescoring.py :** `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/scripts/r8b/r8b_fullcluster_rescoring.py`
+    > **Note :** Le dossier canonique P1 est `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/` (hors `${MALARIA_ROOT}`). Le dossier `Project1_Chem_space_antimalarial_V2607_CorrectedGrid` dans `${MALARIA_ROOT}/` est une copie git-trackée partielle (manuscrits + scripts, pas de Docking/). L'ancien dossier `Project1_Chem_space_antimalarialV2607` est déprécié (archivé le 17 juillet 2026).
 
 ### 3.1b. Vérification de Provenance et de Propagation Aval — ✅ Résolue
 *   **Axe / Faille :** Le BMAD signalait que `v2_centroid_scores.csv` mélange deux exhaustivités Vina (EX=32 et EX=64) — en pratique, le vrai mélange était **EX=16 vs EX=128 vs EX=64** (pas EX=32). Le fichier `v2_centroid_scores.csv` et `v2_postprocess.py` avaient disparu du projet. De plus, **aucune colonne de provenance** n'existait dans aucun CSV.
@@ -73,8 +75,10 @@ P1 alimente directement P2 (docking mutants, RRS/ACSI/PNS) et P3 (panel congén�
     - (iv) `docking_results_clean.csv` généré avec EX=16/V2 uniquement pour consommation P2/P3.
     - (v) `config.txt` de P1 mis à jour : EX=16 (valeur réelle). Les configs P2 conservent EX=64 (valeur documentée, inchangée).
 *   **Critère de validation :** ✅ 100% des lignes (6 fichiers, ~7 300 lignes) tracées avec exhaustivité et version de grille identifiées. Tous les tests `check_provenance.py --strict` passent.
-*   **Fichiers créés (copies de travail dans le dépôt git) :** `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/scripts/fix_provenance.py`, `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/scripts/check_provenance.py`, `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/results/v2_centroid_scores.csv`, `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/results/docking_results_clean.csv`.
-    > **Note :** Les mêmes fichiers existent dans le dossier canonique `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/` avec des résultats complets (EX=64, 484 centroïdes). Les copies dans `_V2607_CorrectedGrid` sont simplifiées (EX=16, 20 centroïdes) pour la consommation P2/P3.
+*   **Fichiers de provenance créés (18 juillet 2026) :** Ces scripts et CSV ont été générés par `fix_provenance.py` dans le dossier canonique `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/scripts/` et `.../results/`.
+    - **Scripts :** `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/scripts/fix_provenance.py`, `.../check_provenance.py`
+    - **Résultats :** `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/v2_centroid_scores.csv` (complet, EX=64, 484 centroïdes), `.../docking_results_clean.csv` (EX=64/V2, panel 1 815 mols)
+    > **Note :** Le dossier déprécié `Project1_Chem_space_antimalarialV2607` contient également des copies de ces fichiers (créées lors de l'audit provenance), mais le dossier canonique est la source de vérité. Les chemins ci-dessus pointent vers le dossier canonique.
 
 ### 3.1c. Cartographie Complète des Dépendances Avales de la Correction de Grille V2
 
@@ -420,7 +424,7 @@ Ce tableau répertorie les fichiers clés impliqués dans les corrections métho
 
 | Projet | Fichier Cible | Rôle dans l'Analyse | Action Requise |
 |--------|---------------|---------------------|----------------|
-| P1 | [config.txt](${MALARIA_ROOT}/Project1_Chem_space_antimalarial_V2607_CorrectedGrid/Docking/Docking_7F3Y/config.txt) | Docking de référence | Aligner coordonnées de centrage V2. |
+| P1 | [config.txt](/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_7F3Y/config.txt) | Docking de référence | Aligner coordonnées de centrage V2. |
 | P1 | [r8b_fullcluster_rescoring.py](/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/scripts/r8b/r8b_fullcluster_rescoring.py) | Docking local (1815 mols) | Aligner le dictionnaire `TARGETS` V2. |
 | P1 | `v2_postprocess.py` | Provenance des scores V2 (`v2_centroid_scores.csv`, `docking_results.csv`) | Homogénéiser l'exhaustivité (EX=64) ou tracer la provenance avant consommation P2/P3 (§3.1b). |
 | P1 | `9N10.pdbqt` (préparation récepteur PfATP4) | Filtrage de chaîne | Vérifier l'exclusion de l'hélice TM de PfABP co-purifiée (§3.3). |
