@@ -241,11 +241,11 @@ Cette phase détaille les corrections apportées aux analyses de persistance top
 *   **État d'avancement (18 juillet 2026) :**
     - Panel de 1 815 molécules préparé : **1 397 SMILES uniques** extraits de la librairie (neighbors Tanimoto ≥ 0.50 des centroïdes de clusters). → `results/panel_1815_comprehensive_smiles.csv`
     - Appariement Vina-score : **1 008/1 815 (55%)** molécules ont leur SMILES + Vina score tracés via `prepare_panel_1815.py`. → `results/panel_1815_metadata.csv`
-    - **Job 7949** (`p3_tda_1815`) soumis : TDA H1/H2 sur 1 397 SMILES, 48 CPU, 12h walltime. **Statut :** ⏳ Pending (derrière 7943).
-    - **Job 7950** (`p3_qks_1815`) soumis : QKS benchmark sur 1 815 molécules (activity file), 48 CPU, 24h walltime. **Statut :** ⏳ Pending (derrière 7943).
+    - **Job 7949** (`p3_tda_1815`) soumis : TDA H1/H2 sur 1 397 SMILES, 48 CPU, 12h walltime. **Statut :** ⏳ Pending (PartitionTime, derrière 7952).
+    - **Job 7950** (`p3_qks_1815`) soumis : QKS benchmark sur 1 815 molécules (activity file), 48 CPU, 24h walltime. **Statut :** ⏳ Pending (PartitionTime, derrière 7952).
     - **Job 7943** (`p3_qi_5k`, ✗ **tué 19 juil.**) : benchmark hybride 5 000 mols, 48 CPU. Avant son arrêt, il avait complété 8/9 descripteurs classiques et ~52% des blocs QK du fold 1/5. Le job était ralenti par 48 `PennyLaneDeprecationWarning` (NumPy 1.26.4 incompatible avec PennyLane 0.45.1).
     - **Job 7952** (`p3_qi_5k`, 🟢 **relancé 19 juil.**) : remplace 7943 avec NumPy **2.4.6** (upgradé) — plus de warnings, exécution propre et ~5× plus rapide attendue.
-    - **Job 7951** (`p2_v2_redock_anp`) : re-dock V2 des 94 molécules ANP (nécessaire pour C3 DiffDock-Vina). **Statut :** ⏳ Pending (derrière 7943).
+    - **Job 7951** (`p2_v2_redock_anp`) : re-dock V2 des 94 molécules ANP (nécessaire pour C3 DiffDock-Vina). **Statut :** ⏳ Pending (PartitionTime, derrière 7952).
     - **Note :** Les jeux de molécules TDA et QKS sont différents (panel cluster vs activity file) car QKS nécessite des labels d'activité binaires absents du panel cluster. Ceci est documenté et acceptable.
 
 ## 6. Extraits de Code pour Corrections Statistiques et Algorithmiques
