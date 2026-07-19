@@ -249,11 +249,12 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 - TNE bond_dim=8 embeddings (65,856 molecules)
 
 ### In Progress 🔄
-- **Optimisation paramètres quantiques :** Recherche systématique des hyperparamètres QK optimaux (n_repeats, n_kpca, bond_dim) — voir §3.4
+- **QKS Phase 1 (n=500):** Benchmark crashed during fold 1/5 (joblib semlock leak). Needs retry with reduced parallelism or memory.
+- **Optimisation paramètres quantiques:** Stratégie en 3 phases définie (§3.4). Phase 1 (n=500) à relancer.
 - P2 MM-GBSA membrane: PfATP4 with igb=8 (job 7944, PENDING — Resources)
 - TNE bond_dim=16: 768 features (job 7945, PENDING — Priority)
 - TNE bond_dim=16 vs bond8 comparison (job 7947, PENDING — Dependency on 7945)
-- **Named ligand docking: 5 ligands × 6 mutants (job 7948, PENDING — PartitionTime)**
+- **Named ligand docking: 5 ligands × 6 mutants (job 7948, PENDING — PartitionTime, switched to production)
 
 ### Completed Since Last Report ✅
 - **RRS table populated** in P2 manuscript: 14 polypharm compounds (PP-04 to PP-17) with actual per-mutant RRS values
@@ -264,6 +265,9 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 - **NumPy upgraded** 1.26.4 → 2.4.6 in malaria_md environment — no more PennyLane warnings
 - **Job 7952 completed**: 5K benchmark with NumPy 2.4.6 (PHCO=0.801 ✅ confirmed)
 - **PHCO AUC = 0.801 validated** at n=5,000 (identical to n=19,849)
+- **RDKit upgraded**: 2023.09.6 (PyPI) → 2025.03.6 (conda-forge) — fixes `_ARRAY_API` conflict with NumPy 2.x
+- **Disk cache cleared**: 101 GiB → 663 MiB — frees memory for SLURM jobs
+- **slurmd/slurmctld restarted**: SLURM now sees 124.5 GB free memory
 
 ### Resolved Since Last Update ✅
 - **Provenance tracking** (synthese_audit §3.1b): ✅ EX=16 confirmé (pas EX=32), colonnes `exhaustiveness` + `grid_version` ajoutées à tous les CSVs, `check_provenance.py --strict` passe à 100%
@@ -272,11 +276,11 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 - **PHCO AUC**: ✅ Corrigé de 0.500→0.801 (GetOnBits fix) — toutes les occurrences manuscrites synchronisées
 - **Cover Letters P3**: ✅ ρ=0.916→0.947 synchronisé
 - **v0.7 copies**: ✅ Toutes les valeurs synchronisées avec le manuscrit principal (PHCO, TNE, ρ)
-- **NumPy 2.4.6 upgrade**: ✅ Resolved PennyLaneDeprecationWarning, but ⚠️ introduced RDKit conflict (_ARRAY_API)
+- **NumPy 2.4.6 upgrade**: ✅ Resolved PennyLaneDeprecationWarning
+- **RDKit 2025.03.6 upgrade**: ✅ Resolved `_ARRAY_API` conflict — RDKit now compatible with NumPy 2.x (conda-forge build)
 
 ### Pending 📋
-- Optimisation des paramètres quantiques (n_repeats, n_kpca, bond_dim) — phase 1 sur n=500 (§3.4)
-- Named ligand RRS results (job 7948, pending queue)
+- **QKS Phase 1 (n=500) à relancer**: échec fold 1/5 (joblib semlock). Réduire n_jobs ou mémoire.
+- Named ligand RRS results (job 7948, pending queue — switched to production)
 - Full 1,815-molecule congeneric series TDA + QKS (§5.5 of audit)
 - PfATP4 9N10 chain filtering (PfABP exclusion check)
-- RDKit + NumPy 2.4.6 compatibilité (_ARRAY_API errors)
