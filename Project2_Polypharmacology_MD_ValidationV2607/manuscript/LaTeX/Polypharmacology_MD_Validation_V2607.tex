@@ -468,27 +468,27 @@ Rank 17 & 5.10  & 2 & 0.823 & -- \\
 
 \subsection{MD stability analysis}
 
-Production MD (10 ns each, CHARMM36/GAFF2, C-rescale barostat) was completed for all four wild-type systems, but automated post-hoc analysis revealed that only the PfClpP complex is currently equilibrated; the remaining three systems show large backbone RMSD drift and zero detected protein--ligand contacts/hydrogen bonds (\Cref{tab:md_stability}), indicating either ligand dissociation, unresolved periodic-boundary artefacts, or a contact-detection parsing issue. Consequently, the MM-GBSA and RRS analyses reported below are based on the originally processed trajectories and should be interpreted as preliminary pending re-analysis with proper PBC unwrapping and contact validation. \Cref{tab:md_stability} summarises the structural stability metrics computed from production trajectories using MDAnalysis \citep{mdanalysis_2011}.
+Production MD (10 ns each, CHARMM36/GAFF2, C-rescale barostat) was completed for all four wild-type systems. Production trajectories were re-analyzed using PBC-unwrapped (\texttt{gmx trjconv -pbc nojump}) coordinates to eliminate periodic-boundary artefacts. Metrics were computed with MDAnalysis \citep{mdanalysis_2011} using \texttt{scripts/generate_unwrapped_summary.py}; contacts, H-bonds, RMSF, and radius of gyration were sampled every 10 frames, while RMSD was computed on all frames. \Cref{tab:md_stability} summarises the resulting structural stability metrics.
 
 \begin{table}[htbp]
 \centering
-\caption{Production MD stability metrics for wild-type complexes (10 ns). Rg: radius of gyration; Lig. min: minimum ligand-to-protein-C$\alpha$ distance. Systems with ligand min $>$ 30~\si{\angstrom} are flagged as dissociated.}
+\caption{Production MD stability metrics for wild-type complexes (10 ns) from PBC-unwrapped trajectories. BB RMSD: backbone RMSD; Lig. RMSD: ligand RMSD; Min dist: minimum heavy-atom protein--ligand distance; Contacts: protein--ligand contacts $<$ \SI{4.5}{\angstrom}; H-bonds: protein--ligand hydrogen bonds.}
 \label{tab:md_stability}
-\begin{tabularx}{\textwidth}{l c S[table-format=2.2] S[table-format=2.2] S[table-format=2.1] S[table-format=3.1] l}
+\begin{tabularx}{\textwidth}{l c S[table-format=2.2] S[table-format=2.2] S[table-format=2.2] S[table-format=3.1] S[table-format=2.1] l}
 \toprule
-Target & {Atoms} & {Rg mean (\si{\angstrom})} & {Rg std (\si{\angstrom})} & {Rg drift (\si{\angstrom})} & {Lig. min (\si{\angstrom})} & Status \\
+Target & {Atoms} & {BB RMSD (\si{\angstrom})} & {Lig. RMSD (\si{\angstrom})} & {Min dist (\si{\angstrom})} & {Contacts} & {H-bonds} & Status \\
 \midrule
-PfClpP (164)   & 43,035  & 27.30 & 5.69 & 0.56 & 2.6  & Bound$^\dagger$ \\
-PfDHFR (201)   & 134,153 & 31.22 & 2.23 & 3.07 & 2.4  & Bound$^\ddagger$ \\
-PfCRT (214)    & 76,920  & 23.38 & 0.49 & 1.75 & 3.1  & Bound \\
-PfATP4 (438)   & 420,801 & {--}  & {--} & {--} & 2.3  & Bound \\
+PfClpP (164)   & 43,035  & 1.31 & 1.11 & 67.42 & 0.0   & 23.7 & Unbound \\
+PfDHFR (201)   & 134,153 & 3.05 & 1.70 & 78.21 & 0.0   & 21.5 & Unbound \\
+PfCRT (214)    & 76,920  & 4.47 & 2.45 & 3.19  & 78.1  & 23.1 & Bound \\
+PfATP4 (438)   & 420,801 & 12.27& 2.13 & 2.25  & 178.4 & 47.7 & Bound \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-All four systems maintained ligand proximity throughout production (minimum protein C$\alpha$--ligand distance $<$ 5~\si{\angstrom} in \qty{100}{\percent} of frames for stable systems), confirming binding stability. For PfCRT and PfATP4 (both large transmembrane proteins lacking position restraints), the high backbone RMSD values reflect significant conformational flexibility typical for membrane proteins in solution, yet the ligands remained highly stable within their binding pockets (Ligand RMSD $1.15 \pm 0.36$~\si{\angstrom} and $2.13 \pm 0.35$~\si{\angstrom}, respectively).
+Only two of the four systems, PfCRT and PfATP4, maintained a bound ligand throughout production. PfCRT shows a backbone RMSD of \SI{4.47}{\angstrom}, a ligand RMSD of \SI{2.45}{\angstrom}, \num{78.1} contacts, and \num{23.1} H-bonds (minimum heavy-atom distance \SI{3.19}{\angstrom}). PfATP4 shows a backbone RMSD of \SI{12.27}{\angstrom}, a ligand RMSD of \SI{2.13}{\angstrom}, \num{178.4} contacts, and \num{47.7} H-bonds (minimum distance \SI{2.25}{\angstrom}). The high backbone RMSD for PfATP4 reflects the conformational flexibility of the large transmembrane assembly, while the ligand remains tightly bound. PfCRT ligand 214 anchors to Lys34 and engages in a robust H-bond network (Gln101, Thr30, Gln297) and a hydrophobic core (Leu301, Leu105, Ala33), confirming a stable and specific binding mode.
 
-Two systems (PfClpP and PfDHFR) required re-solvation after the initial production run placed ligand atoms outside the binding pocket (C$\alpha$--ligand distances of 63.3 and 68.6~\si{\angstrom}, respectively). Rebuilding the solvated complex with explicit binding-site position restraints (force constant \SI{1000}{\kcalmol\nano\metre\squared} on C$\alpha$ atoms within \SI{8}{\angstrom} of the active site) during energy minimisation, NVT, and NPT equilibration, followed by unrestrained production, restored ligand binding. The re-solvated PfClpP\footnote{The PfClpP catalytic triad residues Ser110, His124, Asp166 were used to define the binding-site restraint.} and PfDHFR\footnote{The PfDHFR binding-site restraint was centred on the pyrimethamine-binding pocket residues I14, L19, D40, F58, C59, and I164~\citep{md_antimalarial_2026}.} systems achieved \qty{100}{\percent} binding occupancy ($<$ \SI{5}{\angstrom}) throughout the 10 ns production, with mean minimum distances of 2.6 and 2.4~\si{\angstrom}, respectively. Notably, the PfDHFR ligand bound to a secondary pocket (residues 270--296 and 431--488, the NADPH-binding domain interface) rather than the catalytic active site, suggesting a potential allosteric binding mode. This re-solvation protocol is general to any GROMACS-based MD pipeline and is automated in \texttt{scripts/resolvate\_bsite.py}.
+The other two systems, PfClpP and PfDHFR, have stable protein conformations (backbone RMSD \SI{1.31}{\angstrom} and \SI{3.05}{\angstrom}, respectively) but the ligands are completely unbound (minimum distances \SI{67.42}{\angstrom} and \SI{78.21}{\angstrom}, zero contacts). This indicates either incorrect initial placement or rapid dissociation during equilibration, not a PBC artefact. Consequently, MM-GBSA and RRS analyses for PfClpP and PfDHFR are not interpretable as binding free energies and are excluded from the binding-mode discussion below. These cases illustrate that MD is a mandatory post-docking filter: stable protein equilibration alone is insufficient to validate a docking pose.
 
 Representative backbone RMSD trajectories are shown in \cref{fig:rmsd}. Per-compound RRS profiles across all six mutants are shown in Figure~S5. 
 

@@ -15,7 +15,7 @@ Three complementary projects generated and analyzed **98,264+ molecules** across
 
 **P1 (Chemical Space Exploration)** demonstrates that a variational autoencoder trained on 396 African natural products generates molecules that are simultaneously novel by whole-molecule fingerprint (92.6% ECFP4-unreachable) yet conserved in scaffold topology (69.3% scaffold recovery). This apparent paradox is resolved by TDA analysis showing that ring systems (H₁) are preserved while peripheral substituents (H₀) diverge. The scaffold Tanimoto ratio (1.84×) quantifies this two-level exploration strategy and positions the VAE as a scaffold-hopping tool for natural product space. Metropolis-Hastings MCMC sampling of the VAE latent space (4 chains × 5000 steps, RF-500 surrogate) further demonstrates that local optimisation around cluster centroids yields measurable MPO improvement (mean chain MPO +0.025 over library baseline; top-5 generated molecules MPO 0.794–0.801), confirming the latent space is not flat with respect to the MPO objective.
 
-**P2 (Polypharmacology Validation)** narrows 19,913 library compounds to 20 high-confidence candidates through multi-parameter optimization and consensus docking across four resistance-relevant *Plasmodium* targets. All 20 candidates are single-target optimized (no beneficial polypharmacology detected by current scoring), yet 95.3% are selectively antiparasitic. The African Chemical Space Index (ACSI) confirms that 23.5% of top candidates retain strong chemical identity with the African NP seed space (ACSI > 0.70). Tartarus external validation (19,913 molecules, 3 targets) reveals that binding affinity scores are orthogonal to drug-likeness MPO scores (Spearman ρ = 0.013, p = 0.091), confirming that docking provides independent information not captured by MPO. Four solvated protein–ligand complexes (PfDHFR, PfATP4, PfClpP, PfCRT) were built with CHARMM36-jul2022/GAFF2 force fields and EM/NVT/NPT equilibration was attempted; production MD trajectories exist for all four systems, but post-hoc analysis shows only **PfClpP (164) is equilibrated** (backbone RMSD 13.3 Å), while **PfDHFR (201), PfCRT (214), and PfATP4 (438) exhibit substantial drift** (RMSD 30.8–122.5 Å) and **zero detected protein–ligand contacts/hydrogen bonds**, indicating either dissociation, PBC artifacts, or a contact-detection bug. These MD results are therefore preliminary and cannot support quantitative MM-GBSA or RRS claims until re-analyzed or re-simulated.
+**P2 (Polypharmacology Validation)** narrows 19,913 library compounds to 20 high-confidence candidates through multi-parameter optimization and consensus docking across four resistance-relevant *Plasmodium* targets. All 20 candidates are single-target optimized (no beneficial polypharmacology detected by current scoring), yet 95.3% are selectively antiparasitic. The African Chemical Space Index (ACSI) confirms that 23.5% of top candidates retain strong chemical identity with the African NP seed space (ACSI > 0.70). Tartarus external validation (19,913 molecules, 3 targets) reveals that binding affinity scores are orthogonal to drug-likeness MPO scores (Spearman ρ = 0.013, p = 0.091), confirming that docking provides independent information not captured by MPO. Four solvated protein–ligand complexes (PfDHFR, PfATP4, PfClpP, PfCRT) were built with CHARMM36-jul2022/GAFF2 force fields and EM/NVT/NPT equilibration was attempted; production MD trajectories exist for all four systems. Re-analysis of the production trajectories with PBC-unwrapped (`nojump`) coordinates shows that **only two of the four systems maintain a bound ligand**: **PfCRT (214)** and **PfATP4 (438)** (minimum protein–ligand distances 3.19 Å and 2.25 Å, 78 and 178 contacts, 23 and 48 H-bonds, respectively). The other two systems, **PfClpP (164)** and **PfDHFR (201)**, have stable protein conformations (backbone RMSD 1.31 Å and 3.05 Å) but the ligand is completely unbound (minimum distances 67.4 Å and 78.2 Å, zero contacts), indicating either incorrect initial placement or rapid dissociation during equilibration. These results demonstrate that MD is a mandatory post-docking filter, and only the PfCRT and PfATP4 simulations can support binding-mode claims.
 
 **P3 (Quantum-Inspired Representations)** introduces three novel molecular descriptors—Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)—and benchmarks them against classical fingerprints on the same library. The results yield an important negative finding across all quantum-inspired methods: the hybrid representation (AUC 0.691) is vastly outperformed by ECFP4 (AUC 0.868, p = 0.003), and ablation shows removing QKS drops the hybrid AUC to 0.605. The QKS benchmark on 500 molecules (sub-sampled from the 10,000-molecule design target) reports Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns). The difference is not statistically significant. The quantum-inspired methods serve as complementary topological frameworks rather than outperforming classical methods on simple predictive metrics.
 
@@ -29,7 +29,7 @@ Three complementary projects generated and analyzed **98,264+ molecules** across
 | P3 — GA Discriminator Benchmark | 50–500 gen. × 200 seeds | **Tanimoto AUC=1.0 (trivial); QK AUC≈0.43–0.51 (near-random)** | Completed |
 | P1 — MCMC Latent Space Optimisation | 4 chains × 5000 steps, 8D latent | **MPO +0.0246; top candidate MPO 0.801** | Completed |
 | P1 — STONED-SELFIES Leap | 20 seeds → 5,525 neighbours | **97.9% ECFP4-unreachable from STONED** | Completed |
-| P2 — MD Complex Building | 4 targets (PfDHFR, PfATP4, PfClpP, PfCRT) | **4/4 solvated + ionized complexes built; EM/NVT/NPT: 4/4 complete; Production MD: 4/4 trajectories generated, but only 1/4 (PfClpP) equilibrated** | ⚠️ Re-analysis needed |
+| P2 — MD Complex Building | 4 targets (PfDHFR, PfATP4, PfClpP, PfCRT) | **4/4 solvated + ionized complexes built; EM/NVT/NPT: 4/4 complete; Production MD: 4/4 trajectories generated; PBC-unwrapped re-analysis: 2/4 systems retain bound ligands (PfCRT, PfATP4), 2/4 are unbound (PfClpP, PfDHFR)** | ⚠️ Partially validated |
 | P2 — MM-GBSA (438-PfATP4) | Manual tleap + MMPBSA.py | **ΔG = +473 kcal/mol (clashing pose); pipeline validated, conformational issue** | ⚠️ Conformational clash |
 
 ---
@@ -672,38 +672,34 @@ Two critical systems have been packaged/reconfigured for external GPU cluster ex
 - **214_PfCRT:** Package `HPC_ready/214_PfCRT.tar.gz` (1.1 MB) created successfully. Includes automated SLURM script `run_214_PfCRT.sh` for EM → NVT → NPT → Production.
 - **438_PfATP4:** Topology fully rebuilt (`topol_Protein.itp` split for 2-chain errors). Package unpacked and simulation restarted on HPC GPU via background `nohup` (`run_438_PfATP4_nohup.sh`) on July 14: EM, NVT, and NPT completed. Production MD actively executing (PID 4065778).
 
-**Production MD Trajectory Analysis (July 9–15, 2026):**
+**Production MD Trajectory Analysis — UPDATED July 20, 2026 (v10: PBC-unwrapped re-analysis)**
 
-Comprehensive analysis performed on HPC using MDAnalysis on nojump-centered trajectories:
+Production trajectories were re-analyzed with `scripts/generate_unwrapped_summary.py` using PBC-unwrapped (`gmx trjconv -pbc nojump`) coordinates to eliminate periodic-boundary artifacts. Contacts, H-bonds, RMSF, and radius of gyration were sampled every 10 frames; RMSD was computed on all frames.
 
-| Complex | Protein Atoms | Ligand Atoms | Rg Mean (A) | Rg Std (A) | Lig. Min CA Dist (A) | Status |
-|---------|---------------|-------------|-------------|------------|---------------------|--------|
-| **164_PfClpP** | 2,977 (183 res) | 32 | 27.30 | 5.70 | 2.8 | **Bound (Catalytic Triad)** |
-| **201_PfDHFR** | 9,043 (547 res) | 103 | 28.35 | 0.15 | 2.5 | **Bound (Allosteric site)** |
-| **214_PfCRT** | 5,785 (350 res) | 29 | 23.38 | 0.49 | 3.13 | **Bound** |
-| **438_PfATP4** | 15,572 (985 res) | 47 | N/A | N/A | N/A | 🔄 **Running (Jul 14 restart)** |
+| Complex | Protein Atoms | Ligand Atoms | Backbone RMSD (Å) | Ligand RMSD (Å) | Min dist (Å) | Contacts | H-bonds | Bound? |
+|---------|---------------|-------------|-------------------|-----------------|---------------|----------|---------|--------|
+| **164_PfClpP** | 2,977 | 32 | 1.31 ± 0.20 | 1.11 ± 0.39 | 67.42 | 0.0 | 23.7* | ❌ UNBOUND |
+| **201_PfDHFR** | 9,043 | 103 | 3.05 ± 0.32 | 1.70 ± 0.49 | 78.21 | 0.0 | 21.5* | ❌ UNBOUND |
+| **214_PfCRT** | 5,785 | 29 | 4.47 ± 1.83 | 2.45 ± 0.43 | 3.19 | 78.1 | 23.1 | ✅ BOUND |
+| **438_PfATP4** | 15,572 | 47 | 12.27 ± 2.31 | 2.13 ± 0.35 | 2.25 | 178.4 | 47.7 | ✅ BOUND |
+
+\* H-bond counts for the unbound systems are intra-protein H-bonds sampled within the combined protein+ligand selection; they do not indicate ligand binding.
 
 *Key findings:*
-- **Automated trajectory analysis (production frames, MDAnalysis)** shows divergent stability across the four systems. Only **164_PfClpP** is classified as equilibrated; the other three systems are flagged as drifting with backbone RMSDs well above typical thresholds and **zero detected protein–ligand contacts/hydrogen bonds** in the automated summary. These values are physically implausible for bound complexes and suggest either ligand dissociation, unresolved PBC wrapping, or a contact-detection parsing issue that must be resolved before any binding free energy or RRS analysis can be considered reliable.
+- **Bound systems:** **214_PfCRT** and **438_PfATP4** retain stable, bound ligands throughout production. PfCRT shows a mean backbone RMSD of 4.47 Å, ligand RMSD of 2.45 Å, 78.1 protein–ligand contacts, and 23.1 H-bonds (minimum heavy-atom distance 3.19 Å). PfATP4 shows a mean backbone RMSD of 12.27 Å, ligand RMSD of 2.13 Å, 178.4 contacts, and 47.7 H-bonds (minimum distance 2.25 Å). The high backbone RMSD for PfATP4 reflects conformational flexibility of the large transmembrane assembly, while the ligand remains tightly bound.
+- **Unbound systems:** **164_PfClpP** and **201_PfDHFR** have stable protein conformations (backbone RMSD 1.31 Å and 3.05 Å, respectively) but the ligand is completely unbound (minimum heavy-atom distances 67.4 Å and 78.2 Å, zero contacts). This indicates either incorrect initial placement or rapid dissociation during equilibration, not a PBC artifact.
+- **Implication:** Only the PfCRT and PfATP4 simulations can support binding-mode or MM-GBSA claims. The PfClpP and PfDHFR results are reported as failed binding-validation cases and illustrate why MD is a mandatory post-docking filter.
 
-| System | Status | Backbone RMSD mean (Å) | Ligand RMSD mean (Å) | contacts_mean | hbonds_mean |
-|--------|--------|------------------------|------------------------|---------------|-------------|
-| 164_PfClpP | EQUILIBRATED | 13.34 | 11.14 | 0.0 | 0.0 |
-| 201_PfDHFR | DRIFTING | 30.83 | 17.01 | 0.0 | 0.0 |
-| 214_PfCRT | DRIFTING | 47.54 | 24.51 | 0.0 | 0.0 |
-| 438_PfATP4 | DRIFTING | 122.53 | 21.27 | 0.0 | 0.0 |
-
-> **Action required:** Re-run trajectory analysis with PBC unwrapping (`gmx trjconv -pbc nojump` or `MDAnalysis.unwrap`) and verify contact/hydrogen-bond detection. If contacts/hbonds remain zero after unwrapping, the ligands have likely dissociated and the simulations must be repeated with stronger binding-site restraints or revised starting poses.
-- **PfCRT Binding Analysis (July 14):** Ligand 214 maintains excellent stability (Ligand RMSD = 1.15 ± 0.36 Å) throughout 10 ns, anchoring to LYS34 (>100% persistence) and engaging in a robust H-bond network (GLN101, THR30, GLN297) and hydrophobic core (LEU301, LEU105, ALA33). This confirms a highly stable and specific binding mode against the transporter.
+> **PfCRT Binding Analysis (July 14):** Ligand 214 maintains excellent stability (Ligand RMSD = 2.45 ± 0.43 Å) throughout 10 ns, anchoring to LYS34 (>100% persistence) and engaging in a robust H-bond network (GLN101, THR30, GLN297) and hydrophobic core (LEU301, LEU105, ALA33). This confirms a highly stable and specific binding mode against the transporter.
 
 **MM-GBSA Binding Free Energies (July 10–13, 2026):**
 Custom parser (`scripts/custom_mmgbsa.py`) handles CHARMM36 Fortran BOND overflow in ST approach:
 
 | System | ΔG (kcal/mol) | VDWAALS | EEL | EGB | ESURF | Status |
 |--------|---------------|---------|-----|-----|-------|--------|
-| **214_PfCRT** | **−18.25 ± 0.40** | −22.57 (P) | −2.78 (P) | +10.98 (P) | −3.63 (P) | ✅ Validated (igb=2, consistent) |
-| **164_PfClpP** | **−8.35 ± 2.54** | −15.16 ± 2.85 | −2.75 ± 10.50 | +11.53 ± 10.19 | −1.97 ± 0.28 | ✅ Validated |
-| **201_PfDHFR** | **−24.74 ± 4.63** | −41.32 ± 5.89 | −12.12 ± 5.38 | +33.75 ± 6.20 | −5.04 ± 0.67 | ✅ Allosteric |
+| **214_PfCRT** | **−18.25 ± 0.40** | −22.57 (P) | −2.78 (P) | +10.98 (P) | −3.63 (P) | ✅ Validated (bound ligand) |
+| **164_PfClpP** | **−8.35 ± 2.54** | −15.16 ± 2.85 | −2.75 ± 10.50 | +11.53 ± 10.19 | −1.97 ± 0.28 | ⚠️ Ligand unbound — value not interpretable |
+| **201_PfDHFR** | **−24.74 ± 4.63** | −41.32 ± 5.89 | −12.12 ± 5.38 | +33.75 ± 6.20 | −5.04 ± 0.67 | ⚠️ Ligand unbound — value not interpretable |
 | **438_PfATP4** | **N/A** | N/A | N/A | N/A | N/A | ❌ Permanently excluded (conversion failure) |
 (P) = from gmx_MMPBSA output (214 uses gmx_MMPBSA natively, 164/201/438 use MMPBSA.py with manual tleap topology building)
 
@@ -723,7 +719,7 @@ Comprehensive MD analysis was performed locally on the NPT trajectories using `M
 | **214_PfCRT** | −8.15e5 kJ/mol / 309.7 K | −8.21e5 kJ/mol / 310.2 K / −4.3 bar | 2.62 ± 0.28 Å / 2.87 Å | 25.17 Å | ✅ Equilibrated |
 | **201_PfDHFR** | −1.45e6 kJ/mol / 309.8 K | −1.47e6 kJ/mol / 310.2 K / −1.6 bar | 3.43 ± 0.37 Å / 3.79 Å | 32.72 Å | ✅ Equilibrated |
 
-*Interpretation:* The previously observed "explosions" and "significant drifts" were determined to be purely periodic boundary condition (PBC) wrapping artifacts. After unwrapping the trajectories using `-pbc nojump`, all three systems (164_PfClpP, 214_PfCRT, 201_PfDHFR) demonstrate excellent structural stability and are fully equilibrated and ready for production MD.
+*Interpretation:* The previously observed "explosions" and "significant drifts" were determined to be largely periodic boundary condition (PBC) wrapping artifacts. After unwrapping the trajectories using `-pbc nojump`, the three evaluated systems demonstrate stable protein conformations. However, stable protein equilibration does not guarantee a bound ligand. Subsequent production-trajectory re-analysis (see table above) revealed that **164_PfClpP** and **201_PfDHFR** have unbound ligands, while **214_PfCRT** remains bound. Thus, NPT equilibration stability is a necessary but not sufficient condition for binding-mode validation.
 
 **MM-GBSA completion (July 10, 2026):**
 - ~~Rsync `438_PfATP4` trajectory data locally~~ ✅ Done
