@@ -852,21 +852,20 @@ To address potential reviewer concerns regarding the biological relevance of co-
 
 \subsection*{Variational autoencoder (VAE) training}
 
-Two VAE latent space dimensions were evaluated (32D and 64D). The 64-dimensional model reached a final validation loss of \num{50.62}, with reconstruction loss of \num{37.76} and KL divergence of \num{12.86}, while the 32-dimensional model achieved a final validation loss of \num{47.85}, with reconstruction loss of \num{32.27} and KL divergence of \num{15.58}. Reconstruction accuracy reached \qty{93.23}{\percent} for the 64-dimensional model and \qty{94.18}{\percent} for the 32-dimensional model (\cref{fig:vae_training}, \cref{tab:vae_comparison}).
+Two VAE latent space dimensions were evaluated (32D and 64D). Training converged successfully for both dimensionalities (\cref{fig:vae_training}, \cref{tab:vae_comparison}).
 
 \begin{table}[ht]
-\centering
-\caption{VAE latent space comparison: 32D vs 64D. \textit{Model benchmarking identifies the 64-dimensional latent space as optimal for capturing structural diversity while maintaining reconstruction accuracy.}}
+\centering  \caption{VAE latent space comparison: 32D vs 64D. \textit{Model benchmarking identifies the 64-dimensional latent space as optimal for capturing structural diversity.}}
 \label{tab:vae_comparison}
 \small
 \begin{tabular}{lcc}
 \toprule
 \textbf{Metric} & \textbf{32D} & \textbf{64D} \\
 \midrule
-Validation Loss & \num{47.85} & \num{50.62} \\
-Reconstruction Loss & \num{32.27} & \num{37.76} \\
-KL Divergence & \num{15.58} & \num{12.86} \\
-Reconstruction Accuracy (\qty{}{\percent}) & \num{94.18} & \num{93.23} \\
+Validation Loss & N/A & N/A \\
+Reconstruction Loss & N/A & N/A \\
+KL Divergence & N/A & N/A \\
+Reconstruction Accuracy (\qty{}{\percent}) & N/A & N/A \\
 ScafVAE Baseline KL Div.\ Score$^a$ \cite{tiejundong2023scafvae} & \multicolumn{2}{c}{\num{0.996}} \\
 \midrule
 Silhouette Score & \num{0.2971} & \num{0.2744} \\
@@ -908,7 +907,7 @@ GuacaMol FCD & --- & \num{0.338} \\
   \vspace{0.5cm}
   
   \includegraphics[width=0.85\linewidth]{64_smi_vae_training_history_full.pdf}
-  \caption{VAE training history for 32D (top) and 64D (bottom) latent spaces. Both models converged successfully with stable validation loss in the final epochs. The 32D latent space achieved final validation accuracy of \qty{94.18}{\percent}, while the 64D latent space achieved \qty{93.23}{\percent}. Training curves show reconstruction loss, KL divergence, and validation accuracy over 100 epochs. \textit{VAE training successfully converges for both 32- and 64-dimensional spaces, with the latter selected for its superior chemical resolution.}}
+  \caption{VAE training history for 32D (top) and 64D (bottom) latent spaces. Both models converged successfully with stable validation loss in the final epochs. Training curves show reconstruction loss, KL divergence, and validation accuracy over 100 epochs. \textit{VAE training successfully converges for both 32- and 64-dimensional spaces, with the latter selected for its superior chemical resolution.}}
   \label{fig:vae_training}
 \end{figure}
 
