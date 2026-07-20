@@ -139,9 +139,15 @@ local_askcos/
 # Manuscript figure directories (generated PNGs/PDFs)
 **/manuscript/LaTeX/Graphics/
 **/manuscript/Graphics/
+# Ignore generated PNG figures in manuscript directories
+**/manuscript/**/*.png
+**/manuscript/**/*.pdf
 # Temporary status files
 compile
 syntax
+# Local ASKCOS installation (heavy)
+local_askcos
+local_askcos/
 # *.smi
 # *.sdf
 # *.mol2
