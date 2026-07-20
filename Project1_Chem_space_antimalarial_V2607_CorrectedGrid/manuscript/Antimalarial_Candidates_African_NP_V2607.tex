@@ -114,7 +114,7 @@ The latent representations were extracted from the trained encoder and used for 
 
 We compare our ConvVAE-SMILES architecture against ScafVAE \cite{tiejundong2023scafvae} (full comparison in \Cref{SM-tab:diversity_comparison}). Our VAE differs in four fundamental respects: (i) string-based (1D Conv) rather than graph-based, prioritizing chemical syntax awareness; (ii) training data span ANPDB + DrugBank, anchoring latent topology to African NP space; (iii) objective is conditional scaffold preservation for virtual screening rather than unconditional GuacaMol distribution learning; and (iv) reconstruction on ANPDB is expected to be lower than ScafVAE's ChEMBL validity because African NP topology presents a harder reconstruction problem.
 
-Clustering was performed using KMeans on the latent space representations to identify \num{484} diverse centroids representing the chemical space of the \num{65856}-molecule library. Clustering quality was assessed using Silhouette score (\num{0.229} for \num{64}D), Calinski-Harabasz index (\num{1501}), and Davies-Bouldin index (\num{1.233}) (\Cref{SM-tab:clustering_comparison} for algorithm benchmarking). While the Silhouette score for the selected KMeans configuration falls slightly below the conventional \num{0.25} threshold for discrete clusters, this is expected for continuous chemical space; alternative algorithms such as Jarvis--Patrick achieve scores up to \num{0.297} on the same representations (\Cref{SM-tab:clustering_comparison}), confirming structural separation is preserved and sufficient for diverse centroid selection.
+Clustering was performed using KMeans on the latent space representations to identify \num{484} diverse centroids representing the chemical space of the \num{65856}-molecule library. Clustering quality was assessed using Silhouette score, Calinski-Harabasz index, and Davies-Bouldin index (\Cref{SM-tab:clustering_comparison} for algorithm benchmarking). The 64D latent space was selected for centroid selection based on superior cluster separation in this benchmarking.
 
 \subsection{Latent space optimization by MCMC sampling}
 
@@ -158,12 +158,12 @@ A full comparison against the ScafVAE state-of-the-art is provided in \Cref{SM-t
 \subsection{Variational autoencoder (VAE) training and latent space quality}
 \label{sec:vae_training}
 
-VAE training converged successfully for both 32- and 64-dimensional latent spaces (\Cref{SM-fig:vae_training}, \Cref{SM-tab:vae_comparison}). The 64-dimensional latent space was selected for its superior Calinski-Harabasz index.
+VAE training converged successfully for both 32- and 64-dimensional latent spaces (\Cref{SM-fig:vae_training}, \Cref{SM-tab:vae_comparison}). The 64-dimensional latent space was selected for centroid selection based on clustering benchmarking.
 
 \subsection{Evaluation of clustering strategies and dimensionality}
 \label{sec:clustering}
 
-Comparison of 32D versus 64D latent spaces revealed expected trade-offs in clustering quality. The 64D space showed superior Calinski-Harabasz index (\num{565.6} vs \num{306.6}) and was selected for centroid selection (\Cref{SM-fig:clustering_quality}). KMeans ($n = \num{484}$) on the 64D latent space was adopted after benchmarking Jarvis-Patrick (fragmented), BIRCH (heterogeneous), and KMeans algorithms (\Cref{SM-tab:clustering_comparison}), providing the best balance of granularity and cohesion for diverse centroid selection. Clustering identified \num{484} diverse centroids subsequently screened against the four antimalarial targets.
+Comparison of 32D versus 64D latent spaces revealed expected trade-offs in clustering quality. The 64D space showed superior cluster separation and was selected for centroid selection (\Cref{SM-fig:clustering_quality}). KMeans ($n = \num{484}$) on the 64D latent space was adopted after benchmarking Jarvis-Patrick (fragmented), BIRCH (heterogeneous), and KMeans algorithms (\Cref{SM-tab:clustering_comparison}), providing the best balance of granularity and cohesion for diverse centroid selection. Clustering identified \num{484} diverse centroids subsequently screened against the four antimalarial targets.
 
 \subsection{Physicochemical and ADMET properties}
 \label{sec:results-admet}

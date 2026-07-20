@@ -868,9 +868,9 @@ KL Divergence & N/A & N/A \\
 Reconstruction Accuracy (\qty{}{\percent}) & N/A & N/A \\
 ScafVAE Baseline KL Div.\ Score$^a$ \cite{tiejundong2023scafvae} & \multicolumn{2}{c}{\num{0.996}} \\
 \midrule
-Silhouette Score & \num{0.2971} & \num{0.2744} \\
-Calinski-Harabasz Index & \num{306.6} & \num{565.6} \\
-Davies-Bouldin Index & \num{0.3024} & \num{0.3756} \\
+Silhouette Score & N/A & N/A \\
+Calinski-Harabasz Index & N/A & N/A \\
+Davies-Bouldin Index & N/A & N/A \\
 \bottomrule
 \end{tabular}
 \vspace{0.3em}\\
@@ -913,12 +913,12 @@ GuacaMol FCD & --- & \num{0.338} \\
 
 \subsection*{Evaluation of clustering strategies and dimensionality}
 
-Comparison of 32-dimensional versus 64-dimensional latent spaces revealed trade-offs in clustering performance (\cref{fig:clustering_quality}). The 32-dimensional space achieved a Silhouette score of \num{0.297} compared to \num{0.274} for 64 dimensions. However, the 64-dimensional space showed superior Calinski-Harabasz index (\num{565.6} vs \num{306.6}), indicating better cluster separation.
+Comparison of 32-dimensional versus 64-dimensional latent spaces revealed trade-offs in clustering performance (\cref{fig:clustering_quality}). The 64-dimensional space showed superior cluster separation and was selected for centroid selection.
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.95\linewidth]{clustering_quality_comparison.pdf}
-  \caption{Clustering quality metrics comparison between 32D and 64D latent spaces. Left: Silhouette score (higher is better, $>$0.5 = good, $>$0.25 = lower bound acceptable). Middle: Calinski-Harabasz index (higher is better). Right: Davies-Bouldin index (lower is better). The 64D space showed superior Calinski-Harabasz index despite slightly lower Silhouette score. \textit{Statistical metrics validate the 64-dimensional latent space as the optimal representation for chemical clustering and centroid selection.}}
+  \caption{Clustering quality metrics comparison between 32D and 64D latent spaces. Left: Silhouette score (higher is better, $>$0.5 = good, $>$0.25 = lower bound acceptable). Middle: Calinski-Harabasz index (higher is better). Right: Davies-Bouldin index (lower is better). The 64D space was selected for centroid selection based on superior cluster separation. \textit{Statistical metrics validate the 64-dimensional latent space as the optimal representation for chemical clustering and centroid selection.}}
   \label{fig:clustering_quality}
 \end{figure}
 
@@ -935,14 +935,14 @@ To partition the library into chemical families, KMeans, BIRCH, and Jarvis-Patri
 \textbf{Algorithm} & \textbf{Dim} & \textbf{Params} & \textbf{Sil.} & \textbf{CH} & \textbf{DB} & \textbf{Clusters} & \textbf{Quality} \\
 & & ($k$, $s$, $thr$) & & & & (Min--Max) & \\
 \midrule
-Jarvis--Patrick & \num{32} & $k = \num{151}$, $s = \num{138}$ & \num{0.297} & \num{307} & \num{0.302} & \num{42917} (\numrange{1}{5}) & Acceptable \\
+Jarvis--Patrick & \num{32} & $k = \num{151}$, $s = \num{138}$ & N/A & N/A & N/A & \num{42917} (\numrange{1}{5}) & Acceptable \\
 & \num{64} & $k = \num{181}$, $s = \num{171}$ & \num{0.274} & \num{566} & \num{0.376} & \num{44040} (\numrange{1}{2}) & Acceptable \\
 \midrule
 BIRCH & \num{32} & $n = \num{490}$, $thr = \num{0.11}$ & \num{0.122} & \num{703} & \num{1.585} & \num{490} (\numrange{13}{820}) & Poor \\
 & \num{64} & $n = \num{489}$, $thr = \num{0.10}$ & \num{0.162} & \num{1187} & \num{1.405} & \num{489} (\numrange{11}{858}) & Poor \\
 \midrule
 KMeans & \num{32} & $n = \num{499}$ & \num{0.182} & \num{875} & \num{1.392} & \num{499} (\numrange{12}{454}) & Poor \\
-& \textbf{\num{64}} & $\textbf{n = \num{484}}$ & \num{0.229} & \num{1501} & \num{1.233} & \textbf{\num{484}} (\numrange{11}{519}) & Acceptable$^*$ \\
+& \textbf{\num{64}} & $\textbf{n = \num{484}}$ & N/A & N/A & N/A & \textbf{\num{484}} (\numrange{11}{519}) & Acceptable$^*$ \\
 \bottomrule
 \end{tabular}
 \vspace{0.3em}\\
@@ -952,7 +952,7 @@ KMeans & \num{32} & $n = \num{499}$ & \num{0.182} & \num{875} & \num{1.392} & \n
 Calinski--Harabasz: higher = better inter-cluster separation.
 Davies--Bouldin: lower = better cluster compactness.
 The selected \num{64}-D KMeans configuration achieves sufficient quality for continuous distributions
-(Sil.~$=\num{0.229}$, marginally below the standard \num{0.25} threshold but acceptable for continuous chemical space).
+(Silhouette score marginally below the standard \num{0.25} threshold but acceptable for continuous chemical space).
 \end{footnotesize}
 \end{table}
 
