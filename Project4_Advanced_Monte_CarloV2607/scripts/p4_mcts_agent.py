@@ -1,0 +1,133 @@
+#!/usr/bin/env python3
+"""P4 — Monte Carlo Tree Search (MCTS) agent for molecular generation.
+
+The agent explores a tree where each node is a partial molecule and edges are
+fragment-attachment actions. Selection uses the UCT formula; expansion, rollout,
+and backpropagation are standard MCTS steps.
+"""
+
+from __future__ import annotations
+
+import math
+import random
+from typing import Any, Callable, Optional
+
+
+class MCTSNode:
+    """Node in the MCTS tree."""
+
+    def __init__(self, state: str, parent: Optional["MCTSNode"] = None, action: str = "") -> None:
+        self.state = state
+        self.parent = parent
+        self.action = action
+        self.children: dict[str, "MCTSNode"] = {}
+        self.visits = 0
+        self.value = 0.0
+        self.untried_actions: Optional[list[str]] = None
+
+    def is_fully_expanded(self) -> bool:
+        return self.untried_actions is not None and len(self.untried_actions) == 0
+
+    def best_child(self, c: float = 1.414) -> "MCTSNode":
+        """Select child with highest UCT score."""
+        return max(
+            self.children.values(),
+            key=lambda child: child.value / max(child.visits, 1)
+            + c * math.sqrt(math.log(self.visits) / max(child.visits, 1)),
+        )
+
+    def update(self, reward: float) -> None:
+        self.visits += 1
+        self.value += reward
+
+
+class MCTSAgent:
+    """MCTS agent for molecular optimization.
+
+    Parameters
+    ----------
+    env : object
+        Molecular environment with reset(), step(), and fragment_vocab.
+        NOTE: the current skeleton mutates ``env`` in place. For a real tree
+        search, clone/reset the environment for each rollout or make
+        ``step()`` side-effect free.
+    oracle : callable
+        Function that maps a SMILES string to a scalar reward.
+    n_iterations : int
+        Number of MCTS iterations per search.
+    c_puct : float
+        Exploration constant for UCT.
+    """
+
+    def __init__(
+        self,
+        env: Any,
+        oracle: Callable[[str], float],
+        n_iterations: int = 100,
+        c_puct: float = 1.414,
+    ) -> None:
+        self.env = env
+        self.oracle = oracle
+        self.n_iterations = n_iterations
+        self.c_puct = c_puct
+
+    def search(self, root_state: str) -> str:
+        """Run MCTS from root_state and return the best action sequence."""
+        root = MCTSNode(root_state)
+
+        for _ in range(self.n_iterations):
+            node = self._select(root)
+            reward = self._rollout(node.state)
+            self._backpropagate(node, reward)
+
+        # Return the state reached by the most visited child
+        if not root.children:
+            return root_state
+        best = max(root.children.values(), key=lambda child: child.visits)
+        return best.state
+
+    def _select(self, node: MCTSNode) -> MCTSNode:
+        """Select a leaf node using UCT, expanding if possible."""
+        while node.children and node.is_fully_expanded():
+            node = node.best_child(self.c_puct)
+        if not node.is_fully_expanded():
+            node = self._expand(node)
+        return node
+
+    def _expand(self, node: MCTSNode) -> MCTSNode:
+        """Expand the node by adding one untried action as a child."""
+        if node.untried_actions is None:
+            # First visit: lazily populate available actions from the environment
+            node.untried_actions = list(getattr(self.env, "fragment_vocab", []))
+        if not node.untried_actions:
+            return node
+        action = node.untried_actions.pop()
+        next_state, _reward, _done, _info = self.env.step(action)
+        child = MCTSNode(state=next_state, parent=node, action=action)
+        node.children[action] = child
+        return child
+
+    def _rollout(self, state: str) -> float:
+        """Simulate a random rollout from state and return oracle reward."""
+        # TODO: replace with proper rollout using env.step()
+        return self.oracle(state)
+
+    def _backpropagate(self, node: MCTSNode, reward: float) -> None:
+        """Propagate the reward up the tree."""
+        while node is not None:
+            node.update(reward)
+            node = node.parent
+
+
+def dummy_oracle(smiles: str) -> float:
+    """Placeholder oracle returning a random reward."""
+    return random.random()
+
+
+if __name__ == "__main__":
+    from p4_mcts_rl_env import MolecularEnv
+
+    env = MolecularEnv(initial_smiles="C", max_steps=5)
+    agent = MCTSAgent(env, oracle=dummy_oracle, n_iterations=10)
+    best_state = agent.search("C")
+    print("Best state found:", best_state)
