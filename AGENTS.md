@@ -561,3 +561,28 @@ Completed:
 - **PP-11 C59R investigation report created** ✅ — `Project2_Polypharmacology_MD_ValidationV2607/analysis/PP11_C59R_investigation.md` (8 sections: compound ID, RRS data, statistics, structural context, 3 mechanistic hypotheses, unaffected mutants, library comparison, recommendations)
 
 **Status**: Data → Report → Manuscript workflow applied. P2 RRS section now populated with actual data. Named ligand docking results pending (job 7948).
+
+## Session 2026-07-20 — P4 MCTS+RL Proof-of-Concept Complete
+
+Completed:
+- **P4 MCTS+RL pipeline implemented** ✅
+  - `scripts/p4_mcts_agent.py` — UCT selection, expansion, rollout, backpropagation
+  - `scripts/p4_mcts_rl_env.py` — fragment-attachment molecular environment
+  - `scripts/p4_mcts_oracles.py` — real P1/P2 oracles (MPO, docking, SYBA, SA) with canonical-SMILES cache
+  - `scripts/p4_mcts_run.py` — single-search CLI runner
+  - `scripts/p4_mcts_merge.py` — merge and rank per-task outputs
+  - `scripts/p4_mcts_array.sbatch` — SLURM array submission
+- **Test array submitted and completed** ✅ (job 10597, 3 tasks)
+  - All tasks completed within ~15 seconds
+  - Outputs: `results/mcts/p4_mcts_seed_*.csv` + `p4_mcts_merged_ranked.csv`
+- **Documentation updated** ✅
+  - `Project4_Advanced_Monte_CarloV2607/README.md` created
+  - `P4_MC_Strategies.md` updated to reflect implemented status
+  - `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §4 added
+- **Git hygiene** ✅
+  - `Project4_Advanced_Monte_CarloV2607/results/` added to `.gitignore`
+
+**Current P4 status:**
+- MCTS+RL PoC: ✅ complete
+- QMC validation: ⏸️ skeleton only (future work)
+

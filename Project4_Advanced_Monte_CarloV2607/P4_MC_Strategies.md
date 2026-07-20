@@ -23,10 +23,15 @@ Le MCTS explorera l'arbre de décision de la construction moléculaire (ou l'esp
 | **Oracles** | Évaluent la qualité d'une molécule complète | Tartarus docking, MPO, SYBA, SA |
 | **Récompense** | Scalaire combiné des oracles | `reward = α·MPO + β·docking + γ·SYBA - δ·SA` |
 
-### Fichiers associés (squelettes)
-- [`scripts/p4_mcts_rl_env.py`](scripts/p4_mcts_rl_env.py) — Environnement RL moléculaire (squelette)
-- [`scripts/p4_mcts_agent.py`](scripts/p4_mcts_agent.py) — Agent MCTS (squelette)
-- [`scripts/p4_mcts_oracles.py`](scripts/p4_mcts_oracles.py) — Oracles de scoring (squelette)
+### Fichiers associés (implémentés)
+- [`scripts/p4_mcts_rl_env.py`](scripts/p4_mcts_rl_env.py) — Environnement RL moléculaire
+- [`scripts/p4_mcts_agent.py`](scripts/p4_mcts_agent.py) — Agent MCTS (UCT, expansion, rollout, backprop)
+- [`scripts/p4_mcts_oracles.py`](scripts/p4_mcts_oracles.py) — Oracles de scoring réels (MPO, docking, SYBA, SA)
+- [`scripts/p4_mcts_run.py`](scripts/p4_mcts_run.py) — CLI runner pour une recherche MCTS
+- [`scripts/p4_mcts_merge.py`](scripts/p4_mcts_merge.py) — Fusion et classement des sorties par tâche
+- [`scripts/p4_mcts_array.sbatch`](scripts/p4_mcts_array.sbatch) — Script SLURM array
+
+**Statut actuel (juillet 2026):** Preuve de concept MCTS+RL fonctionnelle validée sur un array test de 3 tâches. Les oracles utilisent les données P1/P2 (C6 + Tartarus) avec cache par SMILES canonique.
 
 ### Estimation de l'Effort
 - **Développement :** 2 à 3 semaines. Nécessite une refonte architecturale pour l'intégration de la boucle RL et des oracles de scoring en temps réel.

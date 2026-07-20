@@ -1448,3 +1448,62 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 | P3 — QKS benchmark | 10,000 molecules | 0.751 vs 0.701 (p=0.088) | ⚠️ Headline contradiction to resolve |
 | P3 — GA discriminator | 50–500 generated | Tanimoto AUC=1.0; QK near-random | ✅ Complete |
 
+
+---
+
+## P4: Advanced Monte Carlo Strategies — MCTS+RL Proof-of-Concept
+
+**Status:** Proof-of-concept complete (July 20, 2026). Production-scale runs pending.
+
+### 4.1 MCTS+RL Pipeline
+
+Project 4 implements a Monte Carlo Tree Search (MCTS) agent for de novo molecular generation, coupled to real P1/P2 oracles. The goal is to move beyond latent-space sampling (P1) and directly optimize molecules for polypharmacological profiles.
+
+| Component | File | Role |
+|-----------|------|------|
+| Environment | `scripts/p4_mcts_rl_env.py` | Fragment-attachment state machine |
+| Agent | `scripts/p4_mcts_agent.py` | UCT selection, expansion, rollout, backpropagation |
+| Oracles | `scripts/p4_mcts_oracles.py` | MPO, docking, SYBA, SA scoring |
+| Runner | `scripts/p4_mcts_run.py` | Single-search CLI |
+| Merge | `scripts/p4_mcts_merge.py` | Merge and rank per-task outputs |
+| SLURM | `scripts/p4_mcts_array.sbatch` | Array submission |
+
+### 4.2 Oracle Wiring
+
+The oracle aggregator loads precomputed P1/P2 data for fast lookup and falls back to on-the-fly computation for novel molecules:
+
+| Score | Primary source | Fallback |
+|-------|----------------|----------|
+| MPO | `Project2/results/c6_primary_leads_synthesisable.csv` | RDKit QED |
+| Docking | `Project2/results/tartarus_output.csv` | Tanimoto nearest-neighbour proxy |
+| SYBA | `c6_primary_leads_synthesisable.csv` | `syba` package |
+| SA | `c6_primary_leads_synthesisable.csv` | RDKit `sascorer` |
+
+Canonical SMILES are cached to avoid recomputing the same molecule during rollouts.
+
+### 4.3 Test Array Results
+
+A 3-task test array (job 10597) completed successfully on the HPC cluster:
+
+| Seed | Best state | Best reward |
+|-----:|:-----------|------------:|
+| 0 | `CO` | 2.600000 |
+| 1 | `CC` | 2.600000 |
+| 2 | `Cc1ccccc1` | 2.600000 |
+
+All tasks completed within ~15 seconds. The merged and ranked output is available at `Project4_Advanced_Monte_CarloV2607/results/mcts/p4_mcts_merged_ranked.csv`.
+
+### 4.4 Next Steps for P4
+
+1. **Scale MCTS:** increase `MAX_STEPS` and `N_ITERATIONS` for meaningful chemical exploration.
+2. **Expand fragment vocabulary:** add medicinal-chemistry-aware fragment actions beyond the current placeholder set.
+3. **Validate against P1/P2 benchmarks:** compare MCTS-generated molecules with the VAE-generated library using MPO, docking, and novelty metrics.
+4. **QMC skeleton:** complete the quantum Monte Carlo validation pipeline (`p4_qmc_prepare.py`, `p4_qmc_analyze.py`) for high-accuracy electronic-structure validation of top candidates.
+
+### 4.5 Updated Project Status Table
+
+| Domain | Molecules / Systems | Key Result | Status |
+|--------|---------------------|------------|--------|
+| P4 — MCTS+RL PoC | 3 test tasks | Test array completed; real P1/P2 oracles wired | ✅ Complete |
+| P4 — QMC validation | — | Skeleton only; awaiting candidate shortlist | ⏸️ Future work |
+
