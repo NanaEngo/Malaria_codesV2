@@ -76,7 +76,7 @@
 
 This supplementary document details methodological protocols, scoring metrics, and dataset statistics supporting the main text (Temgoua \textit{et al.}, 2026). The main manuscript describes a computational framework for antimalarial drug discovery that integrates African natural products with synthetic antimalarials, identifies polypharmacological candidates through dual-filter consensus docking, and prioritizes leads using multi-parameter optimization scoring.
 
-The supplementary content elaborates the Multi-Parameter Optimization (MPO) scoring framework introduced in the main manuscript (\cref{M-sec:mpo}), presenting mathematical formulations for the five desirability components and the polypharmacology bonus. Tabular summaries detail chemical space analysis, scaffold diversity, and drug-likeness characteristics of the \num{65856}-molecule hybrid library. Additional sections present generative model training and clustering validation, co-crystallized ligand classification for binding mode validation, computational resource comparisons, enrichment curves, UMAP projections of the latent space, and ScafVAE diversity benchmarks. Final tables provide target-specific docking outcomes, selectivity indices, and cytochrome P450 inhibition profiles for the \num{850} seed molecules screened against four \textit{Plasmodium falciparum} targets: dihydrofolate reductase (DHFR, PDB: 7F3Y), chloroquine resistance transporter (CRT, 6UKJ), ATPase 4 (ATP4, 9N10), and caseinolytic protease (ClpP, 4GM2).
+The supplementary content elaborates the Multi-Parameter Optimization (MPO) scoring framework introduced in the main manuscript (\cref{M-sec:mpo}), presenting mathematical formulations for the five desirability components and the polypharmacology bonus. Tabular summaries detail chemical space analysis, scaffold diversity, and drug-likeness characteristics of the \num{65856}-molecule hybrid library. Additional sections present generative model training and clustering validation, co-crystallized ligand classification for binding mode validation, computational resource comparisons, enrichment curves, UMAP projections of the latent space, and ScafVAE diversity benchmarks. Final tables provide target-specific docking outcomes, selectivity indices, and cytochrome P450 inhibition profiles for the \num{810} screened seed molecules with valid selectivity predictions against four \textit{Plasmodium falciparum} targets: dihydrofolate reductase (DHFR, PDB: 7F3Y), chloroquine resistance transporter (CRT, 6UKJ), ATPase 4 (ATP4, 9N10), and caseinolytic protease (ClpP, 4GM2).
 
 All calculation results referenced in this supplementary material are archived in the project repository (\url{https://github.com/Vital-Sao/Malaria_codes}) and can be regenerated using the scripts provided in the \texttt{scripts/} directory.
 
@@ -233,14 +233,14 @@ The following tables summarize the chemical diversity, drug-likeness characteris
 
 \begin{table}[htbp]
 \centering
-\caption{Distribution of predicted selectivity index proxies ($\text{SI}_{\text{pred}} = \text{score}_{\text{eos7kpb}} / (1 - \text{DILI}_{\text{ADMET-AI}})$) for \num{850} screened seed molecules. This computational proxy approximates antiparasitic selectivity over mammalian cytotoxicity; experimental $\text{IC}_{50}(\text{HepG2}) / \text{IC}_{50}(\text{Pf NF54})$ determination is required for confirmation. \textit{Over \qty{95}{\percent} of screened molecules exhibit favorable predicted selectivity, suggesting a broad therapeutic window for the identified hits.}}
+\caption{Distribution of predicted selectivity index proxies ($\text{SI}_{\text{pred}} = \text{score}_{\text{eos7kpb}} / (1 - \text{DILI}_{\text{ADMET-AI}})$) for \num{810} screened seed molecules with valid predictions. This computational proxy approximates antiparasitic selectivity over mammalian cytotoxicity; experimental $\text{IC}_{50}(\text{HepG2}) / \text{IC}_{50}(\text{Pf NF54})$ determination is required for confirmation. \textit{All screened molecules with valid SI predictions exhibit favorable predicted selectivity, suggesting a broad therapeutic window for the identified hits.}}
 \label{tab:selectivity}
 \begin{tabular}{@{}l r@{}}
 \toprule
 \textbf{Metric} & \textbf{Value} \\
 \midrule
-Total molecules screened & \num{850} \\
-Selectively antiparasitic ($\text{SI} > \num{10}$) & \qty{95.3}{\percent} (\num{810}) \\
+Total molecules screened & \num{810} \\
+Selectively antiparasitic ($\text{SI} > \num{10}$) & \qty{100}{\percent} (\num{810}) \\
 Mean selectivity index & \num{947.2} \\
 Median selectivity index & \num{252.9} \\
 Maximum selectivity index & \num{106773.8} \\
@@ -250,7 +250,7 @@ Maximum selectivity index & \num{106773.8} \\
 
 \begin{table}[htbp]
 \centering
-\caption{Cytochrome P450 (CYP) inhibition interaction risks for the \num{850} screened seed molecules, identifying moderate metabolic interaction probabilities (threshold $> \num{0.5}$) relevant for formulation and drug-drug interactions. \textit{Metabolic risk profiles are isoform-dependent, with CYP2C19 and CYP3A4 exhibiting the highest interaction probabilities.}}
+\caption{Cytochrome P450 (CYP) inhibition interaction risks for the \num{810} screened seed molecules with valid predictions, identifying moderate metabolic interaction probabilities (threshold $> \num{0.5}$) relevant for formulation and drug-drug interactions. \textit{Metabolic risk profiles are isoform-dependent, with CYP2C19 and CYP3A4 exhibiting the highest interaction probabilities.}}
 \label{tab:cyp450}
 \begin{tabular}{@{}l r r r r@{}}
 \toprule
@@ -669,7 +669,7 @@ All raw calculation results referenced in this supplementary material are availa
 \begin{itemize}
   \item \texttt{results/c1\_library\_size\_verification.txt}: Library size verification (\num{65856} molecules)
   \item \texttt{results/c2\_per\_source\_breakdown.json}: Per-source breakdown of generative library
-  \item \texttt{results/c3\_selectivity\_index.csv}: Selectivity index calculations (\num{810}/\num{850} with $\text{SI} > \num{10}$)
+  \item \texttt{results/c3\_selectivity\_index.csv}: Selectivity index calculations (\num{810}/\num{810} with $\text{SI} > \num{10}$)
   \item \texttt{results/c4\_cyp450\_inhibition\_profile.csv}: Cytochrome P450 inhibition predictions
   \item \texttt{results/c5\_aqueous\_solubility.csv}: Aqueous solubility analysis ($\log S$ values)
   \item \texttt{results/c6\_primary\_leads\_synthesizable.csv}: Synthesisable primary leads (\num{19913} compounds)

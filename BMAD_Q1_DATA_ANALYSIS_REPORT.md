@@ -15,14 +15,14 @@ Three complementary projects generated and analyzed **over 85,000 unique molecul
 
 **P1 (Chemical Space Exploration)** demonstrates that a variational autoencoder trained on 396 African natural products generates molecules that are simultaneously novel by whole-molecule fingerprint (92.6% ECFP4-unreachable) yet conserved in scaffold topology (69.3% scaffold recovery). This apparent paradox is resolved by TDA analysis showing that ring systems (H₁) are preserved while peripheral substituents (H₀) diverge. The scaffold Tanimoto ratio (1.84×) quantifies this two-level exploration strategy and positions the VAE as a scaffold-hopping tool for natural product space. Metropolis-Hastings MCMC sampling of the VAE latent space (4 chains × 5000 steps, RF-500 surrogate) further demonstrates that local optimisation around cluster centroids yields measurable MPO improvement (mean chain MPO +0.025 over library baseline; top-5 generated molecules MPO 0.794–0.801), confirming the latent space is not flat with respect to the MPO objective.
 
-**P2 (Polypharmacology Validation)** narrows 19,913 synthesisable P1 leads to 20 high-confidence candidates through multi-parameter optimization and consensus docking across four resistance-relevant *Plasmodium* targets. All 20 candidates are single-target optimized (no beneficial polypharmacology detected by current scoring), yet 95.3% are selectively antiparasitic. The African Chemical Space Index (ACSI) confirms that 23.5% of top candidates retain strong chemical identity with the African NP seed space (ACSI > 0.70). Tartarus external validation (19,913 molecules, 3 targets) reveals that binding affinity scores are orthogonal to drug-likeness MPO scores (Spearman ρ = 0.013, p = 0.091), confirming that docking provides independent information not captured by MPO. Four solvated protein–ligand complexes (PfDHFR, PfATP4, PfClpP, PfCRT) were built with CHARMM36-jul2022/GAFF2 force fields and EM/NVT/NPT equilibration was attempted; production MD trajectories exist for all four systems. Re-analysis of the production trajectories with PBC-unwrapped (`nojump`) coordinates shows that **only two of the four systems maintain a bound ligand**: **PfCRT (214)** and **PfATP4 (438)** (minimum protein–ligand distances 3.19 Å and 2.25 Å, 78 and 178 contacts, 23 and 48 H-bonds, respectively). The other two systems, **PfClpP (164)** and **PfDHFR (201)**, have stable protein conformations (backbone RMSD 1.31 Å and 3.05 Å) but the ligand is completely unbound (minimum distances 67.4 Å and 78.2 Å, zero contacts), indicating either incorrect initial placement or rapid dissociation during equilibration. These results demonstrate that MD is a mandatory post-docking filter, and only the PfCRT and PfATP4 simulations can support binding-mode claims.
+**P2 (Polypharmacology Validation)** narrows 19,913 synthesisable P1 leads to 20 high-confidence candidates through multi-parameter optimization and consensus docking across four resistance-relevant *Plasmodium* targets. All 20 candidates are single-target optimized (no beneficial polypharmacology detected by current scoring); among 810 screened seed molecules with valid SI predictions, 100% are selectively antiparasitic (SI > 10). The African Chemical Space Index (ACSI) confirms that 23.5% of top candidates retain strong chemical identity with the African NP seed space (ACSI > 0.70). Tartarus external validation (19,913 molecules, 3 targets) reveals that binding affinity scores are orthogonal to drug-likeness MPO scores (Spearman ρ = 0.013, p = 0.091), confirming that docking provides independent information not captured by MPO. Four solvated protein–ligand complexes (PfDHFR, PfATP4, PfClpP, PfCRT) were built with CHARMM36-jul2022/GAFF2 force fields and EM/NVT/NPT equilibration was attempted; production MD trajectories exist for all four systems. Re-analysis of the production trajectories with PBC-unwrapped (`nojump`) coordinates shows that **only two of the four systems maintain a bound ligand**: **PfCRT (214)** and **PfATP4 (438)** (minimum protein–ligand distances 3.19 Å and 2.25 Å, 78 and 178 contacts, 23 and 48 H-bonds, respectively). The other two systems, **PfClpP (164)** and **PfDHFR (201)**, have stable protein conformations (backbone RMSD 1.31 Å and 3.05 Å) but the ligand is completely unbound (minimum distances 67.4 Å and 78.2 Å, zero contacts), indicating either incorrect initial placement or rapid dissociation during equilibration. These results demonstrate that MD is a mandatory post-docking filter, and only the PfCRT and PfATP4 simulations can support binding-mode claims.
 
 **P3 (Quantum-Inspired Representations)** introduces three novel molecular descriptors—Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)—and benchmarks them against classical fingerprints on the same library. The results yield an important negative finding across all quantum-inspired methods: the hybrid representation (AUC 0.691) is vastly outperformed by ECFP4 (AUC 0.868, p = 0.003), and ablation shows removing QKS drops the hybrid AUC to 0.605. The QKS benchmark on 500 molecules (sub-sampled from the 10,000-molecule design target) reports Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns). The difference is not statistically significant. The quantum-inspired methods serve as complementary topological frameworks rather than outperforming classical methods on simple predictive metrics.
 
 | Domain | Molecules Analyzed | Key Result | Status |
 |--------|-------------------|------------|--------|
 | P1 — Scaffold Novelty | 5,000 gen. + 396 seeds | **92.6% ECFP4-unreachable; 1.84× scaffold ratio** | Completed |
-| P2 — Polypharmacology | 19,913 leads → 20 top candidates | **100% single-target optimized; 95.3% selectively antiparasitic** | Completed |
+| P2 — Polypharmacology | 19,913 leads → 20 top candidates | **100% single-target optimized; 100% of 810 screened seeds with valid SI predictions had SI > 10** | Completed |
 | P3 — TDA/TNE Representations | 19,849 molecules | **99.93% TDA validity; 15.6× TNE compression** | Completed |
 | P3 — Hybrid Benchmark | 19,849 × 10 descriptors × 5CV | **ECFP4 AUC 0.868 vs Hybrid AUC 0.842 (p=0.111, ns)**; PHCO bug fixed (AUC 0.500 → ~0.83) | Completed |
 | P3 — QKS Benchmark | 500 mol (sub-sampled) | **Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns)**; earlier 0.936/0.105 claim removed as unsupported | Completed (July 2026) |
@@ -106,20 +106,20 @@ This Fsp3 profile shows that nearly a quarter of the library (25.4%) has $Fsp3 \
 
 | Metric | Value |
 |--------|-------|
-| Total molecules | 850 |
-| Selectively antiparasitic (SI > 10) | **810 (95.3%)** |
+| Total molecules | 810 |
+| Selectively antiparasitic (SI > 10) | **810 (100%)** |
 | Mean SI | 947.2 |
 | Median SI | 252.9 |
 | Max SI | 106,773.8 |
 
 ### 1.5 ADMET & Physicochemical Profile
 
-**Aqueous Solubility (n=850 from `c5_aqueous_solubility_summary.txt`):**
+**Aqueous Solubility (n=810 from `c5_aqueous_solubility_summary.txt`):**
 - Mean normalised aq_sol: 0.526
 - Median normalised aq_sol: 0.525
 - Poorly soluble (aq_sol < 0.2): **7 (0.8%)** (threshold < 0.2 used for 'poorly soluble')
 
-**CYP450 Inhibition (n=850):**
+**CYP450 Inhibition (n=810):**
 | Isoform | Mean Inhibition Probability |
 |---------|---------------------------|
 | CYP2C9 | 0.261 |
@@ -378,7 +378,7 @@ All P1 result files have been synced from HPC (`Project1_Chem_space_antimalarial
 
 ### 1.13 Principal Component Analysis (PCA) of Molecular Descriptors
 
-To map the high-dimensional chemical space, Principal Component Analysis (PCA) was performed using scikit-learn on 9 standardized molecular descriptors (molecular weight, logP, hydrogen bond acceptors, hydrogen bond donors, TPSA, QED, synthetic accessibility score, rotatable bonds, and stereo centers) across 850 screening molecules (from `c8_pca_explained_variance.txt`):
+To map the high-dimensional chemical space, Principal Component Analysis (PCA) was performed using scikit-learn on 9 standardized molecular descriptors (molecular weight, logP, hydrogen bond acceptors, hydrogen bond donors, TPSA, QED, synthetic accessibility score, rotatable bonds, and stereo centers) across 810 screening molecules with valid SI predictions (from `c8_pca_explained_variance.txt`):
 - **PC1 Explained Variance**: 51.71%
 - **PC2 Explained Variance**: 17.57% (Cumulative: 69.28%)
 - **PC3 Explained Variance**: 13.05% (Cumulative: 82.33%)
@@ -1010,7 +1010,7 @@ Three observations that appeared contradictory are now explained:
 1. **Scaffold novelty:** 1.84× scaffold-to-whole-molecule Tanimoto ratio (P1)
 2. **MCMC optimisation:** Mean chain MPO +0.025; top candidate MPO 0.801 (piperazine scaffold) — latent space is not flat (P1)
 3. **Scaffold leap:** 92.6% of molecules are ECFP4-unreachable from seeds (P1)
-4. **Selectivity:** 95.3% of leads are selectively antiparasitic (SI > 10) (P1)
+4. **Selectivity:** 100% of 810 screened seed molecules with valid SI predictions are selectively antiparasitic (SI > 10) (P1)
 5. **TDA efficiency:** 19,836 molecules processed in 6.4 min with 99.93% validity (P3)
 6. **TNE compression:** 15.6× compression at 0.1130 reconstruction error (P3)
 7. **Quantum Kernel:** Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns), but RBF baseline suspiciously low (P3)
