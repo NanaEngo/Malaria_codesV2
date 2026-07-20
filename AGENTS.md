@@ -586,3 +586,28 @@ Completed:
 - MCTS+RL PoC: ✅ complete
 - QMC validation: ⏸️ skeleton only (future work)
 
+
+## Session 2026-07-20 (continued) — P3 Phase2 awk Banner Fix
+
+**Issue:** Running P3 phase2 jobs (10594, 10595) emitted an `awk` syntax error in their `.err` files:
+```
+awk: cmd. line:1: {print $3 \" / \" $2}
+awk: cmd. line:1:           ^ backslash not last character on line
+```
+
+**Root cause:** In `scripts/p3_phase2_array.sbatch`, the banner line
+```bash
+echo "║  Mem: $(free -h | grep Mem | awk '{print $3 \" / \" $2}')"
+```
+passed literal backslash-escaped double quotes into the awk script, which is invalid awk syntax.
+
+**Fix:** Moved the `free | awk` pipeline to a variable assignment before the echo:
+```bash
+mem_info=$(free -h | awk '/Mem/{print $3 " / " $2}')
+echo "║  Mem: ${mem_info}"
+```
+
+**Impact:** The error only affected the startup banner; the actual 5-fold CV computation continued unaffected. Current jobs (10594, 10595) were left running. The fix applies to future submissions.
+
+**Validation:** `bash -n p3_phase2_array.sbatch` passes.
+
