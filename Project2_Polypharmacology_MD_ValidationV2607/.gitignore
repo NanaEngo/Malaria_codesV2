@@ -1,6 +1,9 @@
 # ============================================================================
-# MALARIA PROJECT .gitignore
+# MALARIA PROJECT 2 .gitignore - MD Validation & Polypharmacology
 # ============================================================================
+
+# Specific large/generated dataset
+data/raw/merged_cheese_prop.csv
 
 # ============================================================================
 # Python & Development
@@ -8,6 +11,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 *.so
 .Python
 build/
@@ -53,6 +57,82 @@ vfvs_env/
 *.ipynb_checkpoints
 
 # ============================================================================
+# PROJECT 2 SPECIFIC: MD Simulation Data
+# ============================================================================
+# Large trajectory files (multi-GB each)
+results/trajectories/
+results/md_outputs/
+*.xtc
+*.trr
+*.gro
+*.tpr
+*.edr
+*.cpt
+*.mdp
+*.top
+*.itp
+*.ndx
+
+# MM-GBSA outputs (can be large)
+results/mmpbsa/
+*.mmpbsa
+*.dat
+
+# Docking results (large pose files)
+results/docking/
+results/vina_outputs/
+*.pdbqt
+*.dlg
+
+# Protein structure files (large)
+data/proteins/prepared/
+data/proteins/mutants/
+data/md_inputs/systems/
+
+# Large analysis outputs
+results/analysis/raw_data/
+results/analysis/trajectories/
+results/metrics/raw_calculations/
+
+# Temporary MD files
+*.backup
+*.part
+*.restart
+*.checkpoint
+*_prev.cpt
+*_prev.gro
+*_prev.trr
+*_prev.xtc
+
+# GROMACS specific
+\#*
+step*.pdb
+confout.gro
+state*.cpt
+ener.edr
+md.log
+mdout.mdp
+
+# Schrödinger Suite outputs
+*.mae
+*.maegz
+*.cms
+*.msj
+*.out
+*.log
+*.zip
+maestro_*.log
+
+# OpenEye outputs
+*.oeb
+*.oez
+*.sdf.gz
+
+# PyMOL sessions
+*.pse
+*.pml
+
+# ============================================================================
 # Data Files (Large/Generated) - SELECTIVE TRACKING
 # ============================================================================
 # Track essential input data in data/raw/ (add specific exceptions below)
@@ -85,37 +165,6 @@ vfvs_env/
 *.pickle
 *.npy
 *.npz
-# Molecular dynamics trajectory / force-field / coordinate files (often GiB)
-*.xtc
-*.frc
-*.mdcrd
-*.mdcrd.*
-*.crd
-*.oldpsf
-*.gro
-*.gro.*
-*.prmtop
-*.ndx
-*.rtf
-*.prm
-*.itp
-*.str
-*.psf
-*.top
-*.tpr
-*.edr
-*.trr
-*.log
-# Generated result files (large CSVs, figures)
-results/**/*.csv
-results/**/*.png
-results/**/*.txt
-data/from_project1/**/*.csv
-# Backup / timestamped generated files
-*_backup*
-*_backup.csv
-*_2026*.csv
-*.backup
 # *.smi
 # *.sdf
 # *.mol2
@@ -145,13 +194,11 @@ checkpoint/
 checkpoints/
 logs/
 
-# AiZynthFinder model bundle (~754 MB at models/aizynthfinder/, downloaded
-# 2026-07-15 via scripts/r8b/download_aizynth_models.sh). The binary *.onnx
-# / *.hdf5 / *.h5 patterns above already match most files, but adding the
-# directory catches *.csv.gz + config.yml as well.
-models/
-!models/.gitkeep
-!models/README.md
+# ============================================================================
+# Legacy & Archive
+# ============================================================================
+legacy/
+archive/
 
 # ============================================================================
 # IDE & Editor Configuration
@@ -240,3 +287,63 @@ site-packages/
 # ============================================================
 _bmad/
 _bmad-output/
+.bmad/
+bmad/
+bmad-config.*
+bmad-session.*
+bmad-*.json
+bmad-*.yaml
+bmad-*.yml
+bmad-*.log
+*bmad*.json
+*bmad*.yaml
+*bmad*.yml
+*bmad*.log
+bmad_workspace/
+bmad_sessions/
+bmad_state/
+bmad_cache/
+.bmad-cache/
+.bmad-sessions/
+# Additional GitHub collaboration exclusions
+# ============================================================================
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS specific files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.orig
+*.rej
+
+# Log files
+nohup.out
+
+# Compressed files (unless specifically needed)
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+
+# Large data files that should be tracked via Git LFS or external storage
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.npy
+*.npz
