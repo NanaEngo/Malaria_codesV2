@@ -556,7 +556,7 @@ PfClpP & 4GM2 & --- & --- & --- & --- & --- & --- & --- & --- \\
 
 \begin{table}[htbp]
 \centering
-\caption{ADMET cross-referencing: Spearman correlation ($\rho$) between ADMET-AI and RDKit-based proxy descriptors (top-\num{20} compounds). SwissADME estimates were not directly available (no public REST API); RDKit descriptors (ESOL logS, Egan BBB, logP-based CYP/hERG heuristics) serve as SwissADME-equivalent proxies. ADMETlab 3.0 API returned 404 and was not available. \textit{RDKit-based ADMET proxies provide a reproducible local alternative to web-based tools, with ESOL logS and logP-based heuristics showing moderate correlation with ADMET-AI predictions.}}
+\caption{ADMET cross-referencing: Spearman correlation ($\rho$) between ADMET-AI and RDKit-based proxy descriptors (top-\num{20} compounds). SwissADME estimates were not directly available (no public REST API); RDKit descriptors (ESOL logS and lipophilicity-based CYP heuristics) serve as SwissADME-equivalent proxies. ADMETlab 3.0 API returned 404 and was not available. \textit{RDKit-based ADMET proxies provide a reproducible local alternative to web-based tools, with ESOL logS showing moderate correlation with ADMET-AI predictions.}}
 \label{tab:sm_s16_admet_crossval}
 \small
 \begin{tabular}{lccccc}
@@ -564,19 +564,18 @@ PfClpP & 4GM2 & --- & --- & --- & --- & --- & --- & --- & --- \\
 Endpoint & $\rho_{\text{AI vs Swiss}}$ & $\rho_{\text{AI vs RDKit}}$ & $n$ & Disagreements & Notes \\
 \midrule
 LogS (aqueous solubility) & \num{-0.19} & \num{-0.19} & \num{20} & \num{0} & ADMETlab 3.0 API unavailable \\
-hERG inhibition prob. & \num{-0.61} & \num{-0.61} & \num{20} & \num{0} & SwissADME: Egan rule estimate \\
-BBB penetration & NaN & NaN & \num{20} & \num{0} & Constant input; undefined $\rho$ \\
 CYP3A4 inhibition & \num{-0.29} & \num{-0.29} & \num{20} & \num{1} & \num{1} compound $>\num{1}$ risk category apart \\
-cLogP & \num{0.92} & \num{0.92} & \num{20} & \num{0} & Perfect agreement on hydrophobicity \\
 \bottomrule
 \end{tabular}
 \vspace{0.5em}
 \begin{footnotesize}
 Note: ADMETLab 3.0 web API returned 404; values labelled ``SwissADME'' are RDKit-based
-proxies (ESOL logS, Egan BBB, logP-based CYP/hERG). The identical $\rho$ values for
+proxies (ESOL logS and lipophilicity-based CYP heuristics). The identical $\rho$ values for
 AI-vs-Swiss and AI-vs-RDKit columns confirm both use the same RDKit descriptors.
 Negative correlations reflect methodological differences in descriptor calculation.
-BBB scores are binary (Egan rule), yielding undefined $\rho$ for constant predictions.
+Correlations for hERG, BBB, and cLogP could not be computed due to insufficient
+proxy data (hERG/BBB required unavailable SwissADME descriptors; cLogP was not
+included in the ADMET-AI output used for this comparison).
 \end{footnotesize}
 \end{table}
 

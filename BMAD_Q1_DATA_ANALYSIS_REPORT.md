@@ -127,12 +127,11 @@ This Fsp3 profile shows that nearly a quarter of the library (25.4%) has $Fsp3 \
 | CYP3A4 | 0.426 |
 | CYP2D6 | 0.170 |
 
-**ADMET Cross-Validation (20 candidates across 3 tools):**
-- ADMET-AI, SwissADME, and ADMETlab3 compared
-- logS range: −3.06 to −5.51 (ADMET-AI)
-- CYP3A4 range: 0.002–0.876
-- hERG range: 0.058–0.179
-- BBB penetration: 0.941–0.996
+**ADMET Cross-Validation (20 candidates, RDKit-based proxies):**
+- ADMET-AI vs RDKit-based SwissADME-equivalent proxies (ADMETlab 3.0 API returned 404)
+- logS: Spearman ρ = −0.19 (n = 20)
+- CYP3A4: Spearman ρ = −0.29 (n = 20)
+- hERG, BBB, and cLogP: correlations could not be computed due to insufficient proxy data
 
 ### 1.6 MPO Sensitivity
 

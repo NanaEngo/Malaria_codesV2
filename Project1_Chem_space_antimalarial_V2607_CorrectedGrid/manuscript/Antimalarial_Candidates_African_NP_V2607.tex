@@ -186,7 +186,7 @@ African NPs possess molecular weights (mean MW: \qty{402}{\dalton}) within pharm
 Intra-cluster Tanimoto similarity (mean \num{0.227}) was twofold higher than inter-cluster similarity (mean \num{0.101}), confirming that VAE clustering captures pharmacophoric coherence.
 \subsubsection{ADMET profile}
 
-ADMET profiling via ADMET-AI \cite{Swanson2024} revealed that NPs exhibit lower predicted hepatotoxicity, hERG cardiotoxicity, and nuclear receptor interactions compared to SDs, while synthetic compounds show higher membrane permeability. Cross-referencing ADMET-AI predictions with RDKit-based ADMET proxies (SwissADME-equivalent ESOL logS, Egan BBB, and lipophilicity-based CYP/hERG heuristics) showed moderate concordance for logS ($\rho = -0.19$) and hERG ($\rho = -0.61$), with stronger agreement for cLogP ($\rho = 0.92$; \Cref{SM-tab:sm_s16_admet_crossval}).
+ADMET profiling via ADMET-AI \cite{Swanson2024} revealed that NPs exhibit lower predicted hepatotoxicity, hERG cardiotoxicity, and nuclear receptor interactions compared to SDs, while synthetic compounds show higher membrane permeability. Cross-referencing ADMET-AI predictions with RDKit-based ADMET proxies (SwissADME-equivalent ESOL logS and lipophilicity-based CYP heuristics) showed moderate concordance for logS ($\rho = -0.19$) and CYP3A4 ($\rho = -0.29$). Correlations for hERG, BBB, and cLogP could not be computed due to insufficient proxy data (\Cref{SM-tab:sm_s16_admet_crossval}).
 
 \subsection{\textit{In silico} prediction of antimalarial activity}
 
