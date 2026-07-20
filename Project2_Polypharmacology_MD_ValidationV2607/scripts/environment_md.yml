@@ -1,0 +1,66 @@
+# Malaria MD Simulation Environment
+# Usage: conda env create -f environment_md.yml
+#        conda activate malaria_md
+#
+# Separates MD-specific packages from the quantum/TDA pipeline (qml-env).
+# Last updated: July 5, 2026
+
+name: malaria_md
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.11
+
+  # --- MD engine ---
+  # - gromacs>=2024               # MD production engine (2024.2+ tested)
+
+  # --- Ligand parameterisation ---
+  - openbabel>=3.1              # MOL2 conversion for CGenFF workflow
+  - acpype>=2023.10             # GAFF2 fallback topology generation
+  # - ambertools>=23              # MMPBSA.py (primary MM-GBSA engine)
+
+  # --- Trajectory analysis ---
+  - mdanalysis>=2.8             # RMSD, RMSF, SASA, H-bonds (tested 2.10.0)
+  - mdtraj>=1.10                # Secondary trajectory I/O (tested 1.11.1)
+
+  # --- Structural biology ---
+  - biopython>=1.81             # PDB parsing, Superimposer (RMSD check)
+
+  # --- OpenFF force fields (PfDHFR/PfATP4/PfClpP ligands) ---
+  - openff-toolkit>=0.16.0      # OpenFF 2.2 (Sage) ligand parameterisation
+  - openff-forcefields>=2024.04 # OpenFF 2.2 Sage force field
+
+  # --- Scientific stack ---
+  - numpy<2.0                   # Required by gmx_mmpbsa
+  - scipy>=1.11
+  - pandas
+  - matplotlib<3.8              # Required by gmx_mmpbsa
+  - seaborn>=0.13
+
+  # --- Cheminformatics ---
+  - rdkit>=2023.09              # 3D ligand generation, ACSI fingerprints
+  - selfies>=2.1                # SELFIES encoding for STONED analysis
+
+  # --- Networking & API ---
+  - requests                    # SWISS-MODEL API (md_homology_mutants.py)
+  - networkx>=3.0               # PNS composite centrality (md_calculate_rrs_acsi_pns.py)
+
+  # --- MM-GBSA format conversion ---
+  # - gmx_mmpbsa>=1.6             # GROMACS->AMBER format converter (calls MMPBSA.py)
+
+  # --- Pipeline extras (shared with qml-env) ---
+  - scikit-learn>=1.5           # Clustering, classification
+  - ripser>=0.6                 # TDA persistent homology
+
+  - pip:
+    - pennylane>=0.45.1         # QKS circuit simulation (pip only)
+    - pennylane-catalyst        # JIT compilation for PennyLane
+    - tensorly>=0.9.0           # TNE Tucker decomposition (pip only)
+    # - pyemma>=2.5               # Markov state models (optional)
+    # cgenff_charmm2gmx: install manually from MacKerell lab (PfCRT systems only)
+    # https://mackerell.umaryland.edu/charmm_ff_params.shtml
+    # Gnina 1.1: install via Docker or binary (not conda-available)
+    # docker pull gnina/gnina:latest
+    # ColabFold: use web server or localcolabfold (https://github.com/YoshitakaMo/localcolabfold)

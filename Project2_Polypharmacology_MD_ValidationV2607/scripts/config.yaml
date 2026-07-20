@@ -1,0 +1,43 @@
+# Snakemake Pipeline Configuration
+# Manuscript Calculations C1-C14
+
+# Project paths
+results_dir: "results"
+scripts_dir: "scripts"
+
+# Calculation settings
+calculations:
+  c1_c8: true      # Pandas-based calculations
+  c9_c12: true     # RDKit-dependent calculations
+  c13: true        # Human DHFR decoy docking
+  c14: true        # 2D interaction diagrams
+  md_simulations: false  # Optional, requires HPC
+
+# MD simulation settings (optional)
+md:
+  top_hits:
+    - ligand_201
+    - ligand_214
+    - ligand_87
+  duration_ns: 100
+  force_field: "charmm36m"
+  water_model: "tip3p"
+
+# Docking settings
+docking:
+  exhaustiveness: 64
+  num_modes: 20
+  energy_range: 5
+  binding_site:
+    center_x: 15.0
+    center_y: 20.0
+    center_z: 10.0
+    size_x: 20.0
+    size_y: 20.0
+    size_z: 20.0
+
+# Output settings
+output:
+  summary_report: true
+  supplementary_tables: true
+  figures: true

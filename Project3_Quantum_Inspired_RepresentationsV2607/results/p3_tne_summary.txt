@@ -1,0 +1,27 @@
+Molecules processed  : 19849
+Valid embeddings     : 19838
+Failed               : 11
+Bond dimension       : 16
+Tucker ranks         : (16, 16, 3)
+Input tensor (padded): 100×10×3 = 3000 elements
+Core descriptor dim  : 480
+
+--- Compression ratios ---
+Padded ratio (N=100) : 6.2x
+
+--- Real (unpadded) stats  ---
+Mean atoms/molecule   : 39.0
+Median atoms/molecule : 39.0
+Min atoms             : 12
+Max atoms             : 70
+Real ratio (mean)     : 2.4x
+Real ratio range      : 0.8x to 4.4x
+
+--- Reconstruction error ---
+Mean recon. error    : 0.0034
+Max  recon. error    : 0.0323
+
+--- Performance ---
+Wall time (s)        : 60.1
+Throughput (mol/s)   : 330.11
+Backend              : CPU (n_jobs=48)
