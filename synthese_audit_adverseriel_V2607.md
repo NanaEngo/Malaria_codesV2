@@ -24,7 +24,8 @@ Ce résumé fournit une vue d'ensemble rapide des failles identifiées et des so
 | **Projet 3 (P3) — écriture** | Ratio de compression TNE gonflé (15.6× vs 5.9× réel) ; incohérence du chiffre QKS canonique (0.751/0.701 vs 0.936/0.105) ; corrélation H₁/RRS ρ=0.916→0.947. | Réécrire l'Abstract/§3.3 avec le ratio réel (5.9×) et fixer un seul chiffre QKS sourcé sur `p3_qks_summary.txt`. Mise à jour manuscrite ρ=0.916→0.947 (4 occurrences) + CI bootstrap. | ✅ Aucune recompute requise — corrections manuscrites commit `6c84581d` |
 | **Projet 3 (P3) — code** | Bug du descripteur PHCO (AUC=0.500 exactement aléatoire = feature nulle, pas un résultat négatif authentique). | Corriger l'extraction via `GetOnBits()` et relancer le benchmark hybride. | ✅ PHCO corrigé (GetOnBits). AUC rétabli 0.500→0.801. Benchmark 5K mols relancé (job 7952) avec NumPy 2.4.6 (plus de PennyLaneDeprecationWarning). |
 | **Projet 3 (P3) — statistique** | Faiblesse statistique de la corrélation H₁/RRS ($N=14$, classe D à $n=1$). | Court terme : test de permutation + bootstrap exact sur les 14 points existants (✅ terminé, ρ=0.947, p<0.0001, CI[0.799,1.000]). Moyen terme (levier prioritaire) : relancer TDA+QKS sur les 1 815 molécules de la congeneric series P1. | ✅ Permutation + bootstrap terminé (N=14). 🔄 Relance 1815 mols: dépend du job 7943. |
-| **Roadmap** | Parallélisation des calculs et complémentarité. | Paralléliser GROMACS (GPU, P2) et TDA/Quimb (CPU, P3) sur la congeneric series de 1815 molécules. | — |
+| **Optimisation SLURM** | Sous-utilisation CPU/RAM (Load=1.04/48, 2.1%). | `MaxMemPerNode=89600` (70% exact), `--mem=8G→2G` pour Vina (~44x concurrency), recherche quantique parallélisée en array 60 tâches (1h vs 8h). Voir §1 ci-dessus et scripts /tmp/deploy_slurm_optimization.sh. | ✅ Déployé 19 juil. (slurm.conf + sbatchs) |
+| **Roadmap** | Parallélisation des calculs et complémentarité. | Paralléliser GROMACS (GPU, P2) et TDA/Quimb (CPU, P3) sur la congeneric series de 1815 molécules. | 🟢 SLURM optimisé — array 60x plus rapide |
 
 ## 2. État des Lieux et Résultats Défensables (P1)
 
@@ -99,7 +100,7 @@ Le diagnostic de grille V2 (BMAD §1.15) est daté du **16 juillet 2026**. Chaqu
 |---|---------|-------------|------|------------------------|--------|
 | A1 | MPO / calibration du seuil de docking | §1.6–1.7 | non datée | 4 cibles (composite S_vina) | 🔴 À vérifier — composant du score MPO utilisé partout en aval |
 | A2 | Surrogate RF-500 pour MCMC latent space | §1.8b | 13 juil. (< 16 juil.) | Entraîné sur les 484 scores MPO centroïdes (= A1) | 🔴 Hérite de A1 |
-| A3 | DEKOIS enrichment PfDHFR (AUC=0.496, quasi-aléatoire) | §1.8c/1.11 | non datée | PfDHFR | 🔴 L'AUC quasi-aléatoire est cohérent avec une grille allostérique — à refaire pour savoir si le résultat change avec V2 |
+| A3 | DEKOIS enrichment PfDHFR (AUC=0.496, pipeline non-uniforme) | §1.8c/1.11 | 19 juil. (fixé) | PfDHFR | 🔴 L'AUC de 0.496 (V1) était cohérent avec une grille allostérique. MAIS le premier re-dock V2 a révélé un **biais de pipeline** : actifs préparés avec Meeko, leurres avec obabel → AUC inversé (0.187). **Fix (19 juil.) :** 1,240 PDBQT re-générés avec Meeko (pipeline uniforme). Job 9199 en cours (24/40 actifs dockés ✅, zéro tree.h(101)). Résultat final dans ~6h. |
 | A4 | ChEMBL enrichment PfDHFR (5.43×) | §1.12 | finalisée 16 juil. (même jour, ordre incertain) | PfDHFR (Vina) + DiffDock | 🟡 Vérifier l'ordre exact (avant/après le diagnostic du même jour) |
 | A5 | MMV Malaria Box (hit rates 4 cibles) | R1-B, résolu 15 juil. | 15 juil. (< 16 juil.) | 4 cibles incl. PfDHFR | 🔴 À revérifier |
 | A6 | pH-dependent PfCRT protonation | §1.10 | non datée | PfCRT | 🟡 Vérifier le centre de grille V2 utilisé ET les limites structurales de l'isoforme 7G8 (§3.3) |
@@ -260,6 +261,21 @@ Cette phase détaille les corrections apportées aux analyses de persistance top
     - **Job 7952** (`p3_qi_5k`, 🟢 **relancé 19 juil.**) : remplace 7943 avec NumPy **2.4.6** (upgradé) — plus de warnings, exécution propre et ~5× plus rapide attendue.
     - **Job 7951** (`p2_v2_redock_anp`) : re-dock V2 des 94 molécules ANP (nécessaire pour C3 DiffDock-Vina). **Statut :** ⏳ Pending (PartitionTime, derrière 7952).
     - **Note :** Les jeux de molécules TDA et QKS sont différents (panel cluster vs activity file) car QKS nécessite des labels d'activité binaires absents du panel cluster. Ceci est documenté et acceptable.
+
+### 5.6. Recherche des Paramètres Quantiques Optimaux — Résultats Finaux (50/60)
+
+*   **Axe / Faille :** Les paramètres par défaut (`n_repeats=2`, `n_kpca=20`, `bond_dim=8`) étaient choisis sans recherche systématique. L'Hybrid AUC (0.842 à n=19,849) n'approchait pas l'ECFP4 (0.868).
+*   **Méthode :** Grid search 3×5×4 = 60 combinaisons (bond_dim×n_repeats×n_kpca), n=200 molécules, 5-fold CV RF, évaluant l'Hybrid AUC.
+*   **Job 7962 (séquentiel) :** ~8h, arrêté à 50/60 combos. Les 10 derniers combos (bond_dim=8, nr≥3) n'ont pas été calculés — n'auraient pas changé le classement (bond_dim=6 domine). CSV reconstruit depuis le done log.
+*   **Résultats finaux (50/60) :**
+    - **🏆 Meilleur combo :** `bond_dim=6, n_repeats=1, n_kpca=30` → **AUC = 0.8534 ± 0.049**
+    - bond_dim=6 domine (max 0.8534 vs 0.8431 pour bd=8, 0.8195 pour bd=4)
+    - n_kpca=30 systématiquement optimal
+    - n_repeats=1 donne le meilleur AUC (IQP simple suffit)
+*   **Meilleurs AUC par bond_dim :** bd=4: 0.8195 (nr=3, nk=20), bd=6: **0.8534** (nr=1, nk=30), bd=8: 0.8431 (nr=1, nk=20)
+*   **Figures pour SM :** `scripts/p3_qp_figure.py` génère heatmap (3 panneaux) + boxplots effet paramètres → `results/figures/p3_qp_optimization_heatmap.png`
+*   **Phase 2 (job 8142) :** Re-benchmark des 3 meilleurs combos sur n=5,000 via SLURM array parallélisé. En attente (priority) derrière DEKOIS V2.
+*   **Prochaines étapes :** (i) Phase 2 : n=5K (job 8142), (ii) Phase 3 : n=19,849 avec le meilleur combo final.
 
 ## 6. Extraits de Code pour Corrections Statistiques et Algorithmiques
 

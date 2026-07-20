@@ -1,0 +1,232 @@
+# ============================================================================
+# MALARIA PROJECT .gitignore
+# ============================================================================
+
+# ============================================================================
+# Python & Development
+# ============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ============================================================================
+# Jupyter Notebook
+# ============================================================================
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+.jupyter/
+
+# ============================================================================
+# Virtual Environments
+# ============================================================================
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+vfvs_env/
+.venv/
+*.ipynb_checkpoints
+
+# ============================================================================
+# Data Files (Large/Generated) - SELECTIVE TRACKING
+# ============================================================================
+# Track essential input data in data/raw/ (add specific exceptions below)
+# Ignore generated/processed outputs
+
+# Ignore all CSVs by default (generated outputs)
+# *.csv
+# # BUT track essential input datasets (unignore specific files)
+# !data/raw/All_molecules.csv
+# !data/raw/Afromalaria_DB.csv
+# !data/raw/Antimalarial_sp.csv
+# !data/raw/Antimalarial_NP.csv
+# !data/raw/MalariaBox400compoundsDec2014.csv
+# !data/raw/admet.csv
+# !data/raw/mol2mol_inputs.csv
+# !data/raw/malaria_final_inputs.csv
+# !data/raw/np_inputs.csv
+# !data/raw/wehi_pains.csv
+# !data/raw/PAINS_hits_Malaria.txt
+# !data/raw/pains.txt
+# !data/raw/alphabet.txt
+
+# Ignore all large binary/data files
+*.csv.lock
+*.csv#
+.~lock.*.csv#
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.npy
+*.npz
+# Molecular dynamics trajectory / force-field / coordinate files (often GiB)
+*.xtc
+*.frc
+*.mdcrd
+*.mdcrd.*
+*.crd
+*.oldpsf
+*.gro
+*.gro.*
+*.prmtop
+*.ndx
+*.rtf
+*.prm
+*.itp
+*.str
+*.psf
+*.top
+*.tpr
+*.edr
+*.trr
+*.log
+# *.smi
+# *.sdf
+# *.mol2
+#
+# # Track PDB files selectively (only essential reference structures)
+# *.pdb
+# *.pdbqt
+# # Exception: Track test/reference PDB files if needed
+# # !data/pdbqt_ligands_test/*.pdbqt
+#
+# # Other data formats
+# *.xlsx
+# *.xls
+
+# ============================================================================
+# Model Outputs & Training Results
+# ============================================================================
+# results/
+clustering_results/
+150_epochs_smi_vae_outputs/
+*.pt
+*.pth
+*.keras
+*.onnx
+*.h5
+checkpoint/
+checkpoints/
+logs/
+
+# AiZynthFinder model bundle (~754 MB at models/aizynthfinder/, downloaded
+# 2026-07-15 via scripts/r8b/download_aizynth_models.sh). The binary *.onnx
+# / *.hdf5 / *.h5 patterns above already match most files, but adding the
+# directory catches *.csv.gz + config.yml as well.
+models/
+!models/.gitkeep
+!models/README.md
+
+# ============================================================================
+# IDE & Editor Configuration
+# ============================================================================
+.vscode/
+.idea/
+.qodo/
+.qwen/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+QWEN.md
+
+# ============================================================================
+# OS & System Files
+# ============================================================================
+.DS_Store
+Thumbs.db
+.Thumbs.db
+ehthumbs.db
+*.bak
+
+# ============================================================================
+# Temporary & Cache Files
+# ============================================================================
+*.tmp
+*.temp
+*.log
+*.cache
+.cache/
+*.lock
+site-packages/
+
+# ============================================================================
+# LaTeX
+# ============================================================================
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.eps
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.nav
+*.out
+*.pdf
+*.ps
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*~.bak
+.texpadtmp/
+*.latexmain
+
+# ============================================================================
+# Misc Files
+# ============================================================================
+.env
+.env.local
+*.patch
+*.diff
+
+# ============================================================
+# Git
+# ============================================================
+*.orig
+*.rej
+
+# ============================================================
+# Hidden folders (except essential ones)
+# ============================================================
+.*/
+!.git/
+
+# ============================================================
+# BMAD (Build-Measure-Analyze-Document) methodology artifacts
+# ============================================================
+_bmad/
+_bmad-output/

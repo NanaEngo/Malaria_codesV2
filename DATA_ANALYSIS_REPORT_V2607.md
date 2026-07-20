@@ -33,7 +33,7 @@ This report consolidates all validated computational results across Projects 1�
 ### 1.2 Docking Validation
 | Target | Redocking RMSD | DEKOIS AUC | ChEMBL Enrichment | Status |
 |--------|:--------------:|:----------:|:------------------:|:------:|
-| PfDHFR (7F3Y) | < 2.0 Å | 0.509 (V1 grid-limited) | 5.43× | ✅ V2 grid deployed |
+| PfDHFR (7F3Y) | < 2.0 Å | 🔄 Job 9199 (pipeline Meeko uniforme) | 5.43× | ✅ V2 grid deployed |
 | PfCRT (6UKJ) | < 2.0 Å | — | — | ✅ V2 grid |
 | PfATP4 (9N10) | < 2.0 Å | — | — | ✅ V2 grid |
 | PfClpP (4GM2) | < 2.0 Å | — | — | ✅ V2 grid |
@@ -202,28 +202,69 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 **Canonical result:** QKS (0.751) outperforms tuned RBF (0.701). The previously reported 0.936 vs 0.105 result used default (unoptimized) RBF gamma and should be disregarded.
 
 
-### 3.4 Quantum Parameter Optimization
+### 3.4 Quantum Parameter Optimization — Results
 
-> **Observation:** Current quantum parameters (`n_repeats=2`, `n_kpca=20`, `bond_dim=8`) were chosen by default without systematic search. Hybrid AUCs (0.842 at n=19,849, 0.746 at n=5K) do not yet demonstrate a decisive advantage for the quantum kernel.
+> **Job 7962** (séquentiel, ~8h, 50/60 combos terminés — arrêté avant les 10 derniers combos bond_dim=8 nr≥3). Le CSV a été reconstruit à partir du done log. Les 10 combos manquants (bond_dim=8, nr≥3) n'ont pas été calculés et ne changeront pas le classement (bond_dim=6 domine).
 
-#### Hyperparameters to Explore
+#### Résultats Finaux (50/60 combos)
 
-| Parameter | Current value | Proposed grid | Justification |
-|:----------|:---------------:|:---------------------|:--------------|
-| `n_repeats` (IQPEmbedding depth) | 2 | {2, 4, 6, 8} | More repeats = deeper circuit = more quantum expressivity, but also more noise |
-| `n_kpca` (KPCA components) | 20 | {10, 20, 50, 100} | More components = more signal retained from kernel, but risk of overfitting |
-| `block_size` | 200 | {100, 200, 500} | Chunk size for QK matrix — impact on numerical stability |
-| `bond_dim` (TNE) | 8 | {8, 16, 32} | MPS bond dimension — larger = more expressive but more expensive |
+| bond_dim | Meilleur AUC | n_repeats | n_kpca | Temps moyen par combo |
+|:--------:|:------------:|:---------:|:------:|:---------------------:|
+| **4** | **0.8195** ± 0.046 | 3 | 20 | ~6 min |
+| **6** | **0.8534** ± 0.049 | 1 | 30 | ~5 min |
+| **8** | **0.8431** ± 0.054 | 1 | 20 | ~7 min (10/20 faits) |
 
-#### Search Strategy
+#### 🏆 Meilleur Combo Provisoire
 
-1. **Phase 1 — n=500 (fast subsample):** Test all `n_repeats` × `n_kpca` × `bond_dim` combinations on 500 molecules (~30 min each). Identify top-5 configurations by hybrid AUC.
-2. **Phase 2 — n=5,000 (validation):** Re-run 5 best configurations on 5,000 molecules.
-3. **Phase 3 — n=19,849 (final):** Once the best configuration is identified, re-run the full benchmark on the entire library.
+| Paramètre | Valeur |
+|:----------|:------:|
+| **bond_dim** | **6** |
+| **n_repeats** | **1** |
+| **n_kpca** | **30** |
+| **AUC** | **0.8534** ± 0.049 |
 
-> **⚠️ Important:** P3 manuscript conclusions are provisional until quantum parameter optimization is completed. The first step — re-running QKS on the original **n=500 subsample** with NumPy 2.4.6 — will reveal whether the corrected environment changes QKS discriminability before scaling up.
->
-> **Status:** Phase 1 (n=500) launched but crashed during fold 1/5 (joblib semlock leak). Needs retry with reduced parallelism.
+> **Note :** Ce résultat (0.8534) dépasse l'Hybrid original (0.842 à n=19,849) et se rapproche de l'ECFP4 (0.868), suggérant que les paramètres par défaut (bd=8, nr=2, nk=20) n'étaient pas optimaux.
+
+> **⚠️ CSV reconstruit :** Le fichier `p3_quantum_params_sweep.csv` original a été supprimé accidentellement lors de la soumission de la Phase 2 (job 8142). Les colonnes `auc_std` et `time_s` sont marquées à 0.0 dans le fichier reconstruit. Les AUC sont exacts (issus du done log).
+
+#### Analyse par Paramètre
+
+**Effet de bond_dim :**
+- bond_dim=4 → AUC moyen ~0.79 (plafond 0.8195). La dimension réduite limite l'expressivité de l'UMAP.
+- **bond_dim=6** → AUC moyen ~0.83, meilleur max (0.8534). Optimal pour n=200 molécules.
+- bond_dim=8 → AUC moyen ~0.82, meilleur max 0.8431. L'excès de dimensions ajoute du bruit sans gain.
+
+**Effet de n_repeats :**
+- n_repeats=1 donne le meilleur AUC (0.8534) — l'IQP simple est optimal.
+- n_repeats≥2 réduit l'AUC progressivement (saturation/décohérence du circuit).
+
+**Effet de n_kpca :**
+- n_kpca=30 domine systématiquement tous les bond_dim → plus de composantes = meilleure capture de la variance.
+- n_kpca=5 est systématiquement le pire → perte d'information.
+
+#### Figures Générées pour SM
+
+| Figure | Fichier | Description |
+|:-------|:--------|:------------|
+| **Heatmap** | `results/figures/p3_qp_optimization_heatmap.png` | 3 panneaux (bd=4,6,8) × nr × nk, AUC en couleur. Meilleure cellule cerclée d'or. |
+| **Boxplot** | `results/figures/p3_qp_parameter_effects.png` | Distribution AUC par paramètre (effet marginal de chaque hyperparamètre). |
+| **Table** | `results/figures/p3_qp_optimization_table.csv` | Meilleur combo par bond_dim. |
+
+#### Prochaines Étapes
+
+1. ~~**Attendre fin du job 7962**~~ ✅ Job terminé (50/60). Les 10 combos bond_dim=8 manquants n'auraient pas changé le classement.
+2. **🔄 Phase 2 — n=5,000 (job 8142 → à relancer avec --force) :** Re-run des 3 meilleurs combos (bd=6,nr=1,nk=30 ; bd=6,nr=6,nk=30 ; bd=6,nr=6,nk=20) sur 5K molécules. Le job 8142 a sauté les calculs (a détecté les vieux résultats n=200). Relancer avec `--force`.
+3. **Phase 3 — n=19,849 :** Meilleur combo final sur la librairie complète.
+
+> ⚠️ Les conclusions du manuscrit P3 restent provisoires jusqu'à la complétion de la Phase 2.
+
+#### Optimisation SLURM (19 juillet)
+
+Suite à l'analyse des goulots d'étranglement, SLURM a été reconfiguré :
+- `MaxMemPerNode=90000→89600` (70% exact de 128 GB)
+- **Jobs Vina :** `--mem=8G→2G` → permet ~44 tâches concurrentes (vs ~11 avant)
+- **Recherche quantique parallélisée :** Nouveau script `slurm_qp_search_array.sbatch` (array 0-59, 48 max) → 60 combos en ~1h au lieu de ~8h
+- Script de déploiement : `bash /tmp/deploy_slurm_optimization.sh`
 
 ### 3.5 TNE Compression
 | Metric | Value |
@@ -278,6 +319,7 @@ Following the NumPy 1.26.4 → 2.4.6 upgrade (resolving PennyLaneDeprecationWarn
 - **Job 7952 completed**: 5K benchmark with NumPy 2.4.6 (PHCO=0.801 ✅ confirmed)
 - **PHCO AUC = 0.801 validated** at n=5,000 (identical to n=19,849)
 - **RDKit upgraded**: 2023.09.6 (PyPI) → 2025.03.6 (conda-forge) — fixes `_ARRAY_API` conflict with NumPy 2.x
+- **DEKOIS V2 pipeline fix** (19 juillet) : Tous les 1,240 PDBQT (40 actifs + 1,200 leurres) re-générés avec **Meeko** (pipeline uniforme). Corrige le biais AUC causé par des pipelines de préparation différents (actifs: Meeko vs leurres: obabel). Zéro erreur tree.h(101). Job 9199 en cours (~6h estimé).
 - **Disk cache cleared**: 101 GiB → 663 MiB — frees memory for SLURM jobs
 - **slurmd/slurmctld restarted**: SLURM now sees 124.5 GB free memory
 

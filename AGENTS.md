@@ -111,10 +111,12 @@ Rules:
   |------|------|
   | Main V2607 | `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/manuscript/Antimalarial_Candidates_African_NP_V2607.tex` |
   | SM V2607 | `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/manuscript/Antimalarial_Candidates_African_NP_V2607_SM.tex` |
-  | Main V1 | `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/manuscript/Antimalarial_Candidates_African_NP_V1.tex` |
-  | SM V1 | `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/manuscript/Antimalarial_Candidates_African_NP_V1_SM.tex` |
-  | Bib V2607 | `acs-Antimalarial_Candidates_African_NP_V2607.bib` / `_SM.bib` |
-  | Bib V1 | `acs-Antimalarial_Candidates_African_NP_V1.bib` / `_SM.bib` |
+  | Bib V2607 | `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/manuscript/acs-Antimalarial_Candidates_African_NP_V2607.bib` / `_SM.bib` |
+
+  **Deprecated / historical only (archived under `.archive_P1_V2607_20260717/manuscript/`):**
+  - `.archive_P1_V2607_20260717/manuscript/Antimalarial_Candidates_African_NP_V1.tex` — pre-V2607 main manuscript; retained for historical reference.
+  - `.archive_P1_V2607_20260717/manuscript/Antimalarial_Candidates_African_NP_V1_SM.tex` — pre-V2607 supplementary material; retained for historical reference.
+  - `.archive_P1_V2607_20260717/manuscript/Deep_Learning_Antimalarial_Hybrids*.tex` — old title manuscripts and timestamped backups; retained for historical reference.
 
 ### V2607 manuscript files (P2)
   | File | Path |
@@ -123,6 +125,22 @@ Rules:
   | SM V2607 | `Project2_Polypharmacology_MD_ValidationV2607/manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2607.tex` |
   | Bib | `Project2_Polypharmacology_MD_ValidationV2607/manuscript/LaTeX/Bibliography_Polypharmacology_MD_Validation.bib` |
   | Cover Letter | `Project2_Polypharmacology_MD_ValidationV2607/manuscript/LaTeX/Cover_Letter.tex` |
+
+  **Deprecated / historical only (archived under `.archive_P2_V2607_20260720/manuscript/LaTeX/`):**
+  - `.archive_P2_V2607_20260720/manuscript/LaTeX/Paper2_Draft_v0.6.tex` — retained for historical reference; do not edit or submit.
+  - `.archive_P2_V2607_20260720/manuscript/LaTeX/Supplementary_Material.tex` — old placeholder SM; superseded by `Polypharmacology_MD_Validation_SM_V2607.tex`.
+
+### V2607 manuscript files (P3)
+  | File | Path |
+  |------|------|
+  | Main V2607 | `Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Paper3_Quantum_InspiredV2607.tex` |
+  | SM V2607 | `Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Paper3_Quantum_Inspired_SM_V2607.tex` |
+  | Bib | `Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Bibliography_Paper3.bib` |
+  | Cover Letter | `Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Cover_Letter_P3.tex` |
+  | Zenodo DOI | `10.5281/zenodo.19608875` — archived data, benchmark CSVs, and analysis scripts |
+
+  **Deprecated / historical only (archived under `.archive_P3_V2607_20260720/manuscript/LaTeX/`):**
+  - `.archive_P3_V2607_20260720/manuscript/LaTeX/Paper3_Draft_v0.6.tex` — retained for historical reference; do not edit or submit.
 
 ## Session July 10 — Re-solvation, MM-GBSA & Cross-Metric Correlation
   Completed:
@@ -494,6 +512,43 @@ Note 2026-07-17: this commit was rewritten via `git commit --amend` on
 2026-07-17 to align the subject marker with the in-file comment
 (DIR-DEDUP-2 -> DIR-DEDUP-DOC). Pre-push; local repo only; safe.
 # AUDIT FIX 2026-07-17 — DIR-DEDUP-DOC-HASHNOTE
+
+## Session 2026-07-20 — P3 Phase2 SLURM Job Audit & Fixes
+
+Completed:
+- **P3 phase2 running jobs audited** ✅
+  - Job 10594_0 (`p3_phase2_task0`): running with fixed script (`--n-jobs 1`)
+  - Jobs 9255_1 and 9255_2 (`p3_phase2`): running with old unfixed script (`--hpc`)
+  - Findings documented in `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §4.
+- **Critical race condition fixed** ✅ in `Project3_Quantum_Inspired_RepresentationsV2607/scripts/p3_quantum_param_search.py`
+  - Added `--output-csv` argument so each array task writes to a unique file.
+  - Derived `.done.log` from output CSV via `with_suffix(".done.log")`.
+  - Old shared `p3_quantum_params_sweep.csv` no longer races between tasks.
+- **OpenMP oversubscription fixed** ✅ in `Project3_Quantum_Inspired_RepresentationsV2607/scripts/p3_phase2_array.sbatch`
+  - Added `OMP_NUM_THREADS=1`, `OPENBLAS_NUM_THREADS=1`, `MKL_NUM_THREADS=1`, `NUMEXPR_NUM_THREADS=1`.
+  - Prevents lightning.qubit from spawning 48 threads on a 1-CPU allocation.
+- **TFP imputation bug fixed** ✅ in `p3_quantum_param_search.py`
+  - `load_precomputed()` now pads missing SMILES with `np.nan` instead of `np.zeros`.
+  - Existing mean-imputation logic now actually runs (previously dead code).
+- **Bash error handling improved** ✅ in `p3_phase2_array.sbatch`
+  - Added `err_handler` trap to log failures before `set -e` exits.
+  - Passes exit code explicitly via `trap 'err_handler $?' ERR`.
+- **PicklingError root cause eliminated** ✅
+  - Removed `--hpc` argparse flag and auto-detect block from `p3_quantum_param_search.py`.
+  - `_kernel_matrix_chunked` forces `n_jobs=1` with warning.
+  - SLURM script now uses `--n-jobs 1` instead of `--hpc`.
+- **Old jobs cancelled and resubmitted** ✅
+  - Cancelled 9255_1 and 9255_2.
+  - Resubmitted as job 10595 (tasks 1–2) with fixed script.
+- **Validation** ✅
+  - `python -m py_compile` on `p3_quantum_param_search.py` passes.
+  - `bash -n` on `p3_phase2_array.sbatch` passes.
+  - Code-reviewer-kimi approved all changes.
+
+**Current P3 phase2 jobs:**
+- 10594_0 (bd6_nr1_nk30): RUNNING, fixed script
+- 10595_1 (bd6_nr6_nk30): RUNNING, fixed script
+- 10595_2 (bd6_nr6_nk20): RUNNING, fixed script
 
 ## Session 2026-07-18 — RRS Table Population, PP-11 C59R Investigation & Named Ligand Docking
 

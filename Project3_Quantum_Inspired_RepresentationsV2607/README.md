@@ -10,7 +10,16 @@ Topological and Tensor-Network Representations Resolve Chemical Space Paradoxes 
 
 > **Data-analysis audit (2026-07-18):** Active P3 results are currently located under `Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/` and are being consolidated into the canonical top-level directory. Known issues: ✅ PHCO descriptor bug fixed — AUC rose from 0.500 to ~0.83 after replacing `ConvertToNumpyArray` with manual `GetOnBits()` bit-setting; ✅ QKS headline reconciled — canonical result is Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns) on 500 molecules; the 0.936/0.105 claim was unsupported and has been removed. See `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §2 for the full audit and SLURM correction plan.
 >
-> **Next steps for P3 relaunch:** import P1 full-cluster 1815-mol panel (`Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/r8b/fullcluster_rescoring/docking_results.csv`) into P3, run TDA and QKS benchmarks on this congeneric series, and update §3.3/§4.7 of the manuscript.
+> **P3 phase2 SLURM job audit & fixes (2026-07-20):** Running jobs audited and four issues fixed in `scripts/p3_quantum_param_search.py` and `scripts/p3_phase2_array.sbatch`: (1) `PicklingError` on PennyLane `StateVectorC128` — removed the `--hpc` auto-detect flag and forced `n_jobs=1`; (2) race condition on shared `p3_quantum_params_sweep.csv` — added `--output-csv` so each array task writes a unique file; (3) OpenMP oversubscription — set `OMP_NUM_THREADS=1`, `OPENBLAS_NUM_THREADS=1`, `MKL_NUM_THREADS=1`, `NUMEXPR_NUM_THREADS=1`; (4) TFP imputation bug — missing SMILES now padded with `NaN` instead of zeros so mean imputation runs. Bash error handling improved with an `err_handler` trap.
+>
+> **Smoke tests (2026-07-20):** Single-process test (`--n-mols 50`) completed in ~44 s with AUC 0.8697 ± 0.1002 (verification only, not a benchmark result). Parallel two-process test with distinct `--output-csv` files completed successfully, confirming no race condition.
+>
+> **Current P3 phase2 jobs:**
+> - `10594_0` (bd6_nr1_nk30): RUNNING, fixed script
+> - `10595_1` (bd6_nr6_nk30): RUNNING, fixed script
+> - `10595_2` (bd6_nr6_nk20): RUNNING, fixed script
+>
+> **Next steps for P3 relaunch:** import P1 full-cluster 1815-mol panel (`Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/r8b/fullcluster_rescoring/docking_results.csv`) into P3, run TDA and QKS benchmarks on this congeneric series, and update §3.3/§4.7 of the manuscript. See `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §4 for the full P3 phase2 SLURM audit and fix details.
 ## Overview
 
 | Attribute | Details |
@@ -61,8 +70,11 @@ Topological and Tensor-Network Representations Resolve Chemical Space Paradoxes 
 
 | File | Description |
 |------|-------------|
-| [`LaTeX/Paper3_Draft_v0.6.tex`](LaTeX/Paper3_Draft_v0.6.tex) | **Current draft** — all sections written; siunitx/cleveref/booktabs/xr applied; AI layers removed; Results tables structured, ready for data |
+| [`LaTeX/Paper3_Quantum_InspiredV2607.tex`](LaTeX/Paper3_Quantum_InspiredV2607.tex) | **Canonical manuscript (v0.7)** — all sections written; siunitx/cleveref/booktabs/xr applied; internal version labels and job IDs removed; ready for submission |
+| [`LaTeX/Paper3_Quantum_Inspired_SM_V2607.tex`](LaTeX/Paper3_Quantum_Inspired_SM_V2607.tex) | **Supplementary Material** — contains the H$_1$ vs RRS cross-paper violin figure (`fig:h1_rrs`) |
+| [`LaTeX/Paper3_Draft_v0.6.tex`](../../.archive_P3_V2607_20260720/manuscript/LaTeX/Paper3_Draft_v0.6.tex) | `Malaria_codesV2/.archive_P3_V2607_20260720/manuscript/LaTeX/Paper3_Draft_v0.6.tex` | Deprecated draft — archived for historical reference only; do not edit |
 | [`LaTeX/Bibliography_Paper3.bib`](LaTeX/Bibliography_Paper3.bib) | 50+ references (zero missing citations) |
+| Zenodo DOI | [`10.5281/zenodo.19608875`](https://doi.org/10.5281/zenodo.19608875) — archived data, benchmark CSVs, and analysis scripts |
 
 ## Scripts
 
@@ -112,4 +124,4 @@ Myke Vital Sao Temgoua, Jean-Pierre Tchapet Njafa, Serge Guy Nana Engo, Penabei 
 ---
 
 **Roadmap:** [`docs/PAPERS_2_3_ROADMAP.md`](../../docs/PAPERS_2_3_ROADMAP.md) (v2.2)
-**Last Updated:** April 2026
+**Last Updated:** July 20, 2026

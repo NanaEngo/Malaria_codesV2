@@ -7,11 +7,30 @@
 
 **Target Journal:** *Journal of Chemical Information and Modeling* (IF 5.6)  
 **Status:** ✅ Production MD complete (4/4 systems); 🚧 Mutant integration & MM-GBSA reconciliation in progress  
-**Manuscript:** `manuscript/PEER_REVIEW_v0.6.md` — conceptual framework complete, results pending
+**Manuscript:** `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` — canonical V2607 version---
+
+## 📄 Manuscript Files
+
+### Canonical V2607 files
+
+| File | Path | Description |
+|------|------|-------------|
+| Main manuscript | [`manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex`](manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex) | Canonical V2607 main manuscript |
+| Supplementary Material | [`manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2607.tex`](manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2607.tex) | Canonical V2607 supplementary material |
+| Cover Letter | [`manuscript/LaTeX/Cover_Letter.tex`](manuscript/LaTeX/Cover_Letter.tex) | Submission cover letter |
+| Bibliography | [`manuscript/LaTeX/Bibliography_Polypharmacology_MD_Validation.bib`](manuscript/LaTeX/Bibliography_Polypharmacology_MD_Validation.bib) | Main bibliography |
+
+### Deprecated / historical / stale files
+
+> **⚠️ These files are retained for historical reference only. Do not edit or submit them.**
+
+| File | Archive Location | Description |
+|------|------------------|-------------|
+| `Paper2_Draft_v0.6.tex` | `Malaria_codesV2/.archive_P2_V2607_20260720/manuscript/LaTeX/` | Old draft main manuscript |
+| `Supplementary_Material.tex` | `Malaria_codesV2/.archive_P2_V2607_20260720/manuscript/LaTeX/` | Old placeholder supplementary material |
+| `Bibliography_Paper2.bib` | `manuscript/LaTeX/` (still in source tree) | Stale/legacy bibliography; superseded by `Bibliography_Polypharmacology_MD_Validation.bib` |
 
 ---
-
-
 
 > **Data-analysis audit (2026-07-18):** Active P2 results are currently located under `Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/` and are being consolidated into the canonical top-level directory. Known issues: `md_top20_candidates.csv` contains 17 rows (not 20); 438_PfATP4 MM-GBSA ΔG = +473 kcal/mol is physically implausible and excluded; mutant docking results (102 rows) are not yet integrated into RRS/ACSI/PNS. See `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §2 for the full audit and SLURM correction plan.
 ## 📋 Table of Contents
@@ -108,8 +127,8 @@ Project2_Polypharmacology_MD_ValidationV2607/
 │
 ├── manuscript/
 │   ├── LaTeX/                             → LaTeX source
-│   │   ├── Paper2_Draft_v0.6.tex          → Main manuscript
-│   │   ├── Supplementary_Material.tex     → Supplementary document
+│   │   ├── Polypharmacology_MD_Validation_V2607.tex  → Main manuscript
+│   │   ├── Polypharmacology_MD_Validation_SM_V2607.tex → Supplementary document
 │   │   ├── Table_S0_Docking_Validation.tex
 │   │   ├── Table_S5_ADMET_CrossValidation.tex
 │   │   ├── Table_S6_ACSI_Weight_Sensitivity.tex
@@ -349,10 +368,10 @@ bash scripts/md_run_production.sh
 
 ## 🔗 Related Projects
 
-- **[Project 1: Computational Discovery](../Papers/Chem_space_antimalarial_JCIM/)** — Initial candidate identification via AI pipeline
+- **[Project 1: Computational Discovery](../Project1_Chem_space_antimalarial_V2607_CorrectedGrid/)** — Initial candidate identification via AI pipeline
 - **[ANPDB](https://african-compounds.org/)** — African Natural Products Database
 
 ---
 
-**Last Updated:** July 4, 2026  
+**Last Updated:** July 20, 2026  
 **Contact:** myke-vital.sao@facsciences-uy1.cm

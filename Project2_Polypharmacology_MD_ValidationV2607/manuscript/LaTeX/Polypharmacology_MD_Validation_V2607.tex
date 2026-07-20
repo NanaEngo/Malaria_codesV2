@@ -46,7 +46,7 @@
 \usepackage{xr}
 \externaldocument[SM-]{Polypharmacology_MD_Validation_SM_V2607}
 \IfFileExists{../../Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Paper3_Quantum_Inspired_v0.7.aux}{%
-  \externaldocument[P3-]{../../Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Paper3_Quantum_Inspired_v0.7_V2607}%
+  \externaldocument[P3-]{../../Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Paper3_Quantum_InspiredV2607}%
 }{%
   \typeout{WARNING: Paper3 aux file not found - cross-references disabled}%
 }
@@ -305,7 +305,7 @@ The \num{20} candidates were selected from the \num{19914} primary leads (MPO $\
 
 The 14 polypharm scaffolds were classified into four resilience tiers based on their RRS values across the six mutants (\cref{tab:rrs}). Named consensus hits (Ligands 201, 214, 87, 438, 164) are reported in the methods section; their per-mutant RRS values will be computed in subsequent MD-based validation.
 
-One scaffold, PP-11 (7,3$'$-O-dimethylquercetin, a methylated flavonol), exhibited a striking resistance pattern: near-complete loss of binding at PfDHFR-C59R (RRS = \qty{0.4}{\percent}, $\Delta G = -\SI{0.02}{\kcalmol}$) while maintaining RRS \qtyrange{126}{155}{\percent} at all other five mutants. This \qty{3.0}{\sigma} outlier is not a docking artifact: other compounds dock normally at C59R (mean $\Delta G = -\SI{5.8}{\kcalmol}$), and PP-11 docks normally at all other mutants. The selective knockout is consistent with a steric clash between the Arg59 guanidinium group (introduced by the Cys-to-Arg mutation, which doubles side-chain volume from \SI{86}{\angstrom\cubed} to \SI{173}{\angstrom\cubed}) and the rigid, planar flavonoid C-ring. This finding establishes a design rule: planar, $\pi$-conjugated scaffolds such as flavonoids, while highly resilient to most PfDHFR mutations, are selectively vulnerable to C59R --- the most prevalent pyrimethamine resistance allele in Africa (\qtyrange{60}{80}{\percent}). Preference should therefore be given to sp$^3$-rich, conformationally flexible scaffolds for PfDHFR-targeted polypharmacological leads. 
+One scaffold, PP-11 (7,3$'$-O-dimethylquercetin, a methylated flavonol), exhibited a striking resistance pattern: near-complete loss of binding at PfDHFR-C59R (RRS = \qty{0.4}{\percent}, $\Delta G = -\SI{0.02}{\kcalmol}$) while maintaining RRS \qtyrange{126}{155}{\percent} at all other five mutants. This 3.0$\sigma$ outlier is not a docking artifact: other compounds dock normally at C59R (mean $\Delta G = -\SI{5.8}{\kcalmol}$), and PP-11 docks normally at all other mutants. The selective knockout is consistent with a steric clash between the Arg59 guanidinium group (introduced by the Cys-to-Arg mutation, which doubles side-chain volume from \SI{86}{\angstrom\cubed} to \SI{173}{\angstrom\cubed}) and the rigid, planar flavonoid C-ring. This finding establishes a design rule: planar, $\pi$-conjugated scaffolds such as flavonoids, while highly resilient to most PfDHFR mutations, are selectively vulnerable to C59R --- the most prevalent pyrimethamine resistance allele in Africa (\qtyrange{60}{80}{\percent}). Preference should therefore be given to sp$^3$-rich, conformationally flexible scaffolds for PfDHFR-targeted polypharmacological leads. 
 
 \begin{table}[htbp]
 \centering
@@ -681,7 +681,7 @@ We present a resistance-aware computational framework for antimalarial lead vali
 
 \section*{Data Availability}
 
-All MD trajectories, MM-GBSA outputs, and analysis scripts are deposited on Zenodo (DOI: \textit{to be assigned upon acceptance}). Docking results and compound SMILES are provided as supplementary CSV files, including the full molecular library in SELFIES representation (\texttt{all\_mol\_selfies.csv}, \num{51} molecules). All code is available at \url{https://github.com/NanaEngo/Malaria_codesV2} under the MIT licence.
+All MD trajectories, MM-GBSA outputs, and analysis scripts are deposited on Zenodo (DOI: \url{https://doi.org/10.5281/zenodo.19608875}, shared with the companion chemical-space dataset). Docking results and compound SMILES are provided as supplementary CSV files, including the full molecular library in SELFIES representation (\texttt{all\_mol\_selfies.csv}, \num{51} molecules). All code is available at \url{https://github.com/NanaEngo/Malaria_codesV2} under the MIT licence.
 
 \section*{Competing Interests}
 
