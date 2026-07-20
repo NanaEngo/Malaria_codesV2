@@ -79,7 +79,8 @@ echo "║  Label: ${LABEL}"
 echo "║  N molecules: ${N_MOLS}"
 echo "║  Host: $(hostname)"
 echo "║  CPUs avail: $(nproc)"
-echo "║  Mem: $(free -h | grep Mem | awk '{print $3 \" / \" $2}')"
+mem_info=$(free -h | awk '/Mem/{print $3 " / " $2}')
+echo "║  Mem: ${mem_info}"
 echo "║  Start: $(date -u -Iseconds)"
 echo "╚══════════════════════════════════════════════════════════════╝"
 
