@@ -112,7 +112,7 @@ if _HAS_JAX:
         Uses pennylane-lightning with JAX backend for optimal performance.
         Falls back to default.qubit if lightning devices unavailable.
         """
-        key = (n_qubits, n_repeats)
+        key = (n_qubits, n_repeats, prefer_cpu)
         if key not in _KERNEL_FN_JAX_CACHE:
             dev_name = _DEVICE_OVERRIDE or best_device(n_qubits, prefer_cpu=prefer_cpu)
             dev_jax = qml.device(dev_name, wires=n_qubits)
