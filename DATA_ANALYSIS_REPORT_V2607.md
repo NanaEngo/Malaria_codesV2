@@ -278,13 +278,55 @@ Suite à l'analyse des goulots d'étranglement, SLURM a été reconfiguré :
 
 ---
 
-## 4. Cross-Project Validation Summary
+## 5. Cross-Project Validation Summary
 
 | Cross-Validation | Method 1 | Method 2 | Result | Significance |
 |:----------------:|:--------:|:--------:|:------:|:------------:|
 | MPO vs Binding (Tartarus) | MPO score | QuickVina docking | ρ = 0.013, n = 17,211 | Independent |
 | H1 Persistence vs RRS | TFP (H1) | RRS (docking mutants) | ρ = 0.947, n = 14 | p < 0.0001 |
 | TNE vs Tartarus docking | TNE (192-dim) | QuickVina score | R² = 0.473 (PfDHFR) | Slightly > ECFP4 |
+
+---
+
+## 4. P4 Pareto-Guided MCTS Results (Benchmark v2)
+
+### 4.1 Four-Method Benchmark (5 seeds, n_iterations=500, rollout=policy_biased)
+
+| Method | Mean Reward | Std | Min | Max | Time (s) | Docking (mean) | MPO (mean) |
+|:------|:----------:|:---:|:---:|:---:|:--------:|:--------------:|:----------:|
+| **MCTS+ScafVAE** | 1.653 | 0.368 | 1.097 | 2.075 | 41.1 | −5.967 | 0.397 |
+| **Random** | 2.097 | 0.040 | 2.041 | 2.145 | 37.1 | −7.560 | 0.561 |
+| **Greedy** | 2.227 | 0.061 | 2.168 | 2.293 | 137.4 | −7.727 | 0.846 |
+| **GA** | 2.211 | 0.107 | 2.071 | 2.367 | 8.4 | −7.740 | 0.791 |
+
+**Key findings:**
+- GA and Greedy outperform MCTS by a large margin (~0.56 reward difference)
+- MCTS with `policy_biased` rollout improves by +0.13 (+8.5%) vs random rollout (v1), but still underperforms baselines
+- Greedy has the lowest variance (σ=0.061) and highest MPO (0.846) — strong local optimisation
+- GA is the most wall-clock efficient (8.4s per seed) due to population-based parallel evaluation
+- MCTS suffers from high variance (σ=0.368, CV=22%), suggesting sensitivity to random initialisation
+
+### 4.2 Ablation Studies
+
+| Configuration | Mean Reward | Δ vs Full MCTS |
+|:-------------|:-----------:|:--------------:|
+| Full MCTS+ScafVAE (default) | 1.52 | — |
+| w/o ScafVAE policy (flat PUCT) | 1.48 | −0.04 |
+| w/o Pareto front (scalar reward) | 1.50 | −0.02 |
+| c_puct = 0.5 (low exploration) | 1.55 | +0.03 |
+| c_puct = 5.0 (high exploration) | 1.45 | −0.07 |
+| Minimal fragment set (10 fragments) | 1.38 | −0.14 |
+
+**Key findings:**
+- ScafVAE policy and Pareto front have minimal impact on MCTS reward (Δ < 0.05)
+- The most impactful factor is fragment vocabulary size: 33→10 fragments degrades reward by −0.14
+- Reducing c_PUCT from 1.414→0.5 marginally improves (+0.03) — less exploration helps with small budgets
+
+### 4.3 Root Cause Analysis: Why MCTS Underperforms
+
+1. **Random rollouts dominate value noise**: With 33 actions × 10 steps, a single random rollout gives a noisy value estimate. Greedy evaluates ALL 33 fragments at each step, yielding much better local choices.
+2. **Policy-biased rollout helps modestly (+0.13)** but the core issue persists: the rollout horizon is too long for the MCTS budget (500 iterations).
+3. **Docking proxy penalises novel molecules**: MCTS explores more diverse chemical space, but the Tanimoto nearest-neighbour proxy assigns −5.97 docking to novel molecules vs −7.73 for library-similar molecules from Greedy/GA.
 
 ---
 
@@ -301,13 +343,23 @@ Suite à l'analyse des goulots d'étranglement, SLURM a été reconfiguré :
 - TNE bond_dim=8 embeddings (65,856 molecules)
 
 ### In Progress 🔄
+- **Phase 2 P3 (job 11876, n=5,000):** En cours — kernel ~7h CPU, `bd=6, nr=1, nk=30`
 - **QKS Phase 1 (n=500):** Benchmark crashed during fold 1/5 (joblib semlock leak). Needs retry with reduced parallelism or memory.
-- **Optimisation paramètres quantiques:** Stratégie en 3 phases définie (§3.4). Phase 1 (n=500) à relancer.
+- **Optimisation paramètres quantiques:** Stratégie en 3 phases définie (§3.4). Phase 2 (n=5,000) en cours.
 - P2 MM-GBSA membrane: PfATP4 with igb=8 (job 7944, PENDING — Resources)
 - TNE bond_dim=16: 768 features (job 7945, PENDING — Priority)
 - TNE bond_dim=16 vs bond8 comparison (job 7947, PENDING — Dependency on 7945)
 - **Named ligand docking: 5 ligands × 6 mutants (job 7948, PENDING — switched to production)
 - **TNE bond_dim=16 (job 7945), bond16 vs bond8 comparison (job 7947)**: PENDING — on hold until production partition frees
+
+### GPU & Parallélisation
+
+**GPU disponible** (NVIDIA RTX A4000, CUDA 12) mais **déconseillé** pour le kernel quantique P3 :
+- CPU (`lightning.qubit` + triangle supérieur) : **535 paires/s** ✅
+- GPU (`lightning.gpu`) : **420 paires/s** ❌ (1.3× plus lent, overhead GPU)
+- JAX JIT GPU : **81 paires/s** ❌ (8× plus lent)
+
+**Parallélisation CPU recommandée** quand possible via `--n-jobs` (TNE, TDA, MD) ou SLURM arrays (P4 MCTS).
 
 ### Completed Since Last Report ✅
 - **RRS table populated** in P2 manuscript: 14 polypharm compounds (PP-04 to PP-17) with actual per-mutant RRS values

@@ -13,7 +13,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
-#SBATCH --time=01:00:00
+#SBATCH --time=08:00:00
 #SBATCH --partition=production
 #SBATCH --export=ALL
 
@@ -47,7 +47,7 @@ time "${PYTHON}" "${PROJECT_DIR}/scripts/p3_quantum_param_search.py" \
   --n-kpca 30 \
   --n-mols "${N_MOLS}" \
   --block-size 200 \
-  --n-jobs 1 \
+  --n-jobs 4 \
   --output-csv "${OUT_CSV}" 2>&1
 
 if [ -f "${OUT_CSV}" ]; then

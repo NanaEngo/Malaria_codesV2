@@ -78,6 +78,13 @@ try:
 except ImportError:
     pass
 
+_HAS_JOBLIB = False
+try:
+    from joblib import Parallel, delayed
+    _HAS_JOBLIB = True
+except ImportError:
+    pass
+
 # ── Colour palette (JCIM-compatible, colourblind-friendly) ──────────
 PALETTE = {
     "primary": "#4575b4",
@@ -370,13 +377,45 @@ def plot_score_heatmap(
 # ═══════════════════════════════════════════════════════════════════════
 
 
-def compute_molecular_properties(smiles_list: list[str]) -> "pd.DataFrame":
+def _compute_single_properties(smi: str) -> dict:
+    """Compute molecular properties for a single SMILES (extracted for joblib)."""
+    if not _HAS_RDKIT:
+        return {"SMILES": smi, "MW": 0, "LogP": 0, "HBA": 0, "HBD": 0,
+                "RotBonds": 0, "TPSA": 0, "RingCount": 0, "Validity": False}
+    mol = Chem.MolFromSmiles(smi)
+    if mol is None:
+        return {"SMILES": smi, "MW": 0, "LogP": 0, "HBA": 0, "HBD": 0,
+                "RotBonds": 0, "TPSA": 0, "RingCount": 0, "Validity": False}
+    try:
+        return {
+            "SMILES": smi,
+            "MW": Descriptors.MolWt(mol),
+            "LogP": Descriptors.MolLogP(mol),
+            "HBA": Descriptors.NumHAcceptors(mol),
+            "HBD": Descriptors.NumHDonors(mol),
+            "RotBonds": Descriptors.NumRotatableBonds(mol),
+            "TPSA": Descriptors.TPSA(mol),
+            "RingCount": rdMolDescriptors.CalcNumRings(mol),
+            "Validity": True,
+        }
+    except Exception as exc:
+        logger.debug("Property computation failed for %s: %s", smi, exc)
+        return {"SMILES": smi, "MW": 0, "LogP": 0, "HBA": 0, "HBD": 0,
+                "RotBonds": 0, "TPSA": 0, "RingCount": 0, "Validity": False}
+
+
+def compute_molecular_properties(
+    smiles_list: list[str],
+    n_jobs: int = 1,
+) -> "pd.DataFrame":
     """Compute RDKit molecular properties for a list of SMILES.
 
     Parameters
     ----------
     smiles_list : list of str
         List of SMILES strings.
+    n_jobs : int
+        Number of parallel jobs (default: 1=sequential).
 
     Returns
     -------
@@ -386,36 +425,12 @@ def compute_molecular_properties(smiles_list: list[str]) -> "pd.DataFrame":
     if not _HAS_RDKIT or not _HAS_PANDAS:
         return pd.DataFrame()
 
-    properties = []
-    for smi in smiles_list:
-        mol = Chem.MolFromSmiles(smi)
-        if mol is None:
-            properties.append({
-                "SMILES": smi,
-                "MW": 0, "LogP": 0, "HBA": 0, "HBD": 0,
-                "RotBonds": 0, "TPSA": 0, "RingCount": 0,
-                "Validity": False,
-            })
-            continue
-        try:
-            properties.append({
-                "SMILES": smi,
-                "MW": Descriptors.MolWt(mol),
-                "LogP": Descriptors.MolLogP(mol),
-                "HBA": Descriptors.NumHAcceptors(mol),
-                "HBD": Descriptors.NumHDonors(mol),
-                "RotBonds": Descriptors.NumRotatableBonds(mol),
-                "TPSA": Descriptors.TPSA(mol),
-                "RingCount": rdMolDescriptors.CalcNumRings(mol),
-                "Validity": True,
-            })
-        except Exception as exc:
-            logger.debug("Property computation failed for %s: %s", smi, exc)
-            properties.append({
-                "SMILES": smi, "MW": 0, "LogP": 0, "HBA": 0,
-                "HBD": 0, "RotBonds": 0, "TPSA": 0, "RingCount": 0,
-                "Validity": False,
-            })
+    if _HAS_JOBLIB and n_jobs != 1:
+        properties = Parallel(n_jobs=n_jobs, verbose=0)(
+            delayed(_compute_single_properties)(smi) for smi in smiles_list
+        )
+    else:
+        properties = [_compute_single_properties(smi) for smi in smiles_list]
 
     return pd.DataFrame(properties)
 

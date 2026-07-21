@@ -348,13 +348,12 @@ def _precompute_qk_all(X_ecfp,
                                    n_qubits=n_qubits,
                                    n_repeats=n_repeats)
     else:
-        if _HAS_JAX and _JAX_BACKEND == "gpu":
-            print(f"    Using JAX kernel (GPU) — JIT compiling first call...", flush=True)
-            K = _kernel_matrix_jax(X_q, n_qubits, n_repeats)
-        else:
-            _kfn = _get_kernel_fn(n_qubits, n_repeats)
-            desc = f"  Kernel ({n_qubits}q, {n_repeats}rep)"
-            K = _kernel_matrix_with_progress(X_q, _kfn, desc=desc)
+        # NOTE: GPU (lightning.gpu / JAX JIT) is 1.3-8x SLOWER than CPU
+        # for pair-by-pair kernel evaluation due to GPU launch overhead.
+        # Always use CPU (lightning.qubit + upper-triangle loop) for speed.
+        _kfn = _get_kernel_fn(n_qubits, n_repeats)
+        desc = f"  Kernel ({n_qubits}q, {n_repeats}rep)"
+        K = _kernel_matrix_with_progress(X_q, _kfn, desc=desc)
     times["kernel"] = time.perf_counter() - t1
     rate = n_pairs / times["kernel"] if times["kernel"] > 0 else 0
     print(f"    Kernel matrix: {times['kernel']:.1f}s  ({rate:.0f} pairs/s)", flush=True)

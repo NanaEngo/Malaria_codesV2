@@ -16,6 +16,8 @@ import math
 import random
 from typing import Any, Callable, Optional
 
+import numpy as np
+
 
 class MCTSNode:
     """Node in the MCTS tree."""
@@ -75,12 +77,14 @@ class MCTSAgent:
         n_iterations: int = 100,
         c_puct: float = 1.414,
         policy_fn: Optional[Callable[[str, list[str]], dict[str, float]]] = None,
+        rollout_strategy: str = "policy_biased",
     ) -> None:
         self.env = env
         self.oracle = oracle
         self.n_iterations = n_iterations
         self.c_puct = c_puct
         self.policy_fn = policy_fn
+        self.rollout_strategy = rollout_strategy
 
     def search(self, root_state: str) -> str:
         """Run MCTS from root_state and return the best molecule found.
@@ -93,12 +97,8 @@ class MCTSAgent:
         root = MCTSNode(root_state)
         root.step_count = self.env.step_count
 
-        # Pre-compute action priors if a policy is available
-        if self.policy_fn is not None:
-            vocab = list(getattr(self.env, "fragment_vocab", []))
-            self._action_priors = self.policy_fn(root_state, vocab)
-        else:
-            self._action_priors = {}
+        # Cache priors per node state for efficiency
+        self._priors_cache: dict[str, dict[str, float]] = {}
 
         for iteration in range(self.n_iterations):
             node = self._select(root)
@@ -109,6 +109,18 @@ class MCTSAgent:
             return root_state
         best = max(root.children.values(), key=lambda child: child.visits)
         return best.state
+
+    def _get_priors(self, state: str) -> dict[str, float]:
+        """Get (or compute and cache) action priors for a given state."""
+        if state in self._priors_cache:
+            return self._priors_cache[state]
+        if self.policy_fn is not None:
+            vocab = list(getattr(self.env, "fragment_vocab", []))
+            priors = self.policy_fn(state, vocab)
+        else:
+            priors = {}
+        self._priors_cache[state] = priors
+        return priors
 
     def _select(self, node: MCTSNode) -> MCTSNode:
         """Select a leaf node using PUCT, expanding if possible."""
@@ -122,17 +134,20 @@ class MCTSAgent:
         """Select child with highest PUCT score = Q + U.
 
         U = c_puct * P(s,a) * sqrt(N_parent) / (1 + N_child)
-        where P(s,a) is the policy prior for taking action a from state s.
+        where P(s,a) is the state-dependent policy prior for action a.
         """
         sqrt_n = math.sqrt(max(node.visits, 1))
         best_score = -float("inf")
         best_child = None
 
+        # Get state-dependent priors for this node
+        node_priors = self._get_priors(node.state) if self.policy_fn else {}
+
         for action, child in node.children.items():
             # Action value
             q = child.value / max(child.visits, 1)
-            # Policy prior
-            prior = self._action_priors.get(action, 0.0)
+            # State-dependent policy prior
+            prior = node_priors.get(action, 0.0)
             # Convert log-prob back to prob for PUCT formula
             p = math.exp(prior) if prior < 0 else prior
             # PUCT exploration bonus
@@ -149,11 +164,13 @@ class MCTSAgent:
         """Expand the node by adding one untried action as a child."""
         if node.untried_actions is None:
             vocab = list(getattr(self.env, "fragment_vocab", []))
-            if self.policy_fn is not None and self._action_priors:
+            # Get state-dependent priors for this node
+            node_priors = self._get_priors(node.state)
+            if node_priors:
                 # Order by policy prior (highest first) for efficient exploration
                 node.untried_actions = sorted(
                     vocab,
-                    key=lambda a: self._action_priors.get(a, 0.0),
+                    key=lambda a: node_priors.get(a, 0.0),
                     reverse=True,
                 )
             else:
@@ -176,14 +193,36 @@ class MCTSAgent:
         return child
 
     def _rollout(self, node: MCTSNode) -> float:
-        """Simulate a random rollout from the node and return the oracle reward."""
+        """Simulate a rollout from the node and return the oracle reward.
+
+        Uses policy-biased sampling during rollout instead of pure random:
+        - 'policy_biased' (default): sample fragments from ScafVAE policy distribution
+        - 'random': uniform random (original, poor performance)
+        """
         env_copy = copy.deepcopy(self.env)
         env_copy.state = node.state
         env_copy.step_count = node.step_count
 
         done = env_copy.step_count >= env_copy.max_steps or env_copy._is_terminal(env_copy.state)
+
         while not done:
-            action = random.choice(env_copy.fragment_vocab)
+            if self.rollout_strategy == "policy_biased" and self.policy_fn is not None:
+                # Sample fragment from policy distribution (not uniform random)
+                node_priors = self._get_priors(env_copy.state)
+                if node_priors:
+                    actions = list(node_priors.keys())
+                    log_probs = np.array([node_priors[a] for a in actions])
+                    # Numerically stable softmax
+                    log_probs = log_probs - np.max(log_probs)
+                    probs = np.exp(log_probs)
+                    probs = probs / probs.sum()
+                    action = random.choices(actions, weights=probs, k=1)[0]
+                else:
+                    action = random.choice(env_copy.fragment_vocab)
+            else:
+                # Uniform random (original)
+                action = random.choice(env_copy.fragment_vocab)
+
             _state, _reward, done, _info = env_copy.step(action)
 
         return self.oracle(env_copy.state)

@@ -40,6 +40,13 @@ import numpy as np
 _HAS_PANDAS = False
 _HAS_RDKIT = False
 _HAS_MATPLOTLIB = False
+_HAS_JOBLIB = False
+
+try:
+    from joblib import Parallel, delayed
+    _HAS_JOBLIB = True
+except ImportError:
+    pass
 
 try:
     import pandas as pd
@@ -97,6 +104,124 @@ def _compute_diversity(smiles_list: list[str]) -> float:
 # ── Benchmark runner ─────────────────────────────────────────────────
 
 
+def _run_single_seed(
+    seed: int,
+    env: Any,
+    oracle: Any,
+    n_iterations: int,
+    ga_population: int,
+    ga_generations: int,
+    mcts_c_puct: float,
+    use_policy: bool,
+) -> dict[str, Any]:
+    """Run all methods for a single seed (extracted for joblib parallelism)."""
+    from p4_mcts_agent import MCTSAgent
+    from p4_mcts_baselines import (
+        genetic_algorithm,
+        greedy_search,
+        random_search,
+    )
+    from p4_mcts_policy import ScafVAEPolicy
+
+    result: dict[str, Any] = {}
+
+    # ── MCTS ──────────────────────────────────────────────────
+    policy_fn = None
+    if use_policy:
+        policy = ScafVAEPolicy(temperature=0.8, random_seed=seed)
+        policy_fn = policy.get_action_priors
+
+    agent = MCTSAgent(
+        env, oracle=oracle.reward,
+        n_iterations=n_iterations,
+        c_puct=mcts_c_puct,
+        policy_fn=policy_fn,
+    )
+    mcts_start = time.time()
+    best_mcts = agent.search(env.initial_smiles)
+    mcts_time = time.time() - mcts_start
+    mcts_reward = oracle.reward(best_mcts)
+    mcts_scores = oracle.score(best_mcts)
+
+    result["mcts"] = {
+        "seed": seed,
+        "best_smiles": best_mcts,
+        "best_reward": mcts_reward,
+        "mpo": mcts_scores.get("mpo", 0.0),
+        "docking": mcts_scores.get("docking", 0.0),
+        "syba": mcts_scores.get("syba", 0.0),
+        "sa": mcts_scores.get("sa", 0.0),
+        "time_s": mcts_time,
+    }
+
+    # ── Random Search ─────────────────────────────────────────
+    random_start = time.time()
+    best_rand, rand_r, rand_traj = random_search(
+        env, oracle.reward, n_iterations=n_iterations, seed=seed
+    )
+    random_time = time.time() - random_start
+    rand_scores = oracle.score(best_rand)
+
+    result["random"] = {
+        "seed": seed,
+        "best_smiles": best_rand,
+        "best_reward": rand_r,
+        "mpo": rand_scores.get("mpo", 0.0),
+        "docking": rand_scores.get("docking", 0.0),
+        "syba": rand_scores.get("syba", 0.0),
+        "sa": rand_scores.get("sa", 0.0),
+        "time_s": random_time,
+        "n_molecules": len(rand_traj),
+    }
+
+    # ── Greedy Search ─────────────────────────────────────────
+    n_restarts = max(1, n_iterations // 50)
+    greedy_start = time.time()
+    best_greedy, greedy_r, greedy_traj = greedy_search(
+        env, oracle.reward, max_steps=env.max_steps,
+        n_restarts=n_restarts, seed=seed
+    )
+    greedy_time = time.time() - greedy_start
+    greedy_scores = oracle.score(best_greedy)
+
+    result["greedy"] = {
+        "seed": seed,
+        "best_smiles": best_greedy,
+        "best_reward": greedy_r,
+        "mpo": greedy_scores.get("mpo", 0.0),
+        "docking": greedy_scores.get("docking", 0.0),
+        "syba": greedy_scores.get("syba", 0.0),
+        "sa": greedy_scores.get("sa", 0.0),
+        "time_s": greedy_time,
+        "n_molecules": len(greedy_traj),
+    }
+
+    # ── Genetic Algorithm ─────────────────────────────────────
+    ga_start = time.time()
+    best_ga, ga_r, ga_traj = genetic_algorithm(
+        env, oracle.reward,
+        population_size=ga_population,
+        n_generations=ga_generations,
+        seed=seed,
+    )
+    ga_time = time.time() - ga_start
+    ga_scores = oracle.score(best_ga)
+
+    result["ga"] = {
+        "seed": seed,
+        "best_smiles": best_ga,
+        "best_reward": ga_r,
+        "mpo": ga_scores.get("mpo", 0.0),
+        "docking": ga_scores.get("docking", 0.0),
+        "syba": ga_scores.get("syba", 0.0),
+        "sa": ga_scores.get("sa", 0.0),
+        "time_s": ga_time,
+        "n_evals": ga_population * ga_generations,
+    }
+
+    return result
+
+
 def run_benchmark(
     env: Any,
     oracle: Any,
@@ -104,6 +229,7 @@ def run_benchmark(
     ga_population: int = 50,
     ga_generations: int = 20,
     n_seeds: int = 5,
+    n_jobs: int = 1,
     mcts_c_puct: float = 1.414,
     use_policy: bool = True,
 ) -> dict[str, Any]:
@@ -133,14 +259,6 @@ def run_benchmark(
     dict
         Nested dictionary with results per method per seed.
     """
-    from p4_mcts_agent import MCTSAgent
-    from p4_mcts_baselines import (
-        genetic_algorithm,
-        greedy_search,
-        random_search,
-    )
-    from p4_mcts_policy import ScafVAEPolicy
-
     results: dict[str, list[dict[str, Any]]] = {
         "mcts": [],
         "random": [],
@@ -148,105 +266,28 @@ def run_benchmark(
         "ga": [],
     }
 
-    for seed in range(n_seeds):
-        print(f"  Seed {seed + 1}/{n_seeds}...")
+    # Use joblib for cross-seed parallelism when n_jobs > 1
+    _run_seed_job = lambda seed: _run_single_seed(
+        seed, env, oracle, n_iterations, ga_population, ga_generations,
+        mcts_c_puct, use_policy
+    )
 
-        # ── MCTS ────────────────────────────────────────────────
-        policy_fn = None
-        if use_policy:
-            policy = ScafVAEPolicy(temperature=0.8, random_seed=seed)
-            policy_fn = policy.get_action_priors
-
-        agent = MCTSAgent(
-            env, oracle=oracle.reward,
-            n_iterations=n_iterations,
-            c_puct=mcts_c_puct,
-            policy_fn=policy_fn,
+    if _HAS_JOBLIB and n_jobs != 1:
+        parallel_results = Parallel(n_jobs=n_jobs, verbose=10)(
+            delayed(_run_seed_job)(seed) for seed in range(n_seeds)
         )
-        mcts_start = time.time()
-        best_mcts = agent.search(env.initial_smiles)
-        mcts_time = time.time() - mcts_start
-        mcts_reward = oracle.reward(best_mcts)
-        mcts_scores = oracle.score(best_mcts)
-
-        results["mcts"].append({
-            "seed": seed,
-            "best_smiles": best_mcts,
-            "best_reward": mcts_reward,
-            "mpo": mcts_scores.get("mpo", 0.0),
-            "docking": mcts_scores.get("docking", 0.0),
-            "syba": mcts_scores.get("syba", 0.0),
-            "sa": mcts_scores.get("sa", 0.0),
-            "time_s": mcts_time,
-        })
-
-        # ── Random Search ──────────────────────────────────────
-        random_start = time.time()
-        best_rand, rand_r, rand_traj = random_search(
-            env, oracle.reward, n_iterations=n_iterations, seed=seed
-        )
-        random_time = time.time() - random_start
-        rand_scores = oracle.score(best_rand)
-
-        results["random"].append({
-            "seed": seed,
-            "best_smiles": best_rand,
-            "best_reward": rand_r,
-            "mpo": rand_scores.get("mpo", 0.0),
-            "docking": rand_scores.get("docking", 0.0),
-            "syba": rand_scores.get("syba", 0.0),
-            "sa": rand_scores.get("sa", 0.0),
-            "time_s": random_time,
-            "n_molecules": len(rand_traj),
-        })
-
-        # ── Greedy Search ──────────────────────────────────────
-        n_restarts = max(1, n_iterations // 50)
-        greedy_start = time.time()
-        best_greedy, greedy_r, greedy_traj = greedy_search(
-            env, oracle.reward, max_steps=env.max_steps,
-            n_restarts=n_restarts, seed=seed
-        )
-        greedy_time = time.time() - greedy_start
-        greedy_scores = oracle.score(best_greedy)
-
-        results["greedy"].append({
-            "seed": seed,
-            "best_smiles": best_greedy,
-            "best_reward": greedy_r,
-            "mpo": greedy_scores.get("mpo", 0.0),
-            "docking": greedy_scores.get("docking", 0.0),
-            "syba": greedy_scores.get("syba", 0.0),
-            "sa": greedy_scores.get("sa", 0.0),
-            "time_s": greedy_time,
-            "n_molecules": len(greedy_traj),
-        })
-
-        # ── Genetic Algorithm ──────────────────────────────────
-        ga_start = time.time()
-        best_ga, ga_r, ga_traj = genetic_algorithm(
-            env, oracle.reward,
-            population_size=ga_population,
-            n_generations=ga_generations,
-            seed=seed,
-        )
-        ga_time = time.time() - ga_start
-        ga_scores = oracle.score(best_ga)
-
-        # Total GA evaluations
-        ga_n_evals = ga_population * ga_generations
-
-        results["ga"].append({
-            "seed": seed,
-            "best_smiles": best_ga,
-            "best_reward": ga_r,
-            "mpo": ga_scores.get("mpo", 0.0),
-            "docking": ga_scores.get("docking", 0.0),
-            "syba": ga_scores.get("syba", 0.0),
-            "sa": ga_scores.get("sa", 0.0),
-            "time_s": ga_time,
-            "n_evals": ga_n_evals,
-        })
+        for method in results:
+            results[method] = [r[method] for r in parallel_results]
+        print(f"  Parallel (n_jobs={n_jobs}): {n_seeds} seeds → {len(parallel_results)} results")
+    else:
+        for seed in range(n_seeds):
+            print(f"  Seed {seed + 1}/{n_seeds}...")
+            seed_result = _run_single_seed(
+                seed, env, oracle, n_iterations, ga_population, ga_generations,
+                mcts_c_puct, use_policy
+            )
+            for method in results:
+                results[method].append(seed_result[method])
 
     return results
 
@@ -376,6 +417,8 @@ def main() -> None:
                         help="GA generations (default: 20)")
     parser.add_argument("--n-seeds", type=int, default=5,
                         help="Number of random seeds (default: 5)")
+    parser.add_argument("--n-jobs", type=int, default=1,
+                        help="Parallel seeds via joblib (default: 1=sequential)")
     parser.add_argument("--no-policy", action="store_true",
                         help="Disable ScafVAE policy in MCTS")
     parser.add_argument("--output", type=Path,
@@ -398,6 +441,8 @@ def main() -> None:
     print(f"  MCTS iterations:  {args.n_iterations}")
     print(f"  GA pop × gen:     {args.ga_population} × {args.ga_generations}")
     print(f"  Seeds:            {args.n_seeds}")
+    parallel_label = "parallel" if _HAS_JOBLIB and args.n_jobs != 1 else "sequential"
+    print(f"  n_jobs:           {args.n_jobs} ({parallel_label})")
     print(f"  Max steps:        {args.max_steps}")
     print(f"  Policy:           {'ScafVAE' if not args.no_policy else 'None'}")
     print(f"  Oracle:           P1/P2 precomputed libraries")
@@ -420,6 +465,7 @@ def main() -> None:
         ga_population=args.ga_population,
         ga_generations=args.ga_generations,
         n_seeds=args.n_seeds,
+        n_jobs=args.n_jobs,
         use_policy=not args.no_policy,
     )
 
