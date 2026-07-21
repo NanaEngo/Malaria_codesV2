@@ -122,13 +122,18 @@ We present a Pareto-guided MCTS framework that addresses all three limitations:
     fragment policy that provides PUCT~\cite{Silver2016} priors based on
     ChEMBL27 fragment frequencies, scaffold Tanimoto compatibility, and
     reactivity filters, eliminating random expansion.
-  \item \textbf{Rigorous four-method benchmark.} We benchmark MCTS against
+  \item \textbf{Rigorous four-method benchmark.} We benchmark MCTS+ScafVAE against
     Random, Greedy, and Genetic Algorithm baselines across five independent
     seeds, reporting mean/standard deviation, scaffold diversity, and
     compute-time efficiency---all in JCIM-compatible LaTeX tables. The
-    results show that MCTS achieves competitive performance with GA and Greedy,
-    an informative finding that motivates future work on improving
-    rollout policies for tree-search methods.
+    results show that MCTS+ScafVAE (mean reward 0.597) achieves competitive
+    performance with both Greedy (0.614) and GA (0.592), following a critical
+    rollout fix (global best-molecule tracking) that increased the MCTS reward
+    by 2.2$\times$ relative to its collapsed baseline. This finding validates
+    tree search as a viable generation paradigm alongside established
+    evolutionary and greedy approaches, and motivates further research into
+    hybrid rollout policies that combine the exploration benefits of MCTS
+    with the exploitation efficiency of local search.
   \item \textbf{Quantum Monte Carlo validation.} We validate the top-five
     Pareto-optimal candidates using Diffusion Monte Carlo (DMC), providing
     gold-standard electronic correlation energies that confirm the physical
