@@ -190,12 +190,10 @@ class MCTSAgent:
         # Collapse detection state
         last_best_state = root_state
         collision_count = 0
+        # Start with max temperature; annealed at end of each iteration
+        current_temp = self.rollout_temperature
 
         for iteration in range(self.n_iterations):
-            # Annealed temperature: linear decay from rollout_temperature to rollout_temp_min
-            frac = iteration / max(self.n_iterations - 1, 1)
-            current_temp = self.rollout_temperature - frac * (self.rollout_temperature - self.rollout_temp_min)
-
             node = self._select(root)
             reward = self._rollout(node, temperature=current_temp)
             self._backpropagate(node, reward)
@@ -215,11 +213,11 @@ class MCTSAgent:
                 last_best_state = current_best
 
             # If collapse detected, force exploration via Dirichlet noise
-            # on root priors (AlphaGo-style). Clears priors cache and adds
-            # noise to the root's action selection to force exploration of
-            # alternative branches.
+            # on root priors (AlphaGo-style). Resets temperature to max
+            # so the NEXT rollout explores more aggressively.
             if collision_count >= self.collision_threshold:
                 self._priors_cache = {}
+                current_temp = self.rollout_temperature  # Reset to max for next rollout
                 # Dirichlet noise on root: get root priors and perturb them
                 if self.policy_fn is not None and root.children:
                     root_priors = self._get_priors(root.state)
@@ -234,6 +232,13 @@ class MCTSAgent:
                             noisy_priors[act] = (1.0 - _DIRICHLET_EPSILON) * prior + _DIRICHLET_EPSILON * float(dir_noise[idx])
                         self._priors_cache[root.state] = noisy_priors
                 collision_count = 0
+            else:
+                # Annealed temperature for NEXT iteration
+                # Use (iteration + 1) to avoid one-iteration delay:
+                # iteration 0 computes temp for iteration 1's rollout, etc.
+                frac = (iteration + 1) / max(self.n_iterations - 1, 1)
+                frac = min(frac, 1.0)  # clamp to [0, 1]
+                current_temp = self.rollout_temperature - frac * (self.rollout_temperature - self.rollout_temp_min)
 
         # Store root for downstream metrics (hparam search uses this)
         self._root = root
