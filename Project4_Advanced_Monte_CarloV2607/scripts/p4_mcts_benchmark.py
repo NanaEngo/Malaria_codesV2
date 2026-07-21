@@ -526,5 +526,103 @@ def main() -> None:
     print(f"{'=' * 60}")
 
 
+# ── Merge per-seed CSVs into cross-seed LaTeX table ─────────────────
+
+def merge_csvs_to_latex(
+    results_dir: Path,
+    n_seeds: int = 5,
+    output_path: Optional[Path] = None,
+) -> None:
+    """Read per-seed CSVs and generate a cross-seed LaTeX table.
+
+    This function is designed to run AFTER array jobs have completed.
+    It reads all p4_benchmark_seed_N.csv files and computes cross-seed
+    statistics (mean, std, max across seeds) for the LaTeX table.
+    """
+    if output_path is None:
+        output_path = results_dir / "p4_benchmark_table.tex"
+
+    from collections import defaultdict
+
+    all_results: dict[str, list[dict[str, float]]] = defaultdict(list)
+
+    for seed in range(n_seeds):
+        csv_path = results_dir / f"p4_benchmark_seed_{seed}.csv"
+        if not csv_path.exists():
+            print(f"  WARNING: {csv_path} not found, skipping seed {seed}")
+            continue
+        with open(csv_path) as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                all_results[row["method"]].append({
+                    "reward": float(row["best_reward"]),
+                    "mpo": float(row["mpo"]),
+                    "docking": float(row["docking"]),
+                    "syba": float(row["syba"]),
+                    "sa": float(row["sa"]),
+                    "time_s": float(row["time_s"]),
+                    "smiles": row["best_smiles"],
+                })
+
+    # Compute cross-seed stats
+    methods_ordered = ["mcts", "random", "greedy", "ga"]
+    method_labels = {
+        "mcts": "MCTS + ScafVAE (ours)",
+        "random": "Random Search",
+        "greedy": "Greedy Search",
+        "ga": "Genetic Algorithm",
+    }
+
+    lines = [
+        r"\begin{table}[htbp]",
+        r"\centering",
+        r"\caption{Benchmark comparison of molecular generation methods across $n=5$ seeds.}",
+        r"\label{tab:p4_benchmark}",
+        r"\begin{tabular}{lcccccc}",
+        r"\toprule",
+        r"Method & Mean Reward $\uparrow$ & Max Reward $\uparrow$ & Std & Time (s) & MPO $\uparrow$ & Docking \\",
+        r"\midrule",
+    ]
+
+    for method in methods_ordered:
+        if method not in all_results or not all_results[method]:
+            continue
+        runs = all_results[method]
+        rewards = [r["reward"] for r in runs]
+        times = [r["time_s"] for r in runs]
+        mpos = [r["mpo"] for r in runs]
+        docks = [r["docking"] for r in runs]
+        smiles = [r["smiles"] for r in runs]
+
+        mean_r = float(np.mean(rewards))
+        max_r = float(np.max(rewards))
+        std_r = float(np.std(rewards))
+        mean_t = float(np.mean(times))
+        mean_mpo = float(np.mean(mpos))
+        mean_dock = float(np.mean(docks))
+
+        label = method_labels.get(method, method.capitalize())
+        line = (
+            f"  {label} & "
+            f"{mean_r:.4f} & "
+            f"{max_r:.4f} & "
+            f"{std_r:.4f} & "
+            f"{mean_t:.1f} & "
+            f"{mean_mpo:.3f} & "
+            f"{mean_dock:.2f} \\\\"
+        )
+        lines.append(line)
+
+    lines.extend([
+        r"\bottomrule",
+        r"\end{tabular}",
+        r"\end{table}",
+    ])
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"  Cross-seed LaTeX table: {output_path} ({len(lines)} lines)")
+
+
 if __name__ == "__main__":
     main()
