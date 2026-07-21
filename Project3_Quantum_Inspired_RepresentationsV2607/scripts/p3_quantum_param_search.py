@@ -23,10 +23,17 @@ Output:
 """
 
 import argparse
+import gc
+import gzip
+import logging
 import sys
 import time
 import warnings
+from functools import lru_cache
 from pathlib import Path
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+_log = logging.getLogger(__name__)
 
 try:
     from tqdm import tqdm
@@ -92,6 +99,10 @@ from rdkit.Chem import rdFingerprintGenerator
 from rdkit.DataStructs import ConvertToNumpyArray
 
 morgan_gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
+
+# ── ECFP4 cache (R11) ───────────────────────────────────────────────
+_ECFP4_CACHE: dict[str, np.ndarray] = {}
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold

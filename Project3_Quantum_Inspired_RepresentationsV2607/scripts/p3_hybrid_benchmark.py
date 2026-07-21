@@ -38,14 +38,24 @@ Usage:
 """
 
 import argparse
+import gc
+import gzip
 import json
+import logging
 import time
 import warnings
+from functools import lru_cache
 from pathlib import Path
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+_log = logging.getLogger(__name__)
 
 warnings.filterwarnings("ignore")
 warnings.simplefilter("ignore", FutureWarning)
 warnings.simplefilter("ignore", DeprecationWarning)
+
+# ── ECFP4 cache (R11) ───────────────────────────────────────────────
+_ECFP4_CACHE: dict[str, np.ndarray] = {}
 
 import numpy as np
 import pandas as pd
@@ -90,14 +100,21 @@ def load_activity() -> pd.DataFrame:
 
 
 def ecfp4(smiles_list: list[str]) -> np.ndarray:
+    """Compute ECFP4 fingerprints with caching (R11)."""
     rows = []
     for smi in smiles_list:
+        if smi in _ECFP4_CACHE:
+            rows.append(_ECFP4_CACHE[smi])
+            continue
         mol = Chem.MolFromSmiles(smi)
         arr = np.zeros(2048, dtype=np.float32)
         if mol:
             ConvertToNumpyArray(morgan_gen.GetFingerprint(mol), arr)
+        _ECFP4_CACHE[smi] = arr
         rows.append(arr)
-    return np.array(rows)
+    result = np.array(rows)
+    assert result.shape[1] == 2048, f"ECFP4: expected 2048 dims, got {result.shape[1]}"  # R7
+    return result
 
 
 def maccs(smiles_list: list[str]) -> np.ndarray:
@@ -432,6 +449,11 @@ def _qk_features_fold(X_ecfp_tr: np.ndarray, X_ecfp_te: np.ndarray,
     # Normalise to unit variance (for stable weighting across folds)
     qk_tr = qk_tr / (qk_tr.std(axis=0, keepdims=True) + 1e-10)
     qk_te = qk_te / (qk_te.std(axis=0, keepdims=True) + 1e-10)
+
+    # R7: Dimension asserts
+    assert qk_tr.shape[1] == qk_te.shape[1], f"QK dim mismatch: train {qk_tr.shape[1]} vs test {qk_te.shape[1]}"
+    assert np.all(np.isfinite(qk_tr)), "NaN/Inf in QK training features"
+    assert np.all(np.isfinite(qk_te)), "NaN/Inf in QK test features"
 
     return qk_tr.astype(np.float32), qk_te.astype(np.float32)
 
