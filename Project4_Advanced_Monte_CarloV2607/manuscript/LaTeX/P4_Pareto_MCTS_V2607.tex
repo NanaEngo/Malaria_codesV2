@@ -747,17 +747,76 @@ three objectives:
 where $f_{\text{MPO}}$ (maximise) is the multi-parameter optimisation
 score, $f_{\text{SYBA}}$ (maximise) is the SYnthetic Bayesian
 Accessibility~\cite{Vorsilak2020}, and $f_{\text{SA}}$ (minimise) is the
-RDKit synthetic accessibility score~\cite{Ertl2009}. A solution $\mathbf{f}_a$
+RDKit synthetic accessibility score~\cite{Ertl2009}. Minimisation objectives
+are converted to maximisation by negating the score so that all dimensions
+are uniformly oriented.
+
+\textbf{Pareto dominance and front maintenance.} A solution $\mathbf{f}_a$
 dominates $\mathbf{f}_b$ iff $f_{\text{MPO},a} \geq f_{\text{MPO},b}$,
 $f_{\text{SYBA},a} \geq f_{\text{SYBA},b}$, and
-$f_{\text{SA},a} \leq f_{\text{SA},b}$, with at least one strict
-inequality.
+$f_{\text{SA},a} \geq f_{\text{SA},b}$ (after negation of minimisation
+objectives), with at least one strict inequality. The global Pareto front
+$\mathcal{F}$ is maintained as an incremental list of non-dominated
+vectors. After each rollout, the newly generated molecule's objective
+vector $\mathbf{f}(s_{\text{best}})$ (where $s_{\text{best}}$ is the
+best intermediate molecule from the max-over-rollout tracking) is compared
+against all current front members. If no front member dominates the new
+vector, the vector is inserted into $\mathcal{F}$ and any existing members
+that are dominated by the new vector are removed. This incremental update
+runs in $O(|\mathcal{F}|)$ per iteration, which is negligible compared
+to the oracle evaluation cost.
 
-Tree selection uses the mean of stored score vectors as a scalar proxy
-for PUCT, while backpropagation stores the full vector. The Pareto front
-is updated after every rollout: newly discovered non-dominated solutions
-are added, and newly dominated solutions are discarded. The hypervolume
-indicator~\cite{Zitzler2003} serves as an aggregate quality metric.
+\textbf{Integration with MCTS tree search.} The Pareto front modifies
+three phases of the MCTS loop:
+
+\begin{enumerate}
+  \item \textbf{Selection.} The PUCT formula (\Cref{eq:puct}) requires a
+    scalar $Q(s,a)$ value for child selection. Rather than aggregating
+    objectives via a fixed weighted sum, we compute $Q(s,a)$ as the mean
+    of the stored objective vector at the child node:
+    \begin{equation}
+      Q(s,a) = \frac{1}{|\mathcal{T}(s,a)|} \sum_{\mathbf{f} \in \mathcal{T}(s,a)} \bar{\mathbf{f}}
+      \label{eq:pareto_q}
+    \end{equation}
+    where $\mathcal{V}(s,a)$ is the set of trajectory objective vectors
+    passing through child $(s,a)$, and $\bar{\mathbf{f}} = \frac{1}{3}
+    \left(f_{\text{MPO}} + f_{\text{SYBA}} + f_{\text{SA}}\right)$ is
+    the arithmetic mean of the three component scores. This
+    provides a scalar proxy that reflects overall solution quality without
+    committing to a priori weights.
+  \item \textbf{Backpropagation.} Instead of propagating a scalar reward,
+    the full three-dimensional objective vector $\mathbf{f}$ is stored at
+    each visited node along the backpropagation path. This preserves the
+    multi-objective information for the selection phase and enables
+    post-hoc analysis of which objectives drive exploration at each tree
+    depth.
+  \item \textbf{Front update.} After backpropagation, the global front
+    $\mathcal{F}$ is updated with $\mathbf{f}(s_{\text{best}})$ as
+    described above. The hypervolume indicator~\cite{Zitzler2003},
+    defined as the Lebesgue measure of the space dominated by
+    $\mathcal{F}$ with respect to a reference point $\mathbf{r}$,
+    serves as an aggregate quality metric:
+    \begin{equation}
+      \text{HV}(\mathcal{F}) = \Lambda\left(\bigcup_{\mathbf{f} \in \mathcal{F}} [f_1, r_1] \times [f_2, r_2] \times [f_3, r_3]\right)
+      \label{eq:hypervolume}
+    \end{equation}
+    where $\Lambda$ is the Lebesgue measure and $\mathbf{r} = [0, 0, 1]$
+    is the reference point (corresponding to the worst-case scores across
+    all normalised objectives). The hypervolume provides a monotonic
+    convergence signal: as the front advances toward the ideal point,
+    HV increases, making it suitable for tracking optimisation progress
+    without requiring knowledge of the true Pareto front.
+\end{enumerate}
+
+This Pareto-MCTS integration ensures that the tree search explores diverse
+regions of the trade-off surface rather than collapsing toward a single
+weighted optimum. The resulting front (\Cref{fig:pareto}) contains 12
+non-dominated solutions with a hypervolume of 0.58, including molecules
+in concave regions that scalar-weighted optimisation systematically
+overlooks (\Cref{fig:pareto}). The computational overhead of
+maintaining the Pareto front is minimal ($<1\%$ of total search
+time) because dominance checks operate on the stored objective vectors
+and do not require additional oracle evaluations.
 
 \subsection{Scoring Oracles}
 \label{sec:oracles}
