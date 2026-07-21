@@ -235,18 +235,18 @@ PfDHFR (7F3Y) docking of 37 ChEMBL actives:
 
 | Metric | Value | Interpretation |
 |--------|-------|----------------|
-| ROC-AUC | **0.496** (95% CI 0.402–0.591) | **Near-random** — Vina alone cannot discriminate actives from decoys |
+| ROC-AUC | **0.450** (95% CI 0.367–0.531) | **Near-random** — Vina alone cannot discriminate actives from decoys |
 | EF5% | **0.50** | Worse than random (expected 1.0) |
 | EF10% | **1.00** | At random |
 | BEDROC (α=20) | **0.021** | No early enrichment |
 | PR-AUC | **0.032** | Near-random precision |
 | Active mean score | −6.96 kcal/mol | ≈ decoy mean (−7.00) |
 
-**Key finding:** Prospective AutoDock Vina docking alone achieves **near-random enrichment** on DEKOIS PfDHFR (AUC 0.496, all 40 actives). This is a well-documented limitation of naive docking on property-matched decoys and **motivates the ML-based DiffDock rescoring** that underpins the consensus enrichment (MMV AUC 0.924–1.000).
+**Key finding:** Prospective AutoDock Vina docking alone achieves **near-random enrichment** on DEKOIS PfDHFR (AUC 0.450, all 40 actives). This is a well-documented limitation of naive docking on property-matched decoys and **motivates the ML-based DiffDock rescoring** that underpins the consensus enrichment (MMV AUC 0.924–1.000).
 
 **Current manuscript claims (roc-auc 0.924-1.000):** 
 - For PfDHFR/PfATP4/PfClpP/PfCRT — these values come from MMV positive-control ranking (consensus-score stratification), **not DEKOIS**. Caption/Table now updated to clarify "MMV positive-control benchmark".
-- DEKOIS result (AUC 0.509) now honestly reported in Methods, Validation, Discussion, Limitations, and Conclusion as evidence that docking-alone fails, motivating ML rescoring.
+- DEKOIS result (AUC 0.450, 95% CI 0.367–0.531) now honestly reported in Methods, Validation, Discussion, Limitations, and Conclusion as evidence that docking-alone fails, motivating ML rescoring.
 
 **Manuscript edits:** Methods l.134, Validation l.216, Efficiency l.263, Discussion l.279, Limitations l.308 (Seventh), Conclusion l.314/316. SM table rows fixed + DEKOIS row added.
 
@@ -273,7 +273,7 @@ Data from `p1_prior_comparison_summary.txt` (verified locally — rsync July 15,
 
 #### Previously Missing Result Files — ✅ ALL RESOLVED (July 15, 2026)
 
-All P1 result files have been synced from HPC (`Project1_Chem_space_antimalarialV2607/results/`) to local `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/results/` via rsync on July 15, 2026 (~32 MB transferred).
+All P1 result files have been synced from HPC (`Project1_Chem_space_antimalarialV2607/results/`) to local `Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/` via rsync on July 15, 2026 (~32 MB transferred).
 
 | File | Status |
 |------|--------|
@@ -1102,7 +1102,7 @@ The directory `/home/taamangtchu/Documents/Github/Malaria_codes/Papers/` (87 ent
 The HPC cluster (`100.73.21.40` — user `nanaengo`) was audited and synced:
 
 **✅ Completed:**
-- Renamed `Project1_Chem_space_antimalarial_V2607_CorrectedGrid` → `Project1_Chem_space_antimalarialV2607` on HPC (consistent with local naming)
+- Renamed `Project1_Chem_space_antimalarial_V2_CorrectedGrid` → `Project1_Chem_space_antimalarialV2607` on HPC (consistent with local naming)
 - Updated `r8b_fullcluster_hpc.sbatch` with new path
 - Fixed `myke_vital` → `nanaengo` paths in `p1_enrichment_validation.py` (RESULTS, DATA, DOCKING, VINA_BIN)
 - Synced 9 missing result files local → HPC (`p1_admet_crossval.csv`, `p1_mpo_sensitivity*`, `p1_prior_comparison*`, `c12_tanimoto_novelty_v2.csv`, `c3_selectivity_index.csv`, `p1_scaffold_tanimoto.csv`, `eos7kpb_malaria_final_screening.csv`)
@@ -1198,7 +1198,7 @@ A systematic inventory was performed across the three project directories to ver
 
 | Project | Canonical results dir | Files found | Status |
 |---------|----------------------|-------------|--------|
-| P1 V2 corrected-grid | `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/` | 40 (CSV/TXT/PNG/log) | ✅ Results present and mostly analyzed |
+| P1 V2 corrected-grid | `/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/` | 40 (CSV/TXT/PNG/log) | ✅ Results present and mostly analyzed |
 | P2 MD validation | `/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/` | 50+ (CSV/XVG/log) | ⚠️ Results exist but are stored under `Malaria_codesV2/`, not the canonical top-level dir; several outputs are incomplete or physically doubtful |
 | P3 Quantum representations | `/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/` | 30+ (CSV/TXT/PNG) | ⚠️ Results exist under `Malaria_codesV2/`; canonical `/home/nanaengo/Project3.../results/` is empty; some benchmark claims are contradictory |
 
@@ -1213,7 +1213,7 @@ A systematic inventory was performed across the three project directories to ver
 | # | Finding | Severity | Action |
 |---|---------|----------|--------|
 | 1 | **V2 grid correction** (§1.15) shows PfDHFR grid V1 was 35.4 Å off the catalytic site; all pre-V2 PfDHFR docking scores are allosteric, not catalytic. | High | Re-dock top candidates with V2 grids; update manuscript §2.11 |
-| 2 | **DEKOIS enrichment** (§1.8c) AUC = 0.496 (near-random) — consistent with literature but weakens any claim that Vina alone discriminates actives. | Medium | Already disclosed; keep as motivation for DiffDock consensus |
+| 2 | **DEKOIS enrichment** (§1.8c) AUC = 0.450 (near-random) — consistent with literature but weakens any claim that Vina alone discriminates actives. | Medium | Already disclosed; keep as motivation for DiffDock consensus |
 | 3 | **pH 5.2 re-docking** (§1.10) shifts PfCRT scores by +2.20 kcal/mol with ρ = 0.270; ranking is not preserved. | Medium | Report already notes this; consider re-ranking top PfCRT candidates |
 | 4 | **Mixed exhaustiveness** in `v2_centroid_scores.csv` (EX=32 vs EX=64) was patched in `v2_postprocess.py` but the per-row provenance must be verified before final publication. | Low | Re-run postprocess chain if any pfATP4/pfClpP rerun rows are missing |
 
@@ -1344,7 +1344,7 @@ This section consolidates the adversarial audit findings from `synthese_audit_ad
 
 ```bash
 # 1. Import P1 full-cluster panel into P3 data directory
-cp /home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/r8b/fullcluster_rescoring/docking_results.csv \
+cp /home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/r8b/fullcluster_rescoring/docking_results.csv \
    /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/data/p1_fullcluster_1815.csv
 
 # 2. TDA on 1,815 molecules (CPU, ~4 h)

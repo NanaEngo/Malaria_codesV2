@@ -57,9 +57,9 @@ P1 alimente directement P2 (docking mutants, RRS/ACSI/PNS) et P3 (panel congén�
 *   **État réel (BMAD §1.15) :** le redocking complet avec les grilles V2 a **déjà été exécuté** — les 4 cibles sont marquées "✅ Corrigé / Re-centré" dans `Project1_..._V2_CorrectedGrid/results/`, y compris le panel de 1 815 molécules et les 484 centroïdes utilisés en §5.5. Il ne s'agit donc plus d'un calcul à relancer mais d'une **mise à jour du manuscrit** pour refléter ces résultats déjà produits (BMAD §3.1, F1 : "no new simulations").
 *   **Outils Scientifiques (déjà utilisés) :** `rdkit`, `pymol`
 *   **Fichiers Cibles (référence, déjà appliqués) :**
-    - **config.txt :** `Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_7F3Y/config.txt` (canonique : `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_7F3Y/config.txt`)
-    - **r8b_fullcluster_rescoring.py :** `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/scripts/r8b/r8b_fullcluster_rescoring.py`
-    > **Note :** Le dossier canonique P1 est `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/` (hors `${MALARIA_ROOT}`). Le dossier `Project1_Chem_space_antimalarial_V2607_CorrectedGrid` dans `${MALARIA_ROOT}/` est une copie git-trackée partielle (manuscrits + scripts, pas de Docking/). L'ancien dossier `Project1_Chem_space_antimalarialV2607` est déprécié (archivé le 17 juillet 2026).
+    - **config.txt :** `Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_7F3Y/config.txt` (canonique : `/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_7F3Y/config.txt`)
+    - **r8b_fullcluster_rescoring.py :** `/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V2_CorrectedGrid/scripts/r8b/r8b_fullcluster_rescoring.py`
+    > **Note :** Le dossier canonique P1 est `/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V2_CorrectedGrid/` (hors `${MALARIA_ROOT}`). Le dossier `Project1_Chem_space_antimalarial_V2_CorrectedGrid` dans `${MALARIA_ROOT}/` est une copie git-trackée partielle (manuscrits + scripts, pas de Docking/). L'ancien dossier `Project1_Chem_space_antimalarialV2607` est déprécié (archivé le 17 juillet 2026).
 
 ### 3.1b. Vérification de Provenance et de Propagation Aval — ✅ Résolue
 *   **Axe / Faille :** Le BMAD signalait que `v2_centroid_scores.csv` mélange deux exhaustivités Vina (EX=32 et EX=64) — en pratique, le vrai mélange était **EX=16 vs EX=128 vs EX=64** (pas EX=32). Le fichier `v2_centroid_scores.csv` et `v2_postprocess.py` avaient disparu du projet. De plus, **aucune colonne de provenance** n'existait dans aucun CSV.
@@ -80,7 +80,7 @@ P1 alimente directement P2 (docking mutants, RRS/ACSI/PNS) et P3 (panel congén�
     - **Scripts (`fix_provenance.py`, `check_provenance.py`) :** `Project1_Chem_space_antimalarialV2607/scripts/` (dossier déprécié uniquement — scripts de rattrapage one-shot ; le dossier canonique a son propre système de provenance intégré dans `v2_postprocess.py`)
         > Exemple : `ls ${MALARIA_ROOT}/Project1_Chem_space_antimalarialV2607/scripts/check_provenance.py`
     - **Résultats complets (dossier canonique) :**
-        - `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/v2_centroid_scores.csv` (EX=64, 484 centroïdes)
+        - `/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/v2_centroid_scores.csv` (EX=64, 484 centroïdes)
         - Résultats de docking par cible : `results/v2_docking/{pfDHFR,pfCRT,pfATP4,pfClpP}/` (~13 000 fichiers PDBQT)
         - Résultats R8B : `results/r8b/fullcluster_rescoring/docking_results.csv` (brut, 1 815 mols)
     - **Fichiers simplifiés pour consommation P2/P3 (dossier déprécié) :**
@@ -447,8 +447,8 @@ Ce tableau répertorie les fichiers clés impliqués dans les corrections métho
 
 | Projet | Fichier Cible | Rôle dans l'Analyse | Action Requise |
 |--------|---------------|---------------------|----------------|
-| P1 | [config.txt](/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_7F3Y/config.txt) | Docking de référence | Aligner coordonnées de centrage V2. |
-| P1 | [r8b_fullcluster_rescoring.py](/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/scripts/r8b/r8b_fullcluster_rescoring.py) | Docking local (1815 mols) | Aligner le dictionnaire `TARGETS` V2. |
+| P1 | [config.txt](/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_7F3Y/config.txt) | Docking de référence | Aligner coordonnées de centrage V2. |
+| P1 | [r8b_fullcluster_rescoring.py](/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V2_CorrectedGrid/scripts/r8b/r8b_fullcluster_rescoring.py) | Docking local (1815 mols) | Aligner le dictionnaire `TARGETS` V2. |
 | P1 | `v2_postprocess.py` | Provenance des scores V2 (`v2_centroid_scores.csv`, `docking_results.csv`) | Homogénéiser l'exhaustivité (EX=64) ou tracer la provenance avant consommation P2/P3 (§3.1b). |
 | P1 | `9N10.pdbqt` (préparation récepteur PfATP4) | Filtrage de chaîne | Vérifier l'exclusion de l'hélice TM de PfABP co-purifiée (§3.3). |
 | P1/P2 | `mutant_docking_results.csv`, manuscrits P1/P2 | Nomenclature isoforme PfCRT | Vérifier "7G6" vs "7G8" (§3.3, §7.1) avant publication. |

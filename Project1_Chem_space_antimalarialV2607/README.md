@@ -4,7 +4,7 @@ This directory has been **archived** to:
     /home/nanaengo/Malaria_codesV2/.archive_P1_V2607_20260717/
 
 The active V2 corrected-grid pipeline lives at:
-    /home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/   (canonical, top-level)
+    /home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V2_CorrectedGrid/   (canonical, top-level)
 
 ---
 

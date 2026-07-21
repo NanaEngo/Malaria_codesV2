@@ -10,7 +10,7 @@ This report consolidates all validated computational results across Projects 1�
 
 > **⚠️ ATTENTION — WORKING DIRECTORY P1**
 > 
-> **Le dossier canonique P1 est :** `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/`
+> **Le dossier canonique P1 est :** `/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V2_CorrectedGrid/`
 > 
 > Ce dossier contient les **résultats complets** : grilles V2, EX=64, 484 centroïdes, docking par cible (pfDHFR/pfCRT/pfATP4/pfClpP),
 > scores centreux (`v2_centroid_scores.csv`), rescoring R8B (`r8b/fullcluster_rescoring/docking_results.csv`).
@@ -33,7 +33,7 @@ This report consolidates all validated computational results across Projects 1�
 ### 1.2 Docking Validation
 | Target | Redocking RMSD | DEKOIS AUC | ChEMBL Enrichment | Status |
 |--------|:--------------:|:----------:|:------------------:|:------:|
-| PfDHFR (7F3Y) | < 2.0 Å | 🔄 Job 9199 (pipeline Meeko uniforme) | 5.43× | ✅ V2 grid deployed |
+| PfDHFR (7F3Y) | < 2.0 Å | **0.450** [0.367, 0.531] — Meeko-uniform ✅ | 5.43× | ✅ V2 grid deployed |
 | PfCRT (6UKJ) | < 2.0 Å | — | — | ✅ V2 grid |
 | PfATP4 (9N10) | < 2.0 Å | — | — | ✅ V2 grid |
 | PfClpP (4GM2) | < 2.0 Å | — | — | ✅ V2 grid |

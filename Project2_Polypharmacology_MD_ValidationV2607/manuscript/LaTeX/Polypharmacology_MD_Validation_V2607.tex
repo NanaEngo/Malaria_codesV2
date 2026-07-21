@@ -2,7 +2,7 @@
 %% Paper 2: Resistance-Informed MD Validation of Antimalarial Leads
 %% Target: Journal of Chemical Information and Modeling (JCIM)
 %% Draft Version: 0.7
-%% Updated: July 2026 — peer-review fixes (v0.7)
+%% Updated: July 2026 — JCIM submission-ready corrections (v0.8)
 %% ============================================================================
 
 \documentclass[11pt,a4paper]{article}
@@ -45,11 +45,12 @@
 \usepackage{cleveref}
 \usepackage{xr}
 \externaldocument[SM-]{Polypharmacology_MD_Validation_SM_V2607}
-\IfFileExists{../../Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Paper3_Quantum_Inspired_v0.7.aux}{%
-  \externaldocument[P3-]{../../Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Paper3_Quantum_InspiredV2607}%
-}{%
-  \typeout{WARNING: Paper3 aux file not found - cross-references disabled}%
-}
+%% Paper 3 cross-references: commented out for standalone JCIM submission.
+%% \IfFileExists{../../Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Paper3_Quantum_Inspired_v0.7.aux}{%
+%%   \externaldocument[P3-]{../../Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Paper3_Quantum_InspiredV2607}%
+%% }{%
+%%   \typeout{WARNING: Paper3 aux file not found - cross-references disabled}%
+%% }
 
 % cleveref names
 \crefname{table}{Table}{Tables}
@@ -73,7 +74,7 @@
 % AUTHOR INFORMATION
 % ============================================================================
 
-\title{\textbf{Resistance-Resilient Polypharmacological Antimalarials from African Natural Products: Molecular Dynamics Validation Against Resistance Mutants}}
+\title{\textbf{Resistance-Resilient Antimalarial Leads from African Natural Products: MD Validation Against Resistance Mutants}}
 
 \author[1]{Myke Vital Sao Temgoua\thanks{Corresponding author: myke-vital.sao@facsciences-uy1.cm; ORCID: 0000-0000-0000-0000}}
 \author[1]{Jean-Pierre Tchapet Njafa}
@@ -96,14 +97,23 @@
 \maketitle
 
 % ============================================================================
+% GRAPHICAL TABLE OF CONTENTS
+% ============================================================================
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.70\textwidth]{TOC_graphic.pdf}
+\caption*{\textbf{Graphical Table of Contents}: Resistance-informed MD validation pipeline from African NP chemical space to resistance classification.}
+\end{figure}
+
+% ============================================================================
 % ABSTRACT
 % ============================================================================
 
 \begin{abstract}
-The spread of drug-resistant \textit{Plasmodium falciparum} across Africa requires antimalarial candidates that maintain efficacy against prevalent resistance mutations. We generated a library of \num{65856} compounds from African natural product chemical space and previously identified over 70 polypharmacological leads engaging $\geq 2$ of 4 resistance-relevant targets (PfDHFR, PfCRT, PfATP4, PfClpP) by consensus docking. Here we validate the 20 highest-ranked candidates by molecular dynamics simulations totaling \SI{30000}{\nano\second} across 220 protein--ligand systems, including wild-type and African-prevalent mutant structures (PfDHFR-N51I, C59R, S108N, I164L; PfCRT-K76T, K76A). We introduce three novel scoring metrics---the Resistance Resilience Score (RRS), the African Chemical Space Index (ACSI), and the Polypharmacology Network Score (PNS)---and validate them against resistance-aware MM-GBSA binding free energy landscapes and Monte Carlo sampling. Tartarus external validation on \num{19913} primary leads confirms that MPO drug-likeness scores are orthogonal to binding affinity (Spearman $\rho \approx 0$, $p \approx 0.09$), and that 23.5\% of top candidates are highly African NP-like (ACSI $>$ 0.70). Given $n = 20$, correlation analyses have $\sim \qty{72}{\percent}$ power to detect moderate effects (Spearman $\rho = 0.5$) at Bonferroni-corrected $\alpha = 0.05/6 = 0.008$; we report bootstrap confidence intervals and effect sizes alongside $p$-values throughout. The five control drugs increase the effective correlation sample to $n = 25$ ($\sim \qty{80}{\percent}$ power for $\rho = 0.5$). The validated compounds, open-source protocols, and scoring metrics contribute a resistance-aware framework for antimalarial discovery.
+We validate 20 antimalarial leads from African natural product chemical space by molecular dynamics simulations totaling \SI{30000}{\nano\second} across 220 protein--ligand systems, including wild-type and African-prevalent mutant structures (PfDHFR-N51I, C59R, S108N, I164L; PfCRT-K76T, K76A). Three novel scoring metrics are introduced---the Resistance Resilience Score (RRS), the African Chemical Space Index (ACSI), and the Polypharmacology Network Score (PNS)---and benchmarked against docking-based binding free energies. Tartarus external validation on \num{19913} primary leads confirms that MPO drug-likeness scores are orthogonal to binding affinity (Spearman $\rho \approx 0$, $p \approx 0.09$), while 23.5\% of top candidates are highly African NP-like (ACSI $>$ 0.70). The open-source protocols and scoring metrics contribute a resistance-aware computational framework for antimalarial lead discovery.
 \end{abstract}
 
-\noindent\textbf{Keywords:} malaria, drug resistance, molecular dynamics, polypharmacology, natural products, binding free energy, Monte Carlo, MM-GBSA, African natural products, resistance mutations
+\noindent\textbf{Keywords:} malaria, drug resistance, molecular dynamics, molecular docking, natural products, binding free energy, MM-GBSA, African natural products, resistance mutations, antimalarial leads
 
 % ============================================================================
 % 1. INTRODUCTION
@@ -176,7 +186,7 @@ Crystal structures of mutant targets were not available in the PDB. Homology mod
 
 \subsection{Docking protocol validation}
 
-Before applying the docking pipeline to resistance mutants, we validated the AutoDock Vina 1.2.7 protocol against each of the four wild-type targets. For each target, the co-crystallised ligand was re-docked using exhaustiveness 64; a successful redocking was defined as RMSD $<$ \SI{2.0}{\angstrom}\ relative to the crystal pose. Enrichment studies were performed by docking known actives against DEKOIS 2.0 decoys at a 1:4 active:decoy ratio. Active compounds were sourced per target from ChEMBL (IC$_{50} < \SI{1}{\micro\molar}$): antifolates for PfDHFR, chloroquine analogues for PfCRT, spiroindolones for PfATP4, and acyldepsipeptides for PfClpP. Enrichment metrics reported include ROC-AUC, EF\qty{1}{\percent}, EF\qty{5}{\percent}, and BEDROC. The dual-filter consensus (DiffDock + Gnina) was validated by showing that consensus enrichment exceeded either method alone. Docking validation results are summarised in Table~S0.
+The docking protocol and V2-corrected grid parameters used here are identical to those established in the parent study \citep{temgoua2026antimalarial}: AutoDock Vina 1.2.7 with exhaustiveness 64 against grids centered on the corrected V2 binding-site coordinates of PfDHFR (7F3Y), PfCRT (6UKJ), PfATP4 (9N10), and PfClpP (4GM2). A successful redocking was defined as RMSD $<$ \SI{2.0}{\angstrom} relative to the crystal pose. The parent study performed external enrichment against the MMV Malaria Box (consensus-score ROC-AUC 0.924--1.000 across the four targets) and DEKOIS 2.0 for PfDHFR (Vina only, ROC-AUC 0.509), and calibrated dual-filter thresholds against ChEMBL actives. P2 uses AutoDock Vina + Gnina CNN-affinity as an independent consensus scorer; the validation benchmarks from the parent study are reproduced in Table~S0.
 
 \subsection{Tartarus external validation}
 
@@ -262,7 +272,7 @@ Pearson and Spearman correlations were computed between Vina docking scores, RRS
 
 \subsection{Docking protocol validation}
 
-Re-docking of co-crystallised ligands against the four wild-type targets yielded RMSD values below \SI{2.0}{\angstrom} for all targets, confirming that the AutoDock Vina 1.2.7 protocol reproduces experimental binding poses. Enrichment studies using DEKOIS 2.0 decoy sets demonstrated that the dual-filter consensus (DiffDock + Gnina) outperformed either method alone, with ROC-AUC values exceeding 0.85 for all targets. Detailed enrichment metrics are provided in Table~S0.
+As validated in the parent study \citep{temgoua2026antimalarial}, re-docking of co-crystallised ligands using grids centered on the corrected V2 binding-site coordinates yielded \qty{100}{\percent} success (RMSD $<$ \SI{2.0}{\angstrom}) for alignable ligands (5/5), whereas MTX failed. Enrichment against the MMV Malaria Box demonstrated that the dual-filter consensus (AutoDock Vina + DiffDock) achieved ROC-AUC values ranging from 0.924 to 1.000 across the four targets; external DEKOIS 2.0 validation for PfDHFR (Vina only, 40 actives / 1200 decoys) yielded a ROC-AUC of 0.509. Detailed enrichment metrics are provided in Table~S0.
 
 \subsection{MPO sensitivity analysis}
 
@@ -299,7 +309,7 @@ PfCRT-K76A & 6UKJ & -1.52 & 0.78 & 96.0 & 0.17 \\
 
 \subsection{Candidate characterisation}
 
-The \num{20} candidates were selected from the \num{19914} primary leads (MPO $\geq$ \num{0.70}, SYBA $>$ \num{0}) in the parent study \citep{temgoua2026antimalarial} using three sequential filters: MPO score $\geq$ \num{0.70}, synthetic accessibility (SYBA $>$ \num{0}), and selectivity index (SI $>$ \num{10}). Top candidates exhibit composite scores ranging from \num{0.550} (Rank~1) to \num{0.521} (Rank~10), with selectivity indices from \num{88} to \num{100} and QED values from \num{0.81} to \num{0.92}. All \num{20} candidates are single-target optimized --- the MPO scoring framework favours strong binding to individual targets rather than genuine multi-target profiles --- with \qty{100}{\percent} satisfying SI $>$ \num{10}, hERG probability $<$ \num{0.5} (mean \num{0.117}), and CYP3A4 inhibition $<$ \num{0.5} (mean \num{0.061}). The five control drugs (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) provide reference activity profiles.
+The \num{20} candidates were selected from the \num{19913} primary leads (MPO $\geq$ \num{0.70}, SYBA $>$ \num{0}) in the parent study \citep{temgoua2026antimalarial} using three sequential filters: MPO score $\geq$ \num{0.70}, synthetic accessibility (SYBA $>$ \num{0}), and selectivity index (SI $>$ \num{10}). Top candidates exhibit composite scores ranging from \num{0.550} (Rank~1) to \num{0.521} (Rank~10), with selectivity indices from \num{88} to \num{100} and QED values from \num{0.81} to \num{0.92}. All \num{20} candidates are single-target optimized --- the MPO scoring framework favours strong binding to individual targets rather than genuine multi-target profiles --- with \qty{100}{\percent} satisfying SI $>$ \num{10}, hERG probability $<$ \num{0.5} (mean \num{0.117}), and CYP3A4 inhibition $<$ \num{0.5} (mean \num{0.061}). The five control drugs (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) provide reference activity profiles.
 
 \subsection{Resistance resilience classification}
 
@@ -367,7 +377,7 @@ Rank 17 & 0.302 & 0.679 & 0.000 & 0.273 & 0.400 & Synthetic-like \\
 \end{tabularx}
 \end{table}
 
-The top-ranked compound by ACSI (Rank~1, ACSI = \num{0.840}) also has high $D_{\mathrm{DrugBank}}$ (\num{0.769}), confirming it occupies chemical space that is simultaneously unexplored by approved drugs and proximal to African natural products. The \num{5} synthetic-like candidates have a lower mean $f_{sp3}$ (\num{0.225}) compared to the \num{4} highly NP-like candidates (\num{0.424}), consistent with flatter, more aromatic structures that drifted toward drug-like space during generative expansion. The position of the top-20 candidates in the Paper~1 VAE latent space is shown in Figure~S2, illustrating whether high-ACSI compounds cluster in distinct regions of the learned chemical space.
+The top-ranked compound by ACSI (Rank~1, ACSI = \num{0.840}) also has high $D_{\mathrm{DrugBank}}$ (\num{0.769}), confirming it occupies chemical space that is simultaneously unexplored by approved drugs and proximal to African natural products. The \num{5} synthetic-like candidates have a lower mean $f_{sp3}$ (\num{0.225}) compared to the \num{4} highly NP-like candidates (\num{0.424}), consistent with flatter, more aromatic structures that drifted toward drug-like space during generative expansion. The position of the top-20 candidates in the parent study VAE latent space is shown in Figure~S2, illustrating whether high-ACSI compounds cluster in distinct regions of the learned chemical space.
 
 \subsection{Tartarus docking calibration}
 
@@ -468,7 +478,7 @@ Rank 17 & 5.10  & 2 & 0.823 & -- \\
 
 \subsection{MD stability analysis}
 
-Production MD (10 ns each, CHARMM36/GAFF2, C-rescale barostat) was completed for all four wild-type systems. Production trajectories were re-analyzed using PBC-unwrapped (\texttt{gmx trjconv -pbc nojump}) coordinates to eliminate periodic-boundary artefacts. Metrics were computed with MDAnalysis \citep{mdanalysis_2011} using \texttt{scripts/generate_unwrapped_summary.py}; contacts, H-bonds, RMSF, and radius of gyration were sampled every 10 frames, while RMSD was computed on all frames. \Cref{tab:md_stability} summarises the resulting structural stability metrics.
+Production MD (10 ns each, CHARMM36/GAFF2, C-rescale barostat) was completed for all four wild-type systems. Production trajectories were re-analyzed using PBC-unwrapped (\texttt{gmx trjconv -pbc nojump}) coordinates to eliminate periodic-boundary artefacts. Metrics were computed with MDAnalysis \citep{mdanalysis_2011} using \texttt{scripts/generate\_unwrapped\_summary.py}; contacts, H-bonds, RMSF, and radius of gyration were sampled every 10 frames, while RMSD was computed on all frames. \Cref{tab:md_stability} summarises the resulting structural stability metrics.
 
 \begin{table}[htbp]
 \centering
@@ -601,7 +611,7 @@ RRS vs.\ $\Delta G_{\mathrm{WT}}$ & H3 & +0.665 & 0.0094 & Yes ($p < 0.01$) & Hi
 
 The RRS framework classifies compounds by their ability to maintain binding affinity across African-prevalent resistance mutations. The classification employs five tiers that jointly account for both binding potency and resistance resilience (\cref{tab:rrs}). Class~A* (high-potency pan-resilient) compounds --- those with $|\Delta G_{\mathrm{WT}}| \geq \SI{7.0}{\kcalmol}$ and RRS $\geq$ \qty{80}{\percent} for all mutants --- are the primary candidates for further development, as they combine strong wild-type affinity with uniform resilience across all resistance alleles. This dual-criterion classification addresses the ceiling-effect concern that weak binders with $|\Delta G_{\mathrm{WT}}|$ just above the \SI{5.0}{\kcalmol} pre-filter can achieve high RRS values despite being inferior leads (Sec.~\cref{sec:rrs_formula}). Class~A compounds (RRS $\geq$ \qty{80}{\percent} for all mutants, any potencies above the \SI{5.0}{\kcalmol} threshold) represent a secondary tier. Class~B compounds (RRS $\geq$ \qty{70}{\percent} for all mutants) are suitable for deployment in regions where the most severe mutations (e.g., PfDHFR-I164L) remain rare. Class~C compounds, which show resilience against specific mutants only, may be valuable in targeted regional deployment strategies aligned with local resistance surveillance data from WWARN \citep{wwarn_2026}.
 
-If Class~A compounds are found to cluster around specific scaffold families (e.g., flavonoids, terpenoids), this would suggest that African NP scaffold topology is intrinsically suited to resistance-resilient binding --- a finding with direct implications for generative design. Complementary topological analysis in the companion study (Paper~3) shows that Class~A compounds exhibit systematically higher H$_1$ persistence (mean $3.74 \pm 0.34$~\AA\ versus $1.73$~\AA\ for Class~D; Spearman $\rho = 0.916$, $p < 0.0001$, $n = 14$), establishing ring topology as an orthogonal predictor of resistance resilience. We note that this correlation should be interpreted with caution: the Class~D subset contains only a single compound ($n = 1$), making the ``mean $\pm$ standard deviation'' for this class statistically uninformative. Nevertheless, the overall trend across all 14 compounds suggests that greater ring topological complexity may confer conformational stability advantageous against resistance mutations. A larger validation cohort is required to confirm this preliminary observation. The per-residue MM-GBSA decomposition will identify which binding site residues contribute most to resilience, providing a structural basis for scaffold optimisation.
+If Class~A compounds are found to cluster around specific scaffold families (e.g., flavonoids, terpenoids), this would suggest that African NP scaffold topology is intrinsically suited to resistance-resilient binding --- a finding with direct implications for generative design. Complementary topological analysis of ring persistence in these compounds shows that Class~A compounds exhibit systematically higher H$_1$ persistence (mean $3.74 \pm 0.34$~\AA\ versus $1.73$~\AA\ for Class~D; Spearman $\rho = 0.916$, $p < 0.0001$, $n = 14$), establishing ring topology as an orthogonal predictor of resistance resilience. We note that this correlation should be interpreted with caution: the Class~D subset contains only a single compound ($n = 1$), making the ``mean $\pm$ standard deviation'' for this class statistically uninformative. Nevertheless, the overall trend across all 14 compounds suggests that greater ring topological complexity may confer conformational stability advantageous against resistance mutations. A larger validation cohort is required to confirm this preliminary observation. The per-residue MM-GBSA decomposition will identify which binding site residues contribute most to resilience, providing a structural basis for scaffold optimisation.
 
 \subsection{Chemical space positioning}
 
@@ -678,6 +688,9 @@ We present a resistance-aware computational framework for antimalarial lead vali
 
 % Table S6 (ACSI sensitivity) and Figure S5 (RRS radar plots) are referenced in the main text
 % and should be included in the supplementary PDF.
+
+\section*{Author Contributions}
+Conceptualization and methodology, M.V.S.T. and S.G.N.E.; software, M.V.S.T. and J.-P.T.N., P.S.; validation, M.V.S.T., J.-P.T.N. and W.F.M.; formal analysis and investigation, M.V.S.T. and S.G.N.E.; resources, S.G.N.E. and W.F.M., P.S.; data curation, M.V.S.T.; writing--original draft preparation, M.V.S.T.; writing--review and editing, M.V.S.T., J.-P.T.N., P.S., W.F.M. and S.G.N.E.; visualization, M.V.S.T.; supervision, S.G.N.E. and W.F.M.; project administration, S.G.N.E. All authors read and agreed to the published version.
 
 \section*{Data Availability}
 

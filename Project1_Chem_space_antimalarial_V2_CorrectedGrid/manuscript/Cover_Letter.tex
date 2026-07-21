@@ -1,0 +1,57 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=1in, bottom=0.9in}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{siunitx}
+\sisetup{separate-uncertainty=true, range-phrase=--}
+\onehalfspacing
+
+\begin{document}
+
+\begin{flushleft}
+\textbf{Myke Vital Sao Temgoua} \\
+Department of Physics, Faculty of Science \\
+University of Yaound\'{e} I \\
+P.O. Box 812, Yaound\'{e}, Cameroon \\
+\href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[1.5em]
+July 5, 2026
+\end{flushleft}
+
+\begin{flushleft}
+Prof.\ Kenneth M.\ Merz, Jr., Editor-in-Chief \\
+\textit{Journal of Chemical Information and Modeling} \\
+American Chemical Society
+\end{flushleft}
+
+\vspace{0.5em}
+
+\noindent Dear Prof.\ Merz,
+
+We submit our revised manuscript \textbf{``Computational Discovery of Antimalarial Candidates from African Natural Product Chemical Space''} for consideration as an Article in \textit{JCIM} (Manuscript ID: ci-2026-012015).
+
+This work presents a validated generative scaffold-hopping framework for antimalarial discovery. Rather than a static hit list, the framework retrospectively predicts (retrodicts) known ground-truth antimalarials from the MMV Malaria Box before application to African chemical space, achieving \qty{69.8}{\percent} hit rates and consensus-score ROC-AUC \numrange{0.924}{1.000}. We demonstrate that \qty{92.6}{\percent} of VAE-generated molecules access chemotypes unreachable by local SELFIES perturbations of known drugs (mean max Tanimoto \num{0.206}), with a \num{1.84}$\times$ scaffold-to-whole-molecule Tanimoto ratio proving systematic ring-system preservation.
+
+The three-component pipeline---scaffold-aware VAE sampling, dual-filter consensus docking (DiffDock + AutoDock Vina), and multi-parameter optimization---reduces screening costs by \qty{99.3}{\percent}. All validation protocols are documented with open-source code, and the full dataset is deposited on Zenodo (10.5281/zenodo.19608875).
+
+\noindent\textbf{Suggested reviewers.}
+\begin{enumerate}
+  \item Dr.\ Maria Sorokina, University of Jena --- natural product cheminformatics
+  \item Dr.\ Ntie-Kang Fidele, University of Buea --- African NP virtual screening
+  \item Dr.\ Fran\c{c}ois D\`{e}ret, Medicines for Malaria Venture --- antimalarial screening
+\end{enumerate}
+
+\noindent This manuscript is original, not under consideration elsewhere, and all authors have approved the submission.
+
+\vspace{1em}
+
+\noindent Sincerely,
+
+\vspace{1em}
+
+\noindent \textbf{Myke Vital Sao Temgoua} \\
+(on behalf of all co-authors)
+
+\end{document}

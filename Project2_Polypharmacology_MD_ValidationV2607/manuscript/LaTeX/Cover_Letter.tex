@@ -2,14 +2,13 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{geometry}
-\geometry{margin=1in}
+\geometry{margin=1in, bottom=0.9in}
 \usepackage{hyperref}
 \usepackage{setspace}
 \usepackage{siunitx}
 \sisetup{separate-uncertainty=true, range-phrase=--}
 \DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
 \DeclareSIUnit\angstrom{\text{\AA}}
-\DeclareSIUnit\nmpressure{bar}
 \onehalfspacing
 
 \begin{document}
@@ -19,59 +18,42 @@
 Department of Physics, Faculty of Science \\
 University of Yaound\'{e} I \\
 P.O. Box 812, Yaound\'{e}, Cameroon \\
-\href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[2em]
+\href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[1.5em]
 July 7, 2026
 \end{flushleft}
 
-\vspace{1em}
-
 \begin{flushleft}
-Prof.\\ Kenneth M.\\ Merz, Jr., Editor-in-Chief \\
+Prof.\ Kenneth M.\ Merz, Jr., Editor-in-Chief \\
 \textit{Journal of Chemical Information and Modeling} \\
 American Chemical Society
 \end{flushleft}
 
-\vspace{1em}
+\vspace{0.5em}
 
-\noindent Dear Prof.\\ Merz,
+\noindent Dear Prof.\ Merz,
 
-We submit our manuscript \textbf{``Resistance-Resilient Polypharmacological Antimalarials from African Natural Products: Molecular Dynamics Validation Against Resistance Mutants''} for consideration as an Article in \textit{JCIM}. This work presents the first systematic molecular dynamics validation of antimalarial leads against a panel of African-prevalent resistance mutations, integrating \SI{30000}{\nano\second} of simulation across 220 protein--ligand systems with three novel scoring metrics.
+We submit our manuscript \textbf{``Resistance-Resilient Antimalarial Leads from African Natural Products: MD Validation Against Resistance Mutants''} for consideration as an Article in \textit{JCIM}.
 
-\textbf{Central finding: Resistance-aware lead validation.} We validate the 20 highest-ranked polypharmacological candidates from our generative library against six clinically relevant resistance mutations (PfDHFR-N51I, C59R, S108N, I164L; PfCRT-K76T, K76A) using \SI{30000}{\nano\second} of MD simulation and MM-GBSA free energy calculations. Three novel metrics are introduced: the Resistance Resilience Score (RRS), which classifies compounds by their ability to maintain binding affinity across mutant variants; the African Chemical Space Index (ACSI), which quantifies the degree to which generated compounds preserve the structural character of African natural products; and the Polypharmacology Network Score (PNS), which weights multi-target engagement by target centrality in the \textit{P. falciparum} interactome. External validation via the Tartarus docking benchmark confirms that MPO drug-likeness scores are orthogonal to binding affinity (Spearman $\rho \approx 0$, $p > 0.7$), motivating the combined MPO + docking ranking strategy. Comprehensive analysis confirms successful NPT equilibration for all four systems. Temperature stability within \SI{0.5}{\kelvin} and pressure convergence within \SI{10}{\bar} were verified for the three locally analysed targets (PfClpP, PfCRT, PfDHFR), with stable backbone RMSD after periodic boundary correction (mean RMSD: PfClpP \SI{0.215}{\nano\metre}, PfCRT \SI{0.262}{\nano\metre}, PfDHFR \SI{0.343}{\nano\metre}). The fourth complex (PfATP4) underwent successful Berendsen-barostat NPT equilibration on its single-chain topology, and is proceeding to production MD on the HPC cluster.
+This work presents the first systematic MD validation of antimalarial leads against a panel of African-prevalent resistance mutations, totaling \SI{30000}{\nano\second} across 220 protein--ligand systems. We validate 20 candidates from a generative antimalarial library against six clinically relevant mutations (PfDHFR-N51I, C59R, S108N, I164L; PfCRT-K76T, K76A) using MM-GBSA free energy calculations. Three novel metrics are introduced: the Resistance Resilience Score (RRS) classifying compounds by binding resilience across mutants, the African Chemical Space Index (ACSI) quantifying NP character retention (\qty{23.5}{\percent} highly NP-like), and the Polypharmacology Network Score (PNS) weighting target engagement by STRING interactome centrality. External Tartarus benchmarking confirms that MPO drug-likeness and binding affinity are orthogonal (Spearman $\rho \approx 0$, $p = 0.09$).
 
-\textbf{Scientific contribution.} This work establishes a resistance-aware computational validation framework through three interconnected components:
-\begin{itemize}
-    \item \textbf{Resistance Resilience Score (RRS):} A five-tier classification (Class A* through D) jointly accounting for binding potency and resistance resilience, addressing the ceiling-effect concern that weak binders can achieve spuriously high RRS values. The \SI{7.0}{\kcalmol} potency floor for Class A* ensures that only strong binders with uniform resilience across all mutants receive the highest classification.
-    \item \textbf{African Chemical Space Index (ACSI):} A quantitative measure calibrated to the ANPDB, revealing that \SI{23.5}{\percent} of top candidates retain strong African NP character (ACSI $>$ 0.70) with a mean ACSI of 0.617 across all parseable candidates.
-    \item \textbf{Polypharmacology Network Score (PNS):} A network-aware metric weighting target engagement by composite centrality (degree, betweenness, closeness, eigenvector) in the \textit{P. falciparum} STRING interactome, enabling biologically motivated candidate prioritization beyond docking affinity alone.
-\end{itemize}
-
-\noindent\textbf{Unified antimalarial design engine.} This paper constitutes the second tier of a three-tier African antimalarial design engine. The first tier (Paper~1, companion manuscript) uses a VAE-based generative framework with dual-filter consensus docking to explore African natural product chemical space and identify polypharmacological candidates; the Tartarus benchmark and STONED-SELFIES scaffold leap analysis independently validate its predictions. The third tier (a forthcoming study on quantum-topological representations) resolves the scaffold paradox revealed by the generative expansion through the Topological Fingerprint, Tensor Network Embedding, and Quantum Kernel Score, demonstrating that ring topology (H$_1$) is preserved while peripheral connectivity (H$_0$) diverges during generation. Together, the three studies constitute the most comprehensive AI-assisted antimalarial discovery framework targeting African malaria strains published to date, grounded in African natural product chemical heritage.
-
-\noindent\textbf{Validation and reproducibility.} All MD protocols, MM-GBSA calculations, and scoring metrics are fully documented with open-source code. The GROMACS 2025.4 simulations use CHARMM36m/GAFF2 force fields with validated equilibration protocols (EM \textrightarrow{} NVT \textrightarrow{} NPT). Statistical robustness is ensured through bootstrap confidence intervals, Bonferroni-corrected hypothesis testing, and explicit power analysis ($\sim$\SI{72}{\percent} power at $\alpha = 0.008$ for $n = 20$). Trajectories and scoring outputs are deposited on Zenodo and GitHub under open-source licences.
-
-\noindent\textbf{Scope fit.} The manuscript introduces methodological contributions in resistance-aware MD validation, chemical space indexing for natural products, and network-pharmacology-weighted scoring, all within the computational chemistry and molecular modeling scope of \textit{JCIM}. The work extends the standard docking-based virtual screening pipeline into a dynamic validation framework that accounts for protein flexibility and resistance mutations, addressing a critical gap in antimalarial computational discovery.
+All protocols, trajectories, and scoring outputs are deposited on Zenodo and GitHub under open-source licences. Statistical robustness is ensured through bootstrap confidence intervals and Bonferroni-corrected hypothesis testing.
 
 \noindent\textbf{Suggested reviewers.}
 \begin{enumerate}
-    \item Dr.\\ Fidele Ntie-Kang, University of Buea, Cameroon (\href{mailto:fidele.ntie-kang@ubuea.cm}{fidele.ntie-kang@ubuea.cm}) --- African natural product databases, computational drug discovery
-    \item Dr.\\ Jose\\ S.\\ Duca, Merck \& Co., United States (\href{mailto:jose.duca@merck.com}{jose.duca@merck.com}) --- MD simulations, MM-GBSA, resistance mutations
-    \item Dr.\\ Gisbert Schneider, ETH Zurich, Switzerland (\href{mailto:gisbert.schneider@bsse.ethz.ch}{gisbert.schneider@bsse.ethz.ch}) --- generative chemistry, scaffold analysis
-    \item Dr.\\ John D.\\ Chodera, Memorial Sloan Kettering, United States (\href{mailto:john.chodera@mskcc.org}{john.chodera@mskcc.org}) --- free energy methods, MD simulation best practices
-    \item Dr.\\ Kelly Chibale, University of Cape Town, South Africa (\href{mailto:kelly.chibale@uct.ac.za}{kelly.chibale@uct.ac.za}) --- antimalarial drug discovery, medicinal chemistry
+  \item Dr.\ Fidele Ntie-Kang, University of Buea --- African NP computational discovery
+  \item Dr.\ Kelly Chibale, University of Cape Town --- antimalarial drug discovery
+  \item Dr.\ John D.\ Chodera, Memorial Sloan Kettering --- free energy methods, MD best practices
 \end{enumerate}
 
-\noindent\textbf{Declarations.} This manuscript is original, not under consideration elsewhere, and all authors have approved the submission. No conflicts of interest exist. Data and code are publicly available.
+\noindent This manuscript is original, not under consideration elsewhere, and all authors have approved the submission.
 
-\vspace{1.5em}
+\vspace{1em}
 
 \noindent Sincerely,
 
-\vspace{2em}
+\vspace{1em}
 
 \noindent \textbf{Myke-Vital Temgoua Sao} \\
 (on behalf of all co-authors)
-
-\vspace{2em}
 
 \end{document}

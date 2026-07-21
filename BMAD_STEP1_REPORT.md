@@ -101,11 +101,11 @@ Successfully executed foundational + Phase 1 + Phase 2 computational analyses. A
 
 ### 4. P1 Scaffold Tanimoto Analysis
 **Status:** ✅ Completed  
-**Script:** `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/scripts/p1_scaffold_tanimoto.py`
+**Script:** `Project1_Chem_space_antimalarial_V2_CorrectedGrid/scripts/p1_scaffold_tanimoto.py`
 
 **Output Files:**
-- `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/results/p1_scaffold_tanimoto.csv`
-- `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/results/p1_scaffold_tanimoto_summary.txt`
+- `Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/p1_scaffold_tanimoto.csv`
+- `Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/p1_scaffold_tanimoto_summary.txt`
 
 **Key Results:**
 
@@ -267,7 +267,7 @@ Malaria_codesV2/
 ├── BMAD_LOCAL_IMPL_PLAN.md         (5-phase execution plan)
 ├── BMAD_STEP1_REPORT.md            (this file)
 │
-├── Project1_Chem_space_antimalarial_V2607_CorrectedGrid/
+├── Project1_Chem_space_antimalarial_V2_CorrectedGrid/
 │   ├── scripts/p1_scaffold_tanimoto.py     (added scaffold_unreachable_fraction)
 │   ├── scripts/p1_stoned_scaffold_leap.py  (NEW — STONED-SELFIES analysis)
 │   └── manuscript/Cover_Letter.tex         (MMV hero narrative + 1.84x)

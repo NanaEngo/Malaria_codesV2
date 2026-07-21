@@ -52,6 +52,10 @@ vfvs_env/
 .venv/
 *.ipynb_checkpoints
 
+# AutoDock docking output files (large generated binaries)
+*.pdbqt
+*.dlg
+
 # ============================================================================
 # Data Files (Large/Generated) - SELECTIVE TRACKING
 # ============================================================================
@@ -117,7 +121,15 @@ data/from_project1/**/*.csv
 *_2026*.csv
 *.backup
 # Large/generated project directories
-Project1_Chem_space_antimalarial_V2607_CorrectedGrid/manuscript/Graphics/
+Project1_Chem_space_antimalarial_V2_CorrectedGrid/manuscript/Graphics/
+Project1_Chem_space_antimalarial_V2_CorrectedGrid/data/
+Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/
+Project1_Chem_space_antimalarial_V2_CorrectedGrid/logs/
+Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/
+Project1_Chem_space_antimalarial_V2_CorrectedGrid/output/
+Project1_Chem_space_antimalarial_V2_CorrectedGrid/graphify-out/
+Project1_Chem_space_antimalarial_V2_CorrectedGrid/pdb_prep_Jul7/
+Project1_Chem_space_antimalarial_V2_CorrectedGrid/.archive_*/
 Project2_Polypharmacology_MD_ValidationV2607/HPC_ready/
 Project2_Polypharmacology_MD_ValidationV2607/MD_systems/
 Project2_Polypharmacology_MD_ValidationV2607/Tuto_MD_MC/

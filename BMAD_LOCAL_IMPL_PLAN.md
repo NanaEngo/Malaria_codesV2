@@ -253,7 +253,7 @@ tail -f Project3_Quantum_Inspired_RepresentationsV2607/results/p3_hybrid_benchma
 # (manual edits to Paper2_Draft_v0.7.tex + Paper3_Draft_v0.6.tex)
 
 # Phase 2a: Scaffold hops (add function to p1_scaffold_tanimoto.py)
-python Project1_Chem_space_antimalarial_V2607_CorrectedGrid/scripts/p1_scaffold_tanimoto.py
+python Project1_Chem_space_antimalarial_V2_CorrectedGrid/scripts/p1_scaffold_tanimoto.py
 
 # Phase 2b: STONED-SELFIES
 pip install stoned-selfies

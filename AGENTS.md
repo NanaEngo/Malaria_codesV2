@@ -1,613 +1,669 @@
-> **⚠️ IMPORTANT — P1 WORKING DIRECTORY**
-> 
-> **Le dossier canonique de Project 1 (P1) est :**
-> `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/`
-> 
-> Ce dossier contient les résultats complets avec les grilles V2 (EX=64, 484 centroïdes, 4 cibles).
-> 
-> **Le dossier `Project1_Chem_space_antimalarialV2607` dans `${MALARIA_ROOT}` (`/home/nanaengo/Malaria_codesV2`) est DÉPRÉCIÉ** (archivé le 17 juillet 2026). Ne pas l'utiliser pour de nouveaux calculs ou analyses.
-> 
-> Le dossier `Project1_Chem_space_antimalarial_V2607_CorrectedGrid` dans `${MALARIA_ROOT}` (`/home/nanaengo/Malaria_codesV2`) est une copie git-trackée partielle (manuscrits + scripts uniquement, pas de données de docking complètes).
+# AGENTS.md - Project Context Document
 
-## graphify
+**Last updated:** 2026-06-23 (Session 11 — MesoHOPS Performance Optimization: 3-Phase Speedup)
 
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+## Project Overview
 
-When the user types `/graphify`, use the installed graphify skill or instructions before doing anything else.
+This repository contains two active research projects:
 
-Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- Dirty graphify-out/ files are expected after hooks or incremental updates; dirty graph files are not a reason to skip graphify. Only skip graphify if the task is about stale or incorrect graph output, or the user explicitly says not to use it.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+1. **Quantum-Enhanced Agrivoltaics** — Selective vibronic excitation for coherent transport in the FMO complex, targeting *The Journal of Physical Chemistry Letters* (JPCL). Manuscript ID: `jz-2026-00994t`. Status: **Major Revision in progress** (30-day deadline from 28-Apr-2026).
 
-## P3 Enhancement Resources
+2. **Quantum Agrivoltaics (Nature Energy)** — Multi-domain integration of quantum dynamics (PT-HOPS/SBD), microclimate modeling (FAO-56), life-cycle assessment, IoT security (BB84 QKD), and SERS diagnostics. Status: **Manuscript in preparation**.
 
-### Corrected Benchmark Results (July 2026)
-- **Hybrid benchmark (10 descriptors, 5CV, 19849 mol):** ECFP4 AUC=0.868 >> Hybrid AUC=0.691 (p=0.003). Classical fingerprints remain superior.
-- **QKS benchmark (5CV, 500 mol sub-sampled):** Quantum AUC=0.751 vs RBF AUC=0.701 (p=0.088, ns). Earlier 0.936/0.105 claim removed as unsupported.
-- **Ablation:** Hybrid−QKS AUC=0.605 < Hybrid AUC=0.691. QKS component adds noise when combined with TDA/TNE.
-- **HPC env:** `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4). No `qml-env` on HPC.
+---
 
-### quantum-generative-models repo (`/home/taamangtchu/Documents/Github/quantum-generative-models/`)
-- **QCBM ansatz upgrade:** `models/priors/qcbm.py` has `EntanglingLayerAnsatz` (4-layer 16-qubit Ry/Rz + CNOT) → replace simple P3 QKS circuit
-- **Multi-basis QKS:** `MultiBasisWavefunctionQCBM` measures in X/Y/Z bases → weighted kernel sum for P3 enrichment
-- **Error mitigation:** `models/error/error_mitigation.py` — dynamical decoupling, randomized compiling, Richardson extrapolation
-- **Fragment TNE:** `stoned_algorithm/stoned.py` has `form_fragments()` → per-fragment tensor decomposition (novel)
-- **8 fingerprint baselines:** `utils/stoned_utils.py` — AP, PHCO, BPF, BTF, PATH, ECFP4/6, FCFP4/6
+## Simulation Environment
 
-### PennyLane v0.45.1 built-in features
-- **`qp.kernels.kernel_matrix(X1, X2, kernel)`** — optimized quantum kernel matrix computation
-- **`qp.kernels.target_alignment(X, Y, kernel)`** — kernel-target alignment (better QKS metric than AUC)
-- **`qp.kernels.closest_psd_matrix(K)`** — fixes non-PSD kernel matrices for SVM
-- **`qp.kernels.mitigate_depolarizing_noise(K, num_wires, method)`** — noise mitigation
-- **`qp.StronglyEntanglingLayers(weights, wires)`** — drop-in P3 circuit upgrade
-- **`qp.IQPEmbedding(features, wires)`** — classically hard data encoding
-- **`qp.MPS`, `qp.TTN`, `qp.MERA`** — quantum circuit tensor network templates (links classical TNE to quantum circuits)
-- **Docs:** `https://docs.pennylane.ai/en/stable/code/qp_kernels.html` and `https://docs.pennylane.ai/en/stable/introduction/templates.html`
-## 438_PfATP4 NPT Progress (July 7, 2026)
-  Started: ~14:15
-  Current step: Just started (400,000 remaining)
-  Temperature: 310.1 K (stable ✅)
-  Pressure: 113 bar (converging)
-  Total Energy: −4.675×10⁶ kJ/mol (stable)
-  Note: Using full Berendsen barostat instead of C-rescale due to 2-chain position restraints.
-  ETA: ~6–8 hours
-
-
-## Session 2026-07-18 — Data-Analysis Audit & SLURM Correction Plan
-
-**Scope:** Systematic audit of `BMAD_Q1_DATA_ANALYSIS_REPORT.md` against all available result files for P1, P2, and P3.
-
-**Findings:**
-- P1 results are in the canonical directory and mostly analyzed; V2 grid correction and mixed-exhaustiveness provenance remain to be finalized.
-- P2 results live under `Malaria_codesV2/Project2.../results/` rather than the canonical top-level directory. `md_top20_candidates.csv` contains only 17 rows. MM-GBSA for 438_PfATP4 returns ΔG = +473 kcal/mol (physically impossible, excluded from use). Mutant docking results (102 rows) are unanalyzed.
-- P3 results also live under `Malaria_codesV2/Project3.../results/`; canonical results dir is empty. PHCO descriptor AUC = 0.500 in `p3_hybrid_benchmark.csv` suggests a degenerate feature. QKS headline in the report is contradictory (0.751/0.701 vs 0.936/0.105).
-
-**Plan:**
-1. rsync P2/P3 results to canonical dirs.
-2. Debug PHCO in P3 hybrid benchmark; re-run if needed.
-3. Reconcile QKS headline against `p3_qks_summary.txt`.
-4. Integrate mutant docking into RRS/ACSI/PNS via SLURM job B2.
-5. Re-dock P1 top-20 with V2 grids (SLURM array B4).
-6. Update BMAD report, AGENTS.md, and project READMEs as each correction completes.
-
-**Documents updated:**
-- `BMAD_Q1_DATA_ANALYSIS_REPORT.md` — added §2 Data Analysis Audit.
-- `AGENTS.md` — this entry.
-- Project READMEs — status and results-location notes updated.
-
-
-## Session July 7 (14:00–21:00)
-  Completed:
-  - GA Discriminator benchmark (P3): HPC PID 3034398 finished; Tanimoto AUC=1.0 vs QK AUC=0.43-0.51
-  - P3 manuscript updated: section 3.7 + table + figure + Discussion reference
-  - P3 GA discriminator figure generated and included in manuscript Graphics/
-  - Cover Letter P2 created with unified 3-tier pitch
-  - Pipeline audit: results -> data analysis report -> manuscript enforced
-  - Cleaned duplicate files (pilot CSVs, anpdb, eos80ch, c6, md_top20, old summaries)
-  - Tartarus logs synced from HPC
-  - Killed QKS PID 2749806 (27h CPU run, results already exist)
-  - **Verified implementation of Q1 Theoretical Fortifications:**
-    - P1: ScafVAE baseline, MolGenBench context, and Cover Letter shift added.
-    - P2: n=20 power caveat, PfCRT string interaction limits, and FEP (Kireev) validation added.
-    - P3: TopologyNet / D-GRIL distinctions added.
-  Ongoing HPC:
-  - Tartarus full run (19,913 x 3 targets): PID 2696731, ~30h/83h, ETA Fri Jul 10
-  - 438_PfATP4 Production MD (10ns): PID 3036264/5, ~3h, on GPU
-
-## Session July 7 (evening) — P1 V2607 Finalisation
-  - JCIM guideline audit: title (12 words ✅), abstract ~130 words/3 sentences ✅, AI jargon eliminated (novel→new, pipeline→protocol, etc.)
-  - Abstract rewritten: 294→130 words, 12→3 sentences
-  - Renamed all files: `Deep_Learning_Antimalarial_Hybrids*` → `Antimalarial_Candidates_African_NP*` (_V2607, _V2607_SM, _V1, _V1_SM)
-  - 4 bib files also renamed
-  - LaTeX compilation verified: main 46p ✅ (0 errors), SM 41p ✅ (0 errors)
-  - Old PDFs deleted (manuscript/ + output/)
-  - Boucle de retroaction: resultats -> data analysis report -> manuscrit -> 
-
-### V2607 manuscript files (P1)
-  | File | Path |
-  |------|------|
-  | Main V2607 | `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/manuscript/Antimalarial_Candidates_African_NP_V2607.tex` |
-  | SM V2607 | `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/manuscript/Antimalarial_Candidates_African_NP_V2607_SM.tex` |
-  | Bib V2607 | `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/manuscript/acs-Antimalarial_Candidates_African_NP_V2607.bib` / `_SM.bib` |
-
-  **Deprecated / historical only (archived under `.archive_P1_V2607_20260717/manuscript/`):**
-  - `.archive_P1_V2607_20260717/manuscript/Antimalarial_Candidates_African_NP_V1.tex` — pre-V2607 main manuscript; retained for historical reference.
-  - `.archive_P1_V2607_20260717/manuscript/Antimalarial_Candidates_African_NP_V1_SM.tex` — pre-V2607 supplementary material; retained for historical reference.
-  - `.archive_P1_V2607_20260717/manuscript/Deep_Learning_Antimalarial_Hybrids*.tex` — old title manuscripts and timestamped backups; retained for historical reference.
-
-### V2607 manuscript files (P2)
-  | File | Path |
-  |------|------|
-  | Main V2607 | `Project2_Polypharmacology_MD_ValidationV2607/manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` |
-  | SM V2607 | `Project2_Polypharmacology_MD_ValidationV2607/manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2607.tex` |
-  | Bib | `Project2_Polypharmacology_MD_ValidationV2607/manuscript/LaTeX/Bibliography_Polypharmacology_MD_Validation.bib` |
-  | Cover Letter | `Project2_Polypharmacology_MD_ValidationV2607/manuscript/LaTeX/Cover_Letter.tex` |
-
-  **Deprecated / historical only (archived under `.archive_P2_V2607_20260720/manuscript/LaTeX/`):**
-  - `.archive_P2_V2607_20260720/manuscript/LaTeX/Paper2_Draft_v0.6.tex` — retained for historical reference; do not edit or submit.
-  - `.archive_P2_V2607_20260720/manuscript/LaTeX/Supplementary_Material.tex` — old placeholder SM; superseded by `Polypharmacology_MD_Validation_SM_V2607.tex`.
-
-### V2607 manuscript files (P3)
-  | File | Path |
-  |------|------|
-  | Main V2607 | `Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Paper3_Quantum_InspiredV2607.tex` |
-  | SM V2607 | `Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Paper3_Quantum_Inspired_SM_V2607.tex` |
-  | Bib | `Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Bibliography_Paper3.bib` |
-  | Cover Letter | `Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Cover_Letter_P3.tex` |
-  | Zenodo DOI | `10.5281/zenodo.19608875` — archived data, benchmark CSVs, and analysis scripts |
-
-  **Deprecated / historical only (archived under `.archive_P3_V2607_20260720/manuscript/LaTeX/`):**
-  - `.archive_P3_V2607_20260720/manuscript/LaTeX/Paper3_Draft_v0.6.tex` — retained for historical reference; do not edit or submit.
-
-## Session July 10 — Re-solvation, MM-GBSA & Cross-Metric Correlation
-  Completed:
-  - **164_PfClpP re-solvé**: Ligand moved to binding site (catalytic triad), EM→NVT→NPT→Production 10ns ✅. Analysis: 100% bound (mean min dist 2.8 ± 0.2 Å), Rg 27.3 ± 5.7 Å
-  - **201_PfDHFR re-solvé**: Ligand moved to active site, full pipeline ✅. Analysis: 100% bound (mean min dist 2.5 ± 0.1 Å), but **allosteric binding mode** — ligand bound at residues 270-296 & 431-488 (NADPH domain), not catalytic site
-  - **438_PfATP4 MM-GBSA**: Investigated 3 approaches — all fail for 2-chain topology:
-    1. gmx_MMPBSA auto → ΔVDWAALS +488 artifact
-    2. parmed manual conversion → VDWAALS +337M (parameter corruption)
-    3. MMPBSA.py with parmed prmtops → NaN (EGB)
-    **Conclusion**: 438 excluded from MM-GBSA (CHARMM36→AMBER not reliable for 2-chain)
-  - **214_PfCRT MM-GBSA**: ❌ **Not feasible** — bond energy overflow (CHARMM→AMBER conversion issue, verified July 15 with multiple strategies)
-  - **164_PfClpP MM-GBSA**: ΔG = **−8.35 ± 2.54 kcal/mol** ✅ (101 frames; VDWAALS −15.16, EEL −2.75, EGB +11.53, ESURF −1.97)
-  - **201_PfDHFR MM-GBSA**: ΔG = **−24.74 ± 4.63 kcal/mol** ✅ (21 frames; VDWAALS −41.32, EEL −12.12, EGB +33.75, ESURF −5.04) — allosteric binding site
-  - **438_PfATP4 MM-GBSA**: **Permanently excluded** — all 3 conversion methods fail for 2-chain topology
-  - **214_PfCRT binding validation**: Docking −9.6 kcal/mol + MD validation (RMSD 1.15 Å, 100% bound, 13 persistent contacts)
-  - **PNS recomputed for 17 polypharm compounds** ✅ — range 5.10–10.80; all bind PfDHFR+PfCRT (n_targets=2). PfCRT STRING ID (PF3D7_0709000) absent from PPI network → centrality defaults to 1.0
-  - **ACSI recomputed for polypharm SMILES** ✅ — saved to `c_acsi_polypharm_scores.csv`. Reference DrugBank/ANPDB files have InChI strings in SMILES columns → ~50% references skipped; relative ranking preserved
-  - **Merged metrics** `c_merged_metrics.csv` ✅ — 17 compounds with PNS, ACSI, RRS_class, dG_WT; 14 with complete data for correlation
-  - **Cross-metric Spearman correlation** ✅:
-    - PNS vs RRS: ρ=−0.665 (p=0.009, **) — stronger binders more mutation-sensitive
-    - ACSI vs RRS: ρ=−0.284 (p=0.326, ns) — weak trend, not significant
-    - ACSI vs PNS: ρ=+0.029 (p=0.923, ns) — orthogonal metrics
-    - PNS vs dG_WT: ρ=−1.000 (mechanical linkage) — PfCRT centrality=1.0 makes PNS = mean |ΔG|
-  - **Scatter plot** saved: `results/figures/cross_metric_correlation.png`
-  - **Data analysis report updated** ✅ — cross-metric correlation results, new output files
-  - **P2 manuscript updated** ✅ — `tab:crossmetric` populated, `tab:pns` populated, cross-metric section rewritten with actual values, PfCRT PPI absence noted in PNS methodology. Compiled successfully (20 pages, 0 errors)
-
-## Session July 10 (evening) — P1 Adversarial LM Remediation
-  Completed:
-  - **Audited** `Adversarial_LM.md` and `BMAD-ADVERSARIAL-REPORT-P1.md` from remote pull
-  - **F2 (pH correction)**: PROPKA3 unavailable → Contingency A: strengthened Limitations with PfCRT vacuolar pH context (pH~5.0-5.4)
-  - **F8 (MPO Jaccard)**: Script already computes Jaccard; manuscript already reports Jaccard=0.548 for top-20; added Spearman ρ range (0.26-0.97) and identified ADMET/QED as most sensitive weights
-  - **F10 (Scaffold paradox)**: Already comprehensively addressed with scaffold-only Tanimoto (1.84×), ECFP4 (92.6% unreachable), TDA reference
-  - **F1 (In vitro)**: Strengthened with MMV 69.8% hit rate and Zenodo DOI archive reference
-  - **F4 (Rigid receptor)**: Added Kitchen 2004 + Shoichet 2004 citations; forward reference to P2 MD study
-  - **F6 (ADMET OOD)**: Strengthened existing disclosure
-  - **F7 (Docking box)**: Corrected Limitations to match Methods (target-specific 25/30Å boxes)
-  - **F9 (Resistance mutations)**: Added forward reference to P2 (RRS + 6 mutant MD validation)
-  - **Bibliography**: Added `kitchen2004` and `shoichet2004` entries
-  - **P1 manuscript recompiled**: 47 pages, 0 errors ✅
-  - **BMAD-ADVERSARIAL-REPORT-P1.md** updated with completion status ✅
-
-## Session July 11 — P1 Submission Finalisation
-  Completed:
-  - **Tartarus full run verified** ✅ (19,913 × 3 targets, completed Jul 7, MD5 match local ↔ HPC)
-  - **P1 REVISION-ROADMAP**: Tartarus dependency resolved, R8-B scripts implemented
-  - **P1 manuscript recompiled**: Main 47p + SM 41p + Cover Letter 3p, 0 errors ✅
-  - **Bug fix**: Unescaped underscores (`_novelty`, `_v2`) in SM.tex line 665 causing LaTeX error
-  - **Submission package**: `p1_submission_2026-07-11.zip` (11 MB, PDFs + source + figures)
-  
-  - **Updated**: P1 README.md, P2 README.md, BMAD-ADVERSARIAL-REPORT-P1.md, AGENTS.md
-
-## Session July 12 (full day) — R8-B + Full-Cluster Rescoring
-  **AM — R8-B Script Implementation:**
-  - **R8-B pipeline implemented** ✅: `scripts/r8b/r8b_pipeline.py`
-    - Top-10 selection from top-20 by MPO score (0.829–0.824)
-    - SM Table S20 generated (LaTeX, 10 compounds with SMILES/scores/targets)
-    - SM Figure S15 generated (2D structure diagrams, 150 KB PDF)
-    - ASKCOS integration stub (placeholder routes table)
-    - ADMET risk classification: all top-10 flagged "Low_Risk"
-  - **Output files**:
-    - `manuscript/SM_Table_S20_top10_retrosynthesis.tex`
-    - `manuscript/SM_Figure_S15_top10_binding_modes.pdf`
-    - `manuscript/SM_Table_S20_top10_retrosynthesis_askcos_stub.tex`
-  - **Updated**: P1 README.md, P1 REVISION-ROADMAP.md, AGENTS.md
-
-  **PM — Full-Cluster Rescoring (F3 Activity Cliff Validation):**
-  - **Parsing fix**: `malaria_final.csv` has no SMILES column → switched to `eos9gg2_malaria_final_drugbank_mpo.csv` (65856 entries, `input` column)
-  - **Script written**: `scripts/r8b/r8b_fullcluster_rescoring.py` — ECFP4 fingerprinting → Tanimoto NN (threshold 0.50) → PDBQT prep → Vina multiprocessing (4 workers × 8 CPUs) → analysis
-  - **Dry-run passed**: 484 centroids loaded, 484/484 matched MPO, top-5 identified, fingerprints 65856/65856 valid
-  - **Bug fixes**: `dock_single` moved to module level (`dock_single_task`) for multiprocessing pickling; Vina parsed via `REMARK VINA RESULT:` (not stdout)
-  - **F3 centroids without scores (460, 477)**: Preliminary Vina docking (exhaustiveness=4) against all 4 targets to determine best target
-  - **Top-5 rescoring completed on HPC** (PID 3886900, 32 cores, ~1.3h):
-    - 575/575 molecules docked successfully
-    - No activity cliffs detected (σ ≤ 0.25 kcal/mol, threshold 1.5 kcal/mol)
-    - Mean Spearman ρ = 0.025 (near-zero correlation: Tanimoto ≠ potency)
-    - Best hit: cluster 460 member 130 (−9.48 kcal/mol, PfCRT, Δ −0.86 vs centroid)
-  - **Top-20 rescoring completed on HPC** ✅ (2294 molecules, results saved on Jul 12 in `results/r8b/fullcluster_rescoring/`)
-  - **Completed**: Updating manuscript Discussion + Limitations, Data Analysis Report §1.9, Adversarial Report F3, README.md, AGENTS.md
-  
-  ⚠️ **Important**: Not submitting until top-20 results verified and all .md files updated. Do NOT claim "submission ready" in any file.
-
-## Session July 13 (afternoon) — P2 HPC Package Preparation Complete
-  **Completed:**
-  - **214_PfCRT HPC package created** ✅ — Ready for GPU cluster transfer
-    - Package: `HPC_ready/214_PfCRT.tar.gz` (1.1 MB compressed)
-    - Automated SLURM script: `run_214_PfCRT.sh` (EM → NVT → NPT → Production 10ns → Analysis)
-    - Environment: Uses `malaria_md` mamba environment (per user requirement)
-    - GPU-aware with automatic CPU fallback
-    - Expected runtime: 24-48h on GPU
-    - All files verified: ions.gro (3.4 MB), topol.top (1.6 MB), restraints, ligand parameters
-  - **Documentation created**:
-    - `HPC_ready/TRANSFER_INSTRUCTIONS.md` (7.6 KB) — Quick start guide
-    - `HPC_ready/PACKAGE_SUMMARY.md` (9.7 KB) — Complete package details
-    - `NEXT_STEPS_JULY13.md` — Comprehensive action plan with 3 parallel tracks
-    - `QUICK_START_JULY13.sh` — Executable quick reference for immediate actions
-    - `STATUS_DASHBOARD_JULY13.md` — Visual progress tracker and risk monitor
-  - **Strategic pivot confirmed**: Focus on 2 successful systems (PfCRT 4.6Å, PfATP4 3.0Å), transparent reporting of 2 failures
-  - **438_PfATP4 status**: Already completed on HPC (July 7, PID 3036264/5, ~3h GPU run), needs download for local analysis
-  - **Timeline**: July 16 deadline achievable (90% confidence), 3 days remaining
-  
-  **Next Actions (Priority Order):**
-  1. 🔴 **URGENT:** Transfer 214_PfCRT.tar.gz to HPC (24-48h runtime, start ASAP)
-  2. 🟡 **HIGH:** Download 438_PfATP4 trajectory from HPC (already finished July 7)
-  3. 🟡 **HIGH:** Analyze local 214_PfCRT trajectory (if available)
-  4. 🟢 **MEDIUM:** Monitor HPC job, analyze 438, generate figures (July 14)
-  5. 🟢 **MEDIUM:** Write manuscript draft focusing on 2 successful systems (July 15)
-  6. ⚪ **LOW:** Final revisions and submission (July 16)
-  
-  **Key Files:**
-  - `Project2_Polypharmacology_MD_ValidationV2607/HPC_ready/214_PfCRT.tar.gz` ⭐
-  - `Project2_Polypharmacology_MD_ValidationV2607/STATUS_DASHBOARD_JULY13.md` 📊
-  - `Project2_Polypharmacology_MD_ValidationV2607/QUICK_START_JULY13.sh` 🚀
-## Workflow global
-  - Toujours suivre la sequence: resultats -> data analysis report -> manuscrit
-  - Pipeline audit enforce: results data available -> data analysis report updated -> manuscript reflects results
-
-## Session July 15 (afternoon) — 214_PfCRT MD Analysis Complete + MM-GBSA Investigation
-  Completed:
-  - **214_PfCRT MD trajectory analysis** ✅ — Comprehensive analysis completed
-    - Individual analysis files (01-05 series) with figures (300 DPI)
-    - Backbone RMSD, RMSF, ligand RMSD, radius of gyration, contact analysis
-    - Key results: Stable binding (min dist 3.13 ± 0.25 Å, ligand RMSD 1.15 ± 0.36 Å, 100% bound)
-    - 13 persistent contact residues, LYS34 primary anchor (>100% persistence)
-    - 9,417 H-bond events throughout simulation
-    - All outputs in `MD_systems/214_PfCRT/production_analysis/`
-  - **Git commit** ✅ — 214_PfCRT analysis results committed (34 files, excluded GROMACS binaries)
-  - **MM-GBSA investigation** ✅ — Comprehensive testing completed
-    - **Strategy 1** (conservative): Frames 600-900, interval 10, igb=2 (31 frames) → ❌ Bond energy overflow
-    - **Strategy 2** (ultra-conservative): Frames 700-950, interval 25, igb=2 (11 frames) → ❌ Bond energy overflow
-    - **Root cause**: CHARMM topology → AMBER conversion incompatibility (GAFF2 ligand parameters)
-    - **Conclusion**: MM-GBSA **not feasible** for 214_PfCRT (technical limitation, not user error)
-    - **Documentation**: `MM-GBSA_FINAL_STATUS.md`, `MM-GBSA_STATUS_JULY15.md`, `run_mmpbsa_robust.sh`
-  - **Binding affinity strategy** ✅ — Use validated docking score + MD validation:
-    - Docking: −9.6 kcal/mol (Vina)
-    - MD validation: RMSD 1.15 Å, 100% bound, 13 persistent contacts
-    - **Scientifically valid**, widely accepted, standard practice
-  - **MM-GBSA summary** for P2:
-    - ✅ 164_PfClpP: −8.35 ± 2.54 kcal/mol
-    - ✅ 201_PfDHFR: −24.74 ± 4.63 kcal/mol (allosteric)
-    - ❌ 214_PfCRT: Not feasible (topology conversion issue)
-    - ❌ 438_PfATP4: Excluded (2-chain topology)
-  - **AGENTS.md corrected** — Removed unverified −18.25 value for 214, documented actual status
-  
-  **Status**: Ready for manuscript writing with strong binding validation data
-  **Deadline**: July 16 (tomorrow) — on track ✅
-  **Risk**: 🟢 LOW (all required data available, approach scientifically sound)
-
-## Session July 15 — P1 BMAD Workflow (data → report → manuscript)
-  Completed:
-  - **Full rsync of all P1 results** ✅ — ~32 MB synced from HPC `Project1_Chem_space_antimalarialV2607/results/` to local `Project1_Chem_space_antimalarial_V2607_CorrectedGrid/results/`
-    - All previously missing files now present: `p1_stoned_leap_summary.txt`, `p1_admet_crossval_summary.txt`, `p1_mpo_sensitivity_summary.txt`, `p1_prior_comparison_summary.txt`, `p1_mcmc_summary.txt`, `c6_primary_leads_synthesisable.csv`, `eos80ch_malaria_final_activity.csv`
-    - r8b fullcluster rescoring confirmed local: `docking_results.csv` (1,815 rows), `cluster_analysis_summary.csv` (20 clusters)
-  - **Orphaned loky workers**: Already cleaned (no remaining LokyProcess workers on HPC)
-  - **Two numerical corrections from verified data files:**
-    - ANPDB coverage: 95.1% → **94.9%** (source: `p1_prior_comparison_summary.txt`)
-    - Unique scaffolds absent from ANPDB: 36.8% (91/247) → **37.0% (91/246)** (source: same file)
-  - **BMAD_Q1_DATA_ANALYSIS_REPORT.md updated** ✅ → v15:
-    - ANPDB numbers corrected with ⚠️ correction note
-    - "Missing Files" → "Previously Missing Files — ✅ ALL RESOLVED"
-    - §1.12 ChEMBL Enrichment Validation placeholder added (🔄 Running)
-    - §1.11 PCA renumbered → §1.13; §1.12 Activity → §1.14
-  - **P1 main .tex updated** ✅ — ANPDB 94.9%, 37.0% (91/246); paragraph formatting preserved
-  - **LaTeX compilation verified**: Main ✅ 0 errors, SM ✅ 0 errors
-  - **SM Table S16** already had correct ρ values (logS: −0.19, CYP3A4: −0.29) — no change needed
-  - **Knowledge graph updated**: graphify update ran (4,582 nodes, 5,181 edges, 413 communities)
-  
-  Ongoing HPC:
-  - `p1_enrichment_validation.py --part B`: PID 4083403 + 4083930 (running, target PfDHFR 7F3Y, obabel --gen3d bug fixed July 15)
-  - 438_PfATP4 NPT + Production MD: previous session run, needs status check
-
-## Session July 15 (evening) — P2 Manuscript Consolidation + Conda Cleanup
-  Completed:
-  - **P2 manuscript consolidated** ✅ — Paper2_Draft_v0.6.tex deleted, V2607 is the single working version
-    - Transferred 3 Discussion subsections from Paper2_Draft → V2607:
-      - Systems-Level Polypharmacology: "If H2 confirmed" → mechanical linkage finding
-      - Cross-Metric Insights: hypothetical framing → actual findings (H1 not supported, H2 mechanical, H3 insufficient data)
-      - Value of MD Validation: speculative ρ>0.7 → actual Vina vs MM-GBSA range (5.1-8.4 vs 8.4-24.7)
-    - Deleted: Paper2_Draft_v0.6.tex, Paper2_Draft_v0.6.pdf, Supplementary_Material.tex, 4 placeholder PDFs
-    - V2607 compiles clean: 23 pages (with bibliography), 0 errors ✅
-  - **P2 manuscript file paths** added to AGENTS.md ✅
-  - **Conda env cleanup** ✅:
-    - Added jupyterlab, ipykernel, beautifulsoup4, tqdm to `malaria_md`
-    - Deleted `malaria_code_env` locally (no `malaria_codes` existed on HPC)
-    - Fixed 28 script docstrings: `conda activate malaria_codes` → `malaria_md` (14 local + 14 HPC)
-  - **ChEMBL Part B restarted** on HPC (PID 4083403, `setsid bash run_chembl_partb.sh`)
-    - Previous attempts failed: wrong conda env name, missing receptor symlinks
-    - Fixed: symlinked 4 PDBQT receptors + 4 docking configs from Project2 to Project1
-    - Running ~40 min, actively processing (stdout Python-buffered)
-
-  Ongoing HPC:
-  - ChEMBL Part B: PID 4083403, ~40 min elapsed, ~2.5 MB written to buffer
-
-## API Credentials
-- `swiss_model_api_token`: `8d2d90bcea850b5dd15c0b27856f3c4fc6edc154`
-
-## Session July 15 (late evening) — P3 Finalization & Cross-Paper Analysis
-  Completed:
-  - **H₁ vs RRS cross-paper analysis** ✅ — Executed `p3_h1_rrs_cross_paper_analysis.py`
-    - 14 compounds with complete TFP + RRS data (3D conformers via ETKDGv3+MMFF, ripser PH)
-    - **Key result**: Spearman ρ(RRS_mean vs H₁_total_persistence) = **0.916** (p < 0.0001) ← major finding
-    - Spearman ρ(RRS_mean vs H₁_count) = 0.801 (p = 0.0006)
-    - Class A (n=3): H₁_total = 3.74 ± 0.34 Å, H₁_count = 5.33 ± 0.58
-    - Class C (n=7): H₁_total = 2.64 ± 0.92 Å, H₁_count = 4.29 ± 1.89
-    - Class D (n=1): H₁_total = 1.73 Å, H₁_count = 4
-    - Violin figure saved: `Project2.../results/figures/h1_rrs_class_violin.png`
-    - Data saved: `Project2.../results/p3_polypharm_tfp_rrs.csv`
-  - **P3 manuscript upgraded** ✅ — 3 targeted edits:
-    - Abstract: added explicit "ECFP4 remains superior (0.868) but hybrid matches (0.842)" + ρ=0.916 result
-    - §4.7 (Integration with P2): replaced "we plan to" → concrete results with full statistics
-    - Data Availability: expanded to enumerate all 6 deposit components explicitly
-    - Compiled: 20 pages, 0 errors ✅ (1 expected warning: fig:h1_rrs SM label undefined)
-  - **Cover Letter P3** ✅ — `Cover_Letter_P3.tex` (2 pages) targeting *Journal of Cheminformatics*
-    - Highlights: 4 novelty axes, cross-paper ρ=0.916, honest negative results, open science
-    - Compiled: Cover_Letter_P3.pdf ✅
-  - **English Roadmap** ✅ — `docs/PAPERS_2_3_ROADMAP2_En.md` created
-
-  **P3 Status**: 90–95% ready for submission
-  **Remaining before submission**:
-  - [ ] Add `\label{fig:h1_rrs}` to SM figure in the supplementary file
-  - [ ] Reserve Zenodo DOI and fill in final DOI
-  - [ ] Internal review of full manuscript PDF
-
-## Session July 15 (late evening) — ASKCOS → AiZynthFinder migration completed
-
-**User directive**: "ASKCOS is heavy for this work. We shall better switch to AiZynthFinder (AstraZeneca) and install it to our malaria_md env."
-
-**Migration path (stages)**:
-
-1. **rxnutils blocker resolved** — `pip install reaction-utils` provides the `rxnutils` namespace (1.9.3). AiZynthFinder 4.4.1 Python API imports clean: `Configuration`, `AiZynthFinder`, `Molecule`, `RetroReaction`.
-
-2. **v4.4.1 API migration** — Pre-4.x class names to 4.4.1:
-   | Pre-4.x | 4.4.1 |
-   |---|---|
-   | `Context` | `Configuration` |
-   | `Reaction` | `RetroReaction` |
-   | (monolithic) | `tree_search()` + `build_routes()` |
-
-3. **Model bundle pivot** — Original GitHub release URLs 404; pivoted to Zenodo (Figshare mirrored) via `python -m aizynthfinder.tools.download_public_data`. Bundle ~754 MB at canonical `Malaria_codesV2/models/aizynthfinder/`:
-   - 91 MB `uspto_model.onnx`
-   - 15 MB `uspto_ringbreaker_model.onnx`
-   - 4 MB `uspto_filter_model.onnx`
-   - <1 MB each of 2 template CSVs
-   - 663 MB `zinc_stock.hdf5`
-
-4. **Scorer block dropped** — AiZynthFinder 4.4.1's 4 default `Scorer` classes (StateScorer, NumberOfReactionsScorer, NumberOfPrecursorsScorer, NumberOfPrecursorsInStockScorer) all require `Configuration` as first positional arg. `ScorerCollection.__init__` auto-loads these defaults if `scorer:` key is absent — we leverage that.
-
-5. **REPO_ROOT path arithmetic fix** — Config file paths went from 2-up to 3-up `REPO_ROOT` for `Malaria_codesV2/` traversal. Bash `$SCRIPT_DIR` makes this robust to any future path arithmetic changes.
-
-6. **Snippet idempotency** — Single appended marker line (`# --- appended by scripts/r8b/download_aizynth_models.sh ---`); wrapper greps for it to prevent double-appending.
-
-7. **CRITICAL FIX (2026-07-15, evening)**: `Configuration.from_file()` / `.from_dict()` in v4.4.1 silently drops every YAML key other than `expansion`/`filter`/`stock`/`scorer`. The pre-4.x `properties:` block (with `iteration_limit`, `max_transforms`, `return_first`) was being silently ignored — defaults remained (iteration_limit=100, max_transforms=6, return_first=False). Also confirmed by source-grep:
-   - `max_depth` does NOT exist in 4.4.1 source (renamed to `max_transforms`)
-   - `search_expansion_top_n` and `search_branching` do NOT exist anywhere in the 4.4.1 codebase
-   
-   **Solution (Python-side enforcement)**: `aizynthfinder_backend.py` now defines `AIZYNTH_SEARCH_OVERRIDES = {"iteration_limit": 500, "max_transforms": 8, "return_first": False}` as a module-level constant. `_query_via_api()` applies them via `setattr(cfg.search, ..., val)` after `Configuration.from_file()`, **before** `finder.tree_search()`. Time-limit is parameterized per-call (not in the constant).
-   
-   YAML `properties:` block was removed entirely from `config.yml.template` and both `config.yml` files. The template still contains the documentation comment block describing the 4.4.1 schema validator.
-
-**Final verification** (`/tmp/verify_aizynth_pipeline.py`, 2026-07-15 evening):
-- ✅ Check 1: `Configuration.from_file()` loads cleanly with library defaults (no silent overrides)
-- ✅ Check 2: `cfg.search.iteration_limit = 500` propagates correctly
-- ✅ Check 3: `AIZYNTH_SEARCH_OVERRIDES` constant has correct values (500/8/False)
-- ✅ Check 4: Override block in `_query_via_api` is BEFORE `finder.tree_search()` with try/except + getattr fallback for graceful degradation
-- ✅ Check 5: Snippet idempotency intact; no broken `properties:` block; no `max_depth` leakage in any of 3 config files
-- ⚠️ Check 6 (non-blocking): ASKCOS byte-identical smoke test fails on `KeyError: 'weighted_mpo_score'` — **verifier-fixture issue, NOT a regression**. Real `generate_sm_table_s20()` expects `weighted_mpo_score` column (not `mpo_score`); smoke test was best-effort and the ASKCOS publication invariant remains valid via the published cache.
-- ✅ Check 7: `capability_summary()` returns USABLE
-- ✅ Check 8: `py_compile` + `bash -n` pass
-
-**Findings / observations**:
-- 4.4.1 YAML schema is narrower than pre-4.x; no warning on unknown keys. Always introspect `_SearchConfiguration` before touching config files.
-- ASKCOS smoke test fixture should be updated to use `weighted_mpo_score` (and add: `targets`, `syba_score`, `qed` columns to match the real schema).
-
-**Files in play** (final, post-fix):
-- `Project1_Chem_space_antimalarialV2607/scripts/r8b/aizynthfinder_backend.py` — has `AIZYNTH_SEARCH_OVERRIDES` constant + override enforcement in `_query_via_api`
-- `Project1_Chem_space_antimalarialV2607/scripts/r8b/config.yml.template` — docs-only, no `properties:` block
-- `Project1_Chem_space_antimalarialV2607/scripts/r8b/config.yml` — model paths only
-- `models/aizynthfinder/config.yml` — mirror of the above
-- `Project1_Chem_space_antimalarialV2607/scripts/r8b/download_aizynth_models.sh` — wrapper with idempotency guard
-- `.gitignore` — includes `models/` exclusion to keep the 754 MB bundle out of git
-
-**Status**: AiZynthFinder R8-B integration fully operational. SWITCHABLE between ASKCOS and AiZynthFinder per call (paper-1 reproducibility preserved; future R8-B runs can pick the faster local AiZynthFinder path).
-
-## Session 2026-07-17 (full day) — Code Audit & Forward-Grep
-
-Completed:
-- **P1 priority scripts audited + fixed** ✅ (3 rounds of code-reviewer-minimax-m3):
-  - `scripts/v2_submit_all.sh` (`Malaria_codesV2/../Project1_Chem_space_antimalarial_V2_CorrectedGrid/`): F1 (added `--time=02:00:00` to all 5 array submits — root cause of 16/484 pfATP4 TIME LIMIT failures in job 30); F2 + F7 (`set -euo pipefail`, `${1:-}` instead of `$1`); F8 (`|| JN=""` on all 6 J1..J6 captures to survive sbatch pipefail fragility).
-  - `scripts/v2_slurm_vina.sh`: F3 (default `#SBATCH --time` raised 01:00:00 → 02:00:00); F4 (`set -euo pipefail` + `vina ... || vina_rc=$?` + receptor/ligand existence guards + stricter `grep -q "VINA RESULT"` reuse check + cleanup `rm -f` on Vina failure).
-  - `scripts/p1_enrichment_validation.py`: F6 (removed duplicate `import shutil`).
-- **P2 priority scripts audited + fixed** ✅ (production scripts):
-  - `scripts/preparation/prepare_targets.sh`: F9 (`set -euo pipefail`; input guards for missing PDB + missing prep scripts; post-pdb2gmx output-existence loop).
-  - `scripts/auto_mmpbsa_438.sh`: F10 (added missing-input guard before `gmx_safe()` — `if ! -f md_production.{log,tpr} then exit 4`).
-  - `scripts/preparation/prepare_complex_systems.py` + `Tuto_MD_MC/prepare_complex_systems.py` (both diverged copies): F11 (replaced hardcoded `/home/vital/Documents/GitHub/...` with `PROJECT2_BASE_DIR` env var + local-repo fallback + `_require_base_dir()` with explicit remediation and `sys.exit(2)`).
-- **P3 priority scripts** reviewed, no fix needed (`p3_qks_benchmark.py`, `p3_tda_pipeline.py`, `p3_tne_pipeline.py`, `aizynthfinder_backend.py` already follow modern defensive patterns).
-- **P2 forward-grep** ✅ on 169 .py + .sh: **116 of 169 (69 %) flagged** for ≥1 of {missing set -e, hardcoded path, missing input guard, 2>/dev/null masking, GROMACS invocation}. Top systemic bugs: 23 files hardcode `/home/vital/...` (1 fixed in F11 → 22 remaining) and 10 shells combine `set -e missing` + `2>/dev/null` (silent-failure combo). Detailed table + sanitize templates + lessons learned in [code_audit_V2607.md](./code_audit_V2607.md).
-
-Validation evidence:
-- `bash -n` ✅ on all 4 .sh (v2_submit_all.sh, v2_slurm_vina.sh, prepare_targets.sh, auto_mmpbsa_438.sh)
-- `python3 -m py_compile` ✅ on all 4 .py (p1_enrichment_validation.py, prepare_complex_systems.py × 2, plus untouched review targets)
-- Functional smoke: `v2_submit_all.sh --dry-run` runs clean; `v2_submit_all.sh` (no args) correctly hits DRY_RUN check under `set -u`; `v2_slurm_vina.sh` exits 2 on missing RECEPTOR; `prepare_complex_systems.py` exits 2 with helpful stderr message when neither env var nor fallback is satisfied.
-
-Round-trip details:
-- Round 1 review caught: set -e killing pred-failure-$? capture in v2_slurm_vina (dead cleanup path); set -u unbound `$1` in v2_submit_all. Both fixed.
-- Round 2 review caught: `set -o pipefail` on `J1=$(cat ... | grep ... | head -1)` could kill master submit on transient sbatch warning. Wrapped with `|| JN=""` on all 6 captures.
-- Round 3 (final): APPROVED.
-
-Out-of-scope (preserved per user directive "only on the codes"):
-- All `.tex` manuscripts, all `.md` reports, all generated artifacts (CSVs, pdbqt, MD trajectories, MM-GBSA outputs). Untouched.
-- `/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarialV2607/scripts/` does NOT carry the V2 corrected-grid pipeline (V2 scripts live in the parallel `Project1_Chem_space_antimalarial_V2_CorrectedGrid/` working copy); audit only covered the working copy.
-
-**Files NOT modified (intentional)** : `Project1_Chem_space_antimalarialV2607/scripts/v2_submit_all.sh` etc do not exist; the V2 corrected-grid pipeline lives in `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/`.
-**Status**: 4-doc documentation update complete; `code_audit_V2607.md` (canonical reference), `bilan_corrections_P1_V2607.md` §3 (sumary), `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §1.15 (QC sibling to data sections), this AGENTS.md entry.
-**Forward-priority**: Batch 1 — fix the 22 remaining `/home/vital/` files + the 10 `set -e`-absent + `2>/dev/null` shells.
-
-## Session 2026-07-18 — P3 PHCO Fix, QKS Reconciliation & Audit Synthesis
-
-Completed:
-- **PHCO descriptor bug fixed** ✅ in `Project3_Quantum_Inspired_RepresentationsV2607/scripts/p3_hybrid_benchmark.py`
-  - Root cause: `Generate.Gen2DFingerprint` returns a `SparseBitVect`; `ConvertToNumpyArray` silently failed, producing all-zero features.
-  - Fix: manual bit-setting via `fp.GetOnBits()`.
-  - Validation: PHCO AUC rose from 0.500 to ~0.83 (RF/SVM) on 200-molecule test.
-- **QKS headline reconciled** ✅ across `BMAD_Q1_DATA_ANALYSIS_REPORT.md` and P3 v0.7 LaTeX
-  - Canonical result: Quantum AUC 0.751 ± 0.033 vs RBF AUC 0.701 ± 0.067 (p=0.088, ns) on 500-molecule subsample.
-  - Removed unsupported 0.936/0.105 claim from current-results sections; retained only as v1 artefact in audit trail.
-- **Canonical P1 directory verified** ✅
-  - `/home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/` is the active canonical directory.
-  - Key files confirmed: `results/v2_centroid_scores.csv`, `results/r8b/fullcluster_rescoring/docking_results.csv`, `results/p1_enrichment_chembl_benchmark.csv`.
-  - `Malaria_codesV2/Project1_Chem_space_antimalarialV2607/` is a stub; `.archive_P1_V2607_20260717/` holds the archived version.
-- **v2_centroid_scores.csv analyzed** ✅ for P1 F3 (consensus justification)
-  - 484 centroids: pfCRT 87.0%, pfATP4 10.1%, pfDHFR 2.7%.
-  - Implication: Vina+DiffDock consensus must be framed as DiffDock compensating for Vina's strong pfCRT bias, not as independent target validation.
-- **Audit synthesis action plan drafted** ✅
-  - P1 F1–F4: manuscript-only fixes (grid coords, MTX RMSD, consensus framing, title).
-  - P3 W1–W4: relaunch on 1815-mol full-cluster panel + Tartarus orthogonal validation.
-
-**Next (P3 relaunch):**
-1. Import `docking_results.csv` (1815 mols) into P3 data directory.
-2. Run `p3_tda_pipeline.py` on 1815 mols (SLURM).
-3. Run `p3_qks_benchmark.py --n-mols 1815` (SLURM).
-4. Update P3 manuscript §3.3/§4.7 with new results.
-
-## Session 2026-07-17 (evening) — 48h Code/Script Fix Synthesis
-
-Completed:
-- **Consolidated 48 h of code/script fixes** into a single synthesis covering July 16–17, 2026.
-- **BMAD_Q1_DATA_ANALYSIS_REPORT.md updated** ✅ → v18:
-  - Header bumped to "Updated July 17, 2026 (v18: 48 h code/script fix synthesis §1.15)".
-  - §1.15.1 added: 48-Hour Code/Script Fix Synthesis — table of F1–F11 fixes, validation evidence, and results enabled.
-  - §1.15.2 added: What Remains to Do — Batch 1/2/3 priorities, 5 specific next actions, and non-code items outside the audit scope.
-- **Cross-references preserved**: links to `code_audit_V2607.md`, `bilan_corrections_P1_V2607.md`, and the Directory Standardization note remain intact.
-
-**Key takeaways from the 48 h push:**
-- 11 surgical code fixes (F1–F11) across 8 files (P1 V2 corrected-grid + P2 MD validation).
-- 3 code-reviewer rounds caught and resolved set -e/set -u/pipefail interaction bugs.
-- 169 P2 scripts forward-grepped; 116 (69 %) flagged; Batch 1 (highest-risk) scoped and ready.
-- Validation: `bash -n` ✅ on 4 .sh; `python3 -m py_compile` ✅ on 4 .py file-edits; functional smoke tests pass.
-
-**Status**: Code-level hardening of the P1 V2 corrected-grid pipeline and P2 MD prep scripts is complete. The remaining work is the Batch 1–3 P2 cleanup and the non-code manuscript items listed in BMAD §1.15.2.
-
-## Directory Standardization (2026-07-17)
-V2 corrected-grid corrections live ONLY in /home/nanaengo/Project1_Chem_space_antimalarial_V2_CorrectedGrid/ (canonical).
-The OLD Malaria_codesV2/Project1_Chem_space_antimalarialV2607/ is **archived** as of 2026-07-17 to .archive_P1_V2607_20260717/ (filesystem move landing under separate DIR-DEDUP-MOVE commit).
-Stop referencing the OLD path in forward-looking scripts.
-
-# AUDIT FIX 2026-07-17 — DIR-DEDUP-DOC (AGENTS.md standardization note — doc-only, future filesystem move is DIR-DEDUP-MOVE)
-
-Note 2026-07-17: this commit was rewritten via `git commit --amend` on
-2026-07-17 to align the subject marker with the in-file comment
-(DIR-DEDUP-2 -> DIR-DEDUP-DOC). Pre-push; local repo only; safe.
-# AUDIT FIX 2026-07-17 — DIR-DEDUP-DOC-HASHNOTE
-
-## Session 2026-07-20 — P3 Phase2 SLURM Job Audit & Fixes
-
-Completed:
-- **P3 phase2 running jobs audited** ✅
-  - Job 10594_0 (`p3_phase2_task0`): running with fixed script (`--n-jobs 1`)
-  - Jobs 9255_1 and 9255_2 (`p3_phase2`): running with old unfixed script (`--hpc`)
-  - Findings documented in `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §4.
-- **Critical race condition fixed** ✅ in `Project3_Quantum_Inspired_RepresentationsV2607/scripts/p3_quantum_param_search.py`
-  - Added `--output-csv` argument so each array task writes to a unique file.
-  - Derived `.done.log` from output CSV via `with_suffix(".done.log")`.
-  - Old shared `p3_quantum_params_sweep.csv` no longer races between tasks.
-- **OpenMP oversubscription fixed** ✅ in `Project3_Quantum_Inspired_RepresentationsV2607/scripts/p3_phase2_array.sbatch`
-  - Added `OMP_NUM_THREADS=1`, `OPENBLAS_NUM_THREADS=1`, `MKL_NUM_THREADS=1`, `NUMEXPR_NUM_THREADS=1`.
-  - Prevents lightning.qubit from spawning 48 threads on a 1-CPU allocation.
-- **TFP imputation bug fixed** ✅ in `p3_quantum_param_search.py`
-  - `load_precomputed()` now pads missing SMILES with `np.nan` instead of `np.zeros`.
-  - Existing mean-imputation logic now actually runs (previously dead code).
-- **Bash error handling improved** ✅ in `p3_phase2_array.sbatch`
-  - Added `err_handler` trap to log failures before `set -e` exits.
-  - Passes exit code explicitly via `trap 'err_handler $?' ERR`.
-- **PicklingError root cause eliminated** ✅
-  - Removed `--hpc` argparse flag and auto-detect block from `p3_quantum_param_search.py`.
-  - `_kernel_matrix_chunked` forces `n_jobs=1` with warning.
-  - SLURM script now uses `--n-jobs 1` instead of `--hpc`.
-- **Old jobs cancelled and resubmitted** ✅
-  - Cancelled 9255_1 and 9255_2.
-  - Resubmitted as job 10595 (tasks 1–2) with fixed script.
-- **Validation** ✅
-  - `python -m py_compile` on `p3_quantum_param_search.py` passes.
-  - `bash -n` on `p3_phase2_array.sbatch` passes.
-  - Code-reviewer-kimi approved all changes.
-
-**Current P3 phase2 jobs:**
-- 10594_0 (bd6_nr1_nk30): RUNNING, fixed script
-- 10595_1 (bd6_nr6_nk30): RUNNING, fixed script
-- 10595_2 (bd6_nr6_nk20): RUNNING, fixed script
-
-## Session 2026-07-18 — RRS Table Population, PP-11 C59R Investigation & Named Ligand Docking
-
-Completed:
-- **RRS table populated in P2 manuscript** ✅ — 14 polypharm scaffolds (PP-04 to PP-17) classified into A*, A, B, C, D tiers with per-mutant RRS values for all 6 mutants (N51I, C59R, S108N, I164L, K76T, K76A). Fixed: `--`→`{--}` for siunitx S-column, caption updated from "20 candidates" to "14 polypharm scaffolds".
-- **PP-11 C59R anomaly investigated** ✅ — Complete mechanistic analysis in `Project2_Polypharmacology_MD_ValidationV2607/analysis/PP11_C59R_investigation.md`. Verdict: steric clash between Arg59 guanidinium (Cys→Arg doubles side chain 86→173Å³) and planar flavonoid C-ring. −3.0σ outlier. Design rule: sp³-rich, flexible scaffolds preferred for PfDHFR targeting.
-- **Named ligand docking pipeline submitted** (job 7948) — 5 ligands × 6 mutants (30 runs). Target-specific WT denominators: PfDHFR mutants → ligand's PfDHFR WT; PfCRT mutants → ligand's PfCRT WT. SMILES→3D PDB (RDKit ETKDG+MMFF) → PDBQT (obabel). PENDING (partition time).
-- **Data analysis report updated** ✅ — RRS section now shows PP-04 to PP-17 with compound types, PP-11 flagged with ★ anomaly marker. Pipeline status updated with 5 new completed items and job 7948.
-- **P2 manuscript narrative updated** ✅ — Added 8-line discussion paragraph on PP-11 C59R selective knockout with structural mechanism and design rule recommendation. Fixed `\numrange`→`\qtyrange` for siunitx compatibility.
-- **PP-11 C59R investigation report created** ✅ — `Project2_Polypharmacology_MD_ValidationV2607/analysis/PP11_C59R_investigation.md` (8 sections: compound ID, RRS data, statistics, structural context, 3 mechanistic hypotheses, unaffected mutants, library comparison, recommendations)
-
-**Status**: Data → Report → Manuscript workflow applied. P2 RRS section now populated with actual data. Named ligand docking results pending (job 7948).
-
-## Session 2026-07-20 — P4 MCTS+RL Proof-of-Concept Complete
-
-Completed:
-- **P4 MCTS+RL pipeline implemented** ✅
-  - `scripts/p4_mcts_agent.py` — UCT selection, expansion, rollout, backpropagation
-  - `scripts/p4_mcts_rl_env.py` — fragment-attachment molecular environment
-  - `scripts/p4_mcts_oracles.py` — real P1/P2 oracles (MPO, docking, SYBA, SA) with canonical-SMILES cache
-  - `scripts/p4_mcts_run.py` — single-search CLI runner
-  - `scripts/p4_mcts_merge.py` — merge and rank per-task outputs
-  - `scripts/p4_mcts_array.sbatch` — SLURM array submission
-- **Test array submitted and completed** ✅ (job 10597, 3 tasks)
-  - All tasks completed within ~15 seconds
-  - Outputs: `results/mcts/p4_mcts_seed_*.csv` + `p4_mcts_merged_ranked.csv`
-- **Documentation updated** ✅
-  - `Project4_Advanced_Monte_CarloV2607/README.md` created
-  - `P4_MC_Strategies.md` updated to reflect implemented status
-  - `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §4 added
-- **Git hygiene** ✅
-  - `Project4_Advanced_Monte_CarloV2607/results/` added to `.gitignore`
-
-**Current P4 status:**
-- MCTS+RL PoC: ✅ complete
-- QMC validation: ⏸️ skeleton only (future work)
-
-
-## Session 2026-07-20 (continued) — P3 Phase2 awk Banner Fix
-
-**Issue:** Running P3 phase2 jobs (10594, 10595) emitted an `awk` syntax error in their `.err` files:
-```
-awk: cmd. line:1: {print $3 \" / \" $2}
-awk: cmd. line:1:           ^ backslash not last character on line
-```
-
-**Root cause:** In `scripts/p3_phase2_array.sbatch`, the banner line
+### Local Execution (Laptop Mode - Fast Verification)
 ```bash
-echo "║  Mem: $(free -h | grep Mem | awk '{print $3 \" / \" $2}')"
+mamba run -n MesoHOP-sim python Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/main.py --config Redac_Paper1/quantum_simulations_framework_parallel_260612/laptop_parameters.yaml
 ```
-passed literal backslash-escaped double quotes into the awk script, which is invalid awk syntax.
 
-**Fix:** Moved the `free | awk` pipeline to a variable assignment before the echo:
+### Local/Cluster Execution (Production Mode - Publication Data)
 ```bash
-mem_info=$(free -h | awk '/Mem/{print $3 " / " $2}')
-echo "║  Mem: ${mem_info}"
+mamba run -n MesoHOP-sim python Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/main.py --parallel --skip-audit
 ```
 
-**Impact:** The error only affected the startup banner; the actual 5-fold CV computation continued unaffected. Current jobs (10594, 10595) were left running. The fix applies to future submissions.
+**Figure 2 Sweep (Server-Side):**
+```bash
+chmod +x Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/run_temp_sweep_cluster.sh
+./Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/run_temp_sweep_cluster.sh
+```
+Monitoring: `tail -f reproducibility_cluster.log`
 
-**Validation:** `bash -n p3_phase2_array.sbatch` passes.
+### Repository Hygiene (STRICT)
+**The canonical simulation framework is:**
+`Redac_Paper1/quantum_simulations_framework_parallel_260612/` (Paper 1 — JPCL revision)
 
+**ALWAYS SYNC AFTER CHANGES**: After every local modification to the codebase, you MUST synchronize the files to the server using `rsync` to ensure the production environment is up-to-date:
+```bash
+rsync -avz -e "ssh -i /home/taamangtchu/.ssh/taiscale_key" /media/taamangtchu/MYDATA/Github/Quantum_Agrivoltaic_PT-HOPS/Redac_Paper1/quantum_simulations_framework_parallel_260612/ nanaengo@100.73.21.40:~/quantum_simulations_framework_parallel_260612/
+```
+
+**DEPRECATED DIRECTORIES (DO NOT REGENERATE):**
+- `Redac_Paper1/quantum_simulations_framework/` (DELETED)
+- `Redac_Paper1/quantum_simulations_framework_parallel/` (DELETED)
+- `Quantum_Agrivoltaic_PT-HOPS/quantum_simulations_framework_parallel_260612/` (DELETED — moved to `_deleted_root_duplicate_260612/`)
+
+If these directories appear, delete them immediately and check for stale path references in `AGENTS.md`, `ROADMAP.md`, or `README.md`.
+
+### Hardware Management
+The simulation now utilizes **2/3 of available CPU cores** via `joblib` parallelization.
+- **Laptop Mode**: Uses $L=3, N=4$ for rapid testing (~10 mins).
+- **Production Mode**: Enforces $L \ge 8$ and $K \ge 2$ for manuscript compliance.
+
+---
+
+## JPCL Revision — Current Status (2026-06-21 — Session 8)
+
+> [!IMPORTANT]
+> [!IMPORTANT]
+> **SOURCE OF TRUTH (REVISION R2 — SUBMITTED)**: The absolute canonical source of truth for the revised, submitted manuscript is `Redac_Paper1/JPCL_Submission_Package_2026-06-20/`. All modifications to the LaTeX files, Response letters, and SI must be done exclusively in this directory.
+
+### ✅ Completed fixes
+- **Serialization/Pickling Hardening**: Refactored parallel trajectory workers in `hops_simulator.py` and `quantum_dynamics_simulator.py` to module-level functions, enabling 100% compatibility with `joblib`/`multiprocessing` backends.
+- **Vibronic Fallback Fix**: Synchronized `QuantumDynamicsSimulator` (fallback) to correctly load the 12-mode Kleinekathöfer vibronic bath instead of defaulting to DL-only.
+- **SBD Resolution**: Set `sbd_bundles_per_site` to 3 balancing tractability (C(24,7)=346K states) vs spectral resolution.
+- **L=8, K=2 Synchronization**: Standardized across manuscript body, SI Tables S1 & S4, `constants.py`, and `parameters.yaml`.
+- **SI K-Convergence Note**: Added physically-motivated justification for $K=2$ truncation (MAE = 3.32e-05) in SI Section S2.3.
+- **Hierarchy Depth Sync**: Confirmed $L=8$ across all documents (MAE = 3.10e-11 for $L=8$ relative difference).
+- **Resource Management**: Explicitly documented the **Memory-Aware Job Scheduler** and the **\SI{54}{\giga\byte}** per-trajectory footprint in the Response Letter and SI.
+- **Figure Synchronization**: May 10 production figures ($N=100$) copied to generic filenames for manuscript compilation.
+- SI Section S1.1: Gaussian pulse temporal envelope E(t) = E₀ exp(-t²/2σ_t²) with FWHM=50 fs added
+- Abstract terminology updated: "quantum control via selective vibronic excitation"
+- Fleming2015 and Scholes2015 added to `references.bib` and cited in manuscript
+- ENAQT reference (Wu et al. 2010) added to `references.bib` per Reviewer 2 comment 4
+- Manuscript formatting: `\section{}` headings removed per JPCL Letter format; `\subsection*{}` used for paragraph headings; `\textbf{...}` bold run-ins for major divisions
+- TOC Graphic: added via `\begin{tocentry}` in achemso class (correct mechanism)
+- Cover Letter: updated with point-by-point response to Manuscript Formatting Request and Cover Art invitation
+- Fake convergence CSVs quarantined as `.INVALID_FALLBACK_DATA.csv`
+- `audit_convergence.py`: now detects MesoHOPS fallback, exits with error, and implements **Trace Preservation/Positivity checks**
+- `main.py`: complete orchestrator (hardened with `--skip-audit` and `--parallel` flags)
+- `figure_generator.py`: Overhauled to support JPCL legibility standards (600 DPI, Time [fs] units, Panel labels (a)-(f), comparison traces)
+- `environmental_factors.py`: Replaced seasonal "Time (days)" cycle with physically motivated static temperature sweeps (FR11)
+- **Code Merge & Data Reconciliation (2026-05-10)**: Merged server-side best practices (Python 3.10+ type hints, NumPy-style docstrings, `np.diag` initialization) into `core/hamiltonian_factory.py`. Local `quantum_simulations_framework_parallel_260612/` confirmed as the canonical reference with all improvements incorporated. Production CSV format verified identical (local=server). SI `η` value aligned: Test 10 corrected from 0.22(4) to 0.20(4) to match production ensemble average.
+- **CSV Format Verified**: Both local and server CSVs use the same column schema (`time_fs` + 7 site populations + `coherences` + broadband columns). No compatibility patch needed for figure generator.
+### ✅ Production Run (2026-06-13→15)
+- **200/200 trajectories completed** with η=0.39±0.04 (2.2× higher than old η=0.18 after vibronic bath bug fix).
+- Convergence: η(L=6)=0.74831, η(L=7)=0.74912, η(L=8)=0.74915 — MAE=3.0×10⁻⁵.
+### ✅ Session 4 — Parameter Tuning, Phase 1-2 Sweeps (2026-06-18)
+- **SBD=3 default**: Changed `parameters.yaml` and `constants.py` from SBD=6 to SBD=3.
+- **`--skip-temp-sweep` flag**: Added to `main.py` to skip temperature sweep in convergence runs.
+- **`effective_jobs` fix**: `memory_aware_patch.py` now uses `min(n_jobs, len(batch_seeds))` to prevent deadlock with N=1.
+- **Cleanup function**: `cleanup_joblib()` kills orphan LokyProcess workers between sweeps.
+- **Zombie cleanup**: Killed 4 orphan workers consuming ~86 GB RAM and 53 GB swap.
+- **Parallel sweeps**: Created `run_phase1_parallel.sh` for concurrent K=3 + dt=2.0 execution.
+- **Phase 1 progress**: L=7 ✅, K=1 ❌ (tué, ODE stiff), K=3+dt=2.0 ❌ (tué lent, contention mémoire avec Phase 2).
+- **Phase 2 parallèle**: 4 sous-sweeps simultanés via `run_phase2_parallel.sh` pour atteindre ≥60 GiB RAM.
+  - Batch 1: T290/T300/T305/T310 (N=5, 20 workers, ~40-60 GiB)
+  - Batch 2: λ=28/42, γ=40/60
+  - Batch 3: filtres (770-820, 730-820, 750-800) + bandwidth (50/200) + single-band (700/850)
+- **`MEMORY_FRACTION_LIMIT=0.75`** in constants.py pour Phase 2.
+- **`n_disorder_samples=1`** bypassé pour sweeps rapides (N=5, ~40 min/sweep).
+- **`[PROGRESS]` logging**: ajouté à `memory_aware_patch.py` — log thread toutes les 60s.
+- **Phase 2 T285 terminée** (21:01 UTC, N=15, filtered+broadband, CSVs sauvegardés).
+- **Phase 2 T290 kill + restart parallèle** (21:41 UTC, N=5 × 4).
+### ✅ R3 Audit (2026-06-14)
+- **SBD Trajectory Fix**: Fixed `TrajectoryError` due to time step mismatch (`TAU`/`dt` consistency) in `hops_simulator.py`.
+- **Worker Post-processing Stability**: Added defensive array shape filtering (`psi_data_filtered`) to handle inhomogeneous trajectory results in parallel workers.
+- **Adaptive Hierarchy**: Enabled `ADAPTIVE_H` and `ADAPTIVE_S` in `eom_param` for robust hierarchical propagation.
+- **Production Safety**: Forced `MAX_N_JOBS=1` in `constants.py` to prevent OOM on server.
+- **Documentation**: Updated `AGENTS.md` to mandate `rsync` protocol after local codebase changes.
+
+### ⚠️ Requires MesoHOPS environment (cannot be done without real solver)
+- (None) — All high-rigor production tasks have been completed.
+
+### 🧪 Test Status (2026-06-13)
+**pytest results:** 33/38 passed, 3 expected-skip, 2 server-only (memory validation) — 3 pre-existing test bugs fixed.
+| Test | Bug | Fix |
+|------|-----|-----|
+| `test_pipeline_exits_on_no_mesohops` | `sys.exit` mock no `SystemExit` → execution continuait | `mock_exit.side_effect = SystemExit` |
+| `test_quantum_dynamics_simulator` | Arguments inversés `time_points` ↔ `psi0` → `assert 5==7` | `keyword args initial_state=psi0, time_points=time_points` |
+| `test_hamiltonian_properties` | `server_hardware['ram_gb']` au lieu de `'total_ram_gb'` → `KeyError` | Corrigé key name |
+| `test_3site_full_dynamics` + `test_7site_full_dynamics` | **Attendu** — validation mémoire bloque 12.9/30.0 GB > 9.5 GB laptop | Comportement correct |
+| `test_hierarchy_convergence_L6_vs_L8` | Long (~30 min), 20 batches × 1 traj | Serveur seulement |
+
+### ✅ Laptop test completed
+- `--config laptop_parameters.yaml` (L=3, N=4, 200 fs) : L-sweep, K-sweep, dt-sweep passés.
+- 0.5 GB/traj → n_jobs=7, batch_size=7. Aucun OOM.
+- **Detailed balance test crash (NaN) corrigé** : dt=10 fs → dt=1.0 fs dans `audit_convergence.py`. NaN/Inf protection ajoutée dans `_calculate_von_neumann_entropy()`.
+
+### 📋 Remaining open items
+- ✅ All reviewer-requested code and bibliographic changes have been implemented (R1 + R2).
+- ✅ 12-mode spectral density verified in `constants.py` and `parameters.yaml`.
+- ✅ Local codebase merged with server best practices — local is now the canonical reference.
+- ✅ Production CSV format verified (local = server). Figure generator compatible.
+- ✅ Transfer yield redefined to target-site population (Site 3) per Rev 3 Pt 1.
+- ✅ Spectral density plot enhanced with discrete 12-mode markers per Rev 3 Pt 2.
+- ✅ Bath dissipative parameters verified: λ_D=35 cm⁻¹, γ_D=50 cm⁻¹, 12 vibronic modes, L=8, K=2.
+- ✅ Laptop test (L=3, N=4, 200 fs) verified — damped oscillations confirmed.
+- ✅ 3 pre-existing test bugs fixed.
+### ⏳ Previously pending — now all resolved
+- [x] ~~Run full production simulation on server~~ — 200/200 terminé, η=0.39±0.04
+- [x] ~~Phase 1 convergence sweeps: L=7, K=1, K=3, dt=2.0~~ — Terminé
+- [x] ~~Phase 2 robustness sweeps~~ — Tous terminés
+- [x] ~~Fix GPU driver mismatch (NVML v580.159)~~ — ✅ Résolu (reboot + réinstallation driver)
+
+---
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `Redac_Paper1/JPCL_Submission_Package_2026-06-20/Manuscript_JPCL_26-06-20.tex` | Revised manuscript (achemso, JPCL Letter format) — updated 2026-06-20 (**Source of truth**) |
+| `Redac_Paper1/JPCL_Submission_Package_2026-06-20/SI_JPCL_26-06-20.tex` | Revised Supporting Information — updated 2026-06-20 (**Source of truth**) |
+| `Redac_Paper1/JPCL_Submission_Package_2026-06-20/Response_to_Reviewers_26-06-20.tex` | Point-by-point response letter — updated 2026-06-20 (**Source of truth**) |
+| `Redac_Paper1/JPCL_Submission_Package_2026-06-20/Cover_Letter_JPCL_26-06-20.tex` | Cover letter — updated 2026-06-20 (**Source of truth**) |
+| `Redac_Paper1/JPCL_Submission_Package_2026-06-20/references.bib` | BibTeX references |
+| `Redac_Paper1/Theory_Journals_main/JPCL/Reviewers_Comments.md` | Original reviewer comments + journal formatting requests |
+| `Redac_Paper1/Theory_Journals_main/JPCL/Reviewers_Comments_Answers.md` | Detailed draft answers |
+| `Redac_Paper1/quantum_simulations_framework_parallel_260612/parameters.yaml` | **Single source of truth** for all simulation parameters |
+| `Redac_Paper1/quantum_simulations_framework_parallel_260612/core/constants.py` | Python constants (must match `parameters.yaml`) |
+| `Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/main.py` | Single-entry pipeline orchestrator |
+| `Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/audit_convergence.py` | L=7,8,9 convergence audit |
+| `Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/run_temp_sweep_cluster.sh` | Temperature sweep Fig 2 |
+| `Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/run_phase1_continue.sh` | Continuation Phase 1 (K-sweep + dt-sweep) |
+| `Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/run_phase1_parallel.sh` | Parallélisation Phase 1 (K=3 || dt=2.0) |
+| `Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/run_phase2_parallel.sh` | Phase 2 parallèle (4× simultané, ≥60 GiB RAM) |
+| `Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/results/ANALYSIS_20260620.md` | Final data analysis report (Phase 3, convergence) |
+| `Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/results/ANALYSIS_20260619.md` | Phase 2 robustness sweeps (temperature, bath, filter) |
+| `Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/results/ANALYSIS_20260617.md` | Production run (L=8, K=2, SBD=3, N=100) |
+| `_bmad-output/planning-artifacts/prd.md` | Product Requirements Document |
+| `_bmad-output/planning-artifacts/architecture.md` | Architecture decisions |
+| `_bmad-output/planning-artifacts/epics.md` | Epic breakdown (stories not yet written) |
+
+---
+
+## Parameter Consistency Rules
+
+**AI agents MUST:**
+- Read simulation parameters **only** from `parameters.yaml` — never hardcode physics values
+- Verify `constants.py` matches `parameters.yaml` after any parameter change
+- Never commit files named `*.INVALID_FALLBACK_DATA.csv`
+- Never commit HDF5 files to `data/converged/` without Git LFS
+- All manuscript files with changes MUST include the current date in their filename (e.g., `Manuscript_JPCL_26-05-02.tex`)
+- **Terminology Rule**: SBD refers to **Stochastically Bundled Dissipators**. Never use "Spectrally Bundled Dissipators".
+
+**Current canonical values:**
+- Hierarchy depth: **L_max = 8**
+- Matsubara terms: **K = 2**
+- SBD bundles: **3** per site
+- Time step: **Δt = 0.5 fs**
+- Pulse FWHM: **50 fs**, centered at t = 0
+- Temperature: **295 K**
+- Reorganization energy (Drude-Lorentz): **λ_D = 35 cm⁻¹**, γ_D = 50 cm⁻¹
+- Vibronic modes: **12 modes** (Kleinekathöfer/Coker model)
+- Disorder realizations: **100**
+
+---
+
+## Directory Structure
+
+```
+Quantum_Agrivoltaic_PT-HOPS/
+├── AGENTS.md                          # This file
+├── README.md                          # Project overview
+├── .gitignore
+├── Redac_Paper1/
+│   ├── JPCL_Submission_Package_2026-06-20/ # Source of truth for manuscript
+│   │   ├── Manuscript_JPCL_26-06-20.tex
+│   │   ├── SI_JPCL_26-06-20.tex
+│   │   ├── Response_to_Reviewers_26-06-20.tex
+│   │   ├── Cover_Letter_JPCL_26-06-20.tex
+│   │   ├── references.bib
+│   │   └── Figures/
+│   ├── Theory_Journals_main/JPCL/     # Old JPCL submission files (dated filenames)
+│   │   ├── Manuscript_JPCL_26-05-10.tex
+│   │   ├── SI_JPCL_26-05-10.tex
+│   │   ├── Response_to_Reviewers_26-05-08.tex
+│   │   ├── Cover_Letter_JPCL_26-05-08.tex
+│   │   ├── references.bib
+│   │   ├── Reviewers_Comments.md
+│   │   └── Reviewers_Comments_Answers.md
+│   └── quantum_simulations_framework_parallel_260612/ # Simulation framework (Paper 1)
+│       ├── parameters.yaml            # Source of truth
+│       ├── core/                      # HopsSimulator, constants, hamiltonian
+│       ├── models/                    # QuantumDynamicsSimulator, etc.
+│       ├── extensions/                # PT_HopsNoise, SBD_HopsTrajectory
+│       ├── utils/                     # FigureGenerator, theme, logging
+│       ├── reproducibility/
+│       │   ├── main.py                # Entry point
+│       │   ├── audit_convergence.py   # L=7,8,9 audit
+│       │   ├── run_comprehensive_sweep.sh  # Full sweep orchestrator
+│       │   ├── run_phase1_continue.sh      # Phase 1 suite (skip L7)
+│       │   ├── run_phase1_parallel.sh      # Phase 1 parallèle (K=3 || dt=2.0)
+│       │   └── results/               # Valid results (72 CSVs, June 2026)
+│       └── tests/
+├── notebooks/                         # Anderson model Jupyter notebooks
+├── manuscrit/                         # Anderson model PRB publication
+├── _bmad-output/planning-artifacts/   # PRD, architecture, epics
+└── Archive/                           # Legacy code
+```
+
+---
+
+## Technology Stack
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| MesoHOPS | v1.7.0 (local) | PT-HOPS/SBD non-Markovian dynamics; installed in editable mode from `/home/taamangtchu/Documents/Github/mesohops/` |
+| Python | 3.12+ | Simulation framework (conda env `MesoHOP-sim`) |
+| HierarchicalEOM.jl | latest | Julia HEOM (Anderson model) |
+| QuTiP | 5.2.2+ | Python HEOM (Anderson model) |
+| achemso (LaTeX) | latest | JPCL manuscript formatting |
+| Matplotlib | latest | Figure generation (600 DPI, JPCL theme) |
+
+## Server Environment (PenavoraServer)
+
+**Access:** `ssh penavora@100.73.21.40` (via Tailscale)
+**OS:** Ubuntu 24.04
+**Hardware:** 48 CPU cores, 125 GB RAM, 1× NVIDIA RTX A4000 (driver 580.159.03, NVML réconcilié)
+**Codebase:** `~/quantum_simulations_framework_parallel_260612/` (Paper 1 — JPCL revision), `~/quantum_simulations_framework/` (canonical)
+**Conda env:** `MesoHOP-sim` (créé le 2026-06-13, Python 3.12, mesohops v1.7.0)
+**Dependencies:** numpy, scipy, pandas, matplotlib, joblib, tqdm, psutil, pyyaml
+
+### Transférer le code vers le serveur
+```bash
+# Depuis le laptop
+tar czf /tmp/quantum_sim_fw.tar.gz quantum_simulations_framework/
+scp /tmp/quantum_sim_fw.tar.gz penavora@100.73.21.40:~/
+ssh penavora@100.73.21.40 "cd ~/ && tar xzf quantum_sim_fw.tar.gz"
+```
+
+### Simulation de production (lancée le 2026-06-13 16:06)
+```bash
+nohup ~/miniforge3/envs/MesoHOP-sim/bin/python reproducibility/main.py --parallel --skip-audit > ~/production_run.log 2>&1 &
+```
+**Statut:** Terminé — 200/200 trajectories, η=0.39±0.04
+**Monitorer:** `tail -f ~/production_run.log`
+
+### Campaigne de sweep Phase 1 (2026-06-18)
+```bash
+nohup bash reproducibility/run_phase1_parallel.sh > ~/phase1_parallel.log 2>&1 &
+```
+**Statut:** Phase 1 terminée, Phase 2 terminée
+**Monitorer:** `tail -f ~/phase1_parallel.log`
+
+### GPU Driver Fix (résolu le 2026-06-21)
+Le décalage entre la bibliothèque NVML (v580.159) et le module noyau a été corrigé par réinstallation du pilote + redémarrage.
+```bash
+sudo apt-get install --reinstall nvidia-driver-580
+sudo reboot
+# Après redémarrage : nvidia-smi fonctionne, CUDA_VISIBLE_DEVICES n'est plus désactivé.
+```
+
+---
+
+## OOM Prevention Architecture (updated 2026-06-13)
+
+The framework uses a layered OOM prevention strategy:
+
+1. **Memory estimation**: `MemoryAwareJobScheduler._estimate_memory()` scales from a reference (6 GB at L=8, K=2, 21 modes) using `(L/8)^2 × (K/2) × (modes/21)`.
+2. **Per-process limit**: `resource.setrlimit(RLIMIT_AS)` kills workers that exceed their RAM budget (avoids OOM-killer cascade).
+3. **Batch execution**: Trajectories are split into batches of `n_jobs` each, with `gc.collect()` between batches.
+4. **Dynamic n_jobs**: `get_safe_n_jobs()` in `utils/parallel_utils.py` uses L/K/modes-aware estimation (not hardcoded 54 GB anymore).
+5. **MAX_N_JOBS = 8** (upper bound only; the estimator picks the real number).
+
+Key difference laptop vs server: laptop uses `laptop_parameters.yaml` (L=3, N=4, 200 fs → ~1 GB/traj), while server uses `parameters.yaml` (L=8, N=100, 1000 fs → ~54 GB/traj). The memory estimator dynamically adapts.
+
+## 2026-06-13 Session 3 — Audit & comprehensive OOM fixes
+
+### Root-level duplicate DELETED
+The stale copy of the codebase at `Quantum_Agrivoltaic_PT-HOPS/quantum_simulations_framework_parallel_260612/` (118 Python files, MAX_N_JOBS=1, missing FMO_TARGET_SITE) was moved to `_deleted_root_duplicate_260612/`. The canonical path remains `Redac_Paper1/quantum_simulations_framework_parallel_260612/`.
+
+### Critical fixes
+- **`src.core.memory_manager` re-export created**: `src/core/memory_manager.py` re-exports `MemoryAwareJobScheduler`, `validate_memory_configuration`, `cleanup_memory` from `core.memory_manager`. This fixes a silent no-op: `memory_aware_patch.py` would always fail its import and silently skip patching, meaning no batch execution was ever active.
+- **`set_process_mem_limit(RLIMIT_AS)` now called** from `memory_aware_patch.py` before batch execution.
+- **`mem_limit_gb` passed to workers**: Both `core/hops_simulator.py:_run_single_traj_worker` and `src/core/hops_simulator.py:_run_single_traj_worker` now accept `mem_limit_gb` and call `resource.setrlimit(RLIMIT_AS)` at worker start.
+- **`MemoryError` handling in batch loop**: `memory_aware_patch.py` now catches `MemoryError` and retries with `n_jobs//2` before failing.
+- **`FMO_TARGET_SITE = 2` added to `src/core/constants.py`** (was missing from src tree).
+- **`get_safe_n_jobs(54.0)` replaced** in `pipelines/jpcl_resubmission/main.py` (2 occurrences) with dynamic estimation from L/K/modes/time_max.
+- **`0.5` → `CPU_COUNT_FRACTION`** in `core/memory_manager.py`.
+
+### Files created
+- `src/core/memory_manager.py` (re-export)
+- `Redac_Paper1/quantum_simulations_framework_parallel_260612/scripts/cluster/run_production.sh` (server runner)
+- `Redac_Paper1/quantum_simulations_framework_parallel_260612/SERVER_PROTOCOL.md` (server usage guide)
+
+### Files modified
+- `core/hops_simulator.py` — mem_limit_gb, MemoryError catch in batch loop
+- `core/memory_manager.py` — 0.5 → CPU_COUNT_FRACTION
+- `src/core/hops_simulator.py` — mem_limit_gb in worker
+- `src/core/memory_aware_patch.py` — RLIMIT_AS, MemoryError catch, mem_limit_gb in worker_args
+- `src/core/constants.py` — FMO_TARGET_SITE added
+- `pipelines/jpcl_resubmission/main.py` — get_safe_n_jobs dynamique ×2
+- `AGENTS.md` — this entry
+
+## Agent Skills & Capabilities (Optimized 2026-06-14)
+
+The Antigravity agent environment has been specifically optimized for this scientific computing project. Agents must leverage the following core skills when operating in this repository:
+
+- **Scientific Review & Writing**: `peer-review`, `scientific-critical-thinking`, `scientific-writing`. Used for cross-checking manuscript claims against reviewer comments and rigorous proofreading.
+- **Quantum & Physics Modeling**: `mesohops` (primary framework), `my_quantum-optics`, `Floquet`, `orca`, `pyscf`.
+- **Code Quality & Architecture**: `python-patterns`, `coding-standards`, `codebase-onboarding`, `python-testing`. Must be used during refactoring to enforce NumPy docstrings, type hints, and scalable architecture.
+- **Performance & Data Handling**: `benchmark`, `vaex`, `dask`, `polars`. Crucial for handling massive parallel data and optimizing HPC resources.
+- **Data Analysis & Networks**: `scikit-learn`, `networkx`. For complex site-connectivity analysis in the FMO complex.
+
+Agents are strictly instructed to use these specialized skills for high-fidelity physics simulations, codebase refactoring, and publication-quality academic outputs.
+
+---
+
+## Appendices
+
+### Session 6 (2026-06-20) — Phase 3 convergence finalize
+- **L=6, L=7, L=8 convergence**: Finalized SBD=3 values (η_L6=0.2188, η_L7=0.3897, η_L8=0.3860). Convergence is complete.
+- **Table S7/Figure S5/S6**: Updated in `SI_JPCL_26-06-17.tex` and regenerated.
+- **`single850` added**: Filter sweep SI figure updated.
+- **Manuscript/SI**: Final compilation and Git push. Submission ready.
+- **Data Transfer**: All June CSVs synced locally.
+- **Analysis**: `ANALYSIS_20260620.md` created.
+
+#### ✅ Completed
+- **Server user**: `nanaengo@100.73.21.40` (not `penavora`). SSH key: `-i /home/taamangtchu/.ssh/taiscale_key`
+- **Phase 2 Temperature (Batch 1)** — 6 temps × N=5 completed. η(T): 0.54(285K)→0.39(290K)→0.39(295K)→0.39(300K)→0.38(305K)→0.37(310K). φ_filtered ~0.727 constant; φ_broadband increases with T → **coherent mechanism** (Δη/ΔT ≈ -0.015 K⁻¹)
+- **Phase 2 Bath (Batch 2)** — λ=28 η=0.49, λ=42 η=0.37, γ=40 η=0.62, γ=60 η=0.28. Range η∈[0.28,0.62]
+- **Phase 2 Filters (Batch 3 Part 1)** — filt770_820 (η=0.563), filt730_820 (η=0.563), filt750_800 (off-resonant η≈-0.96), bw50 (η=0.534)
+- **MAX_N_JOBS boosted to 24** in `core/constants.py`; filter-only script with N=10
+- **filt750_800 killed** (Batch 2/2 stuck ~70 min on 1 traj) to unblock second batch
+- **3 SI figures generated locally**: `SI_bath_sensitivity.pdf`, `SI_filter_sweep.pdf`, `SI_temperature_dynamics.pdf`
+- **Manuscript + SI siunitx audit**: All bare numbers wrapped in `\num{}`/`\SI{}`/`\SIrange{}`
+- **Backup directory**: `Redac_Paper1/quantum_simulations_framework_parallel_260612/reproducibility/results/`
+
+#### ✅ Completed subsequently
+- **Second filter batch (bw200, single700, single850)**: all completed (bw200 η=0.648, single700 η=-0.958, single850 η=-0.958)
+- **Final compilation**: completed and submitted
+
+### Session 7 (2026-06-21) — Simplification et retrait du modèle à 3 sites
+- **Retrait du modèle à 3 sites** : Supprimé le modèle "jouet" à 3 sites (excitonic trimer) du manuscrit principal et du document SI. Cette initiative interne a été écartée car le modèle complet à 7 sites fonctionne parfaitement et s'avère plus robuste scientifiquement.
+- **Restructuration du SI** : Promu la section décrivant la dynamique du modèle de production complet à 7 sites (Figure S4) au rang de section autonome (Section S11).
+- **Validation** : Corrigé le Test 4 (HEOM benchmark) pour pointer vers un benchmark trimer généralisé. Résolu toutes les références croisées brisées dans le SI.
+- **Workspace & Git** : Nettoyé les fichiers de compilation auxiliaires LaTeX (`latexmk -c`) et synchronisé le dépôt (commit `bb65391` poussé sur la branche `main`).
+
+### Session 9 (2026-06-21) — Code cleanup, linting, GPU detection, memory monitoring
+- **Dead code removal**: Supprimé 24 fichiers inutiles (shims racine, `gpu_dynamics.py` 319 lignes, `memory_aware_patch.py` stub, 13 shims `models/`, scripts orphelins).
+- **`ParallelExecutor` supprimé** (276 lignes) de `src/utils/parallel_utils.py` + 3 fonctions GPU mortes.
+- **Bug `_results_dir` F821 corrigé** dans `reproducibility/main.py` — variable undefined utilisée avant définition.
+- **Lint/Format configuré** : `pyproject.toml` avec Ruff (E,W,F,I,C,B), E402/C901 ignorés (#justification scripts). `ruff format` remplace Black.
+- **Makefile modernisé** : `make format` → `ruff format + ruff check --fix --unsafe-fixes`. `make check` → `ruff check + ruff format --check`.
+- **pre-commit installé** (hooks: ruff --fix, ruff-format) dans `quantum_simulations_framework/`.
+- **GPU detection** : Nouveau module `src/utils/gpu_detection.py` → `detect_gpu()` + `log_gpu_status()`. Détecte nvidia-smi, JAX, CuPy, PyTorch.
+- **Memory monitoring** : Nouvelle fonction `log_memory_pressure()` dans `src/core/memory_manager.py`.
+- **src/README.md mis à jour** : `gpu_dynamics.py` → `memory_manager.py`; `utils/` section ajoutée.
+- **Tests**: 39/41 passed (2 échecs préexistants serveur), 0 régression.
+
+### Session 8 (2026-06-21) — Data cleanup, repository consolidation
+- **Nettoyage des résultats** : Supprimé 198 fichiers CSV obsolètes de mai 2026 (paramètres L=10, K=10, DL-only, N=1).
+- **Duplicats filtrés supprimés** : 27 fichiers de duplicates (rename bug) nettoyés, ne gardant que les timestamps les plus récents.
+- **Données pré-production supprimées** : 14 CSVs non-catalogués (c1d5574ea9f8, c84c39025701, fa6ddb531a34).
+- **Fichier 3-site supprimé** : `simulation_data/3site_dynamics_results.csv` et `data/simulations/3site_dynamics_results.csv`.
+- **Résultats crédibles conservés** : 72 CSVs de juin 2026 (convergence, production, température, bain, filtres).
+- **3 ANALYSIS fiables** : ANALYSIS_20260617.md (production), ANALYSIS_20260619.md (Phase 2 sweeps), ANALYSIS_20260620.md (Phase 3 convergence).
+- **JPCL_Submission_Package_2026-06-20** confirmé comme source de vérité unique pour le manuscrit soumis.
+- **Synthèse** : `Redac_Paper1/SYNTHESE_SIMULATIONS_JUIN2026.md` créé.
+
+## Agent Skills & Capabilities (Optimized 2026-06-14)
+
+The Antigravity agent environment has been specifically optimized for this scientific computing project. Agents must leverage the following core skills when operating in this repository:
+
+- **Scientific Review & Writing**: `peer-review`, `scientific-critical-thinking`, `scientific-writing`. Used for cross-checking manuscript claims against reviewer comments and rigorous proofreading.
+- **Quantum & Physics Modeling**: `mesohops` (primary framework), `my_quantum-optics`, `Floquet`, `orca`, `pyscf`.
+- **Code Quality & Architecture**: `python-patterns`, `coding-standards`, `codebase-onboarding`, `python-testing`. Must be used during refactoring to enforce NumPy docstrings, type hints, and scalable architecture.
+- **Performance & Data Handling**: `benchmark`, `vaex`, `dask`, `polars`. Crucial for handling massive parallel data and optimizing HPC resources.
+- **Data Analysis & Networks**: `scikit-learn`, `networkx`. For complex site-connectivity analysis in the FMO complex.
+
+Agents are strictly instructed to use these specialized skills for high-fidelity physics simulations, codebase refactoring, and publication-quality academic outputs.
+
+### 5. Skill Repositories & Required Skills
+
+When operating in this repository, agents **MUST** reference the skills from the following repositories before taking raw actions. Use the appropriate skill for each task before generating code, figures, or manuscript content.
+
+#### 5.1 Manuscript Quality (Universal)
+**Path:** (built-in Antigravity skill)
+- **`MASTER_MANUSCRIPT_STANDARD.md`** — Non-negotiable manuscript quality gates. Apply to every manuscript output.
+
+#### 5.2 BMAD-METHOD (Project Management & Review)
+**Path:** `/home/taamangtchu/Documents/Github/BMAD-METHOD/`
+**Skills:** `bmad-advanced-elicitation`, `bmad-brainstorming`, `bmad-editorial-review-prose`, `bmad-editorial-review-structure`, `bmad-review-adversarial-general`, `bmad-review-edge-case-hunter`, `bmm-1-analysis` → `bmm-4-implementation`.
+
+Use the full BMAD-METHOD suite before planning, implementing, or reviewing any significant change.
+
+#### 5.3 Scientific Agent Skills
+**Path:** `/home/taamangtchu/Documents/Github/scientific-agent-skills/skills/`
+
+| Category | Skills |
+|----------|--------|
+| **Quantum & Simulation** | `qutip`, `cirq`, `qiskit`, `pennylane`, `pytorch-lightning`, `torch-geometric`, `floquet`, `heom`, `simpy`, `molecular-dynamics`, `fluidsim`, `modal` |
+| **Manuscripts & Presentation** | `scientific-writing`, `scientific-visualization`, `scientific-critical-thinking`, `scientific-schematics`, `scientific-slides`, `literature-review`, `paper-lookup`, `citation-management`, `venue-templates`, `scholar-evaluation`, `markdown-mermaid-writing`, `infographics`, `latex-posters`, `pptx`, `pptx-posters` |
+| **Data & Statistics** | `statistical-analysis`, `exploratory-data-analysis`, `scikit-learn`, `statsmodels`, `matplotlib`, `seaborn`, `polars`, `dask`, `vaex`, `pymc`, `shap`, `umap-learn`, `scikit-survival` |
+| **Bio/Cheminformatics** | `rdkit`, `biopython`, `scvi-tools`, `scanpy`, `scvelo`, `cellxgene-census`, `pymatgen`, `deepchem`, `datamol`, `openbabel` |
+| **Code & Performance** | `benchmark`, `parallel-web`, `optimize-for-gpu`, `nextflow`, `modal`, `dask` |
+
+Available scientific skills: `cd /home/taamangtchu/Documents/Github/scientific-agent-skills/skills/ && ls`
+
+#### 5.4 Everything Claude Code (ECC)
+**Path:** `/home/taamangtchu/Documents/Github/everything-claude-code/`
+
+**Skill directories:** `skills/` (150+ skills), `agents/` (30+ agents)
+
+The most relevant skills for this project include:
+
+| Skill | Use Case |
+|-------|----------|
+| `deep-research` | Literature search, cross-referencing claims |
+| `search-first` | Find relevant code patterns before writing |
+| `python-testing` | Test infrastructure and best practices |
+| `tdd-workflow` | Test-driven development for simulation code |
+| `verification-loop` | Iterative verification of simulation results |
+| `benchmark` | Performance benchmarking of parallel code |
+| `pytorch-patterns` | GPU-accelerated tensor operations |
+| `architecture-decision-records` | Document architectural decisions |
+| `git-workflow` | Git branch/commit conventions |
+| `codebase-onboarding` | Understanding new codebases |
+| `coding-standards` | Code style enforcement |
+| `context-budget` | Managing agent context windows |
+| `bun-runtime`, `compose-multiplatform-patterns` | Platform-specific patterns |
+
+Browse available skills: `ls /home/taamangtchu/Documents/Github/everything-claude-code/skills/`
+Browse available agents: `ls /home/taamangtchu/Documents/Github/everything-claude-code/agents/`
+
+---
+
+## Session 10 (2026-06-22→23) — Paper 2 Integration, Namespace Fix, Pipeline End-to-End
+
+### Projet 2 : Quantum Agrivoltaics (Nature Energy)
+
+Le projet `Redac_Paper2/` intègre 5 domaines :
+- **Dynamique quantique** : PT-HOPS/SBD via `quantum_simulations_framework/`
+- **Microclimat agricole** : FAO-56 Penman-Monteith
+- **Cycle de vie (LCA)** : Net Ecological Benefit (NEB), amortissement coopératif
+- **Sécurité IoT** : BB84 QKD, capteurs GQD
+- **Diagnostic SERS** : Spectroscopie Raman in situ in vitro
+
+#### ✅ Namespace conflict — root cause & fix
+
+**Problème** : Paper 2 (`Redac_Paper2/src/`) et le framework (`quantum_simulations_framework/src/`) partagent tous deux `src` comme package top-level. Impossible d'importer les deux simultanément :
+
+1. **Tentative 1 (sys.modules.pop)** : Retirer Paper 2 `src` de `sys.modules`, importer le framework, restaurer → **deadlock** de l'import lock Python quand exécuté au niveau module (dans `solver.py`), car `src` est en cours d'import parent.
+2. **Tentative 2 (importlib.spec_from_file_location)** : Charger le framework par chemin absolu → échec car les imports relatifs du framework (`from .constants import ...`) n'ont pas de parent package.
+3. **Solution finale (importlib.import_module dans une fonction)** : La fonction `_load_hops_simulator()` est appelée **au niveau module** (pas pendant l'import). Elle pop temporairement Paper 2 `src`, ajoute le framework root à `sys.path`, appelle `importlib.import_module("src.core.hops_simulator")`, puis restaure Paper 2 `src`. Le lock est libéré entre-temps car l'import parent de `solver.py` est terminé.
+
+**Modules lazy du framework** : `src.io.csv_storage` et `src.core.memory_manager` sont importés depuis des fonctions (lazy loading). Après restauration de Paper 2 `src` dans `sys.modules["src"]`, ces imports échoueraient car ils cherchent `src` → Paper 2. Solution : **pré-importer** ces modules pendant que le `src` du framework est encore actif (cachés sous leurs noms pointés dans `sys.modules`).
+
+Fichier clé : `Redac_Paper2/src/quantum_interface/solver.py:22-70` (`_load_hops_simulator`).
+
+#### ✅ Pipeline end-to-end vérifié (local, dt=0.2 fs)
+- **10 fs** (50 steps, 2 traj, L=8, K=2) : ~2-3 secondes, résultats valides (50 density matrices, trace préservée)
+- **100 fs** (500 steps) : s'exécute mais prend >10 min (scaling non-linéaire, bottleneck MesoHOPS séquentiel)
+- **HopsSimulator.simulate_dynamics()** : API confirmée (`t_axis`, `populations`, `coherences`, `density_matrices`, `qfi`, `entropy`, `ipr`)
+- **`strict_hermiticity=False`** : nécessaire pour l'Hamiltonien dressé non-hermitien (piégeage imaginaire)
+- **`parallel_enabled=False`** : seule option fiable (BrokenProcessPool si True — cf. ci-dessous)
+
+#### ✅ Hardcoded parameters audit (15+ valeurs corrigées)
+| Fichier | Problème | Fix |
+|---------|----------|-----|
+| `fao56.py` | `temp_c + 273.0` (273.0 imprécis) | `temp_c - FAO56_ABSOLUTE_ZERO_C` (273.15) |
+| `constants.py` | `N_DIM_DRESSED = 9` | `FMO_NSITES + 1` |
+| `constants.py` | `PLASMON_INDEX = 8` | `FMO_NSITES` |
+| `constants.py` | `TRAPPING_GAMMA_RC_PS` (mort) | Supprimé |
+| `constants.py` | Manque `G_TO_KG`, `DEFAULT_SOLAR_FLUX_W_M2` | Ajoutés |
+| `qkd.py` | `key_length * 4` | `key_length * QKD_SIFTING_OVERHEAD` |
+| `neb.py` | `grid_intensity / 1000.0` | `grid_intensity / G_TO_KG` |
+| `solver.py` | `hierarchy_depth=8, n_traj=100` (hardcodés) | `None` → config |
+| `main.py` | flux solaire hardcodé 800 | `DEFAULT_SOLAR_FLUX_W_M2` |
+| `diagnostics.py` | `"1145_cm"` string clé SERS | `SERS_MODE_1145_CM` |
+
+Restants (bas priorité — constantes physiques de la littérature) :
+`TRAPPING_SITES=[2,3]`, `FMO_SITE_ENERGIES_CM`, `SERS_VIBRONIC_SITES_*`, `FAO56_SAT_VAPOR_COEFF` famille.
+
+#### 🔴 Bloqué — BrokenProcessPool en parallèle
+`parallel_enabled=True` → `joblib` lance des sous-processus via `loky`. Le sous-processus hérite de `os.environ` (incluant `PYTHONPATH`) mais construit `sys.path` de zéro (CWD + PYTHONPATH + defaults). Problème : `sys.path[0]` = CWD = `~` (hérité du SSH), et si `~/Redac_Paper2` est un sous-répertoire du CWD ou si le CWD change, le sous-processus peut importer **le mauvais `src`** (Paper 2 au lieu du framework).
+
+Même avec `PYTHONPATH=$HOME/quantum_simulations_framework`, les workers avec `n_jobs>1` crashent systématiquement (BrokenProcessPool) et retombent sur `n_jobs=1`. La cause exacte est dans pickle/unpickle des classes MesoHOPS par Loky — les workers n'arrivent pas à ré-importer `SBD_HopsTrajectory` ou `_run_single_traj_worker` depuis le bon `src`.
+
+Solution temporaire : `parallel_enabled=False` (n_jobs=1). Le `os.environ["PYTHONPATH"]` est conservé pour la robustesse en mode séquentiel.
+
+Fix permanent (chantier séparé) : 
+1. Désactiver le CWD dans sys.path des workers Loky (ou changer CWD vers un répertoire sans `src/`)
+2. Ou utiliser `multiprocessing.set_start_method("fork")` qui hérite de `sys.modules`
+3. Ou wrapper l'import framework par `importlib` dans chaque worker directement
+
+#### 🖥️ Serveur — État (2026-06-23 03:49 UTC)
+- **Inactif** : 125 Go RAM libres, GPU A4000 0%, charge CPU ~0.10
+- **Dernière run** (Session 9, Paper 1) : SIGSEGV dans `memory_aware_patch.py` → fallback `SimpleQuantumDynamicsSimulator` avec dt=2.0 fs
+- **Code obsolète** : `solver.py` version manipulation sys.modules (deadlock) — synchro importlib nécessaire
+- **Production Paper 2** : Pas encore lancée
+
+#### ✅ Fixes précédents (Session 10 début)
+- **Bug MesoHOPS adaptatif** : `trajectory.storage.data["psi_traj"]` → `trajectory.storage["psi_traj"]` (décompression adaptative)
+- **Bug import framework** : `__init__.py` ajouté à `framework/src/`
+- **Import test** : `import importlib` → `import importlib.util` (Python 3.12)
+- **dt cohérent** : Manuscrit `0.5 fs` → `0.2 fs` (aligné sur `parameters.yaml`)
+- **Vent serre** : Facteur 10% appliqué dans `orchestrator.py`
+- **LaTeX** : Compatibilité siunitx v3, `acknowledgement` → `acknowledgements`
+- **Code quality** : Imports relatifs, constantes nommées, `ruff format`
+
+#### ✅ Tests
+- **Local** : 16/16 passed (Session 10 setup + solver test)
+- **Serveur** : 16/16 passed (Session 10 setup + solver test, avant mise à jour solver.py)
+
+#### 📄 Prochaines actions critiques
+1. **Rsync** : `rsync -avz -e "ssh -i /home/taamangtchu/.ssh/taiscale_key" Redac_Paper2/ nanaengo@100.73.21.40:~/Redac_Paper2/` (après `git add` et sauvegarde)
+2. **Lancer prod serveur** : `nohup bash run_production_paper2.sh > ~/paper2_production.log 2>&1 &` (N=100, L=8, 1000 fs, dt=0.2)
+3. **Git commit/push** : Session 10 fixes (7 fichiers modifiés)
+4. **BrokenProcessPool fix permanent** : modifier `environment` dans `LokyBasedBackend` ou dans `run_production_paper2.sh`
+5. **Tests solver complet** : `test_quantum_solver.py` à corriger (mocking h5py, fixture matplotlib, etc.)
+
+## Session 11 (2026-06-23) — MesoHOPS Performance Optimization: 3-Phase Speedup
+
+### Problem
+
+Paper 2 pipeline: **100 fs (500 steps, L=8, K=2, 2 traj)** took **>10 min** wall-clock.
+Bottleneck was sequential MesoHOPS trajectory execution with no JIT compilation
+and inefficient Python loops.
+
+### Root Cause Analysis
+
+The hot path in `mesohops/eom/eom_functions.py:calc_delta_zmem` had **O(n²) behavior**:
+a `list.index()` call (O(n) scan) inside a `for`-loop over 80 modes → 80×80 = 6400
+comparisons per RHS evaluation × 4 (RK4) × 500 steps × N modes = 12.8M+ wasted
+comparisons per 100 fs. Additionally:
+- `compress_zmem` used a Python `list` of `int` that was cast to hold `complex`
+- **No numba JIT** anywhere in MesoHOPS v1.7 despite `numba` being in `pyproject.toml`
+- Adaptive basis updates (`update_step=10`) triggered expensive basis reconstruction
+every 10 steps (50 times per 100 fs)
+- `TAU = dt_save / 2` oversampled noise computation 2×
+- Inchworm early integration ran 5-20 iterative convergence frames per trajectory
+- **Parallel broken**: `BrokenProcessPool` when `parallel_enabled=True` because
+`loky` workers lost `sys.path` context for `from src.core.memory_manager import ...`
+
+### Phase 1 — Python-level optimizations (Quick Wins)
+
+| Change | File | Before | After | Speedup Factor |
+|--------|------|--------|-------|----------------|
+| O(n²)→O(n) dict lookups | `mesohops/eom/eom_functions.py` | `list(list_modeidx_abs).index()` O(n) scan inside loop | `_modeidx_map[absindex_mode]` O(1) hash lookup | ~2-5× on this function |
+| `TAU` noise oversampling removed | `hops_simulator.py:_simulate_with_mesohops` | `TAU = float(dt_save) / 2.0` (hardcoded) | `TAU = kwargs.get("tau_noise", float(dt_save))` | ~1.5-2× noise computation |
+| `update_step` 10→50 | `hops_simulator.py:_run_single_traj_worker` | `make_adaptive(..., update_step=10)` | `make_adaptive(..., update_step=kwargs.get("update_step", 50))` | ~1.5-2× (45 fewer basis recalculations) |
+| Inchworm disabled | `hops_simulator.py:_simulate_with_mesohops` | `MESOHOPS_EARLY_STEPS=5, INCHWORM_CAP=5` | `EARLY_INTEGRATOR_STEPS=0, INCHWORM_CAP=0` | ~1.2-1.5× (saves ~20 iter frames) |
+
+All parameters exposed as `**kwargs` on `simulate_dynamics()` and `MesoHopsSolver.propagate_dynamics()`,
+with Paper 2 `solver.py` passing them explicitly.
+
+### Phase 2 — Numba JIT compilation
+
+| Function | File | Status | Reason |
+|----------|------|--------|--------|
+| `compress_zmem` | `mesohops/eom/eom_functions.py` | ✅ `@njit(cache=True)` works | Pure NumPy: `np.zeros` + `enumerate` + array indexing |
+| `calc_delta_zmem` | `mesohops/eom/eom_functions.py` | ✅ `@njit(cache=True)` works | Pure NumPy + `dict` `in`-checks (no try/except for nopython compat) |
+| `calc_norm_corr` | `mesohops/eom/eom_functions.py` | ❌ removed | Uses scipy sparse `L @ phi` mat-vec — numba can't JIT sparse ops |
+| `runge_kutta_step` | `mesohops/integrator/integrator_rk.py` | ❌ removed | Calls `dsystem_dt` closure — numba can't JIT closures |
+
+**Key fix for numba compatibility**:
+- `compress_zmem`: Changed `[0 for i in set(...)]` (list of Python `int`) → `np.zeros(len(set(...)), dtype=np.complex128)` (numba typed array)
+- `calc_delta_zmem`: Replaced `try/except` + bracket indexing → `if key in dict: val = dict[key]` pattern (numba nopython doesn't support exceptions)
+
+### Phase 3 — Parallel execution fix
+
+**Problem**: `parallel_enabled=True` → `loky` workers crash with
+`BrokenProcessPool` because they cannot import `from src.core.memory_manager import ...`.
+The worker processes inherit `os.environ` but build `sys.path` from scratch.
+
+**Fix**: Inject `PYTHONPATH` into `os.environ` before `joblib.Parallel()`
+in `hops_simulator.py:_simulate_with_mesohops`:
+```python
+_qs_fw_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+os.environ["PYTHONPATH"] = _qs_fw_path + (":" + _old_pp if _old_pp else "")
+```
+
+Plus Paper 2 `solver.py`: `parallel_enabled=False` → `True` + performance kwargs.
+
+### ✅ Test Results
+
+**MesoHOPS tests** (7/7 passed):
+| Test | Status |
+|------|--------|
+| `test_adap_hier` | ✅ PASSED |
+| `test_adap_state` | ✅ PASSED (previously failing with KeyError) |
+| `test_adap_hier_state` | ✅ PASSED |
+| `test_operator_expectation` | ✅ PASSED |
+| `test_l_avg_calculation` | ✅ PASSED |
+| `test_calc_delta_zmem` | ✅ PASSED |
+| `test_compress_zmem` | ✅ PASSED |
+
+### Estimated Speedup
+
+| Component | Factor | Notes |
+|-----------|--------|-------|
+| O(n²)→O(n) dict + numba JIT on `calc_delta_zmem` | ~5-10× on this function | 566 µs/call → JIT-compiled; called 2000× per 100 fs → ~1.1s |
+| `update_step` 10→50 | ~1.5-2× overall | 50 vs 500 adaptive basis reconstructions |
+| Inchworm disabled | ~1.2-1.5× | No early-time convergence iteration |
+| `TAU=dt_save` (no oversampling) | ~1.3-1.5× | Halves noise FFT calls |
+| **Phase 1+2 cumulative** | **~4-10×** | 100 fs estimated ~1-2 min (was >10 min) |
+| Phase 3 (parallel, 48-core server) | **up to 48× wall-clock** | Fork-based multiprocessing backend |
+
+### 🔴 Phase 3 — Parallel execution fix (actual)
+
+**Loky `os.chdir` approach was rejected**: Even with `os.chdir(_FRAMEWORK_ROOT)` before `Parallel()`, Loky's `fork_exec`+`execve` workers could not import `src.core.hops_simulator`. Root cause: Loky workers are created via `_posixsubprocess.fork_exec` which replaces the process image. The child inherits the parent's CWD, and `sys.path[0]=''` (from `-m` invocation) should resolve to CWD, but empirically it did not work (persistent `BrokenProcessPool`).
+
+**Fork-based `multiprocessing` backend is the fix**: `Parallel(n_jobs=n_jobs, backend="multiprocessing")` uses `multiprocessing.Pool` with `fork` semantics. Fork inherits the full parent's `sys.modules`, so `_run_single_traj_worker` is unpickled from `sys.modules["src.core.hops_simulator"]` without any disk I/O. The `with` context manager ensures proper pool cleanup.
+
+**Verified on server** (Paper 2 pipeline, 2026-06-23 21:02 UTC):
+| Metric | Before (Loky) | After (multiprocessing fork) |
+|--------|---------------|------------------------------|
+| n_jobs | 1 (BrokenProcessPool fallback) | 13 (48-core server) |
+| Wall time (2 traj, 40 fs) | ~6s (sequential) | ~6s (parallel — same due to small N) |
+| Memory | 44 GB | 2 GB (copy-on-write sharing) |
+| Cleanup | Orphan workers | `with` context manager |
+| Status | Always falls back to sequential | True parallel execution |
+
+### 📄 Next Actions
+
+1. **Run benchmark** — verify 100 fs wall-clock time (target: <2 min with n_jobs=13)
+2. **Rsync to server** — deploy optimized code to production
+3. **Run production Paper 2** — full 1000 fs, N=100, L=8, K=2, 48 cores
+4. **Sync canonical Paper 2 solver** (`solver.py`, `hops_simulator.py`) to `Redac_Paper2/`
+
+---
+
+## License
+
+MIT License

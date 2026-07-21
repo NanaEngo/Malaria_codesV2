@@ -368,7 +368,7 @@ bash scripts/md_run_production.sh
 
 ## 🔗 Related Projects
 
-- **[Project 1: Computational Discovery](../Project1_Chem_space_antimalarial_V2607_CorrectedGrid/)** — Initial candidate identification via AI pipeline
+- **[Project 1: Computational Discovery](../Project1_Chem_space_antimalarial_V2_CorrectedGrid/)** — Initial candidate identification via AI pipeline
 - **[ANPDB](https://african-compounds.org/)** — African Natural Products Database
 
 ---

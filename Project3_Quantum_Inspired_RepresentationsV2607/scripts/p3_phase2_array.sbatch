@@ -79,7 +79,7 @@ echo "║  Label: ${LABEL}"
 echo "║  N molecules: ${N_MOLS}"
 echo "║  Host: $(hostname)"
 echo "║  CPUs avail: $(nproc)"
-mem_info=$(free -h | awk '/^Mem:/{print $3 "/" $2}')
+read -r _ mem_total mem_used _ < <(free -h | grep '^Mem:') && mem_info="${mem_used}/${mem_total}"
 echo "║  Mem: ${mem_info}"
 echo "║  Start: $(date -u -Iseconds)"
 echo "╚══════════════════════════════════════════════════════════════╝"
