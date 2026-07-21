@@ -183,11 +183,19 @@ def load_activity() -> pd.DataFrame:
 
 def ecfp4(smiles_list: list[str]) -> np.ndarray:
     rows = []
+    
     for smi in smiles_list:
+        # Cache lookup (R11)
+        cached = _ECFP4_CACHE.get(smi)
+        if cached is not None:
+            rows.append(cached)
+            continue
+        
         mol = Chem.MolFromSmiles(smi)
         arr = np.zeros(2048, dtype=np.float32)
         if mol:
             ConvertToNumpyArray(morgan_gen.GetFingerprint(mol), arr)
+        _ECFP4_CACHE[smi] = arr
         rows.append(arr)
     return np.array(rows)
 
