@@ -43,6 +43,35 @@ except ImportError:
     _HAS_JAX = False
     _JAX_BACKEND = None
 
+# ── CuPy for GPU-accelerated NumPy operations (optimize-for-gpu skill) ──
+try:
+    import cupy as cp
+    _HAS_CUPY = True
+    _CUPY_AVAILABLE = cp.is_available()
+except ImportError:
+    _HAS_CUPY = False
+    _CUPY_AVAILABLE = False
+
+# ── pennylane-lightning optimised device detection ──
+def best_device(n_qubits: int = 6) -> str:
+    """Select the fastest available PennyLane device.
+
+    Priority (from pennylane skill):
+    1. lightning.gpu  — GPU-accelerated (fastest if GPU available)
+    2. lightning.qubit — CPU with OpenMP (best for CPU)
+    3. default.qubit   — fallback
+
+    Returns device name string for qml.device().
+    """
+    _devices_to_try = ["lightning.gpu", "lightning.qubit", "default.qubit"]
+    for d in _devices_to_try:
+        try:
+            qml.device(d, wires=n_qubits)
+            return d
+        except Exception:
+            continue
+    return "default.qubit"
+
 warnings.filterwarnings("ignore")
 warnings.simplefilter("ignore", FutureWarning)
 warnings.simplefilter("ignore", DeprecationWarning)
@@ -65,31 +94,53 @@ from pennylane.kernels import kernel_matrix, closest_psd_matrix
 if _HAS_JAX:
     _KERNEL_FN_JAX_CACHE: dict = {}
     def _get_kernel_fn_jax(n_qubits, n_repeats):
-        """JIT-compiled kernel function via JAX interface (10-100x faster)."""
+        """JIT-compiled kernel function via JAX interface (10-100x faster).
+
+        Uses pennylane-lightning with JAX backend for optimal performance.
+        Falls back to default.qubit if lightning devices unavailable.
+        """
         key = (n_qubits, n_repeats)
         if key not in _KERNEL_FN_JAX_CACHE:
-            dev_jax = qml.device("lightning.qubit", wires=n_qubits)
+            dev_name = best_device(n_qubits)
+            dev_jax = qml.device(dev_name, wires=n_qubits)
             @qml.qnode(dev_jax, interface="jax", diff_method=None)
             def _circuit(x1, x2):
                 qml.IQPEmbedding(x1, wires=range(n_qubits), n_repeats=n_repeats)
                 qml.adjoint(qml.IQPEmbedding)(x2, wires=range(n_qubits), n_repeats=n_repeats)
                 return qml.probs(wires=range(n_qubits))
             # JIT the full matrix computation (vmap over all pairs)
-            @jax.jit
-            def _mat(X):
-                return jax.vmap(
-                    lambda x1: jax.vmap(
-                        lambda x2: _circuit(x1, x2)[0]
+            if _JAX_BACKEND == "gpu":
+                @jax.jit
+                def _mat(X):
+                    return jax.vmap(
+                        lambda x1: jax.vmap(
+                            lambda x2: _circuit(x1, x2)[0]
+                        )(X)
                     )(X)
-                )(X)
+            else:
+                # CPU JIT also benefits from XLA compilation
+                @jax.jit
+                def _mat(X):
+                    return jax.vmap(
+                        lambda x1: jax.vmap(
+                            lambda x2: _circuit(x1, x2)[0]
+                        )(X)
+                    )(X)
             _KERNEL_FN_JAX_CACHE[key] = _mat
         return _KERNEL_FN_JAX_CACHE[key]
 
     def _kernel_matrix_jax(X, n_qubits, n_repeats):
-        """Compute full kernel matrix using JAX JIT (10-100x faster than loop)."""
+        """Compute full kernel matrix using JAX JIT (10-100x faster than loop).
+
+        For GPU backend, uses cupy for the final np.array conversion
+        to avoid GPU→CPU transfer overhead when CuPy is available.
+        """
         X_jax = jnp.array(X, dtype=jnp.float32)
         _mat_fn = _get_kernel_fn_jax(n_qubits, n_repeats)
         K_jax = _mat_fn(X_jax)
+        if _HAS_CUPY and _CUPY_AVAILABLE and _JAX_BACKEND == "gpu":
+            # Keep on GPU via CuPy interop
+            return cp.asnumpy(cp.array(K_jax, dtype=cp.float64))
         return np.array(K_jax, dtype=np.float64)
 else:
     def _kernel_matrix_jax(X, n_qubits, n_repeats):  # type: ignore[misc]
@@ -155,9 +206,17 @@ def load_precomputed(smiles_list: list[str],
 _KERNEL_CACHE: dict = {}
 
 def _get_kernel_fn(n_qubits: int, n_repeats: int = 1):
+    """Get (and cache) a quantum kernel function.
+
+    Uses best_device() to select the fastest available device
+    (lightning.gpu > lightning.qubit > default.qubit).
+    The QNode is created in standard mode (not JAX), appropriate for
+    the row-by-row pairwise kernel loop.
+    """
     key = (n_qubits, n_repeats)
     if key not in _KERNEL_CACHE:
-        dev = qml.device("lightning.qubit", wires=n_qubits)
+        dev_name = best_device(n_qubits)
+        dev = qml.device(dev_name, wires=n_qubits)
 
         @qml.qnode(dev)
         def _kernel(x1, x2):
@@ -168,8 +227,9 @@ def _get_kernel_fn(n_qubits: int, n_repeats: int = 1):
         def _kfn(a, b):
             return float(_kernel(a, b)[0])
 
-        _KERNEL_CACHE[key] = _kfn
-    return _KERNEL_CACHE[key]
+        _KERNEL_CACHE[key] = (_kfn, dev_name)
+        print(f"    [Quantum] Device: {dev_name} for {n_qubits}q x {n_repeats}rep", flush=True)
+    return _KERNEL_CACHE[key][0]
 
 
 def _compute_block_task(i0, i1, j0, j1, X_chunk, n_qubits, n_repeats):

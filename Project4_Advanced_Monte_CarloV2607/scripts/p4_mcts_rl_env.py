@@ -6,11 +6,16 @@ This module defines a Gym-compatible environment where:
 - action : attachment of a molecular fragment
 - reward : composite pharmacological score (MPO, docking, SYBA, SA)
 
-The environment uses RDKit to validate fragment attachments and to combine
-molecules into chemically valid structures. Fragment vocabulary has been
-expanded to cover common medicinal chemistry building blocks.
+The environment uses RDKit (via datamol) to validate fragment attachments
+and to combine molecules into chemically valid structures. Fragment
+vocabulary has been expanded to cover common medicinal chemistry building
+blocks.
 
-Version: 0.8 — Expanded vocabulary (30+ fragments) + improved attachment.
+Skills applied:
+- datamol (scientific-agent-skills): simpler SMILES handling, validation
+- rdkit (scientific-agent-skills): rdFingerprintGenerator API
+
+Version: 0.9 — datamol integration + improved SMILES validation.
 """
 
 from __future__ import annotations
@@ -18,6 +23,7 @@ from __future__ import annotations
 import random
 from typing import Any, Optional, Tuple
 
+import datamol as dm
 from rdkit import Chem
 from rdkit.Chem import ValenceType
 from rdkit.Chem.Lipinski import RotatableBondSmarts
@@ -103,9 +109,12 @@ class MolecularEnv:
         randomize_attachment: bool = False,
         seed: Optional[int] = None,
     ) -> None:
-        self.initial_smiles = initial_smiles
+        # Standardize initial SMILES via datamol (handles tautomers, valences)
+        initial_mol = dm.to_mol(initial_smiles)
+        self.initial_smiles = dm.to_smiles(initial_mol) if initial_mol is not None else initial_smiles
+
         self.max_steps = max_steps
-        self.state: str = initial_smiles
+        self.state: str = self.initial_smiles
         self.step_count: int = 0
         self.randomize_attachment = randomize_attachment
         self._fragment_set = fragment_set

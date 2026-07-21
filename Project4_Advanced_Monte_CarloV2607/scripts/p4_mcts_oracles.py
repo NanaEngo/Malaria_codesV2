@@ -56,6 +56,14 @@ def _repo_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
+# ── datamol for molecular operations (scientific-agent-skills skill) ──
+try:
+    import datamol as dm
+    _HAS_DATAMOL = True
+except ImportError:
+    _HAS_DATAMOL = False
+
+
 C6_CSV = (
     _repo_root()
     / "Project2_Polypharmacology_MD_ValidationV2607"
@@ -296,12 +304,21 @@ class OracleAggregator:
 
     # ── Scoring helpers ────────────────────────────────────────────────
     def _canonical_smiles(self, smiles: str) -> str:
-        """Return canonical SMILES; fall back to input on failure."""
+        """Return canonical SMILES; fall back to input on failure.
+
+        Uses datamol (if available) for robust SMILES handling:
+        - dm.to_mol() handles edge cases better than raw RDKit
+        - dm.to_smiles() produces standardised canonical form
+        """
         if smiles in self._canonical_cache:
             return self._canonical_cache[smiles]
         try:
-            mol = Chem.MolFromSmiles(smiles)
-            canon = Chem.MolToSmiles(mol) if mol is not None else smiles
+            if _HAS_DATAMOL:
+                mol = dm.to_mol(smiles)
+                canon = dm.to_smiles(mol) if mol is not None else smiles
+            else:
+                mol = Chem.MolFromSmiles(smiles)
+                canon = Chem.MolToSmiles(mol) if mol is not None else smiles
         except Exception:
             canon = smiles
         self._canonical_cache[smiles] = canon
@@ -319,9 +336,27 @@ class OracleAggregator:
         self._runtime_cache.setdefault(canon, {})[key] = value
 
     def _compute_fingerprints(self, smiles_list: list[str]) -> list:
-        """Compute Morgan bit-vector fingerprints for a list of SMILES."""
+        """Compute Morgan bit-vector fingerprints for a list of SMILES.
+
+        Uses datamol for batch processing (skill-based):
+        dm.parallelized() for multi-CPU fingerprint computation.
+        """
         if not smiles_list:
             return []
+
+        if _HAS_DATAMOL:
+            # Use datamol parallelized batch processing
+            mols = dm.to_mol(smiles_list, ordered=True)
+            gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
+            fps = []
+            for mol in mols:
+                if mol is None:
+                    fps.append(None)
+                else:
+                    fps.append(gen.GetFingerprint(mol))
+            return fps
+
+        # Fallback: raw RDKit (original version)
         gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
         fps = []
         for smi in smiles_list:

@@ -17,6 +17,7 @@ import random
 from pathlib import Path
 from typing import Callable, Optional
 
+import datamol as dm
 from rdkit import Chem, RDLogger
 from rdkit.Chem import Descriptors, rdFingerprintGenerator
 from rdkit.DataStructs import TanimotoSimilarity
@@ -141,10 +142,14 @@ class ScafVAEPolicy:
         self._compute_privileged_fps()
 
     def _compute_privileged_fps(self) -> None:
-        """Generate Morgan fingerprints for privileged scaffolds."""
+        """Generate Morgan fingerprints for privileged scaffolds.
+
+        Uses datamol for simpler SMILES handling (skill-based):
+        dm.to_mol() returns None for invalid SMILES automatically.
+        """
         gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
         for smi in _PRIVILEGED_SMILES:
-            mol = Chem.MolFromSmiles(smi)
+            mol = dm.to_mol(smi)
             if mol:
                 self._priv_fps.append(gen.GetFingerprint(mol))
             else:
