@@ -296,8 +296,42 @@ def genetic_algorithm(
     mutation_rate: float = 0.3,
     elite_frac: float = 0.1,
     seed: Optional[int] = None,
+    # ── MCTS-style improvements (2026-07) ────────────────────
+    # Temperature annealing: mutation_rate starts high, anneals to min_mut_rate
+    # initial_mutation_rate=None means use mutation_rate (backward compat)
+    initial_mutation_rate: Optional[float] = None,
+    min_mutation_rate: float = 0.1,
+    # Stagnation detection: reset + inject diversity after N gens without improvement
+    stagnation_limit: int = 5,
+    # Dirichlet noise in tournament selection (AlphaGo-style)
+    dirichlet_alpha: float = 0.3,
+    dirichlet_epsilon: float = 0.15,
 ) -> tuple[str, float, list[dict[str, Any]]]:
-    """Run a simple genetic algorithm for molecular optimisation.
+    """Run a genetic algorithm for molecular optimisation with MCTS-style
+    exploration enhancements (2026-07).
+
+    Implements three improvements inspired by the MCTS agent:
+
+    1. **Mutation rate annealing** — mutation_rate starts at
+       ``initial_mutation_rate`` (high exploration) and linearly decreases
+       to ``min_mutation_rate`` (exploitation) over generations. Resets to
+       ``initial_mutation_rate`` when stagnation is detected.
+
+    2. **Stagnation detection + diversity injection** — if the best
+       fitness does not improve for ``stagnation_limit`` consecutive
+       generations, the mutation rate is reset and random individuals
+       are injected into the population to escape local optima.
+
+    3. **Dirichlet-noise tournament selection** — during parent
+       selection, tournament fitness scores are blended with Dirichlet
+       noise (AlphaGo-style): ``P' = (1-ε)·P + ε·Dir(α)``. This gives
+       less-fit individuals a small chance of being selected, maintaining
+       genetic diversity without resorting to pure random selection.
+
+    Backward compatibility: all new parameters have defaults that
+    activate the improvements. Set ``initial_mutation_rate=mutation_rate``,
+    ``min_mutation_rate=mutation_rate``, ``stagnation_limit=0``, and
+    ``dirichlet_alpha=0.0`` to restore original behaviour.
 
     Parameters
     ----------
@@ -310,11 +344,27 @@ def genetic_algorithm(
     n_generations : int
         Number of generations to evolve.
     mutation_rate : float
-        Probability of mutation per offspring.
+        Probability of mutation per offspring (kept for backward compat;
+        use ``initial_mutation_rate`` and ``min_mutation_rate`` for
+        annealing).
     elite_frac : float
         Fraction of top individuals kept unchanged (elitism).
     seed : int or None
         Random seed.
+    initial_mutation_rate : float
+        Starting mutation rate (high = exploration). Default 0.5.
+    min_mutation_rate : float
+        Minimum mutation rate after annealing (low = exploitation).
+        Default 0.1.
+    stagnation_limit : int
+        Consecutive generations without improvement before reset.
+        Default 5 (disabled if 0).
+    dirichlet_alpha : float
+        Dirichlet concentration for tournament noise. Smaller = sparser.
+        Default 0.3 (disabled if 0.0).
+    dirichlet_epsilon : float
+        Blending weight for Dirichlet noise in tournament selection.
+        Default 0.15 (ignored if dirichlet_alpha == 0.0).
 
     Returns
     -------
@@ -325,6 +375,10 @@ def genetic_algorithm(
     trajectory : list of dict
         Evolution history with generation-level statistics.
     """
+    # Backward compat: if initial_mutation_rate not set, use mutation_rate
+    if initial_mutation_rate is None:
+        initial_mutation_rate = mutation_rate
+
     rng = random.Random(seed)
     trajectory: list[dict[str, Any]] = []
 
@@ -341,17 +395,53 @@ def genetic_algorithm(
         population.append(ind)
 
     best_individual = max(population, key=lambda ind: ind.fitness)
+    stagnation_count = 0
+
+    # Pre-create RNG for Dirichlet noise (reused across generations)
+    _has_dirichlet = dirichlet_alpha > 0.0
+    if _has_dirichlet:
+        _dir_rng = np.random.Generator(np.random.MT19937(rng.randint(0, 2**31)))
 
     # ── GA main loop ───────────────────────────────────────────────
     # Parallel oracle evaluation via joblib when available.
     # Fitness stats use optimized numpy (already C-optimized).
     for generation in range(n_generations):
+        # ── 1. Mutation rate annealing ──────────────────────────
+        # Linearly decrease from initial_mutation_rate to min_mutation_rate
+        frac = generation / max(n_generations - 1, 1)
+        frac = min(frac, 1.0)
+        mut_rate = initial_mutation_rate - frac * (initial_mutation_rate - min_mutation_rate)
+        mut_rate = max(mut_rate, min_mutation_rate)
+
         # Sort by fitness (descending)
         population.sort(key=lambda ind: ind.fitness, reverse=True)
 
-        # Track best
+        # ── 2. Stagnation detection ────────────────────────────
+        improved = False
         if population[0].fitness > best_individual.fitness:
             best_individual = deepcopy(population[0])
+            stagnation_count = 0
+            improved = True
+        else:
+            stagnation_count += 1
+
+        # If stagnation detected: reset mutation rate + inject diversity
+        if stagnation_limit > 0 and stagnation_count >= stagnation_limit:
+            mut_rate = initial_mutation_rate  # Reset to max exploration
+            stagnation_count = 0
+            # Replace bottom 20% with randomly built molecules
+            n_inject = max(1, population_size // 5)
+            for i in range(n_inject):
+                idx = population_size - 1 - i  # replace from bottom
+                state = env.reset()
+                done = False
+                while not done and rng.random() < 0.7:
+                    action = rng.choice(env.fragment_vocab)
+                    state, _, done, _ = env.step(action)
+                population[idx] = MoleculeIndividual(state)
+                population[idx].fitness = oracle(state)
+            # Re-sort after injection
+            population.sort(key=lambda ind: ind.fitness, reverse=True)
 
         # Record trajectory (numpy C-optimized stats)
         fitness_array = np.array([ind.fitness for ind in population], dtype=np.float64)
@@ -367,6 +457,8 @@ def genetic_algorithm(
             "std_fitness": float(std_fit),
             "best_smiles": population[0].smiles,
             "method": "ga",
+            "mutation_rate": mut_rate,
+            "stagnation": (stagnation_count > 0),
         })
 
         # Elitism: keep top-k unchanged
@@ -378,17 +470,39 @@ def genetic_algorithm(
         # Pre-compute offspring candidate list
         offspring_candidates: list[str] = []
         while len(offspring_candidates) < population_size - n_elite:
-            # Tournament selection (k=3)
+            # ── 3. Dirichlet-noise tournament selection ─────────
             tournament = rng.sample(population, min(3, len(population)))
-            parent1 = max(tournament, key=lambda ind: ind.fitness)
+            if _has_dirichlet:
+                # Blend fitness with Dirichlet noise: P' = (1-ε)·P + ε·Dir(α)
+                noise = _dir_rng.dirichlet([dirichlet_alpha] * len(tournament))
+                parent1 = max(
+                    tournament,
+                    key=lambda ind, n=noise, t=tournament: (
+                        (1.0 - dirichlet_epsilon) * ind.fitness
+                        + dirichlet_epsilon * float(n[t.index(ind)])
+                    ),
+                )
+            else:
+                parent1 = max(tournament, key=lambda ind: ind.fitness)
+
             tournament = rng.sample(population, min(3, len(population)))
-            parent2 = max(tournament, key=lambda ind: ind.fitness)
+            if _has_dirichlet:
+                noise = _dir_rng.dirichlet([dirichlet_alpha] * len(tournament))
+                parent2 = max(
+                    tournament,
+                    key=lambda ind, n=noise, t=tournament: (
+                        (1.0 - dirichlet_epsilon) * ind.fitness
+                        + dirichlet_epsilon * float(n[t.index(ind)])
+                    ),
+                )
+            else:
+                parent2 = max(tournament, key=lambda ind: ind.fitness)
 
             # Crossover
             child_smi = _crossover_fragments(parent1.smiles, parent2.smiles, rng)
 
-            # Mutation
-            if rng.random() < mutation_rate:
+            # Mutation (with annealed rate)
+            if rng.random() < mut_rate:
                 child_smi = _mutate_smiles(child_smi, env, rng)
 
             offspring_candidates.append(child_smi)
