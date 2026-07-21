@@ -136,6 +136,8 @@ def _run_single_seed(
         n_iterations=n_iterations,
         c_puct=mcts_c_puct,
         policy_fn=policy_fn,
+        seed=seed,
+        progressive_widening_k=10,
     )
     mcts_start = time.time()
     best_mcts = agent.search(env.initial_smiles)

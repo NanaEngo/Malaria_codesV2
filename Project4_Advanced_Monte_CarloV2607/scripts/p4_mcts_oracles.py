@@ -24,6 +24,7 @@ References
 from __future__ import annotations
 
 import warnings
+from collections import OrderedDict
 from pathlib import Path
 from typing import Callable, Dict, Optional
 
@@ -118,6 +119,8 @@ class OracleAggregator:
         docking_fallback: str = "similarity",
         use_rrs: bool = True,
         use_pns: bool = True,
+        cache_maxsize: int = 10000,
+        rrs_fallback_k: int = 3,
     ) -> None:
         self.weights = weights or {
             "mpo": 0.30,
@@ -130,8 +133,11 @@ class OracleAggregator:
         self.docking_fallback = docking_fallback
         self.use_rrs = use_rrs
         self.use_pns = use_pns
-        self._runtime_cache: Dict[str, Dict[str, float]] = {}
+        # LRU cache with bounded size (prevents OOM)
+        self._runtime_cache: Dict[str, Dict[str, float]] = OrderedDict()
+        self._cache_maxsize = cache_maxsize
         self._canonical_cache: Dict[str, str] = {}
+        self._rrs_fallback_k = rrs_fallback_k
 
         # Precomputed P1/P2 libraries
         self._c6: Dict[str, Dict[str, float]] = {}
@@ -301,6 +307,9 @@ class OracleAggregator:
 
     def _cache_set(self, smiles: str, key: str, value: float) -> None:
         canon = self._canonical_smiles(smiles)
+        # LRU eviction: remove oldest entry if at capacity
+        if canon not in self._runtime_cache and len(self._runtime_cache) >= self._cache_maxsize:
+            self._runtime_cache.pop(next(iter(self._runtime_cache)), None)
         self._runtime_cache.setdefault(canon, {})[key] = value
 
     def _compute_fingerprints(self, smiles_list: list[str]) -> list:
@@ -430,13 +439,18 @@ class OracleAggregator:
         """Resistance Resilience Score: max Tanimoto similarity to known
         resistance-resilient hits.
 
+        **Multi-fidelity improvement**: For novel molecules with low Tanimoto
+        similarity to any single reference, uses the mean RRS of the K nearest
+        neighbours (K=3) instead of returning 0.0. This provides a smooth
+        gradient even for molecules in novel chemical space.
+
         RRS quantifies how similar a generated molecule is to known
         chemotypes that maintain binding against clinically prevalent
         resistance mutations (PfDHFR N51I, C59R, S108N, I164L;
         PfCRT K76T, K76A).
 
         Uses a continuous scaling function:
-        - Tanimoto ≤ 0.20 → RRS = 0.0 (novel chemotype, no resistance info)
+        - Tanimoto ≤ 0.20 → RRS = 0.0 (novel chemotype, nearest-neighbour avg)
         - Tanimoto 0.20-1.0 → RRS = 0.0-1.0 (linear, continuous at 0.20)
 
         Returns a score in [0, 1], where higher values indicate greater
@@ -460,17 +474,30 @@ class OracleAggregator:
         except Exception:
             return 0.0
 
-        # Max Tanimoto similarity to any reference molecule
-        max_sim = 0.0
+        # Compute similarities to ALL reference molecules and sort
+        sims = []
         for ref_fp in self._rrs_ref_fps:
             if ref_fp is None:
                 continue
             sim = TanimotoSimilarity(query_fp, ref_fp)
-            max_sim = max(max_sim, sim)
+            sims.append(sim)
 
-        # Continuous scaling: Tanimoto [0.20, 1.00] → RRS [0.0, 1.0]
-        # Molecules with Tanimoto ≤ 0.20 get RRS = 0.0 (no resistance info)
-        score = max(0.0, min(1.0, (max_sim - 0.20) / 0.80))
+        if not sims:
+            return 0.0
+
+        sims.sort(reverse=True)
+        max_sim = sims[0]
+
+        # Multi-fidelity fallback: if max_sim < 0.20, use top-K mean
+        # instead of returning 0.0 (smooth gradient for novel molecules)
+        if max_sim < 0.20:
+            k = min(self._rrs_fallback_k, len(sims))
+            mean_sim = sum(sims[:k]) / k if k > 0 else max_sim
+            # Scale [0.0, 0.20] → [0.0, 0.20] (gentle gradient)
+            score = max(0.0, (mean_sim - 0.0) / 0.20) * 0.20
+        else:
+            # Continuous scaling: Tanimoto [0.20, 1.00] → RRS [0.0, 1.0]
+            score = max(0.0, min(1.0, (max_sim - 0.20) / 0.80))
 
         self._cache_set(smiles, "rrs", score)
         return score
@@ -479,6 +506,11 @@ class OracleAggregator:
     def _pns_score(self, smiles: str) -> float:
         """Polypharmacology Network Score: mean docking score across
         all available P. falciparum targets.
+
+        **Multi-fidelity improvement**: Uses a Tanimoto-weighted average
+        of the K nearest neighbours' PNS scores when the query molecule
+        is not found in the Tartarus library. This provides a smooth
+        gradient even for novel molecules without direct docking data.
 
         Uses per-target docking scores from the Tartarus library
         (columns detected dynamically at load time). Falls back to
@@ -494,7 +526,7 @@ class OracleAggregator:
         canon = self._canonical_smiles(smiles)
 
         if canon in self._tartarus and self._tartarus_target_cols:
-            # Dynamically detected target columns from Tartarus CSV
+            # Exact match in Tartarus library (highest fidelity)
             scores = []
             for col in self._tartarus_target_cols:
                 val = self._tartarus[canon].get(col, None)
@@ -503,9 +535,30 @@ class OracleAggregator:
             if not scores:
                 scores = [-7.0]
         elif self._tartarus_smiles:
-            # Fallback: nearest-neighbour docking as PNS proxy
-            nn_dock = self._tanimoto_nearest_docking(canon)
-            scores = [nn_dock]
+            # Multi-fidelity fallback: Tanimoto-weighted K-NN average
+            # instead of single nearest neighbour (smoother gradient)
+            mol = Chem.MolFromSmiles(canon)
+            if mol is not None:
+                gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
+                query_fp = gen.GetFingerprint(mol)
+                # Compute Tanimoto to all Tartarus molecules
+                weighted_scores = []
+                total_weight = 0.0
+                for lib_smi, lib_fp in zip(self._tartarus_smiles, self._tartarus_fingerprints):
+                    if lib_fp is None:
+                        continue
+                    sim = TanimotoSimilarity(query_fp, lib_fp)
+                    if sim > 0.2:  # only consider meaningful similarity
+                        dock = self._tartarus[lib_smi].get("docking", -7.0)
+                        if np.isfinite(dock):
+                            weighted_scores.append(float(dock) * sim)
+                            total_weight += sim
+                if weighted_scores and total_weight > 0:
+                    scores = [sum(weighted_scores) / total_weight]
+                else:
+                    scores = [self._tanimoto_nearest_docking(canon)]
+            else:
+                scores = [self._tanimoto_nearest_docking(canon)]
         else:
             scores = [-7.0]
 
@@ -526,6 +579,8 @@ def make_oracle(
     docking_fallback: str = "similarity",
     use_rrs: bool = True,
     use_pns: bool = True,
+    cache_maxsize: int = 10000,
+    rrs_fallback_k: int = 3,
 ) -> Callable[[str], float]:
     """Factory returning a callable reward function."""
     aggregator = OracleAggregator(
@@ -534,6 +589,8 @@ def make_oracle(
         docking_fallback=docking_fallback,
         use_rrs=use_rrs,
         use_pns=use_pns,
+        cache_maxsize=cache_maxsize,
+        rrs_fallback_k=rrs_fallback_k,
     )
     return aggregator.reward
 

@@ -101,12 +101,15 @@ class MolecularEnv:
         max_steps: int = 10,
         fragment_set: str = "all",
         randomize_attachment: bool = False,
+        seed: Optional[int] = None,
     ) -> None:
         self.initial_smiles = initial_smiles
         self.max_steps = max_steps
         self.state: str = initial_smiles
         self.step_count: int = 0
         self.randomize_attachment = randomize_attachment
+        self._fragment_set = fragment_set
+        self._rng = random.Random(seed)
 
         # Select fragment vocabulary
         if fragment_set == "minimal":
@@ -238,7 +241,7 @@ class MolecularEnv:
             return None
 
         if self.randomize_attachment:
-            return random.choice(candidates)
+            return self._rng.choice(candidates)
 
         # Prefer aliphatic (non-ring) attachment sites
         aliphatic = [i for i in candidates if not mol.GetAtomWithIdx(i).IsInRing()]

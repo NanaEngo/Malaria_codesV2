@@ -114,6 +114,7 @@ def main() -> None:
         n_iterations=args.n_iterations,
         c_puct=args.c_puct,
         policy_fn=policy_fn,
+        seed=args.seed,
     )
 
     print(f"═══ P4 MCTS+RL — seed={args.seed} ═══")
