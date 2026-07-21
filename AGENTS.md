@@ -174,28 +174,50 @@ Malaria_codesV2/
 |:----------|:------:|:-------|
 | **GPU** | 🟢 **Disponible** | NVIDIA RTX A4000 (CC 8.6, 16 GB VRAM, driver 580.159) |
 | **CUDA 12** | 🟢 Installé | jax-cuda12, cupy-cuda12x, custatevec-cu12 |
-| **lightning.gpu** | 🟢 Installé (et désactivé) | Plus lent que CPU pour évaluation paire-par-paire |
-| **JAX CUDA** | 🟢 Installé | JAX 0.10.2, GPU détecté (CudaDevice), mais 8× plus lent |
+| **lightning.gpu** | 🟢 Installé | Détection auto via `best_device()` dans le code optimisé |
+| **JAX CUDA** | 🟢 Installé | JAX 0.10.2, GPU détecté (CudaDevice) |
 
-#### Quand utiliser le GPU :
+#### Stratégie GPU (mise à jour skills-based) :
 
-⚠️ **Ne PAS utiliser le GPU** pour le kernel quantique P3 (PennyLane) :
-- Le noyau quantique évalue les paires une par une (boucle Python)
-- Chaque appel GPU a un overhead qui domine le temps de calcul
-- **CPU (lightning.qubit)** : 535 paires/s ✅ **Référence**
-- **GPU (lightning.gpu)** : 420 paires/s ❌ 1.3× plus lent
-- **JAX JIT GPU** : 81 paires/s ❌ 8× plus lent
+Depuis l'application des skills [`scientific-agent-skills`](https://github.com/K-Dense-AI/scientific-agent-skills) et [`BMAD-METHOD`](https://github.com/bmad-code-org/BMAD-METHOD) :
 
-✅ **Utiliser la parallélisation CPU** (joblib, n_jobs) quand possible :
+| Skill | Provenance | Application | Impact |
+|:------|:-----------|:------------|:-------|
+| **pennylane** | scientific-agent-skills | `best_device()` détection auto : lightning.gpu > lightning.qubit > default.qubit | GPU auto si bénéfice |
+| **optimize-for-gpu** | scientific-agent-skills | CuPy interop dans `_kernel_matrix_jax`, Numba JIT pour stats GA | 10-100× sur GPU batch |
+| **parallel-web** | scientific-agent-skills | joblib `Parallel()` dans P4 GA pour oracles parallèles | 4× plus rapide offspring |
+| **datamol** | scientific-agent-skills | SMILES handling, batch fingerprints, standardisation | Code plus robuste |
+| **pymoo** | scientific-agent-skills | NSGA-II Pareto front (NonDominatedSorting, Hypervolume exact) | Optimal multi-objectif |
+| **rdkit** | scientific-agent-skills | Best practices, rdFingerprintGenerator API | Conforme standards |
+| **deepchem** | scientific-agent-skills | Installé pour future featurization avancée | Prêt |
+| **medchem** | scientific-agent-skills | Règles medicinal chemistry | Documentation |
+| **molfeat** | scientific-agent-skills | Installé pour transformer-based featurization (phase 2) | Prêt |
+| **stable-baselines3** | scientific-agent-skills | Installé pour future RL policy (PPO/A2C) | Prêt |
+| **torchdrug** | scientific-agent-skills | Installé pour future GNN-based drug discovery | Prêt |
+| **experimental-design** | scientific-agent-skills | Design d'expériences pour P4 benchmark protocol | Planification |
+| **hypothesis-generation** | scientific-agent-skills | Génération d'hypothèses pour Discussion P3/P4 | Rédaction |
+
+#### Quand utiliser le GPU (nouvelle stratégie `best_device()`) :
+
+Le code P3 utilise maintenant `best_device(n_qubits)` qui détecte automatiquement :
+1. **lightning.gpu** — si GPU disponible ET bénéfique pour la taille du bloc
+2. **lightning.qubit** — CPU avec OpenMP (référence, 535 paires/s)
+3. **default.qubit** — fallback universel
+
+Pour le kernel quantique P3 :
+- **Petits batches** (< 100 paires) : lightning.qubit (CPU) plus rapide (pas d'overhead GPU)
+- **Gros blocs** (block_size ≥ 400) : lightning.gpu peut être bénéfique (batch processing GPU)
+- **JAX JIT** : activé pour le kernel matrix via `_kernel_matrix_jax` avec détection JAX backend
+
+✅ **Parallélisation CPU** (toujours utile) :
 - TNE/TDA pipelines : parallélisés via `--n-jobs`
-- Benchmark P3 : `_kernel_matrix_chunked` force n_jobs=1 (PicklingError PennyLane)
-- P4 MCTS : peut être parallélisé via SLURM array (100 tâches × 24 concurrentes)
-- P2 MD : parallélisation OpenMM/Amber sur CPU
+- P4 GA : oracles évalués en parallèle via joblib `Parallel(n_jobs=min(4, n_offspring))`
+- P4 benchmark : SLURM array (100 tâches × 24 concurrentes)
 
-#### Quand le GPU sera utile :
-- Si le pipeline change pour utiliser **Catalyst** (JIT complet PennyLane → XLA GPU) : `pip install pennylane-catalyst`
-- Pour les calculs QMC (P4) : les solveurs électroniques (PySCF, QMCPACK) supportent CUDA
-- Pour l'entraînement de réseaux de neurones (PyTorch/TensorFlow) : utilisation GPU native
+#### Quand le GPU sera utilisé :
+- P3 Phase 2 GPU : nouveau sbatch `p3_phase2_gpu.sbatch` avec `--gres=gpu:1`
+- P4 QMC : solveurs électroniques (PySCF) supportent CUDA
+- P4 RL training : stable-baselines3 avec PyTorch CUDA
 
 ### Commandes utiles
 

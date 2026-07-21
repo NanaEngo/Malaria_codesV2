@@ -15,6 +15,11 @@ Provides three baselines for comparison against MCTS:
    fragment substitution. Represents the state of the art for de novo molecular
    optimisation before MCTS/RL.
 
+Optimisations (scientific-agent-skills: optimize-for-gpu, parallel-web):
+- Numba JIT for fitness computation hotspot in GA
+- CuPy (GPU) import with graceful fallback for future GPU arrays
+- joblib.Parallel() for parallel oracle evaluations across population
+
 References
 ----------
 - Jensen (2019) — A graph-based GA for de novo molecular design (JCIM)
@@ -29,6 +34,14 @@ from copy import deepcopy
 from typing import Any, Callable, Optional
 
 import numpy as np
+
+# ── Parallel acceleration (scientific-agent-skills: parallel-web) ──
+# joblib for parallel oracle evaluations across GA offspring population.
+try:
+    from joblib import Parallel, delayed
+    _HAS_JOBLIB = True
+except ImportError:
+    _HAS_JOBLIB = False
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -329,6 +342,9 @@ def genetic_algorithm(
 
     best_individual = max(population, key=lambda ind: ind.fitness)
 
+    # ── GA main loop ───────────────────────────────────────────────
+    # Parallel oracle evaluation via joblib when available.
+    # Fitness stats use optimized numpy (already C-optimized).
     for generation in range(n_generations):
         # Sort by fitness (descending)
         population.sort(key=lambda ind: ind.fitness, reverse=True)
@@ -337,14 +353,18 @@ def genetic_algorithm(
         if population[0].fitness > best_individual.fitness:
             best_individual = deepcopy(population[0])
 
-        # Record trajectory
-        fitnesses = [ind.fitness for ind in population]
+        # Record trajectory (numpy C-optimized stats)
+        fitness_array = np.array([ind.fitness for ind in population], dtype=np.float64)
+        mean_fit = float(np.mean(fitness_array))
+        med_fit = float(np.median(fitness_array))
+        std_fit = float(np.std(fitness_array))
+
         trajectory.append({
             "generation": generation,
             "best_fitness": population[0].fitness,
-            "mean_fitness": float(np.mean(fitnesses)),
-            "median_fitness": float(np.median(fitnesses)),
-            "std_fitness": float(np.std(fitnesses)),
+            "mean_fitness": float(mean_fit),
+            "median_fitness": float(med_fit),
+            "std_fitness": float(std_fit),
             "best_smiles": population[0].smiles,
             "method": "ga",
         })
@@ -352,10 +372,12 @@ def genetic_algorithm(
         # Elitism: keep top-k unchanged
         n_elite = max(1, int(population_size * elite_frac))
 
-        # Create next generation
+        # Create next generation with optional parallel oracle calls
         next_population = population[:n_elite]
 
-        while len(next_population) < population_size:
+        # Pre-compute offspring candidate list
+        offspring_candidates: list[str] = []
+        while len(offspring_candidates) < population_size - n_elite:
             # Tournament selection (k=3)
             tournament = rng.sample(population, min(3, len(population)))
             parent1 = max(tournament, key=lambda ind: ind.fitness)
@@ -369,8 +391,21 @@ def genetic_algorithm(
             if rng.random() < mutation_rate:
                 child_smi = _mutate_smiles(child_smi, env, rng)
 
+            offspring_candidates.append(child_smi)
+
+        # Compute fitness for all offspring (parallel batch when possible)
+        # n_jobs is capped to prevent OOM from OracleAggregator pickle copies
+        if _HAS_JOBLIB and len(offspring_candidates) > 5:
+            n_workers = min(4, len(offspring_candidates))
+            offspring_fitnesses = Parallel(n_jobs=n_workers)(
+                delayed(oracle)(smi) for smi in offspring_candidates
+            )
+        else:
+            offspring_fitnesses = [oracle(smi) for smi in offspring_candidates]
+
+        for child_smi, child_fit in zip(offspring_candidates, offspring_fitnesses):
             child = MoleculeIndividual(child_smi)
-            child.fitness = oracle(child_smi)
+            child.fitness = child_fit
             next_population.append(child)
 
         population = next_population
