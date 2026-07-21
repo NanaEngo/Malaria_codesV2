@@ -180,7 +180,7 @@ configuration---$c_{\text{PUCT}}=5.0$,~$\nu=0.01$,~$pw_\alpha=0.5$,
 $pw_k=1.0$,~$T=0.8$---is used for all subsequent experiments. An
 additional critical improvement---global best-molecule tracking
 (max-over-rollout)---was subsequently introduced to address the MCTS
-rollout degradation issue (see \Cref{sec:rollout_fix}).
+rollout degradation issue through global best-molecule tracking.
 
 \subsection{Benchmark Comparison}
 
@@ -211,7 +211,7 @@ rollout mechanism: when the policy-biased rollout added fragments to a
 good first-step molecule (e.g.,~toluene, reward~0.44), subsequent fragment
 additions systematically degraded the score, causing the tree to undervalue
 high-quality one-step molecules. The fix---tracking the best molecule
-encountered at any point along the rollout trajectory and returning it as the\nsearch result instead of the root's best child---recovers the direct reward
+encountered at any point along the rollout trajectory and returning it as the search result instead of the root's best child---recovers the direct reward
 of high-quality intermediates. MCTS+ScafVAE now achieves competitive
 performance within 0.017 of the Greedy search, which remains the best
 overall method.
