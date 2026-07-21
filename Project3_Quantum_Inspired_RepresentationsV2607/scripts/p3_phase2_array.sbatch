@@ -14,8 +14,8 @@
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p3_phase2
 #SBATCH --array=0-2%1
-#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_%a_%j.log
-#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_%a_%j.err
+#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_%j.log
+#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=4G
@@ -56,6 +56,15 @@ PYTHON="/home/nanaengo/miniforge3/envs/malaria_md/bin/python"
 PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607"
 RESULTS_DIR="${PROJECT_DIR}/results"
 N_MOLS="${N_MOLS:-5000}"
+
+# ── Log redirect (after PROJECT_DIR is defined) ──────────────────────
+# The %%a SLURM directive in #SBATCH --output expands to 4294967294
+# (invalid sentinel) for the master array job. Using $SLURM_ARRAY_TASK_ID
+# env var directly gives the correct task ID at runtime.
+_LOG_DIR="${PROJECT_DIR}/logs/slurm"
+mkdir -p "${_LOG_DIR}"
+_LOG_PATH="${_LOG_DIR}/p3_phase2_${SLURM_ARRAY_TASK_ID:-unknown}_${SLURM_JOB_ID}.log"
+exec > "${_LOG_PATH}" 2>&1
 
 # ── 3 meilleurs combos de la recherche de paramètres ─────────────────
 # Format: bond_dim,n_repeats,n_kpca
