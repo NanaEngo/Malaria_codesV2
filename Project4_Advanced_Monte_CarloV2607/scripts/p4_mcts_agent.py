@@ -9,7 +9,9 @@ The environment is deep-copied during expansion and rollout so that the shared
 environment state is not mutated while exploring the tree.
 """
 
-from __future__ import annotations    import math
+from __future__ import annotations
+
+import math
 import random
 from typing import Any, Callable, Optional
 
@@ -18,7 +20,6 @@ import numpy as np
 # Dirichlet noise parameters (AlphaGo-style root exploration)
 _DIRICHLET_ALPHA = 0.15        # concentration parameter (smaller = sparser noise)
 _DIRICHLET_EPSILON = 0.20      # mixing proportion (P' = (1-ε)P + ε·Dir)
-_DIRICHLET_RESET_INTERVAL = 75 # iterations between forced Dirichlet resets
 
 
 class MCTSNode:
@@ -97,8 +98,8 @@ class MCTSAgent:
     rollout_temp_min : float
         Minimum temperature after annealing. Default 0.3.
     rollout_epsilon : float
-        Probability of taking a random action during rollout (epsilon-greedy).
-        Default 0.15. Helps discover novel branches.
+        Blending weight between policy and uniform distributions during rollout.
+        Default 0.15. Higher = more diverse rollout actions.
     collision_threshold : int
         Number of consecutive identical best molecules before reset.
         Default 50. Detects rollout collapse.
@@ -409,8 +410,8 @@ class MCTSAgent:
                     blended = (1.0 - self.rollout_epsilon) * policy_probs + self.rollout_epsilon * uniform_probs
                     blended = blended / blended.sum()  # renormalise
                     action = self._rng.choices(actions, weights=blended, k=1)[0]
-                    else:
-                        action = self._rng.choice(env_copy.fragment_vocab)
+                else:
+                    action = self._rng.choice(env_copy.fragment_vocab)
             else:
                 # Uniform random (original)
                 action = self._rng.choice(env_copy.fragment_vocab)
