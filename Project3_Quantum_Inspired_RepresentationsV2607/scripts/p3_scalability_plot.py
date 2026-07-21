@@ -78,7 +78,6 @@ def _sample_molecules(n: int) -> np.ndarray:
     return X_q_tr
 
 
-@profile
 def _measure_kernel_time(X: np.ndarray, n_repeats: int = 1,
                           use_chunked: bool = False,
                           block_size: int = 200) -> dict:
