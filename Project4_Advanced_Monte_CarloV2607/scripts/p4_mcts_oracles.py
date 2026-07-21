@@ -345,22 +345,24 @@ class OracleAggregator:
         if not smiles_list:
             return []
 
-        gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
-
-        def _fp_from_mol(mol) -> object | None:
-            return None if mol is None else gen.GetFingerprint(mol)
+        def _fp_from_smiles(smi: str) -> object | None:
+            """Compute fingerprint for a single SMILES.
+            gen created inside to ensure picklability for parallel workers."""
+            if not smi:
+                return None
+            try:
+                _g = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
+                mol = Chem.MolFromSmiles(smi)
+                return None if mol is None else _g.GetFingerprint(mol)
+            except Exception:
+                return None
 
         if _HAS_DATAMOL:
             # Parallelized batch fingerprinting via datamol
-            mols = dm.to_mol(smiles_list, ordered=True)
-            return dm.parallelized(_fp_from_mol, mols, n_jobs=-1, progress=False)
+            return dm.parallelized(_fp_from_smiles, smiles_list, n_jobs=-1, progress=False)
 
         # Fallback: sequential RDKit
-        fps = []
-        for smi in smiles_list:
-            mol = Chem.MolFromSmiles(smi)
-            fps.append(_fp_from_mol(mol))
-        return fps
+        return [_fp_from_smiles(smi) for smi in smiles_list]
 
     @staticmethod
     def _clamp_docking(score: float, default: float = -7.0) -> float:
