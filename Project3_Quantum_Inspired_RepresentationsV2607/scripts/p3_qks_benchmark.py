@@ -294,24 +294,46 @@ def build_quantum_kernel(X: np.ndarray, n_repeats: int = 1,
     """
     kernel_fn = _make_kernel_fn(N_QUBITS, n_repeats)
 
-    # Step 1: Compute kernel matrix
-    n = len(X)
+    # Step 1: Standardize input features (R2: StandardScaler for QK stability)
+    # NOTE: IQPEmbedding requires inputs in [-1, 1] (arccos(x^2)).
+    # StandardScaler produces values outside this range, so we clip.
+    from sklearn.preprocessing import StandardScaler
+    _scaler = StandardScaler()
+    X_scaled = _scaler.fit_transform(X)
+    # Clip back to [-1, 1] for IQPEmbedding compatibility
+    X_scaled = np.clip(X_scaled, -1.0, 1.0)
+    if not np.all(np.isfinite(X_scaled)):
+        print("    WARNING: NaN/Inf in standardized QK features — falling back to raw")
+        X_scaled = X
+
+    # Step 2: Compute kernel matrix
+    n = len(X_scaled)
     if block_size is None or n <= block_size:
         # Small matrix: direct computation (fast, no parallel overhead)
-        K = kernel_matrix(X, X, kernel=kernel_fn)
+        K = kernel_matrix(X_scaled, X_scaled, kernel=kernel_fn)
     else:
         # Large matrix: block decomposition for parallelism
         print(f"    Chunked mode: {n}x{n} matrix, {block_size} blocks, {n_jobs} jobs")
-        K = _kernel_matrix_chunked(X,
+        K = _kernel_matrix_chunked(X_scaled,
                                     block_size=block_size,
                                     n_jobs=n_jobs,
                                     n_qubits=N_QUBITS,
                                     n_repeats=n_repeats)
 
-    # Step 2: Fix non-PSD matrices for SVM compatibility
+    # Step 3: Fix non-PSD matrices for SVM compatibility
     K = closest_psd_matrix(K)
 
-    # Step 3: Optional noise mitigation
+    # Step 4: Verify PSD property (R3: post-fix sanity check)
+    _eigvals = np.linalg.eigvalsh(K)
+    _min_eig = _eigvals.min()
+    _max_eig = _eigvals.max()
+    if _min_eig < -1e-8:
+        print(f"    WARNING: PSD fix residual — min eigenvalue = {_min_eig:.6e}")
+    elif _min_eig < 0:
+        print(f"    NOTE: Tiny negative eigenvalue (numerical noise) = {_min_eig:.6e}")
+    print(f"    Eigenvalue range: [{_min_eig:.6f}, {_max_eig:.6f}] (n={n})")
+
+    # Step 5: Optional noise mitigation
     if noise_method:
         K = mitigate_depolarizing_noise(K, N_QUBITS, method=noise_method)
 

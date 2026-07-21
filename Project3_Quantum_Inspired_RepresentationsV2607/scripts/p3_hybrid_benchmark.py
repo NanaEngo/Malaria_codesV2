@@ -624,6 +624,8 @@ def main():
                         help="Include persistence image + Betti curves in TFP (default: True; add --no-tfp-enriched to use only base H features)")
     parser.add_argument("--no-tfp-enriched", action="store_false", dest="tfp_enriched",
                         help="Use only base H features for TFP (no pers_img or betti curves)")
+    parser.add_argument("--checkpoint", type=str, default=None,
+                        help="Path to JSON checkpoint for fold-by-fold resume (default: None)")
     args = parser.parse_args()
 
     DEVICE = "lightning.qubit"  # system-wide PennyLane device
@@ -673,9 +675,13 @@ def main():
                                         RESULTS_DIR / "p3_tda_fingerprints.csv", "betti_")
         if X_tfp_pers is not None and X_tfp_betti is not None:
             X_tfp = np.hstack([X_tfp, X_tfp_pers, X_tfp_betti])
-            print(f"    TFP enriched: {X_tfp.shape[1]} features (33 H + {X_tfp_pers.shape[1]} pers_img + {X_tfp_betti.shape[1]} betti)")
+            print(f"    TFP enriched: {X_tfp.shape[1]} features (H={33}, pers_img={X_tfp_pers.shape[1]}, betti={X_tfp_betti.shape[1]})")
+        else:
+            print(f"    WARNING: TFP enriched requested but pers_img or betti columns missing — using base H only ({X_tfp.shape[1]} features)")
     elif X_tfp is not None:
         print(f"    TFP base only: {X_tfp.shape[1]} features (H0/H1/H2 base features only)")
+    if X_tfp is None:
+        print("    WARNING: TFP file not found — run p3_tda_pipeline first. TFP will be excluded from Hybrid.")
     X_tne = load_precomputed(smiles_list,
                               RESULTS_DIR / "p3_tne_embeddings.csv", "tne_")
 
