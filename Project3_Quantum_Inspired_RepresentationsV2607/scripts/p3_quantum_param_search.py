@@ -23,6 +23,7 @@ Output:
 """
 
 import argparse
+import gc
 import sys
 import time
 import warnings
@@ -656,7 +657,15 @@ def main():
 
     # Final save
     results_df = pd.DataFrame(records)
-    results_df.to_csv(out_csv, index=False)
+    # ── gzip-compressed output (R14) ─────────────────────────────
+    out_csv = RESULTS_DIR / "p3_quantum_params_sweep.csv.gz"
+    results_df.to_csv(out_csv, index=False, compression="gzip")
+    out_csv_uncomp = RESULTS_DIR / "p3_quantum_params_sweep.csv"
+    results_df.to_csv(out_csv_uncomp, index=False)
+
+    # ── Memory cleanup (R13) ──────────────────────────────────────
+    del results_df, records, done_set
+    gc.collect()
 
     # Summary
     best_idx = results_df["auc"].idxmax()

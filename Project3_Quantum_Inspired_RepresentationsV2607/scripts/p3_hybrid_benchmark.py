@@ -38,6 +38,7 @@ Usage:
 """
 
 import argparse
+import gc
 import json
 import time
 import warnings
@@ -420,10 +421,18 @@ def _qk_features_fold(X_ecfp_tr: np.ndarray, X_ecfp_te: np.ndarray,
     n_train = len(X_q_tr)
 
     # Step 3-4: Training kernel matrix (chunked if large) + PSD fix
-    if block_size is not None and n_train > block_size:
-        print(f"        Chunked QK matrix: {n_train}x{n_train}, block_size={block_size}, n_jobs={n_jobs}, n_repeats={n_repeats}")
+    # ── Adaptive block_size (R12) ────────────────────────────────
+    _bs = block_size
+    if _bs is None and n_train > 500:
+        # Heuristic: target ~2 blocks per job for efficient load balancing
+        _target_blocks = max(n_jobs * 2, 4)
+        _bs = max(50, min(500, n_train // _target_blocks))
+        print(f"        Adaptive block_size: n_train={n_train}, n_jobs={n_jobs} → block_size={_bs}")
+
+    if _bs is not None and n_train > _bs:
+        print(f"        Chunked QK matrix: {n_train}x{n_train}, block_size={_bs}, n_jobs={n_jobs}, n_repeats={n_repeats}")
         K_tr = _kernel_matrix_chunked(X_q_tr,
-                                       block_size=block_size,
+                                       block_size=_bs,
                                        n_jobs=n_jobs,
                                        n_qubits=n_qubits,
                                        n_repeats=n_repeats)
@@ -475,6 +484,10 @@ def _qk_features_fold(X_ecfp_tr: np.ndarray, X_ecfp_te: np.ndarray,
     assert qk_tr.shape[1] == qk_te.shape[1], f"QK dim mismatch: train {qk_tr.shape[1]} vs test {qk_te.shape[1]}"
     assert np.all(np.isfinite(qk_tr)), "NaN/Inf in QK training features"
     assert np.all(np.isfinite(qk_te)), "NaN/Inf in QK test features"
+
+    # ── Memory cleanup (R13) ──────────────────────────────────────
+    del K_tr, K_tr_psd, K_te, X_q_tr, X_q_te, X_8d_tr, X_8d_te
+    gc.collect()
 
     return qk_tr.astype(np.float32), qk_te.astype(np.float32)
 
@@ -833,10 +846,15 @@ def main():
         print(f"  Intermediate checkpoint: hybrid benchmark done")
 
     results_df = pd.DataFrame(all_records)
-    out_csv = RESULTS_DIR / "p3_hybrid_benchmark.csv"
-    results_df.to_csv(out_csv, index=False)
+    # ── gzip-compressed output (R14) ─────────────────────────────
+    out_csv = RESULTS_DIR / "p3_hybrid_benchmark.csv.gz"
+    results_df.to_csv(out_csv, index=False, compression="gzip")
+    out_csv_uncomp = RESULTS_DIR / "p3_hybrid_benchmark.csv"
+    results_df.to_csv(out_csv_uncomp, index=False)
     t_benchmark = time.perf_counter() - t0_total
-    print(f"\n  Saved: {out_csv}  (total wall time: {t_benchmark:.1f}s)")
+    print(f"\n  Saved: {out_csv} (compressed), {out_csv_uncomp} (plain)  (wall time: {t_benchmark:.1f}s)")
+    del results_df
+    gc.collect()
 
     # Ablation study (per-fold QK, no data leakage)
     print("\n  Running ablation study...")
@@ -855,9 +873,14 @@ def main():
         ))
 
     abl_df = pd.DataFrame(ablation_records)
-    abl_out = RESULTS_DIR / "p3_ablation.csv"
-    abl_df.to_csv(abl_out, index=False)
-    print(f"  Saved: {abl_out}")
+    # ── gzip-compressed ablation output (R14) ────────────────────
+    abl_out = RESULTS_DIR / "p3_ablation.csv.gz"
+    abl_df.to_csv(abl_out, index=False, compression="gzip")
+    abl_out_uncomp = RESULTS_DIR / "p3_ablation.csv"
+    abl_df.to_csv(abl_out_uncomp, index=False)
+    print(f"  Saved: {abl_out} (compressed), {abl_out_uncomp} (plain)")
+    del abl_df
+    gc.collect()
 
     # Summary
     lines = ["Hybrid: per-fold QK (no data leakage); RF is scale-invariant (no weights)", ""]

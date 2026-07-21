@@ -36,6 +36,7 @@ Usage:
 """
 
 import argparse
+import gc
 import json
 import time
 import warnings
@@ -308,14 +309,21 @@ def build_quantum_kernel(X: np.ndarray, n_repeats: int = 1,
 
     # Step 2: Compute kernel matrix
     n = len(X_scaled)
-    if block_size is None or n <= block_size:
+    # ── Adaptive block_size (R12) ────────────────────────────────
+    _bs = block_size
+    if _bs is None and n > 500:
+        _target_blocks = max(n_jobs * 2, 4)
+        _bs = max(50, min(500, n // _target_blocks))
+        print(f"    Adaptive block_size: n={n}, n_jobs={n_jobs} → block_size={_bs}")
+
+    if _bs is None or n <= _bs:
         # Small matrix: direct computation (fast, no parallel overhead)
         K = kernel_matrix(X_scaled, X_scaled, kernel=kernel_fn)
     else:
         # Large matrix: block decomposition for parallelism
-        print(f"    Chunked mode: {n}x{n} matrix, {block_size} blocks, {n_jobs} jobs")
+        print(f"    Chunked mode: {n}x{n} matrix, block_size={_bs}, n_jobs={n_jobs}")
         K = _kernel_matrix_chunked(X_scaled,
-                                    block_size=block_size,
+                                    block_size=_bs,
                                     n_jobs=n_jobs,
                                     n_qubits=N_QUBITS,
                                     n_repeats=n_repeats)
@@ -337,6 +345,10 @@ def build_quantum_kernel(X: np.ndarray, n_repeats: int = 1,
     # Step 5: Optional noise mitigation
     if noise_method:
         K = mitigate_depolarizing_noise(K, N_QUBITS, method=noise_method)
+
+    # ── Memory cleanup (R13) ──────────────────────────────────────
+    del X_scaled, kernel_fn
+    gc.collect()
 
     return K
 
@@ -531,6 +543,11 @@ def run_benchmark(X: np.ndarray, y: np.ndarray,
                 json.dump({"records": records}, f, default=str)
             print(f"    Checkpoint saved: {checkpoint_path}")
 
+        # ── Memory cleanup after each fold (R13) ──────────────────
+        del K_tr_q, K_te_q, X_tr_q, X_te_q, X_tr_raw, X_te_raw
+        del K_tr_rbf, K_te_rbf
+        gc.collect()
+
     return pd.DataFrame(records)
 
 
@@ -591,9 +608,16 @@ def main():
                             block_size=args.block_size,
                             n_jobs=args.n_jobs)
 
-    out_csv = RESULTS_DIR / "p3_qks_benchmark.csv"
-    results.to_csv(out_csv, index=False)
-    print(f"\n  Saved: {out_csv}")
+    # ── gzip-compressed output (R14) ─────────────────────────────
+    out_csv = RESULTS_DIR / "p3_qks_benchmark.csv.gz"
+    results.to_csv(out_csv, index=False, compression="gzip")
+    out_csv_uncomp = RESULTS_DIR / "p3_qks_benchmark.csv"
+    results.to_csv(out_csv_uncomp, index=False)
+    print(f"\n  Saved: {out_csv} (compressed), {out_csv_uncomp} (plain)")
+
+    # Memory cleanup (R13)
+    del X, y, results
+    gc.collect()
 
     # Summary
     lines = [
