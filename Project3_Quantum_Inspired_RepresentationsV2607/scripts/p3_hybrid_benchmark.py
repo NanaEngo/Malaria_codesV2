@@ -244,10 +244,11 @@ def cv_score(X: np.ndarray, y: np.ndarray,
     """
     skf = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
     records = []
-    iter_folds = tqdm(enumerate(skf.split(X, y), 1), total=N_FOLDS,
-                      desc=f"  {descriptor} {clf_name}", unit="fold",
-                      ncols=80, disable=not _HAS_TQDM)
-    for fold, (tr, te) in iter_folds:
+    fold_iter = enumerate(skf.split(X, y), 1)
+    if _HAS_TQDM:
+        fold_iter = tqdm(fold_iter, total=N_FOLDS,
+                         desc=f"  {descriptor} {clf_name}", unit="fold", ncols=80)
+    for fold, (tr, te) in fold_iter:
         X_tr, X_te = scale(X[tr], X[te])
         y_tr, y_te = y[tr], y[te]
 
@@ -800,8 +801,10 @@ def main():
         descriptors["TNE"] = X_tne
 
     # Classical descriptors: use existing cv_score (no QK involved)
-    desc_iter = tqdm(descriptors.items(), desc=f"  Classical descriptors",
-                     unit="desc", ncols=80, disable=not _HAS_TQDM)
+    desc_iter = descriptors.items()
+    if _HAS_TQDM:
+        desc_iter = tqdm(desc_iter, desc="  Classical descriptors",
+                         unit="desc", ncols=80)
     for desc_name, X_desc in desc_iter:
         for clf in ["rf", "svm"]:
             all_records.extend(cv_score(X_desc, y, clf, desc_name))
