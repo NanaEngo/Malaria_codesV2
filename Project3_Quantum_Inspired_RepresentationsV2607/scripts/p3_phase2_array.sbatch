@@ -18,7 +18,10 @@
 #SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=4G
+#SBATCH --mem=16G
+# Increased from 4G—the QK kernel matrix and PennyLane state vectors for
+# n=1,000 molecules require >4GB RSS. Lower memory causes thrashing
+# (block times: 210s→256s→406s→1,400s+).
 #SBATCH --time=48:00:00
 #SBATCH --partition=production
 #SBATCH --export=ALL
