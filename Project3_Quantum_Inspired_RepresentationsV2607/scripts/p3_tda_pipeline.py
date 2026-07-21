@@ -35,9 +35,22 @@ import numpy as np
 import pandas as pd
 from rdkit import Chem
 from rdkit.Chem import AllChem
-# Morgan fingerprints not used — TFP uses ripser persistent homology
 
 warnings.filterwarnings("ignore")
+
+# ── R5: Try-except global ripser (graceful degradation if not installed) ──
+try:
+    from ripser import ripser
+    _HAS_RIPSER = True
+except ImportError:
+    ripser = None
+    _HAS_RIPSER = False
+    warnings.warn("ripser not installed. Run: pip install ripser. TDA pipeline will fail at compute_persistence().")
+
+# ── R5: Fallback class for missing ripser ──
+class _RipserFallbackError(Exception):
+    """Raised when ripser is needed but not installed."""
+    pass
 
 PROJECT_DIR = Path(__file__).parent.parent  # .../Project3
 RESULTS_DIR = PROJECT_DIR / "results"
@@ -177,12 +190,13 @@ def compute_persistence(dist_matrix: np.ndarray) -> list[np.ndarray]:
     Compute Vietoris-Rips persistence diagrams up to MAX_DIM.
 
     Returns list of (birth, death) arrays indexed by dimension [0..MAX_DIM].
-    Requires ripser.
+    Requires ripser. If ripser is not installed, raises _RipserFallbackError
+    which callers should catch for graceful degradation (R5).
     """
-    try:
-        from ripser import ripser
-    except ImportError:
-        raise ImportError("ripser not installed. Run: pip install ripser")
+    if not _HAS_RIPSER:
+        raise _RipserFallbackError(
+            "ripser not installed. Run: pip install ripser"
+        )
 
     result = ripser(dist_matrix, maxdim=MAX_DIM, distance_matrix=True)
     return result["dgms"]   # list of (n_features, 2) arrays

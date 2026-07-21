@@ -324,6 +324,7 @@ def build_quantum_kernel(X: np.ndarray, n_repeats: int = 1,
     K = closest_psd_matrix(K)
 
     # Step 4: Verify PSD property (R3: post-fix sanity check)
+    assert K.shape == (n, n), f"Kernel shape mismatch: {K.shape} vs ({n},{n})"  # R7
     _eigvals = np.linalg.eigvalsh(K)
     _min_eig = _eigvals.min()
     _max_eig = _eigvals.max()

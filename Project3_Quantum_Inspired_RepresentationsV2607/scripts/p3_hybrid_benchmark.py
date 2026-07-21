@@ -43,6 +43,12 @@ import time
 import warnings
 from pathlib import Path
 
+try:
+    from tqdm import tqdm
+    _HAS_TQDM = True
+except ImportError:
+    _HAS_TQDM = False
+
 warnings.filterwarnings("ignore")
 warnings.simplefilter("ignore", FutureWarning)
 warnings.simplefilter("ignore", DeprecationWarning)
@@ -218,9 +224,30 @@ def scale(X_tr: np.ndarray, X_te: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 
 def cv_score(X: np.ndarray, y: np.ndarray,
              clf_name: str, descriptor: str) -> list[dict]:
+    """5-fold CV for a classical descriptor (no QK involved). (R10: docstring added)
+
+    Parameters
+    ----------
+    X : np.ndarray
+        Feature matrix of shape (n_mols, n_features).
+    y : np.ndarray
+        Binary labels of shape (n_mols,).
+    clf_name : str
+        Classifier name: "rf" (Random Forest) or "svm" (SVC RBF).
+    descriptor : str
+        Descriptor name for record-keeping.
+
+    Returns
+    -------
+    list[dict]
+        List of per-fold metric dictionaries.
+    """
     skf = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
     records = []
-    for fold, (tr, te) in enumerate(skf.split(X, y), 1):
+    iter_folds = tqdm(enumerate(skf.split(X, y), 1), total=N_FOLDS,
+                      desc=f"  {descriptor} {clf_name}", unit="fold",
+                      ncols=80, disable=not _HAS_TQDM)
+    for fold, (tr, te) in iter_folds:
         X_tr, X_te = scale(X[tr], X[te])
         y_tr, y_te = y[tr], y[te]
 
@@ -773,8 +800,9 @@ def main():
         descriptors["TNE"] = X_tne
 
     # Classical descriptors: use existing cv_score (no QK involved)
-    for desc_name, X_desc in descriptors.items():
-        print(f"    {desc_name}...")
+    desc_iter = tqdm(descriptors.items(), desc=f"  Classical descriptors",
+                     unit="desc", ncols=80, disable=not _HAS_TQDM)
+    for desc_name, X_desc in desc_iter:
         for clf in ["rf", "svm"]:
             all_records.extend(cv_score(X_desc, y, clf, desc_name))
 
