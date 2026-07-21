@@ -55,7 +55,7 @@ export NUMEXPR_NUM_THREADS=1
 PYTHON="/home/nanaengo/miniforge3/envs/malaria_md/bin/python"
 PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607"
 RESULTS_DIR="${PROJECT_DIR}/results"
-N_MOLS=5000
+N_MOLS="${N_MOLS:-5000}"
 
 # ── 3 meilleurs combos de la recherche de paramètres ─────────────────
 # Format: bond_dim,n_repeats,n_kpca
