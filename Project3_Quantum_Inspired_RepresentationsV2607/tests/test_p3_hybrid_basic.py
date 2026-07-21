@@ -25,12 +25,14 @@ warnings.filterwarnings("ignore")
 
 @pytest.fixture
 def sample_smiles() -> list[str]:
-    return ["C", "CC", "CCC", "CCCC", "CCCCC", "c1ccccc1"]
+    return ["C", "CC", "CCC", "CCCC", "CCCCC", "c1ccccc1",
+            "c1ccccc1C", "c1ccccc1CC", "c1ccccc1CCC", "c1ccccc1CCCC"]
 
 
 @pytest.fixture
 def sample_y() -> np.ndarray:
-    return np.array([0, 0, 0, 1, 1, 1], dtype=int)
+    # 10 samples, 5 active + 5 inactive → StratifiedKFold(5) possible
+    return np.array([0, 0, 0, 1, 1, 1, 0, 0, 1, 1], dtype=int)
 
 
 class TestECFP4:

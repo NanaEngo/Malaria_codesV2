@@ -53,11 +53,11 @@ warnings.filterwarnings("ignore")
 warnings.simplefilter("ignore", FutureWarning)
 warnings.simplefilter("ignore", DeprecationWarning)
 
-# ── ECFP4 cache (R11) ───────────────────────────────────────────────
-_ECFP4_CACHE: dict[str, np.ndarray] = {}
-
 import numpy as np
 import pandas as pd
+
+# ── ECFP4 cache (R11) — placed after numpy import ─────────────────
+_ECFP4_CACHE: dict[str, np.ndarray] = {}
 from rdkit import Chem
 from rdkit.Chem import MACCSkeys
 from rdkit.Chem import rdFingerprintGenerator
