@@ -28,7 +28,7 @@ export PYTHONUNBUFFERED=1
 PYTHON="/home/nanaengo/miniforge3/envs/malaria_md/bin/python"
 PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607"
 RESULTS_DIR="${PROJECT_DIR}/results"
-N_MOLS="${N_MOLS:-1000}"
+N_MOLS="${N_MOLS:-500}"
 
 echo "╔══════════════════════════════════════════════════════════════╗"
 echo "║  P3 Single Combo — bd6_nr1_nk30 optimisé                     ║"

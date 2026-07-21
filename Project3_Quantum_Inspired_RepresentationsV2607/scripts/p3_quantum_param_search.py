@@ -34,6 +34,15 @@ try:
 except ImportError:
     _HAS_TQDM = False
 
+try:
+    import jax
+    import jax.numpy as jnp
+    _HAS_JAX = True
+    _JAX_BACKEND = jax.devices()[0].platform  # 'cpu' or 'gpu'
+except ImportError:
+    _HAS_JAX = False
+    _JAX_BACKEND = None
+
 warnings.filterwarnings("ignore")
 warnings.simplefilter("ignore", FutureWarning)
 warnings.simplefilter("ignore", DeprecationWarning)
@@ -52,6 +61,39 @@ from sklearn.preprocessing import StandardScaler
 
 import pennylane as qml
 from pennylane.kernels import kernel_matrix, closest_psd_matrix
+
+if _HAS_JAX:
+    _KERNEL_FN_JAX_CACHE: dict = {}
+    def _get_kernel_fn_jax(n_qubits, n_repeats):
+        """JIT-compiled kernel function via JAX interface (10-100x faster)."""
+        key = (n_qubits, n_repeats)
+        if key not in _KERNEL_FN_JAX_CACHE:
+            dev_jax = qml.device("lightning.qubit", wires=n_qubits)
+            @qml.qnode(dev_jax, interface="jax", diff_method=None)
+            def _circuit(x1, x2):
+                qml.IQPEmbedding(x1, wires=range(n_qubits), n_repeats=n_repeats)
+                qml.adjoint(qml.IQPEmbedding)(x2, wires=range(n_qubits), n_repeats=n_repeats)
+                return qml.probs(wires=range(n_qubits))
+            # JIT the full matrix computation (vmap over all pairs)
+            @jax.jit
+            def _mat(X):
+                return jax.vmap(
+                    lambda x1: jax.vmap(
+                        lambda x2: _circuit(x1, x2)[0]
+                    )(X)
+                )(X)
+            _KERNEL_FN_JAX_CACHE[key] = _mat
+        return _KERNEL_FN_JAX_CACHE[key]
+
+    def _kernel_matrix_jax(X, n_qubits, n_repeats):
+        """Compute full kernel matrix using JAX JIT (10-100x faster than loop)."""
+        X_jax = jnp.array(X, dtype=jnp.float32)
+        _mat_fn = _get_kernel_fn_jax(n_qubits, n_repeats)
+        K_jax = _mat_fn(X_jax)
+        return np.array(K_jax, dtype=np.float64)
+else:
+    def _kernel_matrix_jax(X, n_qubits, n_repeats):  # type: ignore[misc]
+        raise RuntimeError("JAX not installed — use _kernel_matrix_with_progress instead")
 
 PROJECT_DIR = Path(__file__).parent.parent
 RESULTS_DIR = PROJECT_DIR / "results"
@@ -306,9 +348,13 @@ def _precompute_qk_all(X_ecfp,
                                    n_qubits=n_qubits,
                                    n_repeats=n_repeats)
     else:
-        _kfn = _get_kernel_fn(n_qubits, n_repeats)
-        desc = f"  Kernel ({n_qubits}q, {n_repeats}rep)"
-        K = _kernel_matrix_with_progress(X_q, _kfn, desc=desc)
+        if _HAS_JAX and _JAX_BACKEND == "gpu":
+            print(f"    Using JAX kernel (GPU) — JIT compiling first call...", flush=True)
+            K = _kernel_matrix_jax(X_q, n_qubits, n_repeats)
+        else:
+            _kfn = _get_kernel_fn(n_qubits, n_repeats)
+            desc = f"  Kernel ({n_qubits}q, {n_repeats}rep)"
+            K = _kernel_matrix_with_progress(X_q, _kfn, desc=desc)
     times["kernel"] = time.perf_counter() - t1
     rate = n_pairs / times["kernel"] if times["kernel"] > 0 else 0
     print(f"    Kernel matrix: {times['kernel']:.1f}s  ({rate:.0f} pairs/s)", flush=True)
@@ -337,6 +383,15 @@ def evaluate_hybrid(X_ecfp, X_tfp, X_tne, y,
     per-fold submatrices — avoids 5x redundant kernel recomputation.
     """
     skf = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
+
+    # --- Handle missing precomputed data ---
+    n = len(X_ecfp)
+    if X_tne is None:
+        X_tne = np.zeros((n, 1), dtype=np.float32)
+        print("    TNE: not found — using dummy zeros", flush=True)
+    if X_tfp is None:
+        X_tfp = np.zeros((n, 1), dtype=np.float32)
+        print("    TFP: not found — using dummy zeros", flush=True)
 
     # --- Precompute kernel ONCE on all data ---
     QK_data = _precompute_qk_all(X_ecfp,

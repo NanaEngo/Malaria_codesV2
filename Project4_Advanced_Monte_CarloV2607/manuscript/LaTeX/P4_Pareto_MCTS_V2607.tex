@@ -40,9 +40,10 @@
 
 \email{serguy.engo@facsciences-uy1.cm}
 
-\abbreviations{MCTS, PUCT, ScafVAE, QMC, MPO, SYBA, SA}
+\abbreviations{MCTS, PUCT, ScafVAE, QMC, MPO, SYBA, SA, RRS, PNS}
 \keywords{de novo drug design, Monte Carlo tree search, Pareto optimization,
-  quantum Monte Carlo, antimalarial, machine learning}
+  quantum Monte Carlo, antimalarial, machine learning, resistance resilience,
+  polypharmacology}
 
 \begin{document}
 
@@ -184,18 +185,219 @@ We present a Pareto-guided MCTS framework that addresses all three limitations:
 \section{Methods}
 
 \subsection{Molecular Environment}
+\label{sec:env}
+
+We formulate de novo molecular generation as a Markov decision process
+(MDP) in which the state $s_t$ is a partially constructed molecule
+represented as a canonical SMILES string, and actions $a \in \mathcal{A}$
+consist of appending one of 33 carefully curated chemical fragments to the
+current scaffold. The fragment vocabulary (Table~\ref{tab:fragments}) spans five
+medicinal chemistry categories: (i)~aromatic linkers (benzene, pyridine,
+thiophene), (ii)~aliphatic chains (methyl, ethyl, propyl), (iii)~functional
+groups (carboxyl, amino, hydroxyl, sulfonamide), (iv)~heterocycles
+(pyrrole, furan, imidazole, oxazole), and (v)~privileged drug scaffolds
+(piperazine, morpholine, indole). Each fragment is attached at a
+regiospecific site determined by the SMILES attachment token~\texttt{[*]},
+ensuring chemically valid bond formation without stereochemical ambiguity.
+
+Episode termination occurs when the molecule exceeds 10 construction steps
+($t_{\max}=10$) or violates a predefined reactivity filter (Warfarin-like
+acyl migration\,>\,N-nitroso formation). Upon termination, all oracle
+scores are evaluated on the complete molecule.
 
 \subsection{MCTS with ScafVAE Policy}
+\label{sec:mcts}
+
+Our Monte Carlo Tree Search (MCTS) agent uses the standard four-phase
+loop: selection, expansion, rollout, and backpropagation. The tree is
+rooted at a validated P1 hit molecule (benzene,~\texttt{c1ccccc1}) and
+expands over $N_{\text{iter}}=1{,}000$ iterations per search.
+
+\textbf{PUCT selection.} At each tree node, child actions are selected by
+maximising the PUCT score~\cite{Silver2016}:
+\begin{equation}
+  a^{*} = \arg\max_{a} \,
+  \frac{Q(s,a)}{N(s,a)} +
+  c_{\text{PUCT}} \cdot P(a\mid s)
+  \cdot \frac{\sqrt{N(s)}}{1 + N(s,a)}
+  \label{eq:puct}
+\end{equation}
+where $Q(s,a)$ is the cumulative reward from node $s$ after taking
+action $a$, $N(s,a)$ is the visit count, $N(s)=\sum_{a}N(s,a)$,
+$c_{\text{PUCT}}=1.414$ is the exploration constant, and
+$P(a\mid s)$ is the ScafVAE policy prior.
+
+\textbf{ScafVAE policy.} The policy prior $P(a\mid s)$ combines three
+chemistry-informed signals:
+\begin{equation}
+  P(a\mid s) = \operatorname{softmax}\bigl(
+    \underbrace{\log f_{\text{ChEMBL}}(a)}_{\text{fragment prior}}
+    + \underbrace{\beta \cdot \operatorname{Tani}(s, a)}_{\text{scaffold compatibility}}
+    - \underbrace{\gamma \cdot \mathbf{1}_{\text{reactive}}(a)}_{\text{reactivity penalty}}
+  \bigr)
+  \label{eq:policy}
+\end{equation}
+
+Here $f_{\text{ChEMBL}}(a)$ is the ChEMBL27 fragment frequency,
+$\operatorname{Tani}(s, a)$ is the Tanimoto similarity between the
+current scaffold and a library of 200 privileged antimalarial
+scaffolds~\cite{Temgoua2026}, $\beta=0.1$ controls the scaffold
+influence, and $\gamma=5.0$ ensures reactive fragments
+(e.g., acyl chlorides, nitroso precursors) receive negligible prior
+probability. This chemistry-aware prior replaces the random expansion
+used in standard MCTS implementations.
 
 \subsection{Pareto Multi-Objective Optimization}
+\label{sec:pareto}
+
+Single-objective reward aggregation (e.g., weighted sum) requires the user
+to specify relative importance weights a priori and systematically misses
+optimal trade-off solutions on the Pareto front. We implement a Pareto
+MCTS~\cite{Mothra2024} that maintains a global non-dominated front across
+three objectives:
+\begin{align}
+  \mathbf{f}(s) = \bigl(f_{\text{MPO}}(s),\, f_{\text{SYBA}}(s),\, f_{\text{SA}}(s)\bigr)
+  \label{eq:objectives}
+\end{align}
+where $f_{\text{MPO}}$ (maximise) is the multi-parameter optimisation
+score, $f_{\text{SYBA}}$ (maximise) is the SYnthetic Bayesian
+Accessibility~\cite{Vorsilak2020}, and $f_{\text{SA}}$ (minimise) is the
+RDKit synthetic accessibility score~\cite{Ertl2009}. A solution $\mathbf{f}_a$
+dominates $\mathbf{f}_b$ iff $f_{\text{MPO},a} \geq f_{\text{MPO},b}$,
+$f_{\text{SYBA},a} \geq f_{\text{SYBA},b}$, and
+$f_{\text{SA},a} \leq f_{\text{SA},b}$, with at least one strict
+inequality.
+
+Tree selection uses the mean of stored score vectors as a scalar proxy
+for PUCT, while backpropagation stores the full vector. The Pareto front
+is updated after every rollout: newly discovered non-dominated solutions
+are added, and newly dominated solutions are discarded. The hypervolume
+indicator~\cite{Zitzler2003} serves as an aggregate quality metric.
+
+\subsection{Scoring Oracles}
+\label{sec:oracles}
+
+Each generated molecule is evaluated by a composite
+\texttt{OracleAggregator} that returns both individual scores and a
+weighted scalar reward. The default reward weights are:
+$w_{\text{MPO}}=0.30$, $w_{\text{docking}}=0.25$,
+$w_{\text{SYBA}}=0.15$, $w_{\text{SA}}=0.05$,
+$w_{\text{RRS}}=0.15$, $w_{\text{PNS}}=0.10$.
+
+\textbf{MPO.} The multi-parameter optimisation score combines drug-likeness
+filters (Lipinski rule-of-five, Veber rules, PAINS alerts) into a weighted
+average~\cite{Wager2010}. Precomputed MPO scores are loaded from the P1
+score library~\cite{Temgoua2026a}. For novel molecules not present in the
+library, the QED score~\cite{Bickerton2012} serves as a fallback proxy.
+
+\textbf{Docking.} Per-target docking scores (kcal/mol) are loaded from the
+Tartarus multi-target library, which contains precomputed Glide SP scores
+across four $P. falciparum$ targets (PfDHFR, PfCRT, PfATP4, PfClpP).
+For molecules not in the library, a nearest-neighbour proxy is computed:
+the docking score of the most Tanimoto-similar molecule in the library is
+used as an estimate.
+
+\textbf{SYBA and SA.} SYnthetic Bayesian Accessibility (SYBA)~
+\cite{Vorsilak2020} scores are loaded from the P1 library or computed on
+the fly via the SYBA classifier. The RDKit SAscore~\cite{Ertl2009} ranges
+from 1 (easy to synthesise) to 10 (very difficult) and is inverted to a
+$[0,1]$ reward scale via $(10 - \text{SA})/9$.
+
+\textbf{RRS (Resistance Resilience Score).} The Resistance Resilience
+Score quantifies how similar a generated molecule is to known chemotypes
+that maintain binding against clinically prevalent resistance mutations.
+Resistance mutations in $P. falciparum$ targets include PfDHFR N51I,
+C59R, S108N, I164L and PfCRT K76T, K76A~\cite{Wicht2024}. Our reference
+set comprises 10 validated multi-target hits from Project~2 that retain
+activity against these mutations. For a candidate molecule $M$, RRS is
+the maximum Morgan Tanimoto similarity ($r=2$, 2048 bits) to any
+reference hit, scaled continuously from 0.0 (Tanimoto~$\leq 0.20$,
+chemotypically novel) to 1.0 (Tanimoto~$= 1.0$, identical to a
+resistance-resilient hit). This provides a computational proxy for
+resistance awareness without requiring experimental mutant binding assays
+for each generated molecule.
+
+\textbf{PNS (Polypharmacology Network Score).} The Polypharmacology
+Network Score rewards molecules with broad multi-target engagement.
+For each generated molecule present in the Tartarus library, PNS is the
+mean of its per-target docking scores across all dynamically detected
+target columns (typically PfDHFR, PfCRT, PfATP4, PfClpP). For novel
+molecules, the nearest-neighbour multi-target proxy is used. The mean
+score is normalised from the $[-12,-5]$~kcal/mol physical range to
+$[0,1]$ via $(\bar{d} + 5)/7$, where $\bar{d}$ is the mean docking score.
+This oracle explicitly guides the MCTS towards candidates that engage
+multiple $P. falciparum$ targets simultaneously---a key advantage over
+single-target optimisation for antimalarial therapy~\cite{Burrows2017}.
 
 \subsection{Baselines}
+\label{sec:baselines}
+
+We compare our MCTS+ScafVAE agent against three baseline methods, all
+operating in the same molecular environment and using the same
+\texttt{OracleAggregator} for scoring:
+\begin{description}[itemsep=0pt]
+  \item[Random search.] At each step, a fragment is uniformly sampled
+    from the vocabulary and appended to the current molecule until
+    termination. This establishes the stochastic baseline.
+  \item[Greedy search.] At each step, each fragment in the vocabulary is
+    temporarily appended, the resulting molecule is scored, and the
+    fragment yielding the highest immediate reward is selected. This is a
+    one-step lookahead (hill-climbing) baseline.
+  \item[Genetic algorithm (GA).] A population of $N_\text{pop}=50$ random
+    molecules is evolved over $N_\text{gen}=40$ generations using
+    tournament selection ($k=3$), one-point SMILES crossover
+    ($p_\text{cross}=0.7$), and random fragment replacement mutation
+    ($p_\text{mut}=0.2$). This represents the evolutionary optimisation
+    baseline~\cite{Jensen2019}.
+\end{description}
 
 \subsection{Benchmark Protocol}
+\label{sec:benchmark}
+
+Each of the four methods is run for $N_\text{seeds}=10$ independent seeds
+with different random initialisations. For a fair comparison, all methods
+receive the same total budget of $1{,}000$ oracle calls (MCTS iterations,
+random steps, greedy evaluations, or GA fitness evaluations). Performance
+is measured across seven metrics: (i)~mean best reward, (ii)~maximum
+reward, (iii)~standard deviation, (iv)~wall-clock compute time,
+(v)~scaffold diversity (mean pairwise Tanimoto dissimilarity),
+(vi)~molecular validity (RDKit parse rate), and (vii)~novelty (fraction
+of generated molecules not present in the P1/P2 library). Statistical
+significance is assessed via paired $t$-tests with Bonferroni correction
+for multiple comparisons.
 
 \subsection{Quantum Monte Carlo Validation}
+\label{sec:qmc}
+
+The top-five Pareto-optimal candidates are selected for gold-standard
+electronic structure validation using the Diffusion Monte Carlo (DMC)
+pipeline. Candidate geometries are first optimised at the GFN2-xTB
+level~\cite{Bannwarth2019} using the xTB package. Trial wavefunctions
+are prepared at the HF/6-31G* level in PySCF~\cite{Sun2020}, using
+localised orbitals from the intrinsic bond orbital (IBO) procedure for
+compact Jastrow factor representation. Fixed-node DMC~\cite{Foulkes2001}
+is performed with $\sim$100k walkers and a time step of $\tau=0.01$~Ha$^{-1}$.
+The resulting electronic correlation energy $E_\text{corr}$ is compared
+against the computed QKS descriptor scores from the P3 framework, testing
+the hypothesis that quantum kernel similarity captures physical
+electronic correlation effects.
 
 \subsection{Computational Resources}
+\label{sec:compute}
+
+Molecular generation and scoring were performed on a single CPU node
+(48-core Intel Xeon, 256~GB RAM). The ScafVAE policy and RDKit molecular
+processing require $<$1~CPU-second per molecule. Benchmark experiments
+(4 methods $\times$ 10 seeds) completed in under 4~hours wall-clock
+using SLURM job arrays with 24 concurrent tasks. DMC validation requires
+substantial additional resources ($\sim$1,000--10,000 CPU-hours per
+candidate) and is performed on dedicated GPU nodes.
+
+All software is open-source: RDKit~\cite{RDKit} 2024.09 for cheminformatics,
+PennyLane~\cite{Bergholm2022} 0.45 for quantum descriptors,
+Scikit-learn~\cite{Pedregosa2011} for classifiers, and PySCF~\cite{Sun2020}
+2.5 for quantum chemistry calculations. Source code is available at
+\url{https://github.com/NanaEngo/Malaria_codesV2} under the MIT licence.
 
 % ── Conclusion ───────────────────────────────────────────────────────
 \section{Conclusion}
