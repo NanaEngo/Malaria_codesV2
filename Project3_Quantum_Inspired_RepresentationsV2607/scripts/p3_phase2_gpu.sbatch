@@ -16,8 +16,8 @@
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p3_phase2_gpu
 #SBATCH --array=0-2
-#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_gpu_%a_%j.log
-#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_gpu_%a_%j.err
+#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_gpu_%j.log
+#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_gpu_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
@@ -59,6 +59,12 @@ PYTHON="/home/nanaengo/miniforge3/envs/malaria_md/bin/python"
 PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607"
 RESULTS_DIR="${PROJECT_DIR}/results"
 N_MOLS="${N_MOLS:-5000}"
+
+# ── Log redirect (fix %a→4294967294) ────────────────────────────────
+_LOG_DIR="${PROJECT_DIR}/logs/slurm"
+mkdir -p "${_LOG_DIR}"
+_LOG_PATH="${_LOG_DIR}/p3_phase2_gpu_${SLURM_ARRAY_TASK_ID:-unknown}_${SLURM_JOB_ID}.log"
+exec > "${_LOG_PATH}" 2>&1
 BLOCK_SIZE="${BLOCK_SIZE:-400}"
 
 # ── 3 meilleurs combos ───────────────────────────────────────────────

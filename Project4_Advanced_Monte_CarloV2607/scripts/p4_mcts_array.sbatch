@@ -17,8 +17,8 @@
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p4_mcts
 #SBATCH --array=0-99%24
-#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_mcts_%a_%j.log
-#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_mcts_%a_%j.err
+#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_mcts_%j.log
+#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_mcts_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=4G
@@ -48,6 +48,10 @@ PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607"
 RESULTS_DIR="${PROJECT_DIR}/results/mcts"
 
 mkdir -p "${RESULTS_DIR}" "${PROJECT_DIR}/logs/slurm"
+
+# ── Log redirect (fix %a→4294967294) ────────────────────────────────
+_LOG_PATH="${PROJECT_DIR}/logs/slurm/p4_mcts_${SLURM_ARRAY_TASK_ID:-unknown}_${SLURM_JOB_ID}.log"
+exec > "${_LOG_PATH}" 2>&1
 
 # ── Configuration (override via --export) ────────────────────────────
 INITIAL_SMILES="${INITIAL_SMILES:-C}"

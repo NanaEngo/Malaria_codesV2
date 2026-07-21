@@ -14,8 +14,8 @@
 #   n_kpca    = [5, 10, 20, 30] → array_id % 4
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p3_qp_array
-#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_qp_array_%a_%j.log
-#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_qp_array_%a_%j.err
+#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_qp_array_%j.log
+#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_qp_array_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=4G
@@ -29,6 +29,12 @@ set -euo pipefail
 PYTHON="/home/nanaengo/miniforge3/envs/malaria_md/bin/python"
 PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607"
 RESULTS_DIR="${PROJECT_DIR}/results"
+
+# ── Log redirect (fix %a→4294967294) ────────────────────────────────
+_LOG_DIR="${PROJECT_DIR}/logs/slurm"
+mkdir -p "${_LOG_DIR}"
+_LOG_PATH="${_LOG_DIR}/p3_qp_array_${SLURM_ARRAY_TASK_ID:-unknown}_${SLURM_JOB_ID}.log"
+exec > "${_LOG_PATH}" 2>&1
 
 # ── Map array task ID → parameters ──────────────────────────────────
 BD_LIST=(4 6 8)

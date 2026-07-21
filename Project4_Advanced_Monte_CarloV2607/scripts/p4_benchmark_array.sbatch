@@ -15,8 +15,8 @@
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p4_benchmark
 #SBATCH --array=0-4%5
-#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_benchmark_%a_%j.log
-#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_benchmark_%a_%j.err
+#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_benchmark_%j.log
+#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_benchmark_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
@@ -46,6 +46,10 @@ PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607"
 RESULTS_DIR="${PROJECT_DIR}/results/benchmark"
 
 mkdir -p "${RESULTS_DIR}" "${PROJECT_DIR}/logs/slurm"
+
+# ── Log redirect (fix %a→4294967294: use env var instead of %%a) ────
+_LOG_PATH="${PROJECT_DIR}/logs/slurm/p4_benchmark_${SLURM_ARRAY_TASK_ID:-unknown}_${SLURM_JOB_ID}.log"
+exec > "${_LOG_PATH}" 2>&1
 
 # ── Configuration ────────────────────────────────────────────────────
 N_ITERATIONS="${N_ITERATIONS:-500}"

@@ -11,8 +11,8 @@
 # writes QMC input directories under results/qmc_inputs/.
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p4_qmc
-#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_qmc_%a_%j.log
-#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_qmc_%a_%j.err
+#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_qmc_%j.log
+#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_qmc_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=2G
@@ -36,6 +36,10 @@ PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607"
 RESULTS_DIR="${PROJECT_DIR}/results"
 
 mkdir -p "${RESULTS_DIR}/qmc_inputs" "${PROJECT_DIR}/logs/slurm"
+
+# ── Log redirect (fix %a→4294967294) ────────────────────────────────
+_LOG_PATH="${PROJECT_DIR}/logs/slurm/p4_qmc_${SLURM_ARRAY_TASK_ID:-unknown}_${SLURM_JOB_ID}.log"
+exec > "${_LOG_PATH}" 2>&1
 
 # ── Configuration (override via --export) ────────────────────────────
 SMILES_FILE="${SMILES_FILE:-${PROJECT_DIR}/data/candidates.csv}"
