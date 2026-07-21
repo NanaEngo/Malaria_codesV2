@@ -430,7 +430,8 @@ def _precompute_qk_all(X_ecfp,
                                    n_qubits=n_qubits,
                                    n_repeats=n_repeats,
                                    prefer_cpu=prefer_cpu)
-    elif block_size is not None and n <= block_size:
+    else:
+        # Fallback: row-by-row (block_size=None or n <= block_size)
         _kfn = _get_kernel_fn(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
         desc = f"  Kernel ({n_qubits}q, {n_repeats}rep)"
         K = _kernel_matrix_with_progress(X_q, _kfn, desc=desc)
