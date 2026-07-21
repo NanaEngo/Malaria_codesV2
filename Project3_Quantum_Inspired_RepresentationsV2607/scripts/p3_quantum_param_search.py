@@ -23,9 +23,16 @@ Output:
 """
 
 import argparse
+import sys
 import time
 import warnings
 from pathlib import Path
+
+try:
+    from tqdm import tqdm
+    _HAS_TQDM = True
+except ImportError:
+    _HAS_TQDM = False
 
 warnings.filterwarnings("ignore")
 warnings.simplefilter("ignore", FutureWarning)
@@ -159,8 +166,19 @@ def _kernel_matrix_chunked(X: np.ndarray,
                 tasks.append((i0, i1, j0, j1))
                 task_idx.append((ib, jb))
 
-    results = [_compute_block_task(i0, i1, j0, j1, X, n_qubits, n_repeats)
-               for i0, i1, j0, j1 in tasks]
+    n_tasks = len(tasks)
+    if _HAS_TQDM:
+        iterable = tqdm(tasks, desc=f"  QK matrix ({n_blocks}x{n_blocks} blocks)",
+                        unit="block", ncols=80)
+        results = [_compute_block_task(i0, i1, j0, j1, X, n_qubits, n_repeats)
+                   for i0, i1, j0, j1 in iterable]
+    else:
+        results = []
+        for idx, (i0, i1, j0, j1) in enumerate(tasks, start=1):
+            print(f"    QK block {idx:4d}/{n_tasks}  (rows {i0}:{i1}, cols {j0}:{j1})...")
+            sys.stdout.flush()
+            block_result = _compute_block_task(i0, i1, j0, j1, X, n_qubits, n_repeats)
+            results.append(block_result)
 
     K = np.zeros((n, n), dtype=np.float64)
     for (ib, jb), block in zip(task_idx, results):

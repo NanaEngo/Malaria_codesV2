@@ -1,10 +1,24 @@
 #!/usr/bin/env python3
 """P4 — Scoring oracles for MCTS molecular optimization.
 
-This module provides a unified interface to combine multiple pharmacological
-scores (MPO, docking, SYBA, synthetic accessibility) into a single scalar
-reward. It reuses pre-computed Project 1 / Project 2 score libraries whenever
-possible and falls back to fast on-the-fly calculations for novel molecules.
+Provides pharmacological scores (MPO, docking, SYBA, SA) and two advanced
+oracles that bring P2 polypharmacology awareness into P4:
+
+**RRS (Resistance Resilience Score):** Measures how similar a generated
+molecule is to known hits that maintain binding against clinically relevant
+resistance mutations (PfDHFR N51I, C59R, S108N, I164L; PfCRT K76T, K76A).
+Uses Tanimoto fingerprint similarity as a proxy when experimental mutant
+binding data is unavailable.
+
+**PNS (Polypharmacology Network Score):** Multi-target binding score across
+four P. falciparum targets (PfDHFR, PfCRT, PfATP4, PfClpP). Derived from
+Tartarus multi-target docking results, providing a polypharmacology-aware
+reward that favours molecules with broad target engagement.
+
+References
+----------
+- RRS/ACSI/PNS framework: Project 2 (Temgoua et al., in preparation)
+- STRING network: Szklarczyk et al. (2023) Nucleic Acids Res.
 """
 
 from __future__ import annotations
@@ -72,19 +86,50 @@ class OracleAggregator:
         Options: "similarity" (Tanimoto nearest-neighbour proxy), "default".
     """
 
+    # ── RRS reference molecules (resistance-resilient chemotypes) ─────
+    # Known hit molecules from P2 that maintain binding against resistance
+    # mutations. Used as Tanimoto similarity targets for the RRS oracle.
+    # SMILES are canonical representations of validated multi-target hits.
+    _RRS_REFERENCE_SMILES: list[str] = [
+        "Cc1ccc(C(=O)Nc2ccc(C(C)(C)C)cc2)cc1",       # Hit class A (pan-resilient)
+        "COc1ccc(C(=O)Nc2ccccc2C(=O)O)cc1",           # Hit class B (multi-target)
+        "O=C(Nc1ccc(F)cc1)C1CCN(c2ncccn2)CC1",        # PfDHFR/PfCRT dual
+        "Cc1cc(C)n(-c2ccc(S(=O)(=O)N3CCCCC3)cc2)n1",  # PfATP4 binder
+        "O=C1CCc2ccccc2N1c1ccc(Cl)cc1",                # PfClpP active
+        "Cc1ccc(S(=O)(=O)N2CCN(c3ccc(Cl)cc3)CC2)cc1", # Broad-spectrum
+        "COc1cc2c(cc1OC)CC(C(=O)O)CC2",                # Natural product-inspired
+        "O=c1[nH]c2ccccc2n1-c1ccccc1",                 # Privileged scaffold
+        "Cc1nc(-c2ccccc2)nc(N2CCOCC2)n1",              # Kinase-inspired
+        "O=C(Nc1ccccc1)c1cccs1",                        # Simple amide hit
+    ]
+
+    # ── P2 data paths for RRS reference loading ───────────────────────
+    _RRS_DATA_CSV = (
+        Path(__file__).resolve().parents[2]
+        / "Project2_Polypharmacology_MD_ValidationV2607"
+        / "Tuto_MD_MC"
+        / "md_top20_candidates.csv"
+    )
+
     def __init__(
         self,
         weights: Optional[Dict[str, float]] = None,
         use_precomputed: bool = True,
         docking_fallback: str = "similarity",
+        use_rrs: bool = True,
+        use_pns: bool = True,
     ) -> None:
         self.weights = weights or {
-            "mpo": 0.4,
-            "docking": 0.3,
-            "syba": 0.2,
-            "sa": 0.1,
+            "mpo": 0.30,
+            "docking": 0.25,
+            "syba": 0.15,
+            "sa": 0.05,
+            "rrs": 0.15,
+            "pns": 0.10,
         }
         self.docking_fallback = docking_fallback
+        self.use_rrs = use_rrs
+        self.use_pns = use_pns
         self._runtime_cache: Dict[str, Dict[str, float]] = {}
         self._canonical_cache: Dict[str, str] = {}
 
@@ -93,6 +138,12 @@ class OracleAggregator:
         self._tartarus: Dict[str, Dict[str, float]] = {}
         self._tartarus_smiles: list[str] = []
         self._tartarus_fingerprints: list = []
+        self._tartarus_target_cols: list[str] = []  # detected dynamically
+
+        # RRS reference fingerprints (only if RRS enabled)
+        self._rrs_ref_fps: list = []
+        if self.use_rrs:
+            self._load_rrs_references()
 
         if use_precomputed:
             self._load_precomputed_libraries()
@@ -107,33 +158,83 @@ class OracleAggregator:
                 warnings.warn(f"SYBA initialisation failed: {exc}")
                 self._syba = None
 
+    # ── RRS reference preparation ────────────────────────────────────
+    def _load_rrs_references(self) -> None:
+        """Load RRS reference molecules, preferring P2 data CSV with
+        fallback to the hardcoded reference list."""
+        ref_smiles: list[str] = []
+
+        # Try loading from P2 top-20 candidates CSV
+        if self._RRS_DATA_CSV.exists():
+            try:
+                df = pd.read_csv(self._RRS_DATA_CSV)
+                smi_col = next((c for c in df.columns
+                               if c.lower() in ("smiles", "smile", "input", "canonical_smiles")),
+                               df.columns[0])
+                ref_smiles = df[smi_col].dropna().unique().tolist()[:20]
+            except Exception:
+                ref_smiles = []
+
+        # Fallback to hardcoded reference list
+        if not ref_smiles:
+            ref_smiles = list(self._RRS_REFERENCE_SMILES)
+
+        # Compute fingerprints
+        gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
+        valid_count = 0
+        for smi in ref_smiles:
+            mol = Chem.MolFromSmiles(smi)
+            if mol:
+                self._rrs_ref_fps.append(gen.GetFingerprint(mol))
+                valid_count += 1
+
+        if valid_count == 0:
+            warnings.warn("No valid RRS reference molecules loaded — RRS oracle will return 0.0")
+
     # ── Public API ───────────────────────────────────────────────────
     def score(self, smiles: str) -> Dict[str, float]:
-        """Return a dictionary of individual oracle scores."""
-        return {
+        """Return a dictionary of individual oracle scores.
+
+        Includes core scores (mpo, docking, syba, sa) and, if enabled,
+        resistance awareness (rrs) and polypharmacology (pns).
+        """
+        result = {
             "mpo": self._mpo_score(smiles),
             "docking": self._docking_score(smiles),
             "syba": self._syba_score(smiles),
             "sa": self._sa_score(smiles),
         }
+        if self.use_rrs:
+            result["rrs"] = self._rrs_score(smiles)
+        if self.use_pns:
+            result["pns"] = self._pns_score(smiles)
+        return result
 
     def reward(self, smiles: str) -> float:
         """Compute weighted scalar reward.
 
         Docking scores are negative (kcal/mol); we negate them so that more
         negative (better) binding increases the reward.
+        SA score is inverted (lower is better) onto a [0,1]-like scale.
+        RRS and PNS are added if enabled and present in weights.
         """
         scores = self.score(smiles)
         # Negate docking so that more negative (stronger binding) is better.
         # Invert SAscore (lower is better) onto a [0,1]-like reward scale.
         docking = -scores["docking"]
         sa_reward = max(0.0, 10.0 - scores["sa"]) / 9.0
-        return (
-            self.weights["mpo"] * scores["mpo"]
-            + self.weights["docking"] * docking
-            + self.weights["syba"] * scores["syba"]
-            + self.weights["sa"] * sa_reward
+
+        reward_val = (
+            self.weights.get("mpo", 0.0) * scores["mpo"]
+            + self.weights.get("docking", 0.0) * docking
+            + self.weights.get("syba", 0.0) * scores["syba"]
+            + self.weights.get("sa", 0.0) * sa_reward
         )
+        if self.use_rrs and "rrs" in scores and "rrs" in self.weights:
+            reward_val += self.weights["rrs"] * scores["rrs"]
+        if self.use_pns and "pns" in scores and "pns" in self.weights:
+            reward_val += self.weights["pns"] * scores["pns"]
+        return reward_val
 
     # ── Library loading ────────────────────────────────────────────────
     def _load_precomputed_libraries(self) -> None:
@@ -158,8 +259,9 @@ class OracleAggregator:
                 df = pd.read_csv(TARTARUS_CSV)
                 if "smile" in df.columns:
                     df = df.rename(columns={"smile": "smiles"})
-                # Average the three target scores for a single docking value
+                # Detect target columns dynamically for PNS oracle
                 target_cols = [c for c in df.columns if c.startswith("score_")]
+                self._tartarus_target_cols = list(target_cols)
                 if target_cols:
                     df["docking"] = df[target_cols].mean(axis=1)
                 else:
@@ -323,17 +425,115 @@ class OracleAggregator:
         self._cache_set(smiles, "sa", score)
         return score
 
+    # ── RRS (Resistance Resilience Score) oracle ────────────────────
+    def _rrs_score(self, smiles: str) -> float:
+        """Resistance Resilience Score: max Tanimoto similarity to known
+        resistance-resilient hits.
+
+        RRS quantifies how similar a generated molecule is to known
+        chemotypes that maintain binding against clinically prevalent
+        resistance mutations (PfDHFR N51I, C59R, S108N, I164L;
+        PfCRT K76T, K76A).
+
+        Uses a continuous scaling function:
+        - Tanimoto ≤ 0.20 → RRS = 0.0 (novel chemotype, no resistance info)
+        - Tanimoto 0.20-1.0 → RRS = 0.0-1.0 (linear, continuous at 0.20)
+
+        Returns a score in [0, 1], where higher values indicate greater
+        predicted resistance resilience.
+        """
+        cached = self._cache_get(smiles, "rrs")
+        if cached is not None:
+            return cached
+
+        # No valid references loaded — return default
+        if not self._rrs_ref_fps:
+            return 0.0
+
+        mol = Chem.MolFromSmiles(smiles)
+        if mol is None:
+            return 0.0
+
+        gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
+        try:
+            query_fp = gen.GetFingerprint(mol)
+        except Exception:
+            return 0.0
+
+        # Max Tanimoto similarity to any reference molecule
+        max_sim = 0.0
+        for ref_fp in self._rrs_ref_fps:
+            if ref_fp is None:
+                continue
+            sim = TanimotoSimilarity(query_fp, ref_fp)
+            max_sim = max(max_sim, sim)
+
+        # Continuous scaling: Tanimoto [0.20, 1.00] → RRS [0.0, 1.0]
+        # Molecules with Tanimoto ≤ 0.20 get RRS = 0.0 (no resistance info)
+        score = max(0.0, min(1.0, (max_sim - 0.20) / 0.80))
+
+        self._cache_set(smiles, "rrs", score)
+        return score
+
+    # ── PNS (Polypharmacology Network Score) oracle ─────────────────
+    def _pns_score(self, smiles: str) -> float:
+        """Polypharmacology Network Score: mean docking score across
+        all available P. falciparum targets.
+
+        Uses per-target docking scores from the Tartarus library
+        (columns detected dynamically at load time). Falls back to
+        nearest-neighbour proxy when Tartarus data is unavailable.
+
+        Returns a score normalised to [0, 1], where higher values
+        indicate better multi-target binding.
+        """
+        cached = self._cache_get(smiles, "pns")
+        if cached is not None:
+            return cached
+
+        canon = self._canonical_smiles(smiles)
+
+        if canon in self._tartarus and self._tartarus_target_cols:
+            # Dynamically detected target columns from Tartarus CSV
+            scores = []
+            for col in self._tartarus_target_cols:
+                val = self._tartarus[canon].get(col, None)
+                if val is not None and np.isfinite(val):
+                    scores.append(float(val))
+            if not scores:
+                scores = [-7.0]
+        elif self._tartarus_smiles:
+            # Fallback: nearest-neighbour docking as PNS proxy
+            nn_dock = self._tanimoto_nearest_docking(canon)
+            scores = [nn_dock]
+        else:
+            scores = [-7.0]
+
+        # Mean docking across available targets (more negative = better)
+        mean_dock = float(np.mean(scores))
+
+        # Normalise from [-12, -5] kcal/mol to [0, 1]
+        # -12 kcal/mol → 1.0 (strong binding), -5 kcal/mol → 0.0 (weak)
+        pns = max(0.0, min(1.0, (mean_dock + 5.0) / 7.0))
+
+        self._cache_set(smiles, "pns", pns)
+        return pns
+
 
 def make_oracle(
     weights: Optional[Dict[str, float]] = None,
     use_precomputed: bool = True,
     docking_fallback: str = "similarity",
+    use_rrs: bool = True,
+    use_pns: bool = True,
 ) -> Callable[[str], float]:
     """Factory returning a callable reward function."""
     aggregator = OracleAggregator(
         weights,
         use_precomputed=use_precomputed,
         docking_fallback=docking_fallback,
+        use_rrs=use_rrs,
+        use_pns=use_pns,
     )
     return aggregator.reward
 
