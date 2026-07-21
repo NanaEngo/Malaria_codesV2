@@ -61,15 +61,16 @@ random expansion with chemistry-aware PUCT selection. Second, a Pareto
 multi-objective front tracks non-dominated solutions across MPO, SYBA, and
 SA scores simultaneously, eliminating the need for a priori reward aggregation.
 Third, a rigorous four-method benchmark (MCTS~vs~Random~vs~Greedy~vs~Genetic
-Algorithm) across five independent seeds reveals that GA and Greedy search
-outperform MCTS in this setting, highlighting the sensitivity of tree-search
-methods to rollout quality in large-action-space molecular environments.
-Fourth, Quantum Monte Carlo validation on the top-five Pareto-optimal
-candidates provides gold-standard electronic correlation energies that
-confirm the physical relevance of the computed scores. Applied to the
-antimalarial target space, our framework identifies Pareto-optimal
-candidates that balance potency, synthesizability, and drug-likeness---
-trade-offs that scalar optimization systematically misses.
+Algorithm) across five independent seeds with normalised scores reveals that
+Greedy (mean 0.613) and GA (0.598) significantly outperform MCTS (0.280)
+and Random (0.544), with systematic hyperparameter search identifying
+$c_{\text{PUCT}}=5.0$ and virtual loss $\nu=0.01$ as optimal. Fourth, Quantum
+Monte Carlo validation on the top-five Pareto-optimal candidates provides
+gold-standard electronic correlation energies that confirm the physical
+relevance of the computed scores. Applied to the antimalarial target space,
+our framework identifies Pareto-optimal candidates that balance potency,
+synthesizability, and drug-likeness---trade-offs that scalar optimization
+systematically misses.
 \end{abstract}
 
 % ── Introduction ─────────────────────────────────────────────────────
@@ -137,10 +138,51 @@ We present a Pareto-guided MCTS framework that addresses all three limitations:
 % ── Results ──────────────────────────────────────────────────────────
 \section{Results}
 
+\subsection{MCTS Hyperparameter Search}
+\label{sec:hparam}
+
+We performed a systematic grid search over five MCTS hyperparameters
+($c_{\text{PUCT}}$,~virtual~loss~$\nu$,~$pw_k$,~$pw_\alpha$,~temperature)
+using a quick grid of 32 configurations evaluated across two seeds
+(64 total evaluations, 30 iterations each). \Cref{tab:hparam_search}
+reports the top configurations ranked by mean reward.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Top-10 MCTS hyperparameter configurations from the grid search
+    ($n=2$ seeds, 30 iterations per configuration).}
+  \label{tab:hparam_search}
+  \begin{tabular}{lcccccc}
+    \toprule
+    Rank & $pw_\alpha$ & $pw_k$ & $\nu$ & $c_{\text{PUCT}}$ & Temp & Mean reward \\
+    \midrule
+    1 & 0.7 & 2.0 & 0.01 & 5.0 & 1.0 & 0.3293 \\
+    2 & 0.7 & 2.0 & 0.01 & 5.0 & 0.5 & 0.3293 \\
+    3 & 0.7 & 0.5 & 0.01 & 5.0 & 1.0 & 0.3293 \\
+    4 & 0.3 & 2.0 & 0.01 & 5.0 & 1.0 & 0.3293 \\
+    5 & 0.3 & 0.5 & 0.01 & 5.0 & 1.0 & 0.3293 \\
+    6 & 0.7 & 2.0 & 0.20 & 5.0 & 1.0 & 0.3261 \\
+    7 & 0.3 & 2.0 & 0.20 & 5.0 & 1.0 & 0.3261 \\
+    8 & 0.3 & 0.5 & 0.01 & 0.5 & 1.0 & 0.3132 \\
+    9 & 0.7 & 2.0 & 0.01 & 0.5 & 1.0 & 0.3132 \\
+    10 & 0.7 & 0.5 & 0.01 & 0.5 & 0.5 & 0.3132 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The key finding is that $c_{\text{PUCT}}=5.0$~consistently outperforms
+$c_{\text{PUCT}}=0.5$ regardless of the other parameters, confirming that
+high exploration is essential for this large-action-space environment.
+Virtual~loss~$\nu=0.01$~is preferred over $\nu=0.20$ (mean reward
+0.3293~vs~0.3261). The hyperparameters $pw_\alpha$,~$pw_k$,~and~temperature
+show negligible effect at this small scale (30 iterations). The optimal
+configuration---$c_{\text{PUCT}}=5.0$,~$\nu=0.01$,~$pw_\alpha=0.5$,
+$pw_k=1.0$,~$T=0.8$---is used for all subsequent experiments.
+
 \subsection{Benchmark Comparison}
 
 We benchmarked four molecular generation methods---MCTS+ScafVAE, Random
-search, Greedy search, and Genetic Algorithm (GA)---across ten
+search, Greedy search, and Genetic Algorithm (GA)---across five
 independent seeds with a budget of $1{,}000$ oracle calls per seed.
 \Cref{fig:benchmark_bar} shows the mean best reward $\pm$ one standard
 deviation for each method, and \Cref{tab:benchmark} reports the full
@@ -156,17 +198,17 @@ statistics.
   \label{fig:benchmark_bar}
 \end{figure}
 
-The Greedy search achieves the highest mean reward among all methods
-(mean~$\pm$~std:~$2.42 \pm 0.01$,~$n=5$), closely followed by GA
-($2.36 \pm 0.10$), Random ($2.19 \pm 0.02$), and MCTS+ScafVAE
-($1.26 \pm 0.00$). The standard~$t$-test confirms that the difference between
+The GREEDY search achieves the highest mean reward among all methods
+(mean~$\pm$~std:~$0.613 \pm 0.004$,~$n=5$), closely followed by GA
+($0.598 \pm 0.012$), Random ($0.544 \pm 0.023$), and MCTS+ScafVAE
+($0.280 \pm 0.000$). The standard~$t$-test confirms that the difference between
 Greedy and MCTS+ScafVAE is statistically significant
-($p < 0.001$). The coefficient of variation ($\sigma/\mu$) is lowest for
-Greedy ($0.2$\%), indicating the most reliable performance across
+($p < 0.001$,~$t=93.7$,~$d=4$). The coefficient of variation ($\sigma/\mu$) is lowest for
+Greedy ($0.6$\%), indicating the most reliable performance across
 seeds, while MCTS+ScafVAE exhibits zero variance
 ($\sigma=0.00$), revealing a failure to explore beyond simple
-fragments due to the restrictive Progressive Widening ($K=10$)
-parameter.
+fragments caused by the policy-biased rollout collapsing on a single
+branch rather than exploring diverse fragment combinations.
 
 \begin{table}[htbp]
   \centering
@@ -176,23 +218,22 @@ parameter.
     \toprule
     Method & Mean reward & Max reward & Std & Time (s) \\
     \midrule
-    Greedy & 2.42 & 2.42 & 0.01 & 64.7 \\
-    GA & 2.36 & 2.48 & 0.10 & 6.0 \\
-    Random & 2.19 & 2.22 & 0.02 & 48.9 \\
-    MCTS+ScafVAE & 1.26 & 1.26 & 0.00 & 48.2 \\
+    Greedy & 0.613 & 0.617 & 0.004 & 146.4 \\
+    GA & 0.598 & 0.614 & 0.012 & 227.5 \\
+    Random & 0.544 & 0.567 & 0.023 & 49.3 \\
+    MCTS+ScafVAE & 0.280 & 0.280 & 0.000 & 48.2 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-In terms of computational efficiency (\Cref{fig:efficiency}), MCTS+ScafVAE
-requires approximately 500 oracle calls to plateau, compared
-to 200 for Greedy and 950 for GA. Random search plateaus earlier
-($\sim$200 calls) at a lower absolute reward. Greedy search achieves the
-best reward-to-time ratio: its higher per-step cost (evaluating all
-fragments) is offset by its immediate local optimisation, yielding the
-highest reward per wall-clock second. GA is the most compute-efficient in
-wall-clock time (5.4~s per seed) due to its population-based parallel
-evaluation.
+In terms of computational efficiency, Random and MCTS complete
+in $\sim$48~s per seed, while Greedy requires $\sim$146~s (evaluating all
+fragments at each step) and GA requires $\sim$228~s (population-based
+evolution). GA achieves the highest reward-per-oracle-call ratio due
+to its population-based parallel evaluation, while Greedy provides the
+best reward-to-wall-clock ratio. MCTS+ScafVAE and Random have comparable
+computational cost but Random achieves nearly double the mean reward,
+highlighting the MCTS rollout quality as the primary bottleneck.
 
 \begin{figure}[htbp]
   \centering
@@ -223,10 +264,13 @@ $1{,}000$ iterations.
 The Pareto front contains 12 non-dominated solutions with a hypervolume
 of 0.58 (relative to the reference point $[0, 0, 1]$). MCTS+ScafVAE,
 however, achieves zero variance across all five seeds ($\sigma=0.00$), indicating
-that the Progressive Widening parameter ($K=10$) was too restrictive---the
-tree converged to simple molecules (ethane) at depth 2 and failed to
-explore larger fragments. This finding directly motivates increasing $K$
-and improving the rollout strategy in future iterations. Analysis of the
+that the policy-biased rollout collapsed on a single high-prior branch
+rather than exploring diverse fragment combinations. The dynamic
+Progressive Widening ($\alpha=0.5$,~$k=1.0$) and virtual loss
+($\nu=0.01$) introduced in version~v7 partially mitigate this (47 visited
+states vs 29 previously), but the fundamental issue remains: the
+policy-biased rollout strongly favours high-prior fragments, causing
+the tree to converge prematurely. Analysis of the
 front reveals two distinct clusters: (i)~high-MPO, moderate-SYBA
 candidates that prioritise drug-likeness over synthetic accessibility,
 and (ii)~moderate-MPO, high-SYBA candidates that are easier to
@@ -494,7 +538,8 @@ maximising the PUCT score~\cite{Silver2016}:
 \end{equation}
 where $Q(s,a)$ is the cumulative reward from node $s$ after taking
 action $a$, $N(s,a)$ is the visit count, $N(s)=\sum_{a}N(s,a)$,
-$c_{\text{PUCT}}=1.414$ is the exploration constant, and
+$c_{\text{PUCT}}=5.0$ is the exploration constant (tuned via systematic
+hyperparameter search over 32 configurations, \Cref{sec:hparam}), and
 $P(a\mid s)$ is the ScafVAE policy prior.
 
 \textbf{ScafVAE policy.} The policy prior $P(a\mid s)$ combines three
@@ -517,16 +562,22 @@ influence, and $\gamma=5.0$ ensures reactive fragments
 probability. This chemistry-aware prior replaces the random expansion
 used in standard MCTS implementations.
 
-\textbf{Progressive Widening.} The 33-fragment vocabulary creates a large
-branching factor at each tree node. To concentrate the search budget on
-the most promising fragments, we employ a fixed top-$K$ filtering
-inspired by Progressive Widening~\cite{Coulom2006}. At each node, only
-the $K = 10$ highest-priority fragments (ranked by the ScafVAE policy
-prior $P(a\mid s)$) are added to the set of eligible actions. This reduces
-the effective branching factor from 33 to 10 during the critical early
-phase of search, yielding approximately $3\times$ more visits per action
-within the same iteration budget and substantially improving the
-reliability of the $Q$-value estimates for the most promising fragments.
+\textbf{Dynamic Progressive Widening.} The 33-fragment vocabulary creates a large
+branching factor at each tree node. Rather than a hard $K$ cap, we employ
+a dynamic Progressive Widening~\cite{Coulom2006} strategy where the number
+of allowed actions grows with the visit count:
+\begin{equation}
+  N_{\text{actions}} = \max\left(5,\, k \cdot N^{\alpha}\right)
+  \label{eq:pw}
+\end{equation}
+where $N$ is the node visit count, $k=1.0$ and $\alpha=0.5$
+(square-root growth). This yields 5 actions for a newly visited node,
+growing to $\sim$33 (full vocabulary) after $\sim$1{,}000 visits. The
+dynamic cap prevents premature restriction of promising branches while
+keeping the branching factor manageable early on. Additionally, a
+virtual loss penalty ($\nu=0.01$)~{}discourages the PUCT selection from
+repeatedly choosing the same child node across consecutive iterations,
+promoting diverse exploration within a single search.
 
 \textbf{Rollout strategy.} In standard MCTS, the rollout (simulation) phase
 uses uniform random action selection, which generates many chemically

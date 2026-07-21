@@ -111,8 +111,11 @@ def _run_single_seed(
     n_iterations: int,
     ga_population: int,
     ga_generations: int,
-    mcts_c_puct: float,
-    use_policy: bool,
+    mcts_c_puct: float = 5.0,
+    use_policy: bool = True,
+    mcts_virtual_loss: float = 0.01,
+    mcts_pw_alpha: float = 0.5,
+    mcts_pw_k: float = 1.0,
 ) -> dict[str, Any]:
     """Run all methods for a single seed (extracted for joblib parallelism)."""
     from p4_mcts_agent import MCTSAgent
@@ -137,9 +140,9 @@ def _run_single_seed(
         c_puct=mcts_c_puct,
         policy_fn=policy_fn,
         seed=seed,
-        pw_alpha=0.5,
-        pw_k=1.0,
-        virtual_loss=0.01,
+        pw_alpha=mcts_pw_alpha,
+        pw_k=mcts_pw_k,
+        virtual_loss=mcts_virtual_loss,
     )
     mcts_start = time.time()
     best_mcts = agent.search(env.initial_smiles)
@@ -243,8 +246,11 @@ def run_benchmark(
     ga_generations: int = 20,
     n_seeds: int = 5,
     n_jobs: int = 1,
-    mcts_c_puct: float = 1.414,
+    mcts_c_puct: float = 5.0,
     use_policy: bool = True,
+    mcts_virtual_loss: float = 0.01,
+    mcts_pw_alpha: float = 0.5,
+    mcts_pw_k: float = 1.0,
 ) -> dict[str, Any]:
     """Run all methods over multiple seeds and collect statistics.
 
@@ -282,7 +288,7 @@ def run_benchmark(
     # Use joblib for cross-seed parallelism when n_jobs > 1
     _run_seed_job = lambda seed: _run_single_seed(
         seed, env, oracle, n_iterations, ga_population, ga_generations,
-        mcts_c_puct, use_policy
+        mcts_c_puct, use_policy, mcts_virtual_loss, mcts_pw_alpha, mcts_pw_k,
     )
 
     if _HAS_JOBLIB and n_jobs != 1:
@@ -434,6 +440,14 @@ def main() -> None:
                         help="Parallel seeds via joblib (default: 1=sequential)")
     parser.add_argument("--no-policy", action="store_true",
                         help="Disable ScafVAE policy in MCTS")
+    parser.add_argument("--c-puct", type=float, default=5.0,
+                        help="MCTS exploration constant (default: 5.0, tuned via hparam search)")
+    parser.add_argument("--virtual-loss", type=float, default=0.01,
+                        help="MCTS virtual loss (default: 0.01, tuned via hparam search)")
+    parser.add_argument("--pw-alpha", type=float, default=0.5,
+                        help="MCTS dynamic PW exponent (default: 0.5)")
+    parser.add_argument("--pw-k", type=float, default=1.0,
+                        help="MCTS dynamic PW multiplier (default: 1.0)")
     parser.add_argument("--output", type=Path,
                         default=Path("results/benchmark/p4_benchmark.csv"),
                         help="Output CSV path")
@@ -470,8 +484,11 @@ def main() -> None:
     )
     oracle = OracleAggregator(use_precomputed=True)
 
-    # Run benchmark
-    print("Running benchmark...")
+    # Run benchmark with tuned hyperparameters
+    print(f"  MCTS c_puct:      {args.c_puct} (tuned via hparam search)")
+    print(f"  MCTS virtual_loss: {args.virtual_loss} (tuned via hparam search)")
+    print(f"  MCTS pw_alpha:    {args.pw_alpha}, pw_k: {args.pw_k}")
+    print()
     results = run_benchmark(
         env, oracle,
         n_iterations=args.n_iterations,
@@ -479,6 +496,7 @@ def main() -> None:
         ga_generations=args.ga_generations,
         n_seeds=args.n_seeds,
         n_jobs=args.n_jobs,
+        mcts_c_puct=args.c_puct,
         use_policy=not args.no_policy,
     )
 
