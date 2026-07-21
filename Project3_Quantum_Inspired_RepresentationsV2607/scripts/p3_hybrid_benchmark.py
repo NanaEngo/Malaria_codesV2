@@ -38,6 +38,7 @@ Usage:
 """
 
 import argparse
+import json
 import time
 import warnings
 from pathlib import Path
@@ -447,7 +448,9 @@ def _cv_score_hybrid(X_ecfp: np.ndarray,
                       n_kpca: int = 10,
                       n_repeats: int = 1,
                       block_size: int | None = None,
-                      n_jobs: int = 1) -> list[dict]:
+                      n_jobs: int = 1,
+                      checkpoint_path: str | None = None,
+                      completed_folds: set | None = None) -> list[dict]:
     """
     5-fold CV for hybrid descriptor (lightning.qubit).
 
@@ -458,11 +461,21 @@ def _cv_score_hybrid(X_ecfp: np.ndarray,
       3. Evaluate on [TFP_te, TNE_te, QK_te]
 
     No data leakage: UMAP + kernel matrix + KPCA are fit on training only.
+
+    Supports checkpoint resume: saves fold results to JSON after each fold.
+    Pass ``checkpoint_path`` to enable, ``completed_folds`` to skip already-done
+    folds on resume.
     """
+    if completed_folds is None:
+        completed_folds = set()
     skf = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
     records = []
 
     for fold, (tr_idx, te_idx) in enumerate(skf.split(X_ecfp, y), start=1):
+        if fold in completed_folds:
+            print(f"    Hybrid fold {fold}/{N_FOLDS} — skipped (checkpoint)")
+            continue
+
         print(f"    Hybrid fold {fold}/{N_FOLDS}...")
 
         # Compute QK features within this fold (no leakage)
@@ -526,6 +539,12 @@ def _cv_score_hybrid(X_ecfp: np.ndarray,
             "f1":       f1_score(y_te, y_pred_svm, zero_division=0),
         })
 
+        # Save checkpoint after each fold (R4)
+        if checkpoint_path:
+            with open(checkpoint_path, "w") as _f:
+                json.dump({"records": records, "section": "hybrid"}, _f, default=str)
+            print(f"      Checkpoint saved: {checkpoint_path}")
+
     return records
 
 
@@ -538,14 +557,20 @@ def _cv_score_ablation_hybrid(X_ecfp: np.ndarray,
                                n_kpca: int = 10,
                                n_repeats: int = 1,
                                block_size: int | None = None,
-                               n_jobs: int = 1) -> list[dict]:
+                               n_jobs: int = 1,
+                               checkpoint_path: str | None = None,
+                               completed_folds: set | None = None) -> list[dict]:
     """
     5-fold CV ablation: remove one component from the hybrid (lightning.qubit).
 
     remove ∈ {"TFP", "TNE", "QK"}
     QK is still computed per-fold (no leakage) when it is included.
     Uses chunked kernel for large n (block_size, n_jobs).
+
+    Supports checkpoint resume (same pattern as _cv_score_hybrid).
     """
+    if completed_folds is None:
+        completed_folds = set()
     skf = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
     records = []
     desc_name = f"Hybrid-{remove}"
@@ -685,6 +710,27 @@ def main():
     X_tne = load_precomputed(smiles_list,
                               RESULTS_DIR / "p3_tne_embeddings.csv", "tne_")
 
+    # ── Checkpoint resume (R4) ───────────────────────────────────
+    completed_hybrid: set[int] = set()
+    completed_ablation: set[str] = set()
+    # completed_folds used for ablation sub-sections: "TFP", "TNE", "QK"
+    ablation_done: dict[str, set[int]] = {r: set() for r in ["TFP", "TNE", "QK"]}
+    if args.checkpoint and Path(args.checkpoint).exists():
+        with open(args.checkpoint) as _f:
+            _ckpt = json.load(_f)
+        _saved_records = _ckpt.get("records", [])
+        _completed_sections = _ckpt.get("completed_sections", [])
+        for _r in _saved_records:
+            _desc = _r.get("descriptor", "")
+            _fold = _r.get("fold", 0)
+            if _desc == "Hybrid":
+                completed_hybrid.add(_fold)
+            elif _desc and _desc.startswith("Hybrid-"):
+                _removed = _desc.replace("Hybrid-", "")
+                if _removed in ablation_done:
+                    ablation_done[_removed].add(_fold)
+        print(f"  Checkpoint loaded: {len(completed_hybrid)} hybrid folds + {sum(len(v) for v in ablation_done.values())} ablation folds completed")
+
     print(f"\n  Hybrid: QK features computed per-fold (UMAP + kernel PCA on train only).")
     print(f"    n_repeats={args.n_repeats}, n_kpca={args.n_kpca}, no data leakage.")
     print(f"    TFP enriched={args.tfp_enriched}.")
@@ -720,7 +766,19 @@ def main():
         n_repeats=args.n_repeats,
         block_size=args.block_size,
         n_jobs=args.n_jobs,
+        checkpoint_path=args.checkpoint,
+        completed_folds=completed_hybrid,
     ))
+
+    # Save intermediate checkpoint after hybrid benchmark
+    if args.checkpoint:
+        with open(args.checkpoint, "w") as _f:
+            json.dump({
+                "records": all_records,
+                "completed_sections": ["hybrid"],
+                "section": "hybrid_done",
+            }, _f, default=str)
+        print(f"  Intermediate checkpoint: hybrid benchmark done")
 
     results_df = pd.DataFrame(all_records)
     out_csv = RESULTS_DIR / "p3_hybrid_benchmark.csv"
@@ -740,6 +798,8 @@ def main():
             n_repeats=args.n_repeats,
             block_size=args.block_size,
             n_jobs=args.n_jobs,
+            checkpoint_path=args.checkpoint,
+            completed_folds=ablation_done.get(removed, set()),
         ))
 
     abl_df = pd.DataFrame(ablation_records)
