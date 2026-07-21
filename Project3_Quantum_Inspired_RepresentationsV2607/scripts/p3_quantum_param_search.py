@@ -227,9 +227,9 @@ def _get_kernel_fn(n_qubits: int, n_repeats: int = 1):
         def _kfn(a, b):
             return float(_kernel(a, b)[0])
 
-        _KERNEL_CACHE[key] = (_kfn, dev_name)
+        _KERNEL_CACHE[key] = _kfn
         print(f"    [Quantum] Device: {dev_name} for {n_qubits}q x {n_repeats}rep", flush=True)
-    return _KERNEL_CACHE[key][0]
+    return _KERNEL_CACHE[key]
 
 
 def _compute_block_task(i0, i1, j0, j1, X_chunk, n_qubits, n_repeats):
