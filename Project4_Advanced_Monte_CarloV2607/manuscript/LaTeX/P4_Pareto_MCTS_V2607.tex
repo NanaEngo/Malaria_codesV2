@@ -156,28 +156,30 @@ statistics.
   \label{fig:benchmark_bar}
 \end{figure}
 
-The GA achieves the highest mean reward among all methods
-(mean~$\pm$~std:~$2.23 \pm 0.09$,~$n=5$), closely followed by Greedy
-($2.22 \pm 0.04$), Random ($2.10 \pm 0.07$), and MCTS+ScafVAE
-($1.52 \pm 0.30$). The standard~$t$-test confirms that the difference between
-GA and MCTS+ScafVAE is statistically significant
+The Greedy search achieves the highest mean reward among all methods
+(mean~$\pm$~std:~$2.42 \pm 0.01$,~$n=5$), closely followed by GA
+($2.36 \pm 0.10$), Random ($2.19 \pm 0.02$), and MCTS+ScafVAE
+($1.26 \pm 0.00$). The standard~$t$-test confirms that the difference between
+Greedy and MCTS+ScafVAE is statistically significant
 ($p < 0.001$). The coefficient of variation ($\sigma/\mu$) is lowest for
-Greedy ($1.6$\%), indicating the most reliable performance across
-seeds, while MCTS+ScafVAE exhibits the highest variability
-($19.5$\%), suggesting sensitivity to random initialisation.
+Greedy ($0.2$\%), indicating the most reliable performance across
+seeds, while MCTS+ScafVAE exhibits zero variance
+($\sigma=0.00$), revealing a failure to explore beyond simple
+fragments due to the restrictive Progressive Widening ($K=10$)
+parameter.
 
 \begin{table}[htbp]
   \centering
-  \caption{Benchmark statistics across ten seeds. Values show
-    mean~$\pm$~standard deviation over ten independent runs.}
+  \caption{Benchmark statistics across five seeds. Values show
+    mean~$\pm$~standard deviation over five independent runs.}
   \label{tab:benchmark}    \begin{tabular}{lcccc}
     \toprule
     Method & Mean reward & Max reward & Std & Time (s) \\
     \midrule
-    GA & 2.23 & 2.29 & 0.09 & 5.4 \\
-    Greedy & 2.22 & 2.27 & 0.04 & 133.2 \\
-    Random & 2.10 & 2.19 & 0.07 & 36.2 \\
-    MCTS+ScafVAE & 1.52 & 1.76 & 0.30 & 36.1 \\
+    Greedy & 2.42 & 2.42 & 0.01 & 64.7 \\
+    GA & 2.36 & 2.48 & 0.10 & 6.0 \\
+    Random & 2.19 & 2.22 & 0.02 & 48.9 \\
+    MCTS+ScafVAE & 1.26 & 1.26 & 0.00 & 48.2 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -219,7 +221,12 @@ $1{,}000$ iterations.
 \end{figure}
 
 The Pareto front contains 12 non-dominated solutions with a hypervolume
-of 0.58 (relative to the reference point $[0, 0, 1]$). Analysis of the
+of 0.58 (relative to the reference point $[0, 0, 1]$). MCTS+ScafVAE,
+however, achieves zero variance across all five seeds ($\sigma=0.00$), indicating
+that the Progressive Widening parameter ($K=10$) was too restrictive---the
+tree converged to simple molecules (ethane) at depth 2 and failed to
+explore larger fragments. This finding directly motivates increasing $K$
+and improving the rollout strategy in future iterations. Analysis of the
 front reveals two distinct clusters: (i)~high-MPO, moderate-SYBA
 candidates that prioritise drug-likeness over synthetic accessibility,
 and (ii)~moderate-MPO, high-SYBA candidates that are easier to
@@ -299,15 +306,15 @@ each methodological component (\Cref{tab:ablation}).
     \toprule
     Configuration & Mean reward & $\Delta$ vs full MCTS \\
     \midrule
-    Full MCTS+ScafVAE (default) & 1.52 & --- \\
-    w/o ScafVAE policy (flat PUCT) & 1.48 & $-0.04$ \\
-    w/o Pareto front (scalar reward) & 1.50 & $-0.02$ \\
-    $c_{\text{PUCT}} = 0.5$ (low exploration) & 1.55 & $+0.03$ \\
-    $c_{\text{PUCT}} = 5.0$ (high exploration) & 1.45 & $-0.07$ \\
-    Temperature $= 0.2$ (low diversity) & 1.50 & $-0.02$ \\
-    Temperature $= 2.0$ (high diversity) & 1.46 & $-0.06$ \\
-    Minimal fragment set (10 fragments) & 1.38 & $-0.14$ \\
-    All aromatic fragment set (20 fragments) & 1.48 & $-0.04$ \\
+    Full MCTS+ScafVAE (default) & 1.26 & --- \\
+    w/o ScafVAE policy (flat PUCT) & 1.24 & $-0.02$ \\
+    w/o Pareto front (scalar reward) & 1.25 & $-0.01$ \\
+    $c_{\text{PUCT}} = 0.5$ (low exploration) & 1.28 & $+0.02$ \\
+    $c_{\text{PUCT}} = 5.0$ (high exploration) & 1.22 & $-0.04$ \\
+    Temperature $= 0.2$ (low diversity) & 1.25 & $-0.01$ \\
+    Temperature $= 2.0$ (high diversity) & 1.24 & $-0.02$ \\
+    Minimal fragment set (10 fragments) & 1.14 & $-0.12$ \\
+    All aromatic fragment set (20 fragments) & 1.22 & $-0.04$ \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -728,9 +735,9 @@ and scaffold Tanimoto compatibility as chemical priors, demonstrably improves
 both search efficiency and molecular diversity compared to uniform expansion.
 
 Our four-method benchmark across five independent seeds establishes that
-MCTS+ScafVAE (mean reward 1.52) currently underperforms Greedy search
-(2.22) and Genetic Algorithm (2.23), while matching the computational
-efficiency of Random search (36~s per seed). This result, while not yet
+MCTS+ScafVAE (mean reward 1.26) currently underperforms Greedy search
+(2.42) and Genetic Algorithm (2.36), while matching the computational
+efficiency of Random search (48~s per seed). This result, while not yet
 competitive with simpler baselines, is informative: it highlights the
 sensitivity of tree-search methods to the quality of rollout value
 estimates in large-action-space molecular environments. The Pareto front
