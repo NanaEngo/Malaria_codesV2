@@ -17,7 +17,7 @@
 #SBATCH --output=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_%a_%j.log
 #SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_%a_%j.err
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=4
 #SBATCH --mem=4G
 #SBATCH --time=48:00:00
 #SBATCH --partition=production
@@ -46,10 +46,10 @@ trap 'err_handler $?' ERR
 # lightning.qubit uses OpenMP and will auto-detect all node CPUs even when
 # SLURM allocates only one.  Limit each process to a single thread to
 # avoid oversubscription and context-switching overhead.
-export OMP_NUM_THREADS=1
-export OPENBLAS_NUM_THREADS=1
-export MKL_NUM_THREADS=1
-export NUMEXPR_NUM_THREADS=1
+export OMP_NUM_THREADS=4
+export OPENBLAS_NUM_THREADS=4
+export MKL_NUM_THREADS=4
+export NUMEXPR_NUM_THREADS=4
 
 # ── Configuration ────────────────────────────────────────────────────
 PYTHON="/home/nanaengo/miniforge3/envs/malaria_md/bin/python"
@@ -92,7 +92,8 @@ echo "╚═══════════════════════�
 # au-delà de 994 reçoivent un vecteur TFP nul. Ceci est un facteur contrôlé
 # (identique pour les 3 combos) qui ne biaise pas la comparaison relative.
 #
-# Note : --n-jobs 1 car lightning.qubit est mono-thread (pas de gain en parallélisant).
+# Note : --n-jobs 4 pour le RF classifier, OMP_NUM_THREADS=4 pour lightning.qubit.
+#       Le kernel chunké (block_size=200) offre ~2-4× speedup via OpenMP.
 
 echo "  ▶ Lancement de l'évaluation (5-fold CV, n=${N_MOLS})..."
 echo "  ▶ Paramètres : bond_dim=${BD}, n_repeats=${NR}, n_kpca=${NK}"
@@ -105,7 +106,7 @@ time "${PYTHON}" "${PROJECT_DIR}/scripts/p3_quantum_param_search.py" \
   --n-kpca "${NK}" \
   --n-mols "${N_MOLS}" \
   --block-size 200 \
-  --n-jobs 1 \
+  --n-jobs 4 \
   --output-csv "${OUT_CSV}" 2>&1
 
 # ── Sauvegarde unique par tâche (évite les races conditions) ────────

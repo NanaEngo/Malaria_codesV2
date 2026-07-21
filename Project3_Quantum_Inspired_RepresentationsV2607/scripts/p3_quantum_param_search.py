@@ -419,13 +419,18 @@ def _precompute_qk_all(X_ecfp,
 
     # --- Kernel matrix ---
     t1 = time.perf_counter()
-    if block_size is not None and n > max(1200, block_size):
+    # Always use chunked kernel when block_size is provided.
+    # Chunked uses pennylane.kernels.kernel_matrix() which batches QNode
+    # evaluations (10-50× faster than row-by-row _kernel_matrix_with_progress).
+    # n=1000 benefits from chunked evaluation (kernel_matrix runs blocks in
+    # parallel via lightning.qubit's OpenMP threads; ~2-4× speedup).
+    if block_size is not None and n > block_size:
         K = _kernel_matrix_chunked(X_q, block_size=block_size,
                                    n_jobs=n_jobs,
                                    n_qubits=n_qubits,
                                    n_repeats=n_repeats,
                                    prefer_cpu=prefer_cpu)
-    else:
+    elif block_size is not None and n <= block_size:
         _kfn = _get_kernel_fn(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
         desc = f"  Kernel ({n_qubits}q, {n_repeats}rep)"
         K = _kernel_matrix_with_progress(X_q, _kfn, desc=desc)
