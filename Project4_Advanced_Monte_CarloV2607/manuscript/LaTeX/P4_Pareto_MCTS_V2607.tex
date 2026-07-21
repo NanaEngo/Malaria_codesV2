@@ -445,22 +445,46 @@ trade-off that weighted-sum optimisation typically misses.
 
 \subsection{Comparison with Related Work}
 
-The ScafVAE-informed PUCT policy distinguishes our MCTS implementation
-from standard UCT-based tree search \cite{Mothra2024, CombiMOTS2026}.
-While prior work has applied MCTS to molecular generation, the use of
-ChEMBL27 fragment frequencies and scaffold Tanimoto compatibility as
-PUCT priors is, to our knowledge, novel. The resulting exploration---guided
-by medicinal chemistry knowledge rather than random sampling---improves
-both the mean reward and the diversity of generated molecules compared
-to uniform policy alternatives.
+Several recent studies have applied MCTS to molecular generation. The
+Mothra~\cite{Mothra2024} framework introduced Pareto multi-objective
+optimisation within MCTS for molecular design, demonstrating that
+Pareto fronts reveal trade-offs that scalar aggregation misses. Our work
+extends this paradigm by (i)~replacing the uniform rollout policy with
+a ScafVAE-informed PUCT prior that leverages ChEMBL27 fragment frequencies
+and scaffold Tanimoto compatibility, (ii)~introducing dynamic Progressive
+Widening to manage the 33-fragment branching factor, and (iii)~diagnosing
+and resolving the rollout degradation problem via global best-molecule
+tracking---a critical implementation detail not addressed in prior studies.
+The CombiMOTS~\cite{CombiMOTS2026} framework demonstrated combinatorial
+MCTS for multi-objective molecular optimisation but employed a fixed
+building-block library without learned priors. Our ScafVAE policy provides
+chemistry-aware action selection that adapts to the current scaffold
+context, reducing the number of oracle calls required to reach
+equivalent reward levels.
+
+Compared to reinforcement learning approaches such as REINVENT~\cite{Olivecrona2017}
+and MolDQN~\cite{Zhou2019}, our MCTS agent offers intrinsic advantages
+in interpretability and sample efficiency. RL agents require thousands of
+episodes to learn a policy through trial and error, whereas tree search
+exploits the explicit look-ahead structure of MCTS to discover high-reward
+molecules within a fixed iteration budget. However, RL policies---once
+trained---can generate molecules at minimal inference cost, making them
+more suitable for high-throughput applications. The two paradigms are
+complementary: MCTS can generate high-quality seed molecules for RL
+fine-tuning, while learned rollout policies from RL can accelerate the
+MCTS simulation phase.
 
 Compared to evolutionary approaches \cite{Jensen2019}, our MCTS agent
-achieves comparable or better best-reward values while requiring fewer
-oracle calls. This efficiency stems from the incremental nature of
-tree search: each rollout extends a partially built molecule by one
-fragment, reusing intermediate scoring results. Genetic algorithms,
-by contrast, evaluate complete molecules at each generation and cannot
-exploit partial solutions.
+achieves comparable best-reward values (0.597 vs 0.592 for GA) with a
+different efficiency profile: MCTS evaluates partial molecules
+incrementally, reusing intermediate scoring results across related
+branches, while GA evaluates complete molecules at each generation and
+cannot exploit partial solutions. This distinction becomes important
+when oracle calls are expensive (e.g.,~when docking or quantum
+validation is performed on the fly). The GA variant remains competitive
+on a per-oracle-call basis (Fig.~\Cref{fig:efficiency}), suggesting
+that hybrid strategies combining population-based exploration with
+tree-structured exploitation may be a fruitful direction for future work.
 
 \subsection{Limitations}
 
@@ -486,6 +510,43 @@ generality of the ScafVAE policy priors to other therapeutic areas
 remains to be demonstrated. However, the ChEMBL27 fragment priors are
 not disease-specific, and the scaffold compatibility module can be
 retargeted to any privileged scaffold library.
+
+Fourth, the global best-molecule tracking fix, while improving the mean
+reward by 2.2$\times$, introduces a 5.7$\times$ increase in oracle calls
+(273.8~s vs 48.2~s per seed for the benchmark experiments). This overhead
+is acceptable for off-line lead discovery but may limit applicability to
+interactive or real-time generative settings. Caching strategies (LRU
+cache with 10,000 entries, employed in this study) partially mitigate
+the cost, but a more fundamental solution---such as training a surrogate
+model to approximate the max-over-rollout value---would reduce the
+computational burden.
+
+Fifth, the zero-variance observation for MCTS across five seeds
+($\sigma=0.00$) warrants scrutiny. While the global best-molecule
+tracking successfully prevents the collapse observed in the initial
+implementation (reward 0.239, all seeds returning ethane), the
+zero-variance result suggests that the search may still converge to
+a similar region of chemical space across runs rather than exploring
+diverse high-reward basins. This behaviour is consistent with a
+policy-biased rollout that strongly favours a narrow set of privileged
+fragments; expanding the vocabulary or introducing stochastic
+temperature annealing during selection could encourage wider
+exploration. Increasing the number of independent seeds from 5 to
+at least 20 would provide more statistical power for detecting
+cross-run variability.
+
+Sixth, the oracle proxy for novel chemotypes---particularly the
+nearest-neighbour docking score---carries inherent uncertainty.
+Molecules whose Tanimoto similarity to the Tartarus library falls
+below 0.30 rely on a single structurally distant neighbour, whose
+docking score may not reflect the query molecule's true binding
+affinity. The multi-fidelity K-NN extension introduced for the RRS
+and PNS oracles (\Cref{sec:oracles}) provides a smoother gradient
+but does not eliminate the underlying approximation error. A prospective
+validation campaign in which Pareto-optimised molecules are synthesised
+and assayed against drug-resistant $P. falciparum$ strains---currently
+in preparation---is essential to confirm the practical relevance of
+the computational predictions.
 
 \subsection{Implications for Antimalarial Drug Discovery}
 
@@ -853,10 +914,29 @@ computational drug discovery community.
 
 % ── Supporting Information ───────────────────────────────────────────
 \section*{Supporting Information}
-Full benchmark tables (Table~S1--S5), ablation study details (c$_\text{PUCT}$,
-temperature, fragment set sensitivity), molecular property distributions
-(MW, logP, HBA, HBD, RotBonds, TPSA), Lipinski rule-of-five analysis,
-scaffold diversity dendrograms, and QMC energy correlations (PDF).
+The Supporting Information contains the following materials:
+\begin{itemize}[nosep]
+  \item \textbf{Table~S1:} Hyperparameter grid search results
+    (32 configurations, mean reward per seed).
+  \item \textbf{Tables~S2--S6:} Per-seed benchmark results for Random,
+    Greedy, GA, and MCTS+ScafVAE (best-reward trajectory, oracle calls,
+    wall-clock time).
+  \item \textbf{Table~S7:} Ablation study details: $c_{\text{PUCT}}$,
+    temperature, fragment set size sensitivity.
+  \item \textbf{Figure~S1:} Molecular property distributions (MW, logP,
+    HBA, HBD, rotatable bonds, TPSA) for each method.
+  \item \textbf{Figure~S2:} Lipinski rule-of-five radar plot.
+  \item \textbf{Figure~S3:} Scaffold diversity dendrogram (Bemis--Murcko
+    scaffolds).
+  \item \textbf{Figure~S4:} QMC correlation energy vs QKS score
+    scatter plot.
+  \item \textbf{Table~S8:} SMILES strings of all generated molecules
+    (5 seeds x 4 methods, 1000 molecules per run).
+  \item \textbf{Listing~S1:} Benchmark protocol pseudocode for
+    reproducibility.
+\end{itemize}
+All supplementary data are also available on Zenodo
+(DOI:~\href{https://doi.org/10.5281/zenodo.19608875}{10.5281/zenodo.19608875}).
 
 % ── Data Availability ────────────────────────────────────────────────
 \section*{Data Availability}
