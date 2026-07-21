@@ -187,6 +187,15 @@ class MCTSAgent:
         self._priors_cache = {}
         self._visited_states = {root_state}
 
+        # Track best molecule seen during ANY part of the search
+        # (including intermediate rollout states), not just root children.
+        # This is critical: rollout from a good first-step (e.g. toluene)
+        # often ADD fragments that LOWER the reward; without global tracking
+        # the search returns the root child whose ROLLOUT was best, not the
+        # child whose DIRECT molecule is best.
+        best_global_smiles = root_state
+        best_global_reward = self.oracle(root_state)
+
         # Collapse detection state
         last_best_state = root_state
         collision_count = 0
@@ -195,8 +204,14 @@ class MCTSAgent:
 
         for iteration in range(self.n_iterations):
             node = self._select(root)
-            reward = self._rollout(node, temperature=current_temp)
+            reward, rollout_best_smiles, rollout_best_reward = self._rollout(
+                node, temperature=current_temp)
             self._backpropagate(node, reward)
+
+            # Track best molecule globally (max over all visited states)
+            if rollout_best_reward > best_global_reward:
+                best_global_reward = rollout_best_reward
+                best_global_smiles = rollout_best_smiles
 
             # Adversarial collapse detection
             if root.children:
@@ -244,10 +259,23 @@ class MCTSAgent:
         self._root = root
 
         if not root.children:
-            return root_state
-        # Best by value (not visits) — more accurate for final selection
-        best = max(root.children.values(), key=lambda child: child.value / max(child.visits, 1))
-        return best.state
+            return best_global_smiles if best_global_reward > self.oracle(root_state) else root_state
+
+        # Best child by value/visits (MCTS standard)
+        best_child = max(root.children.values(),
+                         key=lambda child: child.value / max(child.visits, 1))
+        best_child_reward = self.oracle(best_child.state)
+
+        # Return the BEST molecule found during the entire search
+        # (including intermediate rollout states). This is essential for
+        # molecular MCTS: a good first step (e.g. toluene, reward=0.44) may
+        # have a LOW rollout reward because subsequent fragment additions
+        # degrade quality. The MCTS tree correctly uses terminal rewards
+        # for backpropagation, but the BEST molecule is often an
+        # intermediate along the rollout trajectory, not the terminal state.
+        if best_global_reward > best_child_reward:
+            return best_global_smiles
+        return best_child.state
 
     def _get_priors(self, state: str) -> dict[str, float]:
         """Get (or compute and cache) action priors for a given state."""
@@ -373,8 +401,17 @@ class MCTSAgent:
         node.children[action] = child
         return child
 
-    def _rollout(self, node: MCTSNode, temperature: float = 1.0) -> float:
-        """Simulate a rollout from the node and return the oracle reward.
+    def _rollout(self, node: MCTSNode, temperature: float = 1.0) -> tuple[float, str, float]:
+        """Simulate a rollout, tracking the best molecule along the trajectory.
+
+        Returns (terminal_reward, best_smiles, best_reward) where best_smiles
+        is the molecule with the highest oracle score encountered at any step
+        along the rollout path (including the start state).
+
+        This max-over-trajectory tracking is critical for molecular generation:
+        the ROLLOUT from a good first-step molecule (e.g. toluene, reward=0.44)
+        often ADDS fragments that LOWER the reward. Without tracking the best
+        intermediate, the MCTS tree undervalues high-quality one-step molecules.
 
         Uses lightweight env reinit instead of expensive deepcopy.
         Policy-biased sampling with temperature annealing and epsilon-greedy:
@@ -387,19 +424,24 @@ class MCTSAgent:
             Node to rollout from.
         temperature : float
             Softmax temperature for action sampling. Higher = more uniform.
-            Annealed from rollout_temperature to rollout_temp_min.
+
+        Returns
+        -------
+        tuple[float, str, float]
+            (terminal_reward, best_smiles_along_path, best_reward_along_path)
         """
         # Lightweight env copy instead of deepcopy
         env_copy = self._make_env_copy(node.state, node.step_count)
+
+        # Track best molecule along the rollout trajectory
+        best_smiles = env_copy.state
+        best_reward = self.oracle(env_copy.state)
 
         done = env_copy.step_count >= env_copy.max_steps or env_copy._is_terminal(env_copy.state)
 
         while not done:
             if self.rollout_strategy == "policy_biased" and self.policy_fn is not None:
                 # Soft exploration mix: P' = (1-ε)·P_policy + ε·P_uniform
-                # Instead of 100% random actions (too noisy for molecular generation),
-                # we blend the policy distribution with a uniform distribution.
-                # This preserves chemical priors while encouraging diversity.
                 node_priors = self._get_priors(env_copy.state)
                 if node_priors:
                     actions = list(node_priors.keys())
@@ -423,7 +465,14 @@ class MCTSAgent:
 
             _state, _reward, done, _info = env_copy.step(action)
 
-        return self.oracle(env_copy.state)
+            # Track best molecule encountered along rollout path
+            rollout_reward = self.oracle(_state)
+            if rollout_reward > best_reward:
+                best_reward = rollout_reward
+                best_smiles = _state
+
+        terminal_reward = self.oracle(env_copy.state)
+        return terminal_reward, best_smiles, best_reward
 
     def _backpropagate(self, node: MCTSNode, reward: float) -> None:
         """Propagate the reward up the tree."""
