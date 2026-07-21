@@ -1,0 +1,216 @@
+% Unofficial Technion - Israel Institute of Technology CS Poster Template
+% Copied from UChicago version that is very popular :)
+% v1.1.0 released September 8, 2022
+% https://github.com/k4rtik/uchicago-poster
+% a fork of https://github.com/anishathalye/gemini
+
+\documentclass[final]{beamer}
+
+% ====================
+% Packages
+% ====================
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[size=custom,width=120,height=72,scale=1.0]{beamerposter}
+\usetheme{gemini}
+\usecolortheme{technion}
+\usepackage{graphicx, siunitx}
+\usepackage{booktabs}
+\usepackage{doi}
+\usepackage[numbers]{natbib}
+\usepackage[patch=none]{microtype}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{anyfontsize}
+
+\pdfstringdefDisableCommands{%
+\def\translate#1{#1}%
+}
+
+% ====================
+% Lengths
+% ====================
+
+% If you have N columns, choose \sepwidth and \colwidth such that
+% (N+1)*\sepwidth + N*\colwidth = \paperwidth
+\newlength{\sepwidth}
+\newlength{\colwidth}
+\setlength{\sepwidth}{0.025\paperwidth}
+\setlength{\colwidth}{0.3\paperwidth}
+
+\newcommand{\separatorcolumn}{\begin{column}{\sepwidth}\end{column}}
+
+% ====================
+% Title
+% ====================
+
+\title{In Silico Identification of Polypharmacological Antimalarial Candidates from African Natural Product Chemical Space}
+
+\author{Myke Vital SAO TEMGOUA \inst{1} \and Jean-Pierre TCHAPET NJAFA \inst{1} \and  Serge Guy NANA ENGO\inst{1}}
+
+\institute[shortinst]{\inst{1} University of Yaoundé I, Faculty of Science, Department of Physics}
+
+% ====================
+% Footer (optional)
+% ====================
+
+\footercontent{
+  \href{https://indico.ictp.it/event/10849}{https://indico.ictp.it/event/10849} \hfill
+  \textbf{6th Youth in High-Dimensions: Recent Progress in Machine Learning, High-Dimensional Statistics and Inference \& How creative is Generative AI? Perspectives from Science and Philosophy} \hfill
+  \href{mailto:alyssa.p.hacker@example.com}{myke-vital.sao@facsciences-uy1.cm}}
+% (can be left out to remove footer)
+
+% ====================
+% Logo (optional)
+% ====================
+
+% use this to include logos on the left and/or right side of the header:
+% \logoright{\includegraphics[height=7cm]{logos/TCML_QR_CODE.eps}}
+% \logoright{\includegraphics[height=7cm]{logos/cs-logo-white.png}}
+
+% ====================
+% Body
+% ====================
+
+% TRIM RULES: l b r t
+\begin{document}
+\addtobeamertemplate{headline}{}
+{
+    \begin{tikzpicture}[remember picture,overlay]
+      \node [anchor=north west, inner sep=3cm] at ([xshift=0.0cm,yshift=1.0cm]current page.north west)
+      {\includegraphics[scale=0.69,clip]{logos/uy1_logo.eps}}; % also try shield-white.eps
+      \node [anchor=north east, inner sep=3cm] at ([xshift=0.0cm,yshift=1.5cm]current page.north east)
+      {\includegraphics[scale=0.45,clip]{logos/ictp_logo.eps}};
+      % \node [anchor=north west, inner sep=3cm] at ([xshift=0.0cm,yshift=2.5cm]current page.north west)
+    \end{tikzpicture}
+}
+
+\begin{frame}[t]
+\begin{columns}[t]
+\separatorcolumn
+
+\begin{column}{\colwidth}
+
+  \begin{block}{Background \& Motivation}
+
+  \textbf{Malaria} remains a devastating disease, particularly in tropical and subtropical regions, with over \num{247000000} cases and approximately \num{619000} deaths reported in 2023. 
+
+\begin{itemize}
+    \item[\textbf{$\Rightarrow$}] \textbf{Challenge:} Resistance to existing drugs is rapidly increasing due to mutations in \textit{Plasmodium falciparum} strains. Conventional virtual screening requires tens of thousands of docking runs per target (exceeding \num{1000} CPU-hours), limiting antimalarial discovery in resource-constrained malaria-endemic regions where \qty{94}{\percent} of global disease burden occurs.
+    \item[\textbf{$\Rightarrow$}] \textbf{Opportunity:} African natural products offer a rich, underexplored source of bioactive scaffolds, but screening and optimization remain major bottlenecks.
+\end{itemize}
+
+\begin{center}
+\textbf{\textit{Can we reduce computational costs by 99\% while maintaining predictive accuracy?}}
+\end{center}
+
+  \end{block}
+
+  \begin{block}{Natural Products in Drugs Discovery}
+        \begin{figure}
+        \centering
+		\includegraphics[width=1.02\linewidth, clip]{images/NP_def5.jpg}
+		\caption{A few natural products used as medicines identified in the last century. Marilia VALLI and Vanderlan BOLZANI. Natural Products: Perspectives and Challenges for use of Brazilian Plant Species in the Bioeconomy. \emph{Anais da Academia Brasileira de Ciências}.}
+        \end{figure}
+
+  \end{block}
+
+  \begin{alertblock}{Key Objectives}
+
+    \begin{itemize}
+      \item \textbf{Efficient screening strategy}: VAE-based centroid sampling to reduce screening from \num{65856} compounds to \num{484} representatives (\qty{99.3}{\percent} cost reduction)
+      \item \textbf{Dual-filter consensus docking}: Combine DiffDock and AutoDock Vina across four \textit{P. falciparum} resistance targets (DHFR, CRT, ClpP, ATP4)
+      \item \textbf{Multi-parameter optimization (MPO)}: Integrate binding affinity, drug-likeness (QED), and ADMET properties for candidate ranking
+      \item \textbf{External validation}: Benchmark against MMV Malaria Box (\num{399} confirmed actives) and DEKOIS 2.0 decoy set
+      \item \textbf{Scaffold novelty analysis}: Quantify chemical space exploration beyond simple interpolation
+    \end{itemize}
+
+  \end{alertblock}
+
+  \begin{alertblock}{Key Results}
+
+    \begin{itemize}
+      \item \textbf{Computational efficiency}: \qty{99.3}{\percent} reduction in screening cost (\num{65856} $\to$ \num{484} centroids) while maintaining high discriminatory power (consensus-score ROC-AUC \numrange{0.924}{1.000})
+      
+      \item \textbf{Scaffold novelty}: \qty{92.6}{\percent} of generated molecules are ECFP4-unreachable from seed library (Tanimoto $<$ \num{0.4}), yet \qty{69.3}{\percent} scaffold recovery demonstrates preservation of bioactive frameworks
+      
+      \item \textbf{Synthesizable leads}: \num{19913} candidates with favorable properties: \qty{94.1}{\percent} Lipinski-compliant, \qty{100}{\percent} selectively antiparasitic (SI $>$ \num{10}, $n=810$ screened), \qty{57.0}{\percent} synthetically accessible (SYBA $>$ \num{0}$)
+      
+      \item \textbf{External validation}: MMV Malaria Box benchmark confirms enrichment capacity (EF\qty{5}{\percent} and BEDROC $\alpha=20$)
+      
+      \item \textbf{Open science}: Complete \num{65856}-molecule hybrid library deposited (Zenodo DOI: 10.5281/zenodo.19608875)
+        \end{itemize}
+
+  \end{alertblock}
+
+\end{column}
+
+\separatorcolumn
+
+\begin{column}{\colwidth}
+
+  \begin{block}{Computational workflow: From chemical space to validated leads}
+
+    \begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.75]{images/flowchart_chemspace.pdf}
+    \caption{Computational antimalarial discovery pipeline. (\textbf{1}) Dataset construction from \num{396} African natural products and \num{454} synthetic antimalarials, expanded to \num{65856} molecules via Cheese API and STONED-SELFIES. (\textbf{2}) VAE-based dimensionality reduction and KMeans clustering identify \num{484} diverse centroids. (\textbf{3}) Dual-filter consensus docking (DiffDock + Vina) against four \textit{P. falciparum} targets. (\textbf{4}) Multi-parameter optimization scoring integrates binding affinity, drug-likeness, and ADMET. (\textbf{5}) External validation against MMV Malaria Box benchmark (ROC-AUC \numrange{0.924}{1.000}). (\textbf{6}) Final prioritization yields \num{19913} synthesizable leads.}
+    \end{figure}
+
+  \end{block}
+
+  \begin{block}{Chemical space visualization and scaffold diversity}
+    \centering
+  	\begin{tikzpicture}
+  		% Top image
+  		\node at (-0.75,3) {\includegraphics[scale=0.9, clip]{images/mal_dat.pdf}};
+  		
+  		% Bottom-left image
+  		\node at (-10.75,-8.5) {\includegraphics[scale=0.7, clip]{images/pce_np.pdf}};
+  		
+  		% Bottom-right image
+  		\node at (9,-8.5) {\includegraphics[scale=0.7, clip]{images/pce_sd.pdf}};
+  	\end{tikzpicture}
+    \begin{figure}
+    \includegraphics[scale=1.15, clip]{images/chem_space.pdf}
+    \caption{Principal Component Analysis (PCA) of natural products (left) and synthetic antimalarials (right) using molecular descriptors. The hybrid library spans both regions. Bottom: Full chemical space projection shows distinct clustering with overlapping regions, indicating potential for hybrid scaffold design. Generated molecules achieve \qty{92.6}{\percent} ECFP4-unreachable novelty (Tanimoto $<$ \num{0.4}) while maintaining \qty{69.3}{\percent} scaffold recovery from seed library (\num{20702} unique scaffolds, \qty{31.4}{\percent} diversity).}
+  \end{figure}
+  \end{block}
+  
+\end{column}
+
+\separatorcolumn
+
+\begin{column}{\colwidth}
+
+  \begin{block}{Physicochemical properties and ADMET profile}
+     \centering
+     \begin{figure}
+  		\includegraphics[scale=0.94, clip]{images/phys_chem_poster.pdf}
+        \caption{Distribution of key physicochemical properties across natural product (NP, green), synthetic drug (SD, pink), and generated compound subgroups (Cheese, brown; STONED-SELFIES, blue). Horizontal dashed lines: Lipinski thresholds ($\log P \leq \num{5}$, MW $\leq\qty{500}{Da}$, TPSA $\leq \qty{140}{\text{\AA}^2}$). Library achieves \qty{94.1}{\percent} Lipinski compliance, mean QED \num{0.590}, median SA score \num{3.51} (\qty{49.8}{\percent} $<$ \num{3.5}, synthetically tractable).}
+    \end{figure}
+  	\begin{figure}
+  		\includegraphics[scale=0.495, clip]{images/admet_prop_poster.pdf}
+        \caption{Predicted ADMET properties for natural (orange), synthetic (blue), and generated (green) antimalarials via ADMET-AI. African NPs exhibit lower predicted hepatotoxicity and hERG cardiotoxicity compared to synthetic compounds. Cross-validation with RDKit proxies: logS ($\rho = -0.19$), CYP3A4 ($\rho = -0.29$). All \num{810} screened molecules with valid SI predictions show selectivity index $>$ \num{10} (mean SI \num{947}, median \num{253}).}
+  	\end{figure}
+    
+    
+  \end{block}
+
+   
+  \begin{block}{References}
+
+    \nocite{*}
+    \footnotesize{\bibliographystyle{plain}\bibliography{poster}}
+
+  \end{block}
+
+\end{column}
+
+\separatorcolumn
+\end{columns}
+\end{frame}
+
+\end{document}
