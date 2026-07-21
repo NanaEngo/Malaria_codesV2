@@ -162,6 +162,9 @@ class MCTSAgent:
             reward = self._rollout(node)
             self._backpropagate(node, reward)
 
+        # Store root for downstream metrics (hparam search uses this)
+        self._root = root
+
         if not root.children:
             return root_state
         # Best by value (not visits) — more accurate for final selection
