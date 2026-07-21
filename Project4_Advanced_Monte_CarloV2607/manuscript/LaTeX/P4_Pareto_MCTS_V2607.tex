@@ -847,28 +847,29 @@ operating in the same molecular environment and using the same
     molecules is evolved over $N_\text{gen}=40$ generations using
     tournament selection ($k=3$), one-point SMILES crossover
     ($p_\text{cross}=0.7$), and random fragment replacement mutation
-    ($p_\text{mut}=0.2$). We introduce three enhancements to the
-    canonical GA~\cite{Jensen2019} to improve its exploration and
-    convergence properties. First, a temperature annealing schedule
-    controls the selection pressure: the tournament temperature $T$
-    decays linearly from $T_\text{start}=2.0$ to $T_\text{end}=0.5$
-    over the generations, temporarily softening the selection
-    distribution to encourage exploration of low-scoring but
-    structurally promising candidates early in the run and sharpening
-    it to exploit high-quality solutions later. Second, a stagnation
-    detection mechanism monitors the population mean reward over the
-    last 10 generations; if no improvement exceeds a relative
-    threshold of $\epsilon=0.01$, the mutation rate is temporarily
-    increased from 0.2 to 0.5 for 5 generations (adaptive mutation
-    burst), introducing additional genetic diversity to escape local
-    optima. Third, a Dirichlet noise perturbation ($\alpha=0.15$,
-    $\epsilon=0.10$) is applied to the tournament selection
-    probabilities at each generation, following the AlphaGo
-    paradigm~\cite{Silver2016}, to prevent premature convergence on
-    a single molecular family. These enhancements improve the GA
-    mean reward by approximately 8--12\% compared to the canonical
-    implementation in preliminary tests, making it a stronger
-    baseline for the MCTS comparison.
+    ($p_\text{mut}=0.2$)~\cite{Jensen2019}. The baseline GA results
+    reported in \Cref{sec:benchmark} use the canonical implementation
+    described above. In addition, we evaluate an enhanced GA variant
+    that incorporates three modifications designed to improve
+    exploration and convergence. First, a temperature annealing
+    schedule controls the selection pressure: the tournament
+    temperature $T$ decays linearly from $T_\text{start}=2.0$ to
+    $T_\text{end}=0.5$ over the generations, softening the selection
+    distribution early for broader exploration and sharpening it later
+    for exploitation. Second, a stagnation detection mechanism
+    monitors the population mean reward over the last 10 generations;
+    if no improvement exceeds a relative threshold of $\epsilon=0.01$,
+    the mutation rate is temporarily increased from 0.2 to 0.5 for
+    5 generations (adaptive mutation burst), injecting diversity to
+    escape local optima. Third, a Dirichlet noise perturbation
+    ($\alpha=0.15$, $\epsilon=0.10$) is applied to the tournament
+    selection probabilities at each generation, following the
+    exploration-noise paradigm~\cite{Silver2016, Fortunato2018},
+    to prevent premature convergence on a single molecular family.
+    The enhanced GA is evaluated in the ablation study
+    (\Cref{tab:ablation}), where its mean reward is compared against
+    the canonical implementation to isolate the contribution of each
+    enhancement.
 \end{description}
 
 \subsection{Benchmark Protocol}
