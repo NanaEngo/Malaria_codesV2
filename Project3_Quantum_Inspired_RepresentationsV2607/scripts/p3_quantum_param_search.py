@@ -238,24 +238,29 @@ def _precompute_qk_all(X_ecfp,
         - 'X_q': scaled UMAP coordinates (N x n_qubits)
         - 'K_psd': closest-PSD kernel matrix (N x N)
         - 'time_s': kernel computation time
+        - 'times': dict of detailed timing breakdown
     """
     from umap import UMAP
 
-    t0 = time.perf_counter()
+    times = {}
 
-    # UMAP on ALL data (fit + transform once)
+    # --- UMAP ---
+    t0 = time.perf_counter()
     reducer = UMAP(n_components=n_qubits, metric="jaccard",
                    random_state=42, n_neighbors=15, min_dist=0.1)
     X_8d = reducer.fit_transform(X_ecfp)
-
-    # Scale to [-1, 1]
     lo, hi = X_8d.min(axis=0), X_8d.max(axis=0)
     rng = np.where(hi - lo > 0, hi - lo, 1.0)
     X_q = 2.0 * (X_8d - lo) / rng - 1.0
+    times["umap"] = time.perf_counter() - t0
+    print(f"    UMAP ({n_qubits}d): {times['umap']:.1f}s", flush=True)
 
     n = len(X_q)
-    # Use chunked kernel only if n > 1200; otherwise full matrix is faster
-    # (chunking computes more kernel pairs than full matrix for n < 1200)
+    n_pairs = n * (n + 1) // 2
+    print(f"    Kernel: {n}x{n} matrix ({n_pairs:,} upper-triangle pairs)", flush=True)
+
+    # --- Kernel matrix ---
+    t1 = time.perf_counter()
     if block_size is not None and n > max(1200, block_size):
         K = _kernel_matrix_chunked(X_q, block_size=block_size,
                                    n_jobs=n_jobs,
@@ -264,12 +269,19 @@ def _precompute_qk_all(X_ecfp,
     else:
         _kfn = _get_kernel_fn(n_qubits, n_repeats)
         K = kernel_matrix(X_q, X_q, _kfn)
+    times["kernel"] = time.perf_counter() - t1
+    rate = n_pairs / times["kernel"] if times["kernel"] > 0 else 0
+    print(f"    Kernel matrix: {times['kernel']:.1f}s  ({rate:.0f} pairs/s)", flush=True)
 
+    # --- closest PSD ---
+    t2 = time.perf_counter()
     K_psd = closest_psd_matrix(K)
-    elapsed = time.perf_counter() - t0
+    times["closest_psd"] = time.perf_counter() - t2
+    print(f"    closest_PSD: {times['closest_psd']:.1f}s", flush=True)
 
-    print(f"    Kernel precomputed: {n}x{n} matrix in {elapsed:.1f}s")
-    return {"X_q": X_q, "K_psd": K_psd, "time_s": elapsed}
+    elapsed = time.perf_counter() - t0
+    print(f"    Total precompute: {elapsed:.1f}s", flush=True)
+    return {"X_q": X_q, "K_psd": K_psd, "time_s": elapsed, "times": times}
 
 
 # ---------------------------------------------------------------------------
@@ -295,6 +307,7 @@ def evaluate_hybrid(X_ecfp, X_tfp, X_tne, y,
 
     fold_aucs = []
     for fold, (tr_idx, te_idx) in enumerate(skf.split(X_ecfp, y), start=1):
+        tf = time.perf_counter()
         # Extract fold QK from precomputed kernel (seconds, not minutes)
         qk_tr, qk_te = _qk_features_fold(QK_data, tr_idx, te_idx, n_kpca=n_kpca)
 
@@ -314,8 +327,13 @@ def evaluate_hybrid(X_ecfp, X_tfp, X_tne, y,
         y_prob = clf.predict_proba(X_te_s)[:, 1]
         auc = roc_auc_score(y_te, y_prob) if len(np.unique(y_te)) > 1 else np.nan
         fold_aucs.append(auc)
+        t_fold = time.perf_counter() - tf
+        print(f"    Fold {fold}: AUC={auc:.4f}  KPCA+RF: {t_fold:.1f}s", flush=True)
 
-    return np.mean(fold_aucs), np.std(fold_aucs)
+    mean_auc = np.mean(fold_aucs)
+    std_auc = np.std(fold_aucs)
+    print(f"    => Mean AUC = {mean_auc:.4f} +/- {std_auc:.4f}", flush=True)
+    return mean_auc, std_auc
 
 
 # ---------------------------------------------------------------------------

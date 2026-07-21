@@ -8,8 +8,8 @@
 # Temps estimé : ~2-3 min pour n=1000, bd6, nr1
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p3_bd6_nr1_nk30
-#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_single_%%j.log
-#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_single_%%j.err
+#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_single_%j.log
+#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_single_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
@@ -19,10 +19,11 @@
 
 set -euo pipefail
 
-export OMP_NUM_THREADS=1
+export OMP_NUM_THREADS=4
 export OPENBLAS_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
+export PYTHONUNBUFFERED=1
 
 PYTHON="/home/nanaengo/miniforge3/envs/malaria_md/bin/python"
 PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607"
