@@ -23,6 +23,7 @@ References
 
 from __future__ import annotations
 
+import math
 import warnings
 from collections import OrderedDict
 from pathlib import Path
@@ -224,36 +225,72 @@ class OracleAggregator:
             result["pns"] = self._pns_score(smiles)
         return result
 
-    def reward(self, smiles: str) -> float:
-        """Compute weighted scalar reward.
+    @staticmethod
+    def _normalize_docking(dock_score: float) -> float:
+        """Normalise un score de docking (kcal/mol) en [0, 1].
 
-        Docking scores are negative (kcal/mol); we negate them so that more
-        negative (better) binding increases the reward.
-        SA score is inverted (lower is better) onto a [0,1]-like scale.
-        RRS and PNS are added if enabled and present in weights.
+        Plage physique : [-12, -5] kcal/mol.
+        -12 kcal/mol (très fort) → 1.0
+        -5 kcal/mol (faible) → 0.0
+        Les valeurs hors plage sont clampées.
+        """
+        raw = OracleAggregator._clamp_docking(dock_score, default=-7.0)
+        # raw est négatif dans [-15, -0.1] après clamp
+        # Plage physique : [-12, -5] kcal/mol
+        # -12 kcal/mol (très fort) → 1.0
+        # -5 kcal/mol (faible) → 0.0
+        # Formule : (-raw - 5) / 7  (car -raw est positif)
+        norm = max(0.0, min(1.0, (-raw - 5.0) / 7.0))
+        return norm  # 0.0 = faible, 1.0 = fort
+
+    @staticmethod
+    def _normalize_syba(syba_score: float) -> float:
+        """Normalise un score SYBA en [0, 1].
+
+        SYBA peut aller de négatif (difficile) à très positif (facile).
+        On utilise une fonction sigmoïde centrée à 0 :
+        syba=0 → 0.5 (neutre), syba=+10 → ~0.88, syba=-10 → ~0.12
+        """
+        # Sigmoid centrée : 1 / (1 + exp(-x)), x = syba / 5.0
+        x = syba_score / 5.0
+        return 1.0 / (1.0 + math.exp(-x))
+
+    def reward(self, smiles: str) -> float:
+        """Compute weighted scalar reward with all components normalised to [0, 1].
+
+        **Normalisation** : chaque composante est ramenée à [0, 1] avant
+        pondération pour éviter qu'une composante domine les autres.
+        - MPO : déjà en [0, 1]
+        - Docking : [-12, -5] kcal/mol → [0, 1]
+        - SYBA : sigmoïde centrée → [0, 1]
+        - SA : inversion (10 - SA) / 9 → [0, 1]
+        - RRS : déjà en [0, 1]
+        - PNS : déjà en [0, 1]
 
         All sub-scores are clamped to physically reasonable ranges to
         protect against corrupted library entries (the Tartarus CSV
         contains ~2,800 entries with a corrupted value of 10000.0).
         """
         scores = self.score(smiles)
-        # Negate docking so that more negative (stronger binding) is better.
-        # Clamp to physically possible range (corrupted CSV entries give 10000).
-        docking = self._clamp_docking(scores["docking"], default=-7.0)
-        docking = -docking  # negate after clamping
-        # Invert SAscore (lower is better) onto a [0,1]-like reward scale.
+
+        # Chaque composante normalisée en [0, 1]
+        mpo_norm = max(0.0, min(1.0, scores["mpo"]))
+        dock_norm = self._normalize_docking(scores["docking"])
+        syba_norm = self._normalize_syba(scores["syba"])
         sa_reward = max(0.0, 10.0 - scores["sa"]) / 9.0
 
         reward_val = (
-            self.weights.get("mpo", 0.0) * scores["mpo"]
-            + self.weights.get("docking", 0.0) * docking
-            + self.weights.get("syba", 0.0) * scores["syba"]
+            self.weights.get("mpo", 0.0) * mpo_norm
+            + self.weights.get("docking", 0.0) * dock_norm
+            + self.weights.get("syba", 0.0) * syba_norm
             + self.weights.get("sa", 0.0) * sa_reward
         )
         if self.use_rrs and "rrs" in scores and "rrs" in self.weights:
-            reward_val += self.weights["rrs"] * scores["rrs"]
+            rrs_norm = max(0.0, min(1.0, scores["rrs"]))
+            reward_val += self.weights["rrs"] * rrs_norm
         if self.use_pns and "pns" in scores and "pns" in self.weights:
-            reward_val += self.weights["pns"] * scores["pns"]
+            pns_norm = max(0.0, min(1.0, scores["pns"]))
+            reward_val += self.weights["pns"] * pns_norm
         return reward_val
 
     # ── Library loading ────────────────────────────────────────────────

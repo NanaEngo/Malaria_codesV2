@@ -26,10 +26,23 @@ from rdkit.DataStructs import TanimotoSimilarity
 RDLogger.logger().setLevel(RDLogger.ERROR)
 
 
-# ── Fragment frequency priors (from medicinal chemistry literature) ──
-# These are log-frequency scores for each fragment category.
+# ── Fragment frequency priors (medicinal chemistry heuristics) ─────
+# These are manually assigned log-frequency scores for each fragment.
 # Higher = more drug-relevant / synthetically accessible.
-# Based on analysis of ChEMBL27 fragment distributions (Bemis-Murcko).
+#
+# NOTE: These priors are NOT derived from actual ChEMBL27 data.
+# They are heuristic values based on medicinal chemistry experience.
+# A future improvement would be to compute data-driven priors from
+# ChEMBL27 fragment distributions (Bemis-Murcko decomposition).
+# The current heuristic values:
+# - 0.85-0.95: Universal/highly privileged (phenyl, methyl, hydroxyl)
+# - 0.60-0.80: Common drug fragments (pyridyl, piperidinyl, methoxy)
+# - 0.30-0.55: Moderately common (pyrrole, isopropyl, cyclopropyl)
+# - 0.15-0.25: Specific/rare (bromide, sulfonamide, nitro)
+#
+# These values were calibrated to give reasonable exploration
+# diversity in early MCTS iterations. They work adequately for
+# the current benchmark but are not quantitatively grounded.
 FRAGMENT_PRIORS: dict[str, float] = {
     # Aromatic (highly privileged in drug discovery)
     "c1ccc([*])cc1":     0.95,   # Phenyl - most common

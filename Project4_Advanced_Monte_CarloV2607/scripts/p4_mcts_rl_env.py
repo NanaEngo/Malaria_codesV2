@@ -23,10 +23,13 @@ from __future__ import annotations
 import random
 from typing import Any, Optional, Tuple
 
+import logging
 import datamol as dm
 from rdkit import Chem
 from rdkit.Chem import ValenceType
 from rdkit.Chem.Lipinski import RotatableBondSmarts
+
+logger = logging.getLogger(__name__)
 
 
 # ── Medicinal chemistry fragment vocabulary ──────────────────────────
@@ -329,8 +332,12 @@ class MolecularEnv:
 
         try:
             Chem.SanitizeMol(rw_mol)
-            return Chem.MolToSmiles(rw_mol)
-        except Exception:
+            result = Chem.MolToSmiles(rw_mol)
+            if result == state:
+                logger.warning("Fragment attachment produced no change: state=%s fragment=%s", state, fragment_smiles)
+            return result
+        except Exception as exc:
+            logger.debug("Fragment attachment failed: state=%s fragment=%s error=%s", state, fragment_smiles, exc)
             return state
 
     def get_fragment_summary(self) -> str:
