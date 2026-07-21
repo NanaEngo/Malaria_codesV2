@@ -338,33 +338,28 @@ class OracleAggregator:
     def _compute_fingerprints(self, smiles_list: list[str]) -> list:
         """Compute Morgan bit-vector fingerprints for a list of SMILES.
 
-        Uses datamol for batch processing (skill-based):
-        dm.parallelized() for multi-CPU fingerprint computation.
+        Uses datamol parallelized batch processing (skill-based):
+        dm.parallelized() for multi-CPU fingerprint computation,
+        falling back to sequential RDKit if datamol unavailable.
         """
         if not smiles_list:
             return []
 
-        if _HAS_DATAMOL:
-            # Use datamol parallelized batch processing
-            mols = dm.to_mol(smiles_list, ordered=True)
-            gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
-            fps = []
-            for mol in mols:
-                if mol is None:
-                    fps.append(None)
-                else:
-                    fps.append(gen.GetFingerprint(mol))
-            return fps
-
-        # Fallback: raw RDKit (original version)
         gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
+
+        def _fp_from_mol(mol) -> object | None:
+            return None if mol is None else gen.GetFingerprint(mol)
+
+        if _HAS_DATAMOL:
+            # Parallelized batch fingerprinting via datamol
+            mols = dm.to_mol(smiles_list, ordered=True)
+            return dm.parallelized(_fp_from_mol, mols, n_jobs=-1, progress=False)
+
+        # Fallback: sequential RDKit
         fps = []
         for smi in smiles_list:
             mol = Chem.MolFromSmiles(smi)
-            if mol is None:
-                fps.append(None)
-            else:
-                fps.append(gen.GetFingerprint(mol))
+            fps.append(_fp_from_mol(mol))
         return fps
 
     @staticmethod
