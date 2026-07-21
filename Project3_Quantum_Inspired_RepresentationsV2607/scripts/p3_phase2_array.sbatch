@@ -13,7 +13,7 @@
 # Sortie : results/p3_phase2_array_N.csv  (fichier unique par tâche)
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p3_phase2
-#SBATCH --array=0-2
+#SBATCH --array=0-2%1
 #SBATCH --output=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_%a_%j.log
 #SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_%a_%j.err
 #SBATCH --ntasks=1
