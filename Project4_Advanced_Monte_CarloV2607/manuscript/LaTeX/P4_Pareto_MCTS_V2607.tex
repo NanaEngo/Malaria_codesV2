@@ -1,0 +1,229 @@
+% ═══════════════════════════════════════════════════════════════════════
+%  P4 — Pareto-Guided Monte Carlo Tree Search with Quantum Validation
+%        for Antimalarial de Novo Design
+%
+%  Target: Journal of Chemical Information and Modeling (JCIM)
+%  Template: achemso (ACS)
+% ═══════════════════════════════════════════════════════════════════════
+
+\documentclass[jcim,article,layout=manuscript]{achemso}
+
+\usepackage[version=4]{mhchem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\usepackage{cleveref}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{xspace}
+
+% ── Metadata ─────────────────────────────────────────────────────────
+\title{Multi-Objective MCTS with Quantum Validation for Antimalarial Design}
+
+\author{Myke Vital Sao Temgoua}
+\author{Jean-Pierre Tchapet Njafa}
+\author{Penabei Samafou}
+\author{Wilfred Fon Mbacham}
+\author{Serge Guy Nana Engo*}
+
+\affiliation{
+  Department of Physics, Faculty of Science, University of Yaound\'{e} I,
+  P.O. Box 812, Yaound\'{e}, Cameroon
+}
+
+\altaffiliation{%
+  Center for Computational Biology, African Institute for Mathematical Sciences,
+  Limbe, Cameroon
+}
+
+\email{serguy.engo@facsciences-uy1.cm}
+
+\abbreviations{MCTS, PUCT, ScafVAE, QMC, MPO, SYBA, SA}
+\keywords{de novo drug design, Monte Carlo tree search, Pareto optimization,
+  quantum Monte Carlo, antimalarial, machine learning}
+
+\begin{document}
+
+% ── Abstract ─────────────────────────────────────────────────────────
+\begin{abstract}
+De novo molecular generation faces two fundamental challenges: (i)~single-objective
+optimization obscures essential trade-offs between binding affinity, synthetic
+accessibility, and drug-likeness; (ii)~computational predictions lack the
+electronic-structure validation that experimentalists trust. We address both
+limitations with a Pareto-guided Monte Carlo Tree Search (MCTS) framework
+that combines three methodological innovations. First, a ScafVAE-informed
+fragment policy guides tree exploration using chemical priors derived from
+ChEMBL27 fragment frequencies and scaffold Tanimoto compatibility, replacing
+random expansion with chemistry-aware PUCT selection. Second, a Pareto
+multi-objective front tracks non-dominated solutions across MPO, SYBA, and
+SA scores simultaneously, eliminating the need for a priori reward aggregation.
+Third, a rigorous four-method benchmark (MCTS~vs~Random~vs~Greedy~vs~Genetic
+Algorithm) across ten independent seeds establishes statistical significance,
+with scaffold diversity measured by pairwise Tanimoto dissimilarity and
+multi-dimensional scaling. Applied to the antimalarial target space, our
+framework discovers Pareto-optimal candidates that balance potency,
+synthesizability, and drug-likeness---trade-offs that scalar optimization
+systematically misses. Quantum Monte Carlo validation on the top-five
+candidates provides gold-standard electronic correlation energies that
+confirm the physical relevance of the computed scores.
+\end{abstract}
+
+% ── Introduction ─────────────────────────────────────────────────────
+\section{Introduction}
+
+Computational drug discovery has made remarkable progress in identifying
+chemical starting points for challenging therapeutic targets~\cite{Wells2015}.
+Among computational approaches, de novo molecular generation---the automatic
+design of novel chemical entities from scratch---has emerged as a promising
+paradigm for exploring chemical space beyond known compounds~\cite{GDPLarge2019,
+Olivecrona2017, ZielStroth2020}.
+
+\subsection{Limitations of Current Approaches}
+
+Current de novo methods predominantly employ either evolutionary algorithms
+(Jensen~2019~\cite{Jensen2019}), reinforcement learning~\cite{Olivecrona2017,
+Zhou2019}, or variational autoencoders~\cite{GomezBombarelli2018}. While these
+methods generate chemically valid molecules, they share three fundamental
+limitations:
+
+\textbf{L1 -- Scalar reward aggregation.} Multiple objectives (binding affinity,
+synthetic accessibility, ADME properties) are combined into a single scalar
+reward via weighted sum. This forces the user to choose weights a priori,
+and systematically misses optimal trade-off solutions that lie on the Pareto
+front rather than at a single weighted optimum \cite{Mothra2024}.
+
+\textbf{L2 -- Unguided or random exploration.} Many methods expand the
+molecular graph without chemical priors, exploring synthetically inaccessible
+or reactive regions of chemical space. Recent work has demonstrated that
+chemistry-informed priors significantly improve search efficiency for
+drug-like molecules \cite{CombiMOTS2026}.
+
+\textbf{L3 -- No electronic-structure validation.} Generated molecules are
+typically validated only by docking scores or simple drug-likeness filters.
+Docking scores are notoriously noisy \cite{Warren2006}, and no current
+de novo framework validates the electronic structure of generated candidates
+beyond DFT-level approximations.
+
+\subsection{Our Contributions}
+
+We present a Pareto-guided MCTS framework that addresses all three limitations:
+
+\begin{enumerate}[label=\textbf{C\arabic*:}]
+  \item \textbf{Pareto multi-objective optimization.} We replace scalar reward
+    aggregation with a full Pareto front that tracks non-dominated solutions
+    across three objectives (MPO, SYBA, SA), enabling the simultaneous
+    exploration of optimal trade-off surfaces.
+  \item \textbf{ScafVAE-guided PUCT selection.} We introduce a chemistry-informed
+    fragment policy that provides PUCT~\cite{Silver2016} priors based on
+    ChEMBL27 fragment frequencies, scaffold Tanimoto compatibility, and
+    reactivity filters, eliminating random expansion.
+  \item \textbf{Rigorous four-method benchmark.} We benchmark MCTS against
+    Random, Greedy, and Genetic Algorithm baselines across ten independent
+    seeds, reporting mean/standard deviation, scaffold diversity, and
+    compute-time efficiency---all in JCIM-compatible LaTeX tables.
+  \item \textbf{Quantum Monte Carlo validation.} We validate the top-five
+    Pareto-optimal candidates using Diffusion Monte Carlo (DMC), providing
+    gold-standard electronic correlation energies that confirm the physical
+    relevance of the computed scores.
+\end{enumerate}
+
+% ── Results ──────────────────────────────────────────────────────────
+\section{Results}
+
+\subsection{Benchmark Comparison}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{Graphics/benchmark_reward_bar.png}
+  \caption{Benchmark comparison of four molecular generation methods.
+    Bars show mean best reward $\pm$ one standard deviation across ten
+    independent seeds. MCTS+ScafVAE achieves the highest mean reward
+    while maintaining the lowest variance.}
+  \label{fig:benchmark_bar}
+\end{figure}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Benchmark statistics across ten seeds.}
+  \label{tab:benchmark}
+  \input{benchmark_table.tex}
+\end{table}
+
+\subsection{Pareto Front Analysis}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{Graphics/pareto_front.png}
+  \caption{Pareto front of non-dominated solutions across three objectives
+    (MPO, SYBA, SA). The Pareto frontier (dashed line) connects optimal
+    trade-off solutions.}
+  \label{fig:pareto}
+\end{figure}
+
+\subsection{Scaffold Diversity}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{Graphics/scaffold_diversity.png}
+  \caption{Multi-dimensional scaling (MDS) projection of generated molecules
+    coloured by method. MCTS+ScafVAE achieves the broadest chemical space
+    coverage.}
+  \label{fig:diversity}
+\end{figure}
+
+\subsection{Ablation Studies}
+
+\subsection{QMC Validation}
+
+% ── Discussion ───────────────────────────────────────────────────────
+\section{Discussion}
+
+% ── Methods ──────────────────────────────────────────────────────────
+\section{Methods}
+
+\subsection{Molecular Environment}
+
+\subsection{MCTS with ScafVAE Policy}
+
+\subsection{Pareto Multi-Objective Optimization}
+
+\subsection{Baselines}
+
+\subsection{Benchmark Protocol}
+
+\subsection{Quantum Monte Carlo Validation}
+
+\subsection{Computational Resources}
+
+% ── Conclusion ───────────────────────────────────────────────────────
+\section{Conclusion}
+
+% ── Supporting Information ───────────────────────────────────────────
+\section*{Supporting Information}
+Full benchmark tables (Table~S1--S5), ablation study details (c$_\text{PUCT}$,
+temperature, fragment set sensitivity), molecular property distributions
+(MW, logP, HBA, HBD, RotBonds, TPSA), Lipinski rule-of-five analysis,
+scaffold diversity dendrograms, and QMC energy correlations (PDF).
+
+% ── Data Availability ────────────────────────────────────────────────
+\section*{Data Availability}
+All data supporting this study are publicly available on Zenodo
+(DOI:~\href{https://doi.org/10.5281/zenodo.19608875}{10.5281/zenodo.19608875})
+under a CC-BY 4.0 licence. Source code is available at
+\url{https://github.com/NanaEngo/Malaria_codesV2} under the MIT licence.
+See the Supporting Information for a full inventory of deposited files.
+
+% ── Acknowledgements ─────────────────────────────────────────────────
+\section*{Acknowledgements}
+
+This work was supported by the African Institute for Mathematical Sciences
+(AIMS) and the Center for Computational Biology, Yaound\'{e}, Cameroon.
+Computational resources were provided by the Center for High Performance
+Computing (CHPC), South Africa.
+
+% ── References ───────────────────────────────────────────────────────
+\bibliography{P4_Bibliography}
+
+\end{document}

@@ -49,6 +49,10 @@ class MCTSNode:
 class MCTSAgent:
     """MCTS agent for molecular optimization.
 
+    Uses a PUCT variant of the standard MCTS algorithm with policy-guided
+    selection. The policy provides action priors P(s,a) that bias the
+    tree search toward chemically plausible fragment combinations.
+
     Parameters
     ----------
     env : MolecularEnv
@@ -58,7 +62,10 @@ class MCTSAgent:
     n_iterations : int
         Number of MCTS iterations per search.
     c_puct : float
-        Exploration constant for UCT.
+        Exploration constant for PUCT (higher = more exploration).
+    policy_fn : callable or None
+        Function(state, available_actions) -> dict[str, float] of log-prob
+        priors. If None, uses uniform priors (standard UCT).
     """
 
     def __init__(
@@ -67,18 +74,33 @@ class MCTSAgent:
         oracle: Callable[[str], float],
         n_iterations: int = 100,
         c_puct: float = 1.414,
+        policy_fn: Optional[Callable[[str, list[str]], dict[str, float]]] = None,
     ) -> None:
         self.env = env
         self.oracle = oracle
         self.n_iterations = n_iterations
         self.c_puct = c_puct
+        self.policy_fn = policy_fn
 
     def search(self, root_state: str) -> str:
-        """Run MCTS from root_state and return the best action sequence."""
+        """Run MCTS from root_state and return the best molecule found.
+
+        Returns
+        -------
+        str
+            SMILES of the best molecule found.
+        """
         root = MCTSNode(root_state)
         root.step_count = self.env.step_count
 
-        for _ in range(self.n_iterations):
+        # Pre-compute action priors if a policy is available
+        if self.policy_fn is not None:
+            vocab = list(getattr(self.env, "fragment_vocab", []))
+            self._action_priors = self.policy_fn(root_state, vocab)
+        else:
+            self._action_priors = {}
+
+        for iteration in range(self.n_iterations):
             node = self._select(root)
             reward = self._rollout(node)
             self._backpropagate(node, reward)
@@ -89,18 +111,55 @@ class MCTSAgent:
         return best.state
 
     def _select(self, node: MCTSNode) -> MCTSNode:
-        """Select a leaf node using UCT, expanding if possible."""
+        """Select a leaf node using PUCT, expanding if possible."""
         while node.children and node.is_fully_expanded():
-            node = node.best_child(self.c_puct)
+            node = self._puct_best_child(node)
         if not node.is_fully_expanded():
             node = self._expand(node)
         return node
 
+    def _puct_best_child(self, node: MCTSNode) -> MCTSNode:
+        """Select child with highest PUCT score = Q + U.
+
+        U = c_puct * P(s,a) * sqrt(N_parent) / (1 + N_child)
+        where P(s,a) is the policy prior for taking action a from state s.
+        """
+        sqrt_n = math.sqrt(max(node.visits, 1))
+        best_score = -float("inf")
+        best_child = None
+
+        for action, child in node.children.items():
+            # Action value
+            q = child.value / max(child.visits, 1)
+            # Policy prior
+            prior = self._action_priors.get(action, 0.0)
+            # Convert log-prob back to prob for PUCT formula
+            p = math.exp(prior) if prior < 0 else prior
+            # PUCT exploration bonus
+            u = self.c_puct * p * sqrt_n / (1.0 + child.visits)
+            score = q + u
+
+            if score > best_score:
+                best_score = score
+                best_child = child
+
+        return best_child or list(node.children.values())[0]
+
     def _expand(self, node: MCTSNode) -> MCTSNode:
         """Expand the node by adding one untried action as a child."""
         if node.untried_actions is None:
-            node.untried_actions = list(getattr(self.env, "fragment_vocab", []))
-            random.shuffle(node.untried_actions)
+            vocab = list(getattr(self.env, "fragment_vocab", []))
+            if self.policy_fn is not None and self._action_priors:
+                # Order by policy prior (highest first) for efficient exploration
+                node.untried_actions = sorted(
+                    vocab,
+                    key=lambda a: self._action_priors.get(a, 0.0),
+                    reverse=True,
+                )
+            else:
+                node.untried_actions = list(vocab)
+                random.shuffle(node.untried_actions)
+
         if not node.untried_actions:
             return node
 
