@@ -330,17 +330,53 @@ SMILES → Geometry optimization (xTB/GFN2-xTB)
 | **Figure S1** | Molecular property distributions (MW, logP, HBA, HBD, RotBonds, TPSA) | `p4_visualize.py` → `property_correlation.png` |
 | **Table S1** | Full benchmark (LaTeX) | `p4_mcts_benchmark.py` → `p4_benchmark_table.tex` |
 
-### 6.3 Ablation Studies (to implement)
+### 6.3 Ablation Studies — Factorial Design (experimental-design skill)
 
-| Study | Parameters | Expected Insight |
-|-------|-----------|------------------|
-| **Policy ablation** | ScafVAE policy ON vs OFF (flat UCT) | Value of chemistry-informed priors |
-| **Pareto ablation** | Scalar reward vs Pareto front | Benefits of multi-objective optimization |
-| **c_puct sensitivity** | {0.5, 1.0, 1.414, 2.0, 5.0} | Exploration/exploitation trade-off |
-| **Temperature sensitivity** | {0.2, 0.5, 0.8, 1.0, 2.0} | Impact on molecular diversity |
-| **Fragment set** | {minimal, aromatic_only, all} | Vocabulary size vs performance |
+We apply a **full $2^k$ factorial design** (experimental-design skill, Fisher's three principles: randomization, replication, blocking) to quantify main effects and interactions among 5 factors:
 
-These ablation studies will be implemented in `scripts/p4_mcts_ablation.py` before submission.
+| Factor | Low (-1) | High (+1) | Type |
+|--------|:--------:|:---------:|:----:|
+| A: ScafVAE policy | OFF (UCT) | ON (PUCT) | Categorical |
+| B: Pareto front | OFF (scalar) | ON (3-obj) | Categorical |
+| C: c_puct | 0.5 | 1.414 | Continuous |
+| D: Temperature | 0.2 | 1.0 | Continuous |
+| E: Fragment set | minimal (8) | all (33) | Categorical |
+
+**Full $2^5 = 32$ runs**, each with 5 seeds (replicates) → **160 total evaluations**.
+
+**Blocking:** Each $2^k$ block is run in a single SLURM array job to control for cluster load variation (blocking factor = job ID). Run order is randomized within each block to prevent confounding with time-dependent drift (e.g., CPU cache warming, network latency).
+
+**Expected output:**
+- **Main effects plot** — Which factors have the largest impact on reward/diversity/hypervolume?
+- **Interaction plot** — Which factor pairs exhibit synergy or antagonism?
+- **Pareto chart** — Standardized effect size (sorted by magnitude)
+- **ANOVA table** — Statistical significance of each factor and interaction
+- **Response surface** — For continuous factors (c_puct, temperature), 3D surface plots showing the optimum region
+
+**Implementation:** `scripts/p4_mcts_ablation.py` (to be written before submission) using `pyDOE3` for design matrix generation.
+
+```python
+# Example: generate fractional factorial design with pyDOE3
+from pyDOE3 import fracfact
+# 2^(5-1) = 16 runs (resolution V: main effects clear, 2-way aliased with 3-way)
+design = fracfact('a b c d abcd')  # generator: E = ABCD
+```
+
+### 6.4 Response-Surface Optimization (Phase 2)
+
+After identifying significant factors via $2^k$ screening, refine continuous factors (c_puct, temperature) using a **Central Composite Design (CCD)**:
+
+| Factor | -α | -1 | 0 | +1 | +α |
+|--------|:--:|:--:|:--:|:--:|:--:|
+| c_puct | 0.1 | 0.5 | 1.1 | 1.7 | 2.1 |
+| Temperature | 0.1 | 0.3 | 0.8 | 1.3 | 1.6 |
+
+α = 1.414 (rotatable CCD), with 3 center-point replicates. Total: $2^2 + 2×2 + 3 = 11$ runs.
+
+**Expected output:**
+- Response surface contour plot
+- Optimal settings for (c_puct, temperature) → maximize mean reward
+- Curvature test (significant quadratic terms → optimum is interior)
 
 ### 6.4 Anticipated Negative Results & Narrative Strategy
 
