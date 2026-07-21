@@ -54,6 +54,14 @@ class MCTSAgent:
     selection. The policy provides action priors P(s,a) that bias the
     tree search toward chemically plausible fragment combinations.
 
+    Features (2026-07):
+    - **Dynamic Progressive Widening**: branching factor grows with
+      visit count (k * N^alpha) instead of a hard K cap, allowing deeper
+      exploration in promising regions while restricting early branching.
+    - **Virtual Loss**: penalises nodes being explored in the current
+      iteration to encourage parallel exploration of diverse branches.
+    - **Policy-biased rollouts**: informed rollouts via ScafVAE priors.
+
     Parameters
     ----------
     env : MolecularEnv
@@ -70,9 +78,17 @@ class MCTSAgent:
     rollout_strategy : str
         Rollout strategy: 'policy_biased' (default) or 'random'.
     seed : int or None
-        Random seed for reproducible MCTS runs.    progressive_widening_k : int
-        Base number of top-K actions to consider per node (Progressive
-        Widening). Default 20. Set to 0 or >33 to disable."""
+        Random seed for reproducible MCTS runs.
+    pw_alpha : float
+        Dynamic Progressive Widening exponent: max_actions = max(5, k * N^alpha).
+        Default 0.5 (square-root growth). Set k=0 to disable.
+    pw_k : float
+        Base multiplier for Dynamic PW: max_actions = max(5, k * N^alpha).
+        Default 1.0. Higher = more actions per node.
+    virtual_loss : float
+        Penalty applied to nodes currently being explored. Default 0.01.
+        Higher = more exploration diversity.
+    """
 
     def __init__(
         self,
@@ -83,7 +99,9 @@ class MCTSAgent:
         policy_fn: Optional[Callable[[str, list[str]], dict[str, float]]] = None,
         rollout_strategy: str = "policy_biased",
         seed: Optional[int] = None,
-        progressive_widening_k: int = 20,
+        pw_alpha: float = 0.5,
+        pw_k: float = 1.0,
+        virtual_loss: float = 0.05,
     ) -> None:
         self.env = env
         self.oracle = oracle
@@ -92,7 +110,12 @@ class MCTSAgent:
         self.policy_fn = policy_fn
         self.rollout_strategy = rollout_strategy
         self._rng = random.Random(seed)
-        self.progressive_widening_k = progressive_widening_k
+        self.pw_alpha = pw_alpha
+        self.pw_k = pw_k
+        self.virtual_loss = virtual_loss
+        # Track states visited this search to avoid revisiting (MCTS-Solver)
+        self._visited_states: set[str] = set()
+        self._priors_cache: dict[str, dict[str, float]] = {}
 
     def _make_env_copy(self, state: str, step_count: int) -> Any:
         """Create a lightweight environment copy (avoids expensive deepcopy).
@@ -117,6 +140,11 @@ class MCTSAgent:
     def search(self, root_state: str) -> str:
         """Run MCTS from root_state and return the best molecule found.
 
+        Features:
+        - Dynamic Progressive Widening (branching factor grows with visits)
+        - Virtual Loss (diverse parallel exploration)
+        - State caching (avoid revisiting same molecule)
+
         Returns
         -------
         str
@@ -125,8 +153,9 @@ class MCTSAgent:
         root = MCTSNode(root_state)
         root.step_count = self.env.step_count
 
-        # Cache priors per node state for efficiency
-        self._priors_cache: dict[str, dict[str, float]] = {}
+        # Reset per-search caches
+        self._priors_cache = {}
+        self._visited_states = {root_state}
 
         for iteration in range(self.n_iterations):
             node = self._select(root)
@@ -135,7 +164,8 @@ class MCTSAgent:
 
         if not root.children:
             return root_state
-        best = max(root.children.values(), key=lambda child: child.visits)
+        # Best by value (not visits) — more accurate for final selection
+        best = max(root.children.values(), key=lambda child: child.value / max(child.visits, 1))
         return best.state
 
     def _get_priors(self, state: str) -> dict[str, float]:
@@ -159,10 +189,15 @@ class MCTSAgent:
         return node
 
     def _puct_best_child(self, node: MCTSNode) -> MCTSNode:
-        """Select child with highest PUCT score = Q + U.
+        """Select child with highest PUCT score = Q + U - VL.
 
         U = c_puct * P(s,a) * sqrt(N_parent) / (1 + N_child)
         where P(s,a) is the state-dependent policy prior for action a.
+
+        **Virtual Loss (VL)**: a small penalty subtracted from the score
+        to discourage repeated selection of the same branch within a
+        single search iteration. This promotes exploration of diverse
+        chemical regions.
 
         Uses a minimum prior of 1e-8 to avoid zero-prior actions being
         completely unexplored (fix: previous 0.0 caused `exp(0)=1` which
@@ -175,6 +210,10 @@ class MCTSAgent:
         # Get state-dependent priors for this node
         node_priors = self._get_priors(node.state) if self.policy_fn else {}
 
+        # Apply virtual loss: penalise children that have been visited
+        # many times already (encourages exploring less-visited branches)
+        max_visits = max((c.visits for c in node.children.values()), default=1)
+
         for action, child in node.children.items():
             # Action value
             q = child.value / max(child.visits, 1)
@@ -182,13 +221,17 @@ class MCTSAgent:
             prior = node_priors.get(action, 0.0)
             # Convert log-prob back to prob for PUCT formula
             p = math.exp(prior) if prior < 0 else prior
-            # Ensure p is at least a small positive value to avoid actions
-            # with zero prior being over-favoured by the PUCT formula
-            # (previously exp(0)=1 gave them equal weight to high-prior actions)
+            # Ensure p is at least a small positive value
             p = max(p, 1e-8)
             # PUCT exploration bonus
             u = self.c_puct * p * sqrt_n / (1.0 + child.visits)
-            score = q + u
+
+            # Virtual Loss: penalise over-explored children
+            # scale: fraction of max visits, multiplied by virtual_loss
+            visit_ratio = child.visits / max_visits if max_visits > 0 else 0.0
+            vl = self.virtual_loss * visit_ratio
+
+            score = q + u - vl
 
             if score > best_score:
                 best_score = score
@@ -199,10 +242,12 @@ class MCTSAgent:
     def _expand(self, node: MCTSNode) -> MCTSNode:
         """Expand the node by adding one untried action as a child.
 
-        Uses **Progressive Widening**: limits untried actions to the top-K
-        highest-priority fragments (based on ScafVAE policy priors).
-        This reduces the branching factor from 33→10 (default K=10),
-        giving ~3× more visits per action within the same budget.
+        Uses **Dynamic Progressive Widening**: the number of allowed actions
+        grows with the node's visit count: max_actions = max(5, k * N^alpha)
+        where N = node.visits, k = pw_k, alpha = pw_alpha.
+        This replaces the old hard K=20 cap, allowing more actions in
+        promising regions while keeping the branching factor manageable
+        early on.
         """
         if node.untried_actions is None:
             vocab = list(getattr(self.env, "fragment_vocab", []))
@@ -219,10 +264,12 @@ class MCTSAgent:
                 sorted_actions = list(vocab)
                 self._rng.shuffle(sorted_actions)
 
-            # Progressive Widening: limit to top-K actions
-            pw_k = self.progressive_widening_k
-            if pw_k > 0 and len(sorted_actions) > pw_k:
-                node.untried_actions = sorted_actions[:pw_k]
+            # Dynamic Progressive Widening: actions = f(visit_count)
+            if self.pw_k > 0:
+                N = max(node.visits, 1)
+                max_actions = max(5, int(self.pw_k * (N ** self.pw_alpha)))
+                max_actions = min(max_actions, len(sorted_actions))
+                node.untried_actions = sorted_actions[:max_actions]
             else:
                 node.untried_actions = sorted_actions
 
@@ -234,6 +281,12 @@ class MCTSAgent:
         # Use lightweight env copy instead of expensive deepcopy
         env_copy = self._make_env_copy(node.state, node.step_count)
         next_state, _reward, _done, _info = env_copy.step(action)
+
+        # Skip states already visited (MCTS-Solver inspired)
+        if next_state in self._visited_states and next_state != node.state:
+            # Try next action instead
+            return node if not node.untried_actions else self._expand(node)
+        self._visited_states.add(next_state)
 
         child = MCTSNode(state=next_state, parent=node, action=action)
         node.children[action] = child
