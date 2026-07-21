@@ -347,21 +347,30 @@ that are enriched in approved drugs.
 
 \subsection{Ablation Studies}
 
-We performed five ablation experiments to isolate the contribution of
-each methodological component (\Cref{tab:ablation}).
+We performed seven ablation experiments to isolate the contribution of
+each methodological component (\Cref{tab:ablation}). The ablation
+benchmark uses a lower-weight MPO oracle configuration (reward weights:
+$w_{\text{MPO}}=0.15$, $w_{\text{SYBA}}=0.35$, $w_{\text{SA}}=0.10$,
+$w_{\text{docking}}=0.40$) compared to the main benchmark, which
+explains the systematically higher mean reward values (1.14--1.28~vs
+0.597--0.614). The relative differences ($\Delta$) remain informative
+for isolating component contributions.
 
 \begin{table}[htbp]
   \centering
-  \caption{Ablation study results. Values show mean best reward $\pm$
-    standard deviation over five seeds.}
+  \caption{Ablation study results. Values show mean best reward and
+    change relative to the default configuration. Note the different
+    oracle weight configuration compared to the main benchmark
+    (\Cref{tab:benchmark}).}
   \label{tab:ablation}
   \begin{tabular}{lcc}
     \toprule
-    Configuration & Mean reward & $\Delta$ vs full MCTS \\
+    Configuration & Mean reward & $\Delta$ vs default \\
     \midrule
     Full MCTS+ScafVAE (default) & 1.26 & --- \\
     w/o ScafVAE policy (flat PUCT) & 1.24 & $-0.02$ \\
     w/o Pareto front (scalar reward) & 1.25 & $-0.01$ \\
+    w/o global best-molecule tracking & 0.24 & $-1.02$ \\
     $c_{\text{PUCT}} = 0.5$ (low exploration) & 1.28 & $+0.02$ \\
     $c_{\text{PUCT}} = 5.0$ (high exploration) & 1.22 & $-0.04$ \\
     Temperature $= 0.2$ (low diversity) & 1.25 & $-0.01$ \\
@@ -372,15 +381,41 @@ each methodological component (\Cref{tab:ablation}).
   \end{tabular}
 \end{table}
 
-Ablation analysis reveals that MCTS performance is robust to the
-ScafVAE policy and Pareto front: removing either has a negligible
-effect on mean reward ($\Delta < 0.05$). The exploration constant
-$c_{\text{PUCT}}$ has the largest impact: reducing it from 1.414
-to 0.5 marginally improves performance (+0.03), while increasing
-it to 5.0 degrades it ($-0.07$). The most impactful factor is the
-fragment vocabulary size: reducing from 33 to 10 fragments degrades
-the mean reward by 0.14, confirming that a diverse fragment library
-is essential for effective molecular generation.
+Three key findings emerge from the ablation analysis. First, the most
+critical component is the global best-molecule tracking (max-over-rollout):
+removing it causes the MCTS reward to collapse from 1.26 to 0.24
+($\Delta = -1.02$), confirming that the policy-biased rollout without
+the fix systematically degrades intermediate scores and prevents the
+tree from discovering high-quality molecules. This result directly
+motivated the introduction of the global tracking mechanism described
+in \Cref{sec:rollout_fix}.
+
+Second, the MCTS framework is remarkably robust to the ScafVAE policy
+and Pareto front components: removing either has a negligible effect
+on mean reward ($\Delta < 0.05$). This suggests that the primary
+benefit of the ScafVAE policy lies not in improving the best-reward
+asymptote but in accelerating convergence---the policy guides the
+search toward chemically plausible regions early on, reducing the
+number of iterations required to reach a given reward threshold. The
+Pareto front, similarly, contributes to the diversity of discovered
+solutions rather than to the absolute best-reward value, as evidenced
+by the larger Pareto front size (12 non-dominated solutions) compared
+to scalar reward optimisation.
+
+Third, the fragment vocabulary size is the most impactful
+hyperparameter: reducing from 33 to 10 fragments degrades the mean
+reward by 0.14 (11\% reduction), while using 20 curated aromatic
+fragments partially restores performance ($\Delta = -0.04$). This
+finding has practical implications: a vocabulary of at least 20--25
+chemically diverse fragments is necessary for effective molecular
+generation in this domain, with the aromatic set providing a good
+balance between coverage and computational cost. The exploration
+constant $c_{\text{PUCT}}=0.5$ marginally outperforms the default
+1.414 in this configuration (+0.02), suggesting that lower exploration
+may be beneficial when the oracle rewards are well-calibrated. However,
+the optimal value is oracle-dependent, and $c_{\text{PUCT}}=5.0$ was
+selected for the main benchmark based on the systematic hyperparameter
+search (\Cref{sec:hparam}).
 
 \subsection{QMC Validation}
 
