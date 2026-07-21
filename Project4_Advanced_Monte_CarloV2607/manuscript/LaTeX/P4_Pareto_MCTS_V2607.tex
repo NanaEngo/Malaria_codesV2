@@ -347,14 +347,20 @@ that are enriched in approved drugs.
 
 \subsection{Ablation Studies}
 
-We performed seven ablation experiments to isolate the contribution of
+We performed eight ablation experiments to isolate the contribution of
 each methodological component (\Cref{tab:ablation}). The ablation
-benchmark uses a lower-weight MPO oracle configuration (reward weights:
+benchmark uses a modified oracle weight configuration (reward weights:
 $w_{\text{MPO}}=0.15$, $w_{\text{SYBA}}=0.35$, $w_{\text{SA}}=0.10$,
-$w_{\text{docking}}=0.40$) compared to the main benchmark, which
+$w_{\text{docking}}=0.40$; the RRS and PNS oracles from the main
+benchmark are zero-weighted in this configuration) compared to the main
+benchmark ($w_{\text{MPO}}=0.30$, $w_{\text{docking}}=0.25$,
+$w_{\text{SYBA}}=0.15$, $w_{\text{SA}}=0.05$, $w_{\text{RRS}}=0.15$,
+$w_{\text{PNS}}=0.10$). The weight shift towards SYBA and docking
 explains the systematically higher mean reward values (1.14--1.28~vs
-0.597--0.614). The relative differences ($\Delta$) remain informative
-for isolating component contributions.
+0.597--0.614). The relative differences ($\Delta$) and the collapse
+behaviour ($-1.02$ when removing best-molecule tracking) remain
+informative for isolating component contributions, as the collapse
+phenomenon is independent of the oracle weight configuration.
 
 \begin{table}[htbp]
   \centering
