@@ -1522,7 +1522,7 @@ Four methods benchmarked across five independent seeds with 1,000 oracle calls p
 
 ### 4.5 Ablation Study
 
-Seven ablation experiments to isolate component contributions (different oracle weight config: $w_{\text{MPO}}=0.15$, $w_{\text{SYBA}}=0.35$, $w_{\text{docking}}=0.40$, $w_{\text{SA}}=0.10$, RRS/PNS zeroed):
+Nine ablation experiments to isolate component contributions (different oracle weight config: $w_{\text{MPO}}=0.15$, $w_{\text{SYBA}}=0.35$, $w_{\text{docking}}=0.40$, $w_{\text{SA}}=0.10$, RRS/PNS zeroed). The canonical GA (Jensen 2019) is used for the main benchmark (§4.4); the enhanced GA variant is evaluated separately in the ablation below:
 
 | Configuration | Mean reward | $\Delta$ vs default |
 |:--------------|:----------:|:------------------:|
