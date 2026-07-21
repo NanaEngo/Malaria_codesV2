@@ -23,17 +23,10 @@ Output:
 """
 
 import argparse
-import gc
-import gzip
-import logging
 import sys
 import time
 import warnings
-from functools import lru_cache
 from pathlib import Path
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-_log = logging.getLogger(__name__)
 
 try:
     from tqdm import tqdm
