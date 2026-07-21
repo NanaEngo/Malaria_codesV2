@@ -53,17 +53,26 @@ except ImportError:
     _CUPY_AVAILABLE = False
 
 # ── pennylane-lightning optimised device detection ──
-def best_device(n_qubits: int = 6) -> str:
+def best_device(n_qubits: int = 6, prefer_cpu: bool = False) -> str:
     """Select the fastest available PennyLane device.
 
     Priority (from pennylane skill):
-    1. lightning.gpu  — GPU-accelerated (fastest if GPU available)
-    2. lightning.qubit — CPU with OpenMP (best for CPU)
-    3. default.qubit   — fallback
+    - prefer_cpu=False: lightning.gpu > lightning.qubit > default.qubit
+    - prefer_cpu=True:  lightning.qubit > default.qubit (skip GPU)
+
+    Parameters
+    ----------
+    n_qubits : int
+        Number of qubits for the device.
+    prefer_cpu : bool
+        If True, skip lightning.gpu (GPU overhead > CPU for pair-by-pair).
 
     Returns device name string for qml.device().
     """
-    _devices_to_try = ["lightning.gpu", "lightning.qubit", "default.qubit"]
+    if prefer_cpu:
+        _devices_to_try = ["lightning.qubit", "default.qubit"]
+    else:
+        _devices_to_try = ["lightning.gpu", "lightning.qubit", "default.qubit"]
     for d in _devices_to_try:
         try:
             qml.device(d, wires=n_qubits)
@@ -91,9 +100,13 @@ from sklearn.preprocessing import StandardScaler
 import pennylane as qml
 from pennylane.kernels import kernel_matrix, closest_psd_matrix
 
+# ── Global device override (set via --device CLI arg) ──
+_DEVICE_OVERRIDE: str | None = None
+
+
 if _HAS_JAX:
     _KERNEL_FN_JAX_CACHE: dict = {}
-    def _get_kernel_fn_jax(n_qubits, n_repeats):
+    def _get_kernel_fn_jax(n_qubits, n_repeats, prefer_cpu=False):
         """JIT-compiled kernel function via JAX interface (10-100x faster).
 
         Uses pennylane-lightning with JAX backend for optimal performance.
@@ -101,7 +114,7 @@ if _HAS_JAX:
         """
         key = (n_qubits, n_repeats)
         if key not in _KERNEL_FN_JAX_CACHE:
-            dev_name = best_device(n_qubits)
+            dev_name = _DEVICE_OVERRIDE or best_device(n_qubits, prefer_cpu=prefer_cpu)
             dev_jax = qml.device(dev_name, wires=n_qubits)
             @qml.qnode(dev_jax, interface="jax", diff_method=None)
             def _circuit(x1, x2):
@@ -205,17 +218,19 @@ def load_precomputed(smiles_list: list[str],
 
 _KERNEL_CACHE: dict = {}
 
-def _get_kernel_fn(n_qubits: int, n_repeats: int = 1):
+def _get_kernel_fn(n_qubits: int, n_repeats: int = 1, prefer_cpu: bool = False):
     """Get (and cache) a quantum kernel function.
 
-    Uses best_device() to select the fastest available device
-    (lightning.gpu > lightning.qubit > default.qubit).
+    Uses best_device() to select the fastest available device.
+    If prefer_cpu=True, skips lightning.gpu (GPU overhead > CPU
+    for pair-by-pair quantum kernel evaluation).
+
     The QNode is created in standard mode (not JAX), appropriate for
     the row-by-row pairwise kernel loop.
     """
-    key = (n_qubits, n_repeats)
+    key = (n_qubits, n_repeats, prefer_cpu)
     if key not in _KERNEL_CACHE:
-        dev_name = best_device(n_qubits)
+        dev_name = _DEVICE_OVERRIDE or best_device(n_qubits, prefer_cpu=prefer_cpu)
         dev = qml.device(dev_name, wires=n_qubits)
 
         @qml.qnode(dev)
@@ -232,8 +247,8 @@ def _get_kernel_fn(n_qubits: int, n_repeats: int = 1):
     return _KERNEL_CACHE[key]
 
 
-def _compute_block_task(i0, i1, j0, j1, X_chunk, n_qubits, n_repeats):
-    _kfn = _get_kernel_fn(n_qubits, n_repeats)
+def _compute_block_task(i0, i1, j0, j1, X_chunk, n_qubits, n_repeats, prefer_cpu=False):
+    _kfn = _get_kernel_fn(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
     return kernel_matrix(X_chunk[i0:i1], X_chunk[j0:j1], _kfn)
 
 
@@ -280,7 +295,8 @@ def _kernel_matrix_chunked(X: np.ndarray,
                            block_size: int = 200,
                            n_jobs: int = 1,
                            n_qubits: int = 8,
-                           n_repeats: int = 1) -> np.ndarray:
+                           n_repeats: int = 1,
+                           prefer_cpu: bool = False) -> np.ndarray:
     # NOTE: joblib process parallelism (loky backend) causes PicklingError
     # on PennyLane StateVectorC128 objects.  Additionally, lightning.qubit
     # uses OpenMP internally for forward passes — running multiple processes
@@ -311,14 +327,14 @@ def _kernel_matrix_chunked(X: np.ndarray,
     if _HAS_TQDM:
         iterable = tqdm(tasks, desc=f"  QK matrix ({n_blocks}x{n_blocks} blocks)",
                         unit="block", ncols=80)
-        results = [_compute_block_task(i0, i1, j0, j1, X, n_qubits, n_repeats)
+        results = [_compute_block_task(i0, i1, j0, j1, X, n_qubits, n_repeats, prefer_cpu=prefer_cpu)
                    for i0, i1, j0, j1 in iterable]
     else:
         results = []
         for idx, (i0, i1, j0, j1) in enumerate(tasks, start=1):
             print(f"    QK block {idx:4d}/{n_tasks}  (rows {i0}:{i1}, cols {j0}:{j1})...")
             sys.stdout.flush()
-            block_result = _compute_block_task(i0, i1, j0, j1, X, n_qubits, n_repeats)
+            block_result = _compute_block_task(i0, i1, j0, j1, X, n_qubits, n_repeats, prefer_cpu=prefer_cpu)
             results.append(block_result)
 
     K = np.zeros((n, n), dtype=np.float64)
@@ -372,7 +388,8 @@ def _precompute_qk_all(X_ecfp,
                        n_qubits=6,
                        n_repeats=1,
                        block_size=200,
-                       n_jobs=1):
+                       n_jobs=1,
+                       prefer_cpu=False):
     """Precompute UMAP + kernel matrix ONCE on all molecules.
 
     Returns dict with:
@@ -406,12 +423,10 @@ def _precompute_qk_all(X_ecfp,
         K = _kernel_matrix_chunked(X_q, block_size=block_size,
                                    n_jobs=n_jobs,
                                    n_qubits=n_qubits,
-                                   n_repeats=n_repeats)
+                                   n_repeats=n_repeats,
+                                   prefer_cpu=prefer_cpu)
     else:
-        # NOTE: GPU (lightning.gpu / JAX JIT) is 1.3-8x SLOWER than CPU
-        # for pair-by-pair kernel evaluation due to GPU launch overhead.
-        # Always use CPU (lightning.qubit + upper-triangle loop) for speed.
-        _kfn = _get_kernel_fn(n_qubits, n_repeats)
+        _kfn = _get_kernel_fn(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
         desc = f"  Kernel ({n_qubits}q, {n_repeats}rep)"
         K = _kernel_matrix_with_progress(X_q, _kfn, desc=desc)
     times["kernel"] = time.perf_counter() - t1
@@ -435,7 +450,8 @@ def _precompute_qk_all(X_ecfp,
 
 def evaluate_hybrid(X_ecfp, X_tfp, X_tne, y,
                     n_qubits=8, n_kpca=10, n_repeats=1,
-                    block_size=None, n_jobs=1):
+                    block_size=None, n_jobs=1,
+                    prefer_cpu=False):
     """Return mean AUC (RF, 5-fold) for the Hybrid descriptor.
 
     Precomputes UMAP + kernel matrix ONCE on all data, then extracts
@@ -457,7 +473,8 @@ def evaluate_hybrid(X_ecfp, X_tfp, X_tne, y,
                                  n_qubits=n_qubits,
                                  n_repeats=n_repeats,
                                  block_size=block_size,
-                                 n_jobs=n_jobs)
+                                 n_jobs=n_jobs,
+                                 prefer_cpu=prefer_cpu)
 
     fold_aucs = []
     for fold, (tr_idx, te_idx) in enumerate(skf.split(X_ecfp, y), start=1):
@@ -506,6 +523,11 @@ def main():
                         help="Parallel workers (default: 1; forced to 1 for quantum kernel)")
     parser.add_argument("--output-csv", type=str, default=None,
                         help="Output CSV path (default: results/p3_quantum_params_sweep.csv)")
+    parser.add_argument("--device", type=str, default="auto",
+                        choices=["auto", "lightning.qubit", "lightning.gpu", "default.qubit"],
+                        help="PennyLane device: auto (best_device), lightning.qubit (CPU, default "
+                             "for kernels), lightning.gpu (GPU, experimental), default.qubit "
+                             "(fallback). For CPU jobs, use --device lightning.qubit to skip GPU.")
 
     parser.add_argument("--n-repeats", type=str, default="1,2,3,4,6",
                         help="Comma-separated IQP repeat counts to search")
@@ -514,6 +536,12 @@ def main():
     parser.add_argument("--bond-dim", type=str, default="4,6,8",
                         help="Comma-separated qubit counts (UMAP dims) to search")
     args = parser.parse_args()
+
+    # ── Device selection ─────────────────────────────────────────────
+    global _DEVICE_OVERRIDE
+    if args.device != "auto":
+        _DEVICE_OVERRIDE = args.device
+    prefer_cpu = (args.device == "lightning.qubit") or (args.device == "auto" and not _HAS_CUPY)
 
     # Parse grid
     n_repeats_list = [int(x) for x in args.n_repeats.split(",")]
@@ -589,6 +617,7 @@ def main():
                     X_ecfp, X_tfp, X_tne, y,
                     n_qubits=bd, n_kpca=nkpca, n_repeats=nrep,
                     block_size=args.block_size, n_jobs=args.n_jobs,
+                    prefer_cpu=prefer_cpu,
                 )
                 elapsed = time.perf_counter() - t_start
 
