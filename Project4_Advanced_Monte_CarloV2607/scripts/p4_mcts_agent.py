@@ -9,13 +9,16 @@ The environment is deep-copied during expansion and rollout so that the shared
 environment state is not mutated while exploring the tree.
 """
 
-from __future__ import annotations
-
-import math
+from __future__ import annotations    import math
 import random
 from typing import Any, Callable, Optional
 
 import numpy as np
+
+# Dirichlet noise parameters (AlphaGo-style root exploration)
+_DIRICHLET_ALPHA = 0.15        # concentration parameter (smaller = sparser noise)
+_DIRICHLET_EPSILON = 0.20      # mixing proportion (P' = (1-ε)P + ε·Dir)
+_DIRICHLET_RESET_INTERVAL = 75 # iterations between forced Dirichlet resets
 
 
 class MCTSNode:
@@ -88,6 +91,17 @@ class MCTSAgent:
     virtual_loss : float
         Penalty applied to nodes currently being explored. Default 0.01.
         Higher = more exploration diversity.
+    rollout_temperature : float
+        Initial softmax temperature for policy-biased rollout. Higher = more
+        uniform (exploration). Default 1.5.
+    rollout_temp_min : float
+        Minimum temperature after annealing. Default 0.3.
+    rollout_epsilon : float
+        Probability of taking a random action during rollout (epsilon-greedy).
+        Default 0.15. Helps discover novel branches.
+    collision_threshold : int
+        Number of consecutive identical best molecules before reset.
+        Default 50. Detects rollout collapse.
     """
 
     def __init__(
@@ -102,6 +116,10 @@ class MCTSAgent:
         pw_alpha: float = 0.5,
         pw_k: float = 1.0,
         virtual_loss: float = 0.05,
+        rollout_temperature: float = 1.5,
+        rollout_temp_min: float = 0.3,
+        rollout_epsilon: float = 0.15,
+        collision_threshold: int = 50,
     ) -> None:
         self.env = env
         self.oracle = oracle
@@ -113,6 +131,10 @@ class MCTSAgent:
         self.pw_alpha = pw_alpha
         self.pw_k = pw_k
         self.virtual_loss = virtual_loss
+        self.rollout_temperature = rollout_temperature
+        self.rollout_temp_min = rollout_temp_min
+        self.rollout_epsilon = rollout_epsilon
+        self.collision_threshold = collision_threshold
         # Track states visited this search to avoid revisiting (MCTS-Solver)
         self._visited_states: set[str] = set()
         self._priors_cache: dict[str, dict[str, float]] = {}
@@ -144,6 +166,13 @@ class MCTSAgent:
         - Dynamic Progressive Widening (branching factor grows with visits)
         - Virtual Loss (diverse parallel exploration)
         - State caching (avoid revisiting same molecule)
+        - Temperature annealing: rollout temperature decreases from
+          rollout_temperature to rollout_temp_min over iterations
+        - Epsilon-greedy: probability rollout_epsilon of random action
+        - Adversarial collapse detection: if the same best molecule is
+          found for collision_threshold consecutive iterations, the
+          priors cache is cleared and temperature is reset to force
+          re-exploration
 
         Returns
         -------
@@ -157,10 +186,53 @@ class MCTSAgent:
         self._priors_cache = {}
         self._visited_states = {root_state}
 
+        # Collapse detection state
+        last_best_state = root_state
+        collision_count = 0
+
         for iteration in range(self.n_iterations):
+            # Annealed temperature: linear decay from rollout_temperature to rollout_temp_min
+            frac = iteration / max(self.n_iterations - 1, 1)
+            current_temp = self.rollout_temperature - frac * (self.rollout_temperature - self.rollout_temp_min)
+
             node = self._select(root)
-            reward = self._rollout(node)
+            reward = self._rollout(node, temperature=current_temp)
             self._backpropagate(node, reward)
+
+            # Adversarial collapse detection
+            if root.children:
+                best_child = max(root.children.values(),
+                                 key=lambda c: c.value / max(c.visits, 1))
+                current_best = best_child.state
+            else:
+                current_best = root_state
+
+            if current_best == last_best_state:
+                collision_count += 1
+            else:
+                collision_count = 0
+                last_best_state = current_best
+
+            # If collapse detected, force exploration via Dirichlet noise
+            # on root priors (AlphaGo-style). Clears priors cache and adds
+            # noise to the root's action selection to force exploration of
+            # alternative branches.
+            if collision_count >= self.collision_threshold:
+                self._priors_cache = {}
+                # Dirichlet noise on root: get root priors and perturb them
+                if self.policy_fn is not None and root.children:
+                    root_priors = self._get_priors(root.state)
+                    if root_priors:
+                        from numpy.random import Generator, MT19937
+                        _rg = Generator(MT19937(self._rng.randint(0, 2**31)))
+                        dir_noise = _rg.dirichlet([_DIRICHLET_ALPHA] * len(root_priors))
+                        # Perturb priors in the cache so PUCT uses noisy values
+                        noisy_priors = {}
+                        for idx, (act, prior) in enumerate(root_priors.items()):
+                            # P' = (1 - ε) * P + ε * Dir(α)
+                            noisy_priors[act] = (1.0 - _DIRICHLET_EPSILON) * prior + _DIRICHLET_EPSILON * float(dir_noise[idx])
+                        self._priors_cache[root.state] = noisy_priors
+                collision_count = 0
 
         # Store root for downstream metrics (hparam search uses this)
         self._root = root
@@ -295,13 +367,21 @@ class MCTSAgent:
         node.children[action] = child
         return child
 
-    def _rollout(self, node: MCTSNode) -> float:
+    def _rollout(self, node: MCTSNode, temperature: float = 1.0) -> float:
         """Simulate a rollout from the node and return the oracle reward.
 
         Uses lightweight env reinit instead of expensive deepcopy.
-        Policy-biased sampling during rollout:
-        - 'policy_biased' (default): sample fragments from ScafVAE policy distribution
-        - 'random': uniform random (original, poor performance)
+        Policy-biased sampling with temperature annealing and epsilon-greedy:
+        - 'policy_biased' (default): sample from ScafVAE with temperature
+        - 'random': uniform random (original)
+
+        Parameters
+        ----------
+        node : MCTSNode
+            Node to rollout from.
+        temperature : float
+            Softmax temperature for action sampling. Higher = more uniform.
+            Annealed from rollout_temperature to rollout_temp_min.
         """
         # Lightweight env copy instead of deepcopy
         env_copy = self._make_env_copy(node.state, node.step_count)
@@ -310,18 +390,27 @@ class MCTSAgent:
 
         while not done:
             if self.rollout_strategy == "policy_biased" and self.policy_fn is not None:
-                # Sample fragment from policy distribution (not uniform random)
+                # Soft exploration mix: P' = (1-ε)·P_policy + ε·P_uniform
+                # Instead of 100% random actions (too noisy for molecular generation),
+                # we blend the policy distribution with a uniform distribution.
+                # This preserves chemical priors while encouraging diversity.
                 node_priors = self._get_priors(env_copy.state)
                 if node_priors:
                     actions = list(node_priors.keys())
                     log_probs = np.array([node_priors[a] for a in actions])
+                    # Temperature-scaled softmax
+                    log_probs = log_probs / max(temperature, 1e-8)
                     # Numerically stable softmax
                     log_probs = log_probs - np.max(log_probs)
-                    probs = np.exp(log_probs)
-                    probs = probs / probs.sum()
-                    action = self._rng.choices(actions, weights=probs, k=1)[0]
-                else:
-                    action = self._rng.choice(env_copy.fragment_vocab)
+                    policy_probs = np.exp(log_probs)
+                    policy_probs = policy_probs / policy_probs.sum()
+                    # Blend: (1-ε)·policy + ε·uniform
+                    uniform_probs = np.ones_like(policy_probs) / len(policy_probs)
+                    blended = (1.0 - self.rollout_epsilon) * policy_probs + self.rollout_epsilon * uniform_probs
+                    blended = blended / blended.sum()  # renormalise
+                    action = self._rng.choices(actions, weights=blended, k=1)[0]
+                    else:
+                        action = self._rng.choice(env_copy.fragment_vocab)
             else:
                 # Uniform random (original)
                 action = self._rng.choice(env_copy.fragment_vocab)
