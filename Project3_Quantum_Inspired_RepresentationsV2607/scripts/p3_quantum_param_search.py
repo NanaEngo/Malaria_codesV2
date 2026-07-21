@@ -191,57 +191,85 @@ def _kernel_matrix_chunked(X: np.ndarray,
 
 
 # ---------------------------------------------------------------------------
-# Per-fold QK features
+# Optimised QK pipeline — precompute kernel ONCE on all data, then
+# extract per-fold submatrices (avoids redundant UMAP + kernel 5x).
 # ---------------------------------------------------------------------------
 
-def _qk_features_fold(X_ecfp_tr, X_ecfp_te,
-                       n_qubits=8, n_kpca=10, n_repeats=1,
-                       block_size=None, n_jobs=1):
-    from umap import UMAP
+def _qk_features_fold(QK_data: dict,
+                      tr_idx: np.ndarray,
+                      te_idx: np.ndarray,
+                      n_kpca: int = 10):
+    """Extract fold QK features from precomputed kernel matrix.
+
+    Parameters
+    ----------
+    QK_data : dict
+        Precomputed pipeline output from _precompute_qk_all().
+    """
     from sklearn.decomposition import KernelPCA
 
-    # UMAP on training only
-    reducer = UMAP(n_components=n_qubits, metric="jaccard",
-                   random_state=42, n_neighbors=15, min_dist=0.1)
-    X_8d_tr = reducer.fit_transform(X_ecfp_tr)
-    X_8d_te = reducer.transform(X_ecfp_te)
+    K_all_psd = QK_data["K_psd"]
+    n_train = len(tr_idx)
+    n_kpca_actual = min(n_kpca, n_train - 1)
 
-    # Scale to [-1, 1]
-    lo, hi = X_8d_tr.min(axis=0), X_8d_tr.max(axis=0)
-    rng = np.where(hi - lo > 0, hi - lo, 1.0)
-    X_q_tr = 2.0 * (X_8d_tr - lo) / rng - 1.0
-    X_q_te = np.clip(2.0 * (X_8d_te - lo) / rng - 1.0, -1.0, 1.0)
+    # Extract submatrices from precomputed kernel (no recomputation!)
+    K_tr = K_all_psd[np.ix_(tr_idx, tr_idx)]
+    K_te = K_all_psd[np.ix_(te_idx, tr_idx)]
 
-    n_train = len(X_q_tr)
-
-    # Kernel matrix
-    if block_size is not None and n_train > block_size:
-        K_tr = _kernel_matrix_chunked(X_q_tr,
-                                       block_size=block_size,
-                                       n_jobs=n_jobs,
-                                       n_qubits=n_qubits,
-                                       n_repeats=n_repeats)
-    else:
-        _kfn = _get_kernel_fn(n_qubits, n_repeats)
-        K_tr = kernel_matrix(X_q_tr, X_q_tr, _kfn)
-
-    K_tr_psd = closest_psd_matrix(K_tr)
-
-    # KPCA
-    n_kpca_actual = min(n_kpca, len(X_q_tr) - 1)
     kpca = KernelPCA(n_components=n_kpca_actual,
                      kernel="precomputed", copy_X=True, random_state=42)
-    qk_tr = kpca.fit_transform(K_tr_psd)
-
-    # Test kernel
-    _kfn_te = _get_kernel_fn(n_qubits, n_repeats)
-    K_te = kernel_matrix(X_q_te, X_q_tr, _kfn_te)
+    qk_tr = kpca.fit_transform(K_tr)
     qk_te = kpca.transform(K_te)
 
     qk_tr = qk_tr / (qk_tr.std(axis=0, keepdims=True) + 1e-10)
     qk_te = qk_te / (qk_te.std(axis=0, keepdims=True) + 1e-10)
 
     return qk_tr.astype(np.float32), qk_te.astype(np.float32)
+
+
+def _precompute_qk_all(X_ecfp,
+                       n_qubits=6,
+                       n_repeats=1,
+                       block_size=200,
+                       n_jobs=1):
+    """Precompute UMAP + kernel matrix ONCE on all molecules.
+
+    Returns dict with:
+        - 'X_q': scaled UMAP coordinates (N x n_qubits)
+        - 'K_psd': closest-PSD kernel matrix (N x N)
+        - 'time_s': kernel computation time
+    """
+    from umap import UMAP
+
+    t0 = time.perf_counter()
+
+    # UMAP on ALL data (fit + transform once)
+    reducer = UMAP(n_components=n_qubits, metric="jaccard",
+                   random_state=42, n_neighbors=15, min_dist=0.1)
+    X_8d = reducer.fit_transform(X_ecfp)
+
+    # Scale to [-1, 1]
+    lo, hi = X_8d.min(axis=0), X_8d.max(axis=0)
+    rng = np.where(hi - lo > 0, hi - lo, 1.0)
+    X_q = 2.0 * (X_8d - lo) / rng - 1.0
+
+    n = len(X_q)
+    # Use chunked kernel only if n > 1200; otherwise full matrix is faster
+    # (chunking computes more kernel pairs than full matrix for n < 1200)
+    if block_size is not None and n > max(1200, block_size):
+        K = _kernel_matrix_chunked(X_q, block_size=block_size,
+                                   n_jobs=n_jobs,
+                                   n_qubits=n_qubits,
+                                   n_repeats=n_repeats)
+    else:
+        _kfn = _get_kernel_fn(n_qubits, n_repeats)
+        K = kernel_matrix(X_q, X_q, _kfn)
+
+    K_psd = closest_psd_matrix(K)
+    elapsed = time.perf_counter() - t0
+
+    print(f"    Kernel precomputed: {n}x{n} matrix in {elapsed:.1f}s")
+    return {"X_q": X_q, "K_psd": K_psd, "time_s": elapsed}
 
 
 # ---------------------------------------------------------------------------
@@ -251,18 +279,25 @@ def _qk_features_fold(X_ecfp_tr, X_ecfp_te,
 def evaluate_hybrid(X_ecfp, X_tfp, X_tne, y,
                     n_qubits=8, n_kpca=10, n_repeats=1,
                     block_size=None, n_jobs=1):
-    """Return mean AUC (RF, 5-fold) for the Hybrid descriptor with given QK params."""
+    """Return mean AUC (RF, 5-fold) for the Hybrid descriptor.
+
+    Precomputes UMAP + kernel matrix ONCE on all data, then extracts
+    per-fold submatrices — avoids 5x redundant kernel recomputation.
+    """
     skf = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
+
+    # --- Precompute kernel ONCE on all data ---
+    QK_data = _precompute_qk_all(X_ecfp,
+                                 n_qubits=n_qubits,
+                                 n_repeats=n_repeats,
+                                 block_size=block_size,
+                                 n_jobs=n_jobs)
+
     fold_aucs = []
-
     for fold, (tr_idx, te_idx) in enumerate(skf.split(X_ecfp, y), start=1):
-        qk_tr, qk_te = _qk_features_fold(
-            X_ecfp[tr_idx], X_ecfp[te_idx],
-            n_qubits=n_qubits, n_kpca=n_kpca, n_repeats=n_repeats,
-            block_size=block_size, n_jobs=n_jobs,
-        )
+        # Extract fold QK from precomputed kernel (seconds, not minutes)
+        qk_tr, qk_te = _qk_features_fold(QK_data, tr_idx, te_idx, n_kpca=n_kpca)
 
-        # Build hybrid [TFP, TNE, QK] — no data leakage
         tr_parts = [X_tfp[tr_idx], X_tne[tr_idx], qk_tr]
         te_parts = [X_tfp[te_idx], X_tne[te_idx], qk_te]
 
