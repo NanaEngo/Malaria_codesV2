@@ -135,6 +135,45 @@ def _compute_block_task(i0, i1, j0, j1, X_chunk, n_qubits, n_repeats):
     return kernel_matrix(X_chunk[i0:i1], X_chunk[j0:j1], _kfn)
 
 
+def _kernel_matrix_with_progress(X, kernel_fn, desc="Kernel"):
+    """Compute symmetric kernel matrix row-by-row with tqdm progress.
+
+    Only computes the upper triangle (i <= j) and mirrors to lower.
+    Uses tqdm for real-time progress (ETA, pairs/s) in both SLURM logs
+    and interactive terminals. Updates once per row to minimise overhead.
+    """
+    n = len(X)
+    K = np.zeros((n, n), dtype=np.float64)
+    total_pairs = n * (n + 1) // 2
+
+    if _HAS_TQDM:
+        pbar = tqdm(total=total_pairs, desc=desc, unit="pair", ncols=80)
+    else:
+        pbar = None
+        print(f"    Computing {total_pairs:,} kernel pairs (0/{n} rows)", flush=True)
+
+    for i in range(n):
+        Xi = X[i]
+        row_pairs = n - i  # pairs in this row (i,i) .. (i,n-1)
+        for j in range(i, n):
+            val = kernel_fn(Xi, X[j])
+            K[i, j] = val
+            if i != j:
+                K[j, i] = val
+        if pbar is not None:
+            pbar.update(row_pairs)
+        if pbar is None and (i + 1) % 10 == 0:
+            done = (i + 1) * n - (i + 1) * i // 2
+            print(f"    Row {i+1}/{n}  ({done:,}/{total_pairs:,} pairs)", flush=True)
+
+    if pbar is not None:
+        pbar.close()
+    if pbar is None:
+        print(f"    Row {n}/{n}  ({total_pairs:,}/{total_pairs:,} pairs) \u2014 done", flush=True)
+
+    return K
+
+
 def _kernel_matrix_chunked(X: np.ndarray,
                            block_size: int = 200,
                            n_jobs: int = 1,
@@ -268,7 +307,8 @@ def _precompute_qk_all(X_ecfp,
                                    n_repeats=n_repeats)
     else:
         _kfn = _get_kernel_fn(n_qubits, n_repeats)
-        K = kernel_matrix(X_q, X_q, _kfn)
+        desc = f"  Kernel ({n_qubits}q, {n_repeats}rep)"
+        K = _kernel_matrix_with_progress(X_q, _kfn, desc=desc)
     times["kernel"] = time.perf_counter() - t1
     rate = n_pairs / times["kernel"] if times["kernel"] > 0 else 0
     print(f"    Kernel matrix: {times['kernel']:.1f}s  ({rate:.0f} pairs/s)", flush=True)

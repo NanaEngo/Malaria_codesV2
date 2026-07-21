@@ -93,7 +93,6 @@ class ParetoFront:
             if i not in self._dominated
         ]
 
-    @property
     def hypervolume(self, reference: Optional[np.ndarray] = None) -> float:
         """Approximate hypervolume indicator (sum of volumes of dominated hyper-rectangles).
 
@@ -222,7 +221,7 @@ class ParetoMCTSAgent:
     ):
         self.env = env
         self.oracle_fn = oracle_fn
-        self.objectives = objectives or ["mpo", "docking", "syba"]
+        self.objectives = objectives or ["mpo", "syba", "sa", "rrs", "pns"]
         self.maximize = maximize
         self.n_iterations = n_iterations
         self.c_puct = c_puct
@@ -319,8 +318,8 @@ if __name__ == "__main__":
     agent = ParetoMCTSAgent(
         env,
         oracle_fn=oracle.score,
-        objectives=["mpo", "syba", "sa"],
-        maximize=[True, True, False],  # minimise SA (lower is better)
+        objectives=["mpo", "syba", "sa", "rrs", "pns"],
+        maximize=[True, True, False, True, True],  # minimise SA, maximise RRS+PNS
         n_iterations=50,
         policy_fn=policy.get_action_priors,
     )
@@ -329,4 +328,5 @@ if __name__ == "__main__":
     print(f"Pareto front size: {len(front.solutions)}")
     print(f"Hypervolume: {front.hypervolume():.4f}")
     for smi, vec, meta in front.solutions[:5]:
-        print(f"  {smi:35s} MPO={vec[0]:.3f} SYBA={vec[1]:.3f} SA={vec[2]:.3f}")
+        print(f"  {smi:35s} MPO={vec[0]:.3f} SYBA={vec[1]:.3f} SA={vec[2]:.3f} "
+              f"RRS={vec[3]:.3f} PNS={vec[4]:.3f}")
