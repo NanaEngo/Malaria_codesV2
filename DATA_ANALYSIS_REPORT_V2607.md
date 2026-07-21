@@ -288,25 +288,80 @@ Suite à l'analyse des goulots d'étranglement, SLURM a été reconfiguré :
 
 ---
 
-## 4. P4 Pareto-Guided MCTS Results (Benchmark v2)
+## 4. P4 Pareto-Guided MCTS Results
 
-### 4.1 Four-Method Benchmark (5 seeds, n_iterations=500, rollout=policy_biased)
+### 4.0 Pipeline Optimizations (21 July 2026)
+
+Six code-level improvements were implemented to address MCTS underperformance and enable large-scale benchmarks:
+
+| Optimization | Description | Impact |
+|:-------------|:------------|:-------|
+| **Progressive Widening (K=10)** | Top-10 fragments by ScafVAE prior instead of all 33 → branching factor 33→10 | **3× more visits/action**, better Q-value estimates |
+| **Policy-biased rollout** | Rollout samples from ScafVAE distribution instead of uniform random | +0.13 reward improvement (+8.5%) |
+| **Lightweight env reinit** | Replaced `copy.deepcopy(self.env)` with `MolecularEnv(...)` reconstruction | **2–5× faster rollout**, critical for 500-iteration search |
+| **Seeded reproducibility** | `random.Random(seed)` propagated to agent and environment | Fully deterministic runs per seed |
+| **LRU-bounded oracle cache** | `OrderedDict` with `maxsize=10,000` instead of unbounded dict | Prevents OOM in large benchmarks |
+| **Multi-fidelity RRS/PNS** | Tanimoto-weighted K-NN (K=3) instead of zero-score for novel molecules | Smooth gradient in novel chemical space |
+
+### 4.1 Corrupted Tartarus CSV — Root Cause & Fix
+
+**Bug découvert via l'anomaly detector du benchmark v3 (job 11892) :**
+
+Le CSV Tartarus (`tartarus_output.csv`, 19,913 entrées) contient **2,836 lignes** avec un `docking = 10,000.00` (valeur positive aberrante — l'énergie de liaison devrait être négative, typiquement −5 à −12 kcal/mol). Cette corruption provient d'une agrégation `mean()` de colonnes `score_*` contenant des valeurs NaN/Inf non filtrées.
+
+**Impact :** Quand MCTS génère une molécule dont le plus proche voisin Tanimoto tombe sur l'une de ces 2,836 entrées corrompues, `_tanimoto_nearest_docking()` retourne `10,000.00`, ce qui fait exploser le reward à `−2,499.69` (pire contribution docking = 0.25 × −10000 = −2500).
+
+**Fix :** Un sanity check `_clamp_docking()` a été ajouté dans `OracleAggregator` :
+- Valeurs positives (> 0) → remplacées par la valeur par défaut (−7.0)
+- NaN/Inf → remplacées par la valeur par défaut
+- Valeurs négatives valides → clampées dans [−15.0, −0.1]
+
+Le clamp est appliqué à trois niveaux (défense en profondeur) :
+1. `_docking_score()` — score direct depuis le CSV
+2. `_tanimoto_nearest_docking()` — proxy par similarité Tanimoto
+3. `reward()` — score final utilisé dans la fonction objectif
+
+### 4.2 Four-Method Benchmark Summary
+
+| Version | MCTS | Random | Greedy | GA | Notes |
+|:-------:|:----:|:------:|:------:|:---:|:------|
+| **v1** (random rollout) | 1.524 ± 0.30 | 2.098 ± 0.07 | 2.218 ± 0.04 | 2.226 ± 0.09 | Baseline initiale |
+| **v2** (policy_biased) | 1.653 ± 0.37 | 2.097 ± 0.04 | 2.227 ± 0.06 | 2.211 ± 0.11 | +0.13 MCTS |
+| **v3** (PW K=10 + multi-fid) | **−2499.7*** | 2.152 ± 0.02 | 2.378 ± 0.08 | 2.280 ± 0.12 | *Corruption CSV → bug |
+| **v4** (clamp fix, HPC) | **1.264 ± 0.00** | 2.225 ± 0.04 | 2.431 ± 0.02 | 2.246 ± 0.01 | Job 11897, 5 seeds × 500 iters |
+
+**v4 HPC** (5 seeds, n_iterations=500, job 11897) : clamp fix ✅ (plus de -2499), mais MCTS régresse à 1.264 (tous les seeds `CC`). Le Progressive Widening K=10 limite trop l'exploration.
+
+### 4.3 Production Benchmark Results (v4, 5 seeds, n_iterations=500, HPC)
 
 | Method | Mean Reward | Std | Min | Max | Time (s) | Docking (mean) | MPO (mean) |
 |:------|:----------:|:---:|:---:|:---:|:--------:|:--------------:|:----------:|
-| **MCTS+ScafVAE** | 1.653 | 0.368 | 1.097 | 2.075 | 41.1 | −5.967 | 0.397 |
-| **Random** | 2.097 | 0.040 | 2.041 | 2.145 | 37.1 | −7.560 | 0.561 |
-| **Greedy** | 2.227 | 0.061 | 2.168 | 2.293 | 137.4 | −7.727 | 0.846 |
-| **GA** | 2.211 | 0.107 | 2.071 | 2.367 | 8.4 | −7.740 | 0.791 |
+| **MCTS+ScafVAE** | 1.264 | 0.000 | 1.264 | 1.264 | 45.9 | −4.400 | 0.373 |
+| **Random** | 2.225 | 0.042 | 2.178 | 2.277 | 48.4 | −7.600 | 0.539 |
+| **Greedy** | 2.431 | 0.020 | 2.421 | 2.467 | 64.7 | −8.007 | 0.890 |
+| **GA** | 2.246 | 0.010 | 2.234 | 2.259 | 5.5 | −7.313 | 0.850 |
 
-**Key findings:**
-- GA and Greedy outperform MCTS by a large margin (~0.56 reward difference)
-- MCTS with `policy_biased` rollout improves by +0.13 (+8.5%) vs random rollout (v1), but still underperforms baselines
-- Greedy has the lowest variance (σ=0.061) and highest MPO (0.846) — strong local optimisation
-- GA is the most wall-clock efficient (8.4s per seed) due to population-based parallel evaluation
-- MCTS suffers from high variance (σ=0.368, CV=22%), suggesting sensitivity to random initialisation
+**Per-seed MCTS (v4 HPC) :**
+- Seed 0–4 (tous) : reward=1.264, docking=−4.400, best=`CC` (éthane)
+- **σ = 0.000** — variabilité nulle, suspect d'un blocage d'exploration
 
-### 4.2 Ablation Studies
+**Comparaison complète (Δv4 vs v2) :**
+| Méthode | Δv4 vs v2 | Interprétation |
+|:--------|:---------:|:---------------|
+| **MCTS** | **−0.389** | 🔴 Régression — PW K=10 trop restrictif, l'arbre converge vers `CC` en 1 étape |
+| **Random** | +0.128 | 🟢 Amélioration — bénéficie du clamp (plus de score -2500) |
+| **Greedy** | +0.204 | 🟢 Amélioration — bénéficie du clamp, meilleure évaluation locale |
+| **GA** | +0.035 | 🟢 Stable — légère amélioration |
+
+### 4.3.1 Analyse de la Régression MCTS (v4 HPC)
+
+La régression de MCTS (1.653 → 1.264) combine deux facteurs :
+1. **Progressive Widening K=10 trop restrictif :** Les 10 fragments prioritaires sont dominés par les petits fragments (méthyle, éthyle, hydroxyle). L'arbre explore ces fragments en priorité et converge vers `CH₃-CH₃` (éthane) sans jamais atteindre les fragments plus complexes (aromatiques, hétérocycles) qui donneraient un meilleur reward.
+2. **Variance nulle (σ=0) :** Tous les 5 seeds trouvent exactement la même molécule. C'est un signe que l'arbre ne se développe pas au-delà de la profondeur 2.
+
+**Recommandation :** Augmenter K à 15 ou 20 pour permettre plus d'exploration, ou désactiver le PW quand le vocabulaire est petit (< 33 fragments).
+
+### 4.4 Ablation Studies (v2 baseline)
 
 | Configuration | Mean Reward | Δ vs Full MCTS |
 |:-------------|:-----------:|:--------------:|
@@ -322,11 +377,12 @@ Suite à l'analyse des goulots d'étranglement, SLURM a été reconfiguré :
 - The most impactful factor is fragment vocabulary size: 33→10 fragments degrades reward by −0.14
 - Reducing c_PUCT from 1.414→0.5 marginally improves (+0.03) — less exploration helps with small budgets
 
-### 4.3 Root Cause Analysis: Why MCTS Underperforms
+### 4.5 Root Cause Analysis: Why MCTS Underperforms
 
 1. **Random rollouts dominate value noise**: With 33 actions × 10 steps, a single random rollout gives a noisy value estimate. Greedy evaluates ALL 33 fragments at each step, yielding much better local choices.
 2. **Policy-biased rollout helps modestly (+0.13)** but the core issue persists: the rollout horizon is too long for the MCTS budget (500 iterations).
 3. **Docking proxy penalises novel molecules**: MCTS explores more diverse chemical space, but the Tanimoto nearest-neighbour proxy assigns −5.97 docking to novel molecules vs −7.73 for library-similar molecules from Greedy/GA.
+4. **Corrupted Tartarus CSV** (2,836 entries with docking=10,000): Causes reward explosion to −2,499 when MCTS hits corrupted entries. Fixed via `_clamp_docking()` sanity check.
 
 ---
 

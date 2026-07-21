@@ -223,11 +223,17 @@ class OracleAggregator:
         negative (better) binding increases the reward.
         SA score is inverted (lower is better) onto a [0,1]-like scale.
         RRS and PNS are added if enabled and present in weights.
+
+        All sub-scores are clamped to physically reasonable ranges to
+        protect against corrupted library entries (the Tartarus CSV
+        contains ~2,800 entries with a corrupted value of 10000.0).
         """
         scores = self.score(smiles)
         # Negate docking so that more negative (stronger binding) is better.
+        # Clamp to physically possible range (corrupted CSV entries give 10000).
+        docking = self._clamp_docking(scores["docking"], default=-7.0)
+        docking = -docking  # negate after clamping
         # Invert SAscore (lower is better) onto a [0,1]-like reward scale.
-        docking = -scores["docking"]
         sa_reward = max(0.0, 10.0 - scores["sa"]) / 9.0
 
         reward_val = (
@@ -326,8 +332,26 @@ class OracleAggregator:
                 fps.append(gen.GetFingerprint(mol))
         return fps
 
+    @staticmethod
+    def _clamp_docking(score: float, default: float = -7.0) -> float:
+        """Clamp a docking score to a physically reasonable range.
+
+        Docking scores should be negative (binding) and in the range
+        [-15, 0] kcal/mol. Positive values indicate steric clashes or
+        corrupted data entries. Values > 0 are clamped to the default.
+        NaN values are also replaced with the default.
+        """
+        if not np.isfinite(score) or score > 0:
+            return default
+        return max(-15.0, min(score, -0.1))
+
     def _tanimoto_nearest_docking(self, smiles: str) -> float:
-        """Return the docking score of the nearest neighbour by Tanimoto similarity."""
+        """Return the docking score of the nearest neighbour by Tanimoto similarity.
+
+        The score is clamped to a physically reasonable range [-15, -0.1] kcal/mol
+        to protect against corrupted entries in the Tartarus library (e.g., 2836
+        entries with docking=10000.0 due to NaN mean aggregation).
+        """
         if not self._tartarus_fingerprints or not self._tartarus_smiles:
             return -7.0
 
@@ -350,7 +374,8 @@ class OracleAggregator:
                 best_idx = idx
 
         best_smi = self._tartarus_smiles[best_idx]
-        return float(self._tartarus[best_smi].get("docking", -7.0))
+        raw_score = float(self._tartarus[best_smi].get("docking", -7.0))
+        return self._clamp_docking(raw_score)
 
     # ── Individual oracles ───────────────────────────────────────────
     def _mpo_score(self, smiles: str) -> float:
@@ -374,14 +399,21 @@ class OracleAggregator:
         return score
 
     def _docking_score(self, smiles: str) -> float:
-        """Docking score (kcal/mol): use precomputed Tartarus or nearest-neighbour proxy."""
+        """Docking score (kcal/mol): use precomputed Tartarus or nearest-neighbour proxy.
+
+        Scores are clamped to a physically reasonable range [-15, -0.1] kcal/mol
+        to protect against corrupted library entries. The Tartarus CSV contains
+        2,836 entries with a docking value of 10000.0 (from mean aggregation of
+        score columns with corrupted NaN/inf values).
+        """
         cached = self._cache_get(smiles, "docking")
         if cached is not None:
             return cached
 
         canon = self._canonical_smiles(smiles)
         if canon in self._tartarus:
-            score = float(self._tartarus[canon].get("docking", -7.0))
+            raw_score = float(self._tartarus[canon].get("docking", -7.0))
+            score = self._clamp_docking(raw_score)
         elif self.docking_fallback == "similarity":
             score = self._tanimoto_nearest_docking(canon)
         else:

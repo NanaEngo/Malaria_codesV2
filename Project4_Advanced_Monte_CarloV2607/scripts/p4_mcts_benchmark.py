@@ -137,13 +137,22 @@ def _run_single_seed(
         c_puct=mcts_c_puct,
         policy_fn=policy_fn,
         seed=seed,
-        progressive_widening_k=10,
+        progressive_widening_k=20,
     )
     mcts_start = time.time()
     best_mcts = agent.search(env.initial_smiles)
     mcts_time = time.time() - mcts_start
     mcts_reward = oracle.reward(best_mcts)
     mcts_scores = oracle.score(best_mcts)
+
+    # Anomaly detector: extreme values indicate data loading or cache issues
+    if abs(mcts_reward) > 100 or abs(mcts_scores.get("docking", 0)) > 100:
+        print(f"  ANOMALY seed={seed}: MCTS reward={mcts_reward:.4f} docking={mcts_scores.get('docking')}")
+        print(f"    Best SMILES: {best_mcts}")
+        print(f"    Tartarus entries: {len(oracle._tartarus_smiles) if hasattr(oracle, '_tartarus_smiles') else 'N/A'}")
+        print(f"    C6 entries: {len(oracle._c6) if hasattr(oracle, '_c6') else 'N/A'}")
+        print(f"    Cache size: {len(oracle._runtime_cache)}")
+        print(f"    Oracle weights: {oracle.weights}")
 
     result["mcts"] = {
         "seed": seed,

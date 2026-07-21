@@ -70,11 +70,9 @@ class MCTSAgent:
     rollout_strategy : str
         Rollout strategy: 'policy_biased' (default) or 'random'.
     seed : int or None
-        Random seed for reproducible MCTS runs.
-    progressive_widening_k : int
+        Random seed for reproducible MCTS runs.    progressive_widening_k : int
         Base number of top-K actions to consider per node (Progressive
-        Widening). Default 10. Set to 0 or >33 to disable.
-    """
+        Widening). Default 20. Set to 0 or >33 to disable."""
 
     def __init__(
         self,
@@ -85,7 +83,7 @@ class MCTSAgent:
         policy_fn: Optional[Callable[[str, list[str]], dict[str, float]]] = None,
         rollout_strategy: str = "policy_biased",
         seed: Optional[int] = None,
-        progressive_widening_k: int = 10,
+        progressive_widening_k: int = 20,
     ) -> None:
         self.env = env
         self.oracle = oracle
