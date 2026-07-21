@@ -197,25 +197,30 @@ Depuis l'application des skills [`scientific-agent-skills`](https://github.com/K
 | **experimental-design** | scientific-agent-skills | Design d'expériences pour P4 benchmark protocol | Planification |
 | **hypothesis-generation** | scientific-agent-skills | Génération d'hypothèses pour Discussion P3/P4 | Rédaction |
 
-#### Quand utiliser le GPU (nouvelle stratégie `best_device()`) :
+#### Quand utiliser le GPU (nouvelle stratégie `best_device()` + `--device` flag) :
 
-Le code P3 utilise maintenant `best_device(n_qubits)` qui détecte automatiquement :
-1. **lightning.gpu** — si GPU disponible ET bénéfique pour la taille du bloc
-2. **lightning.qubit** — CPU avec OpenMP (référence, 535 paires/s)
-3. **default.qubit** — fallback universel
+Le code P3 utilise `best_device(n_qubits, prefer_cpu=False)` avec un flag `--device` :
 
-Pour le kernel quantique P3 :
-- **Petits batches** (< 100 paires) : lightning.qubit (CPU) plus rapide (pas d'overhead GPU)
-- **Gros blocs** (block_size ≥ 400) : lightning.gpu peut être bénéfique (batch processing GPU)
-- **JAX JIT** : activé pour le kernel matrix via `_kernel_matrix_jax` avec détection JAX backend
+| Flag | Comportement | Usage |
+|:-----|:-------------|:------|
+| `auto` (défaut) | best_device() avec `prefer_cpu=True` si CuPy absent | **Recommandé pour CPU** |
+| `--device lightning.qubit` | Force CPU (lightning.qubit) | **Pour sbatch CPU** — 535 paires/s |
+| `--device lightning.gpu` | Force GPU (expérimental) | Réservé aux tests GPU |
 
-✅ **Parallélisation CPU** (toujours utile) :
+⚠️ **LEÇON CRITIQUE — GPU PLUS LENT QUE CPU** (vérifié expérimentalement) :
+- `lightning.gpu` : 0/91 blocs en 9 min (job 11907) → **stuck** ❌
+- `lightning.qubit` CPU : 77s/bloc (référence historique) ✅
+- Cause : overhead GPU par appel (2ms) domine pour l'évaluation paire-par-paire
+- `best_device()` retourne `lightning.gpu` en priorité, ce qui piège les sbatch CPU !
+- **Fix appliqué :** `--device lightning.qubit` + `prefer_cpu=True` propagé à tout le code
+
+✅ **Parallélisation CPU** (recommandée) :
 - TNE/TDA pipelines : parallélisés via `--n-jobs`
 - P4 GA : oracles évalués en parallèle via joblib `Parallel(n_jobs=min(4, n_offspring))`
 - P4 benchmark : SLURM array (100 tâches × 24 concurrentes)
 
-#### Quand le GPU sera utilisé :
-- P3 Phase 2 GPU : nouveau sbatch `p3_phase2_gpu.sbatch` avec `--gres=gpu:1`
+#### Quand le GPU sera testé :
+- P3 Phase 2 GPU : réservé aux tests (sbatch `p3_phase2_gpu.sbatch` avec `--gres=gpu:1`)
 - P4 QMC : solveurs électroniques (PySCF) supportent CUDA
 - P4 RL training : stable-baselines3 avec PyTorch CUDA
 
