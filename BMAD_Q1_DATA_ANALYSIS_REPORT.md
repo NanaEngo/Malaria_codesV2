@@ -27,7 +27,7 @@ Three complementary projects generated and analyzed **over 85,000 unique molecul
 | P3 — Hybrid Benchmark | 19,849 × 10 descriptors × 5CV | **ECFP4 AUC 0.868 vs Hybrid AUC 0.842 (p=0.111, ns)**; PHCO bug fixed (AUC 0.500 → ~0.83) | Completed |
 | P3 — QKS Benchmark | 500 mol (sub-sampled) | **Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns)**; earlier 0.936/0.105 claim removed as unsupported | Completed (July 2026) |
 | P3 — GA Discriminator Benchmark | 50–500 gen. × 200 seeds | **Tanimoto AUC=1.0 (trivial); QK AUC≈0.43–0.51 (near-random)** | Completed |
-| P4 — MCTS Benchmark (5 seeds) | 500 iters × 5 seeds, c_puct=5.0, VL=0.01 | **MCTS collapses: reward=0.239±0.000 (all seeds → CC). Random=0.533±0.027, Greedy=0.616±0.003, GA=0.599±0.015, cross-seed table generated** | ⚠️ MCTS collapse |
+| P4 — MCTS Benchmark (5 seeds) | 500 iters × 5 seeds, c_puct=5.0, VL=0.01 | **MCTS fix validated: reward=0.597±0.000, MPO=0.877, docking=-7.63. Random=0.547±0.014, Greedy=0.614±0.002, GA=0.592±0.018, cross-seed table updated** | ✅ MCTS collapse resolved (global best-molecule tracking) |
 | P1 — MCMC Latent Space Optimisation | 4 chains × 5000 steps, 8D latent | **MPO +0.0246; top candidate MPO 0.801** | Completed |
 | P1 — STONED-SELFIES Leap | 20 seeds → 5,525 neighbours | **97.9% ECFP4-unreachable from STONED** | Completed |
 | P2 — MD Complex Building | 4 targets (PfDHFR, PfATP4, PfClpP, PfCRT) | **4/4 solvated + ionized complexes built; EM/NVT/NPT: 4/4 complete; Production MD: 4/4 trajectories generated; PBC-unwrapped re-analysis: 2/4 systems retain bound ligands (PfCRT, PfATP4), 2/4 are unbound (PfClpP, PfDHFR)** | ⚠️ Partially validated |
