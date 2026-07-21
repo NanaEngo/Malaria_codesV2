@@ -624,6 +624,12 @@ def _cv_score_ablation_hybrid(X_ecfp: np.ndarray,
             "f1":       f1_score(y_te, y_pred, zero_division=0),
         })
 
+        # Save checkpoint after each ablation fold (R4)
+        if checkpoint_path:
+            with open(checkpoint_path, "w") as _f:
+                json.dump({"records": records, "section": f"ablation_{remove}"}, _f, default=str)
+            print(f"      Ablation checkpoint saved: {checkpoint_path}")
+
     return records
 
 
