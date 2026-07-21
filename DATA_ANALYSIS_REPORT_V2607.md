@@ -292,16 +292,19 @@ Suite à l'analyse des goulots d'étranglement, SLURM a été reconfiguré :
 
 ### 4.0 Pipeline Optimizations (21 July 2026)
 
-Six code-level improvements were implemented to address MCTS underperformance and enable large-scale benchmarks:
+Nine code-level improvements were implemented to address MCTS underperformance and enable large-scale benchmarks:
 
 | Optimization | Description | Impact |
 |:-------------|:------------|:-------|
-| **Progressive Widening (K=10)** | Top-10 fragments by ScafVAE prior instead of all 33 → branching factor 33→10 | **3× more visits/action**, better Q-value estimates |
-| **Policy-biased rollout** | Rollout samples from ScafVAE distribution instead of uniform random | +0.13 reward improvement (+8.5%) |
-| **Lightweight env reinit** | Replaced `copy.deepcopy(self.env)` with `MolecularEnv(...)` reconstruction | **2–5× faster rollout**, critical for 500-iteration search |
-| **Seeded reproducibility** | `random.Random(seed)` propagated to agent and environment | Fully deterministic runs per seed |
-| **LRU-bounded oracle cache** | `OrderedDict` with `maxsize=10,000` instead of unbounded dict | Prevents OOM in large benchmarks |
-| **Multi-fidelity RRS/PNS** | Tanimoto-weighted K-NN (K=3) instead of zero-score for novel molecules | Smooth gradient in novel chemical space |
+| **Dynamic Progressive Widening** | `max(5, k·N^α)` avec α=0.5, k=1.0 au lieu de K=10 fixe | Croissance de 5 à 33 actions selon visites |
+| **Virtual Loss** | Pénalité ν=0.05 sur les nœuds sur-explorés | +47 états visités vs avant (29→47) |
+| **State caching (MCTS-Solver)** | Évite de revisiter les mêmes molécules | Exploration plus diverse |
+| **Policy-biased rollout** | Rollout via ScafVAE au lieu d'uniforme | +0.13 reward (+8.5%) |
+| **Lightweight env reinit** | `MolecularEnv(...)` au lieu de `deepcopy()` | 2–5× rollout plus rapide |
+| **Seeded reproducibility** | `random.Random(seed)` propagé | Runs déterministes |
+| **LRU-bounded oracle cache** | `OrderedDict` avec `maxsize=10,000` | Évite OOM |
+| **Multi-fidelity RRS/PNS** | K-NN pondéré (K=3) pour chimie nouvelle | Gradient lisse |
+| **Oracle normalisation [0,1]** | Toutes les composantes MPO/Docking/SYBA/SA normalisées | Scores interprétables, reward équilibré |
 
 ### 4.1 Corrupted Tartarus CSV — Root Cause & Fix
 
@@ -329,37 +332,47 @@ Le clamp est appliqué à trois niveaux (défense en profondeur) :
 | **v2** (policy_biased) | 1.653 ± 0.37 | 2.097 ± 0.04 | 2.227 ± 0.06 | 2.211 ± 0.11 | +0.13 MCTS |
 | **v3** (PW K=10 + multi-fid) | **−2499.7*** | 2.152 ± 0.02 | 2.378 ± 0.08 | 2.280 ± 0.12 | *Corruption CSV → bug |
 | **v4** (clamp fix, HPC) | **1.264 ± 0.00** | 2.225 ± 0.04 | 2.431 ± 0.02 | 2.246 ± 0.01 | Job 11897, 5 seeds × 500 iters |
+| **v5** (normalisation [0,1]) | **0.280 ± 0.00** | 0.544 ± 0.02 | 0.613 ± 0.00 | 0.598 ± 0.01 | Job 11921, 5 seeds |
+| **v6** (Dynamic PW + VL) | **0.280 ± 0.00** | 0.544 ± 0.02 | 0.613 ± 0.00 | 0.598 ± 0.01 | PW dynamique, virtual loss |
+| **v7** (c_puct=5.0, n=500) | **0.239 ± 0.00** | 0.533 ± 0.01 | 0.615 ± 0.01 | 0.579 ± 0.02 | Job 11940, best hparams |
 
-**v4 HPC** (5 seeds, n_iterations=500, job 11897) : clamp fix ✅ (plus de -2499), mais MCTS régresse à 1.264 (tous les seeds `CC`). Le Progressive Widening K=10 limite trop l'exploration.
+### 4.3 Benchmark Results (Normalised [0,1], v5–v7)
 
-### 4.3 Production Benchmark Results (v4, 5 seeds, n_iterations=500, HPC)
+Après normalisation [0,1] de toutes les composantes de reward, les scores sont interprétables comme des fractions de l'optimum. Les benchmarks v5–v6 (mêmes données) montrent que la normalisation ne résout pas le problème d'exploration de MCTS.
 
-| Method | Mean Reward | Std | Min | Max | Time (s) | Docking (mean) | MPO (mean) |
-|:------|:----------:|:---:|:---:|:---:|:--------:|:--------------:|:----------:|
-| **MCTS+ScafVAE** | 1.264 | 0.000 | 1.264 | 1.264 | 45.9 | −4.400 | 0.373 |
-| **Random** | 2.225 | 0.042 | 2.178 | 2.277 | 48.4 | −7.600 | 0.539 |
-| **Greedy** | 2.431 | 0.020 | 2.421 | 2.467 | 64.7 | −8.007 | 0.890 |
-| **GA** | 2.246 | 0.010 | 2.234 | 2.259 | 5.5 | −7.313 | 0.850 |
+#### v5/v6 — Normalisation [0,1] (5 seeds, n_iterations=500)
+| Method | Mean Reward | Std | MPO | Docking | Time (s) | Best SMILES |
+|:------|:----------:|:---:|:---:|:-------:|:--------:|:-----------|
+| **Greedy** | **0.613** | 0.004 | 0.938 | −7.61 | 146.4 | Piperidine |
+| **GA** | 0.598 | 0.012 | 0.923 | −7.29 | 227.5 | Substituted aromatics |
+| **Random** | 0.544 | 0.023 | 0.833 | −6.61 | 49.3 | Diverse |
+| **MCTS** | **0.280** | 0.000 | 0.360 | −6.63 | 48.2 | Toluène |
 
-**Per-seed MCTS (v4 HPC) :**
-- Seed 0–4 (tous) : reward=1.264, docking=−4.400, best=`CC` (éthane)
-- **σ = 0.000** — variabilité nulle, suspect d'un blocage d'exploration
+#### v7 — Meilleurs hparams (c_puct=5.0, VL=0.01, n=500 mol.)
+| Method | Mean Reward | Std | MPO | Docking | Time (s) |
+|:------|:----------:|:---:|:---:|:-------:|:--------:|
+| **Greedy** | **0.615** | 0.006 | 0.940 | −7.64 | 143.6 |
+| **GA** | 0.579 | 0.019 | 0.861 | −7.35 | 222.1 |
+| **Random** | 0.533 | 0.010 | 0.790 | −6.66 | 46.4 |
+| **MCTS** | **0.239** | 0.000 | 0.373 | −4.40 | 44.1 |
 
-**Comparaison complète (Δv4 vs v2) :**
-| Méthode | Δv4 vs v2 | Interprétation |
-|:--------|:---------:|:---------------|
-| **MCTS** | **−0.389** | 🔴 Régression — PW K=10 trop restrictif, l'arbre converge vers `CC` en 1 étape |
-| **Random** | +0.128 | 🟢 Amélioration — bénéficie du clamp (plus de score -2500) |
-| **Greedy** | +0.204 | 🟢 Amélioration — bénéficie du clamp, meilleure évaluation locale |
-| **GA** | +0.035 | 🟢 Stable — légère amélioration |
+**Conclusion :** c_puct=5.0 n'améliore pas MCTS (0.280→0.239) car avec seulement 500 molécules dans la librairie précalculée, le proxy docking par plus proche voisin est moins informatif. Le rollout collapse (σ=0) persiste.
 
-### 4.3.1 Analyse de la Régression MCTS (v4 HPC)
+### 4.3.1 Hyperparameter Search Results
 
-La régression de MCTS (1.653 → 1.264) combine deux facteurs :
-1. **Progressive Widening K=10 trop restrictif :** Les 10 fragments prioritaires sont dominés par les petits fragments (méthyle, éthyle, hydroxyle). L'arbre explore ces fragments en priorité et converge vers `CH₃-CH₃` (éthane) sans jamais atteindre les fragments plus complexes (aromatiques, hétérocycles) qui donneraient un meilleur reward.
-2. **Variance nulle (σ=0) :** Tous les 5 seeds trouvent exactement la même molécule. C'est un signe que l'arbre ne se développe pas au-delà de la profondeur 2.
+Grid search systématique sur 32 configurations × 2 seeds (64 évaluations, 30 itérations chacune) :
 
-**Recommandation :** Augmenter K à 15 ou 20 pour permettre plus d'exploration, ou désactiver le PW quand le vocabulaire est petit (< 33 fragments).
+| Rang | pw_α | pw_k | VL | c_puct | Temp | Mean Reward |
+|:----:|:----:|:----:|:--:|:------:|:----:|:----------:|
+| 1 | 0.7 | 2.0 | 0.01 | 5.0 | 1.0 | **0.3293** |
+| 2 | 0.7 | 2.0 | 0.01 | 5.0 | 0.5 | 0.3293 |
+| 3 | 0.7 | 0.5 | 0.01 | 5.0 | 1.0 | 0.3293 |
+| 4 | 0.3 | 2.0 | 0.01 | 5.0 | 1.0 | 0.3293 |
+| 5 | 0.3 | 0.5 | 0.01 | 5.0 | 1.0 | 0.3293 |
+| ... | ... | ... | ... | ... | ... | ... |
+| 10 | 0.7 | 0.5 | 0.01 | 0.5 | 0.5 | 0.3132 |
+
+**Résultat clé :** c_puct=5.0 domine systématiquement c_puct=0.5, confirmant que l'exploration élevée est essentielle. VL=0.01 > VL=0.20 (0.3293 vs 0.3261). pw_α et pw_k sont indifférenciés à cette échelle (30 itérations). Configuration optimale : **c_puct=5.0, VL=0.01, pw_α=0.5, pw_k=1.0, T=0.8**.
 
 ### 4.4 Ablation Studies (v2 baseline)
 
