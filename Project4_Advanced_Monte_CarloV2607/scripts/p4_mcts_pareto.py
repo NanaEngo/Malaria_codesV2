@@ -28,6 +28,9 @@ import numpy as np
 class ParetoFront:
     """Maintain a set of non-dominated (Pareto-optimal) solutions.
 
+    Uses pymoo's non-dominated sorting and hypervolume computation for
+    efficient and exact multi-objective optimization metrics.
+
     Parameters
     ----------
     objectives : list[str]
@@ -44,111 +47,90 @@ class ParetoFront:
         )
         # Store (solution_smiles, vector_of_scores, metadata)
         self._solutions: list[tuple[str, np.ndarray, dict]] = []
-        self._dominated: set[int] = set()
-
-    def _dominates(self, a: np.ndarray, b: np.ndarray) -> bool:
-        """Check if vector a dominates vector b."""
-        at_least_one = False
-        for i in range(self.n_obj):
-            ai = a[i] if self.maximize[i] else -a[i]
-            bi = b[i] if self.maximize[i] else -b[i]
-            if ai < bi:
-                return False
-            if ai > bi:
-                at_least_one = True
-        return at_least_one
 
     def update(self, smiles: str, scores: dict[str, float], metadata: Optional[dict] = None) -> bool:
-        """Try to add a new solution. Returns True if Pareto front was updated."""
+        """Try to add a new solution using pymoo's non-dominated check.
+        Returns True if Pareto front was updated.
+        """
+        from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
+
         vec = np.array([scores.get(obj, 0.0) for obj in self.objectives], dtype=float)
-        meta = metadata or {}
+        if len(self._solutions) == 0:
+            self._solutions.append((smiles, vec, metadata or {}))
+            return True
 
-        # Check if new solution is dominated by any existing solution
-        for i, (existing_smi, existing_vec, _) in enumerate(self._solutions):
-            if i in self._dominated:
-                continue
-            if self._dominates(existing_vec, vec):
-                return False  # dominated — not Pareto-optimal
+        # Check dominance using pymoo's efficient algorithm
+        all_vecs = np.array([v for _, v, _ in self._solutions] + [vec])
+        # pymoo minimises by default; negate maximised objectives
+        sign = np.array([-1.0 if m else 1.0 for m in self.maximize])
+        all_vecs_signed = all_vecs * sign[np.newaxis, :]
 
-        # New solution is Pareto-optimal: remove dominated solutions
-        newly_dominated = []
-        for i, (_, existing_vec, _) in enumerate(self._solutions):
-            if i in self._dominated:
-                continue
-            if self._dominates(vec, existing_vec):
-                newly_dominated.append(i)
+        # NonDominatedSorting.do() returns a numpy array (not a list)
+        front_indices = NonDominatedSorting().do(all_vecs_signed, only_non_dominated_front=True)
+        non_dominated_mask = np.zeros(len(all_vecs_signed), dtype=bool)
+        non_dominated_mask[front_indices] = True
 
-        for i in newly_dominated:
-            self._dominated.add(i)
+        # Check if new solution (last row) is non-dominated
+        if not non_dominated_mask[-1]:
+            return False  # new solution is dominated
 
-        self._solutions.append((smiles, vec, meta))
+        # Rebuild non-dominated solutions (keep only old non-dominated + new)
+        kept = [
+            (smi, vec, meta)
+            for i, (smi, vec, meta) in enumerate(self._solutions)
+            if non_dominated_mask[i]
+        ]
+        self._solutions = kept + [(smiles, vec, metadata or {})]
         return True
 
     @property
     def solutions(self) -> list[tuple[str, np.ndarray, dict]]:
         """Return the list of (smiles, score_vector, metadata) for non-dominated solutions."""
-        return [
-            (smi, vec, meta)
-            for i, (smi, vec, meta) in enumerate(self._solutions)
-            if i not in self._dominated
-        ]
+        if not self._solutions:
+            return []
+        from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
+
+        vecs = np.array([v for _, v, _ in self._solutions])
+        sign = np.array([-1.0 if m else 1.0 for m in self.maximize])
+        # NonDominatedSorting.do() returns a numpy array directly
+        front_indices = NonDominatedSorting().do(vecs * sign[np.newaxis, :], only_non_dominated_front=True)
+        return [self._solutions[i] for i in front_indices]
 
     def hypervolume(self, reference: Optional[np.ndarray] = None) -> float:
-        """Approximate hypervolume indicator (sum of volumes of dominated hyper-rectangles).
+        """Exact hypervolume indicator using pymoo's algorithm.
 
-        Higher is better. Uses a simple Monte Carlo estimate for >2 objectives.
+        Higher is better. Works for any number of objectives.
         """
         sols = self.solutions
         if not sols:
             return 0.0
 
-        if reference is None:
-            reference = np.zeros(self.n_obj)
+        try:
+            from pymoo.indicators.hv import Hypervolume
 
-        if self.n_obj <= 2:
-            # Exact hypervolume for 2D
             vecs = np.array([v for _, v, _ in sols])
-            # Sort by first objective (descending)
-            idx = np.argsort([-v[0] if self.maximize[0] else v[0] for v in vecs])
-            sorted_vecs = vecs[idx]
-            hv = 0.0
-            prev_second = reference[1]
-            for v in sorted_vecs:
-                if self.maximize[1]:
-                    width = max(0.0, v[1] - reference[1])
-                    height = max(0.0, prev_second - reference[1])
-                    hv += width * height
-                else:
-                    width = max(0.0, reference[1] - v[1])
-                    height = max(0.0, reference[1] - prev_second)
-                    hv += width * height
-                prev_second = v[1] if self.maximize[1] else -v[1]
-            return hv
-        else:
-            # Monte Carlo estimate for >2 objectives
-            bounds = np.array([
-                [v[i] for _, v, _ in sols] for i in range(self.n_obj)
-            ])
-            n_samples = max(10000, 100 * len(sols))
-            count = 0
-            rng = np.random.default_rng(42)
-            for _ in range(n_samples):
-                point = rng.uniform(
-                    [b.min() for b in bounds],
-                    [b.max() for b in bounds],
-                )
-                # Check if point is dominated by any solution
-                dominated = False
-                for _, v, _ in sols:
-                    if all(
-                        (v[i] >= point[i]) if self.maximize[i] else (v[i] <= point[i])
-                        for i in range(self.n_obj)
-                    ):
-                        dominated = True
-                        break
-                if dominated:
-                    count += 1
-            return count / n_samples * np.prod([b.max() - b.min() for b in bounds])
+            # Negate maximised objectives for pymoo (minimisation convention)
+            sign = np.array([-1.0 if m else 1.0 for m in self.maximize])
+            signed_vecs = vecs * sign[np.newaxis, :]
+
+            if reference is None:
+                # Reference point must be WORSE than all solutions (pymoo minimisation convention):
+                # use max + 10% margin instead of min - 10% margin
+                vmin = signed_vecs.min(axis=0)
+                vmax = signed_vecs.max(axis=0)
+                margin = 0.1 * (vmax - vmin)
+                ref_point = vmax + np.where(margin > 0, margin, 0.1)
+                ref_point = np.where(np.isinf(ref_point), 0.0, ref_point)
+            else:
+                ref_point = reference.copy()
+                for i, m in enumerate(self.maximize):
+                    if m:
+                        ref_point[i] = -ref_point[i]
+
+            hv = Hypervolume(ref_point=ref_point)
+            return hv.do(signed_vecs)
+        except ImportError:
+            return 0.0
 
 
 class PMCTSNode:
