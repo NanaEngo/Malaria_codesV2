@@ -81,10 +81,6 @@ def load_benchmark_data():
         if not csv_path.exists():
             print(f"  WARNING: {csv_path} not found")
             continue
-    if not data:
-        print("  ERROR: No benchmark data loaded! Check results/benchmark/ directory.")
-        print(f"  Expected {N_SEEDS} files: p4_benchmark_seed_[0-{N_SEEDS-1}].csv")
-        sys.exit(1)
         with open(csv_path) as f:
             reader = csv.DictReader(f)
             for row in reader:
@@ -98,6 +94,10 @@ def load_benchmark_data():
                     "sa": float(row.get("sa", 0)),
                     "time_s": float(row["time_s"]),
                 })
+    if not data:
+        print("  ERROR: No benchmark data loaded! Check results/benchmark/ directory.")
+        print(f"  Expected {N_SEEDS} files: p4_benchmark_seed_[0-{N_SEEDS-1}].csv")
+        sys.exit(1)
     return data
 
 
@@ -152,25 +152,41 @@ def plot_reward_bar(data):
 
 # ── Figure 2: Efficiency scatter plot ────────────────────────────────
 def plot_efficiency(data):
-    """Scatter plot: reward vs time, coloured by method."""
+    """Scatter + errorbar: reward vs time, coloured by method.
+
+    Individual seed results are shown as scatter points; mean ± std
+    per method is overlaid as error bars for a clearer comparison.
+    """
     methods = ["mcts", "greedy", "ga", "random"]
     markers = {"mcts": "o", "greedy": "s", "ga": "^", "random": "D"}
 
     fig, ax = plt.subplots(figsize=(4.5, 3.8))
 
     for m in methods:
-        times = [d["time_s"] for d in data[m]]
-        rewards = [d["reward"] for d in data[m]]
-        ax.scatter(times, rewards, c=COLOURS[m], label=METHOD_LABELS[m],
-                   marker=markers[m], s=40, edgecolors="black", linewidth=0.4,
-                   alpha=0.85, zorder=3)
+        times = np.array([d["time_s"] for d in data[m]])
+        rewards = np.array([d["reward"] for d in data[m]])
+
+        # Individual seed points (transparent, show distribution)
+        ax.scatter(times, rewards, c=COLOURS[m], label=None,
+                   marker=markers[m], s=25, edgecolors="black",
+                   linewidth=0.3, alpha=0.4, zorder=2)
+
+        # Mean ± std error bar (bold, principal visual anchor)
+        mean_t, mean_r = np.mean(times), np.mean(rewards)
+        std_t, std_r = np.std(times, ddof=1), np.std(rewards, ddof=1)
+        ax.errorbar(mean_t, mean_r, xerr=std_t, yerr=std_r,
+                    fmt=markers[m], c=COLOURS[m], label=METHOD_LABELS[m],
+                    markersize=9, markeredgecolor="black",
+                    markeredgewidth=0.6, capsize=4, capthick=1.0,
+                    elinewidth=1.2, alpha=1.0, zorder=4)
 
     ax.set_xlabel("Wall-clock time (s)", fontsize=10)
     ax.set_ylabel("Best reward", fontsize=10)
     ax.set_title("Computational efficiency", fontsize=11, fontweight="bold")
-    ax.legend(frameon=True, fancybox=False, edgecolor="grey", fontsize=8)
+    ax.legend(frameon=True, fancybox=False, edgecolor="grey", fontsize=8,
+              loc="upper left")
 
-    # Add rectangle annotations for method regions
+    # Annotations for method regions
     ax.annotate("Fast ↔ cheap", xy=(60, 0.54), fontsize=7, fontstyle="italic",
                 color="grey", ha="center")
     ax.annotate("Slow ↔ accurate", xy=(220, 0.61), fontsize=7, fontstyle="italic",
