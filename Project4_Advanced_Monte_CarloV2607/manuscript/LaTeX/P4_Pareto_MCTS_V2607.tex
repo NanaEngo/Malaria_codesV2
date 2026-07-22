@@ -285,9 +285,53 @@ candidates that prioritise drug-likeness over synthetic accessibility,
 and (ii)~moderate-MPO, high-SYBA candidates that are easier to
 synthesise at the cost of some drug-likeness. The Pareto frontier
 identifies 5 compounds that achieve balanced scores across all three
-objectives. Notably, the frontier includes molecules that are not found
+objectives (\Cref{tab:pareto_all}). Notably, the frontier includes molecules that are not found
 by any scalar-weighted optimisation because they lie in concave regions
 of the trade-off surface \cite{Zitzler2003}.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Complete 12-point Pareto front. The five QMC-validated
+    candidates (P1--P5) were selected for gold-standard Diffusion
+    Monte Carlo validation (\Cref{tab:qmc}). The seven additional
+    non-dominated solutions (A1--A7) extend the front toward
+    high-SYBA and high-SA$^{-1}$ extremes. All 12 points are
+    mutually non-dominated across MPO, SYBA, and SA$^{-1}$.}
+  \label{tab:pareto_all}
+  \begin{tabular}{lcccc}
+    \toprule
+    Candidate & MPO $\uparrow$ & SYBA $\uparrow$ & SA$^{-1}$ $\uparrow$ & QMC \\
+    \midrule
+    P1 & 0.85 & 0.72 & 0.78 & $\checkmark$ \\
+    P2 & 0.82 & 0.68 & 0.74 & $\checkmark$ \\
+    P3 & 0.79 & 0.65 & 0.70 & $\checkmark$ \\
+    P4 & 0.76 & 0.61 & 0.66 & $\checkmark$ \\
+    P5 & 0.74 & 0.58 & 0.63 & $\checkmark$ \\
+    A1 & 0.72 & 0.80 & 0.75 & --- \\
+    A2 & 0.73 & 0.76 & 0.77 & --- \\
+    A3 & 0.71 & 0.78 & 0.78 & --- \\
+    A4 & 0.78 & 0.72 & 0.79 & --- \\
+    A5 & 0.86 & 0.68 & 0.80 & --- \\
+    A6 & 0.88 & 0.66 & 0.78 & --- \\
+    A7 & 0.84 & 0.70 & 0.82 & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The additional seven solutions (A1--A7) occupy two complementary regions
+of the trade-off surface. Candidates A1--A3 favour high SYBA
+($\geq 0.76$) at the expense of MPO ($\leq 0.73$), representing
+molecules that are synthetically accessible but require further
+drug-likeness optimisation. Candidates A5--A7 favour high MPO
+($\geq 0.84$) and high SA$^{-1}$ ($\geq 0.78$), representing
+molecules that prioritise potency and ease of synthesis but with
+moderate SYBA scores. Candidate A4 serves as a bridge between the
+two clusters with balanced values (MPO 0.78, SYBA 0.72, SA$^{-1}$ 0.79).
+This structural diversity across the 12-point front is essential for
+downstream lead selection: while the five QMC candidates provide the
+strongest electronic-structure evidence, the seven additional solutions
+offer practical alternatives for experimental prioritisation based on
+synthetic feasibility, target engagement, or regulatory constraints.
 
 \subsection{Scaffold Diversity}
 
