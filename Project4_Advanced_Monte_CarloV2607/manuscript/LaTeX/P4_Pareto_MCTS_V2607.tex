@@ -242,8 +242,8 @@ per seed, Greedy in $\sim$147~s (evaluating all fragments at each step),
 GA in $\sim$242~s (population-based evolution), and MCTS+ScafVAE in
 $\sim$274~s. The higher MCTS compute time (273.8~s vs 48.2~s previously)
 reflects the global best-molecule tracking, which evaluates the oracle at
-every rollout step rather than only at the terminal state. This 5.7\times
-increase in oracle calls is compensated by the 2.2\times improvement in
+every rollout step rather than only at the terminal state. This $5.7\times$
+increase in oracle calls is compensated by the $2.2\times$ improvement in
 mean reward. GA achieves the highest reward-per-oracle-call ratio due
 to its population-based parallel evaluation, while Greedy provides the
 best reward-to-wall-clock ratio.
@@ -270,7 +270,9 @@ $1{,}000$ iterations.
   \caption{Pareto front of non-dominated solutions across three objectives
     (MPO, SYBA, SA). Each point represents a generated molecule. The
     Pareto frontier (dashed line) connects optimal trade-off solutions.
-    Point size encodes the inverse SA score (larger = easier to synthesise).}
+    Colour encodes the inverse SA score (warmer = easier to synthesise).
+    Marker shape indicates the candidate category: stars (QMC-validated),
+    pentagons (additional Pareto), and dots (benchmark baselines).}
   \label{fig:pareto}
 \end{figure}
 
@@ -315,6 +317,11 @@ of the trade-off surface \cite{Zitzler2003}.
     A6 & 0.88 & 0.66 & 0.78 & --- \\
     A7 & 0.84 & 0.70 & 0.82 & --- \\
     \bottomrule
+    \multicolumn{5}{l}{\footnotesize P1--P5: QMC-validated candidates from the MCTS search.}
+    \\
+    \multicolumn{5}{l}{\footnotesize A1--A7: additional non-dominated solutions from the same search,}
+    \\
+    \multicolumn{5}{l}{\footnotesize not selected for QMC validation.}
   \end{tabular}
 \end{table}
 
@@ -746,9 +753,25 @@ where $N$ is the node visit count, $k=1.0$ and $\alpha=0.5$
 growing to $\sim$33 (full vocabulary) after $\sim$1{,}000 visits. The
 dynamic cap prevents premature restriction of promising branches while
 keeping the branching factor manageable early on. Additionally, a
-virtual loss penalty ($\nu=0.01$)~{}discourages the PUCT selection from
+virtual loss penalty discourages the PUCT selection from
 repeatedly choosing the same child node across consecutive iterations,
-promoting diverse exploration within a single search.
+promoting diverse exploration within a single search. Specifically, the
+PUCT score is modified by subtracting a virtual loss term proportional to
+the fractional visit count:
+\begin{equation}
+  \text{Score}(s,a) = \frac{Q(s,a)}{N(s,a)} +
+  c_{\text{PUCT}} \cdot P(a\mid s)
+  \cdot \frac{\sqrt{N(s)}}{1 + N(s,a)}
+  - \nu \cdot \frac{N(s,a)}{\max_{a'} N(s,a')}
+  \label{eq:vl}
+\end{equation}
+where $\nu=0.01$ is the virtual loss coefficient. The last term penalises
+frequently visited children, discouraging the PUCT selection from repeatedly
+choosing the same child node and promoting diverse exploration within a
+single search. When $N(s,a)/N(s)$ is small (i.e., the child is
+under-explored relative to its parent), the penalty is negligible; as
+visits accumulate, the penalty increases linearly, redirecting exploration
+toward alternative branches.
 
 \textbf{Rollout strategy.} In standard MCTS, the rollout (simulation) phase
 uses uniform random action selection, which generates many chemically
@@ -1064,7 +1087,7 @@ following a critical fix that addressed the rollout degradation issue
 (global best-molecule tracking along the rollout trajectory). The
 MCTS compute time (273.8~s per seed) is higher than Random (49.1~s)
 due to the additional oracle calls required for max-over-trajectory
-evaluation, but this 5.7\times increase yields a 2.2\times improvement
+evaluation, but this $5.7\times$ increase yields a $2.2\times$ improvement
 in reward. The Pareto front
 analysis identifies distinct clusters of high-MPO and high-SYBA candidates,
 providing practical guidance for lead selection. Importantly, the
