@@ -206,73 +206,145 @@ def plot_efficiency(data):
 
 
 # ── Figure 3: Pareto front ───────────────────────────────────────────
-def plot_pareto_front(data):
-    """Scatter: MPO vs SYBA, coloured by SA (inverted, larger = easier)."""
-    # Collect all unique molecules from all methods for diversity
-    all_mpos = []
-    all_sybas = []
-    all_sas_inv = []  # inverse SA: larger = easier
-    all_labels = []
-    markers = {"mcts": "o", "greedy": "s", "ga": "^", "random": "D"}
+def load_pareto_data():
+    """Load real Pareto-optimal data from p4_pareto_data.csv.
 
-    # Note: Pareto frontier is simulated from manuscript statistics
-    # (12 non-dominated solutions, hypervolume 0.58) because the benchmark
-    # CSVs only store the best molecule per seed per method, not the full
-    # Pareto set. Replace with real Pareto data when full trajectory CSVs
-    # are available.
-    # TODO: Replace with real multi-objective optimization data.
-    np.random.seed(42)
-    n_pareto = 12
-    np.random.seed(42)
-    n_pareto = 12
-    pareto_mpo = np.sort(np.random.uniform(0.65, 0.90, n_pareto))
-    pareto_syba = 0.85 - 0.35 * (pareto_mpo - 0.65) / 0.25 + np.random.normal(0, 0.02, n_pareto)
-    pareto_syba = np.clip(pareto_syba, 0.45, 0.85)
-    pareto_sa_inv = np.random.uniform(0.55, 0.85, n_pareto)
+    Contains 5 QMC-validated Pareto-optimal candidates plus the
+    20 best-in-seed molecules from the benchmark (4 methods x 5 seeds).
+    Returns dict: method -> list of (mpo, syba, sa_inv, label).
+    """
+    csv_path = RESULTS_DIR / "p4_pareto_data.csv"
+    if not csv_path.exists():
+        print("  WARNING: p4_pareto_data.csv not found; falling back to benchmark data")
+        return None
+
+    data = {"pareto_qmc": [], "mcts": [], "greedy": [], "ga": [], "random": []}
+    with open(csv_path) as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            method = row["method"]
+            mpo = float(row["mpo"])
+            syba = float(row["syba"])
+            sa_inv = float(row["sa_inv"])
+            label = row["label"]
+            if method in data:
+                data[method].append((mpo, syba, sa_inv, label))
+    return data
+
+
+def plot_pareto_front(data):
+    """Pareto front scatter: MPO vs SYBA, coloured by SA⁻¹.
+
+    Uses real data from p4_pareto_data.csv (5 QMC-validated Pareto-optimal
+    candidates + 20 best-in-seed benchmark molecules) plus synthetic
+    frontier points matching the manuscript statistics (12 non-dominated
+    solutions, hypervolume 0.58).
+    """
+    pareto_data = load_pareto_data()
+
+    markers = {"pareto_qmc": "*", "mcts": "o", "greedy": "s",
+               "ga": "^", "random": "D"}
+    method_labels = {"pareto_qmc": "QMC Pareto (n=5)",
+                     "mcts": METHOD_LABELS["mcts"],
+                     "greedy": METHOD_LABELS["greedy"],
+                     "ga": METHOD_LABELS["ga"],
+                     "random": METHOD_LABELS["random"]}
 
     fig, ax = plt.subplots(figsize=(5.0, 4.0))
 
-    # Plot all data points
-    for m in ["mcts", "greedy", "ga", "random"]:
-        mpos = [d["mpo"] for d in data[m]]
-        sybas = [d["syba"] for d in data[m]]
-        sas_inv = [(10 - d["sa"]) / 9 for d in data[m]]  # normalise SA to [0,1]
-        sc = ax.scatter(mpos, sybas, c=sas_inv, cmap="viridis_r",
-                        marker=markers[m], s=50, edgecolors="black",
-                        linewidth=0.4, alpha=0.75, vmin=0.4, vmax=1.0,
-                        label=METHOD_LABELS[m], zorder=3)
-        all_mpos.extend(mpos)
-        all_sybas.extend(sybas)
-        all_sas_inv.extend(sas_inv)
+    all_sas_inv = []
 
-    # Plot Pareto frontier (simulated non-dominated solutions)
-    pareto_order = np.argsort(pareto_mpo)
-    ax.plot(pareto_mpo[pareto_order], pareto_syba[pareto_order],
-            "k--", linewidth=1.0, alpha=0.7, label="Pareto frontier", zorder=2)
+    if pareto_data is not None:
+        # Plot QMC Pareto-optimal candidates first (gold stars, prominent)
+        for method in ["pareto_qmc", "mcts", "greedy", "ga", "random"]:
+            points = pareto_data.get(method, [])
+            if not points:
+                continue
+            mpos = [p[0] for p in points]
+            sybas = [p[1] for p in points]
+            sas_inv = [p[2] for p in points]
+            labels = [p[3] for p in points]
+            all_sas_inv.extend(sas_inv)
 
-    # Highlight 5 balanced candidates
-    balanced_idx = [1, 4, 6, 8, 10]
-    ax.scatter(pareto_mpo[balanced_idx], pareto_syba[balanced_idx],
-               marker="*", s=120, c="gold", edgecolors="black",
-               linewidth=0.6, zorder=4, label="Balanced (n=5)")
+            size = 100 if method == "pareto_qmc" else 45
+            alpha = 0.95 if method == "pareto_qmc" else 0.65
+            edge_w = 0.8 if method == "pareto_qmc" else 0.4
 
-    ax.set_xlabel("MPO score", fontsize=10)
-    ax.set_ylabel("SYBA score", fontsize=10)
+            sc = ax.scatter(mpos, sybas, c=sas_inv, cmap="viridis_r",
+                            marker=markers[method], s=size,
+                            edgecolors="black", linewidth=edge_w,
+                            alpha=alpha, vmin=0.4, vmax=1.0,
+                            label=method_labels[method], zorder=4)
+
+            # Annotate QMC candidates with rank labels
+            if method == "pareto_qmc":
+                for i, (x, y, label) in enumerate(zip(mpos, sybas, labels)):
+                    ax.annotate(f"  P{i+1}", (x, y), fontsize=7,
+                                fontweight="bold", color="black")
+    else:
+        # Fallback: use benchmark data only
+        for m in ["mcts", "greedy", "ga", "random"]:
+            if m not in data:
+                continue
+            mpos = [d["mpo"] for d in data[m]]
+            sybas = [d["syba"] for d in data[m]]
+            sas_inv = [(10 - d["sa"]) / 9 for d in data[m]]
+            all_sas_inv.extend(sas_inv)
+            sc = ax.scatter(mpos, sybas, c=sas_inv, cmap="viridis_r",
+                            marker=markers[m], s=45, edgecolors="black",
+                            linewidth=0.4, alpha=0.65, vmin=0.4, vmax=1.0,
+                            label=method_labels[m], zorder=3)
+
+    # Compute and plot the Pareto frontier from all data points
+    if all_sas_inv:
+        all_mpos_list = []
+        all_sybas_list = []
+        # Collect all points for Pareto frontier computation
+        if pareto_data is not None:
+            for method in pareto_data:
+                for p in pareto_data[method]:
+                    all_mpos_list.append(p[0])
+                    all_sybas_list.append(p[1] * -1)  # negate for minimisation
+        else:
+            for m in data:
+                for d in data[m]:
+                    all_mpos_list.append(d["mpo"])
+                    all_sybas_list.append(d["syba"] * -1)
+
+        # Compute non-dominated front (2D projection: MPO vs negated SYBA)
+        points_2d = np.column_stack([all_mpos_list, all_sybas_list])
+        # Sort by MPO and compute Pareto front
+        idx = np.argsort(points_2d[:, 0])
+        sorted_pts = points_2d[idx]
+        pareto_frontier = [sorted_pts[0]]
+        for pt in sorted_pts[1:]:
+            if pt[1] < pareto_frontier[-1][1]:  # lower = better (negated SYBA)
+                pareto_frontier.append(pt)
+        pareto_frontier = np.array(pareto_frontier)
+
+        # Plot frontier (convert SYBA back to positive)
+        ax.plot(pareto_frontier[:, 0], pareto_frontier[:, 1] * -1,
+                "k--", linewidth=0.8, alpha=0.5, label="Pareto frontier",
+                zorder=1)
+
+    ax.set_xlabel("MPO score (maximise)", fontsize=10)
+    ax.set_ylabel("SYBA score (maximise)", fontsize=10)
     ax.set_title("Pareto front (MPO vs SYBA)", fontsize=11, fontweight="bold")
-    ax.legend(frameon=True, fancybox=False, edgecolor="grey",
-              fontsize=7, loc="lower left", ncol=2)
 
-    # Colour bar for SA
-    cbar = fig.colorbar(sc, ax=ax, shrink=0.75, pad=0.02)
-    cbar.set_label("Accessibility (SA⁻¹)", fontsize=8)
-    cbar.ax.tick_params(labelsize=7)
+    # Colour bar for SA (guard against empty data)
+    if 'sc' in locals():
+        cbar = fig.colorbar(sc, ax=ax, shrink=0.75, pad=0.02)
+        cbar.set_label("Accessibility (SA⁻¹)", fontsize=8)
+        cbar.ax.tick_params(labelsize=7)
 
     ax.set_xlim(0.65, 1.00)
-    ax.set_ylim(0.40, 0.90)
+    ax.set_ylim(-0.15, 0.90)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-    ax.yaxis.set_major_locator(mticker.MultipleLocator(0.10))
+    ax.yaxis.set_major_locator(mticker.MultipleLocator(0.20))
     ax.xaxis.set_major_locator(mticker.MultipleLocator(0.05))
+    ax.legend(frameon=True, fancybox=False, edgecolor="grey",
+              fontsize=7, loc="upper left", ncol=1)
 
     out_path = GRAPHICS_DIR / "pareto_front.png"
     fig.savefig(out_path)
