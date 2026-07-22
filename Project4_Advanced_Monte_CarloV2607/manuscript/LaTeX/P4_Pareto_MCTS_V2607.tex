@@ -62,8 +62,8 @@ multi-objective front tracks non-dominated solutions across MPO, SYBA, and
 SA scores simultaneously, eliminating the need for a priori reward aggregation.
 Third, a rigorous four-method benchmark (MCTS~vs~Random~vs~Greedy~vs~Genetic
 Algorithm) across five independent seeds with normalised scores reveals
-competitive performance: Greedy (mean 0.614), GA (0.592), MCTS (0.597),
-and Random (0.547), with systematic hyperparameter search identifying
+competitive performance: Greedy (mean 0.638), MCTS (0.637), GA (0.615),
+and Random (0.555), with systematic hyperparameter search identifying
 $c_{\text{PUCT}}=5.0$ and virtual loss $\nu=0.01$ as optimal. Fourth, Quantum
 Monte Carlo validation on the top-five Pareto-optimal candidates provides
 gold-standard electronic correlation energies that confirm the physical
@@ -105,8 +105,8 @@ We present a Pareto-guided MCTS framework addressing all three limitations:
     MPO, SYBA, and SA replaces scalar aggregation.
   \item \textbf{ScafVAE-guided PUCT selection.} Chemistry-informed priors from
     ChEMBL27 fragment frequencies and scaffold Tanimoto compatibility.
-  \item \textbf{Rigorous four-method benchmark.} MCTS+ScafVAE (0.597) achieves
-    competitive performance with Greedy (0.614) and GA (0.592), following a
+  \item \textbf{Rigorous four-method benchmark.} MCTS+ScafVAE (0.637) achieves
+    competitive performance with Greedy (0.638) and GA (0.615), following a
     2.5$\times$ improvement via global best-molecule tracking.
   \item \textbf{Quantum Monte Carlo validation.} DMC on top-five Pareto-optimal
     candidates provides gold-standard electronic correlation energies.
@@ -178,13 +178,13 @@ statistics.
 \end{figure}
 
 Greedy search achieves the highest mean reward among all methods
-(mean~$\pm$~std:~$0.614 \pm 0.002$,~$n=5$), closely followed by MCTS+ScafVAE
-($0.597 \pm 0.000$), GA ($0.592 \pm 0.018$), and Random ($0.547 \pm 0.014$).
-MCTS+ScafVAE (mean~$\pm$~std:~$0.597 \pm 0.000$,~$n=5$), and Random
-($0.547 \pm 0.014$). MCTS now achieves competitive performance within 0.017
+(mean~$\pm$~std:~$0.638 \pm 0.002$,~$n=5$), closely followed by MCTS+ScafVAE
+($0.637 \pm 0.000$), GA ($0.615 \pm 0.011$), and Random ($0.555 \pm 0.031$).
+MCTS+ScafVAE (mean~$\pm$~std:~$0.637 \pm 0.000$,~$n=5$), and Random
+($0.555 \pm 0.031$). MCTS now achieves competitive performance within 0.017
 of the Greedy search, following a critical rollout fix (global best-molecule
 tracking, \Cref{sec:rollout_fix}).
-performance within 0.017 of the Greedy search, which remains the best
+performance within 0.001 of the Greedy search, which remains the best
 overall method.
 
 \begin{table}[htbp]
@@ -195,10 +195,10 @@ overall method.
     \toprule
     Method & Mean reward & Max reward & Std & Time (s) \\
     \midrule
-    Greedy & 0.614 & 0.617 & 0.002 & 146.7 \\
-    GA & 0.592 & 0.617 & 0.018 & 242.3 \\
-    Random & 0.547 & 0.573 & 0.014 & 49.1 \\
-    MCTS+ScafVAE & 0.597 & 0.597 & 0.000 & 273.8 \\
+    Greedy & 0.638 & 0.645 & 0.004 & 152.2 \\
+    GA & 0.615 & 0.629 & 0.011 & 241.2 \\
+    Random & 0.555 & 0.572 & 0.031 & 47.7 \\
+    MCTS+ScafVAE & 0.637 & 0.637 & 0.000 & 272.7 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -359,7 +359,7 @@ benchmark ($w_{\text{MPO}}=0.30$, $w_{\text{docking}}=0.25$,
 $w_{\text{SYBA}}=0.15$, $w_{\text{SA}}=0.05$, $w_{\text{RRS}}=0.15$,
 $w_{\text{PNS}}=0.10$). The weight shift towards SYBA and docking
 explains the systematically higher mean reward values (1.14--1.28~vs
-0.597--0.614). The relative differences ($\Delta$) and the collapse
+0.637--0.638). The relative differences ($\Delta$) and the collapse
 behaviour ($-1.02$ when removing best-molecule tracking) remain
 informative for isolating component contributions, as the collapse
 phenomenon is independent of the oracle weight configuration.
@@ -472,7 +472,7 @@ post-training---the two paradigms are complementary.
 Several limitations should be acknowledged. The 33-fragment vocabulary
 constrains accessible chemical space; the docking score proxy introduces
 approximation error for novel chemotypes (partially mitigated by multi-fidelity
-K-NN). Global best-molecule tracking improves reward by 2.2$\times$ but increases
+K-NN). Global best-molecule tracking improves reward by 2.7$\times$ but increases
 oracle calls 5.7$\times$. Zero-variance across seeds ($\sigma=0.00$) suggests
 convergence to a similar chemical region; increasing seeds to $\geq 20$ would
 provide more statistical power. Molecules with Tanimoto $<0.30$ to the reference
@@ -602,8 +602,8 @@ stored. After rollout completion, the best intermediate molecule---rather
 than the terminal state---is returned as the rollout result, ensuring that
 high-quality partial constructions are preserved even if later additions
 degrade the score. This fix increased the mean MCTS reward from 0.239
-(all seeds returning ethane) to 0.597, a 2.5$\times$ improvement that
-brings MCTS within 0.017 of the Greedy search baseline. The associated
+(all seeds returning ethane) to 0.637, a 2.5$\times$ improvement that
+brings MCTS within 0.001 of the Greedy search baseline. The associated
 increase in oracle calls (each rollout step now evaluates the oracle
 rather than only the terminal state) is compensated by the recovery of
 high-reward intermediates that were previously discarded by the sequential
@@ -854,11 +854,11 @@ and scaffold Tanimoto compatibility as chemical priors, demonstrably improves
 both search efficiency and molecular diversity compared to uniform expansion.
 
 Our four-method benchmark across five independent seeds demonstrates that
-MCTS+ScafVAE (mean reward 0.597, MPO 0.877) achieves competitive
-performance with Greedy search (0.614) and Genetic Algorithm (0.592),
+MCTS+ScafVAE (mean reward 0.637, MPO 0.877) achieves competitive
+performance with Greedy search (0.638) and Genetic Algorithm (0.615),
 following a critical fix that addressed the rollout degradation issue
 (global best-molecule tracking along the rollout trajectory). The
-MCTS compute time (273.8~s per seed) is higher than Random (49.1~s)
+MCTS compute time (272.7~s per seed) is higher than Random (47.7~s)
 due to the additional oracle calls required for max-over-trajectory
 evaluation, but this $5.7\times$ increase yields a $2.2\times$ improvement
 in reward. The Pareto front
