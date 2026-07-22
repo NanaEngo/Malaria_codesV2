@@ -19,7 +19,7 @@ from typing import Callable, Optional
 
 import datamol as dm
 from rdkit import Chem, RDLogger
-from rdkit.Chem import Descriptors, rdFingerprintGenerator
+from rdkit.Chem import Descriptors, MACCSkeys, rdFingerprintGenerator
 from rdkit.DataStructs import TanimotoSimilarity
 
 # Suppress RDKit warnings during fragment scoring
@@ -150,21 +150,25 @@ class ScafVAEPolicy:
         self.use_filters = use_filters
         self._rng = random.Random(random_seed)
 
-        # Precompute privileged fingerprints
-        self._priv_fps: list = []
+        # Precompute privileged fingerprints (Morgan + MACCS)
+        self._priv_fps: list[dict[str, object] | None] = []
         self._compute_privileged_fps()
 
     def _compute_privileged_fps(self) -> None:
-        """Generate Morgan fingerprints for privileged scaffolds.
+        """Generate Morgan + MACCS fingerprints for privileged scaffolds.
 
-        Uses datamol for simpler SMILES handling (skill-based):
-        dm.to_mol() returns None for invalid SMILES automatically.
+        Multi-fingerprint approach inspired by molfeat (scientific-agent-skills):
+        - Morgan: captures detailed atomic environments (ECFP-like)
+        - MACCS: captures structural key presence (166-bit)
         """
-        gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
+        gen_morgan = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
         for smi in _PRIVILEGED_SMILES:
             mol = dm.to_mol(smi)
             if mol:
-                self._priv_fps.append(gen.GetFingerprint(mol))
+                self._priv_fps.append({
+                    "morgan": gen_morgan.GetFingerprint(mol),
+                    "maccs": MACCSkeys.GenMACCSKeys(mol),
+                })
             else:
                 self._priv_fps.append(None)
 
@@ -215,25 +219,38 @@ class ScafVAEPolicy:
         return self._softmax_log_probs(raw_scores)
 
     def _scaffold_compatibility(self, state: str) -> float:
-        """Compute scaffold compatibility score (0-1) for current molecule."""
+        """Compute scaffold compatibility score (0-1) for current molecule.
+
+        Uses combined Morgan + MACCS fingerprint similarity for better
+        chemical space coverage (scientific-agent-skills: molfeat-inspired
+        multi-fingerprint approach).
+
+        Morgan weight: 0.7 (captures detailed atomic environments)
+        MACCS weight: 0.3 (captures structural key presence)
+        """
         mol = Chem.MolFromSmiles(state)
         if mol is None:
             return 0.3  # default
 
-        gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
         try:
-            query_fp = gen.GetFingerprint(mol)
+            gen_morgan = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
+            query_morgan = gen_morgan.GetFingerprint(mol)
+            query_maccs = MACCSkeys.GenMACCSKeys(mol)
         except Exception:
             return 0.3
 
-        max_sim = 0.0
-        for priv_fp in self._priv_fps:
-            if priv_fp is None:
+        max_morgan = 0.0
+        max_maccs = 0.0
+        for priv in self._priv_fps:
+            if priv is None:
                 continue
-            sim = TanimotoSimilarity(query_fp, priv_fp)
-            max_sim = max(max_sim, sim)
+            sim_morgan = TanimotoSimilarity(query_morgan, priv["morgan"])
+            sim_maccs = TanimotoSimilarity(query_maccs, priv["maccs"])
+            max_morgan = max(max_morgan, sim_morgan)
+            max_maccs = max(max_maccs, sim_maccs)
 
-        return max_sim
+        # Weighted combination: 0.7 Morgan + 0.3 MACCS
+        return 0.7 * max_morgan + 0.3 * max_maccs
 
     def _chemical_penalty(self, fragment: str) -> float:
         """Score penalty for reactive or problematic chemical patterns.

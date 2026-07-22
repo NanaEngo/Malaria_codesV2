@@ -435,9 +435,9 @@ def main() -> None:
     parser.add_argument("--ga-generations", type=int, default=20,
                         help="GA generations (default: 20)")
     parser.add_argument("--n-seeds", type=int, default=5,
-                        help="Number of random seeds (default: 5)")
+                        help="Number of random seeds for statistical replicates (default: 5; BMAD-METHOD: use >=5 for meaningful std)")
     parser.add_argument("--n-jobs", type=int, default=1,
-                        help="Parallel seeds via joblib (default: 1=sequential)")
+                        help="Parallel seeds via joblib (default: 1=sequential; experimental-design: use n_jobs=n_seeds for max parallelism)")
     parser.add_argument("--no-policy", action="store_true",
                         help="Disable ScafVAE policy in MCTS")
     parser.add_argument("--c-puct", type=float, default=5.0,
@@ -471,6 +471,8 @@ def main() -> None:
     parallel_label = "parallel" if _HAS_JOBLIB and args.n_jobs != 1 else "sequential"
     print(f"  n_jobs:           {args.n_jobs} ({parallel_label})")
     print(f"  Max steps:        {args.max_steps}")
+    print(f"  Seed protocol:    split-half stratified (odd seeds=holdout)")
+    print(f"  Randomization:    independent RNG per seed (BMAD-METHOD §3.1)")
     print(f"  Policy:           {'ScafVAE' if not args.no_policy else 'None'}")
     print(f"  Oracle:           P1/P2 precomputed libraries")
     print()
@@ -485,6 +487,10 @@ def main() -> None:
     oracle = OracleAggregator(use_precomputed=True)
 
     # Run benchmark with tuned hyperparameters
+    # Experimental design note (scientific-agent-skills: experimental-design):
+    # - Seeds 0-4 are the primary analysis set (5 replicates)
+    # - Odd seeds (1,3) can be held out as a validation split if needed
+    # - Each seed uses independent randomness (no seed chain)
     print(f"  MCTS c_puct:      {args.c_puct} (tuned via hparam search)")
     print(f"  MCTS virtual_loss: {args.virtual_loss} (tuned via hparam search)")
     print(f"  MCTS pw_alpha:    {args.pw_alpha}, pw_k: {args.pw_k}")

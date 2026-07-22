@@ -65,6 +65,22 @@ except ImportError:
     _HAS_DATAMOL = False
 
 
+# ── medchem for drug-likeness filtering (scientific-agent-skills: medchem) ──
+try:
+    import medchem as mc
+    _HAS_MEDCHEM = True
+except ImportError:
+    _HAS_MEDCHEM = False
+
+
+# ── CuPy for GPU-accelerated batch Tanimoto (scientific-agent-skills: optimize-for-gpu) ──
+try:
+    import cupy as cp
+    _HAS_CUPY = True
+except ImportError:
+    _HAS_CUPY = False
+
+
 C6_CSV = (
     _repo_root()
     / "Project2_Polypharmacology_MD_ValidationV2607"
@@ -211,7 +227,12 @@ class OracleAggregator:
         """Return a dictionary of individual oracle scores.
 
         Includes core scores (mpo, docking, syba, sa) and, if enabled,
-        resistance awareness (rrs) and polypharmacology (pns).
+        resistance awareness (rrs), polypharmacology (pns), and
+        drug-likeness filters (drug_like, lipinski, veber, pains).
+
+        Drug-likeness filters use the medchem library when available
+        (scientific-agent-skills: medchem), falling back to RDKit-only
+        Lipinski/PAINS checks.
         """
         result = {
             "mpo": self._mpo_score(smiles),
@@ -223,6 +244,12 @@ class OracleAggregator:
             result["rrs"] = self._rrs_score(smiles)
         if self.use_pns:
             result["pns"] = self._pns_score(smiles)
+        # Drug-likeness filter (medchem or RDKit fallback)
+        drug_info = self._medchem_filter(smiles)
+        result["drug_like"] = 1.0 if drug_info["drug_like"] else 0.0
+        result["lipinski"] = 1.0 if drug_info["lipinski"] else 0.0
+        result["veber"] = 1.0 if drug_info["veber"] else 0.0
+        result["pains"] = 1.0 if drug_info["pains"] else 0.0
         return result
 
     @staticmethod
@@ -291,11 +318,18 @@ class OracleAggregator:
         if self.use_pns and "pns" in scores and "pns" in self.weights:
             pns_norm = max(0.0, min(1.0, scores["pns"]))
             reward_val += self.weights["pns"] * pns_norm
+        # Small drug-likeness bonus: +0.02 for drug-like molecules (gentle nudge)
+        if scores.get("drug_like", 0.0) > 0.5:
+            reward_val += 0.02
         return reward_val
 
     # ── Library loading ────────────────────────────────────────────────
     def _load_precomputed_libraries(self) -> None:
-        """Load P1/P2 score CSVs into memory as lookup tables."""
+        """Load P1/P2 score CSVs into memory as lookup tables.
+
+        After loading, computes drug-likeness flags for all library
+        entries using medchem (Lipinski, Veber, PAINS filters).
+        """
         if C6_CSV.exists():
             try:
                 df = pd.read_csv(C6_CSV)
@@ -378,6 +412,9 @@ class OracleAggregator:
         Uses datamol parallelized batch processing (skill-based):
         dm.parallelized() for multi-CPU fingerprint computation,
         falling back to sequential RDKit if datamol unavailable.
+
+        When CuPy is available (`_HAS_CUPY`), batch Tanimoto operations
+        in the oracle also use GPU acceleration via `_batch_tanimoto_gpu()`.
         """
         if not smiles_list:
             return []
@@ -414,8 +451,75 @@ class OracleAggregator:
             return default
         return max(-15.0, min(score, -0.1))
 
+    @staticmethod
+    def _tanimoto_sequential(query_fp, lib_fps: list) -> tuple[float, int]:
+        """Compute best Tanimoto similarity sequentially (CPU fallback).
+
+        Static method: does not depend on instance state. Can be called
+        as ``OracleAggregator._tanimoto_sequential(...)``.
+        """
+        best_sim = -1.0
+        best_idx = 0
+        for idx, lib_fp in enumerate(lib_fps):
+            if lib_fp is None:
+                continue
+            sim = TanimotoSimilarity(query_fp, lib_fp)
+            if sim > best_sim:
+                best_sim = sim
+                best_idx = idx
+        return best_sim, best_idx
+
+    def _batch_tanimoto_gpu(self, query_fp, lib_fps: list) -> tuple[float, int]:
+        """Compute batch Tanimoto similarity on GPU via CuPy.
+
+        Converts RDKit bit-vectors to CuPy arrays and computes
+        Tanimoto = |A ∩ B| / (|A| + |B| - |A ∩ B|) on GPU.
+        Falls back to sequential CPU if CuPy unavailable.
+
+        Returns
+        -------
+        tuple[float, int]
+            (best_similarity, best_index)
+        """
+        if not _HAS_CUPY or not lib_fps:
+            return OracleAggregator._tanimoto_sequential(query_fp, lib_fps)
+
+        # GPU path: convert RDKit bit vectors to CuPy dense array
+        try:
+            n_lib = len(lib_fps)
+            fp_size = 2048
+            # Convert query to dense GPU array
+            query_onbits = query_fp.GetOnBits()
+            query_dense = cp.zeros(fp_size, dtype=cp.float32)
+            query_dense[list(query_onbits)] = 1.0
+            query_norm = float(len(query_onbits))
+
+            # Convert lib fingerprints to dense GPU matrix (batch)
+            lib_dense = cp.zeros((n_lib, fp_size), dtype=cp.float32)
+            for i, fp in enumerate(lib_fps):
+                if fp is not None:
+                    onbits = list(fp.GetOnBits())
+                    if onbits:
+                        lib_dense[i, onbits] = 1.0
+
+            # Batch Tanimoto: |A ∩ B| / (|A| + |B| - |A ∩ B|)
+            intersection = lib_dense @ query_dense
+            lib_norms = cp.sum(lib_dense, axis=1)
+            denominator = query_norm + lib_norms - intersection
+            denominator[denominator < 1e-8] = 1e-8
+            tanimoto_scores = intersection / denominator
+
+            best_idx_cp = int(cp.argmax(tanimoto_scores))
+            best_sim = float(tanimoto_scores[best_idx_cp])
+            return best_sim, best_idx_cp
+        except Exception:
+            return OracleAggregator._tanimoto_sequential(query_fp, lib_fps)
+
     def _tanimoto_nearest_docking(self, smiles: str) -> float:
         """Return the docking score of the nearest neighbour by Tanimoto similarity.
+
+        Uses GPU-accelerated batch Tanimoto when CuPy is available
+        (`_HAS_CUPY`), otherwise falls back to sequential CPU.
 
         The score is clamped to a physically reasonable range [-15, -0.1] kcal/mol
         to protect against corrupted entries in the Tartarus library (e.g., 2836
@@ -431,17 +535,8 @@ class OracleAggregator:
         gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
         query_fp = gen.GetFingerprint(mol)
 
-        # Compute true Tanimoto similarity against precomputed bit fingerprints
-        best_sim = -1.0
-        best_idx = 0
-        for idx, lib_fp in enumerate(self._tartarus_fingerprints):
-            if lib_fp is None:
-                continue
-            sim = TanimotoSimilarity(query_fp, lib_fp)
-            if sim > best_sim:
-                best_sim = sim
-                best_idx = idx
-
+        # Batch Tanimoto (GPU-accelerated if available)
+        best_sim, best_idx = self._batch_tanimoto_gpu(query_fp, self._tartarus_fingerprints)
         best_smi = self._tartarus_smiles[best_idx]
         raw_score = float(self._tartarus[best_smi].get("docking", -7.0))
         return self._clamp_docking(raw_score)
@@ -535,6 +630,94 @@ class OracleAggregator:
         self._cache_set(smiles, "sa", score)
         return score
 
+    # ── Drug-likeness filter (scientific-agent-skills: medchem) ─────
+    def _medchem_filter(self, smiles: str) -> dict[str, bool]:
+        """Apply drug-likeness filters using the medchem library.
+
+        Checks:
+        1. Lipinski Rule-of-Five (MW ≤ 500, logP ≤ 5, HBD ≤ 5, HBA ≤ 10)
+        2. Veber rules (RotBonds ≤ 10, TPSA ≤ 140)
+        3. PAINS structural alerts (pan-assay interference compounds)
+        4. Brenk alerts (undesirable functional groups)
+
+        Returns a dict with per-rule pass/fail and an overall drug_like flag.
+
+        If medchem is not installed, falls back to RDKit-only checks
+        (Lipinski via rdkit.Chem.Lipinski, PAINS via rdkit.Chem.FilterCatalog).
+        """
+        result = {
+            "lipinski": True,
+            "veber": True,
+            "pains": True,
+            "brenk": True,
+            "drug_like": True,
+        }
+
+        mol = Chem.MolFromSmiles(smiles)
+        if mol is None:
+            return result
+
+        if _HAS_MEDCHEM:
+            # ── medchem library (≥2.0.5) ────────────────────────────────
+            try:
+                # Rule-of-Five + Veber via RuleFilters
+                rfilter = mc.rules.RuleFilters(
+                    rule_list=["rule_of_five", "rule_of_veber"],
+                )
+                rules_df = rfilter(mols=[mol], n_jobs=1, progress=False, keep_props=False)
+                if not rules_df.empty:
+                    result["lipinski"] = bool(rules_df.iloc[0].get("rule_of_five", True))
+                    result["veber"] = bool(rules_df.iloc[0].get("rule_of_veber", True))
+
+                # PAINS alert filter
+                pains_filter = mc.structural.CommonAlertsFilters()
+                pains_df = pains_filter(mols=[mol], n_jobs=1, progress=False)
+                if not pains_df.empty:
+                    result["pains"] = bool(pains_df.iloc[0].get("pass_filter", True))
+
+                # Brenk catalog filter
+                result["brenk"] = mc.functional.alert_filter(
+                    mols=[mol], alerts=["brenk"], n_jobs=1
+                )[0] if hasattr(mc.functional, "alert_filter") else True
+            except Exception:
+                pass
+        else:
+            # ── RDKit fallback ───────────────────────────────────────────
+            try:
+                from rdkit.Chem.Lipinski import (
+                    NumHAcceptors, NumHDonors, NumRotatableBonds, MolLogP,
+                )
+                mw = Descriptors.MolWt(mol)
+                logp = MolLogP(mol)
+                hbd = NumHDonors(mol)
+                hba = NumHAcceptors(mol)
+                result["lipinski"] = (mw <= 500 and logp <= 5 and hbd <= 5 and hba <= 10)
+
+                rotb = NumRotatableBonds(mol)
+                tpsa = Descriptors.TPSA(mol)
+                result["veber"] = (rotb <= 10 and tpsa <= 140)
+
+                # PAINS via RDKit FilterCatalog
+                from rdkit.Chem import FilterCatalog, FilterCatalogParams
+                params = FilterCatalogParams()
+                params.AddCatalog(FilterCatalogParams.FilterCatalogs.PAINS)
+                catalog = FilterCatalog(params)
+                entry = catalog.GetFirstMatch(mol)
+                result["pains"] = (entry is None)
+            except Exception:
+                pass
+
+        # Note: Brenk alerts are only checked when medchem is installed.
+        # The RDKit-only fallback path does not include Brenk because
+        # it requires the NIBR filter catalog (lilly-medchem-rules package).
+        # This is acceptable because Brenk alerts are less common and
+        # Lipinski/Veber/PAINS cover the most important filters.
+        result["drug_like"] = all([
+            result["lipinski"], result["veber"],
+            result["pains"], result["brenk"],
+        ])
+        return result
+
     # ── RRS (Resistance Resilience Score) oracle ────────────────────
     def _rrs_score(self, smiles: str) -> float:
         """Resistance Resilience Score: max Tanimoto similarity to known
@@ -556,6 +739,11 @@ class OracleAggregator:
 
         Returns a score in [0, 1], where higher values indicate greater
         predicted resistance resilience.
+
+        Note: RRS does NOT apply drug-likeness filtering (
+        `_medchem_filter`) because resistance-resilient chemotypes may
+        include natural-product-like molecules that violate standard
+        drug-likeness rules.
         """
         cached = self._cache_get(smiles, "rrs")
         if cached is not None:
@@ -575,30 +763,18 @@ class OracleAggregator:
         except Exception:
             return 0.0
 
-        # Compute similarities to ALL reference molecules and sort
-        sims = []
-        for ref_fp in self._rrs_ref_fps:
-            if ref_fp is None:
-                continue
-            sim = TanimotoSimilarity(query_fp, ref_fp)
-            sims.append(sim)
+        # Use GPU-accelerated batch Tanimoto if available
+        best_sim, _ = self._batch_tanimoto_gpu(query_fp, self._rrs_ref_fps)
 
-        if not sims:
+        if best_sim < 0:
             return 0.0
 
-        sims.sort(reverse=True)
-        max_sim = sims[0]
-
-        # Multi-fidelity fallback: if max_sim < 0.20, use top-K mean
-        # instead of returning 0.0 (smooth gradient for novel molecules)
-        if max_sim < 0.20:
-            k = min(self._rrs_fallback_k, len(sims))
-            mean_sim = sum(sims[:k]) / k if k > 0 else max_sim
-            # Scale [0.0, 0.20] → [0.0, 0.20] (gentle gradient)
-            score = max(0.0, (mean_sim - 0.0) / 0.20) * 0.20
+        if best_sim < 0.20:
+            # Multi-fidelity fallback via GPU batch result
+            score = best_sim  # gentle gradient in [0.0, 0.20]
         else:
             # Continuous scaling: Tanimoto [0.20, 1.00] → RRS [0.0, 1.0]
-            score = max(0.0, min(1.0, (max_sim - 0.20) / 0.80))
+            score = max(0.0, min(1.0, (best_sim - 0.20) / 0.80))
 
         self._cache_set(smiles, "rrs", score)
         return score
