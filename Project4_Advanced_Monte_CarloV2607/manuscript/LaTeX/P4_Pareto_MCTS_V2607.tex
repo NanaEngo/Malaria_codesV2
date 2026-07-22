@@ -107,7 +107,7 @@ We present a Pareto-guided MCTS framework addressing all three limitations:
     ChEMBL27 fragment frequencies and scaffold Tanimoto compatibility.
   \item \textbf{Rigorous four-method benchmark.} MCTS+ScafVAE (0.597) achieves
     competitive performance with Greedy (0.614) and GA (0.592), following a
-    2.2$\times$ improvement via global best-molecule tracking.
+    2.5$\times$ improvement via global best-molecule tracking.
   \item \textbf{Quantum Monte Carlo validation.} DMC on top-five Pareto-optimal
     candidates provides gold-standard electronic correlation energies.
 \end{enumerate}
@@ -206,7 +206,7 @@ overall method.
 Random completes in $\sim$49~s per seed, Greedy in $\sim$147~s, GA in
 $\sim$242~s, and MCTS+ScafVAE in $\sim$274~s. The higher MCTS time reflects
 global best-molecule tracking (5.7$\times$ more oracle calls), compensated by
-the 2.2$\times$ reward improvement.
+the 2.5$\times$ reward improvement.
 
 \begin{figure}[htbp]
   \centering
@@ -231,6 +231,8 @@ $1{,}000$ iterations.
     (MPO, SYBA, SA). Each point represents a generated molecule. The
     Pareto frontier (dashed line) connects optimal trade-off solutions.
     Colour encodes the inverse SA score (warmer = easier to synthesise).
+    The figure shows a 2D projection (MPO vs SYBA); the third dimension (SA) is
+    encoded by colour. All 12 points are mutually non-dominated in the full 3D space.
     Marker shape indicates the candidate category: stars (QMC-validated),
     pentagons (additional Pareto), and dots (benchmark baselines).}
   \label{fig:pareto}
@@ -402,7 +404,7 @@ The top-five Pareto-optimal candidates were selected for DMC validation.
 
 \begin{table}[htbp]
   \centering
-  \caption{Quantum Monte Carlo validation results for the top-five
+  \caption{Illustrative Quantum Monte Carlo validation results for the top-five
     Pareto-optimal candidates.}
   \label{tab:qmc}
   \begin{tabular}{lcccc}
@@ -600,7 +602,7 @@ stored. After rollout completion, the best intermediate molecule---rather
 than the terminal state---is returned as the rollout result, ensuring that
 high-quality partial constructions are preserved even if later additions
 degrade the score. This fix increased the mean MCTS reward from 0.239
-(all seeds returning ethane) to 0.597, a 2.2$\times$ improvement that
+(all seeds returning ethane) to 0.597, a 2.5$\times$ improvement that
 brings MCTS within 0.017 of the Greedy search baseline. The associated
 increase in oracle calls (each rollout step now evaluates the oracle
 rather than only the terminal state) is compensated by the recovery of
@@ -922,6 +924,9 @@ under a CC-BY 4.0 licence. Source code is available at
 See the Supporting Information for a full inventory of deposited files.
 
 % ── Acknowledgements ─────────────────────────────────────────────────
+\section*{Author Contributions}
+M.V.S.T. and S.G.N.E.: conceptualization and methodology. M.V.S.T., J.-P.T.N., and P.S.: software. M.V.S.T., J.-P.T.N., and W.F.M.: validation. M.V.S.T. and S.G.N.E.: formal analysis and investigation. S.G.N.E. and W.F.M.: resources. M.V.S.T.: data curation. M.V.S.T.: writing---original draft. M.V.S.T., J.-P.T.N., P.S., W.F.M., and S.G.N.E.: writing---review and editing. M.V.S.T.: visualization. S.G.N.E. and W.F.M.: supervision. S.G.N.E.: project administration. All authors read and agreed to the published version of the manuscript.
+
 \section*{Acknowledgements}
 
 This work was supported by the African Institute for Mathematical Sciences
