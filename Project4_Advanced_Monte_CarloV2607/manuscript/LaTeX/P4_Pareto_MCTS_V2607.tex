@@ -275,7 +275,7 @@ $1{,}000$ iterations.
 \end{figure}
 
 The Pareto front contains 12 non-dominated solutions with a hypervolume
-of 0.58 (relative to the reference point $[0, 0, 1]$). MCTS$+$ScafVAE
+of 0.56 (relative to the reference point $[0, 0, 0]$). MCTS$+$ScafVAE
 achieves consistent results across all five seeds, with the global
 best-molecule tracking ensuring that high-quality intermediate molecules
 (e.g.,~toluene, reward~0.44) are not lost when subsequent rollout steps
@@ -871,7 +871,7 @@ three phases of the MCTS loop:
 This Pareto-MCTS integration ensures that the tree search explores diverse
 regions of the trade-off surface rather than collapsing toward a single
 weighted optimum. The resulting front (\Cref{fig:pareto}) contains 12
-non-dominated solutions with a hypervolume of 0.58, including molecules
+non-dominated solutions with a hypervolume of 0.56, including molecules
 in concave regions that scalar-weighted optimisation systematically
 overlooks (\Cref{fig:pareto}). The computational overhead of
 maintaining the Pareto front is minimal ($<1\%$ of total search
