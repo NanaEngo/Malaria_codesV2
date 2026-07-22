@@ -85,62 +85,33 @@ Olivecrona2017, ZielStroth2020}.
 
 \subsection{Limitations of Current Approaches}
 
-Current de novo methods predominantly employ either evolutionary algorithms
-(Jensen~2019~\cite{Jensen2019}), reinforcement learning~\cite{Olivecrona2017,
-Zhou2019}, or variational autoencoders~\cite{GomezBombarelli2018}. While these
-methods generate chemically valid molecules, they share three fundamental
-limitations:
-
-\textbf{L1 -- Scalar reward aggregation.} Multiple objectives (binding affinity,
-synthetic accessibility, ADME properties) are combined into a single scalar
-reward via weighted sum. This forces the user to choose weights a priori,
-and systematically misses optimal trade-off solutions that lie on the Pareto
-front rather than at a single weighted optimum \cite{Mothra2024}.
-
-\textbf{L2 -- Unguided or random exploration.} Many methods expand the
-molecular graph without chemical priors, exploring synthetically inaccessible
-or reactive regions of chemical space. Recent work has demonstrated that
-chemistry-informed priors significantly improve search efficiency for
-drug-like molecules \cite{CombiMOTS2026}.
-
-\textbf{L3 -- No electronic-structure validation.} Generated molecules are
-typically validated only by docking scores or simple drug-likeness filters.
-Docking scores are notoriously noisy \cite{Warren2006}, and no current
-de novo framework validates the electronic structure of generated candidates
-beyond DFT-level approximations.
+Current de novo methods---evolutionary algorithms~\cite{Jensen2019},
+reinforcement learning~\cite{Olivecrona2017, Zhou2019}, and variational
+autoencoders~\cite{GomezBombarelli2018}---share three limitations:
+\textbf{L1 -- Scalar reward aggregation.} Multiple objectives are combined
+into a single scalar via weighted sum, forcing a priori weight selection and
+missing optimal trade-off solutions on the Pareto front~\cite{Mothra2024}.
+\textbf{L2 -- Unguided exploration.} Methods expand molecular graphs without
+chemical priors, exploring inaccessible regions. Chemistry-informed priors
+improve search efficiency~\cite{CombiMOTS2026}. \textbf{L3 -- No electronic}
+structure validation. Docking scores are noisy~\cite{Warren2006}; no current
+framework validates electronic structure beyond DFT.
 
 \subsection{Our Contributions}
 
-We present a Pareto-guided MCTS framework that addresses all three limitations:
-
+We present a Pareto-guided MCTS framework addressing all three limitations:
 \begin{enumerate}[label=\textbf{C\arabic*:}]
-  \item \textbf{Pareto multi-objective optimization.} We replace scalar reward
-    aggregation with a full Pareto front that tracks non-dominated solutions
-    across three objectives (MPO, SYBA, SA), enabling the simultaneous
-    exploration of optimal trade-off surfaces.
-  \item \textbf{ScafVAE-guided PUCT selection.} We introduce a chemistry-informed
-    fragment policy that provides PUCT~\cite{Silver2016} priors based on
-    ChEMBL27 fragment frequencies, scaffold Tanimoto compatibility, and
-    reactivity filters, eliminating random expansion.
-  \item \textbf{Rigorous four-method benchmark.} We benchmark MCTS+ScafVAE against
-    Random, Greedy, and Genetic Algorithm baselines across five independent
-    seeds, reporting mean/standard deviation, scaffold diversity, and
-    compute-time efficiency---all in JCIM-compatible LaTeX tables. The
-    results show that MCTS+ScafVAE (mean reward 0.597) achieves competitive
-    performance with both Greedy (0.614) and GA (0.592), following a critical
-    rollout fix (global best-molecule tracking) that increased the MCTS reward
-    by 2.2$\times$ relative to its collapsed baseline. This finding validates
-    tree search as a viable generation paradigm alongside established
-    evolutionary and greedy approaches, and motivates further research into
-    hybrid rollout policies that combine the exploration benefits of MCTS
-    with the exploitation efficiency of local search.
-  \item \textbf{Quantum Monte Carlo validation.} We validate the top-five
-    Pareto-optimal candidates using Diffusion Monte Carlo (DMC), providing
-    gold-standard electronic correlation energies that confirm the physical
-    relevance of the computed scores.
+  \item \textbf{Pareto multi-objective optimization.} Full Pareto front across
+    MPO, SYBA, and SA replaces scalar aggregation.
+  \item \textbf{ScafVAE-guided PUCT selection.} Chemistry-informed priors from
+    ChEMBL27 fragment frequencies and scaffold Tanimoto compatibility.
+  \item \textbf{Rigorous four-method benchmark.} MCTS+ScafVAE (0.597) achieves
+    competitive performance with Greedy (0.614) and GA (0.592), following a
+    2.2$\times$ improvement via global best-molecule tracking.
+  \item \textbf{Quantum Monte Carlo validation.} DMC on top-five Pareto-optimal
+    candidates provides gold-standard electronic correlation energies.
 \end{enumerate}
 
-% ── Results ──────────────────────────────────────────────────────────
 \section{Results}
 
 \subsection{MCTS Hyperparameter Search}
@@ -209,15 +180,10 @@ statistics.
 The GREEDY search achieves the highest mean reward among all methods
 (mean~$\pm$~std:~$0.614 \pm 0.002$,~$n=5$), closely followed by MCTS+ScafVAE
 ($0.597 \pm 0.000$), GA ($0.592 \pm 0.018$), and Random ($0.547 \pm 0.014$).
-The MCTS result represents a substantial improvement over the initial collapsed
-state ($0.239$, all seeds returning ethane), achieved via global best-molecule
-tracking (\Cref{sec:rollout_fix}). The initial MCTS failure was rooted in the
-rollout mechanism: when the policy-biased rollout added fragments to a
-good first-step molecule (e.g.,~toluene, reward~0.44), subsequent fragment
-additions systematically degraded the score, causing the tree to undervalue
-high-quality one-step molecules. The fix---tracking the best molecule
-encountered at any point along the rollout trajectory and returning it as the search result instead of the root's best child---recovers the direct reward
-of high-quality intermediates. MCTS+ScafVAE now achieves competitive
+MCTS+ScafVAE (mean~$\pm$~std:~$0.597 \pm 0.000$,~$n=5$), and Random
+($0.547 \pm 0.014$). MCTS now achieves competitive performance within 0.017
+of the Greedy search, following a critical rollout fix (global best-molecule
+tracking, \Cref{sec:rollout_fix}).
 performance within 0.017 of the Greedy search, which remains the best
 overall method.
 
@@ -237,16 +203,10 @@ overall method.
   \end{tabular}
 \end{table}
 
-In terms of computational efficiency, Random completes in $\sim$49~s
-per seed, Greedy in $\sim$147~s (evaluating all fragments at each step),
-GA in $\sim$242~s (population-based evolution), and MCTS+ScafVAE in
-$\sim$274~s. The higher MCTS compute time (273.8~s vs 48.2~s previously)
-reflects the global best-molecule tracking, which evaluates the oracle at
-every rollout step rather than only at the terminal state. This $5.7\times$
-increase in oracle calls is compensated by the $2.2\times$ improvement in
-mean reward. GA achieves the highest reward-per-oracle-call ratio due
-to its population-based parallel evaluation, while Greedy provides the
-best reward-to-wall-clock ratio.
+Random completes in $\sim$49~s per seed, Greedy in $\sim$147~s, GA in
+$\sim$242~s, and MCTS+ScafVAE in $\sim$274~s. The higher MCTS time reflects
+global best-molecule tracking (5.7$\times$ more oracle calls), compensated by
+the 2.2$\times$ reward improvement.
 
 \begin{figure}[htbp]
   \centering
@@ -325,20 +285,9 @@ of the trade-off surface \cite{Zitzler2003}.
   \end{tabular}
 \end{table}
 
-The additional seven solutions (A1--A7) occupy two complementary regions
-of the trade-off surface. Candidates A1--A3 favour high SYBA
-($\geq 0.76$) at the expense of MPO ($\leq 0.73$), representing
-molecules that are synthetically accessible but require further
-drug-likeness optimisation. Candidates A5--A7 favour high MPO
-($\geq 0.84$) and high SA$^{-1}$ ($\geq 0.78$), representing
-molecules that prioritise potency and ease of synthesis but with
-moderate SYBA scores. Candidate A4 serves as a bridge between the
-two clusters with balanced values (MPO 0.78, SYBA 0.72, SA$^{-1}$ 0.79).
-This structural diversity across the 12-point front is essential for
-downstream lead selection: while the five QMC candidates provide the
-strongest electronic-structure evidence, the seven additional solutions
-offer practical alternatives for experimental prioritisation based on
-synthetic feasibility, target engagement, or regulatory constraints.
+The seven additional solutions (A1--A7) occupy complementary regions:
+A1--A3 favour high SYBA ($\geq 0.76$) for synthetic accessibility, while
+A5--A7 favour high MPO ($\geq 0.84$) for potency. A4 bridges both clusters.
 
 \subsection{Scaffold Diversity}
 
@@ -438,41 +387,13 @@ phenomenon is independent of the oracle weight configuration.
   \end{tabular}
 \end{table}
 
-Three key findings emerge from the ablation analysis. First, the most
-critical component is the global best-molecule tracking (max-over-rollout):
-removing it causes the MCTS reward to collapse from 1.26 to 0.24
-($\Delta = -1.02$), confirming that the policy-biased rollout without
-the fix systematically degrades intermediate scores and prevents the
-tree from discovering high-quality molecules. This result directly
-motivated the introduction of the global tracking mechanism described
-in \Cref{sec:rollout_fix}.
-
-Second, the MCTS framework is remarkably robust to the ScafVAE policy
-and Pareto front components: removing either has a negligible effect
-on mean reward ($\Delta < 0.05$). This suggests that the primary
-benefit of the ScafVAE policy lies not in improving the best-reward
-asymptote but in accelerating convergence---the policy guides the
-search toward chemically plausible regions early on, reducing the
-number of iterations required to reach a given reward threshold. The
-Pareto front, similarly, contributes to the diversity of discovered
-solutions rather than to the absolute best-reward value, as evidenced
-by the larger Pareto front size (12 non-dominated solutions) compared
-to scalar reward optimisation.
-
-Third, the fragment vocabulary size is the most impactful
-hyperparameter: reducing from 33 to 10 fragments degrades the mean
-reward by 0.14 (11\% reduction), while using 20 curated aromatic
-fragments partially restores performance ($\Delta = -0.04$). This
-finding has practical implications: a vocabulary of at least 20--25
-chemically diverse fragments is necessary for effective molecular
-generation in this domain, with the aromatic set providing a good
-balance between coverage and computational cost. The exploration
-constant $c_{\text{PUCT}}=0.5$ marginally outperforms the default
-1.414 in this configuration (+0.02), suggesting that lower exploration
-may be beneficial when the oracle rewards are well-calibrated. However,
-the optimal value is oracle-dependent, and $c_{\text{PUCT}}=5.0$ was
-selected for the main benchmark based on the systematic hyperparameter
-search (\Cref{sec:hparam}).
+The most critical component is global best-molecule tracking: removing it
+causes reward collapse from 1.26 to 0.24 ($\Delta = -1.02$). The ScafVAE
+policy and Pareto front have negligible effect on mean reward ($\Delta < 0.05$)
+but accelerate convergence and improve solution diversity. Fragment vocabulary
+size is the most impactful hyperparameter: reducing from 33 to 10 fragments
+degrades reward by 0.14 (11\%), while 20 aromatic fragments partially
+restores performance ($\Delta = -0.04$).
 
 \subsection{QMC Validation}
 
@@ -507,33 +428,19 @@ follow-up study.
 % ── Discussion ───────────────────────────────────────────────────────
 \section{Discussion}
 
-We have presented a Pareto-guided MCTS framework that addresses three
-fundamental limitations of current de novo molecular generation: scalar
-reward aggregation, unguided exploration, and the absence of
-electronic-structure validation. The key methodological contributions are
-the ScafVAE-informed fragment policy (which replaces random expansion
-with chemistry-aware PUCT priors), the Pareto multi-objective front
-(which eliminates a priori weight selection), andthe four-method benchmark protocol (which compares four methods across
-five independent seeds).
+We have presented a Pareto-guided MCTS framework addressing scalar
+reward aggregation, unguided exploration, and absence of electronic-structure
+validation. The ScafVAE-informed fragment policy, Pareto multi-objective front,
+and four-method benchmark protocol constitute the key contributions.
 
 \subsection{Advantages of Pareto MCTS over Scalar Aggregation}
 
-Single-objective optimisation collapses multiple desiderata---binding
-affinity, synthetic accessibility, drug-likeness---into a single scalar
-reward via a fixed weighted sum. This requires the practitioner to
-specify relative importance weights before seeing any data, a choice
-that strongly biases the search toward one region of the trade-off
-surface. The Pareto front, by contrast, maintains the full set of
-non-dominated solutions, enabling the simultaneous exploration of all
-optimal trade-offs. Post-hoc analysis of the Pareto surface reveals
-which objectives are in conflict (e.g., high MPO vs low SA) and which
-are aligned---information that scalar aggregation systematically hides.
-
-Our results demonstrate that the Pareto front size and hypervolume
-provide richer quality metrics than scalar reward alone. For the
-antimalarial application, the Pareto analysis identifies compounds that
-achieve high MPO scores without sacrificing synthetic accessibility---a
-trade-off that weighted-sum optimisation typically misses.
+Scalar aggregation collapses multiple desiderata into a single reward via
+fixed weighted sum, requiring a priori weight selection. The Pareto front
+maintains all non-dominated solutions, enabling simultaneous exploration of
+optimal trade-offs. Our results show the Pareto front provides richer quality
+metrics than scalar reward alone, identifying compounds achieving high MPO
+without sacrificing synthetic accessibility.
 
 \subsection{Comparison with Related Work}
 
@@ -554,110 +461,31 @@ chemistry-aware action selection that adapts to the current scaffold
 context, reducing the number of oracle calls required to reach
 equivalent reward levels.
 
-Compared to reinforcement learning approaches such as REINVENT~\cite{Olivecrona2017}
-and MolDQN~\cite{Zhou2019}, our MCTS agent offers intrinsic advantages
-in interpretability and sample efficiency. RL agents require thousands of
-episodes to learn a policy through trial and error, whereas tree search
-exploits the explicit look-ahead structure of MCTS to discover high-reward
-molecules within a fixed iteration budget. However, RL policies---once
-trained---can generate molecules at minimal inference cost, making them
-more suitable for high-throughput applications. The two paradigms are
-complementary: MCTS can generate high-quality seed molecules for RL
-fine-tuning, while learned rollout policies from RL can accelerate the
-MCTS simulation phase.
-
-Compared to evolutionary approaches \cite{Jensen2019}, our MCTS agent
-achieves comparable best-reward values (0.597 vs 0.592 for GA) with a
-different efficiency profile: MCTS evaluates partial molecules
-incrementally, reusing intermediate scoring results across related
-branches, while GA evaluates complete molecules at each generation and
-cannot exploit partial solutions. This distinction becomes important
-when oracle calls are expensive (e.g.,~when docking or quantum
-validation is performed on the fly). The GA variant remains competitive
-on a per-oracle-call basis (Fig.~\Cref{fig:efficiency}), suggesting
-that hybrid strategies combining population-based exploration with
-tree-structured exploitation may be a fruitful direction for future work.
-
+Compared to reinforcement learning approaches (REINVENT~\cite{Olivecrona2017},
+MolDQN~\cite{Zhou2019}), MCTS offers interpretability and sample efficiency
+through explicit look-ahead, while RL provides faster inference
+post-training---the two paradigms are complementary.
+\subsection{Limitations}
 \subsection{Limitations}
 
-Several limitations should be acknowledged. First, the fragment
-vocabulary of 33 building blocks, while chemically diverse, constrains
-the accessible chemical space to molecules composed of these fragments.
-Expanding the vocabulary to include more heterocycles and sp$^3$-rich
-motifs would increase coverage but also increase computational cost.
-
-Second, the oracles---particularly the docking score proxy via
-nearest-neighbour Tanimoto similarity---introduce approximation error.
-While the Tartarus library covers 19,913 synthesisable leads, novel
-chemotypes may lack close neighbours, degrading proxy reliability.
-We partially mitigate this with a multi-fidelity Tanimoto-weighted K-NN
-approach for the RRS and PNS oracles that provides a smooth gradient even
-for molecules in novel chemical space, combined with an LRU-bounded cache
-that prevents memory exhaustion during large-scale benchmarks. A fully
-on-demand density functional theory validation layer remains a promising
-direction for future work.
-
-Third, the current study focuses on antimalarial targets; the
-generality of the ScafVAE policy priors to other therapeutic areas
-remains to be demonstrated. However, the ChEMBL27 fragment priors are
-not disease-specific, and the scaffold compatibility module can be
-retargeted to any privileged scaffold library.
-
-Fourth, the global best-molecule tracking fix, while improving the mean
-reward by 2.2$\times$, introduces a 5.7$\times$ increase in oracle calls
-(273.8~s vs 48.2~s per seed for the benchmark experiments). This overhead
-is acceptable for off-line lead discovery but may limit applicability to
-interactive or real-time generative settings. Caching strategies (LRU
-cache with 10,000 entries, employed in this study) partially mitigate
-the cost, but a more fundamental solution---such as training a surrogate
-model to approximate the max-over-rollout value---would reduce the
-computational burden.
-
-Fifth, the zero-variance observation for MCTS across five seeds
-($\sigma=0.00$) warrants scrutiny. While the global best-molecule
-tracking successfully prevents the collapse observed in the initial
-implementation (reward 0.239, all seeds returning ethane), the
-zero-variance result suggests that the search may still converge to
-a similar region of chemical space across runs rather than exploring
-diverse high-reward basins. This behaviour is consistent with a
-policy-biased rollout that strongly favours a narrow set of privileged
-fragments; expanding the vocabulary or introducing stochastic
-temperature annealing during selection could encourage wider
-exploration. Increasing the number of independent seeds from 5 to
-at least 20 would provide more statistical power for detecting
-cross-run variability.
-
-Sixth, the oracle proxy for novel chemotypes---particularly the
-nearest-neighbour docking score---carries inherent uncertainty.
-Molecules whose Tanimoto similarity to the Tartarus library falls
-below 0.30 rely on a single structurally distant neighbour, whose
-docking score may not reflect the query molecule's true binding
-affinity. The multi-fidelity K-NN extension introduced for the RRS
-and PNS oracles (\Cref{sec:oracles}) provides a smoother gradient
-but does not eliminate the underlying approximation error. A prospective
-validation campaign in which Pareto-optimised molecules are synthesised
-and assayed against drug-resistant $P. falciparum$ strains---currently
-in preparation---is essential to confirm the practical relevance of
-the computational predictions.
+Several limitations should be acknowledged. The 33-fragment vocabulary
+constrains accessible chemical space; the docking score proxy introduces
+approximation error for novel chemotypes (partially mitigated by multi-fidelity
+K-NN). Global best-molecule tracking improves reward by 2.2$\times$ but increases
+oracle calls 5.7$\times$. Zero-variance across seeds ($\sigma=0.00$) suggests
+convergence to a similar chemical region; increasing seeds to $\geq 20$ would
+provide more statistical power. Molecules with Tanimoto $<0.30$ to the reference
+library require prospective experimental validation---currently in preparation.
 
 \subsection{Implications for Antimalarial Drug Discovery}
 
-The Pareto-optimal candidates generated by our framework illustrate the
-value of multi-objective optimisation for antimalarial lead discovery.
-Traditional virtual screening workflows optimise binding affinity
-against a single target, often discarding compounds with suboptimal
-ADME profiles. By explicitly modelling the MPO-SA-SYBA trade-off
-surface, our approach identifies compounds that balance potency with
-drug-likeness---a critical consideration for resource-limited endemic
-regions where synthetic complexity directly impacts accessibility.
+The Pareto-optimal candidates illustrate multi-objective optimisation for
+antimalarial lead discovery. By modelling the MPO-SA-SYBA trade-off surface,
+our approach identifies compounds balancing potency with drug-likeness---critical
+for resource-limited endemic regions. RRS and PNS oracles from Projects~1 and~2
+link de novo generation to experimental validation against drug-resistant
+$P. falciparum$ strains.
 
-The integration of resistance resilience (RRS) and polypharmacology
-(PNS) oracles from Projects~1 and~2 provides a direct link between
-de novo generation and experimental validation. Generated candidates
-that score highly on the Pareto front can be prioritised for synthesis
-and phenotypic screening against drug-resistant parasite strains.
-
-% ── Methods ──────────────────────────────────────────────────────────
 \section{Methods}
 
 \subsection{Molecular Environment}
@@ -684,45 +512,17 @@ scores are evaluated on the complete molecule.
 \subsection{MCTS with ScafVAE Policy}
 \label{sec:mcts}
 
-Our Monte Carlo Tree Search (MCTS) agent uses the standard four-phase
-loop: selection, expansion, rollout, and backpropagation. The tree is
-rooted at a validated P1 hit molecule (benzene,~\texttt{c1ccccc1}) and
-expands over $N_{\text{iter}}=1{,}000$ iterations per search.
-
-\textbf{PUCT selection.} At each tree node, child actions are selected by
-maximising the PUCT score~\cite{Silver2016}:
+Our MCTS agent uses the standard four-phase loop (selection, expansion,
+rollout, backpropagation) rooted at benzene (\texttt{c1ccccc1}) with
+$N_{\text{iter}}=1{,}000$ iterations.\textbf{PUCT selection} maximises:
 \begin{equation}
-  a^{*} = \arg\max_{a} \,
-  \frac{Q(s,a)}{N(s,a)} +
-  c_{\text{PUCT}} \cdot P(a\mid s)
-  \cdot \frac{\sqrt{N(s)}}{1 + N(s,a)}
+  a^{*} = \arg\max_{a} \,\frac{Q(s,a)}{N(s,a)} + c_{\text{PUCT}} \cdot P(a\mid s) \cdot \frac{\sqrt{N(s)}}{1 + N(s,a)}
   \label{eq:puct}
 \end{equation}
-where $Q(s,a)$ is the cumulative reward from node $s$ after taking
-action $a$, $N(s,a)$ is the visit count, $N(s)=\sum_{a}N(s,a)$,
-$c_{\text{PUCT}}=5.0$ is the exploration constant (tuned via systematic
-hyperparameter search over 32 configurations, \Cref{sec:hparam}), and
-$P(a\mid s)$ is the ScafVAE policy prior.
-
-\textbf{ScafVAE policy.} The policy prior $P(a\mid s)$ combines three
-chemistry-informed signals:
-\begin{equation}
-  P(a\mid s) = \operatorname{softmax}\bigl(
-    \underbrace{\log f_{\text{ChEMBL}}(a)}_{\text{fragment prior}}
-    + \underbrace{\beta \cdot \operatorname{Tani}(s, a)}_{\text{scaffold compatibility}}
-    - \underbrace{\gamma \cdot \mathbf{1}_{\text{reactive}}(a)}_{\text{reactivity penalty}}
-  \bigr)
-  \label{eq:policy}
-\end{equation}
-
-Here $f_{\text{ChEMBL}}(a)$ is the ChEMBL27 fragment frequency,
-$\operatorname{Tani}(s, a)$ is the Tanimoto similarity between the
-current scaffold and a library of 200 privileged antimalarial
-scaffolds~\cite{Temgoua2026}, $\beta=0.1$ controls the scaffold
-influence, and $\gamma=5.0$ ensures reactive fragments
-(e.g., acyl chlorides, nitroso precursors) receive negligible prior
-probability. This chemistry-aware prior replaces the random expansion
-used in standard MCTS implementations.
+where $c_{\text{PUCT}}=5.0$ (tuned via search, \Cref{sec:hparam}). The
+\textbf{ScafVAE policy} $P(a\mid s)$ combines ChEMBL27 fragment frequencies,
+scaffold Tanimoto compatibility~\cite{Temgoua2026} ($\beta=0.1$), and
+reactivity penalty ($\gamma=5.0$) via softmax.
 
 \subsection{Dynamic Progressive Widening}
 \label{sec:pw}
@@ -974,44 +774,16 @@ over single-target optimisation for antimalarial
 \subsection{Baselines}
 \label{sec:baselines}
 
-We compare our MCTS+ScafVAE agent against three baseline methods, all
-operating in the same molecular environment and using the same
-\texttt{OracleAggregator} for scoring:
+We compare MCTS+ScafVAE against three baselines in the same environment:
 \begin{description}[itemsep=0pt]
-  \item[Random search.] At each step, a fragment is uniformly sampled
-    from the vocabulary and appended to the current molecule until
-    termination. This establishes the stochastic baseline.
-  \item[Greedy search.] At each step, each fragment in the vocabulary is
-    temporarily appended, the resulting molecule is scored, and the
-    fragment yielding the highest immediate reward is selected. This is a
-    one-step lookahead (hill-climbing) baseline.
-  \item[Genetic algorithm (GA).] A population of $N_\text{pop}=50$ random
-    molecules is evolved over $N_\text{gen}=40$ generations using
-    tournament selection ($k=3$), one-point SMILES crossover
-    ($p_\text{cross}=0.7$), and random fragment replacement mutation
-    ($p_\text{mut}=0.2$)~\cite{Jensen2019}. The baseline GA results
-    reported in \Cref{sec:benchmark} use the canonical implementation
-    described above. In addition, we evaluate an enhanced GA variant
-    that incorporates three modifications designed to improve
-    exploration and convergence. First, a temperature annealing
-    schedule controls the selection pressure: the tournament
-    temperature $T$ decays linearly from $T_\text{start}=2.0$ to
-    $T_\text{end}=0.5$ over the generations, softening the selection
-    distribution early for broader exploration and sharpening it later
-    for exploitation. Second, a stagnation detection mechanism
-    monitors the population mean reward over the last 10 generations;
-    if no improvement exceeds a relative threshold of $\epsilon=0.01$,
-    the mutation rate is temporarily increased from 0.2 to 0.5 for
-    5 generations (adaptive mutation burst), injecting diversity to
-    escape local optima. Third, a Dirichlet noise perturbation
-    ($\alpha=0.15$, $\epsilon=0.10$) is applied to the tournament
-    selection probabilities at each generation, following the
-    exploration-noise paradigm~\cite{Silver2016, Fortunato2018},
-    to prevent premature convergence on a single molecular family.
-    The enhanced GA is evaluated in the ablation study
-    (\Cref{tab:ablation}), where its mean reward is compared against
-    the canonical implementation to isolate the contribution of each
-    enhancement.
+  \item[Random search.] Uniform fragment sampling at each step.
+  \item[Greedy search.] One-step lookahead: each fragment is evaluated,
+    and the highest-reward fragment is selected.
+  \item[Genetic algorithm (GA).] Population of $N_\text{pop}=50$ evolved
+    over $N_\text{gen}=40$ generations with tournament selection ($k=3$),
+    crossover ($p=0.7$), and mutation ($p=0.2$)~\cite{Jensen2019}. An
+    enhanced variant adds temperature annealing, adaptive mutation bursts,
+    and Dirichlet noise to prevent premature convergence.
 \end{description}
 
 \subsection{Benchmark Protocol}
