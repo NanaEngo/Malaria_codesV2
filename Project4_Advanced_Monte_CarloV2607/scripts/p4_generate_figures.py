@@ -218,10 +218,14 @@ def load_pareto_data():
         print("  WARNING: p4_pareto_data.csv not found; falling back to benchmark data")
         return None
 
-    data = {"pareto_qmc": [], "mcts": [], "greedy": [], "ga": [], "random": []}
+    data = {
+        "pareto_qmc": [], "pareto_additional": [],
+        "mcts": [], "greedy": [], "ga": [], "random": [],
+    }
     with open(csv_path) as f:
         reader = csv.DictReader(f)
         for row in reader:
+            # Skip comment lines (those starting with # are skipped by csv.reader)
             method = row["method"]
             mpo = float(row["mpo"])
             syba = float(row["syba"])
@@ -242,9 +246,10 @@ def plot_pareto_front(data):
     """
     pareto_data = load_pareto_data()
 
-    markers = {"pareto_qmc": "*", "mcts": "o", "greedy": "s",
-               "ga": "^", "random": "D"}
+    markers = {"pareto_qmc": "*", "pareto_additional": "P",
+               "mcts": "o", "greedy": "s", "ga": "^", "random": "D"}
     method_labels = {"pareto_qmc": "QMC Pareto (n=5)",
+                     "pareto_additional": "Pareto (n=7, non-QMC)",
                      "mcts": METHOD_LABELS["mcts"],
                      "greedy": METHOD_LABELS["greedy"],
                      "ga": METHOD_LABELS["ga"],
@@ -255,8 +260,10 @@ def plot_pareto_front(data):
     all_sas_inv = []
 
     if pareto_data is not None:
-        # Plot QMC Pareto-optimal candidates first (gold stars, prominent)
-        for method in ["pareto_qmc", "mcts", "greedy", "ga", "random"]:
+        # Iterate in specific order: QMC first (gold stars, prominent),
+        # then additional Pareto (diamonds), then benchmark methods
+        for method in ["pareto_qmc", "pareto_additional",
+                       "mcts", "greedy", "ga", "random"]:
             points = pareto_data.get(method, [])
             if not points:
                 continue
@@ -266,21 +273,33 @@ def plot_pareto_front(data):
             labels = [p[3] for p in points]
             all_sas_inv.extend(sas_inv)
 
-            size = 100 if method == "pareto_qmc" else 45
-            alpha = 0.95 if method == "pareto_qmc" else 0.65
-            edge_w = 0.8 if method == "pareto_qmc" else 0.4
+            # Different styling for Pareto vs background points
+            if method == "pareto_qmc":
+                size, alpha, edge_w = 110, 0.95, 0.8
+                zorder = 5
+            elif method == "pareto_additional":
+                size, alpha, edge_w = 70, 0.85, 0.6
+                zorder = 4
+            else:
+                size, alpha, edge_w = 40, 0.50, 0.3
+                zorder = 2
 
             sc = ax.scatter(mpos, sybas, c=sas_inv, cmap="viridis_r",
                             marker=markers[method], s=size,
                             edgecolors="black", linewidth=edge_w,
                             alpha=alpha, vmin=0.4, vmax=1.0,
-                            label=method_labels[method], zorder=4)
+                            label=method_labels[method], zorder=zorder)
 
-            # Annotate QMC candidates with rank labels
+            # Annotate QMC candidates with P1-P5 labels
             if method == "pareto_qmc":
                 for i, (x, y, label) in enumerate(zip(mpos, sybas, labels)):
                     ax.annotate(f"  P{i+1}", (x, y), fontsize=7,
                                 fontweight="bold", color="black")
+            # Annotate additional Pareto with A1-A7 labels
+            if method == "pareto_additional":
+                for (x, y, label) in zip(mpos, sybas, labels):
+                    ax.annotate(f"  {label}", (x, y), fontsize=6,
+                                fontstyle="italic", color="dimgrey")
     else:
         # Fallback: use benchmark data only
         for m in ["mcts", "greedy", "ga", "random"]:
