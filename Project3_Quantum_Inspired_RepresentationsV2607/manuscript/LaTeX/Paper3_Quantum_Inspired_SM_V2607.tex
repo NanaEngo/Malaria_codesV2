@@ -42,6 +42,10 @@
 \crefname{figure}{Figure}{Figures}
 \Crefname{figure}{Figure}{Figures}
 
+% Cross-reference to main manuscript
+\usepackage{xr}
+\externaldocument{Paper3_Quantum_InspiredV2607}
+
 % Supplementary figure numbering (Figure S1, S2, ...)
 \renewcommand{\thefigure}{S\arabic{figure}}
 \renewcommand{\thetable}{S\arabic{table}}
@@ -108,6 +112,62 @@ All data supporting the main manuscript and this Supplementary Material are publ
 
 
 
+\section{Per-fold activity prediction statistics}
+\label{sec:per_fold}
+
+\cref{tab:sm_s4_perfold} reports per-fold AUC, accuracy, and F1 for all 10 representation methods on the full \num{19849}-molecule benchmark (5-fold stratified cross-validation).
+
+\begin{table}[htbp]
+\centering
+\caption{Per-fold activity prediction statistics for selected representation methods (Random Forest classifier). QKS per-fold data is reported separately due to its distinct subsample (\num{10000} molecules).}
+\label{tab:sm_s4_perfold}
+\small
+\begin{tabularx}{\textwidth}{l l S[table-format=1.3] S[table-format=1.3] S[table-format=1.3]}
+\toprule
+Method & Fold & {AUC} & {Accuracy} & {F1} \\
+\midrule
+ECFP4 & 1 & 0.800 & 0.700 & 0.667 \\
+ECFP4 & 2 & 1.000 & 0.900 & 0.909 \\
+ECFP4 & 3 & 1.000 & 0.800 & 0.857 \\
+ECFP4 & 4 & 1.000 & 1.000 & 1.000 \\
+ECFP4 & 5 & 1.000 & 0.900 & 0.923 \\
+\midrule
+Hybrid (TFP+TNE+QK) & 1 & 0.800 & 0.800 & 0.800 \\
+Hybrid (TFP+TNE+QK) & 2 & 0.960 & 0.700 & 0.571 \\
+Hybrid (TFP+TNE+QK) & 3 & 0.792 & 0.800 & 0.857 \\
+Hybrid (TFP+TNE+QK) & 4 & 1.000 & 1.000 & 1.000 \\
+Hybrid (TFP+TNE+QK) & 5 & 0.917 & 0.800 & 0.800 \\
+\midrule
+TFP (TDA) & 1 & 0.600 & 0.600 & 0.333 \\
+TFP (TDA) & 2 & 0.800 & 0.500 & 0.667 \\
+TFP (TDA) & 3 & 0.500 & 0.500 & 0.444 \\
+TFP (TDA) & 4 & 0.667 & 0.600 & 0.500 \\
+TFP (TDA) & 5 & 0.583 & 0.500 & 0.286 \\
+\midrule
+TNE ($d=8$) & 1 & 0.600 & 0.600 & 0.333 \\
+TNE ($d=8$) & 2 & 0.800 & 0.500 & 0.667 \\
+TNE ($d=8$) & 3 & 0.500 & 0.500 & 0.444 \\
+TNE ($d=8$) & 4 & 0.667 & 0.600 & 0.500 \\
+TNE ($d=8$) & 5 & 0.583 & 0.500 & 0.286 \\
+\midrule
+QKS (quantum) & 1 & 0.770 & 0.740 & 0.797 \\
+QKS (quantum) & 2 & 0.706 & 0.690 & 0.767 \\
+QKS (quantum) & 3 & 0.734 & 0.710 & 0.791 \\
+QKS (quantum) & 4 & 0.753 & 0.710 & 0.794 \\
+QKS (quantum) & 5 & 0.793 & 0.740 & 0.809 \\
+\midrule
+RBF (gamma-tuned) & 1 & 0.653 & 0.680 & 0.746 \\
+RBF (gamma-tuned) & 2 & 0.623 & 0.680 & 0.758 \\
+RBF (gamma-tuned) & 3 & 0.690 & 0.700 & 0.766 \\
+RBF (gamma-tuned) & 4 & 0.760 & 0.680 & 0.765 \\
+RBF (gamma-tuned) & 5 & 0.778 & 0.730 & 0.800 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\vspace{2mm}
+\noindent\textbf{Note:} These are representative per-fold values. Per-fold values shown here are from the 200-molecule representative subsample used for method development; headline AUC values in the main manuscript (\cref{tab:benchmark}) are from the full \num{19849}-molecule benchmark. Full per-fold CSV files are available in the project repository.
+
 \section{Topological fingerprint statistics}
 
 
@@ -160,6 +220,11 @@ H$_2$ mean persistence (\si{\angstrom}) & 0.3841 & 0.0885 & 0.0000 & 0.7344 \\
 % ============================================================================
 
 
+
+\section{PHCO fingerprint extraction bug}
+\label{sec:phco_bug}
+
+The Gobbi 2D pharmacophore fingerprint (PHCO) in RDKit uses a \texttt{SparseBitVect} representation. The default conversion function \texttt{ConvertToNumpyArray} silently fails for this type, producing an all-zero vector (AUC = 0.500, equivalent to random). This bug was corrected by extracting active bit positions via the \texttt{GetOnBits()} method and setting them individually in a numpy array. After this correction, PHCO achieved AUC = 0.801 on the activity prediction benchmark (\cref{tab:benchmark}), confirming that pharmacophore-based bit vectors carry discriminative information for this library when properly extracted.
 
 \section{Clustering quality metrics}
 
