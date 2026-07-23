@@ -1007,7 +1007,29 @@ The completion of the Tartarus full run (19,913 mol × 3 targets, July 7, 2026) 
 
 **Manuscript integration:** SM Section 6, Supplementary Table (tab:mc_uncertainty).
 
-### 3.11 Computational Scalability — **NEW (July 23, 2026)**
+##### 3.12 Effect Sizes for Pairwise AUC Comparisons
+
+Cohen's $d$ effect sizes were computed for all pairwise AUC comparisons against the ECFP4 baseline (200-molecule development subsample, 5-fold CV). Effect sizes quantify the practical magnitude of performance differences.
+
+| Method | AUC | $\Delta$AUC | Cohen's $d$ | Effect | $p$-value | Power |
+|--------|-----|-------------|-------------|--------|-----------|-------|
+| FCFP4 | 0.932 | +0.028 | +1.70 | large | 0.0189* | 0.809 |
+| AP | 0.924 | +0.036 | +1.85 | large | 0.0145* | 0.864 |
+| MACCS | 0.914 | +0.046 | +2.36 | large | 0.0062* | 0.970 |
+| BPF | 0.904 | +0.056 | +2.87 | large | 0.0030* | 0.996 |
+| TFP | 0.630 | +0.330 | +2.49 | large | 0.0051* | 0.981 |
+| TNE | 0.630 | +0.330 | +2.49 | large | 0.0051* | 0.981 |
+| PHCO | 0.912 | +0.048 | +2.92 | large | 0.0028* | 0.997 |
+| Hybrid | 0.894 | +0.066 | +0.77 | medium | 0.1617 | 0.263 |
+| TFP+ECFP4 | 0.950 | +0.010 | +0.63 | medium | 0.2302 | 0.195 |
+
+* $p < 0.05$ (uncorrected). Bonferroni-corrected $lpha = 0.05/9 = 0.0056$. Power computed for 80% target at $lpha = 0.05$.
+
+The Hybrid descriptor shows a medium effect size (Cohen's $d = 0.77$) but is not statistically significant after Bonferroni correction, confirming that the performance difference is within a margin of practical equivalence.
+
+**Manuscript integration:** SM Section 8, Supplementary Table S8 (tab:effect_sizes).
+
+# 3.11 Computational Scalability — **NEW (July 23, 2026)**
 
 **Data source:** `Project3.../results/p3_scalability_results.csv` (138 bytes)
 

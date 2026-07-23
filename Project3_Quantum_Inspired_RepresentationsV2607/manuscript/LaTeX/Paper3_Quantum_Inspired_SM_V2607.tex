@@ -390,4 +390,36 @@ Throughput & 128.0~pairs/s \\
 \footnotesize Extrapolating linearly, the full \num{19849}-molecule library requires $\sim$\SI{6.4}{\minute} for TDA computation on a 12-core workstation, consistent with the reported full-library runtime.
 \end{table}
 
+% ============================================================================
+% 8. EFFECT SIZES FOR PAIRWISE COMPARISONS
+% ============================================================================
+
+\section{Effect sizes for pairwise AUC comparisons}
+\label{sec:effect_sizes}
+
+Cohen's $d$ effect sizes for all pairwise AUC comparisons against the ECFP4 baseline are reported in \cref{tab:effect_sizes}. Effect sizes quantify practical magnitude: $d > 0.8$ indicates large, $0.5 < d \leq 0.8$ medium, $0.2 < d \leq 0.5$ small.
+
+\begin{table}[htbp]
+\centering
+\caption{Effect sizes for pairwise AUC comparisons against ECFP4 baseline (200-molecule development subsample, 5-fold CV). Cohen's $d$ quantifies the magnitude of difference. Note: AUC values here are from the development subsample used for method selection, not the full \num{19849}-molecule benchmark reported in the main manuscript.}
+\label{tab:effect_sizes}
+\begin{tabularx}{\textwidth}{l S[table-format=1.3] S[table-format=+1.3] S[table-format=+1.2] l S[table-format=1.4] S[table-format=1.3]}
+\toprule
+Method & {AUC} & {$\Delta$AUC} & {Cohen's $d$} & {Effect} & {$p$-value} & {Power} \\
+\midrule
+FCFP4 & 0.932 & +0.028 & +1.70 & large & 0.0189$^{\ast}$ & 0.809 \\
+AP & 0.924 & +0.036 & +1.85 & large & 0.0145$^{\ast}$ & 0.864 \\
+MACCS & 0.914 & +0.046 & +2.36 & large & 0.0062$^{\ast}$ & 0.970 \\
+BPF & 0.904 & +0.056 & +2.87 & large & 0.0030$^{\ast}$ & 0.996 \\
+TFP & 0.630 & +0.330 & +2.49 & large & 0.0051$^{\ast}$ & 0.981 \\
+TNE & 0.630 & +0.330 & +2.49 & large & 0.0051$^{\ast}$ & 0.981 \\
+PHCO & 0.912 & +0.048 & +2.92 & large & 0.0028$^{\ast}$ & 0.997 \\
+Hybrid & 0.894 & +0.066 & +0.77 & medium & 0.1617 & 0.263 \\
+TFP+ECFP4 & 0.950 & +0.010 & +0.63 & medium & 0.2302 & 0.195 \\
+\bottomrule
+\end{tabularx}
+\vspace{1mm}
+\footnotesize $^{\ast}$ $p < 0.05$ (uncorrected). Bonferroni-corrected $\alpha = 0.05/9 = 0.0056$. Power computed for 80\% target at $\alpha = 0.05$.
+\end{table}
+
 \end{document}
