@@ -111,9 +111,10 @@ vfvs_env/
 *.trr
 *.log
 # Generated result files (large CSVs, figures)
-results/**/*.csv
-
-data/from_project1/**/*.csv
+# results/**/*.csv  # REMOVED 2026-07-23 — CSV/TXT now tracked for reproducibility
+# data/from_project1/**/*.csv  # REMOVED 2026-07-23
+!results/**/*.csv
+!results/**/*.txt
 # Backup / timestamped generated files
 *_backup*
 *_backup.csv
@@ -123,7 +124,7 @@ data/from_project1/**/*.csv
 Project1_Chem_space_antimalarial_V2_CorrectedGrid/data/
 Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/
 Project1_Chem_space_antimalarial_V2_CorrectedGrid/logs/
-Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/
+# Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/  # REMOVED 2026-07-23 — CSV/TXT now tracked
 Project1_Chem_space_antimalarial_V2_CorrectedGrid/output/
 Project1_Chem_space_antimalarial_V2_CorrectedGrid/graphify-out/
 Project1_Chem_space_antimalarial_V2_CorrectedGrid/pdb_prep_Jul7/
@@ -137,9 +138,9 @@ Project2_Polypharmacology_MD_ValidationV2607/data/proteins/
 Project2_Polypharmacology_MD_ValidationV2607/docs/
 Project2_Polypharmacology_MD_ValidationV2607/environments/
 Project2_Polypharmacology_MD_ValidationV2607/manuscript/Methods/
-Project2_Polypharmacology_MD_ValidationV2607/results/
-Project3_Quantum_Inspired_RepresentationsV2607/results/
-Project4_Advanced_Monte_CarloV2607/results/
+# Project2_Polypharmacology_MD_ValidationV2607/results/  # REMOVED 2026-07-23 — CSV/TXT now tracked
+# Project3_Quantum_Inspired_RepresentationsV2607/results/  # REMOVED 2026-07-23 — CSV/TXT now tracked
+# Project4_Advanced_Monte_CarloV2607/results/  # REMOVED 2026-07-23 — CSV/TXT now tracked
 # Top-level generated/cache directories
 data/
 docs/

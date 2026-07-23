@@ -663,11 +663,7 @@ def main():
     out_csv_uncomp = RESULTS_DIR / "p3_quantum_params_sweep.csv"
     results_df.to_csv(out_csv_uncomp, index=False)
 
-    # ── Memory cleanup (R13) ──────────────────────────────────────
-    del results_df, records, done_set
-    gc.collect()
-
-    # Summary
+    # Summary (before memory cleanup)
     best_idx = results_df["auc"].idxmax()
     best = results_df.loc[best_idx]
     total_time = time.perf_counter() - t0
