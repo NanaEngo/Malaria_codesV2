@@ -663,7 +663,7 @@ def main():
     out_csv_uncomp = RESULTS_DIR / "p3_quantum_params_sweep.csv"
     results_df.to_csv(out_csv_uncomp, index=False)
 
-    # Summary (before memory cleanup)
+    # Summary
     best_idx = results_df["auc"].idxmax()
     best = results_df.loc[best_idx]
     total_time = time.perf_counter() - t0
@@ -704,6 +704,10 @@ def main():
         best_nk = sub.loc[sub["auc"].idxmax()]
         print(f"       n_kpca={nk}: best AUC = {best_nk['auc']:.4f} "
               f"(bond_dim={int(best_nk['bond_dim'])}, n_repeats={int(best_nk['n_repeats'])})")
+
+    # Memory cleanup (after all results_df usage)
+    del results_df, records, done_set
+    gc.collect()
 
 
 if __name__ == "__main__":
