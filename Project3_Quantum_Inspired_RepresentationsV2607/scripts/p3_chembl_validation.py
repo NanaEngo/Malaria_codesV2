@@ -166,6 +166,9 @@ def compute_tanimoto_smiles(smiles1, smiles2):
 
 def main():
     """Main entry point: query ChEMBL and validate top candidates."""
+    if not _RDKIT_AVAILABLE:
+        print("Warning: RDKit not installed; similarity search disabled.")
+    """Main entry point: query ChEMBL and validate top candidates."""
     print("=" * 70)
     print("P3 ChEMBL Experimental Validation")
     print("=" * 70)
