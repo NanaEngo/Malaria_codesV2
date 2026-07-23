@@ -48,7 +48,7 @@ Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antima
 | QKS AUC (gamma-tuned RBF) | 0.751 | Subsample (n=500) |
 | QKS vs RBF p-value | 0.088 (ns) | Subsample (n=500) |
 | Optimised Hybrid AUC (n=1000) | 0.828 ± 0.037 | Phase2 re-benchmark (bd=6, nr=1, nk=30) |
-| H₁ persistence vs RRS | ρ = 0.947, p < 0.0001 | Cross-paper (n=14) |
+| H₁ persistence vs RRS | ρ = 0.947, p < 0.0001, 95% CI [0.799, 1.000] | Cross-paper (n=14) |
 | TNE compression | 5.9× real-atom | Full library |
 | TDA success rate | 99.93% | 19,836/19,849 valid |
 
@@ -133,7 +133,7 @@ Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antima
 
 | Priority | Task | Status |
 |----------|------|--------|
-| 🔴 High | Reserve Zenodo DOI and update Data Availability in main + SM | Pending |
+| 🔴 High | Final Zenodo deposit (DOI reserved, data upload pending) + update Data Availability | Pending |
 | 🔴 High | Resubmit full 60-combo grid search on HPC with fixed script | Pending |
 | 🟡 Medium | Update P1/P2 manuscripts with shared Zenodo DOI | Pending |
 | 🟡 Medium | Compile P1 and P2 manuscripts to verify clean build | Pending |
