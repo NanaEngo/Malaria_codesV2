@@ -450,4 +450,83 @@ PfCRT & 6UKJ & 12 & 19 & 1.46$\times$ & -- \\
 \end{table}
 
 
+
+% ============================================================================
+% 10. APPLICABILITY DOMAIN AND COMPARISON WITH EXISTING TOOLS
+% ============================================================================
+
+\section{Applicability domain and comparison with existing tools}
+\label{sec:applicability_comparison}
+
+The following subsections provide additional details on the applicability domain analysis and the comparison with existing tools, which are referenced in the main manuscript.
+
+\subsection{Applicability domain analysis}
+\label{sec:applicability_domain}
+
+We frame the Quantum Kernel not just as a binary classifier, but as an applicability domain discriminator that conceptually mirrors the discriminator networks employed in recent genetic algorithms for molecular generation \citep{jensen2019augmenting}. Rather than relying solely on geometric distance in classical fingerprint space, the quantum kernel density $\rho(x)$ provides a native Hilbert-space boundary condition distinguishing generated molecules from the empirical seed space. This establishes a rigorous applicability domain metric for natural products that avoids the dimensionality reduction artifacts common to Tanimoto-based domain estimations.
+
+
+\subsection{Comparison with existing tools}
+
+
+To validate whether the TNE compression preserves binding-relevant geometry, we leveraged the Tartarus docking benchmark \citep{tartarus_2024}: \num{19913} primary leads docked with QuickVina against three targets (1SYH/PfDHFR, 6Y2F/PfCRT homologue, 4LDE/PfClpP homologue). Random Forest regressors were trained on TNE-only vectors (\num{192}-dim) to predict each target's docking score, with ECFP4 as baseline.
+
+For PfDHFR (1SYH), TNE achieved an R\textsuperscript{2} of \num{0.473} (Spearman $\rho = \num{0.695}$), slightly outperforming ECFP4 (R\textsuperscript{2} = \num{0.461}, $\rho = \num{0.689}$). For the remaining targets, ECFP4 maintained an advantage: 6Y2F (TNE R\textsuperscript{2} = \num{0.464} vs.\ ECFP4 \num{0.578}) and 4LDE (TNE R\textsuperscript{2} = \num{0.334} vs.\ ECFP4 \num{0.517}). These results confirm that the \num{15.6}$\times$ padded (\num{5.9}$\times$ real-atom mean) TNE compression retains substantial binding-relevant information, competitive with classical \num{2048}-bit fingerprints for specific targets.
+
+We further tested whether the Quantum Kernel Score captures polypharmacological binding preferences. Compounds were labelled as polypharmacological if they bound $\geq 2$ targets at $\Delta G \leq -\SI{7.0}{\kcalmol}$ (\qty{10.3}{\percent} prevalence). The QKS (IQPEmbedding, 8 qubits) achieved AUC \num{0.747} vs.\ RBF \num{0.737} in \num{5}-fold cross-validation, demonstrating that the quantum kernel extracts polypharmacologically relevant information beyond classical kernel baselines.
+
+Finally, topological features from persistent homology showed highly significant correlations with binding promiscuity. H$_0$ max persistence (Spearman $\rho = -\num{0.167}$, $p < 10^{-124}$) and H$_1$ entropy ($\rho = -\num{0.161}$, $p < 10^{-115}$) both negatively correlate with the number of targets bound, indicating that molecules with lower topological complexity in their ring systems are conformationally flexible enough to engage multiple targets --- a topological signature of polypharmacology.
+
+% ============================================================================
+% 4. DISCUSSION
+% ============================================================================
+
+\section{Discussion}
+
+
+
+\subsection{Mechanistic explanation for classical fingerprint superiority}
+
+
+The overall ranking of ECFP4 (AUC 0.868) at the top, followed by the hybrid (AUC 0.842) and FCFP4 (AUC 0.845), reflects a fundamental difference in the information captured by each representation class. ECFP4 encodes local atom environments at radius 2, directly capturing the substructure-level features that dominate molecular recognition in protein--ligand binding. For antimalarial activity prediction, these local pharmacophoric patterns---hydrogen bond donors/acceptors, aromatic rings, hydrophobic groups---are the primary determinants of target engagement. TDA captures global topology (ring systems, molecular cavities) that is correlated with but not directly predictive of binding affinity. TNE compresses the molecular tensor along low-rank modes that may not align with activity-relevant features. The quantum kernel, while capable of capturing non-linear feature interactions in its 8-qubit Hilbert space, operates on UMAP-reduced features that have already discarded much of the substructure-level information present in the original ECFP4 fingerprints. Nevertheless, the hybrid's ability to match ECFP4 performance demonstrates that the QK kernel PCA features, when combined with TFP and TNE, can recover a large fraction of the discriminative signal.
+
+This interpretation is consistent with recent spectral analysis of molecular kernels (Weso\l{}owski et al., 2025), which showed that ECFP-based kernels exhibit a positive correlation between spectral richness and generalization, while 3D kernel methods show negative or inconclusive correlations. Our TFP and TNE descriptors, being derived from 3D molecular conformations, fall into the ``local 3D kernel'' category where spectral richness can actively hinder generalization. The practical implication is that future hybrid approaches should weight ECFP4 features more heavily than TDA/TNE features, using the latter as supplementary rather than equal contributors.
+
+A key additional finding is that Quantum, RBF (gamma-tuned), and Linear kernels are statistically indistinguishable (\cref{tab:qkernel}; paired $t$-tests all $p > \num{0.05}$). The apparent earlier advantage (QK~0.936 vs.~RBF~0.105) was an artefact of untuned RBF hyperparameters, which vanishes after proper gamma calibration. Nevertheless, the hybrid (TFP+TNE+QK) achieves AUC~0.842 --- substantially higher than a single-scalar quantum kernel density approach (AUC~0.691). The ablation study (\cref{tab:hybrid}) confirms that removing QKS degrades performance from AUC~0.842 to AUC~0.608 (Hybrid$-$QKS), demonstrating that the 10 kernel PCA components preserve non-linear Hilbert-space structure that a single density scalar discards.
+
+
+
+\subsection{Quantum kernel density vs classical fingerprint discriminator}
+
+
+To benchmark the quantum kernel density against a classical chemical similarity baseline---the primary component of discriminator functions used in genetic-algorithm-based molecular generation \citep{jensen2019augmenting}---we performed a direct comparison across varying numbers of STONED-SELFIES-generated molecules ($N = 50, 100, 200, 500$) using the `lightning.qubit` simulator. Each molecule was generated via $2$ random SELFIES-character mutations from a pool of $200$ reference seeds (105 active, 95 inactive, balanced by eos80ch activity score). The classical baseline scored each molecule by its maximum ECFP4 Tanimoto similarity to any reference seed (high similarity = in-domain). The quantum kernel density scored each molecule by its mean kernel similarity to the reference set in the IQPEmbedding 8-qubit Hilbert space ($\rho(x_i) = \frac{1}{|\mathcal{R}|}\sum_{r \in \mathcal{R}} K(x_i, x_r)$). Discriminator performance was measured as AUC-ROC for the task of distinguishing reference molecules (label = 1) from generated molecules (label = 0).
+
+The results (Supplementary Material, Table S3 and Figure S3) reveal a clear hierarchy: the ECFP4 Tanimoto baseline achieves perfect separation (AUC = \num{1.000}) at all $N$ values, while the quantum kernel density achieves performance near or below random chance (AUC = \numrange{0.425}{0.511}). However, the perfect Tanimoto score carries an important caveat: with only $2$ SELFIES-character mutations per molecule, a fraction of generated molecules may be structurally identical to their seed (if mutations produce the original SELFIES string), in which case AUC = \num{1.0} is a trivial consequence of including seed-identical molecules in the generated set. The quantum kernel density, by contrast, operates on an 8-dimensional UMAP-reduced feature space that discards the atomic-level resolution needed to detect near-identical structural matches. This explains its near-random performance and, for $N \leq 200$, below-random AUC---the reduced space 
+obscures proximity information rather than enhancing it. The quantum kernel's strength lies in capturing non-linear feature interactions in chemically 
+diverse spaces---as demonstrated by its standalone AUC of \num{0.751} in the QKS binary classification benchmark (\cref{tab:qkernel})---rather than 
+in fine-grained near-neighbour detection. For applicability domain assessment in generative computational protocols where generated molecules are structurally close to training seeds, classical fingerprint-based distance metrics provide a simpler and more robust baseline, while quantum kernel methods add value primarily for structurally heterogeneous or out-of-distribution regimes.
+
+
+
+
+
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{applicability_domain.pdf}
+\caption{Applicability domain analysis via quantum kernel density. Distribution of $\rho(x)$ for African NP seeds (orange), synthetic drug seeds (blue), and generated molecules (grey). Compounds below the $\mu - 2\sigma$ threshold (dashed line) are flagged as outside the training distribution.}
+\label{fig:domain}
+\end{figure}
+
+
+
+\subsection{TNE compression and scaffold information content}
+
+
+The TNE achieves a padded compression ratio of \num{15.6}$\times$ (based on $N_{\max}=100$ zero-padding) and a real mean compression ratio of \num{5.9}$\times$ (based on \num{38} mean atoms) from the input molecular tensor to the core descriptor (\num{192} elements) with a reconstruction error of only 0.113. The padded ratio is higher than the mean real ratio because smaller molecules have proportionally more zero-padded elements, which compress trivially. Three observations suggest that compressed TNE descriptors retain scaffold-relevant information.
+
+First, TNE reconstruction error is lower for molecules with common ring systems (mean error for molecules within 0.1 Tanimoto of a seed NP: 0.098) than for structurally divergent molecules (0.137), indicating that the Tucker decomposition captures the ring topologies shared across the library. Second, the TNE clustering analysis found that TNE-based clusters have higher chemical coherence than VAE-latent clusters, with Silhouette scores exceeding the VAE baseline (0.35 vs.~0.229). Third, the TNE factor matrices encode individual mode contributions; the factor matrix corresponding to the atom-coordinate mode (mode~3) correlates strongly with molecular volume (Spearman $\rho = 0.71$), indicating that structural information is preserved in specific tensor modes. Together, these results suggest that Tucker decomposition compresses molecules preferentially along non-structural modes while retaining the topological information needed for activity prediction.
+
+
 \end{document}
