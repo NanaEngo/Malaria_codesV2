@@ -1,22 +1,14 @@
-P3 Hybrid Benchmark Summary (RF classifier, 5-fold CV)
-==================================================
+Hybrid: per-fold QK (no data leakage); RF is scale-invariant (no weights)
 
-AP            AUC = 0.8230 ± 0.0515
-ECFP4         AUC = 0.8192 ± 0.0431
-FCFP4         AUC = 0.8166 ± 0.0416
-PHCO          AUC = 0.8011 ± 0.0370
-MACCS         AUC = 0.8006 ± 0.0368
-BPF           AUC = 0.7712 ± 0.0365
-Hybrid        AUC = 0.7455 ± 0.0477
-TFP           AUC = 0.5827 ± 0.0310
-TNE           AUC = 0.5596 ± 0.0230
+ECFP4        RF  AUC=0.9600±0.0894
+FCFP4        RF  AUC=0.9513±0.0656
+MACCS        RF  AUC=0.9053±0.0743
+AP           RF  AUC=0.9520±0.0716
+PHCO         RF  AUC=0.9430±0.0671
+BPF          RF  AUC=0.9600±0.0693
+TFP          RF  AUC=0.6300±0.1121
+TNE          RF  AUC=0.6300±0.1121
+Hybrid       RF  AUC=0.8937±0.0941
 
-Paired t-tests (vs ECFP4):
-  vs AP          : Δ=-0.0038, t=-0.257, p=0.80956 (not significant)
-  vs BPF         : Δ=+0.0480, t=2.069, p=0.10729 (not significant)
-  vs FCFP4       : Δ=+0.0026, t=0.311, p=0.77106 (not significant)
-  vs Hybrid      : Δ=+0.0737, t=8.156, p=0.00123 (SIGNIFICANT)
-  vs MACCS       : Δ=+0.0186, t=0.961, p=0.39114 (not significant)
-  vs PHCO        : Δ=+0.0181, t=1.918, p=0.12751 (not significant)
-  vs TFP         : Δ=+0.2365, t=13.325, p=0.00018 (SIGNIFICANT)
-  vs TNE         : Δ=+0.2596, t=8.384, p=0.00111 (SIGNIFICANT)
+Paired t-test Hybrid vs ECFP4: t=-1.714, p=0.1616
+Not significant

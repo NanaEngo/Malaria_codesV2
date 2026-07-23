@@ -45,9 +45,10 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent  # .../Project3
-ARCHIVE = Path("/home/nanaengo/Malaria_codesV2/.archive_P1_V2607_20260717")
-P2_DATA = Path("/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1")
-P1_RESULTS = Path("/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarialV2607/results")
+MALARIA_ROOT = PROJECT_ROOT.parent  # .../Malaria_codesV2
+ARCHIVE = MALARIA_ROOT / ".archive_P1_V2607_20260717"
+P2_DATA = MALARIA_ROOT / "Project2_Polypharmacology_MD_ValidationV2607" / "data" / "from_project1"
+P1_RESULTS = MALARIA_ROOT / "Project1_Chem_space_antimalarial_V2_CorrectedGrid" / "results"
 
 TANIMOTO_THRESHOLD = 0.50   # original was 0.55, but 694 molecules fall in [0.50, 0.55)
 MAX_MEMBERS_PER_CLUSTER = 250  # largest cluster has 233 members

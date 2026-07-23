@@ -53,7 +53,7 @@ except ImportError:
 
 # ── Paths ─────────────────────────────────────────────────────────────────
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent  # Malaria_codesV2
-PROJECT1_DIR = REPO_ROOT / "Projet1_Chem_space_antimalarialV2607"
+PROJECT1_DIR = REPO_ROOT / "Project1_Chem_space_antimalarial_V2_CorrectedGrid"
 PROJECT2_DIR = REPO_ROOT / "Project2_Polypharmacology_MD_ValidationV2607"
 DEFAULT_INPUT = PROJECT2_DIR / "data" / "from_project1" / "results" / "md_top20_candidates.csv"
 DEFAULT_TABLE = PROJECT1_DIR / "manuscript" / "SM_Table_S20_top10_retrosynthesis.tex"

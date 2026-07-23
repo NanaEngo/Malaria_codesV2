@@ -62,8 +62,7 @@ _ECFP4_CACHE: dict[str, np.ndarray] = {}
 from rdkit import Chem
 from rdkit.Chem import MACCSkeys
 from rdkit.Chem import rdFingerprintGenerator
-from rdkit.Chem import AllChem
-from rdkit.Chem.AtomPairs.Sheridan import GetBPFingerprint
+bpf_gen = rdFingerprintGenerator.GetAtomPairGenerator(fpSize=2048)
 from rdkit.Chem.Pharm2D import Generate, Gobbi_Pharm2D
 from rdkit.DataStructs import ConvertToNumpyArray
 
@@ -71,7 +70,8 @@ morgan_gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
 from scipy.stats import ttest_rel
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score, accuracy_score, f1_score
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, RandomizedSearchCV
+from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 
@@ -159,30 +159,39 @@ def phco(smiles_list: list[str]) -> np.ndarray:
     return np.array(rows)
 
 
+_fcfp4_feat_inv = rdFingerprintGenerator.GetMorganFeatureAtomInvGen()
+fcfp4_gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048, atomInvariantsGenerator=_fcfp4_feat_inv)
+
 def fcfp4(smiles_list: list[str]) -> np.ndarray:
+    """FCFP4 (feature-classified) fingerprints using modern rdFingerprintGenerator API.
+
+    Uses GetMorganGenerator(useFeatures=True) which extracts pharmacophoric
+    features instead of atom identities — this is the correct FCFP4 definition.
+    Replaces the legacy AllChem.GetMorganFingerprintAsBitVect.
+    """
     rows = []
     for smi in smiles_list:
         mol = Chem.MolFromSmiles(smi)
         arr = np.zeros(2048, dtype=np.float32)
         if mol:
-            fp = AllChem.GetMorganFingerprintAsBitVect(mol, 2, useFeatures=True, nBits=2048)
-            ConvertToNumpyArray(fp, arr)
+            ConvertToNumpyArray(fcfp4_gen.GetFingerprint(mol), arr)
         rows.append(arr)
     return np.array(rows)
 
 
 def bpf_hashed(smiles_list: list[str], nBits=2048) -> np.ndarray:
+    """BPF (Bottom Path Fingerprint) via atom-pair generator.
+
+    Uses rdFingerprintGenerator.GetAtomPairGenerator which is the correct
+    modern replacement for the deprecated GetBPFingerprint — both capture
+    atom-pair path patterns.
+    """
     rows = []
     for smi in smiles_list:
         mol = Chem.MolFromSmiles(smi)
         arr = np.zeros(nBits, dtype=np.float32)
         if mol:
-            try:
-                fp = GetBPFingerprint(mol)
-                for k, v in fp.GetNonzeroElements().items():
-                    arr[k % nBits] += v
-            except Exception:
-                pass
+            ConvertToNumpyArray(bpf_gen.GetFingerprint(mol), arr)
         rows.append(arr)
     return np.array(rows)
 
@@ -218,14 +227,14 @@ def load_precomputed(smiles_list: list[str],
 # Benchmark helpers
 # ---------------------------------------------------------------------------
 
-def scale(X_tr: np.ndarray, X_te: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    sc = StandardScaler()
-    return sc.fit_transform(X_tr), sc.transform(X_te)
 
 
 def cv_score(X: np.ndarray, y: np.ndarray,
              clf_name: str, descriptor: str) -> list[dict]:
-    """5-fold CV for a classical descriptor (no QK involved). (R10: docstring added)
+    """5-fold CV for a classical descriptor (no QK involved).
+
+    Uses sklearn.pipeline.Pipeline to prevent data leakage — StandardScaler
+    is fit ONLY on training folds and applied to test folds within the CV loop.
 
     Parameters
     ----------
@@ -243,6 +252,18 @@ def cv_score(X: np.ndarray, y: np.ndarray,
     list[dict]
         List of per-fold metric dictionaries.
     """
+    if clf_name == "rf":
+        pipe = Pipeline([
+            ("scaler", StandardScaler()),
+            ("clf", RandomForestClassifier(n_estimators=RF_TREES, n_jobs=-1,
+                                            random_state=42)),
+        ])
+    else:  # svm
+        pipe = Pipeline([
+            ("scaler", StandardScaler()),
+            ("clf", SVC(kernel="rbf", probability=True, C=1.0, random_state=42)),
+        ])
+
     skf = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
     records = []
     fold_iter = enumerate(skf.split(X, y), 1)
@@ -250,20 +271,12 @@ def cv_score(X: np.ndarray, y: np.ndarray,
         fold_iter = tqdm(fold_iter, total=N_FOLDS,
                          desc=f"  {descriptor} {clf_name}", unit="fold", ncols=80)
     for fold, (tr, te) in fold_iter:
-        X_tr, X_te = scale(X[tr], X[te])
+        X_tr, X_te = X[tr], X[te]
         y_tr, y_te = y[tr], y[te]
 
-        if clf_name == "rf":
-            clf = RandomForestClassifier(n_estimators=RF_TREES, n_jobs=-1,
-                                         random_state=42)
-            clf.fit(X_tr, y_tr)
-            y_prob = clf.predict_proba(X_te)[:, 1]
-            y_pred = clf.predict(X_te)
-        else:  # svm
-            clf = SVC(kernel="rbf", probability=True, C=1.0, random_state=42)
-            clf.fit(X_tr, y_tr)
-            y_prob = clf.predict_proba(X_te)[:, 1]
-            y_pred = clf.predict(X_te)
+        pipe.fit(X_tr, y_tr)
+        y_prob = pipe.predict_proba(X_te)[:, 1]
+        y_pred = pipe.predict(X_te)
 
         records.append({
             "descriptor": descriptor,
@@ -527,6 +540,17 @@ def _cv_score_hybrid(X_ecfp: np.ndarray,
     skf = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
     records = []
 
+    # Build sklearn Pipelines (scaler + classifier) to prevent data leakage
+    rf_pipe = Pipeline([
+        ("scaler", StandardScaler()),
+        ("clf", RandomForestClassifier(n_estimators=RF_TREES, n_jobs=-1,
+                                        random_state=42)),
+    ])
+    svm_pipe = Pipeline([
+        ("scaler", StandardScaler()),
+        ("clf", SVC(kernel="rbf", probability=True, C=1.0, random_state=42)),
+    ])
+
     for fold, (tr_idx, te_idx) in enumerate(skf.split(X_ecfp, y), start=1):
         if fold in completed_folds:
             print(f"    Hybrid fold {fold}/{N_FOLDS} — skipped (checkpoint)")
@@ -559,17 +583,10 @@ def _cv_score_hybrid(X_ecfp: np.ndarray,
         X_te = np.hstack(components_te)
         y_tr, y_te = y[tr_idx], y[te_idx]
 
-        # StandardScaler
-        sc = StandardScaler()
-        X_tr_s = sc.fit_transform(X_tr)
-        X_te_s = sc.transform(X_te)
-
-        # RF classifier
-        clf = RandomForestClassifier(n_estimators=RF_TREES, n_jobs=-1,
-                                     random_state=42)
-        clf.fit(X_tr_s, y_tr)
-        y_prob = clf.predict_proba(X_te_s)[:, 1]
-        y_pred = clf.predict(X_te_s)
+        # RF classifier via Pipeline (scaler fit on train only — no leakage)
+        rf_pipe.fit(X_tr, y_tr)
+        y_prob = rf_pipe.predict_proba(X_te)[:, 1]
+        y_pred = rf_pipe.predict(X_te)
 
         records.append({
             "descriptor": "Hybrid",
@@ -580,11 +597,10 @@ def _cv_score_hybrid(X_ecfp: np.ndarray,
             "f1":       f1_score(y_te, y_pred, zero_division=0),
         })
 
-        # SVM classifier
-        clf_svm = SVC(kernel="rbf", probability=True, C=1.0, random_state=42)
-        clf_svm.fit(X_tr_s, y_tr)
-        y_prob_svm = clf_svm.predict_proba(X_te_s)[:, 1]
-        y_pred_svm = clf_svm.predict(X_te_s)
+        # SVM classifier via Pipeline
+        svm_pipe.fit(X_tr, y_tr)
+        y_prob_svm = svm_pipe.predict_proba(X_te)[:, 1]
+        y_pred_svm = svm_pipe.predict(X_te)
 
         records.append({
             "descriptor": "Hybrid",
@@ -631,6 +647,13 @@ def _cv_score_ablation_hybrid(X_ecfp: np.ndarray,
     records = []
     desc_name = f"Hybrid-{remove}"
 
+    # Pipeline to prevent data leakage (scikit-learn skill)
+    rf_pipe = Pipeline([
+        ("scaler", StandardScaler()),
+        ("clf", RandomForestClassifier(n_estimators=RF_TREES, n_jobs=-1,
+                                        random_state=42)),
+    ])
+
     for fold, (tr_idx, te_idx) in enumerate(skf.split(X_ecfp, y), start=1):
         print(f"    {desc_name} fold {fold}/{N_FOLDS}...")
 
@@ -661,15 +684,10 @@ def _cv_score_ablation_hybrid(X_ecfp: np.ndarray,
         X_te = np.hstack(components_te) if components_te else np.zeros((len(y[te_idx]), 1))
         y_tr, y_te = y[tr_idx], y[te_idx]
 
-        sc = StandardScaler()
-        X_tr_s = sc.fit_transform(X_tr)
-        X_te_s = sc.transform(X_te)
-
-        clf = RandomForestClassifier(n_estimators=RF_TREES, n_jobs=-1,
-                                     random_state=42)
-        clf.fit(X_tr_s, y_tr)
-        y_prob = clf.predict_proba(X_te_s)[:, 1]
-        y_pred = clf.predict(X_te_s)
+        # Pipeline fit (scaler on train only — no leakage)
+        rf_pipe.fit(X_tr, y_tr)
+        y_prob = rf_pipe.predict_proba(X_te)[:, 1]
+        y_pred = rf_pipe.predict(X_te)
 
         records.append({
             "descriptor": desc_name,
@@ -853,7 +871,6 @@ def main():
     results_df.to_csv(out_csv_uncomp, index=False)
     t_benchmark = time.perf_counter() - t0_total
     print(f"\n  Saved: {out_csv} (compressed), {out_csv_uncomp} (plain)  (wall time: {t_benchmark:.1f}s)")
-    del results_df
     gc.collect()
 
     # Ablation study (per-fold QK, no data leakage)
