@@ -147,10 +147,9 @@ except ImportError:
 
 def compute_tanimoto_smiles(smiles1, smiles2):
     """Compute Tanimoto similarity between two SMILES strings."""
+    if not _RDKIT_AVAILABLE:
+        return None
     try:
-        from rdkit import Chem
-        from rdkit.Chem import DataStructs, AllChem
-        
         mol1 = Chem.MolFromSmiles(smiles1)
         mol2 = Chem.MolFromSmiles(smiles2)
         
