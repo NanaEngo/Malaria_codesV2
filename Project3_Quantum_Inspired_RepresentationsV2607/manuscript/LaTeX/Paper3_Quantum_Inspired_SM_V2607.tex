@@ -307,21 +307,19 @@ The full optimisation heatmap and marginal parameter-effect boxplots are provide
 
 \begin{table}[htbp]
 \centering
-\caption{Top-5 quantum circuit configurations. Rows 1–3: re-benchmarked on $n = 1000$ molecules (5-fold CV, per-fold data in raw CSVs). Rows 4–5: from the initial grid search on $n = 200$ molecules. The default configuration ($d = 8$, $n_{\text{rep}} = 2$, $n_{\text{kpca}} = 20$) is highlighted.}
+\caption{Top quantum circuit configurations re-benchmarked on $n = 1000$ molecules (5-fold CV, per-fold data in phase2 raw CSVs). The optimal configuration ($d = 6$, $n_{\text{rep}} = 1$, $n_{\text{kpca}} = 30$) approaches ECFP4 (AUC $0.868$) on this subsample.}
 \label{tab:qp_optimisation}
-\begin{tabularx}{\textwidth}{S[table-format=1.0] S[table-format=1.0] S[table-format=2.0] S[table-format=1.4] S[table-format=1.4] l}
+\begin{tabularx}{\textwidth}{S[table-format=1.0] S[table-format=1.0] S[table-format=2.0] S[table-format=1.4] S[table-format=1.4]}
 \toprule
-{$d$} & {$n_{\text{rep}}$} & {$n_{\text{kpca}}$} & {AUC} & {Std} & {$n_{\text{mol}}$} \\
+{$d$} & {$n_{\text{rep}}$} & {$n_{\text{kpca}}$} & {AUC} & {Std} \\
 \midrule
-6 & 1 & 30 & 0.8283 & 0.0371 & 1000 \\
-6 & 6 & 20 & 0.8047 & 0.0354 & 1000 \\
-6 & 6 & 30 & 0.8121 & 0.0396 & 1000 \\
-4 & 1 & 30 & 0.8412 & 0.0521 & 200 \\
-8 & 2 & 20 & 0.8420 & 0.0510 & 200 \\
+6 & 1 & 30 & 0.8283 & 0.0371 \\
+6 & 6 & 20 & 0.8047 & 0.0354 \\
+6 & 6 & 30 & 0.8121 & 0.0396 \\
 \bottomrule
 \end{tabularx}
 \vspace{1mm}
-\footnotesize Rows 1–3 are from the authoritative n=1000 re-benchmarking (per-fold data in phase2 raw CSVs). Rows 4–5 are from the initial n=200 grid search. The default configuration (row 5) is used throughout the main manuscript.
+\footnotesize All values are from the $n = 1000$ re-benchmarking (750 active, 250 inactive). The initial grid search was performed on $n = 200$ molecules (50/60 combinations completed); the top three combinations were selected for re-benchmarking at $n = 1000$.
 \end{table}
 
 \begin{figure}[htbp]
