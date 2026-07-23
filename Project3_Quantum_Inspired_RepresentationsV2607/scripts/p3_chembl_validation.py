@@ -266,7 +266,7 @@ def main():
             f.write("\\caption{ChEMBL experimental validation of top-10 candidates. For each candidate, the closest structural analogue with experimental IC$_{50}$ data is reported.}\n")
             f.write("\\label{tab:chembl_validation}\n")
             f.write("\\small\n")
-            f.write("\\begin{tabularx}{\\textwidth}{c l l l S[table-format=1.3] l}\n")
+            f.write("\\begin{tabularx}{\\textwidth}{c l l l l l}\n")
             f.write("\\toprule\n")
             f.write("Rank & Target & ChEMBL ID & Activity & {IC$_{50}$ (\\si{\\micro\\molar})} & Tanimoto \\\\\n")
             f.write("\\midrule\n")
