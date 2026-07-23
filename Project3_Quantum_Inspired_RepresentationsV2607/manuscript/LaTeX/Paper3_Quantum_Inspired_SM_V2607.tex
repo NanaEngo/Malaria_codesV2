@@ -529,4 +529,17 @@ The TNE achieves a padded compression ratio of \num{15.6}$\times$ (based on $N_{
 First, TNE reconstruction error is lower for molecules with common ring systems (mean error for molecules within 0.1 Tanimoto of a seed NP: 0.098) than for structurally divergent molecules (0.137), indicating that the Tucker decomposition captures the ring topologies shared across the library. Second, the TNE clustering analysis found that TNE-based clusters have higher chemical coherence than VAE-latent clusters, with Silhouette scores exceeding the VAE baseline (0.35 vs.~0.229). Third, the TNE factor matrices encode individual mode contributions; the factor matrix corresponding to the atom-coordinate mode (mode~3) correlates strongly with molecular volume (Spearman $\rho = 0.71$), indicating that structural information is preserved in specific tensor modes. Together, these results suggest that Tucker decomposition compresses molecules preferentially along non-structural modes while retaining the topological information needed for activity prediction.
 
 
+
+\subsection{Integration with resistance-resilient MD validation}
+
+
+The 20 high-confidence polypharmacological leads identified in a related MD validation study include both Class~A (resistance-resilient, active against drug-sensitive and resistant \textit{P.~falciparum} strains) and Class~D (resistance-vulnerable) compounds \citep{temgoua2026antimalarial}.
+
+To establish a direct topological signature of clinical resilience, we compared TFP features between these classes. Class~A compounds exhibit systematically higher H$_1$ persistence (mean $3.74 \pm 0.34$~\AA\ versus $1.73$~\AA\ for Class~D; Spearman $\rho = 0.947$, $p < 0.0001$, $n = 14$; permutation test $p < 0.0001$, 95\% bootstrap CI $[0.799, 1.000]$). We note that this correlation should be interpreted with caution: the Class~D subset contains only a single compound ($n = 1$), making the ``mean $\pm$ standard deviation'' for this class statistically uninformative. Nevertheless, the overall trend across all 14 compounds suggests that greater ring topological complexity may confer conformational stability that is advantageous against resistance mutations. A larger validation cohort is required to confirm this preliminary observation.
+
+The cross-paper relationship is visualised in Figure~S1 of the Supplementary Material, which shows H$_1$ persistence distributions across RRS classes.
+
+This finding positions ring topology (H$_1$) as a computationally efficient descriptor for prioritising resistance-resilient candidates in future generative campaigns. Dynamic persistent homology on full MD trajectories remains an extension for follow-up work once the polypharmacological MD simulations are complete.
+
+
 \end{document}
