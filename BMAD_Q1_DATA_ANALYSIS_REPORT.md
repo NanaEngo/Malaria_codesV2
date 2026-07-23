@@ -1029,6 +1029,16 @@ The Hybrid descriptor shows a medium effect size (Cohen's $d = 0.77$) but is not
 
 **Manuscript integration:** SM Section 8, Supplementary Table S8 (tab:effect_sizes).
 
+### 3.13 ChEMBL Experimental Validation Attempt (July 23, 2026)
+
+A ChEMBL REST API query was attempted for experimental IC50 data on the top-10 P3 candidates across 4 Plasmodium targets (PfDHFR: CHEMBL4296323, PfCRT: CHEMBL1795182, PfATP4: CHEMBL5235475, PfClpP: CHEMBL4824474).
+
+**Result:** ChEMBL API returned HTTP 500 errors for 3/4 targets; only PfCRT returned 34 activities (12 active, 22 inactive). The API outage prevented systematic experimental validation.
+
+**Action required:** Re-run `p3_chembl_validation.py` when the ChEMBL API recovers. Document the API outage as a limitation in the P3 manuscript.
+
+**Manuscript integration:** To be added as Limitation section pending API recovery.
+
 # 3.11 Computational Scalability — **NEW (July 23, 2026)**
 
 **Data source:** `Project3.../results/p3_scalability_results.csv` (138 bytes)

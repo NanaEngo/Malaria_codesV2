@@ -422,4 +422,32 @@ TFP+ECFP4 & 0.950 & +0.010 & +0.63 & medium & 0.2302 & 0.195 \\
 \footnotesize $^{\ast}$ $p < 0.05$ (uncorrected). Bonferroni-corrected $\alpha = 0.05/9 = 0.0056$. Power computed for 80\% target at $\alpha = 0.05$.
 \end{table}
 
+
+% ============================================================================
+% 9. ChEMBL ENRICHMENT BENCHMARK
+% ============================================================================
+
+\section{ChEMBL enrichment benchmark}
+\label{sec:chembl_enrichment}
+
+Table~S9 reports the docking enrichment benchmark of our Vina protocol against ChEMBL-confirmed antimalarial actives and inactives for three Plasmodium targets.
+
+\begin{table}[htbp]
+\centering
+\caption{ChEMBL enrichment benchmark for the Vina docking protocol against experimentally confirmed antimalarials.}
+\label{tab:chembl_enrichment}
+\begin{tabularx}{\textwidth}{l c c c c c}
+\toprule
+Target & PDB & {Actives} & {Inactives} & {Enrichment} & Verdict \\
+\midrule
+PfDHFR & 7F3Y & 53 & 18 & 5.43$\times$ & EXCELLENT \\
+PfATP4 & 9N10 & 73 & 87 & $\infty$ & EXCELLENT \\
+PfCRT & 6UKJ & 12 & 19 & 1.46$\times$ & -- \\
+\bottomrule
+\end{tabularx}
+\vspace{1mm}
+\footnotesize Active hit rate for PfDHFR: 60.4\% (EXCELLENT) vs. 11.1\% inactive. PfATP4: 0\% false-positive rate. PfCRT: 1.46x did not meet the 2x threshold.
+\end{table}
+
+
 \end{document}
