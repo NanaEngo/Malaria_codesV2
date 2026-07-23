@@ -1,121 +1,154 @@
-# Paper 3: Topological and Tensor-Network Representations Resolve Chemical Space Paradoxes
+# Paper 3: Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antimalarial Candidates
 
 ## Working Title
 
-Topological and Tensor-Network Representations Resolve Chemical Space Paradoxes in African Antimalarial Natural Products
+Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antimalarial Candidates: a Topological and Tensor-Network Fingerprinting Study
 
 ---
 
-
-
-> **Data-analysis audit (2026-07-18):** Active P3 results are currently located under `Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/` and are being consolidated into the canonical top-level directory. Known issues: ✅ PHCO descriptor bug fixed — AUC rose from 0.500 to ~0.83 after replacing `ConvertToNumpyArray` with manual `GetOnBits()` bit-setting; ✅ QKS headline reconciled — canonical result is Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns) on 500 molecules; the 0.936/0.105 claim was unsupported and has been removed. See `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §2 for the full audit and SLURM correction plan.
->
-> **P3 phase2 SLURM job audit & fixes (2026-07-20):** Running jobs audited and four issues fixed in `scripts/p3_quantum_param_search.py` and `scripts/p3_phase2_array.sbatch`: (1) `PicklingError` on PennyLane `StateVectorC128` — removed the `--hpc` auto-detect flag and forced `n_jobs=1`; (2) race condition on shared `p3_quantum_params_sweep.csv` — added `--output-csv` so each array task writes a unique file; (3) OpenMP oversubscription — set `OMP_NUM_THREADS=1`, `OPENBLAS_NUM_THREADS=1`, `MKL_NUM_THREADS=1`, `NUMEXPR_NUM_THREADS=1`; (4) TFP imputation bug — missing SMILES now padded with `NaN` instead of zeros so mean imputation runs. Bash error handling improved with an `err_handler` trap.
->
-> **Smoke tests (2026-07-20):** Single-process test (`--n-mols 50`) completed in ~44 s with AUC 0.8697 ± 0.1002 (verification only, not a benchmark result). Parallel two-process test with distinct `--output-csv` files completed successfully, confirming no race condition.
->
-> **Current P3 phase2 jobs:**
-> - `10594_0` (bd6_nr1_nk30): RUNNING, fixed script
-> - `10595_1` (bd6_nr6_nk30): RUNNING, fixed script
-> - `10595_2` (bd6_nr6_nk20): RUNNING, fixed script
->
-> **Next steps for P3 relaunch:** import P1 full-cluster 1815-mol panel (`Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/r8b/fullcluster_rescoring/docking_results.csv`) into P3, run TDA and QKS benchmarks on this congeneric series, and update §3.3/§4.7 of the manuscript. See `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §4 for the full P3 phase2 SLURM audit and fix details.
-## Overview
+## Status (July 23, 2026)
 
 | Attribute | Details |
 |-----------|---------|
-| **Status** | v0.7 — TDA/TNE/QKS/GA benchmarks complete; PHCO fixed (GetOnBits, AUC 0.500→0.801); QKS reconciled (0.751 vs 0.701); 5K molecule optimization running (job 7943) |
+| **Version** | v0.7 — Main 20p + SM 6p, 0 undefined references |
 | **Target Journal** | *Journal of Cheminformatics* (IF 6.5) |
-| **Bibliography style** | BMC (`\bibliographystyle{bmc-mathphys}`) |
-| **Timeline** | June 2026 – February 2027 |
-| **Submission target** | February 2027 |
-| **Acceptance probability** | ~75% (pre-results) |
+| **Bibliography style** | natbib (authoryear) |
+| **Compilation** | ✅ Main 20 pages, 0 errors; SM 6 pages, 0 errors |
+| **Zenodo DOI** | [`10.5281/zenodo.19608875`](https://doi.org/10.5281/zenodo.19608875) |
 
-## Novelty Claims
+### Recent Commits (July 23, 2026)
 
-| ID | Claim |
-|----|-------|
-| **N5** | First systematic TDA vs. ECFP4 benchmark on natural product chemical space |
-| **N6** | First use of persistent homology to explain a chemical space paradox (92.6% Tanimoto novelty vs. 69.3% scaffold recovery) |
-| **N7** | First tensor network descriptor compression for a drug discovery library (d=8 → 5.9× compression) |
-| **N8** | First applicability domain analysis using quantum kernel density for NP compounds |
+| Commit | Description |
+|--------|-------------|
+| `cd901a35` | SM Table S5: remove fabricated n=200 rows, keep authoritative n=1000 only |
+| `be9b18dd` | P3 phase2 n=1000 data integration + gitignore CSV/TXT unignore + P3 param_search bugfix |
+| `e265c881` | gitignore CSV/TXT unignore + P3 param_search bugfix |
+| `a85c7f02` | P3 data pipeline integration + deprecated-ref cleanup (SM §5-7, BMAD §3.10-3.11) |
+| `58e2156b` | P3 Q1 polish: 5 remaining items fixed (circular caption, undefined fig ref, PHCO to SM, Table S4, SM label bug) |
+| `e189a786` | P3 Q1 prose polish: 17 non-Q1 terms replaced, caption consistency, siunitx fix |
 
-## Scope
+---
 
-- **Library**: 65,856 molecules from African NP chemical space
-- **Methods**: TFP (12-dim persistent homology), TNE (Tucker d=8, 5.9× compression), QKS (8-qubit PennyLane)
-- **Benchmark**: 5-fold CV, RF + SVM, Bonferroni-corrected paired t-tests
-- **QK subsample**: 10,000 molecules (O(N²) scaling constraint)
-- **Scaffold paradox**: H₁ preservation vs. H₀ divergence (Wilcoxon test)
-- **VAE baseline**: Silhouette 0.229 (Paper 1); target TNE Silhouette > 0.35
+## Compilation Status
 
-## Key Parameters
+| File | Pages | Undefined Refs | Errors |
+|------|-------|----------------|--------|
+| `Paper3_Quantum_InspiredV2607.tex` | 20 | 0 | 0 |
+| `Paper3_Quantum_Inspired_SM_V2607.tex` | 6 | 0 | 0 |
 
-| Parameter | Value | Source |
-|-----------|-------|--------|
-| TFP dimension | 12 (3 dims × 4 statistics) | Roadmap Step 2 |
-| Persistence threshold | 0.5 Å (noise filter) | Roadmap Step 2 |
-| TNE bond dimension | d=8 (default) | Roadmap Step 3 |
-| TNE compression | 5.9× (512 vs 3,000 elements) | Roadmap Step 3 |
-| QK qubits | 8 (PennyLane default.qubit) | Roadmap Step 4 |
-| QK dim reduction | UMAP (Jaccard metric, not PCA) | Roadmap Step 4 |
-| QK subsample | 10,000 molecules | Roadmap Step 4 |
-| Hybrid ref set | 500 molecules (MaxMin diversity) | Roadmap Step 5 |
-| Default weights | α=0.40 (TFP), β=0.35 (TNE), γ=0.25 (QK) | Roadmap Step 5 |
-| KMeans k | 484 (matching Paper 1) | Roadmap Step 2/3 |
-| CV folds | 5-fold stratified | Roadmap Step 6 |
-| RF trees | 200 | Roadmap Step 6 |
+---
 
-## Files
+## Key Results
 
-| File | Description |
-|------|-------------|
-| [`LaTeX/Paper3_Quantum_InspiredV2607.tex`](LaTeX/Paper3_Quantum_InspiredV2607.tex) | **Canonical manuscript (v0.7)** — all sections written; siunitx/cleveref/booktabs/xr applied; internal version labels and job IDs removed; ready for submission |
-| [`LaTeX/Paper3_Quantum_Inspired_SM_V2607.tex`](LaTeX/Paper3_Quantum_Inspired_SM_V2607.tex) | **Supplementary Material** — contains the H$_1$ vs RRS cross-paper violin figure (`fig:h1_rrs`) |
-| [`LaTeX/Paper3_Draft_v0.6.tex`](../../.archive_P3_V2607_20260720/manuscript/LaTeX/Paper3_Draft_v0.6.tex) | `Malaria_codesV2/.archive_P3_V2607_20260720/manuscript/LaTeX/Paper3_Draft_v0.6.tex` | Deprecated draft — archived for historical reference only; do not edit |
-| [`LaTeX/Bibliography_Paper3.bib`](LaTeX/Bibliography_Paper3.bib) | 50+ references (zero missing citations) |
-| Zenodo DOI | [`10.5281/zenodo.19608875`](https://doi.org/10.5281/zenodo.19608875) — archived data, benchmark CSVs, and analysis scripts |
+| Result | Value | Source |
+|--------|-------|--------|
+| ECFP4 AUC (baseline) | 0.868 | Full benchmark (n=19,849) |
+| Hybrid AUC (TFP+TNE+QKS) | 0.842 | Full benchmark (n=19,849) |
+| Hybrid p-value vs ECFP4 | 0.111 (ns) | Paired t-test, 5-fold CV |
+| QKS AUC (gamma-tuned RBF) | 0.751 | Subsample (n=500) |
+| QKS vs RBF p-value | 0.088 (ns) | Subsample (n=500) |
+| Optimised Hybrid AUC (n=1000) | 0.828 ± 0.037 | Phase2 re-benchmark (bd=6, nr=1, nk=30) |
+| H₁ persistence vs RRS | ρ = 0.947, p < 0.0001 | Cross-paper (n=14) |
+| TNE compression | 5.9× real-atom | Full library |
+| TDA success rate | 99.93% | 19,836/19,849 valid |
+
+---
+
+## Quantum Parameter Optimisation (Phase 2)
+
+### Grid Search (Job 7962)
+- 60 combinations: bond_dim ∈ {4,6,8} × n_repeats ∈ {1,2,3,4,6} × n_kpca ∈ {5,10,20,30}
+- 5-fold CV RF on n=200 molecules
+- Completed 50/60 combos before termination
+
+### Re-benchmarking (Jobs 11974, July 22)
+- Top-3 combinations re-evaluated on n=1000 molecules (750 active, 250 inactive)
+- All 3 completed quantum kernel computation but failed at summary stage (UnboundLocalError — fixed July 23)
+- Per-fold results saved to raw CSVs
+
+| bond_dim | n_repeats | n_kpca | AUC (n=1000) | Source |
+|:--------:|:---------:|:------:|:------------:|:------:|
+| **6** | **1** | **30** | **0.8283 ± 0.0371** | `p3_phase2_bd6_nr1_nk30_raw.csv` |
+| 6 | 6 | 20 | 0.8047 ± 0.0354 | `p3_phase2_bd6_nr6_nk20_raw.csv` |
+| 6 | 6 | 30 | 0.8121 ± 0.0396 | `p3_phase2_bd6_nr6_nk30_raw.csv` |
+
+---
+
+## Manuscript Files
+
+| File | Status |
+|------|--------|
+| `manuscript/LaTeX/Paper3_Quantum_InspiredV2607.tex` | **Canonical main** — 20p, 0 errors |
+| `manuscript/LaTeX/Paper3_Quantum_Inspired_SM_V2607.tex` | **Canonical SM** — 6p, 0 errors |
+| `manuscript/LaTeX/Paper3_Quantum_InspiredV2607.pdf` | Compiled PDF (main) |
+| `manuscript/LaTeX/Paper3_Quantum_Inspired_SM_V2607.pdf` | Compiled PDF (SM) |
+| `.archive_P3_V2607_20260720/` | Deprecated drafts — do not edit |
+
+### SM Sections
+
+| Section | Content |
+|---------|---------|
+| §1 | Cross-paper H₁ persistence vs RRS (fig:h1_rrs) |
+| §2 | Per-fold activity prediction statistics (Table S4) |
+| §3 | Topological fingerprint statistics (Table S1, fig:persistence) |
+| §4 | PHCO fingerprint extraction bug |
+| §5 | Quantum circuit parameter optimisation (Table S5, fig:qp_heatmap, fig:qp_effects) |
+| §6 | Monte Carlo uncertainty estimation |
+| §7 | Computational scalability |
+
+---
 
 ## Scripts
 
-| Script | Purpose | Roadmap Step |
-|--------|---------|--------------|
-| `Scripts/p3_tda_pipeline.py` | Vietoris-Rips persistence diagrams + TFP extraction | Steps 1–2 |
-| `Scripts/p3_tda_pipeline.py --pilot` | Pilot run on 100 molecules (wall-time check) | Step 1 |
-| `Scripts/p3_tne_pipeline.py` | Tucker decomposition + TNE embeddings | Step 3 |
-| `Scripts/p3_qks_benchmark.py` | 8-qubit quantum kernel vs RBF-SVM benchmark | Step 4 |
-| `Scripts/p3_hybrid_benchmark.py` | Hybrid framework + ablation study | Steps 5–6 |
+| Script | Purpose |
+|--------|---------|
+| `scripts/p3_tda_pipeline.py` | Vietoris-Rips persistence diagrams + TFP extraction |
+| `scripts/p3_tne_pipeline.py` | Tucker decomposition + TNE embeddings |
+| `scripts/p3_qks_benchmark.py` | 8-qubit quantum kernel vs RBF-SVM benchmark |
+| `scripts/p3_hybrid_benchmark.py` | Hybrid framework + ablation study |
+| `scripts/p3_quantum_param_search.py` | Grid search over quantum circuit hyperparameters |
+| `scripts/p3_ga_discriminator.py` | GA-style discriminator benchmark |
+| `scripts/p3_mc_uncertainty.py` | Monte Carlo dropout uncertainty estimation |
+| `scripts/p3_h1_rrs_cross_paper_analysis.py` | Cross-paper H₁ persistence vs RRS |
+| `scripts/prepare_panel_1815.py` | 1,815-molecule panel for TDA/QKS relance |
 
-## Quick Start
+---
 
-```bash
-# 1. Create and activate Paper 3 environment
-conda env create -f environment_paper3.yml
-conda activate malaria_paper3
+## Bug Fixes Applied
 
-# 2. Pilot run (100 molecules, ~5 min)
-python Papers/Quantum_Inspired_Representations/Scripts/p3_tda_pipeline.py --pilot
-python Papers/Quantum_Inspired_Representations/Scripts/p3_tne_pipeline.py --pilot
+| Bug | File | Fix | Date |
+|-----|------|-----|------|
+| PHCO SparseBitVect → all zeros | `p3_hybrid_benchmark.py` | Use `GetOnBits()` instead of `ConvertToNumpyArray()` | July 2026 |
+| QKS untuned RBF baseline | `p3_qks_benchmark.py` | Inner CV gamma optimisation on {0.5,1.0,2.0,5.0} | July 2026 |
+| Circular Table 2 caption | `Paper3_Quantum_InspiredV2607.tex` | Removed self-referencing `\cref{tab:qkernel}` | July 23 |
+| Undefined fig:joint_h1_rrs | `Paper3_Quantum_InspiredV2607.tex` | Replaced with `SM-fig:h1_rrs` via externaldocument | July 23 |
+| SM double-prefix labels | `Paper3_Quantum_Inspired_SM_V2607.tex` | `SM-sec:phco_bug` → `sec:phco_bug` | July 23 |
+| UnboundLocalError (results_df) | `p3_quantum_param_search.py` | Moved summary before `del` cleanup | July 23 |
+| Hardcoded P1 path | `prepare_panel_1815.py` | Replaced with relative `MALARIA_ROOT` path | July 23 |
+| Typo Projet1 → Project1 | `r8b_pipeline.py` | Corrected directory name | July 23 |
 
-# 3. Full library (65,856 molecules)
-python Papers/Quantum_Inspired_Representations/Scripts/p3_tda_pipeline.py --n-jobs 4
-python Papers/Quantum_Inspired_Representations/Scripts/p3_tne_pipeline.py --bond-dim 8
+---
 
-# 4. Quantum kernel benchmark (10,000-molecule subsample)
-python Papers/Quantum_Inspired_Representations/Scripts/p3_qks_benchmark.py --n-mols 10000
+## Remaining Tasks Before Submission
 
-# 5. Hybrid framework + ablation
-python Papers/Quantum_Inspired_Representations/Scripts/p3_hybrid_benchmark.py
-```
+| Priority | Task | Status |
+|----------|------|--------|
+| 🔴 High | Reserve Zenodo DOI and update Data Availability in main + SM | Pending |
+| 🔴 High | Resubmit full 60-combo grid search on HPC with fixed script | Pending |
+| 🟡 Medium | Update P1/P2 manuscripts with shared Zenodo DOI | Pending |
+| 🟡 Medium | Compile P1 and P2 manuscripts to verify clean build | Pending |
+| 🟢 Low | Internal review of full manuscript PDF | Pending |
 
-## JCIM Reinforcements Addressed
+---
 
-| Code | JCIM Criticism | Response in Paper 3 |
-|------|---------------|---------------------|
-| R7 | VAE latent space lacks validation (Silhouette 0.229) | §3.3 TFP vs. VAE comparison (Silhouette, CH, DB indices) |
-| R8 | KMeans clustering "methodological decoration" | §3.6 TNE clustering benchmark vs. ECFP4 vs. VAE |
-| R9 | African NPs outside applicability domain of Ersilia models? | §3.8 Quantum kernel density applicability domain analysis |
-| R10 | Tanimoto/scaffold paradox flagged as data inconsistency | §3.4 Scaffold paradox resolution via H₁/H₀ persistent homology |
+## Scope
+
+- **Library**: 19,849 molecules (full benchmark); 65,856 (activity labels)
+- **Methods**: TFP (12-dim persistent homology), TNE (Tucker d=8, 5.9× compression), QKS (8-qubit PennyLane)
+- **Benchmark**: 5-fold CV, RF + SVM, Bonferroni-corrected paired t-tests
+- **Cross-paper**: H₁ persistence vs RRS (P3 × P2, n=14, Spearman ρ=0.947)
+
+---
 
 ## Authors
 
@@ -124,4 +157,4 @@ Myke Vital Sao Temgoua, Jean-Pierre Tchapet Njafa, Serge Guy Nana Engo, Penabei 
 ---
 
 **Roadmap:** [`docs/PAPERS_2_3_ROADMAP.md`](../../docs/PAPERS_2_3_ROADMAP.md) (v2.2)
-**Last Updated:** July 20, 2026
+**Last Updated:** July 23, 2026
