@@ -135,6 +135,16 @@ def classify_activity(ic50_nM):
         return 'Intermediate'
 
 
+# Check RDKit availability at module level
+_RDKIT_AVAILABLE = False
+try:
+    from rdkit import Chem
+    from rdkit.Chem import DataStructs, AllChem
+    _RDKIT_AVAILABLE = True
+except ImportError:
+    pass
+
+
 def compute_tanimoto_smiles(smiles1, smiles2):
     """Compute Tanimoto similarity between two SMILES strings."""
     try:
