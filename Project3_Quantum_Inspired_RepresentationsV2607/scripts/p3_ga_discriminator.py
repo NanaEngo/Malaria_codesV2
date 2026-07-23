@@ -388,7 +388,7 @@ def main():
     # Summary
     lines = [
         "GA Discriminator vs Quantum Kernel (AUC-ROC comparison)",
-        f"Device: {args.device} | Seeds: {len(ref_smiles)} | Mutations/mol: {args.n_mutations}",
+        f"Device: {DEVICE} | Seeds: {len(ref_smiles)} | Mutations/mol: {args.n_mutations}",
         "",
         f"{'N_gen':>6}  {'AUC_Tanimoto':>14}  {'AUC_QK':>10}  {'Delta':>8}",
         "-" * 45,
