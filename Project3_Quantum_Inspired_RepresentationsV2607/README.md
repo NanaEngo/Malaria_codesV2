@@ -10,11 +10,11 @@ Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antima
 
 | Attribute | Details |
 |-----------|---------|
-| **Version** | v0.7 — Main 20p + SM 6p, 0 undefined references |
+| **Version** | v0.8 — Main 20p + SM 6p, 0 undefined references |
 | **Target Journal** | *Journal of Cheminformatics* (IF 6.5) |
 | **Bibliography style** | natbib (authoryear) |
 | **Compilation** | ✅ Main 20 pages, 0 errors; SM 6 pages, 0 errors |
-| **Zenodo DOI** | [`10.5281/zenodo.19608875`](https://doi.org/10.5281/zenodo.19608875) |
+| **Zenodo DOI** | `10.5281/zenodo.19608875` — reserved (pending final deposit of CSVs, scripts, benchmark data) |
 
 ### Recent Commits (July 23, 2026)
 
@@ -140,6 +140,14 @@ Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antima
 | 🟢 Low | Internal review of full manuscript PDF | Pending |
 
 ---
+
+## Key Findings
+
+1. **ECFP4 remains the recommended baseline** (AUC 0.868) for primary screening; the hybrid matches it (AUC 0.842, p=0.111) without significantly exceeding it.
+2. **Quantum, RBF, and Linear kernels are statistically indistinguishable** (p > 0.05) — the earlier apparent quantum advantage was an artefact of untuned RBF hyperparameters.
+3. **H₁ topological persistence predicts resistance tolerance** (Spearman ρ=0.947, p < 0.0001, n=14) — a computationally efficient topological predictor of mutation tolerance.
+4. **TFP resolves the scaffold paradox** via H₁/H₀ decomposition: ring topology (H₁) is preserved while peripheral connectivity (H₀) diverges.
+5. **TNE achieves 5.9× real-atom compression** with competitive Tartarus regression (R²=0.473 for PfDHFR).
 
 ## Scope
 
