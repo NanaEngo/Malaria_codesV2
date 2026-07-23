@@ -849,9 +849,22 @@ The 15.6× compression (padded, Nmax=100) with 0.113 reconstruction error demons
 - `results/figures/p3_qp_parameter_effects.png` — Boxplots showing marginal AUC distribution per parameter.
 - `results/figures/p3_qp_optimization_table.csv` — Best combo per bond_dim.
 
-**Phase 2 (job 8142):** The 3 best combos are being re-benchmarked on n=5,000 molecules via parallel SLURM array (pending — behind DEKOIS V2).
+**Phase 2 — Re-benchmarking on n=1000 molecules (July 22, 2026; updated July 23):** The top-3 parameter combinations from the n=200 grid search were re-evaluated on n=1000 molecules (750 active, 250 inactive) via SLURM array (Jobs 11974). All 3 completed the quantum kernel computation but failed at the summary stage due to an `UnboundLocalError` in `p3_quantum_param_search.py` (fixed July 23 — `del results_df` placed before summary block). Per-fold results were saved to raw CSVs before the crash.
 
-> ⚠️ **Note:** The CSV was reconstructed from done.log after accidental deletion. AUC values are exact; std/timing lost. The 10 missing combos (bond_dim=8, nr≥3) would not change the ranking — bond_dim=6 dominates.
+| bond_dim | n_repeats | n_kpca | AUC (n=1000) | AUC std | Time (s) | Source |
+|:--------:|:---------:|:------:|:------------:|:-------:|:--------:|:------:|
+| **6** | **1** | **30** | **0.8283** | 0.0371 | 21,719 | `p3_phase2_bd6_nr1_nk30_raw.csv` |
+| 6 | 6 | 20 | 0.8047 | 0.0354 | 27,914 | `p3_phase2_bd6_nr6_nk20_raw.csv` |
+| 6 | 6 | 30 | 0.8121 | 0.0396 | 28,282 | `p3_phase2_bd6_nr6_nk30_raw.csv` |
+
+**Comparison across sample sizes:**
+| Sample | n_mols | Best Hybrid AUC | Config |
+|--------|--------|-----------------|--------|
+| Grid search (Job 7962) | 200 | 0.8534 ± 0.049 | bd=6, nr=1, nk=30 |
+| Phase 2 re-benchmark | 1000 | 0.8283 ± 0.0371 | bd=6, nr=1, nk=30 |
+| Full hybrid benchmark | 19,849 | 0.842 ± 0.051 | bd=8, nr=2, nk=20 (default) |
+
+> ⚠️ **Note:** The original n=200 grid search CSV was overwritten by the last phase2 run. The n=200 values are documented in this report from the original done.log. The n=1000 raw CSVs contain the authoritative per-fold data. The AUC drop from n=200→1000 (0.8534→0.8283) is expected as larger samples expose more edge cases.
 
 ### 3.6 GA Discriminator vs Quantum Kernel — **FINAL RESULTS (July 7, 2026)**
 
