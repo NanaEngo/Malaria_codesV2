@@ -330,7 +330,7 @@ The manuscript has 6 limitations listed. Rather than apologising, each should be
 | `scripts/p3_chembl_validation.py` | ✏️ Existing | Query ChEMBL for experimental IC₅₀ values |
 | `scripts/p3_rrs_expansion.py` | ✏️ Existing | Expand RRS computation |
 | `scripts/p3_rrs_expansion.sbatch` | ✏️ Existing | SLURM batch for RRS expansion |
-| `scripts/p3_sota_benchmark.py` | 📝 New | Benchmark TopologyNet/D-GRIL |
+| `scripts/p3_sota_benchmark.py` | ❌ Not created | Action 3 completed via textual comparison (tasks incommensurable) |
 | `manuscript/LaTeX/Paper3_Quantum_InspiredV2607.tex` | ✏️ Modified | Reframe H₁-RRS, add ChEMBL ref, trim |
 | `manuscript/LaTeX/Paper3_Quantum_Inspired_SM_V2607.tex` | ✏️ Modified | Add Tables S7 (ChEMBL), S9 (SOTA) |
 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | ✏️ Modified | Add §3.14 (acceptance assessment) |
