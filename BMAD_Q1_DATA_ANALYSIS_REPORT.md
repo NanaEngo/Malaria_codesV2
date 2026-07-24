@@ -1734,7 +1734,7 @@ Based on comprehensive analysis of the P3 manuscript, BMAD report, and all verif
 |---|-----|----------|--------|--------|
 | 1 | No experimental validation (all computational) | 🔴 High | −15% | ChEMBL IC₅₀ proxy (Action 1) |
 | 2 | H₁-RRS headline failed at n=33 (ρ=0.947→0.305) | 🔴 High | −10% | Reframe as methodological finding (Action 2) |
-| 3 | No SOTA topological benchmark | ✅ Complete (textual) | −8% → 0% | Textual comparison with TopologyNet/D-GRIL in §2.1 (different tasks: regression vs classification) |
+| 3 | No SOTA topological benchmark | 🟡 Medium | −8% | Benchmark TopologyNet/D-GRIL needed (Action 3) |
 | 4 | RRS cohort too small (n=33, need n≥80) | 🟡 Medium | −5% | Expand to 500+ compounds (Action 4) |
 | 5 | Zenodo deposit incomplete | 🟡 Medium | −5% | Complete deposit (Action 5) |
 

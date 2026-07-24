@@ -47,7 +47,7 @@ The P3 manuscript "Persistent homology decomposes the scaffold paradox in AI-gen
 |---|-----|----------|---------------------|--------|
 | 1 | **No experimental validation** — all activity labels are computational (Ersilia ML) | 🔴 High | −15% | ChEMBL IC₅₀ proxy validation (Action 1) |
 | 2 | **H₁-RRS headline finding failed at n=33** — ρ=0.947→0.305 (n.s.) | 🔴 High | −10% | Reframe as methodological finding (Action 2) |
-| 3 | **No comparison with SOTA topological methods** — addressed via textual comparison (different tasks: regression vs classification) | ✅ Complete (textual) | 0% | Textual comparison with TopologyNet/D-GRIL in manuscript §2.1 |
+| 3 | **No comparison with SOTA topological methods** — only textual, not benchmarked | 🟡 Medium | −8% | Benchmark TopologyNet/D-GRIL (Action 3) |
 | 4 | **RRS cohort too small for definitive conclusion** — n=33, need n≥80 | 🟡 Medium | −5% | Expand to 500+ compounds (Action 4) |
 | 5 | **Zenodo deposit incomplete** — DOI reserved but data not uploaded | 🟡 Medium | −5% | Complete deposit (Action 5) |
 
