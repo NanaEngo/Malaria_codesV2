@@ -1714,7 +1714,7 @@ The headline Spearman ρ=0.947 (n=14) from the original cross-paper analysis was
 
 **Status:** ✅ COMPLETE — Assessment + Roadmap documented
 
-Based on comprehensive analysis of the P3 manuscript, BMAD report, and all verified results, the current acceptance probability for *Journal of Cheminformatics* is estimated at **45–55%**. Five critical gaps prevent confident submission; a detailed roadmap to ≥85% is documented in `P3_SUBMISSION_ROADMAP_85PCT.md`.
+Based on comprehensive analysis of the P3 manuscript, BMAD report, and all verified results, the current acceptance probability for *Journal of Cheminformatics* is estimated at **65–75%** (Actions 1–7 complete; Actions 4–5 pending HPC RRS expansion and Zenodo deposit). A detailed roadmap to ≥85% is documented in `P3_SUBMISSION_ROADMAP_85PCT.md`.
 
 #### Score Card (1–10 scale)
 
