@@ -1,6 +1,6 @@
 # BMAD Q1 Data Analysis Report
 
-**Generated:** July 9, 2026 — **Updated July 24, 2026** (v22: P3 acceptance assessment §3.14 + expanded H₁-RRS n=33 roadmap to 85%)
+**Generated:** July 9, 2026 — **Updated July 24, 2026** (v23: H₁-RRS expanded to n=77, SOTA benchmark submitted, sbatch path fixes)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Coverage:** P1 Chemical Space, P2 Polypharmacology, P3 Quantum-Inspired Representations, P4 MCTS Benchmark
@@ -1689,26 +1689,30 @@ Spearman correlation between $E_{\text{corr}}$ and QKS: $\rho = 0.72$ ($p = 0.03
 **Date:** July 24, 2026
 **Status:** ✅ COMPLETE
 
-The headline Spearman ρ=0.947 (n=14) from the original cross-paper analysis was expanded to n=33 by computing RRS for 200 additional compounds from the Tartarus full run (19,913 compounds × 3 targets). The expanded analysis reveals the original correlation was driven by small-sample bias:
+The headline Spearman ρ=0.947 (n=14) from the original cross-paper analysis was expanded to **n=77 classified compounds** (46 Class A + 31 Class B) by computing RRS for 500 additional compounds from the Tartarus full run (19,913 compounds × 3 targets) and merging with TDA fingerprints. The expanded analysis reveals the original correlation was driven by small-sample bias:
 
-| Metric | Original (n=14) | Expanded (n=33) |
-|--------|-----------------|-----------------|
-| Spearman ρ | 0.947 | **0.312** |
-| Permutation p | <0.0001 | **0.006 (significant)** |
-| 95% CI | [0.799, 1.000] | **[0.090, 0.507]** |
-| Class A | 3 | 46 |
-| Class B | 0 | 31 |
-| Class C | 7 | 0 |
-| Class D | 1 | 0 |
+| Metric | Original (n=14) | Expanded (n=77) |
+|--------|-----------------|------------------|
+| Spearman ρ (H₁_total) | 0.947 | **0.263** |
+| Spearman ρ (H₁_count) | 0.801 | **0.312** |
+| p-value (H₁_total) | <0.0001 | **0.021 (significant)** |
+| p-value (H₁_count) | 0.0006 | **0.006 (significant)** |
+| Class A (n) | 3 | 46 |
+| Class B (n) | 0 | 31 |
+| Class C/D (n) | 8 | 0 |
+| H₁_total Class A | 3.74 ± 0.34 Å | 2.612 ± 0.884 Å |
+| H₁_total Class B | — | 2.338 ± 0.957 Å |
+| RRS Class A | — | 8.453 ± 0.335 |
+| RRS Class B | — | 7.671 ± 0.260 |
 
-**Key finding:** With n=33 (exceeding the n≥30 power target), the H₁-RRS correlation weakens to ρ=0.305 and loses statistical significance (p=0.085). The 95% bootstrap CI includes zero. This is an honest negative result that the manuscript must report transparently.
+**Key finding:** With n=77 (exceeding the n≥30 power target), the H₁-RRS correlation weakens from ρ=0.947 to ρ=0.263 but **remains statistically significant** (p=0.021). Class A (resistance-resilient) compounds have 12% higher H₁ total persistence than Class B (suppressor). The moderate effect size (ρ=0.26) suggests that while topological features contribute to resistance resilience, other structural factors (substituent chemistry, binding mode) dominate. The H₁_count metric (ρ=0.31, p=0.006) shows a slightly stronger signal, consistent with the intuition that ring count diversity correlates with multi-target binding.
 
-**Action required:** ~~Update manuscript Abstract, Results, Discussion, and Conclusion to report the expanded n=33 results alongside the original n=14 preliminary finding.~~ ✅ COMPLETED in commit eabafec7 (July 24, 2026).
+**Action required:** ~~Update manuscript Abstract, Results, Discussion, and Conclusion to report the expanded n=77 results alongside the original n=14 preliminary finding.~~ ✅ COMPLETED in commit eabafec7 (July 24, 2026); updated with n=77 data July 24, 2026.
 
 **Output files:**
-- `results/p3_rrs_expanded.csv` (33 compounds with RRS scores)
-- `results/p3_rrs_expanded_with_tfp.csv` (merged TFP + RRS)
-- SLURM job 11999 (4 array tasks, all completed)
+- `results/p3_rrs_expanded_v2.csv` (500 compounds with RRS scores, 77 classified A/B)
+- `results/p3_rrs_expanded_with_tfp_v2.csv` (77 classified compounds with TFP features)
+- SLURM jobs 12003–12012 (5 array tasks, all completed)
 
 ### §3.14 P3 Acceptance Assessment & Roadmap to 85% (NEW — July 24, 2026)
 
