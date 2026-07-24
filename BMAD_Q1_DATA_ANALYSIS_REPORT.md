@@ -1703,7 +1703,7 @@ The headline Spearman ρ=0.947 (n=14) from the original cross-paper analysis was
 
 **Key finding:** With n=33 (exceeding the n≥30 power target), the H₁-RRS correlation weakens to ρ=0.305 and loses statistical significance (p=0.085). The 95% bootstrap CI includes zero. This is an honest negative result that the manuscript must report transparently.
 
-**Action required:** Update manuscript Abstract, Results, Discussion, and Conclusion to report the expanded n=33 results alongside the original n=14 preliminary finding.
+**Action required:** ~~Update manuscript Abstract, Results, Discussion, and Conclusion to report the expanded n=33 results alongside the original n=14 preliminary finding.~~ ✅ COMPLETED in commit eabafec7 (July 24, 2026).
 
 **Output files:**
 - `results/p3_rrs_expanded.csv` (33 compounds with RRS scores)

@@ -3,7 +3,7 @@
 **Target:** *Journal of Cheminformatics* (IF ≈ 6.5)
 **Current estimate:** 45–55% acceptance probability (post expanded H₁-RRS n=33)
 **Target:** ≥85% acceptance probability
-**Generated:** July 23, 2026 — **Updated July 24, 2026**
+**Generated:** July 24, 2026
 
 ---
 
