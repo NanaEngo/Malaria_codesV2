@@ -29,14 +29,11 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from scipy import stats as sp_stats
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
     accuracy_score,
-    auc,
     f1_score,
     roc_auc_score,
-    roc_curve,
 )
 from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
@@ -73,10 +70,10 @@ def get_labels(df: pd.DataFrame) -> np.ndarray:
         return df["label"].values.astype(int)
     if "mpo_score" in df.columns:
         return (df["mpo_score"].values >= 0.50).astype(int)
-    # Fallback: use smiles hash as pseudo-label (for smoke testing only)
-    log.warning("No label column found — using random labels for structure test")
-    rng = np.random.default_rng(42)
-    return rng.integers(0, 2, size=len(df))
+    # No valid labels found — fail hard to prevent wasted HPC compute
+    log.error("No activity/label/true_label column found in data or labels CSV")
+    log.error("Provide a CSV with 'smiles' + activity columns via --labels-csv")
+    raise SystemExit(1)
 
 
 # ---------------------------------------------------------------------------
@@ -272,8 +269,6 @@ def main():
                 log.info(f"After merge: {len(df)} molecules with both TDA features and labels")
             else:
                 log.warning(f"Cannot merge: missing 'smiles' column in one of the DataFrames")
-            else:
-                log.warning(f"Cannot merge: missing 'smiles' column in labels CSV")
         else:
             log.warning(f"Labels CSV not found: {labels_path}")
 
