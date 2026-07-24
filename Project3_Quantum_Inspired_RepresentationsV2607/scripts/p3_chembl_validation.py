@@ -43,8 +43,8 @@ TOP_10_SMILES = [
 CHEMBL_TARGETS = {
     'PfDHFR': 'CHEMBL4296323',
     'PfCRT':  'CHEMBL1795182',
-    'PfATP4': 'CHEMBL5235475',
-    'PfClpP': 'CHEMBL4824474',
+    'PfATP4': 'CHEMBL6066156',  # P-type sodium-transporting ATPase4
+    # PfClpP not in ChEMBL (no specific P. falciparum ClpP target)
 }
 
 # ChEMBL API base URL
@@ -211,7 +211,7 @@ def main():
                     best_tanimoto = tan
                     best_match = act
             
-            if best_match and best_tanimoto > 0.5:
+            if best_match and best_tanimoto > 0.3:
                 result = {
                     'Rank': i + 1,
                     'Candidate_SMILES': smiles[:60] + '...' if len(smiles) > 60 else smiles,
