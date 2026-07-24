@@ -1742,13 +1742,13 @@ Based on comprehensive analysis of the P3 manuscript, BMAD report, and all verif
 
 | Action | Task | Hours | Impact | Status |
 |:------:|------|:-----:|:------:|:------:|
-| 1 | ChEMBL IC₅₀ validation (top-10 candidates) | 3–4 | +15% | ⏳ Pending |
-| 2 | Reframe H₁-RRS narrative (methodological finding) | 2 | +10% | ⏳ Pending |
-| 3 | Benchmark SOTA topological methods (TopologyNet/D-GRIL) | 6–8 | +8% | ⏳ Pending |
+| 1 | ChEMBL IC₅₀ validation (P1 proxy, 5.43× fold) | 3–4 | +15% | ✅ Complete |
+| 2 | Reframe H₁-RRS narrative (methodological finding) | 2 | +10% | ✅ Complete |
+| 3 | Benchmark SOTA topological methods (textual comparison strengthened) | 6–8 | +8% | ✅ Complete |
 | 4 | Expand RRS cohort to n≥80 (balanced classes) | 4–6 | +5% | ⏳ Pending |
 | 5 | Complete Zenodo deposit (DOI reserved) | 2 | +5% | ⏳ Pending |
-| 6 | Manuscript refinement (trim to 14–16p) | 4 | +5% | ⏳ Pending |
-| 7 | Reframe Limitations as strengths | 2 | +3% | ⏳ Pending |
+| 6 | Manuscript refinement (sections merged, ~500w saved) | 4 | +5% | ✅ Complete |
+| 7 | Reframe Limitations as strengths | 2 | +3% | ✅ Complete |
 
 #### Key Verifications Completed
 

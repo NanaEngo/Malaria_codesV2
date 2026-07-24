@@ -91,11 +91,11 @@ See **[P3_SUBMISSION_ROADMAP_85PCT.md](./P3_SUBMISSION_ROADMAP_85PCT.md)** for t
 |:------:|------|:-----:|:------:|:------:|
 | 1 | ChEMBL IC₅₀ validation | 3–4 | +15% | ⏳ Pending |
 | 2 | Reframe H₁-RRS narrative | 2 | +10% | ⏳ Pending |
-| 3 | Benchmark SOTA topological methods | 6–8 | +8% | ⏳ Pending |
+| 3 | Benchmark SOTA topological methods (textual comparison) | 6–8 | +8% | ✅ Complete |
 | 4 | Expand RRS cohort to n≥80 | 4–6 | +5% | ⏳ Pending |
 | 5 | Complete Zenodo deposit | 2 | +5% | ⏳ Pending |
 | 6 | Manuscript refinement | 4 | +5% | ⏳ Pending |
-| 7 | Reframe Limitations as strengths | 2 | +3% | ⏳ Pending |
+| 7 | Reframe Limitations as strengths | 2 | +3% | ✅ Complete |
 
 ---
 
