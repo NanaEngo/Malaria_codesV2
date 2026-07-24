@@ -1684,7 +1684,7 @@ Spearman correlation between $E_{\text{corr}}$ and QKS: $\rho = 0.72$ ($p = 0.03
 
 
 
-### §3.13 Expanded H₁-RRS Correlation (n=33)
+### §3.13 Expanded H₁-RRS Correlation (n=77)
 
 **Date:** July 24, 2026
 **Status:** ✅ COMPLETE
