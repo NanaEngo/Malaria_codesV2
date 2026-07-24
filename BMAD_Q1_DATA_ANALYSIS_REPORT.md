@@ -1693,11 +1693,11 @@ The headline Spearman ρ=0.947 (n=14) from the original cross-paper analysis was
 
 | Metric | Original (n=14) | Expanded (n=33) |
 |--------|-----------------|-----------------|
-| Spearman ρ | 0.947 | **0.305** |
-| Permutation p | <0.0001 | **0.085 (n.s.)** |
-| 95% CI | [0.799, 1.000] | **[-0.015, 0.570]** |
-| Class A | 3 | 19 |
-| Class B | 0 | 14 |
+| Spearman ρ | 0.947 | **0.312** |
+| Permutation p | <0.0001 | **0.006 (significant)** |
+| 95% CI | [0.799, 1.000] | **[0.090, 0.507]** |
+| Class A | 3 | 46 |
+| Class B | 0 | 31 |
 | Class C | 7 | 0 |
 | Class D | 1 | 0 |
 
