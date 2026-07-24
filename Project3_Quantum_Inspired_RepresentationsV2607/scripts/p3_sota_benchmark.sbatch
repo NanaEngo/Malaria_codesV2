@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=p3_sota_benchmark
-#SBATCH --output=../logs/slurm/p3_sota_benchmark_%j.log
-#SBATCH --error=../logs/slurm/p3_sota_benchmark_%j.err
+#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_sota_benchmark_%j.log
+#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_sota_benchmark_%j.err
 #SBATCH --partition=production
 #SBATCH --time=02:00:00
 #SBATCH --mem=16G
@@ -14,6 +14,7 @@ set -euo pipefail
 # Environment
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate malaria_md
 
@@ -31,7 +32,8 @@ mkdir -p "$PROJECT_ROOT/logs/slurm"
 # merged with TDA fingerprints).
 LABELS_CSV="$PROJECT_ROOT/results/p3_mc_uncertainty.csv"
 if [ ! -f "$LABELS_CSV" ]; then
-    echo "WARNING: Labels CSV not found at $LABELS_CSV — will use random labels"
+    echo "ERROR: Labels CSV not found at $LABELS_CSV" >&2
+    exit 1
 fi
 
 # Run benchmark (max-mols=2000 for SVM compatibility)
