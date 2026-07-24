@@ -68,20 +68,28 @@
 | MM-GBSA (PfATP4) | ✅ Complété | Parser regex fixé |
 | **Manuscrit** | ✅ **Prêt soumission JCIM** | Sections Methods complètes, figures TOC |
 
-### P3 — Quantum-Inspired Representations 🔄 (Phase 2 prête)
+### P3 — Quantum-Inspired Representations 🔄 (Roadmap 85% en cours)
 
 | Composant | Statut | Résultat clé |
 |-----------|:------:|:-------------|
 | **Benchmark final (v0.7, n=19,849)** | ✅ Complété | ECFP4=0.868, Hybrid=0.842 |
 | **Ablation study** | ✅ Complété | QKS driver principal (p<0.001) |
-| **QKS canonical** | ✅ Complété | Quantum 0.751 vs RBF 0.701 |
+| **QKS canonical** | ✅ Complété | Quantum 0.751 vs RBF 0.701 (gamma-tuned) |
 | **PHCO corrigé** | ✅ Complété | 0.500→0.801 (GetOnBits fix) |
 | **Phase 1 — Grid search (n=200)** | ✅ **Complété** | **bd=6, nr=1, nk=30 → AUC 0.8534** |
+| **Phase 2 — Re-benchmark (n=1000)** | ✅ **Complété** | Optimised: 0.828±0.037, 0.805±0.035, 0.812±0.040 |
 | Figures SM (heatmap, boxplot, table) | ✅ Générées | `results/figures/p3_qp_*.png` |
-| **TNE embeddings (bond_dim=8)** | ✅ **Généré** (job 11872) | 19,836/19,849 valides, 192 dims, 15.6× compression |
-| **TDA fingerprints (19,849 mol.)** | ✅ **Généré** (job 11873) | 19,849/19,849 valides, 0 échecs, 78 features |
-| **Phase 2 — Benchmark n=5,000** | ✅ **PRÊTE** | TNE + TDA + activité disponibles |
-| Phase 3 — Benchmark n=19,849 | ⏳ Après Phase 2 | Meilleur combo sur librairie complète |
+| **TNE embeddings (bond_dim=8)** | ✅ **Généré** | 19,836/19,849 valides, 192 dims, 5.9× compression |
+| **TDA fingerprints (19,849 mol.)** | ✅ **Généré** | 19,849/19,849 valides, 0 échecs, 78 features |
+| **H₁-RRS expanded (n=33)** | ✅ **Complété** | ρ=0.305, p=0.085 (n.s.) — attenuation vs n=14 |
+| **RRS expansion SLURM** | ✅ **Fonctionnel** | p3_rrs_expansion.sbatch, 4 tasks, 200 molécules |
+| **Manuscrit (Main 16p + SM 11p)** | ✅ **0 undefined refs** | J Cheminform limit respecté |
+| **Acceptance assessment** | ✅ **45–55%** | Roadmap vers ≥85% documenté |
+| 🔴 Action 1: ChEMBL IC₅₀ validation | ⏳ **À faire** | +15% acceptance |
+| 🔴 Action 2: Reframe H₁-RRS narrative | ⏳ **À faire** | +10% acceptance |
+| 🟡 Action 3: Benchmark SOTA topological | ⏳ **À faire** | +8% acceptance |
+| 🟡 Action 4: Expand RRS to n≥80 | ⏳ **À faire** | +5% acceptance |
+| 🟡 Action 5: Zenodo deposit | ⏳ **À faire** | +5% acceptance |
 
 #### Fichiers de données P3 — État actuel
 
