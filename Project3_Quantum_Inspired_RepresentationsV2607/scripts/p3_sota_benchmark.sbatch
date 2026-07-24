@@ -24,10 +24,19 @@ echo "Project root: $PROJECT_ROOT"
 # Ensure log directory exists
 mkdir -p "$PROJECT_ROOT/logs/slurm"
 
-# Run benchmark
+# Find the hybrid benchmark CSV for activity labels
+LABELS_CSV="$PROJECT_ROOT/results/p3_hybrid_benchmark.csv"
+if [ ! -f "$LABELS_CSV" ]; then
+    # Fallback: try the 1815-molecule panel
+    LABELS_CSV="$PROJECT_ROOT/results/p3_tda_features_1815.csv"
+fi
+
+# Run benchmark (max-mols=2000 for SVM compatibility)
 cd "$SCRIPT_DIR"
 python3 p3_sota_benchmark.py \
     --n-folds 5 \
+    --max-mols 2000 \
+    --labels-csv "$LABELS_CSV" \
     --output-csv "$PROJECT_ROOT/results/p3_sota_benchmark.csv" \
     2>&1 | tee "$PROJECT_ROOT/logs/slurm/p3_sota_benchmark_detail.log"
 

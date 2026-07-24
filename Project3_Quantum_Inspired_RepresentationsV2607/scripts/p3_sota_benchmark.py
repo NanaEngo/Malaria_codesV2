@@ -230,6 +230,8 @@ def main():
     parser.add_argument("--n-folds", type=int, default=5)
     parser.add_argument("--max-mols", type=int, default=2000,
                         help="Max molecules to subsample (SVM scales O(n^2))")
+    parser.add_argument("--labels-csv", type=str, default=None,
+                        help="CSV with 'smiles' and 'activity' columns (merge with TDA data)")
     parser.add_argument("--output-csv", type=str, default=None)
     args = parser.parse_args()
 
@@ -239,7 +241,6 @@ def main():
     else:
         tda_path = RESULTS_DIR / "p3_tda_fingerprints.csv"
         if not tda_path.exists():
-            # Try the 1815-molecule panel
             tda_path = RESULTS_DIR / "p3_tda_features_1815.csv"
         if not tda_path.exists():
             log.error(f"TDA fingerprints not found at {tda_path}")
@@ -250,6 +251,21 @@ def main():
     # Load data
     log.info(f"Loading data from {tda_path}")
     df = load_tda_fingerprints(tda_path)
+
+    # Merge external labels if provided
+    if args.labels_csv:
+        labels_path = Path(args.labels_csv)
+        if labels_path.exists():
+            log.info(f"Merging labels from {labels_path}")
+            labels_df = pd.read_csv(labels_path)
+            if "smiles" in labels_df.columns and "smiles" in df.columns:
+                df = df.merge(labels_df[["smiles", "activity"]], on="smiles", how="inner")
+                log.info(f"After merge: {len(df)} molecules with both TDA features and labels")
+            else:
+                log.warning(f"Cannot merge: missing 'smiles' column in labels CSV")
+        else:
+            log.warning(f"Labels CSV not found: {labels_path}")
+
     y = get_labels(df)
     n_active = y.sum()
     n_inactive = len(y) - n_active
