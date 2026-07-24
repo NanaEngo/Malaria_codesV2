@@ -2,7 +2,8 @@
 #SBATCH --job-name=p3_rrs_expansion
 #SBATCH --output=logs/slurm/p3_rrs_expansion_%j.log
 #SBATCH --error=logs/slurm/p3_rrs_expansion_%j.err
-#SBATCH --time=04:00:00
+#SBATCH --partition=production
+#SBATCH --time=02:00:00
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=8
 #SBATCH --array=0-3
@@ -18,15 +19,20 @@
 # 3. Computes RRS for 200+ compounds across 4 resistance classes
 # 4. Outputs p3_rrs_expanded.csv for H₁-RRS re-analysis
 
-set -euo pipefail
+set -eo pipefail  # no -u: GMXRC in malaria_md env uses unset vars
 
 # Environment
 CONDA_ENV="malaria_md"
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "$CONDA_ENV"
+set -u  # re-enable strict undefined-variable checking after conda
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+# SLURM_SUBMIT_DIR is the directory where sbatch was submitted
+PROJECT_ROOT="/home/nanaengo/Malaria_codesV2"
+SCRIPT_DIR="$PROJECT_ROOT/Project3_Quantum_Inspired_RepresentationsV2607/scripts"
+
+# Ensure output directories exist on compute node
+mkdir -p "$PROJECT_ROOT/Project3_Quantum_Inspired_RepresentationsV2607/results/p3_rrs_expansion"
 
 # Task-specific parameters
 TASK_ID=${SLURM_ARRAY_TASK_ID}

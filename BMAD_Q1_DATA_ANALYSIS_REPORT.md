@@ -1682,3 +1682,30 @@ Spearman correlation between $E_{\text{corr}}$ and QKS: $\rho = 0.72$ ($p = 0.03
 | P4 — QMC validation | 5 candidates, DMC + GFN2-xTB | **ρ=0.72 (p=0.03) QKS vs E_corr** | ✅ Preliminary |
 | P4 — Manuscript | JCIM submission | **Discussion, Methods, Results drafted** | 📝 In progress |
 
+
+
+### §3.13 Expanded H₁-RRS Correlation (n=33)
+
+**Date:** July 24, 2026
+**Status:** ✅ COMPLETE
+
+The headline Spearman ρ=0.947 (n=14) from the original cross-paper analysis was expanded to n=33 by computing RRS for 200 additional compounds from the Tartarus full run (19,913 compounds × 3 targets). The expanded analysis reveals the original correlation was driven by small-sample bias:
+
+| Metric | Original (n=14) | Expanded (n=33) |
+|--------|-----------------|-----------------|
+| Spearman ρ | 0.947 | **0.305** |
+| Permutation p | <0.0001 | **0.085 (n.s.)** |
+| 95% CI | [0.799, 1.000] | **[-0.015, 0.570]** |
+| Class A | 3 | 19 |
+| Class B | 0 | 14 |
+| Class C | 7 | 0 |
+| Class D | 1 | 0 |
+
+**Key finding:** With n=33 (exceeding the n≥30 power target), the H₁-RRS correlation weakens to ρ=0.305 and loses statistical significance (p=0.085). The 95% bootstrap CI includes zero. This is an honest negative result that the manuscript must report transparently.
+
+**Action required:** Update manuscript Abstract, Results, Discussion, and Conclusion to report the expanded n=33 results alongside the original n=14 preliminary finding.
+
+**Output files:**
+- `results/p3_rrs_expanded.csv` (33 compounds with RRS scores)
+- `results/p3_rrs_expanded_with_tfp.csv` (merged TFP + RRS)
+- SLURM job 11999 (4 array tasks, all completed)
