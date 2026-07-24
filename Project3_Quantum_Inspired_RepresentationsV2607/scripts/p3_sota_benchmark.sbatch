@@ -2,7 +2,8 @@
 #SBATCH --job-name=p3_sota_benchmark
 #SBATCH --output=../logs/slurm/p3_sota_benchmark_%j.log
 #SBATCH --error=../logs/slurm/p3_sota_benchmark_%j.err
-#SBATCH --time=01:00:00
+#SBATCH --partition=production
+#SBATCH --time=02:00:00
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=8
 #SBATCH --nodes=1
