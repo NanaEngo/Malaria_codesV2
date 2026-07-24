@@ -258,8 +258,17 @@ def main():
         if labels_path.exists():
             log.info(f"Merging labels from {labels_path}")
             labels_df = pd.read_csv(labels_path)
-            if "smiles" in labels_df.columns and "smiles" in df.columns:
-                df = df.merge(labels_df[["smiles", "activity"]], on="smiles", how="inner")
+            # Find the label column (activity, label, or true_label)
+            label_col = None
+            for candidate in ["activity", "label", "true_label"]:
+                if candidate in labels_df.columns:
+                    label_col = candidate
+                    break
+            if label_col is None:
+                log.warning(f"No activity/label column found in {labels_path}")
+            elif "smiles" in labels_df.columns and "smiles" in df.columns:
+                df = df.merge(labels_df[["smiles", label_col]], on="smiles", how="inner")
+                df = df.rename(columns={label_col: "activity"})
                 log.info(f"After merge: {len(df)} molecules with both TDA features and labels")
             else:
                 log.warning(f"Cannot merge: missing 'smiles' column in labels CSV")

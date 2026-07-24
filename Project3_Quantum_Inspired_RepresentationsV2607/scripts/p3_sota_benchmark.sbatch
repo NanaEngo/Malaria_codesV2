@@ -24,11 +24,11 @@ echo "Project root: $PROJECT_ROOT"
 # Ensure log directory exists
 mkdir -p "$PROJECT_ROOT/logs/slurm"
 
-# Find the hybrid benchmark CSV for activity labels
-LABELS_CSV="$PROJECT_ROOT/results/p3_hybrid_benchmark.csv"
+# Labels CSV: must have 'smiles' + 'activity' columns
+# p3_mc_uncertainty.csv has smiles + true_label (100 molecules with activity labels)
+LABELS_CSV="$PROJECT_ROOT/results/p3_mc_uncertainty.csv"
 if [ ! -f "$LABELS_CSV" ]; then
-    # Fallback: try the 1815-molecule panel
-    LABELS_CSV="$PROJECT_ROOT/results/p3_tda_features_1815.csv"
+    echo "WARNING: Labels CSV not found at $LABELS_CSV — will use random labels"
 fi
 
 # Run benchmark (max-mols=2000 for SVM compatibility)
