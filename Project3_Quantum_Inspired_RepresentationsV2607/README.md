@@ -77,7 +77,7 @@ Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antima
 |---|-----|----------|--------|
 | 1 | No experimental validation (all computational) | 🔴 High | ChEMBL IC₅₀ proxy (Action 1) |
 | 2 | H₁-RRS failed at n=33 (ρ=0.947→0.305) | 🔴 High | Reframe as methodological finding (Action 2) |
-| 3 | No SOTA topological benchmark | 🟡 Medium | Benchmark TopologyNet/D-GRIL (Action 3) |
+| 3 | No SOTA topological benchmark | ✅ Complete (textual comparison) | Comparison with TopologyNet/D-GRIL integrated into manuscript §2.1 |
 | 4 | RRS cohort too small (n=33, need n≥80) | 🟡 Medium | Expand to 500+ compounds (Action 4) |
 | 5 | Zenodo deposit incomplete | 🟡 Medium | Complete deposit (Action 5) |
 
