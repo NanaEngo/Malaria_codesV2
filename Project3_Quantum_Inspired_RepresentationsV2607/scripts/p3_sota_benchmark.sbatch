@@ -27,10 +27,9 @@ echo "Project root: $PROJECT_ROOT"
 mkdir -p "${PROJECT_ROOT}/logs/slurm"
 
 # Labels CSV: must have 'smiles' + any of activity/label/true_label columns
-# NOTE: p3_mc_uncertainty.csv has only 100 rows (pilot run). For production
-# results, use a larger CSV with 500+ molecules (e.g., P1 Ersilia predictions
-# merged with TDA fingerprints).
-LABELS_CSV="${PROJECT_ROOT}/results/p3_mc_uncertainty.csv"
+# p3_rrs_labels_for_sota.csv: 77 classified compounds (46 active + 31 inactive)
+# from RRS expanded dataset, merged with TDA fingerprints.
+LABELS_CSV="${PROJECT_ROOT}/results/p3_rrs_labels_for_sota.csv"
 if [ ! -f "$LABELS_CSV" ]; then
     echo "ERROR: Labels CSV not found at $LABELS_CSV" >&2
     exit 1
