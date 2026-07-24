@@ -271,6 +271,8 @@ def main():
                 df = df.rename(columns={label_col: "activity"})
                 log.info(f"After merge: {len(df)} molecules with both TDA features and labels")
             else:
+                log.warning(f"Cannot merge: missing 'smiles' column in one of the DataFrames")
+            else:
                 log.warning(f"Cannot merge: missing 'smiles' column in labels CSV")
         else:
             log.warning(f"Labels CSV not found: {labels_path}")

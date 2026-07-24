@@ -24,7 +24,7 @@ echo "Project root: $PROJECT_ROOT"
 # Ensure log directory exists
 mkdir -p "$PROJECT_ROOT/logs/slurm"
 
-# Labels CSV: must have 'smiles' + 'activity' columns
+# Labels CSV: must have 'smiles' + any of activity/label/true_label columns
 # p3_mc_uncertainty.csv has smiles + true_label (100 molecules with activity labels)
 LABELS_CSV="$PROJECT_ROOT/results/p3_mc_uncertainty.csv"
 if [ ! -f "$LABELS_CSV" ]; then
