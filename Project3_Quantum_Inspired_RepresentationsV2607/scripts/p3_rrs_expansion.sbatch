@@ -6,10 +6,11 @@
 #SBATCH --time=02:00:00
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=8
-#SBATCH --array=0-3
+#SBATCH --array=0-9
 
-# P3 H₁-RRS Expansion: Compute RRS for 200+ compounds
-# to expand the headline correlation from n=14 to n≥30
+# P3 H₁-RRS Expansion: Compute RRS for 500+ compounds
+# to expand the headline correlation from n=14 to n≥80
+# (10 tasks × 50 compounds = 500 total)
 #
 # Usage: sbatch p3_rrs_expansion.sbatch
 #
@@ -36,7 +37,7 @@ mkdir -p "$PROJECT_ROOT/Project3_Quantum_Inspired_RepresentationsV2607/results/p
 
 # Task-specific parameters
 TASK_ID=${SLURM_ARRAY_TASK_ID}
-N_MOLS=50  # compounds per task (4 tasks × 50 = 200 total)
+N_MOLS=50  # compounds per task (10 tasks × 50 = 500 total)
 START_IDX=$((TASK_ID * N_MOLS))
 END_IDX=$((START_IDX + N_MOLS))
 
