@@ -448,6 +448,8 @@ def main() -> None:
                         help="MCTS dynamic PW exponent (default: 0.5)")
     parser.add_argument("--pw-k", type=float, default=1.0,
                         help="MCTS dynamic PW multiplier (default: 1.0)")
+    parser.add_argument("--seed", type=int, default=0,
+                        help="Base random seed (default: 0)")
     parser.add_argument("--output", type=Path,
                         default=Path("results/benchmark/p4_benchmark.csv"),
                         help="Output CSV path")
@@ -483,6 +485,7 @@ def main() -> None:
         max_steps=args.max_steps,
         fragment_set="all",
         randomize_attachment=True,
+        seed=args.seed,
     )
     oracle = OracleAggregator(use_precomputed=True)
 
