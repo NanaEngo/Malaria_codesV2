@@ -40,7 +40,10 @@ def main():
     # 1. Load base RRS data
     rrs_df = pd.read_csv(RRS_BASE)
     print(f"Loaded RRS data: {len(rrs_df)} compounds")
-    if 'smiles' not in rrs_df.columns and 'input' in rrs_df.columns:
+    # Normalize SMILES column name (RRS CSV uses 'smile', others use 'smiles' or 'input')
+    if 'smile' in rrs_df.columns and 'smiles' not in rrs_df.columns:
+        rrs_df = rrs_df.rename(columns={'smile': 'smiles'})
+    elif 'input' in rrs_df.columns and 'smiles' not in rrs_df.columns:
         rrs_df = rrs_df.rename(columns={'input': 'smiles'})
 
     # 2. Load existing TFP data
@@ -78,7 +81,9 @@ def main():
         merged = rrs_row.to_dict()
 
         # Try existing TFP first, then new TFP
-        tfp_source = existing_tfp.get(smiles) or new_tfp.get(smiles)
+        tfp_source = existing_tfp.get(smiles)
+        if tfp_source is None:
+            tfp_source = new_tfp.get(smiles)
         if tfp_source is not None:
             for col in TFP_H1_COLS:
                 merged[col] = tfp_source.get(col, np.nan)
