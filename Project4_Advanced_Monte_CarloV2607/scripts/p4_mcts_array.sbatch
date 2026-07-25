@@ -86,4 +86,3 @@ echo "  Start:           $(date -u -Iseconds)"
   2>&1 | tee "${OUT_LOG}"
 
 echo "═══ Task ${SEED} complete: $(date -u -Iseconds) ═══"
-"

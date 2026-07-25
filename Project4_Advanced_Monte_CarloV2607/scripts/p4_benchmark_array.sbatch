@@ -78,6 +78,7 @@ echo "  Start:         $(date -u -Iseconds)"
   --ga-population "${GA_POPULATION}" \
   --ga-generations "${GA_GENERATIONS}" \
   --n-seeds 1 \
+  --seed "${SEED}" \
   --initial-smiles "${INITIAL_SMILES}" \
   --max-steps "${MAX_STEPS}" \
   --output "${OUT_CSV}" \
