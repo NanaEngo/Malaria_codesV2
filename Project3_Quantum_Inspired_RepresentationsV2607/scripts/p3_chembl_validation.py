@@ -211,7 +211,7 @@ def main():
                     best_tanimoto = tan
                     best_match = act
             
-            if best_match and best_tanimoto > 0.3:
+            if best_match and best_tanimoto > 0.2:
                 result = {
                     'Rank': i + 1,
                     'Candidate_SMILES': smiles[:60] + '...' if len(smiles) > 60 else smiles,

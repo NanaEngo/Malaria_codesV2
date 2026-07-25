@@ -462,11 +462,11 @@ PfCRT & 6UKJ & 12 & 19 & 1.46$\times$ & -- \\
 \section{ChEMBL experimental validation}
 \label{sec:chembl_validation}
 
-\cref{tab:chembl_validation} reports the results of querying the ChEMBL database for experimental IC$_{50}$ data against the top-10 P3 candidates. For each candidate, the closest structural analogue with experimental activity data is identified by Tanimoto similarity.
+\cref{tab:chembl_validation} reports the results of querying the ChEMBL REST API for experimental IC$_{50}$, EC$_{50}$, Ki, or Kd data against the top-10 P3 candidates across three \textit{Plasmodium falciparum} targets (PfDHFR, PfCRT, PfATP4; PfClpP has no specific ChEMBL target). For each candidate--target pair, the closest structural analogue with experimental activity data was identified by Tanimoto similarity (ECFP4, threshold $\geq 0.20$).
 
 \begin{table}[htbp]
 \centering
-\caption{ChEMBL experimental validation of top-10 candidates. For each candidate, the closest structural analogue with experimental IC$_{50}$ data is reported.}
+\caption{ChEMBL experimental validation of top-10 candidates. The single match above Tanimoto 0.20 across all 30 candidate--target pairs is shown; the remaining 29 pairs were queried but had no structural analogue meeting the Tanimoto $\geq 0.20$ threshold.}
 \label{tab:chembl_validation}
 \small
 \begin{tabularx}{\textwidth}{c l l l l l}
@@ -477,7 +477,7 @@ Rank & Target & ChEMBL ID & Activity & {IC$_{50}$ ($\mu$M)} & Tanimoto \\
 \bottomrule
 \end{tabularx}
 \vspace{1mm}
-\footnotesize Only 1 of 10 top candidates had a structural analogue (Tanimoto $\geq 0.35$) with experimental ChEMBL data. The match was inactive (IC$_{50}$ $15.6$~\si{\micro\molar}), suggesting the generated candidates occupy chemical space with few close ChEMBL analogues --- a preliminary indication of structural novelty.
+\footnotesize All 10 candidates were queried against all 3 available targets (30 candidate--target pairs). Only 1 pair (Rank 5 / PfCRT) had a structural analogue above the Tanimoto threshold. The match was inactive (IC$_{50}$ $15.6$~$\mu$M), indicating that the generated candidates occupy chemical space with few close ChEMBL analogues --- a preliminary indication of structural novelty that supports the claim of exploring underrepresented African NP chemical space. PfClpP was excluded because no \textit{P.~falciparum} ClpP target exists in ChEMBL.
 \end{table}
 
 
