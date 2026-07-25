@@ -9,8 +9,8 @@ import numpy as np
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parent.parent
-RESULTS_DIR = PROJECT_ROOT / 'Project3_Quantum_Inspired_RepresentationsV2607' / 'results'
+PROJECT_ROOT = SCRIPT_DIR.parent  # script is in Project3.../scripts/, parent is project root
+RESULTS_DIR = PROJECT_ROOT / 'results'
 
 RRS_INPUT = RESULTS_DIR / 'p3_rrs_tfp_final.csv'
 OUTPUT_CSV = RESULTS_DIR / 'p3_chembl_expanded.csv'
@@ -120,6 +120,12 @@ def main():
                     best_act = act
 
             if best_act and best_tan > 0.25:
+                # Sanity check: if Tanimoto is suspiciously high, verify SMILES match
+                match_smi = best_act.get('smiles', '')
+                if best_tan > 0.95 and smi.strip() != match_smi.strip():
+                    # Bug: Tanimoto near 1.0 but SMILES differ — skip this result
+                    print(f"  WARNING: Skipping spurious match for cpd {idx} vs {best_act['chembl_id']} (T={best_tan:.3f} but SMILES differ)")
+                    continue
                 results.append({
                     'compound_idx': idx,
                     'target': tname,
