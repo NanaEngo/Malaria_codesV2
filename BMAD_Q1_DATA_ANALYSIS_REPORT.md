@@ -1549,9 +1549,12 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 | TFP-Enriched | RF | 0.8381 ± 0.0091 | 0.7614 | 0.7614 | 32 |
 | PersImage | RF | 0.8370 ± 0.0094 | 0.7644 | 0.7640 | 25 |
 | TFP-12 | RF | 0.8303 ± 0.0097 | 0.7496 | 0.7505 | 12 |
-| BettiCurve | RF | 0.7717 ± 0.0120 | 0.6976 | 0.6946 | 20 |
-
-*SVM results pending — current run executed RF only. SVM benchmark scheduled as follow-up.*
+| PersStats | SVM | 0.8042 | 0.7398 | 0.7436 | 22 |
+| PersImage | SVM | 0.7912 | 0.7270 | 0.7312 | 25 |
+| TFP-Enriched | SVM | 0.7891 | 0.7208 | 0.7250 | 32 |
+| TFP-12 | SVM | 0.7857 | 0.7198 | 0.7220 | 12 |
+| BettiCurve | RF | 0.7717 | 0.6976 | 0.6946 | 20 |
+| BettiCurve | SVM | 0.7198 | 0.6646 | 0.6620 | 20 |
 
 **Key findings:**
 1. **PersStats + RF achieves AUC = 0.842**, approaching the ECFP4 baseline (AUC = 0.868) with only 22 topological features vs. 2048-bit ECFP4.
