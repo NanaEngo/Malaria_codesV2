@@ -21,8 +21,8 @@ from pathlib import Path
 # Configuration
 # ---------------------------------------------------------------------------
 SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parent.parent.parent
-OUTPUT_DIR = PROJECT_ROOT / 'Project3_Quantum_Inspired_RepresentationsV2607' / 'results' / 'p3_chembl_validation'
+PROJECT_ROOT = SCRIPT_DIR.parent.parent  # Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607
+OUTPUT_DIR = PROJECT_ROOT / 'results' / 'p3_chembl_validation'
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Top-10 P3 candidates (from SM Table S20 / P1 R8-B pipeline)
