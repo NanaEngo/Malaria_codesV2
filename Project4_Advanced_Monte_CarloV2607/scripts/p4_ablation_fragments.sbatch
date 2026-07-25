@@ -34,9 +34,10 @@ set +u
 conda activate malaria_md
 set -u
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-cd "$PROJECT_ROOT"
+# BASH_SOURCE[0] is unreliable in SLURM (script is copied to a temp dir).
+# Use SLURM_SUBMIT_DIR to find the project root.
+SCRIPT_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+cd "$SCRIPT_DIR"
 
 # ── Map task ID to fragment_set + seed ────────────────────────────────
 TASK_ID="${SLURM_ARRAY_TASK_ID:-0}"
