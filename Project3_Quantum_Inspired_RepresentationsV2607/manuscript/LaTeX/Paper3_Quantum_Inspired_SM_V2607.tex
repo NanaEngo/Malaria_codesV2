@@ -462,22 +462,29 @@ PfCRT & 6UKJ & 12 & 19 & 1.46$\times$ & -- \\
 \section{ChEMBL experimental validation}
 \label{sec:chembl_validation}
 
-\cref{tab:chembl_validation} reports the results of querying the ChEMBL REST API for experimental IC$_{50}$, EC$_{50}$, Ki, or Kd data against the top-10 P3 candidates across three \textit{Plasmodium falciparum} targets (PfDHFR, PfCRT, PfATP4; PfClpP has no specific ChEMBL target). For each candidate--target pair, the closest structural analogue with experimental activity data was identified by Tanimoto similarity (ECFP4, threshold $\geq 0.20$).
+The top-10 candidates (Table~S10) were queried against three \textit{Plasmodium falciparum} targets (PfDHFR, PfCRT, PfATP4) via the ChEMBL REST API (release 37); PfClpP was excluded because no \textit{P.~falciparum} ClpP target exists in ChEMBL. The search was subsequently expanded to the full RRS-TFP cohort of 77 compounds across all three targets (231 candidate--target pairs), identifying ChEMBL structural analogues by ECFP4 Tanimoto similarity (threshold $\geq 0.25$).
 
 \begin{table}[htbp]
 \centering
-\caption{ChEMBL experimental validation of top-10 candidates. The single match above Tanimoto 0.20 across all 30 candidate--target pairs is shown; the remaining 29 pairs were queried but had no structural analogue meeting the Tanimoto $\geq 0.20$ threshold.}
+\caption{ChEMBL experimental validation: expanded search across 77 RRS-TFP compounds against 3 \textit{Plasmodium} targets (231 candidate--target pairs, Tanimoto $\geq 0.25$). Eight structural analogues were identified (3.5\% match rate); three showed experimental activity below 1~$\mu$M (PfATP4), while the remaining five were inactive or intermediate. The low match rate supports the structural novelty of the generated chemical space.}
 \label{tab:chembl_validation}
 \small
 \begin{tabularx}{\textwidth}{c l l l l l}
 \toprule
-Rank & Target & ChEMBL ID & Activity & {IC$_{50}$ ($\mu$M)} & Tanimoto \\
+Cpd & Target & ChEMBL ID & Activity & {IC$_{50}$ ($\mu$M)} & Tanimoto \\
 \midrule
-5 & PfCRT & CHEMBL4754685 & Inactive & 15.6 & 0.379 \\
+12 & PfCRT & CHEMBL6966 & Inactive & 30.0 & 0.258 \\
+22 & PfDHFR & CHEMBL36 & Intermediate & 2.48 & 1.000 \\
+29 & PfCRT & CHEMBL1830987 & Inactive & 69.0 & 0.322 \\
+47 & PfATP4 & CHEMBL6150594 & Active & 0.40 & 0.261 \\
+65 & PfCRT & CHEMBL4745810 & Inactive & 12.5 & 0.284 \\
+75 & PfATP4 & CHEMBL6162944 & Active & 0.40 & 0.273 \\
+76 & PfCRT & CHEMBL1830987 & Inactive & 69.0 & 0.270 \\
+76 & PfATP4 & CHEMBL6175630 & Active & 0.79 & 0.329 \\
 \bottomrule
 \end{tabularx}
 \vspace{1mm}
-\footnotesize All 10 candidates were queried against all 3 available targets (30 candidate--target pairs). Only 1 pair (Rank 5 / PfCRT) had a structural analogue above the Tanimoto threshold. The match was inactive (IC$_{50}$ $15.6$~$\mu$M), indicating that the generated candidates occupy chemical space with few close ChEMBL analogues --- a preliminary indication of structural novelty that supports the claim of exploring underrepresented African NP chemical space. PfClpP was excluded because no \textit{P.~falciparum} ClpP target exists in ChEMBL.
+\footnotesize The expanded search queried all 77 RRS-TFP compounds against PfDHFR, PfCRT, and PfATP4 (231 pairs; PfClpP excluded). Eight matches (3.5\% match rate) exceeded the Tanimoto $\geq 0.25$ threshold. Compound 22/PfDHFR has a Tanimoto 1.000 exact match to CHEMBL36 (intermediate, IC$_{50}$ 2.48~$\mu$M) --- the only identical structure found. Three PfATP4 matches are experimentally active (IC$_{50}$ 0.4--0.79~$\mu$M), indicating that generated candidates with structural homology to known PfATP4 actives retain binding potential. The remaining four PfCRT matches are inactive. The low overall match rate (3.5\%), with only one exact structure match, provides preliminary evidence of structural novelty, though direct IC$_{50}$ measurements remain necessary for activity confirmation.
 \end{table}
 
 
@@ -515,6 +522,33 @@ BettiCurve & SVM & 0.7198 & 0.6646 & 0.6620 & 20 \\
 \end{table}
 
 Key findings: (i)~PersStats + RF achieves AUC $0.873$, numerically exceeding the ECFP4 baseline (AUC $0.868$) with only 22 topological features --- though this $\Delta$AUC of $+0.005$ does not reach statistical significance ($p > 0.05$), so the two methods should be interpreted as performing comparably rather than PersStats being definitively superior; (ii)~RF consistently outperforms SVM across all strategies (mean $\Delta\text{AUC} = +0.077$; note: RF was evaluated on the full $n = 19849$ library while SVM was restricted to $n = 5000$ due to $O(N^2)$ kernel scaling, so this comparison is confounded by sample size); (iii)~TFP-Enriched (32 features) is marginally inferior to TFP-12 (12 features, $\Delta\text{AUC} = -0.0002$), suggesting the additional 20 features introduce noise rather than signal; (iv)~BettiCurve underperforms (AUC $0.811$), indicating Betti number sequences alone lack the discriminative power of persistence statistics.
+
+% ============================================================================
+% 9D. TOPOLOGYNET ANALOG BENCHMARK (MLP vs RF on PersStats)
+% ============================================================================
+
+\section{TopologyNet analog: neural network on persistent homology features}
+\label{sec:topologynet_analog}
+
+To contextualise the PersStats + RF result within the neural-network literature (TopologyNet~\citep{topologynet_2018}, D-GRIL~\citep{dgril_2026}), we benchmarked a Multi-Layer Perceptron (MLP) on the same 22 PersStats features used by the best RF model. The MLP used 3 hidden layers (128, 64, 32 neurons), ReLU activation, class-balanced sample weighting, and early stopping (5-fold stratified CV, $n = 5000$ stratified subsample).
+
+\begin{table}[htbp]
+\centering
+\caption{TopologyNet analog: MLP vs. Random Forest on PersStats 22 features ($n = 5000$, 5-fold stratified CV, class-weighted). RF outperforms MLP by $\Delta$AUC = $+0.061$, confirming that tree-based methods better capture persistent homology feature interactions for this chemical space.}
+\label{tab:topologynet_analog}
+\begin{tabularx}{\textwidth}{l S[table-format=1.4] S[table-format=1.4] S[table-format=1.0]}
+\toprule
+{Classifier} & {AUC} & {Std} & {Features} \\
+\midrule
+Random Forest & 0.860 & 0.014 & 22 \\
+MLP (128+64+32) & 0.799 & 0.015 & 22 \\
+\bottomrule
+\end{tabularx}
+\vspace{1mm}
+\footnotesize Both classifiers use PersStats 22 features (H$_0$/H$_1$ persistence statistics). MLP uses class-balanced sample weighting to handle the 75.9\%/24.1\% class imbalance. The RF result here (AUC 0.860 on $n = 5000$) is slightly below the full-library result (AUC 0.873 on $n = 19849$, \cref{SM-tab:sota}), consistent with the larger training set in the full benchmark.
+\end{table}
+
+The MLP underperforms RF by $\Delta$AUC = $-0.061$, consistent with the broader SOTA benchmark finding that tree-based methods better capture PH feature interactions. This is consistent with the observation that PersStats features have limited non-linear interactions --- deep architectures that excel on raw graph or image data add no benefit over a well-tuned ensemble of decision trees on pre-computed persistence statistics. TopologyNet~\citep{topologynet_2018} and D-GRIL~\citep{dgril_2026} operate on richer inputs (full persistence diagrams or multi-parameter persistence) where neural architectures may extract additional signal; on summary statistics alone, RF is the more appropriate classifier.
 
 \vspace{4mm}
 

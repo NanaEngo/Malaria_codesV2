@@ -1,6 +1,6 @@
 # BMAD Q1 Data Analysis Report
 
-**Generated:** July 9, 2026 — **Updated July 25, 2026** (v25: ChEMBL validation complete n=30 pairs; RRS-TFP expansion n=77 confirmed; SMILES/pandas fixes)
+**Generated:** July 9, 2026 — **Updated July 25, 2026** (v26: ChEMBL expanded to 77 compounds (8/231 matches, 3 active); TopologyNet analog (MLP vs RF on PersStats); manuscript updated)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Coverage:** P1 Chemical Space, P2 Polypharmacology, P3 Quantum-Inspired Representations, P4 MCTS Benchmark
@@ -27,6 +27,8 @@ Three complementary projects generated and analyzed **over 85,000 unique molecul
 | P3 — Hybrid Benchmark | 19,849 × 10 descriptors × 5CV | **ECFP4 AUC 0.868 vs Hybrid AUC 0.842 (p=0.111, ns)**; PHCO bug fixed (AUC 0.500 → ~0.83) | Completed |
 | P3 — QKS Benchmark | 500 mol (sub-sampled) | **Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns)**; earlier 0.936/0.105 claim removed as unsupported | Completed (July 2026) |
 | P3 — GA Discriminator Benchmark | 50–500 gen. × 200 seeds | **Tanimoto AUC=1.0 (trivial); QK AUC≈0.43–0.51 (near-random)** | Completed |
+| P3 — ChEMBL Expanded Validation | 77 compounds × 3 targets (231 pairs) | **8/231 matches (3.5%); 3 active PfATP4; 1 exact match** | ✅ Completed (July 25) |
+| P3 — TopologyNet Analog | 5000 mol, PersStats 22 features | **MLP AUC 0.799 vs RF AUC 0.860 (Δ=−0.061)**; neural nets don't improve over RF on PH summary stats | ✅ Completed (July 25) |
 | P4 — MCTS Benchmark (5 seeds) | 500 iters × 5 seeds, c_puct=5.0, VL=0.01 | **MCTS fix validated: reward=0.597±0.000, MPO=0.877, docking=-7.63. Random=0.547±0.014, Greedy=0.614±0.002, GA=0.592±0.018, cross-seed table updated** | ✅ MCTS collapse resolved (global best-molecule tracking) |
 | P1 — MCMC Latent Space Optimisation | 4 chains × 5000 steps, 8D latent | **MPO +0.0246; top candidate MPO 0.801** | Completed |
 | P1 — STONED-SELFIES Leap | 20 seeds → 5,525 neighbours | **97.9% ECFP4-unreachable from STONED** | Completed |
@@ -1617,6 +1619,30 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 **Output:** `results/p3_rrs_tfp_final.csv`, `results/p3_h1_rrs_correlation_final.csv`
 
 ---
+
+
+## 3.18 TopologyNet Analog — NEW (July 25, 2026)
+
+**Status:** ✅ **COMPLETED** — MLP on PersStats 22 features (class-balanced sample weighting, 5-fold stratified CV, n=5000).
+
+**Rationale:** Gap #3 in §3.14 identified the absence of neural-network comparison for PersStats features. TopologyNet (Cang & Wei 2018) and D-GRIL (2026) operate on richer inputs (full persistence diagrams, multi-parameter PH), which are not installable in our environment due to C++/CUDA dependencies. As a practical analog, we benchmarked an MLP (3 hidden layers: 128+64+32, ReLU, class-balanced sample weighting, early stopping) against Random Forest on the same PersStats 22 features.
+
+**Results:**
+
+| Classifier | AUC | Std | Features | n |
+|------------|------|-----|----------|---|
+| Random Forest | 0.860 | 0.014 | 22 | 5000 |
+| MLP (128+64+32) | 0.799 | 0.015 | 22 | 5000 |
+| MLP vs RF Δ | **−0.061** | — | — | — |
+
+**Key findings:**
+1. **RF outperforms MLP by +0.061 AUC** on the same PersStats features — neural networks do not extract additional signal from PH summary statistics.
+2. **Consistent with SOTA benchmark**: full-library PersStats RF AUC=0.873 confirming that tree-based methods better capture PH feature interactions.
+3. **D-GRIL/TopologyNet operate on richer inputs** (full persistence diagrams, multi-parameter PH) where neural architectures may extract additional signal; on summary statistics alone, RF is the more appropriate classifier.
+4. **Comparison with the main manuscript**: The Limitations section now references this result as evidence that for the feature set used in our benchmark, classical tree-based methods are optimal, and neural architectures would require richer topological inputs (full diagrams, multi-parameter PH) to show advantage.
+
+**Output:** `results/p3_topologynet_analog.csv`; SM Table S11; manuscript Limitations updated.
+
 
 ## P4: Advanced Monte Carlo Strategies — MCTS+RL Benchmark (Completed)
 
