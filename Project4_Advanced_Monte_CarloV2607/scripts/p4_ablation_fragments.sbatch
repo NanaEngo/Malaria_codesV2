@@ -27,8 +27,12 @@
 set -euo pipefail
 
 # ── Load environment ──────────────────────────────────────────────────
+# Temporarily disable -u (unbound variable) for conda activate;
+# GROMACS init scripts in malaria_md reference unbound variables.
 source "$(conda info --base)/etc/profile.d/conda.sh"
+set +u
 conda activate malaria_md
+set -u
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
