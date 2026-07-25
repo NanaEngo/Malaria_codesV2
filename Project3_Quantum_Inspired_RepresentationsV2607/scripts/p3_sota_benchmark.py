@@ -160,11 +160,11 @@ def get_classifiers() -> dict:
     return {
         "rf": lambda: RandomForestClassifier(
             n_estimators=500, max_depth=None, min_samples_split=5,
-            random_state=42, n_jobs=-1,
+            class_weight="balanced", random_state=42, n_jobs=-1,
         ),
         "svm": lambda: SVC(
             kernel="rbf", C=10.0, gamma="scale",
-            probability=True, random_state=42,
+            class_weight="balanced", probability=True, random_state=42,
         ),
     }
 

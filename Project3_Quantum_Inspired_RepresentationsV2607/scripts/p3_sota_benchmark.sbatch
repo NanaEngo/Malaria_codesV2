@@ -3,9 +3,9 @@
 #SBATCH --output=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_sota_benchmark_%j.log
 #SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_sota_benchmark_%j.err
 #SBATCH --partition=production
-#SBATCH --time=02:00:00
-#SBATCH --mem=16G
-#SBATCH --cpus-per-task=8
+#SBATCH --time=04:00:00
+#SBATCH --mem=32G
+#SBATCH --cpus-per-task=16
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 
@@ -27,19 +27,19 @@ echo "Project root: $PROJECT_ROOT"
 mkdir -p "${PROJECT_ROOT}/logs/slurm"
 
 # Labels CSV: must have 'smiles' + any of activity/label/true_label columns
-# p3_rrs_labels_for_sota.csv: 77 classified compounds (46 active + 31 inactive)
-# from RRS expanded dataset, merged with TDA fingerprints.
-LABELS_CSV="${PROJECT_ROOT}/results/p3_rrs_labels_for_sota.csv"
+# PRODUCTION: p3_labels_production.csv = 19,849 molecules (eos80ch activity + TDA FP merge)
+# Previous pilot: p3_rrs_labels_for_sota.csv had only 77 molecules (unreliable AUC)
+LABELS_CSV="${PROJECT_ROOT}/results/p3_labels_production.csv"
 if [ ! -f "$LABELS_CSV" ]; then
     echo "ERROR: Labels CSV not found at $LABELS_CSV" >&2
     exit 1
 fi
 
-# Run benchmark (max-mols=2000 for SVM compatibility)
+# Run benchmark on n=5000 stratified subsample (SVM kernel O(N^2) limits full-library eval)
 cd "$SCRIPT_DIR"
 python3 p3_sota_benchmark.py \
     --n-folds 5 \
-    --max-mols 2000 \
+    --max-mols 5000 \
     --labels-csv "$LABELS_CSV" \
     --output-csv "${PROJECT_ROOT}/results/p3_sota_benchmark.csv" \
     2>&1 | tee "${PROJECT_ROOT}/logs/slurm/p3_sota_benchmark_detail.log"
