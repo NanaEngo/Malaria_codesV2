@@ -20,6 +20,7 @@
 % Figures and tables
 \usepackage{graphicx}
 \usepackage{booktabs, tabularx, array, longtable}
+\usepackage{algorithm, algorithmic}
 \usepackage[table]{xcolor}
 
 % Units and SI
@@ -659,6 +660,27 @@ D-GRIL~\citep{dgril_2026} introduces differentiable 2-parameter persistent homol
 We document this build barrier transparently for two reasons: (1)~it demonstrates that D-GRIL's architecture is feasible and compiles on modern toolchains with moderate effort, and (2)~it highlights a systemic reproducibility challenge in differentiable topological deep learning—C++ extensions compiled for specific PyTorch/compiler versions are fragile and non-portable across clusters. The MLP-on-PersStats analog in~\cref{sec:topologynet_analog} provides a comparable feature-based baseline for the static TDA paradigm; D-GRIL's differentiable 2-parameter PH represents a distinct end-to-end approach that learns the bi-filtration function during training rather than pre-computing it.
 
 \noindent [1] PyTorch C++ extension ABI compatibility: \url{https://pytorch.org/docs/stable/cpp_extension.html}.
+
+% ============================================================================
+% NISQ VERIFICATION
+% ============================================================================
+
+\section{Quantum kernel circuit algorithm}
+\label{SM-sec:qkernel_algorithm}
+
+\begin{algorithm}[htbp]
+\caption{Quantum kernel circuit for 8-qubit state overlap using StronglyEntanglingLayers.}
+\label{SM-alg:qkernel}
+\begin{algorithmic}[1]
+\REQUIRE Data points $x_1, x_2 \in [-1, 1]^8$
+\STATE Apply $\mathrm{StronglyEntanglingLayers}(weights, wires)$ parameterized by $x_1$
+\STATE Apply $\mathrm{StronglyEntanglingLayers}^\dagger(weights, wires)$ parameterized by $x_2$
+\STATE Measure probability of state $|00000000\rangle$
+\RETURN Kernel value $K(x_1, x_2)$
+\end{algorithmic}
+\end{algorithm}
+
+The kernel value is $K(x_1, x_2) = |\langle \phi(x_1) | \phi(x_2) \rangle|^2$, estimated by the ground-state measurement probability, accelerated by PennyLane's \texttt{qp.kernels.kernel\_matrix}. Input vectors were computed as Morgan fingerprint atom-pair counts (radius 2, \num{2048} features) reduced to 8 dimensions by UMAP with Jaccard metric, then scaled to $[-1, 1]$.
 
 % ============================================================================
 % NISQ VERIFICATION
