@@ -150,9 +150,10 @@ class PMCTSNode:
     def is_fully_expanded(self) -> bool:
         return self.untried_actions is not None and len(self.untried_actions) == 0
 
+    # NOTE: Selection now uses _puct_best_child() in ParetoMCTSAgent.
+    # This method is kept for backward compatibility but is no longer called.
     def best_child(self, c: float = 1.414) -> "PMCTSNode":
-        """Select child with best multi-objective UCT score."""
-        # Use scalarized proxy for selection (weighted sum across objectives)
+        """DEPRECATED: Use ParetoMCTSAgent._puct_best_child() instead."""
         return max(
             self.children.values(),
             key=lambda child: (
@@ -173,6 +174,10 @@ class ParetoMCTSAgent:
     during search. Uses PUCT for tree selection, with the UCB term computed
     from the mean of stored score vectors.
 
+    Includes the critical rollout fix (max-over-rollout tracking) and
+    other improvements from the standard MCTSAgent (virtual loss,
+    dynamic progressive widening, policy-biased rollout).
+
     Parameters
     ----------
     env : MolecularEnv
@@ -189,6 +194,12 @@ class ParetoMCTSAgent:
         Exploration constant.
     policy_fn : callable or None
         Optional policy for PUCT priors.
+    virtual_loss : float
+        Virtual loss penalty for over-explored children.
+    pw_k : float
+        Progressive Widening base multiplier.
+    pw_alpha : float
+        Progressive Widening exponent.
     """
 
     def __init__(
@@ -200,6 +211,9 @@ class ParetoMCTSAgent:
         n_iterations: int = 100,
         c_puct: float = 1.414,
         policy_fn: Optional[Callable] = None,
+        virtual_loss: float = 0.01,
+        pw_k: float = 1.0,
+        pw_alpha: float = 0.5,
     ):
         self.env = env
         self.oracle_fn = oracle_fn
@@ -208,58 +222,148 @@ class ParetoMCTSAgent:
         self.n_iterations = n_iterations
         self.c_puct = c_puct
         self.policy_fn = policy_fn
+        self.virtual_loss = virtual_loss
+        self.pw_k = pw_k
+        self.pw_alpha = pw_alpha
 
         self.pareto_front = ParetoFront(self.objectives, self.maximize)
-        self._action_priors: dict[str, float] = {}
+        self._priors_cache: dict[str, dict[str, float]] = {}
+
+    def _get_priors(self, state: str) -> dict[str, float]:
+        """Get (or compute and cache) action priors for a given state."""
+        if state in self._priors_cache:
+            return self._priors_cache[state]
+        if self.policy_fn is not None:
+            vocab = list(getattr(self.env, "fragment_vocab", []))
+            priors = self.policy_fn(state, vocab) or {}
+        else:
+            priors = {}
+        self._priors_cache[state] = priors
+        return priors
 
     def search(self, root_state: str) -> ParetoFront:
-        """Run Pareto MCTS from root_state, return the Pareto front."""
+        """Run Pareto MCTS from root_state, return the Pareto front.
+
+        Features (mirroring standard MCTSAgent):
+        - Dynamic Progressive Widening (branching factor grows with visits)
+        - Virtual Loss (diverse parallel exploration)
+        - Global best-molecule tracking (max-over-rollout)
+        - Policy-biased rollout
+        """
         root = PMCTSNode(root_state)
         root.step_count = self.env.step_count
 
-        if self.policy_fn is not None:
-            vocab = list(getattr(self.env, "fragment_vocab", []))
-            self._action_priors = self.policy_fn(root_state, vocab) or {}
+        # Priors cache and PUCT priors for root
+        self._priors_cache = {}
 
-        for _ in range(self.n_iterations):
+        # Global best-molecule tracking (max-over-rollout fix)
+        best_global_state = root_state
+        best_global_scores = self.oracle_fn(root_state)
+        best_global_scalar = float(np.mean([best_global_scores.get(obj, 0.0) for obj in self.objectives]))
+
+        for iteration in range(self.n_iterations):
             node = self._select(root)
-            score_vector = self._rollout(node)
+            score_vector, rollout_best_state, rollout_best_scores = self._rollout(node)
             self._backpropagate(node, score_vector)
 
-            # Update global Pareto front
+            # Update global Pareto front with terminal state
             scores_dict = {
                 obj: float(score_vector[i])
                 for i, obj in enumerate(self.objectives)
             }
             self.pareto_front.update(node.state, scores_dict)
 
+            # ALSO update front with best intermediate state along rollout
+            if rollout_best_state != node.state:
+                rollout_scores_dict = {
+                    obj: float(rollout_best_scores[i])
+                    for i, obj in enumerate(self.objectives)
+                }
+                self.pareto_front.update(rollout_best_state, rollout_scores_dict)
+
+            # Global best-molecule tracking
+            rollout_scalar = float(np.mean(rollout_best_scores))
+            if rollout_scalar > best_global_scalar:
+                best_global_scalar = rollout_scalar
+                best_global_state = rollout_best_state
+                best_global_scores = rollout_best_scores
+
         return self.pareto_front
 
     def _select(self, node: PMCTSNode) -> PMCTSNode:
         while node.children and node.is_fully_expanded():
-            node = node.best_child(self.c_puct)
+            node = self._puct_best_child(node)
         if not node.is_fully_expanded():
             node = self._expand(node)
         return node
 
+    def _puct_best_child(self, node: PMCTSNode) -> PMCTSNode:
+        """Select child with highest PUCT score = Qbar + U - VL."""
+        sqrt_n = math.sqrt(max(node.visits, 1))
+        best_score = -float("inf")
+        best_child = None
+
+        node_priors = self._get_priors(node.state) if self.policy_fn else {}
+        max_visits = max((c.visits for c in node.children.values()), default=1)
+
+        for action, child in node.children.items():
+            # Q: mean scalar reward across stored multi-objective vectors
+            q = float(np.mean(child.value_vectors)) / max(child.visits, 1) if child.value_vectors else 0.0
+
+            # PUCT exploration bonus
+            prior = node_priors.get(action, 0.0)
+            p = math.exp(prior) if prior < 0 else prior
+            p = max(p, 1e-8)
+            u = self.c_puct * p * sqrt_n / (1.0 + child.visits)
+
+            # Virtual Loss
+            visit_ratio = child.visits / max_visits if max_visits > 0 else 0.0
+            vl = self.virtual_loss * visit_ratio
+
+            score = q + u - vl
+            if score > best_score:
+                best_score = score
+                best_child = child
+
+        return best_child or list(node.children.values())[0]
+
     def _expand(self, node: PMCTSNode) -> PMCTSNode:
         if node.untried_actions is None:
             vocab = list(getattr(self.env, "fragment_vocab", []))
-            if self._action_priors:
-                node.untried_actions = sorted(
+            # Get state-dependent priors
+            node_priors = self._get_priors(node.state)
+            if node_priors:
+                sorted_actions = sorted(
                     vocab,
-                    key=lambda a: self._action_priors.get(a, 0.0),
+                    key=lambda a: node_priors.get(a, 0.0),
                     reverse=True,
                 )
             else:
-                node.untried_actions = list(vocab)
-                random.shuffle(node.untried_actions)
+                sorted_actions = list(vocab)
+                random.shuffle(sorted_actions)
+
+            # Dynamic Progressive Widening
+            if self.pw_k > 0:
+                N = max(node.visits, 1)
+                max_actions = max(5, int(self.pw_k * (N ** self.pw_alpha)))
+                max_actions = min(max_actions, len(sorted_actions))
+                node.untried_actions = sorted_actions[:max_actions]
+            else:
+                node.untried_actions = sorted_actions
 
         if not node.untried_actions:
             return node
 
-        action = node.untried_actions.pop()
-        env_copy = copy.deepcopy(self.env)
+        action = node.untried_actions.pop(0)
+
+        # Lightweight env copy (reinit, not deepcopy)
+        from p4_mcts_rl_env import MolecularEnv
+        env_copy = MolecularEnv(
+            initial_smiles=self.env.initial_smiles,
+            max_steps=self.env.max_steps,
+            fragment_set=getattr(self.env, '_fragment_set', 'all'),
+            randomize_attachment=getattr(self.env, 'randomize_attachment', False),
+        )
         env_copy.state = node.state
         env_copy.step_count = node.step_count
         next_state, _, _, _ = env_copy.step(action)
@@ -268,18 +372,65 @@ class ParetoMCTSAgent:
         node.children[action] = child
         return child
 
-    def _rollout(self, node: PMCTSNode) -> np.ndarray:
-        env_copy = copy.deepcopy(self.env)
+    def _rollout(self, node: PMCTSNode) -> tuple[np.ndarray, str, np.ndarray]:
+        """Simulate a rollout, tracking the best molecule along the trajectory.
+
+        Returns (terminal_score_vector, best_state, best_score_vector)
+        where best_state is the molecule with the highest scalarised score
+        encountered at any point along the rollout path.
+
+        This max-over-trajectory tracking (global best-molecule) is critical:
+        without it, the MCTS undervalues high-quality intermediates that are
+        degraded by subsequent fragment additions.
+        """
+        # Lightweight env reinit
+        from p4_mcts_rl_env import MolecularEnv
+        env_copy = MolecularEnv(
+            initial_smiles=self.env.initial_smiles,
+            max_steps=self.env.max_steps,
+            fragment_set=getattr(self.env, '_fragment_set', 'all'),
+            randomize_attachment=getattr(self.env, 'randomize_attachment', False),
+        )
         env_copy.state = node.state
         env_copy.step_count = node.step_count
 
+        # Track best molecule along rollout
+        best_state = env_copy.state
+        best_scores = self.oracle_fn(env_copy.state)
+        best_scalar = float(np.mean([best_scores.get(obj, 0.0) for obj in self.objectives]))
+
         done = env_copy.step_count >= env_copy.max_steps or env_copy._is_terminal(env_copy.state)
         while not done:
-            action = random.choice(env_copy.fragment_vocab)
+            # Policy-biased rollout (sample from ScafVAE priors)
+            if self.policy_fn is not None:
+                node_priors = self._get_priors(env_copy.state)
+                if node_priors:
+                    actions = list(node_priors.keys())
+                    log_probs = np.array([node_priors[a] for a in actions])
+                    log_probs = log_probs - np.max(log_probs)
+                    probs = np.exp(log_probs)
+                    probs = probs / probs.sum()
+                    action = random.choices(actions, weights=probs, k=1)[0]
+                else:
+                    action = random.choice(env_copy.fragment_vocab)
+            else:
+                action = random.choice(env_copy.fragment_vocab)
+
             _, _, done, _ = env_copy.step(action)
 
-        scores = self.oracle_fn(env_copy.state)
-        return np.array([scores.get(obj, 0.0) for obj in self.objectives], dtype=float)
+            # Track best intermediate
+            current_scores = self.oracle_fn(env_copy.state)
+            current_scalar = float(np.mean([current_scores.get(obj, 0.0) for obj in self.objectives]))
+            if current_scalar > best_scalar:
+                best_scalar = current_scalar
+                best_state = env_copy.state
+                best_scores = current_scores
+
+        terminal_scores = self.oracle_fn(env_copy.state)
+        terminal_vector = np.array([terminal_scores.get(obj, 0.0) for obj in self.objectives], dtype=float)
+        best_vector = np.array([best_scores.get(obj, 0.0) for obj in self.objectives], dtype=float)
+
+        return terminal_vector, best_state, best_vector
 
     def _backpropagate(self, node: PMCTSNode, score_vector: np.ndarray) -> None:
         while node is not None:
