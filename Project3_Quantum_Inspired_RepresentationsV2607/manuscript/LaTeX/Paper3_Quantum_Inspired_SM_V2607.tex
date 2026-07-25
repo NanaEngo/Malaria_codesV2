@@ -680,31 +680,7 @@ We document this build barrier transparently for two reasons: (1)~it demonstrate
 \end{algorithmic}
 \end{algorithm}
 
-The kernel value is $K(x_1, x_2) = |\langle \phi(x_1) | \phi(x_2) \rangle|^2$, estimated by the ground-state measurement probability, accelerated by PennyLane's \texttt{qp.kernels.kernel\_matrix}. Input vectors were computed as Morgan fingerprint atom-pair counts (radius 2, \num{2048} features) reduced to 8 dimensions by UMAP with Jaccard metric, then scaled to $[-1, 1]$.
+The kernel value is $K(x_1, x_2) = |\langle \phi(x_1) | \phi(x_2) \rangle|^2$, estimated by the ground-state measurement probability, accelerated by PennyLane's \texttt{qp.kernels.kernel\_matrix}. Input vectors were computed as Morgan fingerprint atom-pair counts (radius 2, \num{2048} features) reduced to 8 dimensions by UMAP with Jaccard metric, then scaled to $[-1, 1]$.% ============================================================================
 
-% ============================================================================
-% NISQ VERIFICATION
-% ============================================================================
-
-\section{NISQ pipeline verification on IBM Quantum}
-\label{SM-sec:nisq_verification}
-
-The PennyLane $\to$ Qiskit $\to$ IBM Quantum deployment pipeline was verified end-to-end on a 2-qubit circuit using the IBM Quantum Open Plan (free tier, 10~min/month).
-
-\begin{table}[htbp]
-\centering
-\caption{2-qubit NISQ pipeline verification on IBM Quantum (ibm\_fez, 156~qubits).}
-\label{SM-tab:nisq_verification}
-\begin{tabularx}{\textwidth}{l l l l}
-\toprule
-Test & Circuit & Expected & Measured \\
-\midrule
-Bell state & $H(0) \to \text{CNOT}(0,1)$ & $\langle XX \rangle = +1.0000$ & $\langle XX \rangle = +1.0056$ \\
-IQPEmbedding kernel & 2-qubit kernel overlap & $K(\mathbf{x}_1,\mathbf{x}_1) \approx 1.0$ & $K(\mathbf{x}_1,\mathbf{x}_1) = 0.988$ \\
-\bottomrule
-\end{tabularx}
-\vspace{1mm}
-\footnotesize Bell state fidelity = 0.0598 (excellent); kernel auto-correlation deviation = 0.012. Scripts: \texttt{p3\_nisq\_smoke\_test.py} (2-qubit verification), \texttt{p3\_nisq\_deploy.py} (8-qubit benchmark). Packages: pennylane-qiskit~0.45.0, qiskit-ibm-runtime~0.45.1. The free-tier fair-share scheduler imposes queue times exceeding practical limits for full 8-qubit IQPEmbedding benchmarks; full hardware deployment requires priority or research access.
-\end{table}
 
 \end{document}
