@@ -170,6 +170,14 @@ FLATTENED_FRAGMENTS: list[tuple[str, str]] = [
     item for category in FRAGMENT_LIBRARY.values() for item in category
 ]
 
+# Medium-sized vocabulary (~24 fragments) for ablation study:
+# Combines aromatic, saturated_heterocycle, alkyl, and functional_group categories.
+MEDIUM_FRAGMENTS: list[str] = [
+    smi
+    for category_name in ["aromatic", "saturated_heterocycle", "alkyl", "functional_group"]
+    for smi, _ in FRAGMENT_LIBRARY[category_name]
+]
+
 
 class MolecularEnv:
     """Molecular construction environment with expanded fragment vocabulary.
@@ -181,8 +189,8 @@ class MolecularEnv:
     max_steps : int
         Maximum number of fragment additions before termination.
     fragment_set : str
-        Which fragment set to use: "all" (default, 108 fragments, 14 categories), "minimal"
-        (5 fragments, backward-compatible), or "aromatic_only".
+        Which fragment set to use: "all" (default, 99 fragments, 14 categories), "medium"
+        (24 fragments, intermediate for ablation), "minimal" (5 fragments), or "aromatic_only" (5 fragments).
     randomize_attachment : bool
         If True, randomly select attachment atoms instead of always picking
         the first available one. Adds stochasticity for exploration.
@@ -210,6 +218,8 @@ class MolecularEnv:
         # Select fragment vocabulary
         if fragment_set == "all":
             self._fragment_vocab = [smi for smi, _ in FLATTENED_FRAGMENTS]
+        elif fragment_set == "medium":
+            self._fragment_vocab = list(MEDIUM_FRAGMENTS)
         elif fragment_set == "minimal":
             self._fragment_vocab: list[str] = [
                 "c1ccccc1",  # phenyl

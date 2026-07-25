@@ -8,12 +8,13 @@
 #  Usage:
 #    sbatch --array=0-29%8 p4_ablation_fragments.sbatch
 #
-#  Array mapping (30 tasks = 3 fragment_sets × 10 seeds):
-#    Tasks  0–9:  fragment_set="all"           (108 fragments, baseline)
-#    Tasks 10–19: fragment_set="aromatic_only" (8 fragments)
-#    Tasks 20–29: fragment_set="minimal"       (5 fragments)
+#  Array mapping (40 tasks = 4 fragment_sets × 10 seeds):
+#    Tasks  0–9:  fragment_set="all"           (99 fragments, baseline)
+#    Tasks 10–19: fragment_set="medium"        (24 fragments)
+#    Tasks 20–29: fragment_set="aromatic_only" (5 fragments)
+#    Tasks 30–39: fragment_set="minimal"       (5 fragments)
 #
-#  Expected runtime: ~6 h for full 30-task array (8 concurrent).
+#  Expected runtime: ~8 h for full 40-task array (8 concurrent).
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p4_ablation
 #SBATCH --output=logs/slurm/p4_ablation_%a_%j.log
@@ -46,11 +47,14 @@ if   (( TASK_ID < 10 )); then
     FRAGMENT_SET="all"
     SEED="$TASK_ID"
 elif (( TASK_ID < 20 )); then
-    FRAGMENT_SET="aromatic_only"
+    FRAGMENT_SET="medium"
     SEED=$(( TASK_ID - 10 ))
+elif (( TASK_ID < 30 )); then
+    FRAGMENT_SET="aromatic_only"
+    SEED=$(( TASK_ID - 20 ))
 else
     FRAGMENT_SET="minimal"
-    SEED=$(( TASK_ID - 20 ))
+    SEED=$(( TASK_ID - 30 ))
 fi
 
 # ── Fixed parameters (match main benchmark) ───────────────────────────

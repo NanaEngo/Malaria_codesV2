@@ -46,7 +46,7 @@ def main() -> None:
         help="Random seed (default: SLURM_ARRAY_TASK_ID)"
     )
     parser.add_argument(
-        "--fragment-set", choices=["all", "aromatic_only", "minimal"],
+        "--fragment-set", choices=["all", "medium", "aromatic_only", "minimal"],
         default="all",
         help="Fragment vocabulary (default: all 108 fragments)"
     )
