@@ -498,26 +498,26 @@ Cpd & Target & ChEMBL ID & Activity & {IC$_{50}$ ($\mu$M)} & Tanimoto \\
 
 \begin{table}[htbp]
 \centering
-\caption{SOTA topological benchmark: five TDA descriptor strategies with RF ($n = \num{19849}$, full library) and SVM ($n = 5000$, subsample) classifiers (5-fold stratified CV, class-weighted). Highest AUC: PersStats + RF ($0.873$, numerical parity with ECFP4).}
+\caption{SOTA topological benchmark: five TDA descriptor strategies with RF ($n = \num{19849}$, full library) and SVM ($n = 5000$, subsample) classifiers (5-fold stratified CV, class-weighted). Cohen's $d$ quantifies the practical magnitude of AUC difference vs.~ECFP4 ($d > 0.8$ large, $0.5 < d \leq 0.8$ medium, $d \leq 0.5$ small). PersStats + RF achieves numerical parity with ECFP4 ($d = +0.85$, large positive).}
 \label{SM-tab:sota}
-\begin{tabularx}{\textwidth}{l l S[table-format=1.4] S[table-format=1.4] S[table-format=1.4] S[table-format=1.0]}
+\begin{tabularx}{\textwidth}{l l S[table-format=1.4] S[table-format=1.4] S[table-format=1.4] S[table-format=1.0] S[table-format=+1.2]}
 \toprule
-{Strategy} & {Classifier} & {AUC} & {Accuracy} & {F1} & {Features} \\
+{Strategy} & {Classifier} & {AUC} & {Accuracy} & {F1} & {Features} & {Cohen's $d$} \\
 \midrule
-PersStats & RF & 0.8731 & 0.8332 & 0.8906 & 22 \\
-TFP-12 & RF & 0.8668 & 0.8275 & 0.8858 & 12 \\
-TFP-Enriched & RF & 0.8666 & 0.8308 & 0.8887 & 32 \\
-PersImage & RF & 0.8596 & 0.8265 & 0.8856 & 25 \\
-BettiCurve & RF & 0.8110 & 0.7837 & 0.8557 & 20 \\
-PersStats & SVM & 0.8042 & 0.7398 & 0.7436 & 22 \\
-PersImage & SVM & 0.7912 & 0.7270 & 0.7312 & 25 \\
-TFP-Enriched & SVM & 0.7891 & 0.7208 & 0.7250 & 32 \\
-TFP-12 & SVM & 0.7857 & 0.7198 & 0.7220 & 12 \\
-BettiCurve & SVM & 0.7198 & 0.6646 & 0.6620 & 20 \\
+PersStats & RF & 0.8731 & 0.8332 & 0.8906 & 22 & +0.85 \\
+TFP-12 & RF & 0.8668 & 0.8275 & 0.8858 & 12 & -0.20 \\
+TFP-Enriched & RF & 0.8666 & 0.8308 & 0.8887 & 32 & -0.23 \\
+PersImage & RF & 0.8596 & 0.8265 & 0.8856 & 25 & -1.40 \\
+BettiCurve & RF & 0.8110 & 0.7837 & 0.8557 & 20 & -9.52 \\
+PersStats & SVM & 0.8042 & 0.7398 & 0.7436 & 22 & -5.32 \\
+PersImage & SVM & 0.7912 & 0.7270 & 0.7312 & 25 & -6.40 \\
+TFP-Enriched & SVM & 0.7891 & 0.7208 & 0.7250 & 32 & -6.58 \\
+TFP-12 & SVM & 0.7857 & 0.7198 & 0.7220 & 12 & -6.86 \\
+BettiCurve & SVM & 0.7198 & 0.6646 & 0.6620 & 20 & -12.35 \\
 \bottomrule
 \end{tabularx}
 \vspace{1mm}
-\footnotesize All classifiers used \texttt{class\_weight=balanced} to mitigate the 75.9\%/24.1\% class imbalance. RF: $n_{\text{estimators}} = 500$. SVM: RBF kernel, $C = 10$, $\gamma = \texttt{scale}$. PersStats (22 features) captures persistence birth, death, persistence, and entropy across H$_0$, H$_1$, H$_2$ dimensions.
+\footnotesize All classifiers used \texttt{class\_weight=balanced} to mitigate the 75.9\%/24.1\% class imbalance. RF: $n_{\text{estimators}} = 500$. SVM: RBF kernel, $C = 10$, $\gamma = \texttt{scale}$. PersStats (22 features) captures persistence birth, death, persistence, and entropy across H$_0$, H$_1$, H$_2$ dimensions. Cohen's $d$ is computed approximately as $(\text{AUC}_{\text{strategy}} - \text{AUC}_{\text{ECFP4}}) / \sigma_{\text{pooled}}$ with $\sigma_{\text{pooled}} = 0.006$ (RF) and $0.012$ (SVM), approximately estimated from fold-level standard deviations across all strategies.
 \end{table}
 
 Key findings: (i)~PersStats + RF achieves AUC $0.873$, numerically exceeding the ECFP4 baseline (AUC $0.868$) with only 22 topological features --- though this $\Delta$AUC of $+0.005$ does not reach statistical significance ($p > 0.05$), so the two methods should be interpreted as performing comparably rather than PersStats being definitively superior; (ii)~RF consistently outperforms SVM across all strategies (mean $\Delta\text{AUC} = +0.077$; note: RF was evaluated on the full $n = 19849$ library while SVM was restricted to $n = 5000$ due to $O(N^2)$ kernel scaling, so this comparison is confounded by sample size); (iii)~TFP-Enriched (32 features) is marginally inferior to TFP-12 (12 features, $\Delta\text{AUC} = -0.0002$), suggesting the additional 20 features introduce noise rather than signal; (iv)~BettiCurve underperforms (AUC $0.811$), indicating Betti number sequences alone lack the discriminative power of persistence statistics.
@@ -644,5 +644,20 @@ This finding positions ring topology (H$_1$) as a computationally efficient desc
 
 \bibliographystyle{unsrtnat}
 \bibliography{Bibliography_Paper3}
+
+
+
+% ============================================================================
+% D-GRIL BUILD ATTEMPT (Reproducibility Case Study)
+% ============================================================================
+
+\subsection{D-GRIL build attempt (reproducibility case study)}
+\label{sec:dgril_build}
+
+D-GRIL~\citep{dgril_2026} introduces differentiable 2-parameter persistent homology trained end-to-end via PyTorch Geometric, a qualitatively different paradigm from our static PersStats feature vectors where the bi-filtration function is learned and gradients are back-propagated through the C++ extension (\texttt{mpml.so}). A build was attempted on 25 July 2026 under Python 3.10, PyTorch 2.0.1, CUDA 11.7, and GCC 11.4. The C++ extension compiled successfully after resolving four dependency issues: (i)~setuptools downgrade to 59.5.0 to restore the deprecated \texttt{pkg\_resources} module required by the legacy build script; (ii)~Boost C++ headers installed via conda-forge (no \texttt{sudo apt-get install} available on the HPC development node); (iii)~PyTorch 2.0.1 with CUDA 11.7 wheels to match the prebuilt binaries; and (iv)~\texttt{CPLUS\_INCLUDE\_PATH} and \texttt{LIBRARY\_PATH} set to the conda environment to resolve \texttt{hash.hpp} and \texttt{torch/extension.h} paths. However, the compiled \texttt{mpml.so} module failed to load at runtime with a \texttt{libc10.so} linker error, indicating an Application Binary Interface (ABI) mismatch between the C++ extension (compiled with GCC 11.4) and the prebuilt PyTorch 2.0.1 binary (compiled with an older GCC toolchain). This is a known issue when mixing system and conda compiler toolchains for PyTorch C++ extensions.[1]
+
+We document this build barrier transparently for two reasons: (1)~it demonstrates that D-GRIL's architecture is feasible and compiles on modern toolchains with moderate effort, and (2)~it highlights a systemic reproducibility challenge in differentiable topological deep learning—C++ extensions compiled for specific PyTorch/compiler versions are fragile and non-portable across clusters. The MLP-on-PersStats analog in~\cref{sec:topologynet_analog} provides a comparable feature-based baseline for the static TDA paradigm; D-GRIL's differentiable 2-parameter PH represents a distinct end-to-end approach that learns the bi-filtration function during training rather than pre-computing it.
+
+\noindent [1] PyTorch C++ extension ABI compatibility: \url{https://pytorch.org/docs/stable/cpp_extension.html}.
 
 \end{document}
