@@ -300,3 +300,33 @@ git add -A && git commit -m "message" && git push origin master
 ## License
 
 MIT License — voir fichier LICENSE à la racine.
+
+
+## NISQ Hardware Access for PennyLane (July 25, 2026)
+
+### Free Platforms for Real Quantum Computers
+
+Our P3 quantum kernel simulations run on PennyLane's `lightning.qubit` classical simulator at 8 qubits.
+The manuscript's NISQ-era caveat notes that real hardware would degrade kernel fidelity.
+Below are the free platforms where our 8-qubit IQPEmbedding circuit could be deployed on actual NISQ devices.
+
+| Platform | Free Tier | Qubits | Best For | PennyLane Plugin |
+|----------|-----------|--------|----------|-----------------|
+| **IBM Quantum Open Plan** | 10 min/month | 100+ (Heron r2) | IQPEmbedding w/ dynamic circuits | `qml.device("qiskit.remote", ...)` |
+| **AWS Braket** | Academic credits (apply) | Varies (IonQ, Rigetti) | Multi-vendor comparison | `qml.device("braket.aws.qubit", ...)` |
+| **IBM Promotion** | 180 min/12mo (after 20 min used) | Same as Open Plan | Full-scale benchmarking | Same as IBM Open |
+
+### Recommended Workflow for P3 NISQ Deployment
+
+1. **Iterate on simulator**: Optimize the 8-qubit IQPEmbedding circuit using `lightning.qubit` (already done)
+2. **Apply for IBM Open Plan**: Register at quantum.ibm.com → use the 10 min/month allocation
+3. **Gate fidelity expectations**: Median 2-qubit error ~10^-3 (99.8% fidelity), coherence T1/T2 ~100-300 us
+4. **Queue times**: Fair-share scheduler; open-tier jobs are lower priority than paid/research tiers
+5. **Error mitigation**: PennyLane natively supports Zero-Noise Extrapolation and Probabilistic Error Amplification
+6. **After 12 months**: Qualify for 180-minute promotion for full kernel benchmark
+
+### Important Caveats
+- **8-qubit circuits MUST be shallow**: Depth < ~50 gates to fit within coherence window
+- **Kernel fidelity will degrade**: Expect 10-30% degradation vs simulator AUC depending on circuit depth
+- **Academic credits**: AWS Cloud Credit for Research program for multi-vendor Braket access
+- **No real quantum advantage expected**: Our benchmark already shows QK = RBF = Linear (p > 0.05)
