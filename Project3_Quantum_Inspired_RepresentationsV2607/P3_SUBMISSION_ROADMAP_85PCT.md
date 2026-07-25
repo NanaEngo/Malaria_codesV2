@@ -303,7 +303,7 @@ The manuscript has 6 limitations listed. Rather than apologising, each should be
 | TopologyNet/D-GRIL outperform our TFP | Low–Medium | Medium | Position TFP as complementary (12-dim, interpretable) vs. SOTA (high-dim, black-box) |
 | Zenodo upload fails | Low | High | Use GitHub release as fallback; DOI already reserved |
 | Reviewer demands wet-lab validation | Medium | Critical | Cannot address in-silico study; strengthen ChEMBL proxy + acknowledge limitation explicitly |
-| Manuscript exceeds page limit after additions | Low | Low | Current 16 pages; can trim to 14 if needed |
+| Manuscript exceeds page limit after additions | Low | Low | ✅ Trimmed 15→14 pages (July 25): deleted duplicate §3.7, moved Algorithm 1 to SM, condensed Limitations |
 
 ---
 
