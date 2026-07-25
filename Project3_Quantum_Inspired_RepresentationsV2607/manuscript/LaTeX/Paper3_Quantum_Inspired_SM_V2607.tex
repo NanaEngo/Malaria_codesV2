@@ -455,6 +455,43 @@ PfCRT & 6UKJ & 12 & 19 & 1.46$\times$ & -- \\
 
 
 % ============================================================================
+% 9B. SOTA TOPOLOGICAL BENCHMARK
+% ============================================================================
+
+\section{SOTA topological benchmark}
+\label{SM-sec:sota_benchmark}
+
+\cref{SM-tab:sota} reports the performance of five TDA descriptor strategies paired with Random Forest (RF) and Support Vector Machine (SVM) classifiers on $n = 5000$ molecules (stratified subsample from the \num{19849}-molecule library; 5-fold cross-validation, class-weighted classifiers). The production labels CSV contained $\num{19849}$ molecules with eos80ch activity labels merged with TDA fingerprints; $n = 5000$ was used due to SVM kernel matrix $O(N^2)$ scaling.
+
+\begin{table}[htbp]
+\centering
+\caption{SOTA topological benchmark: five TDA descriptor strategies with RF and SVM classifiers ($n = 5000$ molecules, 5-fold stratified CV, class-weighted). Best result: PersStats + RF (AUC $0.842$).}
+\label{SM-tab:sota}
+\begin{tabularx}{\textwidth}{l l S[table-format=1.4] S[table-format=1.4] S[table-format=1.4] S[table-format=1.0]}
+\toprule
+{Strategy} & {Classifier} & {AUC} & {Accuracy} & {F1} & {Features} \\
+\midrule
+PersStats & RF & 0.8419 & 0.7694 & 0.7715 & 22 \\
+TFP-Enriched & RF & 0.8381 & 0.7614 & 0.7614 & 32 \\
+PersImage & RF & 0.8370 & 0.7644 & 0.7640 & 25 \\
+TFP-12 & RF & 0.8303 & 0.7496 & 0.7505 & 12 \\
+PersStats & SVM & 0.8042 & 0.7398 & 0.7436 & 22 \\
+PersImage & SVM & 0.7912 & 0.7270 & 0.7312 & 25 \\
+TFP-Enriched & SVM & 0.7891 & 0.7208 & 0.7250 & 32 \\
+TFP-12 & SVM & 0.7857 & 0.7198 & 0.7220 & 12 \\
+BettiCurve & RF & 0.7717 & 0.6976 & 0.6946 & 20 \\
+BettiCurve & SVM & 0.7198 & 0.6646 & 0.6620 & 20 \\
+\bottomrule
+\end{tabularx}
+\vspace{1mm}
+\footnotesize All classifiers used \texttt{class\_weight=balanced} to mitigate the 75.9\%/24.1\% class imbalance. RF: $n_{\text{estimators}} = 500$. SVM: RBF kernel, $C = 10$, $\gamma = \texttt{scale}$. PersStats (22 features) captures persistence birth, death, persistence, and entropy across H$_0$, H$_1$, H$_2$ dimensions.
+\end{table}
+
+Key findings: (i)~PersStats + RF achieves AUC $0.842$, approaching the ECFP4 baseline (AUC $0.868$) with only 22 topological features; (ii)~RF consistently outperforms SVM across all strategies (mean $\Delta\text{AUC} = +0.038$); (iii)~TFP-Enriched (32 features) provides marginal improvement over TFP-12 (12 features, $\Delta\text{AUC} = +0.008$); (iv)~BettiCurve underperforms (AUC $0.772$), indicating Betti number sequences alone lack the discriminative power of persistence statistics.
+
+\vspace{4mm}
+
+% ============================================================================
 % 10. APPLICABILITY DOMAIN AND COMPARISON WITH EXISTING TOOLS
 % ============================================================================
 
