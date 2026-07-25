@@ -1565,7 +1565,7 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 
 **Comparison with literature:** PersStats + RF AUC = 0.842 is comparable to recent TDA benchmarks: TopologyNet (Pearson r = 0.82 on protein-ligand binding; Xu et al. 2018) and PACTNet (cellular complex features; 2025). Our result demonstrates that simple persistence statistics (birth, death, persistence, entropy) extracted from 1D molecular graphs achieve competitive discriminative performance without the computational overhead of neural network architectures.
 
-**Limitations:** (i) n=5,000 subsample from 19,849 due to SVM kernel matrix O(N²) scaling; (ii) eos80ch binary labels are computational predictions, not experimental IC₅₀; (iii) 75.9%/24.1% class imbalance may inflate AUC despite class weighting.
+**Limitations:** (i) n=5,000 subsample from 19,849 due to SVM kernel matrix O(N²) scaling; (ii) eos80ch binary labels are computational predictions, not experimental IC₅₀; (iii) 75.9%/24.1% class imbalance mitigated by `class_weight='balanced'` in both RF and SVC, but residual bias may remain.
 
 **Output:** `results/p3_sota_benchmark.csv`, `results/p3_sota_benchmark_summary.txt`
 
