@@ -330,3 +330,47 @@ Below are the free platforms where our 8-qubit IQPEmbedding circuit could be dep
 - **Kernel fidelity will degrade**: Expect 10-30% degradation vs simulator AUC depending on circuit depth
 - **Academic credits**: AWS Cloud Credit for Research program for multi-vendor Braket access
 - **No real quantum advantage expected**: Our benchmark already shows QK = RBF = Linear (p > 0.05)
+
+
+## IBM Quantum Open Plan — Registration Steps (July 25, 2026)
+
+### How to apply for free IBM Quantum access
+
+1. Go to https://quantum.ibm.com/ and click "Sign up" (free account)
+2. Verify email and log in
+3. Navigate to Account → API token (top-right menu)
+4. Copy the token
+5. On the HPC development node:
+   ```bash
+   export IBM_QUANTUM_TOKEN="your_token_here"
+   # Or save to file (more secure):
+   echo "your_token_here" > ~/.ibm_quantum_token
+   chmod 600 ~/.ibm_quantum_token
+   ```
+
+### Free tier limits
+- **10 minutes/month** of quantum computing time on 100+ qubit Heron processors
+- Fair-share scheduler: open-plan jobs are lower priority than paid/research tiers
+- Queue times: typically 10-60 minutes during peak hours
+- **Promotion**: after using 20 minutes total in 12 months → 180 minutes bonus
+
+### NISQ scripts (ready for deployment)
+
+| Script | Purpose | Qubits | Est. IBM time |
+|--------|---------|:------:|:-------------:|
+| `p3_nisq_smoke_test.py` | Bell state + kernel overlap verification | 2 | ~5 seconds |
+| `p3_nisq_deploy.py` | Full IQPEmbedding kernel benchmark | 8 | ~5 min (n=10) |
+
+### Important caveats
+- **Run smoke test FIRST** before any 8-qubit deployment
+- **n>20 impractical** on free tier: kernel_matrix submits n² individual IBM Quantum jobs per fold
+- **Gate fidelity ~99.8%** (2-qubit), coherence T1/T2 ~100-300 µs
+- **Expect 10-30% AUC degradation** vs classical simulator
+- **Our P3 result already shows**: QK ≈ RBF ≈ Linear (p > 0.05 on simulator)
+- **No quantum advantage expected** on hardware — this is a methodological proof-of-concept
+
+### Packages installed in malaria_md (July 25, 2026)
+- pennylane 0.45.1
+- pennylane-qiskit 0.45.0
+- qiskit 2.3.0
+- qiskit-ibm-runtime 0.45.1
