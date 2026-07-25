@@ -125,8 +125,6 @@ FRAGMENT_LIBRARY: dict[str, list[tuple[str, str]]] = {
         ("[*]C(=O)OCC",          "Ethyl ester"),
         ("[*]C(=O)N(C)C",        "N,N-Dimethylamide"),
         ("[*]C(=O)NC",           "N-Methylamide"),
-        ("[*]C(=O)NH2",          "Carbamoyl"),
-        ("[*]C(=O)NHOH",         "Hydroxamic acid"),
         ("[*]C(=O)CF",           "Fluoroacetyl"),
         ("[*]OC(=O)C",           "Acetoxy"),
     ],
