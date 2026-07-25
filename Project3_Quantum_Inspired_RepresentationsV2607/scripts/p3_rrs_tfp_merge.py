@@ -56,6 +56,9 @@ def main():
     task_files = sorted(RESULTS_DIR.glob(TASK_GLOB))
     print(f"Found {len(task_files)} task output files")
 
+    if len(task_files) < 10:
+        print(f"WARNING: only {len(task_files)}/10 tasks completed. Results may be incomplete.")
+
     new_tfp = {}
     for tf in task_files:
         task_df = pd.read_csv(tf)

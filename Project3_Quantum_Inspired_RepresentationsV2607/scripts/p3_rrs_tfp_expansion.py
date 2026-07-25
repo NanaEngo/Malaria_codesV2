@@ -302,6 +302,13 @@ def main():
             existing_tfp = set(existing_df['smiles'].tolist())
         print(f"Existing TFP data: {len(existing_tfp)} compounds")
 
+    # Normalize SMILES column name (RRS CSV uses 'smile', TFP uses 'smiles')
+    if 'smile' in rrs_df.columns and 'smiles' not in rrs_df.columns:
+        rrs_df = rrs_df.rename(columns={'smile': 'smiles'})
+    elif 'input' in rrs_df.columns and 'smiles' not in rrs_df.columns:
+        rrs_df = rrs_df.rename(columns={'input': 'smiles'})
+    print(f"SMILES column: {'smiles' if 'smiles' in rrs_df.columns else 'NOT FOUND'}")
+
     # Slice to task range
     end_idx = min(args.end_idx, len(rrs_df))
     task_df = rrs_df.iloc[args.start_idx:end_idx].copy()
@@ -310,7 +317,7 @@ def main():
     # Filter to compounds needing TFP
     need_tfp = []
     for idx, row in task_df.iterrows():
-        smiles = row.get('smiles', row.get('input', ''))
+        smiles = row.get('smiles', '')
         if pd.isna(smiles) or smiles in existing_tfp:
             continue
         need_tfp.append((idx, smiles))
