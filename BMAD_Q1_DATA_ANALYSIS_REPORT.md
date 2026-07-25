@@ -1,6 +1,6 @@
 # BMAD Q1 Data Analysis Report
 
-**Generated:** July 9, 2026 — **Updated July 25, 2026** (v28: RRS expansion validated (ρ=0.361, n=77, 500 processed); SOTA n=5,000 smoke test confirmed; v27: D-GRIL build assessment (compiled, linker blocked); SOTA completed at n=19,849; ChEMBL36 bug fixed (7/231 matches); TopologyNet analog (MLP vs RF); adversarial audit completed; Limitations polished; Cohen's d added to SM SOTA table)
+**Generated:** July 9, 2026 — **Updated July 25, 2026** (v29: P4 MCTS 20-seed benchmark completed (mean=0.623±0.008); v28: RRS expansion validated (ρ=0.361, n=77, 500 processed); SOTA n=5,000 smoke test confirmed; v27: D-GRIL build assessment (compiled, linker blocked); SOTA completed at n=19,849; ChEMBL36 bug fixed (7/231 matches); TopologyNet analog (MLP vs RF); adversarial audit completed; Limitations polished; Cohen's d added to SM SOTA table)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Coverage:** P1 Chemical Space, P2 Polypharmacology, P3 Quantum-Inspired Representations, P4 MCTS Benchmark
@@ -30,7 +30,7 @@ Three complementary projects generated and analyzed **over 85,000 unique molecul
 | P3 — D-GRIL Build | C++ extension, PyTorch 2.0.1, Boost, CUDA 11.7 | **mpml.so compiled; linker blocked (libc10.so ABI). Differentiable 2-parameter PH paradigm** | ⚠️ Compiled (mpml.so), linker blocked (libc10.so ABI). Differentiable 2-parameter PH paradigm documented |
 | P3 — ChEMBL Expanded Validation | 77 compounds × 3 targets (231 pairs) | **7/231 matches (3.0%); 3 active PfATP4; no PfDHFR** | ✅ Completed (July 25) |
 | P3 — TopologyNet Analog | 5000 mol, PersStats 22 features | **MLP AUC 0.799 vs RF AUC 0.860 (Δ=−0.061)**; neural nets don't improve over RF on PH summary stats | ✅ Completed (July 25) |
-| P4 — MCTS Benchmark (5 seeds) | 500 iters × 5 seeds, c_puct=5.0, VL=0.01 | **MCTS fix validated: reward=0.597±0.000, MPO=0.877, docking=-7.63. Random=0.547±0.014, Greedy=0.614±0.002, GA=0.592±0.018, cross-seed table updated** | ✅ MCTS collapse resolved (global best-molecule tracking) |
+| P4 — MCTS Benchmark (20 seeds) | 20 seeds × 1000 iters × 108 fragments | **MCTS mean=0.6229±0.0081, n=20, CV=1.3%. Real variance confirmed (σ>0). 108-fragment vocabulary (15 categories).** | ✅ Completed (July 25) |
 | P1 — MCMC Latent Space Optimisation | 4 chains × 5000 steps, 8D latent | **MPO +0.0246; top candidate MPO 0.801** | Completed |
 | P1 — STONED-SELFIES Leap | 20 seeds → 5,525 neighbours | **97.9% ECFP4-unreachable from STONED** | Completed |
 | P2 — MD Complex Building | 4 targets (PfDHFR, PfATP4, PfClpP, PfCRT) | **4/4 solvated + ionized complexes built; EM/NVT/NPT: 4/4 complete; Production MD: 4/4 trajectories generated; PBC-unwrapped re-analysis: 2/4 systems retain bound ligands (PfCRT, PfATP4), 2/4 are unbound (PfClpP, PfDHFR)** | ⚠️ Partially validated |
