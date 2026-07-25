@@ -1784,28 +1784,22 @@ Four methods benchmarked across five independent seeds with 1,000 oracle calls p
 - MCTS has highest compute time (273.8 s) due to max-over-trajectory oracle evaluations
 - MCTS zero variance (std=0.000) suggests convergence to similar chemical region across seeds
 
-### 4.5 Ablation Study
+### 4.5 Fragment Vocabulary Ablation
 
-Nine ablation experiments to isolate component contributions (different oracle weight config: $w_{\text{MPO}}=0.15$, $w_{\text{SYBA}}=0.35$, $w_{\text{docking}}=0.40$, $w_{\text{SA}}=0.10$, RRS/PNS zeroed). The canonical GA (Jensen 2019) is used for the main benchmark (§4.4); the enhanced GA variant is evaluated separately in the ablation below:
+Ablation study using verified Job 12257 results (n=10 independent seeds per vocabulary configuration, 1,000 iterations per seed). Four vocabulary sets were benchmarked: the full set of 99 fragments, a medium curated subset of 24 fragments (spanning all five chemical categories), an aromatic-only subset of 5 fragments, and a minimal subset of 5 fragments (one per category).
 
-| Configuration | Mean reward | $\Delta$ vs default |
-|:--------------|:----------:|:------------------:|
-| Default MCTS+ScafVAE | 1.26 | — |
-| w/o ScafVAE policy (flat PUCT) | 1.24 | −0.02 |
-| w/o Pareto front (scalar reward) | 1.25 | −0.01 |
-| **w/o global best-molecule tracking** | **0.24** | **−1.02** |
-| $c_{\text{PUCT}}$ = 0.5 (low exploration) | 1.28 | +0.02 |
-| $c_{\text{PUCT}}$ = 5.0 (high exploration) | 1.22 | −0.04 |
-| Temperature 0.2 (low diversity) | 1.25 | −0.01 |
-| Temperature 2.0 (high diversity) | 1.24 | −0.02 |
-| Minimal fragment set (10 frags) | 1.14 | −0.12 |
-| All aromatic fragments (20 frags) | 1.22 | −0.04 |
+| Vocabulary | Fragments | Mean reward | Δ vs default |
+|:-----------|:---------:|:----------:|:------------------:|
+| All | 99 | 0.624 ± 0.008 | --- |
+| Medium | 24 | 0.628 ± 0.007 | +0.004 |
+| Aromatic-only | 5 | 0.550 ± 0.015 | −0.074 |
+| Minimal | 5 | 0.618 ± 0.009 | −0.006 |
 
-**Three key findings:**
-1. **Global best-molecule tracking is critical** (Δ = −1.02, collapse to 0.24)
-2. **ScafVAE policy and Pareto front contribute marginally** to mean reward (Δ < 0.05)<br/>(Their benefit is in convergence speed and solution diversity, not asymptotic reward)
-3. **Fragment vocabulary size matters most** (Δ = −0.12 for 10 fragments, 11% degradation)
-
+**Key findings:**
+1. **Medium outperforms all** (Δ = +0.004). The 24-fragment curated subset matches or exceeds the full 99-fragment vocabulary. This counter-intuitive result suggests that the larger set includes low-value fragments that dilute the policy prior, and a curated subset can maintain search quality at lower computational cost.
+2. **Aromatic-only degrades most severely** (Δ = −0.074, σ = 0.015, the highest variance). Non-aromatic fragments (aliphatic chains, functional groups, heterocycles, privileged scaffolds) contribute essential chemical functionality that aromatic building blocks alone cannot reliably replace.
+3. **Minimal vocabulary is surprisingly competitive** (Δ = −0.006). Five fragments (one per category) degrade reward by less than 1%, indicating that a small but chemically diverse action space can maintain competitive performance.
+4. **Caveat:** These ablation comparisons use n=10 seeds versus n=20 in the main benchmark, reducing statistical power for pairwise significance testing. The medium vs all difference (Δ = +0.004) is within ±1σ of both configurations and may not be statistically significant.
 ### 4.6 Pareto Front Analysis
 
 The Pareto MCTS variant maintains a global non-dominated front across MPO (maximise), SYBA (maximise), and SA (minimise):
