@@ -226,7 +226,11 @@ def main():
                         help="Path to TDA fingerprints CSV")
     parser.add_argument("--n-folds", type=int, default=5)
     parser.add_argument("--max-mols", type=int, default=2000,
-                        help="Max molecules to subsample (SVM scales O(n^2))")
+                        help="Global max molecules to subsample (SVM scales O(n^2))")
+    parser.add_argument("--rf-max-mols", type=int, default=0,
+                        help="Max molecules for RF only (0=use all; RF scales O(n log n))")
+    parser.add_argument("--svm-max-mols", type=int, default=0,
+                        help="Max molecules for SVM only (0=use --max-mols; SVM scales O(n^2))")
     parser.add_argument("--labels-csv", type=str, default=None,
                         help="CSV with 'smiles' and 'activity' columns (merge with TDA data)")
     parser.add_argument("--output-csv", type=str, default=None)
@@ -277,39 +281,47 @@ def main():
     n_inactive = len(y) - n_active
     log.info(f"Labels: {n_active} active, {n_inactive} inactive")
 
-    # Subsample if needed (SVM scales O(n^2), RF scales O(n log n))
-    if len(df) > args.max_mols:
-        log.info(f"Subsampling from {len(df)} to {args.max_mols} molecules")
-        rng = np.random.default_rng(42)
-        # Stratified subsample: preserve class balance
-        active_idx = np.where(y == 1)[0]
-        inactive_idx = np.where(y == 0)[0]
-        n_active_sub = min(len(active_idx), args.max_mols // 2)
-        n_inactive_sub = min(len(inactive_idx), args.max_mols - n_active_sub)
-        chosen = np.concatenate([
-            rng.choice(active_idx, n_active_sub, replace=False),
-            rng.choice(inactive_idx, n_inactive_sub, replace=False),
-        ])
-        df = df.iloc[chosen].reset_index(drop=True)
-        y = y[chosen]
-        log.info(f"Subsampled to {len(df)} molecules ({(y==1).sum()} active, {(y==0).sum()} inactive)")
+    # Determine per-classifier subsampling limits
+    # --rf-max-mols 0 means 'use ALL molecules' (RF scales O(N log N))
+    # --svm-max-mols 0 means 'use --max-mols value' (SVM scales O(N^2))
+    rf_max = 0 if args.rf_max_mols == 0 else (args.rf_max_mols if args.rf_max_mols > 0 else args.max_mols)
+    svm_max = args.svm_max_mols if args.svm_max_mols > 0 else args.max_mols
+    log.info(f"Per-classifier limits: RF={'ALL (' + str(len(df)) + ')' if rf_max <= 0 else str(rf_max)} "
+             f", SVM={'ALL (' + str(len(df)) + ')' if svm_max >= len(df) else str(svm_max)}")
 
     # Run benchmark
     results = []
     for strat_name, extract_fn in STRATEGIES.items():
         try:
-            X = extract_fn(df)
-            if X.shape[1] == 0:
+            X_full = extract_fn(df)
+            if X_full.shape[1] == 0:
                 log.warning(f"Skipping {strat_name}: 0 features")
                 continue
-            if np.all(X == 0):
+            if np.all(X_full == 0):
                 log.warning(f"Skipping {strat_name}: all-zero features")
                 continue
 
             for clf_name, clf_factory in get_classifiers().items():
-                log.info(f"Running {strat_name} + {clf_name}...")
+                # Apply per-classifier subsampling
+                limit = rf_max if clf_name == "rf" else svm_max
+                if limit <= 0 or limit >= len(df):
+                    X_sub, y_sub = X_full, y
+                else:
+                    rng_sub = np.random.default_rng(42)
+                    active_idx = np.where(y == 1)[0]
+                    inactive_idx = np.where(y == 0)[0]
+                    n_a = min(len(active_idx), limit // 2)
+                    n_i = min(len(inactive_idx), limit - n_a)
+                    chosen = np.concatenate([
+                        rng_sub.choice(active_idx, n_a, replace=False),
+                        rng_sub.choice(inactive_idx, n_i, replace=False),
+                    ])
+                    X_sub, y_sub = X_full[chosen], y[chosen]
+                    log.info(f"  {clf_name}: subsampled to {len(y_sub)} mols")
+
+                log.info(f"Running {strat_name} + {clf_name} (n={len(y_sub)})...")
                 res = evaluate_strategy(
-                    X, y, strat_name, clf_name, clf_factory, args.n_folds
+                    X_sub, y_sub, strat_name, clf_name, clf_factory, args.n_folds
                 )
                 results.append(res)
                 log.info(f"  AUC = {res['auc_mean']:.4f} ± {res['auc_std']:.4f} "
