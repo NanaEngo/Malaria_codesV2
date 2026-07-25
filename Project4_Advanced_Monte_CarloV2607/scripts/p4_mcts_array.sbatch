@@ -3,26 +3,26 @@
 # P4 MCTS+RL — Array job for molecular generation (production)
 #
 # Uses:
-# - Expanded 33-fragment vocabulary (ScafVAE-guided policy)
+# - Expanded 108-fragment vocabulary (15 categories) (ScafVAE-guided policy)
 # - Real oracles (MPO + docking + SYBA + SA from P1/P2 libraries)
-# - 100 independent seeds per run
+# - 20 independent seeds (n=20 for valid variance, per adversarial audit) per run
 #
 # Usage:
-#   sbatch --array=0-99%32 \
-#     --export=INITIAL_SMILES="C",MAX_STEPS=8,N_ITERATIONS=500 \
+#   sbatch --array=0-19%8 \
+#     --export=INITIAL_SMILES="C",MAX_STEPS=8,N_ITERATIONS=1000 \
 #     scripts/p4_mcts_array.sbatch
 #
 # Each array task runs an independent MCTS search with a unique seed.
 # Results are written per-task and merged post-hoc via p4_mcts_merge.py.
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p4_mcts
-#SBATCH --array=0-99%24
+#SBATCH --array=0-19%8
 #SBATCH --output=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_mcts_%j.log
 #SBATCH --error=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_mcts_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=4G
-#SBATCH --time=04:00:00
+#SBATCH --time=08:00:00
 #SBATCH --partition=production
 #SBATCH --export=ALL
 
@@ -56,7 +56,7 @@ exec > "${_LOG_PATH}" 2>&1
 # ── Configuration (override via --export) ────────────────────────────
 INITIAL_SMILES="${INITIAL_SMILES:-C}"
 MAX_STEPS="${MAX_STEPS:-8}"
-N_ITERATIONS="${N_ITERATIONS:-500}"
+N_ITERATIONS="${N_ITERATIONS:-1000}"
 FRAGMENT_SET="${FRAGMENT_SET:-all}"
 
 # Unique seed per array task for independent searches

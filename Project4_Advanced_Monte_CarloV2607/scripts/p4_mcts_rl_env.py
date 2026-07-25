@@ -79,6 +79,99 @@ FRAGMENT_LIBRARY: dict[str, list[tuple[str, str]]] = {
         ("[*]C(F)(F)F",          "Trifluoromethyl"),
         ("[*][N+](=O)[O-]",      "Nitro"),
     ],
+    "fused_aromatic": [
+        ("c1ccc2c([*])cccc2c1",   "1-Naphthyl"),
+        ("c1cc([*])c2ccccc2n1",   "3-Quinolinyl"),
+        ("c1c([*])cnc2ccccc12",   "4-Isoquinolinyl"),
+        ("c1c([*])[nH]c2ccccc12",  "3-Indolyl"),
+        ("c1c([*])nc2ccccc2n1",   "2-Quinazolinyl"),
+        ("c1c([*])nc2ccccc2s1",   "2-Benzothiazolyl"),
+        ("c1c([*])oc2ccccc12",    "2-Benzofuranyl"),
+        ("c1c([*])sc2ccccc12",    "2-Benzothiophenyl"),
+        ("c1nc2c([*])ncn2n1",     "8-Purinyl"),
+        ("c1c([*])nc2[nH]cnc2n1", "6-Purinyl"),
+        ("c1c([*])nc2ncnn2c1",    "2-Pteridinyl"),
+        ("c1ccc2c([*])ncn2c1",    "4-Quinazolinyl"),
+    ],
+    "bridged_bicyclic": [
+        ("C1CC2([*])CCC1C2",      "2-Bicyclo[2.2.1]heptanyl"),
+        ("C1C2CC3([*])CC1CC(C2)C3", "1-Adamantyl"),
+        ("C1CC2([*])CC1C2",       "2-Bicyclo[2.1.1]hexanyl"),
+    ],
+    "extended_alkyl": [
+        ("[*]CCC",               "n-Propyl"),
+        ("[*]CCCC",              "n-Butyl"),
+        ("[*]CC(C)CC",           "Isobutyl"),
+        ("[*]C1CCCC1",           "Cyclopentyl"),
+        ("[*]C1CCCCC1",          "Cyclohexyl"),
+        ("[*]CC1CC1",            "Cyclopropylmethyl"),
+        ("[*]C(C)CC",            "sec-Butyl"),
+        ("[*]CCCCCC",            "n-Hexyl"),
+    ],
+    "alkene_alkyne": [
+        ("[*]C=C",               "Vinyl"),
+        ("[*]CC=C",              "Allyl"),
+        ("[*]C#C",               "Ethynyl"),
+        ("[*]CC#C",              "Propargyl"),
+        ("[*]/C=C/c1ccccc1",     "(E)-Styryl"),
+        ("[*]C(C)=C",            "Isopropenyl"),
+    ],
+    "carbonyl": [
+        ("[*]C(=O)C",            "Acetyl"),
+        ("[*]C(=O)c1ccccc1",     "Benzoyl"),
+        ("[*]C=O",               "Formyl"),
+        ("[*]C(=O)CC",           "Propionyl"),
+        ("[*]C(=O)OC(C)C",       "Isopropyl ester"),
+        ("[*]C(=O)OCC",          "Ethyl ester"),
+        ("[*]C(=O)N(C)C",        "N,N-Dimethylamide"),
+        ("[*]C(=O)NC",           "N-Methylamide"),
+        ("[*]C(=O)NH2",          "Carbamoyl"),
+        ("[*]C(=O)NHOH",         "Hydroxamic acid"),
+        ("[*]C(=O)CF",           "Fluoroacetyl"),
+        ("[*]OC(=O)C",           "Acetoxy"),
+    ],
+    "sulfur_phosphorus": [
+        ("[*]S(=O)(=O)C",        "Methylsulfonyl"),
+        ("[*]S(=O)C",            "Methylsulfinyl"),
+        ("[*]SC",                "Methylthio"),
+        ("[*]S(=O)(=O)CF",       "Triflyl"),
+        ("[*]S(=O)(=O)N(C)C",    "N,N-Dimethylsulfonamide"),
+        ("[*]P(=O)(OC)OC",       "Dimethyl phosphate"),
+        ("[*]S(=O)(=O)c1ccccc1", "Phenylsulfonyl"),
+        ("[*]SCc1ccccc1",        "Benzylthio"),
+    ],
+    "more_heterocycles": [
+        ("C1CC([*])OC1",         "3-Tetrahydrofuranyl"),
+        ("C1CC([*])OCC1",        "4-Tetrahydropyranyl"),
+        ("C1COC([*])O1",         "2-1,3-Dioxolanyl"),
+        ("C1COC([*])OC1",        "4-1,3-Dioxanyl"),
+        ("C1CC([*])NC1",         "3-Azetidinyl"),
+        ("C1COC1([*])",          "3-Oxetanyl"),
+        ("c1cn([*])nn1",          "1-Triazolyl"),
+        ("c1c([*])nnn1",          "1-Tetrazolyl"),
+        ("c1c([*])noc1",          "3-Isoxazolyl"),
+        ("c1c([*])on1",           "3-Oxadiazolyl"),
+        ("c1cn([*])nc1",          "1-Pyrazolyl"),
+        ("c1c([*])n[nH]c1",       "4-Pyrazolyl"),
+    ],
+    "more_halogenated": [
+        ("[*]C(F)F",             "Difluoromethyl"),
+        ("[*]C(Cl)Cl",           "Dichloromethyl"),
+        ("[*]CF",                "Fluoromethyl"),
+        ("[*]OC(F)(F)F",         "Trifluoromethoxy"),
+        ("[*]C(F)(F)CF",         "Pentafluoroethyl"),
+        ("[*]SC(F)(F)F",         "Trifluoromethylthio"),
+        ("[*]OC(F)F",            "Difluoromethoxy"),
+    ],
+    "amino_acid_like": [
+        ("[*]CC(=O)O",           "Carboxyethyl"),
+        ("[*]CC(=O)N",           "Carbamoylethyl"),
+        ("[*]CN",                "Aminomethyl"),
+        ("[*]CCN",               "Aminoethyl"),
+        ("[*]CCCN",              "Aminopropyl"),
+        ("[*]CN(C)C",            "N,N-Dimethylaminomethyl"),
+        ("[*]CC(=O)NCC(=O)O",    "Glycylglycine-like"),
+    ],
 }
 
 # Flatten to a single list of (smiles, name) pairs for runtime
@@ -97,7 +190,7 @@ class MolecularEnv:
     max_steps : int
         Maximum number of fragment additions before termination.
     fragment_set : str
-        Which fragment set to use: "all" (default, 34 fragments), "minimal"
+        Which fragment set to use: "all" (default, 108 fragments, 14 categories), "minimal"
         (5 fragments, backward-compatible), or "aromatic_only".
     randomize_attachment : bool
         If True, randomly select attachment atoms instead of always picking
@@ -124,7 +217,9 @@ class MolecularEnv:
         self._rng = random.Random(seed)
 
         # Select fragment vocabulary
-        if fragment_set == "minimal":
+        if fragment_set == "all":
+            self._fragment_vocab = [smi for smi, _ in FLATTENED_FRAGMENTS]
+        elif fragment_set == "minimal":
             self._fragment_vocab: list[str] = [
                 "c1ccccc1",  # phenyl
                 "C",         # methyl

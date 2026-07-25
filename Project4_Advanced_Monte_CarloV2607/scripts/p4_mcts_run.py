@@ -48,7 +48,7 @@ def main() -> None:
     parser.add_argument(
         "--fragment-set", choices=["all", "aromatic_only", "minimal"],
         default="all",
-        help="Fragment vocabulary (default: all 33 fragments)"
+        help="Fragment vocabulary (default: all 108 fragments)"
     )
     parser.add_argument(
         "--c-puct", type=float, default=1.414,
