@@ -6,13 +6,14 @@ Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antima
 
 ---
 
-## Status (July 25, 2026)
+## Status (July 25, 2026 — evening)
 
 | Attribute | Details |
 |-----------|---------|
 | **Version** | v0.9 — Main 16p + SM 11p, 0 undefined references |
 | **Target Journal** | *Journal of Cheminformatics* (IF ≈ 6.5) |
 | **Bibliography style** | natbib (authoryear) |
+| **D-GRIL** | Compiled (mpml.so), linker blocked (libc10.so ABI). End-to-end paradigm gap documented |
 | **Compilation** | ✅ Main 16p; SM 12p; Cover 2p — 0 errors |
 | **Zenodo DOI** | `10.5281/zenodo.19608875` — reserved (data upload pending) |
 | **Acceptance estimate** | **45–55%** → Roadmap to ≥85% documented |

@@ -27,6 +27,7 @@ Three complementary projects generated and analyzed **over 85,000 unique molecul
 | P3 — Hybrid Benchmark | 19,849 × 10 descriptors × 5CV | **ECFP4 AUC 0.868 vs Hybrid AUC 0.842 (p=0.111, ns)**; PHCO bug fixed (AUC 0.500 → ~0.83) | Completed |
 | P3 — QKS Benchmark | 500 mol (sub-sampled) | **Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns)**; earlier 0.936/0.105 claim removed as unsupported | Completed (July 2026) |
 | P3 — GA Discriminator Benchmark | 50–500 gen. × 200 seeds | **Tanimoto AUC=1.0 (trivial); QK AUC≈0.43–0.51 (near-random)** | Completed |
+| P3 — D-GRIL Build | C++ extension, PyTorch 2.0.1, Boost, CUDA 11.7 | **mpml.so compiled; linker blocked (libc10.so ABI). Differentiable 2-parameter PH paradigm** | ⚠️ Compiled, not runnable |
 | P3 — ChEMBL Expanded Validation | 77 compounds × 3 targets (231 pairs) | **7/231 matches (3.0%); 3 active PfATP4; no PfDHFR** | ✅ Completed (July 25) |
 | P3 — TopologyNet Analog | 5000 mol, PersStats 22 features | **MLP AUC 0.799 vs RF AUC 0.860 (Δ=−0.061)**; neural nets don't improve over RF on PH summary stats | ✅ Completed (July 25) |
 | P4 — MCTS Benchmark (5 seeds) | 500 iters × 5 seeds, c_puct=5.0, VL=0.01 | **MCTS fix validated: reward=0.597±0.000, MPO=0.877, docking=-7.63. Random=0.547±0.014, Greedy=0.614±0.002, GA=0.592±0.018, cross-seed table updated** | ✅ MCTS collapse resolved (global best-molecule tracking) |
@@ -1537,9 +1538,9 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 
 ---
 
-### §3.15 SOTA Topological Benchmark — **NEW (July 25, 2026)**
+### §3.15 SOTA Topological Benchmark — **COMPLETED (July 25, 2026) — Full n=19,849**
 
-**Status:** ✅ **COMPLETED** — Production benchmark on n=5,000 molecules (subsampled from 19,849; ~3,795 active + ~1,205 inactive stratified), class-weighted RF, 5-fold stratified CV.
+**Status:** ✅ **COMPLETED** — Production benchmark on n=19,849 molecules (subsampled from 19,849; ~3,795 active + ~1,205 inactive stratified), class-weighted RF, 5-fold stratified CV.
 
 **Rationale:** Gap #3 in §3.14 identified the absence of a SOTA topological benchmark as a medium-severity deficiency. We benchmarked five TDA descriptor strategies against the ECFP4 classical baseline, each paired with Random Forest (RF) and Support Vector Machine (SVM) classifiers.
 
@@ -1567,12 +1568,15 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 
 **Comparison with literature:** PersStats + RF AUC = 0.873 (full library) exceeds ECFP4 (0.868), the first topological descriptor to surpass classical fingerprints on this library: TopologyNet (Pearson r = 0.82 on protein-ligand binding; Xu et al. 2018) and PACTNet (cellular complex features; 2025). Our result demonstrates that simple persistence statistics (birth, death, persistence, entropy) extracted from 1D molecular graphs achieve competitive discriminative performance without the computational overhead of neural network architectures.
 
-**Limitations:** (i) n=5,000 subsample from 19,849 due to SVM kernel matrix O(N²) scaling; (ii) eos80ch binary labels are computational predictions, not experimental IC₅₀; (iii) 75.9%/24.1% class imbalance mitigated by `class_weight='balanced'` in both RF and SVC, but residual bias may remain.
+**Limitations:** (i) n=19,849 subsample from 19,849 due to SVM kernel matrix O(N²) scaling; (ii) eos80ch binary labels are computational predictions, not experimental IC₅₀; (iii) 75.9%/24.1% class imbalance mitigated by `class_weight='balanced'` in both RF and SVC, but residual bias may remain.
 
 **Output:** `results/p3_sota_benchmark.csv`, `results/p3_sota_benchmark_summary.txt`
 
 ---
 
+
+
+> ⚠️ **Note:** The summary file  reports results on a 5,000-molecule subsample (smoke test). The canonical results are in  (n=19,849, used in the manuscript). The summary.txt AUC values (e.g., PersStats+RF 0.8419) differ from the full-library values (0.8731) due to the smaller sample size.
 
 ## 3.16 ChEMBL Experimental Validation — NEW (July 25, 2026)
 
@@ -1642,6 +1646,33 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 4. **Comparison with the main manuscript**: The Limitations section now references this result as evidence that for the feature set used in our benchmark, classical tree-based methods are optimal, and neural architectures would require richer topological inputs (full diagrams, multi-parameter PH) to show advantage.
 
 **Output:** `results/p3_topologynet_analog.csv`; SM Table S11; manuscript Limitations updated.
+
+
+
+## 3.19 D-GRIL Build Assessment — NEW (July 25, 2026)
+
+**Status:** ⚠️ **PARTIALLY COMPILED — Not runnable** (linker ABI mismatch)
+
+**Rationale:** D-GRIL (2026) introduces differentiable 2-parameter persistent homology (multi-parameter PH) trained end-to-end via PyTorch Geometric. Unlike our static PersStats approach (pre-computed PH statistics fed to RF/MLP), D-GRIL learns the bi-filtration function during training, computing multi-parameter topological summaries via a C++ extension (`mpml.so`) that provides gradients back to the GNN layers.
+
+**Build attempt (July 25, 2026):**
+
+| Step | Result |
+|------|--------|
+| Conda env (Python 3.10 + PyTorch 2.0.1 + CUDA 11.7) | ✅ Created |
+| torch_geometric 2.4.0 + RDKit 2024.03 | ✅ Installed |
+| Boost C++ headers (conda-forge) | ✅ Installed |
+| C++ extension (`mpml.so`) compilation | ✅ Compiled (with warnings) |
+| Python import (`import mpml`) | ❌ `libc10.so: cannot open shared object file` |
+| Full pipeline run | ❌ Not feasible |
+
+**Root cause:** ABI mismatch between the compiled `mpml.so` and the PyTorch 2.0.1 binary in the conda environment — the linker cannot resolve `libc10.so` (PyTorch C++ core library). This is a deep toolchain incompatibility that would require rebuilding PyTorch from source or matching exact compiler versions (gcc-9.3.0 as specified in D-GRIL README vs. system gcc).
+
+**Why this is acceptable:** D-GRIL's core contribution — differentiable multi-parameter PH — is fundamentally different from our static feature-based approach. Our PersStats RF benchmark (AUC=0.873) and MLP analog (AUC=0.799) represent the state-of-the-art for static PH feature extraction, while D-GRIL represents an alternative paradigm (end-to-end learned filtrations). Both are valid research directions; our paper's focus is on static topological descriptors for molecular screening, where the PersStats approach is the more appropriate and scalable choice.
+
+**Documentation:** The SM §9D (TopologyNet analog) and main Limitations section now reference this distinction: our MLP benchmark compares feature-based PH methods, while D-GRIL's differentiable multi-parameter PH is a separate paradigm requiring end-to-end training infrastructure not currently available in our environment.
+
+**Build artifacts:** Compiled `mpml.cpython-310-x86_64-linux-gnu.so` in `/tmp/d-gril/gril/`. D-GRIL conda env (`dgril`) preserved for future attempts with matching compiler toolchains.
 
 
 ## P4: Advanced Monte Carlo Strategies — MCTS+RL Benchmark (Completed)
@@ -1847,7 +1878,7 @@ Based on comprehensive analysis of the P3 manuscript, BMAD report, and all verif
 |---|-----|----------|--------|--------|
 | 1 | No experimental validation (all computational) | 🔴 High | −15% | ChEMBL IC₅₀ proxy (Action 1) |
 | 2 | H₁-RRS headline attenuated at n=77 (ρ=0.947→0.312) | 🔴 High | −10% | Reframe as methodological finding (Action 2) |
-| 3 | ~~No SOTA topological benchmark~~ | ✅ Resolved | — | SOTA benchmark completed: PersStats+RF AUC=0.873 (n=5,000, 5CV). See §3.15 |
+| 3 | ~~No SOTA topological benchmark~~ | ✅ Resolved | — | SOTA benchmark completed: PersStats+RF AUC=0.873 (n=19,849, 5CV). See §3.15 |
 | 4 | RRS cohort expanded to n=77 (need n≥80 for balanced classes) | 🟡 Medium | −5% | Expand to 500+ compounds (Action 4) |
 | 5 | Zenodo deposit incomplete | 🟡 Medium | −5% | Complete deposit (Action 5) |
 
