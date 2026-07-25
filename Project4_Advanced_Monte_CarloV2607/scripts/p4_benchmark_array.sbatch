@@ -6,7 +6,9 @@
 # robustness. Each task runs one seed and writes per-seed CSV results.
 #
 # Usage:
-#   sbatch --array=0-9%5 scripts/p4_benchmark_array.sbatch
+#   sbatch --array=0-19%8 scripts/p4_benchmark_array.sbatch
+#
+# Note: Uses 108-fragment vocabulary (same as MCTS array) for fair comparison.
 #
 # Output:
 #   results/benchmark/p4_benchmark_seed_N.csv  (per-task)
@@ -14,13 +16,13 @@
 #   results/benchmark/p4_benchmark_table.tex    (LaTeX table)
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p4_benchmark
-#SBATCH --array=0-4%5
+#SBATCH --array=0-19%8
 #SBATCH --output=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_benchmark_%j.log
 #SBATCH --error=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_benchmark_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
-#SBATCH --time=02:00:00
+#SBATCH --time=06:00:00
 #SBATCH --partition=production
 #SBATCH --export=ALL
 
@@ -52,7 +54,7 @@ _LOG_PATH="${PROJECT_DIR}/logs/slurm/p4_benchmark_${SLURM_ARRAY_TASK_ID:-unknown
 exec > "${_LOG_PATH}" 2>&1
 
 # ── Configuration ────────────────────────────────────────────────────
-N_ITERATIONS="${N_ITERATIONS:-500}"
+N_ITERATIONS="${N_ITERATIONS:-1000}"
 GA_POPULATION="${GA_POPULATION:-50}"
 GA_GENERATIONS="${GA_GENERATIONS:-20}"
 MAX_STEPS="${MAX_STEPS:-10}"
