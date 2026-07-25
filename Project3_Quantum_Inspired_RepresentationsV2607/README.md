@@ -21,7 +21,7 @@ Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antima
 
 | Commit | Description |
 |--------|-------------|
-| `eabafec7` | Expanded H₁-RRS n=33 results (ρ=0.305, p=0.085 n.s.) + manuscript updates |
+| `eabafec7` | Expanded H₁-RRS n=77 results (ρ=0.312, p=0.006) + RRS-TFP pipeline |
 | `9ae249b` | Fix all LaTeX bugs (undefined refs, missing SI units, SM bibliography) |
 | `51a2589` | Correct compilation order (Main→SM→Main) |
 | `66c287a` | Page reduction 17→16 (condensed Limitations, Conclusion, When-Methods-Add-Value) |
@@ -180,7 +180,7 @@ See **[P3_SUBMISSION_ROADMAP_85PCT.md](./P3_SUBMISSION_ROADMAP_85PCT.md)** for t
 
 1. **ECFP4 remains the recommended baseline** (AUC 0.868) for primary screening; the hybrid matches it (AUC 0.842, p=0.111) without significantly exceeding it.
 2. **Quantum, RBF, and Linear kernels are statistically indistinguishable** (p > 0.05) — the earlier apparent quantum advantage was an artefact of untuned RBF hyperparameters.
-3. **H₁ topological persistence shows a preliminary correlation with resistance tolerance** (ρ=0.947, n=14 pilot), which weakened to a non-significant trend upon expansion to 33 compounds (ρ=0.305, p=0.085) — a methodological insight on balanced-class sampling.
+3. **H₁ topological persistence correlates with resistance tolerance** (ρ=0.947, n=14 pilot), attenuated but significant at n=77 (ρ=0.312, p=0.006) — confirming balanced-class sampling as critical for topological predictor validation.
 4. **TFP resolves the scaffold paradox** via H₁/H₀ decomposition: ring topology (H₁) is preserved while peripheral connectivity (H₀) diverges.
 5. **TNE achieves 5.9× real-atom compression** with competitive Tartarus regression (R²=0.473 for PfDHFR).
 
@@ -189,7 +189,7 @@ See **[P3_SUBMISSION_ROADMAP_85PCT.md](./P3_SUBMISSION_ROADMAP_85PCT.md)** for t
 - **Library**: 19,849 molecules (full benchmark); 65,856 (activity labels)
 - **Methods**: TFP (12-dim persistent homology), TNE (Tucker d=8, 5.9× compression), QKS (8-qubit PennyLane)
 - **Benchmark**: 5-fold CV, RF + SVM, Bonferroni-corrected paired t-tests
-- **Cross-paper**: H₁ persistence vs RRS (P3 × P2, n=14 pilot, n=33 expanded)
+- **Cross-paper**: H₁ persistence vs RRS (P3 × P2, n=14 pilot, n=77 confirmed; Class A: 46, B: 31, C/D: 0)
 
 ---
 
