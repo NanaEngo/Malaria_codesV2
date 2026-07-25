@@ -188,7 +188,8 @@ following a critical rollout fix (global best-molecule tracking,
   \centering
   \caption{Benchmark statistics across 20 independent seeds (MCTS: standalone $n=20$; Greedy/GA/Random: $n=5$). Values show
     mean~$\pm$~standard deviation over five independent runs.}
-  \label{tab:benchmark}    \begin{tabular}{lcccc}
+  \label{tab:benchmark}
+  \begin{tabular}{lcccc}
     \toprule
     Method & Mean reward & Max reward & Std & Time (s) \\
     \midrule
@@ -197,10 +198,12 @@ following a critical rollout fix (global best-molecule tracking,
     Random & 0.555 & 0.572 & 0.031 & 47.7 \\
     MCTS+ScafVAE$^{a}$ & 0.623 & 0.636 & 0.008 & 272.7 \\
     \bottomrule
-    \multicolumn{5}{l}{\footnotesize $^{a}$MCTS results from standalone 20-seed benchmark (108 fragments,}\
-    \multicolumn{5}{l}{\footnotesize 1000 iterations). Greedy/GA/Random from 5-seed comparison;}\
-    \multicolumn{5}{l}{\footnotesize full 20-seed 4-method comparison in progress (Job 12134).}\
   \end{tabular}
+
+  \vspace{2pt}
+  {\footnotesize $^{a}$MCTS results from standalone 20-seed benchmark (108 fragments,
+  1000 iterations). Greedy/GA/Random from 5-seed comparison;
+  full 20-seed 4-method comparison in progress (Job 12134).}
 \end{table}
 
 Random completes in $\sim$49~s per seed, Greedy in $\sim$147~s, GA in
@@ -279,12 +282,12 @@ of the trade-off surface \cite{Zitzler2003}.
     A6 & 0.88 & 0.66 & 0.78 & --- \\
     A7 & 0.84 & 0.70 & 0.82 & --- \\
     \bottomrule
-    \multicolumn{5}{l}{\footnotesize P1--P5: QMC-validated candidates from the MCTS search.}
-    \\
-    \multicolumn{5}{l}{\footnotesize A1--A7: additional non-dominated solutions from the same search,}
-    \\
-    \multicolumn{5}{l}{\footnotesize not selected for QMC validation.}
   \end{tabular}
+
+  \vspace{2pt}
+  {\footnotesize P1--P5: QMC-validated candidates from the MCTS search.
+  A1--A7: additional non-dominated solutions from the same search,
+  not selected for QMC validation.}
 \end{table}
 
 The seven additional solutions (A1--A7) occupy complementary regions:
@@ -428,9 +431,11 @@ The top-five Pareto-optimal candidates were selected for DMC validation.
     4 & 0.76 & 0.61 & ---$^{a}$ & 0.80 \\
     5 & 0.74 & 0.58 & ---$^{a}$ & 0.77 \\
     \bottomrule
-    \multicolumn{5}{l}{\footnotesize $^{a}$DMC computations pending (CHPC queue).} \
-    \multicolumn{5}{l}{\footnotesize Real $E_{\text{corr}}$ values will be deposited upon completion.} \
   \end{tabular}
+
+  \vspace{2pt}
+  {\footnotesize $^{a}$DMC computations pending (CHPC queue).
+  Real $E_{\text{corr}}$ values will be deposited upon completion.}
 \end{table}
 
 With only $n = 5$ candidates, formal statistical inference is precluded;
