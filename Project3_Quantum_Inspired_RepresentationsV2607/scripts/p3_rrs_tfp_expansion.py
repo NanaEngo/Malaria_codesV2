@@ -84,10 +84,15 @@ def _distance_matrix_from_conformer(mol, conf_id=0):
 
 
 def _distance_matrix_3d(mol):
+    if mol is None or mol.GetNumAtoms() < 2:
+        return None
     params = AllChem.ETKDGv3()
     params.randomSeed = 42
     params.useRandomCoords = True
-    if AllChem.EmbedMolecule(mol, params) != 0:
+    try:
+        if AllChem.EmbedMolecule(mol, params) != 0:
+            return None
+    except Exception:
         return None
     try:
         AllChem.MMFFOptimizeMolecule(mol, maxIters=200)
@@ -103,6 +108,8 @@ def _distance_matrix_3d(mol):
 
 
 def _distance_matrix_2d(mol):
+    if mol is None or mol.GetNumAtoms() < 2:
+        return None
     atoms = list(mol.GetAtoms())[:MAX_ATOMS]
     n = len(atoms)
     if n < 2:
@@ -129,7 +136,12 @@ def smiles_to_distance_matrix(smiles):
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
         return None
-    mol = Chem.AddHs(mol)
+    try:
+        mol = Chem.AddHs(mol)
+    except Exception:
+        return None
+    if mol is None or mol.GetNumAtoms() < 2:
+        return None
     dm = _distance_matrix_3d(mol)
     if dm is not None:
         return dm
@@ -314,7 +326,11 @@ def main():
     for i, (idx, smiles) in enumerate(need_tfp):
         if i % 10 == 0:
             print(f"  Processing {i+1}/{len(need_tfp)}...")
-        tfp = compute_tfp_for_smiles(smiles)
+        try:
+            tfp = compute_tfp_for_smiles(smiles)
+        except Exception as e:
+            print(f"  WARNING: TFP failed for compound {idx}: {e}")
+            tfp = None
         row_data = {'smiles': smiles, 'index': idx}
         if tfp is not None:
             for j, col in enumerate(TFP_COLUMNS):
