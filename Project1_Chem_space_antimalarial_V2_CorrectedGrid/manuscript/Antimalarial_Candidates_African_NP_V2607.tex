@@ -338,9 +338,16 @@ The authors declare no competing financial interest.
 We acknowledge the Ersilia Open Source Initiative (\url{https://www.ersilia.io}, accessed on December 2025) for machine learning models, ChEMBL and DrugBank for compound data, MMV for Malaria Box, and RDKit.
 
 \section*{Data availability}
-SMILES strings for all \num{65856} compounds and primary lead structures are available in the Supplementary Materials. 3D ligand structures, computational workflows, and raw docking results have been deposited on Zenodo (DOI: \\url{https://doi.org/10.5281/zenodo.19608875}) and are also archived in the project repository (\url{https://github.com/Vital-Sao/Malaria_codes}, accessed on 16 April 2026). The dataset is FAIR-compliant: \textbf{Findable} (permanent DOI via Zenodo), \textbf{Accessible} (freely downloadable without login), \textbf{Interoperable} (open formats: CSV, SMILES, PDB, PDBQT), and \textbf{Reusable} (CC BY 4.0 license). While raw enrichment metric CSVs are not archived as standalone files, the source datasets for docking threshold calibration (\texttt{p1\_threshold\_calibration.csv}) and MMV Malaria Box target consensus docking are fully provided in the repository to support reproducibility.
 
-\bibliography{../bibliography/Sao_Chim_Space}
-
+The following six data components are deposited in the Zenodo repository (DOI: \url{https://doi.org/10.5281/zenodo.19608875}) and mirrored in the project repository (\url{https://github.com/Vital-Sao/Malaria_codes}, accessed on 16 April 2026):
+\begin{enumerate}
+    \item Complete SMILES library: \num{65856} hybrid compounds (NP + SD + generative expansion) in \texttt{eos80ch\_malaria\_final\_activity.csv}
+    \item Primary synthesizable leads: \num{19913} candidates (SYBA $>$ 0, MPO $\geq$ 0.40) in \texttt{c6\_primary\_leads\_synthesisable.csv}
+    \item 3D ligand structures: \num{484} centroid conformers (PDB/PDBQT formats) and full-cluster rescoring results (\num{1815} molecules)
+    \item Raw docking results: Vina + DiffDock scores for all four \textit{P. falciparum} targets (PfDHFR, PfCRT, PfATP4, PfClpP)
+    \item Computational workflows: analysis scripts, VAE training configurations, MPO sensitivity matrices, and enrichment validation pipelines
+    \item Source datasets for reproducibility: docking threshold calibration (\texttt{p1\_threshold\_calibration.csv}), MMV Malaria Box target consensus docking, and Tartarus external benchmark scores
+\end{enumerate}
+SMILES strings for all \num{65856} compounds are also available in the Supplementary Materials. The dataset is FAIR-compliant: \textbf{Findable} (permanent DOI via Zenodo), \textbf{Accessible} (freely downloadable without login), \textbf{Interoperable} (open formats: CSV, SMILES, PDB, PDBQT), and \textbf{Reusable} (CC BY 4.0 license). Source datasets for docking threshold calibration (\texttt{p1\_threshold\_calibration.csv}) and MMV Malaria Box target consensus docking are fully provided in the repository to support reproducibility.
 \end{document}
 
