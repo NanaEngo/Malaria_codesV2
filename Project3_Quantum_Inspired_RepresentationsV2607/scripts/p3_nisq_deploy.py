@@ -93,37 +93,55 @@ def _get_ibm_service():
         sys.exit(1)
 
     from qiskit_ibm_runtime import QiskitRuntimeService
-    return QiskitRuntimeService(channel="ibm_quantum", token=token)
+    return QiskitRuntimeService(channel="ibm_quantum_platform", token=token)
+
+def _resolve_backend(service, backend_name: str = "ibm_brisbane"):
+    """Get a backend object from the service. Tries the named backend first,
+    then falls back to the best available backend."""
+    try:
+        return service.backend(backend_name)
+    except Exception as e:
+        print(f"  NOTE: {backend_name} not in your plan — picking best available")
+        backends = service.backends()
+        if backends:
+            for b in backends:
+                if hasattr(b, 'num_qubits') and b.num_qubits >= 100:
+                    print(f"  Using available backend: {b.name} ({b.num_qubits} qubits)")
+                    return b
+            b = backends[0]
+            print(f"  Using available backend: {b.name}")
+            return b
+        raise RuntimeError(f"Backend {backend_name} not found")
+
 
 
 # ──────────────────────────────────────────────────────────────────────
 # NISQ kernel function (IBM Quantum backend)
 # ──────────────────────────────────────────────────────────────────────
 
-def _make_nisq_kernel_fn(n_qubits: int, service, backend: str,
-                         resilience: int = 0, shots: int = 1024):
+def _make_nisq_kernel_fn(n_qubits: int, service, backend: str, shots: int = 1024):
     """
     Build a PennyLane quantum kernel function using IBM Quantum hardware.
 
-    Uses IQPEmbedding on qiskit.remote device with optional error mitigation.
+    Uses IQPEmbedding on qiskit.remote device. The backend is resolved
+    dynamically via _resolve_backend (tries named backend, falls back to
+    best available).
 
     Args:
         n_qubits: Number of qubits (8 for P3)
         service: QiskitRuntimeService
         backend: IBM backend name (e.g., 'ibm_brisbane')
-        resilience: Error mitigation level (0-2)
         shots: Number of measurement shots
 
     Returns:
         kernel: callable K(x1, x2) → float
     """
+    backend_obj = _resolve_backend(service, backend)
     dev = qml.device(
         "qiskit.remote",
         wires=n_qubits,
-        backend=backend,
-        service=service,
+        backend=backend_obj,
         shots=shots,
-        options={"resilience_level": resilience},
     )
 
     @qml.qnode(dev)

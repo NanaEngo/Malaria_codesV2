@@ -22,6 +22,23 @@ Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antima
 | **P1 Reconciliation** | ✅ All P3→P1 cross-refs verified (92.6%, 69.3%, ANPDB 94.9%, 1.84×) against canonical corrected-grid |
 | **Acceptance estimate** | **70–82%** → Roadmap to ≥85% documented in P3_ADVERSARIAL_AUDIT_MITIGATION.md |
 
+
+
+## NISQ Hardware Validation (July 25, 2026)
+
+### PennyLane → IBM Quantum Pipeline ✅
+
+| Test | Backend | Result |
+|------|---------|--------|
+| 2-qubit Bell state | ibm_fez (156 qubits) | `<XX>=+1.0056` (fidelity 0.0598) ✅ |
+| 2-qubit IQPEmbedding kernel | ibm_fez (156 qubits) | K(x₁,x₁)=0.988 (deviation 0.012) ✅ |
+
+- **Free tier**: IBM Quantum Open Plan (10 min/month, fair-share scheduler)
+- **Token**: saved at `~/.ibm_quantum_token` (permissions 600)
+- **Scripts**: `scripts/p3_nisq_smoke_test.py` (2-qubit), `scripts/p3_nisq_deploy.py` (8-qubit)
+- **Backend fallback**: auto-detects best available 100+ qubit device
+- **API**: pennylane-qiskit 0.45.0 + qiskit-ibm-runtime 0.45.1
+
 ### Recent Commits (July 24, 2026)
 
 | Commit | Description |

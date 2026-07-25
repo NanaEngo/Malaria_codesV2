@@ -68,7 +68,7 @@ def _get_ibm_service():
     try:
         from qiskit_ibm_runtime import QiskitRuntimeService
         service = QiskitRuntimeService(
-            channel="ibm_quantum",
+            channel="ibm_quantum_platform",
             token=token,
         )
         return service
@@ -82,24 +82,46 @@ def _get_ibm_service():
         sys.exit(1)
 
 
-def list_available_backends(service) -> list[str]:
+def list_available_backends(service) -> list:
     """List available IBM Quantum backends accessible to this account."""
     backends = service.backends()
     available = []
     for b in backends:
-        status = b.status()
-        name = b.name
-        qubits = b.num_qubits
-        pending = getattr(status, 'pending_jobs', '?')
-        available.append((name, qubits, pending))
+        try:
+            name = b.name
+            qubits = b.num_qubits if hasattr(b, 'num_qubits') else getattr(b.configuration(), 'n_qubits', '?')
+            pending = getattr(b.status(), 'pending_jobs', '?')
+            available.append((name, qubits, pending))
+        except Exception as e:
+            available.append((b.name if hasattr(b, 'name') else str(b), '?', f'error: {e}'))
     return available
+
+def _resolve_backend(service, backend_name: str = "ibm_brisbane"):
+    """Get a backend object from the service. Tries the named backend first,
+    then falls back to the best available backend."""
+    try:
+        return service.backend(backend_name)
+    except Exception:
+        # Try to find any available backend
+        backends = service.backends()
+        if backends:
+            # Prefer 127-qubit+ devices
+            for b in backends:
+                if hasattr(b, 'num_qubits') and b.num_qubits >= 100:
+                    print(f"  Using available backend: {b.name} ({b.num_qubits} qubits)")
+                    return b
+            # Fall back to first available
+            b = backends[0]
+            print(f"  Using available backend: {b.name}")
+            return b
+        raise RuntimeError(f"Backend {backend_name} not found and no other backends available")
 
 
 # ──────────────────────────────────────────────────────────────────────
 # 2-qubit smoke test circuit
 # ──────────────────────────────────────────────────────────────────────
 
-def create_bell_state_circuit(device_str: str, service=None, resilience: int = 0, backend: str = "ibm_brisbane"):
+def create_bell_state_circuit(device_str: str, service=None, resilience: int = 0, backend: str = "ibm_brisbane"):  # resilience kept for API compat, unused
     """
     Create a 2-qubit Bell state circuit on the specified device.
 
@@ -115,16 +137,15 @@ def create_bell_state_circuit(device_str: str, service=None, resilience: int = 0
     """
     if device_str == "qiskit.remote":
         try:
+            backend_obj = _resolve_backend(service, backend)
             dev = qml.device(
                 "qiskit.remote",
                 wires=2,
-                backend=backend,
-                service=service,
+                backend=backend_obj,
                 shots=1024,
-                options={"resilience_level": resilience},
             )
         except Exception as e:
-            print(f"  WARNING: Could not connect to ibm_brisbane: {e}")
+            print(f"  WARNING: Could not connect to {backend}: {e}")
             print("  Falling back to lightning.qubit simulator")
             dev = qml.device("lightning.qubit", wires=2)
     else:
@@ -148,7 +169,7 @@ def create_bell_state_circuit(device_str: str, service=None, resilience: int = 0
 # Kernel overlap test (the actual P3 circuit, but at 2 qubits)
 # ──────────────────────────────────────────────────────────────────────
 
-def create_kernel_overlap_circuit(device_str: str, service=None, resilience: int = 0, backend: str = "ibm_brisbane"):
+def create_kernel_overlap_circuit(device_str: str, service=None, resilience: int = 0, backend: str = "ibm_brisbane"):  # resilience kept for API compat, unused
     """
     2-qubit version of the P3 IQPEmbedding kernel circuit.
 
@@ -163,13 +184,12 @@ def create_kernel_overlap_circuit(device_str: str, service=None, resilience: int
     """
     if device_str == "qiskit.remote":
         try:
+            backend_obj = _resolve_backend(service, backend)
             dev = qml.device(
                 "qiskit.remote",
                 wires=2,
-                backend=backend,
-                service=service,
+                backend=backend_obj,
                 shots=1024,
-                options={"resilience_level": resilience},
             )
         except Exception:
             dev = qml.device("lightning.qubit", wires=2)
@@ -198,10 +218,7 @@ def main():
         "--backend", type=str, default="ibm_brisbane",
         help="IBM Quantum backend name (default: ibm_brisbane)"
     )
-    parser.add_argument(
-        "--resilience", type=int, default=0, choices=[0, 1, 2],
-        help="Error mitigation level (0=none, 1=light, 2=heavy)"
-    )
+    # (--resilience removed: not supported in qiskit-ibm-runtime 0.45 via pennylane-qiskit)
     parser.add_argument(
         "--simulator", action="store_true",
         help="Use lightning.qubit simulator instead of IBM Quantum"
@@ -246,7 +263,7 @@ def main():
     print(f"  Expected: <Z0> ≈ 0, <Z1> ≈ 0, <XX> ≈ 1.0 (perfect Bell state)")
 
     circuit, dev = create_bell_state_circuit(
-        device_str, service, args.resilience, args.backend
+        device_str, service, 0, args.backend
     )
     print(f"  Device: {dev.name} ({'IBM Quantum' if device_str == 'qiskit.remote' else 'simulator'})")
 
@@ -284,7 +301,7 @@ def main():
         print(f"  x2 = [{x2[0]:+.4f}, {x2[1]:+.4f}]")
 
         kernel_fn, kdev = create_kernel_overlap_circuit(
-            device_str, service, args.resilience, args.backend
+            device_str, service, 0, args.backend
         )
         print(f"  Device: {kdev.name}")
 
