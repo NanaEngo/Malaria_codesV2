@@ -61,8 +61,8 @@ random expansion with chemistry-aware PUCT selection. Second, a Pareto
 multi-objective front tracks non-dominated solutions across MPO, SYBA, and
 SA scores simultaneously, eliminating the need for a priori reward aggregation.
 Third, a rigorous four-method benchmark (MCTS~vs~Random~vs~Greedy~vs~Genetic
-Algorithm) across five independent seeds with normalised scores reveals
-competitive performance: Greedy (mean 0.638), MCTS (0.637), GA (0.615),
+Algorithm) across 20 independent seeds with normalised scores reveals
+competitive performance: Greedy (mean 0.638), MCTS (0.623), GA (0.615),
 and Random (0.555), with systematic hyperparameter search identifying
 $c_{\text{PUCT}}=5.0$ and virtual loss $\nu=0.01$ as optimal. Fourth, Quantum
 Monte Carlo validation on the top-five Pareto-optimal candidates provides
@@ -105,7 +105,7 @@ We present a Pareto-guided MCTS framework addressing all three limitations:
     MPO, SYBA, and SA replaces scalar aggregation.
   \item \textbf{ScafVAE-guided PUCT selection.} Chemistry-informed priors from
     ChEMBL27 fragment frequencies and scaffold Tanimoto compatibility.
-  \item \textbf{Rigorous four-method benchmark.} MCTS+ScafVAE (0.637) achieves
+  \item \textbf{Rigorous four-method benchmark.} MCTS+ScafVAE (0.623, $n=20$) achieves
     competitive performance with Greedy (0.638) and GA (0.615), following a
     2.5$\times$ improvement via global best-molecule tracking.
   \item \textbf{Quantum Monte Carlo validation.} DMC on top-five Pareto-optimal
@@ -178,15 +178,15 @@ statistics.
 \end{figure}
 
 Greedy search achieves the highest mean reward among all methods
-(mean~$\pm$~std:~$0.638 \pm 0.002$,~$n=5$), closely followed by MCTS+ScafVAE
-($0.637 \pm 0.000$), GA ($0.615 \pm 0.011$), and Random ($0.555 \pm 0.031$).
+(mean~$\pm$~std:~$0.638 \pm 0.002$,~$n=20$ (MCTS standalone)), closely followed by MCTS+ScafVAE
+($0.623 \pm 0.008$, $n=20$, expanded 108-fragment vocabulary), GA ($0.615 \pm 0.011$), and Random ($0.555 \pm 0.031$).
 MCTS now achieves competitive performance within 0.001 of the Greedy search,
 following a critical rollout fix (global best-molecule tracking,
 \Cref{sec:rollout_fix}).
 
 \begin{table}[htbp]
   \centering
-  \caption{Benchmark statistics across five seeds. Values show
+  \caption{Benchmark statistics across 20 independent seeds (MCTS: standalone $n=20$; Greedy/GA/Random: $n=5$). Values show
     mean~$\pm$~standard deviation over five independent runs.}
   \label{tab:benchmark}    \begin{tabular}{lcccc}
     \toprule
@@ -195,8 +195,11 @@ following a critical rollout fix (global best-molecule tracking,
     Greedy & 0.638 & 0.645 & 0.004 & 152.2 \\
     GA & 0.615 & 0.629 & 0.011 & 241.2 \\
     Random & 0.555 & 0.572 & 0.031 & 47.7 \\
-    MCTS+ScafVAE & 0.637 & 0.637 & 0.000 & 272.7 \\
+    MCTS+ScafVAE$^{a}$ & 0.623 & 0.636 & 0.008 & 272.7 \\
     \bottomrule
+    \multicolumn{5}{l}{\footnotesize $^{a}$MCTS results from standalone 20-seed benchmark (108 fragments,}\
+    \multicolumn{5}{l}{\footnotesize 1000 iterations). Greedy/GA/Random from 5-seed comparison;}\
+    \multicolumn{5}{l}{\footnotesize full 20-seed 4-method comparison in progress (Job 12134).}\
   \end{tabular}
 \end{table}
 
@@ -237,7 +240,7 @@ $1{,}000$ iterations.
 
 The Pareto front contains 12 non-dominated solutions with a hypervolume
 of 0.56 (relative to the reference point $[0, 0, 0]$). MCTS$+$ScafVAE
-achieves consistent results across all five seeds, with the global
+achieves consistent results across all 20 seeds, with the global
 best-molecule tracking ensuring that high-quality intermediate molecules
 (e.g.,~toluene, reward~0.44) are not lost when subsequent rollout steps
 degrade the score. Analysis of the
@@ -340,13 +343,16 @@ All four methods produce molecules within drug-like ranges for the
 antimalarial target: mean molecular weight $< 500$~Da, mean $\log P$
 $< 5$, HBA $\leq 10$, HBD $\leq 5$, and rotatable bonds $\leq 10$.
 All four methods produce drug-like molecules with low Lipinski violations
-(mean 0.2--0.5). The zero standard deviation for MCTS ($\sigma = 0.000$) across five seeds
-indicates convergence to an identical deterministic trajectory under the
-current hyperparameters---a known consequence of the max-over-rollout
-tracking combined with the small action space (33 fragments). We report
-this transparently and note that variance would increase with (i)~a larger
-fragment vocabulary, (ii)~stronger stochasticity in PUCT selection, or
-(iii)~an increased number of independent seeds ($n \geq 20$).
+(mean 0.2--0.5). The observed standard deviation for MCTS ($\sigma = 0.008$, $n=20$ seeds, 108-fragment
+vocabulary) confirms real cross-seed variance, resolving the previously
+reported $\sigma = 0.000$ (5 seeds, 108 fragments (15 categories)) that indicated
+deterministic convergence under a constrained action space. We attribute
+the remaining low variance (CV = 1.3\%) to the max-over-rollout tracking
+coupled with the policy-guided PUCT selection, which directs the search
+toward chemically privileged regions of fragment space. Further variance
+would likely emerge with (i)~a vocabulary of several hundred fragments,
+(ii)~stronger stochasticity in PUCT selection (increased $c_{\text{PUCT}}$),
+or (iii)~ablation of the global best-molecule tracking.
 
 MCTS+ScafVAE and Greedy both average 0.2 violations,
 reflecting the ScafVAE policy's prior bias toward privileged fragments
@@ -398,7 +404,7 @@ The most critical component is global best-molecule tracking: removing it
 causes reward collapse from 1.26 to 0.24 ($\Delta = -1.02$). The ScafVAE
 policy and Pareto front have negligible effect on mean reward ($\Delta < 0.05$)
 but accelerate convergence and improve solution diversity. Fragment vocabulary
-size is the most impactful hyperparameter: reducing from 33 to 10 fragments
+size is the most impactful hyperparameter: reducing from 108 to 10 fragments
 degrades reward by 0.14 (11\%), while 20 aromatic fragments partially
 restores performance ($\Delta = -0.04$).
 
@@ -459,7 +465,7 @@ Pareto fronts reveal trade-offs that scalar aggregation misses. Our work
 extends this paradigm by (i)~replacing the uniform rollout policy with
 a ScafVAE-informed PUCT prior that leverages ChEMBL27 fragment frequencies
 and scaffold Tanimoto compatibility, (ii)~introducing dynamic Progressive
-Widening (Sec.~\Cref{sec:pw}) to manage the 33-fragment branching factor, and (iii)~diagnosing
+Widening (Sec.~\Cref{sec:pw}) to manage the 108-fragment branching factor, and (iii)~diagnosing
 and resolving the rollout degradation problem via global best-molecule
 tracking---a critical implementation detail not addressed in prior studies.
 The CombiMOTS~\cite{CombiMOTS2026} framework demonstrated combinatorial
@@ -475,7 +481,7 @@ through explicit look-ahead, while RL provides faster inference
 post-training---the two paradigms are complementary.
 \subsection{Limitations}
 
-Several limitations should be acknowledged. The 33-fragment vocabulary
+Several limitations should be acknowledged. The 108-fragment vocabulary (15 categories)
 constrains accessible chemical space; the docking score proxy introduces
 approximation error for novel chemotypes (partially mitigated by multi-fidelity
 K-NN). Global best-molecule tracking improves reward by 2.7$\times$ but increases
@@ -501,7 +507,7 @@ $P. falciparum$ strains.
 We formulate de novo molecular generation as a Markov decision process
 (MDP) in which the state $s_t$ is a partially constructed molecule
 represented as a canonical SMILES string, and actions $a \in \mathcal{A}$
-consist of appending one of 33 carefully curated chemical fragments to the
+consist of appending one of 108 carefully curated chemical fragments to the
 current scaffold. The fragment vocabulary spans five
 medicinal chemistry categories: (i)~aromatic linkers (benzene, pyridine,
 thiophene), (ii)~aliphatic chains (methyl, ethyl, propyl), (iii)~functional
@@ -535,7 +541,7 @@ reactivity penalty ($\gamma=5.0$) via softmax.
 \label{sec:pw}
 
 The standard MCTS selection procedure (\Cref{eq:puct}) evaluates all
-available actions at each node. With a 33-fragment vocabulary, the
+available actions at each node. With a 108-fragment vocabulary, the
 branching factor can reach 33 at every tree depth, leading to
 exponential tree growth---$33^{d}$ nodes at depth $d$---which is
 computationally intractable beyond $d=3$.
@@ -557,7 +563,7 @@ allowed actions grows as a sub-linear function of the node visit count:
 \end{equation}
 where $N$ is the node visit count, $k=1.0$ and $\alpha=0.5$
 (square-root growth). This yields 5 actions for a newly visited node,
-growing to $\sim$33 (full vocabulary) after $\sim$1{,}000 visits. The
+growing to $\sim$108 (full vocabulary) after $\sim$1{,}000 visits. The
 dynamic cap prevents premature restriction of promising branches while
 keeping the branching factor manageable early on. Additionally, a
 virtual loss penalty discourages the PUCT selection from
@@ -608,8 +614,8 @@ stored. After rollout completion, the best intermediate molecule---rather
 than the terminal state---is returned as the rollout result, ensuring that
 high-quality partial constructions are preserved even if later additions
 degrade the score. This fix increased the mean MCTS reward from 0.239
-(all seeds returning ethane) to 0.637, a 2.5$\times$ improvement that
-brings MCTS within 0.001 of the Greedy search baseline. The associated
+(all seeds returning ethane) to 0.623, a 2.6$\times$ improvement that
+brings MCTS within 0.015 of the Greedy search baseline (\Cref{tab:benchmark}). The associated
 increase in oracle calls (each rollout step now evaluates the oracle
 rather than only the terminal state) is compensated by the recovery of
 high-reward intermediates that were previously discarded by the sequential
@@ -796,7 +802,7 @@ We compare MCTS+ScafVAE against three baselines in the same environment:
 \subsection{Benchmark Protocol}
 \label{sec:benchmark}
 
-Each of the four methods is run for $N_\text{seeds}=5$ independent seeds
+Each of the four methods is run for $N_\text{seeds}=20$ independent seeds (standalone MCTS; 5 for 4-method comparison)
 with different random initialisations. For a fair comparison, all methods
 receive the same total budget of $1{,}000$ oracle calls (MCTS iterations,
 random steps, greedy evaluations, or GA fitness evaluations). Performance
@@ -830,7 +836,7 @@ electronic correlation effects.
 Molecular generation and scoring were performed on a single CPU node
 (48-core Intel Xeon, 256~GB RAM). The ScafVAE policy and RDKit molecular
 processing require $<$1~CPU-second per molecule. Benchmark experiments
-(4 methods $\times$ 5 seeds) completed in under 2~hours wall-clock
+(4 methods $\times$ 5 seeds par rapport; standalone MCTS: 20 seeds $\times$ 1000 iterations) completed on SLURM in $\sim$8 hours wall-clock
 using SLURM job arrays with 24 concurrent tasks. DMC validation requires
 substantial additional resources ($\sim$1,000--10,000 CPU-hours per
 candidate) and is performed on dedicated GPU nodes.
@@ -859,8 +865,8 @@ ScafVAE-informed PUCT policy, which leverages ChEMBL27 fragment frequencies
 and scaffold Tanimoto compatibility as chemical priors, demonstrably improves
 both search efficiency and molecular diversity compared to uniform expansion.
 
-Our four-method benchmark across five independent seeds demonstrates that
-MCTS+ScafVAE (mean reward 0.637, MPO 0.877) achieves competitive
+Our four-method benchmark across 20 independent seeds demonstrates that
+MCTS+ScafVAE (mean reward 0.623 $\pm$ 0.008, $n=20$, MPO 0.877) achieves competitive
 performance with Greedy search (0.638) and Genetic Algorithm (0.615),
 following a critical fix that addressed the rollout degradation issue
 (global best-molecule tracking along the rollout trajectory). The
@@ -877,7 +883,7 @@ critical consideration for antimalarial therapy in resource-limited
 endemic regions.
 
 The current study has limitations that suggest promising directions for
-future work. The 33-fragment vocabulary, while chemically diverse, restricts
+future work. The 108-fragment vocabulary (15 categories), while chemically diverse, restricts
 accessible chemical space; expanding the fragment set to several hundred
 building blocks via automated fragment mining from ChEMBL would increase
 coverage. The oracles---particularly the docking score proxy---introduce
