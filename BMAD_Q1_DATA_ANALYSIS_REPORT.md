@@ -21,7 +21,7 @@ Three complementary projects generated and analyzed **over 85,000 unique molecul
 
 | Domain | Molecules Analyzed | Key Result | Status |
 |--------|-------------------|------------|--------|
-| P1 — Scaffold Novelty | 5,000 gen. + 396 seeds | **92.6% ECFP4-unreachable; 1.84× scaffold ratio** | Completed |
+| P1 — Scaffold Novelty | 5,000 gen. + 396 seeds | **92.6% ECFP4-unreachable; 1.84× scaffold ratio. P3 cross-references verified against canonical corrected-grid data.** | **92.6% ECFP4-unreachable; 1.84× scaffold ratio** | Completed |
 | P2 — Polypharmacology | 19,913 leads → 20 top candidates | **100% single-target optimized; 100% of 810 screened seeds with valid SI predictions had SI > 10** | Completed |
 | P3 — TDA/TNE Representations | 19,849 molecules | **99.93% TDA validity; 15.6× TNE compression** | Completed |
 | P3 — Hybrid Benchmark | 19,849 × 10 descriptors × 5CV | **ECFP4 AUC 0.868 vs Hybrid AUC 0.842 (p=0.111, ns)**; PHCO bug fixed (AUC 0.500 → ~0.83) | Completed |
@@ -1881,6 +1881,8 @@ The headline Spearman ρ=0.947 (n=14) from the original cross-paper analysis was
 - `results/p3_rrs_expanded_with_tfp_v2.csv` (77 classified compounds with TFP features)
 - SLURM jobs 12003–12012 (5 array tasks, all completed)
 
+
+**Update (July 25, 2026):** The RRS expansion to 500 compounds confirmed n=77 as the ceiling for the current polypharmacology filter (≥2 targets at ΔG ≤ -7.0 kcal/mol). Of 500 processed compounds, 423 (84.6%) failed the polypharmacology criterion, yielding 46 Class A + 31 Class B with no Class C/D representatives. This is a library-level constraint: most compounds in the Tartarus-screened set are single-target binders. The n=77 result (ρ=0.312, p=0.006) remains statistically significant; a 5,000-compound HPC run would be needed to reach n=80 with the same filter, but would not resolve the class imbalance. The manuscript Limitations "Third" now documents the polypharmacology filter as the bottleneck. The honest path is to report n=77 as final and frame the class-imbalance confound as a methodological finding.
 ### §3.14 P3 Acceptance Assessment & Roadmap to 85% (NEW — July 24, 2026)
 
 **Status:** ✅ COMPLETE — Assessment + Roadmap documented
