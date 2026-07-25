@@ -38,6 +38,24 @@ Three complementary projects generated and analyzed **over 85,000 unique molecul
 
 ---
 
+### Zenodo Deposit Status
+
+**DOI:** [10.5281/zenodo.19608875](https://doi.org/10.5281/zenodo.19608875) — reserved July 2026
+**Manifest:** `zenodo_manifest.txt` (858 files, 569.4 MB across P1–P4)
+**README:** `README_ZENODO.md` (deposit structure, key data files, citation)
+**Status:** ⚠️ Manifest ready; upload to Zenodo pending
+
+| Project | Files | Size | Key Contents |
+|---------|:-----:|:----:|-------------|
+| P1 — Chemical Space | 175 | 72 MB | ChEMBL enrichment, full-cluster rescoring (1,815 mols), MCMC, STONED leap |
+| P2 — MD Validation | 493 | 459 MB | RRS classification, MM-GBSA, mutant docking, cross-metric correlations |
+| P3 — Quantum-Inspired | 147 | 37 MB | Hybrid benchmark (19,849 mols), SOTA topological, ChEMBL validation, H₁-RRS |
+| P4 — Pareto MCTS | 43 | 1.5 MB | Four-method benchmark, Pareto front, hyperparameter search |
+
+Excluded: GROMACS trajectories (multi-GB), docking raw outputs (PDBQT), SLURM logs, IBM tokens.
+
+---
+
 ## P1: AI-Driven Chemical Space Exploration
 
 ### 1.1 Scaffold Novelty (Primary Finding)

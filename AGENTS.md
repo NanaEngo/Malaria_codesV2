@@ -394,3 +394,13 @@ Below are the free platforms where our 8-qubit IQPEmbedding circuit could be dep
 - pennylane-qiskit 0.45.0
 - qiskit 2.3.0
 - qiskit-ibm-runtime 0.45.1
+
+
+## Zenodo Deposit (July 25, 2026)
+
+- **DOI:** 10.5281/zenodo.19608875 (reserved)
+- **Manifest:** `zenodo_manifest.txt` — 858 files, 569.4 MB across P1–P4
+- **README:** `README_ZENODO.md` — full deposit structure and citation guide
+- **Status:** ⚠️ Manifest ready; upload pending (use Zenodo web UI or API)
+- **Contents:** All CSV results, Python/Bash/SLURM scripts, LaTeX source (.tex/.bib/.bst), README files, and key figures
+- **Excluded:** GROMACS trajectories, docking PDBQT files, SLURM logs, IBM tokens, .git/
