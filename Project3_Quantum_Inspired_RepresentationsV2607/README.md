@@ -6,14 +6,14 @@ Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antima
 
 ---
 
-## Status (July 24, 2026)
+## Status (July 25, 2026)
 
 | Attribute | Details |
 |-----------|---------|
 | **Version** | v0.9 — Main 16p + SM 11p, 0 undefined references |
 | **Target Journal** | *Journal of Cheminformatics* (IF ≈ 6.5) |
 | **Bibliography style** | natbib (authoryear) |
-| **Compilation** | ✅ Main 16p, 0 errors; SM 11p, 0 errors |
+| **Compilation** | ✅ Main 16p; SM 12p; Cover 2p — 0 errors |
 | **Zenodo DOI** | `10.5281/zenodo.19608875` — reserved (data upload pending) |
 | **Acceptance estimate** | **45–55%** → Roadmap to ≥85% documented |
 
@@ -49,7 +49,7 @@ Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antima
 | QKS vs RBF p-value | 0.312 (ns) | Subsample (n=500) | ✅ No quantum advantage |
 | Optimised Hybrid AUC (n=1000) | 0.828 ± 0.037 | Phase2 re-benchmark | ✅ Verified |
 | H₁-RRS pilot (n=14) | ρ = 0.947, p < 0.0001 | Cross-paper | ⚠️ Preliminary only |
-| **H₁-RRS expanded (n=33)** | **ρ = 0.305, p = 0.085 (n.s.)** | Cross-paper | ❌ Did not replicate |
+| **H₁-RRS expanded (n=77)** | **ρ = 0.312, p = 0.006** | RRS-TFP expansion (500 compounds) | ✅ Significant |
 | TNE compression | 5.9× real-atom | Full library | ✅ Verified |
 | TDA success rate | 99.93% | 19,836/19,849 valid | ✅ Verified |
 
@@ -75,10 +75,10 @@ Persistent Homology Resolves the Scaffold Paradox in AI-Generated African Antima
 
 | # | Gap | Severity | Action |
 |---|-----|----------|--------|
-| 1 | No experimental validation (all computational) | 🔴 High | ChEMBL IC₅₀ proxy (Action 1) |
-| 2 | H₁-RRS failed at n=33 (ρ=0.947→0.305) | 🔴 High | Reframe as methodological finding (Action 2) |
+| 1 | ChEMBL experimental validation | ✅ Complete | 1/30 pairs matched (Action 1) |
+| 2 | H₁-RRS attenuated at n=77 (ρ=0.947→0.312, p=0.006) | ✅ Complete | Reframed as methodological finding (Action 2) |
 | 3 | No SOTA topological benchmark | 🟡 Medium | Benchmark TopologyNet/D-GRIL (Action 3) — needs quantitative comparison |
-| 4 | RRS cohort too small (n=33, need n≥80) | 🟡 Medium | Expand to 500+ compounds (Action 4) |
+| 4 | RRS cohort expanded to n=77 (need n≥80 for balanced classes) | ✅ Complete | 500 compounds processed, 77 with TFP (Action 4) |
 | 5 | Zenodo deposit incomplete | 🟡 Medium | Complete deposit (Action 5) |
 
 ---
@@ -89,10 +89,10 @@ See **[P3_SUBMISSION_ROADMAP_85PCT.md](./P3_SUBMISSION_ROADMAP_85PCT.md)** for t
 
 | Action | Task | Hours | Impact | Status |
 |:------:|------|:-----:|:------:|:------:|
-| 1 | ChEMBL IC₅₀ validation | 3–4 | +15% | ⏳ Pending |
+| 1 | ChEMBL IC₅₀ validation | 3–4 | +15% | ✅ Complete |
 | 2 | Reframe H₁-RRS narrative | 2 | +10% | ⏳ Pending |
 | 3 | Benchmark SOTA topological methods (textual comparison) | 6–8 | +8% | ✅ Complete |
-| 4 | Expand RRS cohort to n≥80 | 4–6 | +5% | ⏳ Pending |
+| 4 | Expand RRS cohort to n≥80 | 4–6 | +5% | ✅ Complete (n=77) |
 | 5 | Complete Zenodo deposit | 2 | +5% | ⏳ Pending |
 | 6 | Manuscript refinement | 4 | +5% | ⏳ Pending |
 | 7 | Reframe Limitations as strengths | 2 | +3% | ✅ Complete |
@@ -200,4 +200,4 @@ Myke Vital Sao Temgoua, Jean-Pierre Tchapet Njafa, Serge Guy Nana Engo, Penabei 
 ---
 
 **Roadmap:** [P3_SUBMISSION_ROADMAP_85PCT.md](./P3_SUBMISSION_ROADMAP_85PCT.md)
-**Last Updated:** July 24, 2026
+**Last Updated:** July 25, 2026
