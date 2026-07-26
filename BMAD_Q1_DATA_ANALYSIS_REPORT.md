@@ -1,6 +1,6 @@
 # BMAD Q1 Data Analysis Report
 
-**Generated:** July 9, 2026 — **Updated July 25, 2026** (v30: P4 MCTS 20-seed benchmark completed (mean=0.623±0.008); v28: RRS expansion validated (ρ=0.361, n=77, 500 processed); SOTA n=5,000 smoke test confirmed; v27: D-GRIL build assessment (compiled, linker blocked); SOTA completed at n=19,849; ChEMBL36 bug fixed (7/231 matches); TopologyNet analog (MLP vs RF); adversarial audit completed; Limitations polished; Cohen's d added to SM SOTA table)
+**Generated:** July 9, 2026 — **Updated July 26, 2026** (v31: P4 MCTS 20-seed benchmark completed (mean=0.623±0.008); v28: RRS expansion validated (ρ=0.361, n=77, 500 processed); SOTA n=5,000 smoke test confirmed; v27: D-GRIL build assessment (compiled, linker blocked); SOTA completed at n=19,849; ChEMBL36 bug fixed (7/231 matches); TopologyNet analog (MLP vs RF); adversarial audit completed; Limitations polished; Cohen's d added to SM SOTA table)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Coverage:** P1 Chemical Space, P2 Polypharmacology, P3 Quantum-Inspired Representations, P4 MCTS Benchmark
@@ -1806,12 +1806,14 @@ The Pareto MCTS variant maintains a global non-dominated front across MPO (maxim
 
 | Metric | Value |
 |--------|:-----:|
-| Non-dominated solutions | 14 |
-| Hypervolume (ref. [0,0,1]) | 0.076 |
-| Clusters identified | 2 (high-MPO/moderate-SYBA; moderate-MPO/high-SYBA) |
-| Balanced candidates (frontier) | 5 |
+| Non-dominated solutions | **4** |
+| Hypervolume (normalised, active obj. only) | **1.1244** |
+| Active objectives | MPO, RRS, PNS (SYBA, SA constant — oracle fallback) |
+| Seeds with non-trivial front | **20/20** (was 2/20 before HV fix) |
+| Clusters identified | 2 (high-MPO ± RRS; moderate-MPO + high-RRS) |
+| Balanced candidates (frontier) | 3 |
 
-**Key insight:** The Pareto frontier includes molecules in concave regions of the trade-off surface that scalar-weighted optimisation systematically misses (Zitzler 2003).
+**Key insight:** After fixing the Pareto front computation to exclude constant objectives (SYBA=0, SA=3 for 99.6% of molecules due to oracle fallback), all 20 seeds produce meaningful Pareto fronts (mean HV=1.05 ± 0.21). The consolidated front contains 4 molecules representing genuine trade-offs between MPO, RRS, and PNS. Note: the hypervolume is normalised to the number of active objectives (k=3), making it not directly comparable to standard HV values.
 
 ### 4.7 Scaffold Diversity and Drug-Likeness
 
@@ -1858,7 +1860,7 @@ Spearman correlation between $E_{\text{corr}}$ and QKS: not computed (no real da
 | P4 — MCTS Benchmark (5 seeds) | 4 methods × 5 seeds × 1,000 calls | **MCTS fix validated: 0.597 | Greedy 0.614 | GA 0.592 | Random 0.547** | ✅ Complete |
 | P4 — Hyperparameter search | 32 configs × 2 seeds | **Optimal: c_PUCT=5.0, VL=0.01** | ✅ Complete |
 | P4 — Vocabulary ablation | 4 configs × 10 seeds | **Medium(24) Δ=+0.004, Aromatic(5) Δ=−0.074** | ✅ Completed (Job 12257) |
-| P4 — Pareto front analysis | 1,000 iterations | **14 non-dominated solutions, hypervol 0.076** | ✅ Complete |
+| P4 — Pareto front analysis | 20 seeds × 1000 iter (fixed code) | **4 solutions, HV=1.1244, 20/20 seeds HV>0** | ✅ Complete |
 | P4 — GA enhancements | 3 mods (annealing, stagnation, Dirichlet) | **Enhanced variant in ablation** | ✅ Complete |
 | P4 — QMC validation | 5 candidates, DMC + GFN2-xTB | **Removed from manuscript (insufficient rigor)** | 📝 Not in manuscript |
 | P4 — Manuscript | JCIM submission | **Discussion, Methods, Results drafted** | 📝 In progress |

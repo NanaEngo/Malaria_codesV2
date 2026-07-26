@@ -137,6 +137,13 @@ reports the top configurations ranked by mean reward.
     10 & 0.7 & 0.5 & 0.01 & 0.5 & 0.5 & 0.3132 \\
     \bottomrule
   \end{tabular}
+  \small
+  \textbf{Key:} M1 = CNC(=O)c1ccc(OC(C)C(C)(C)C)c(OC)c1;\
+  M2 = COc1c(C)cc(-c2ccc(S(N)(=O)=O)cc2)cc1C;\
+  M3 = CC1CCC(n2cccn2)NC1(c1ccccc1)C1OCCO1;\
+  M4 = COc1cc(CO)c(O)c(C)c1C.\
+  All SMILES are canonical representations. SYBA and SA are
+  excluded from dominance computation (see main text).
 \end{table}
 
 The key finding is that $c_{\text{PUCT}}=5.0$~consistently outperforms
@@ -234,51 +241,53 @@ $1{,}000$ iterations.
   \label{fig:pareto}
 \end{figure}
 
-The Pareto front contains 14 non-dominated solutions with a hypervolume
-of 0.076 (relative to the reference point $[0, 0, 0]$).
-The standard MCTS$+$ScafVAE benchmark (20 seeds, 1,000 iterations) yields
-consistent mean rewards ($0.623 \pm 0.008$), while the Pareto front is
-constructed by consolidating non-dominated solutions discovered across all
-seeds. Analysis of the
-front reveals two distinct clusters: (i)~high-MPO, moderate-SYBA
-candidates that prioritise drug-likeness over synthetic accessibility,
-and (ii)~moderate-MPO, high-SYBA candidates that are easier to
-synthesise at the cost of some drug-likeness. The Pareto frontier
-identifies 5 compounds that achieve balanced scores across all three
-objectives (\Cref{tab:pareto_all}). Notably, the frontier includes molecules that are not found
-by any scalar-weighted optimisation because they lie in concave regions
-of the trade-off surface \cite{Zitzler2003}.
+The Pareto front contains 4 non-dominated solutions representing genuine
+trade-offs across the three informative objectives (MPO, RRS, PNS), with a
+normalised hypervolume of 1.1244 after fixing the Pareto front computation
+to exclude constant objectives (SYBA and SA are dominated by oracle
+fallback defaults for generated molecules). The standard MCTS$+$ScafVAE
+benchmark (20 seeds, 1,000 iterations) yields consistent mean rewards
+($0.623 \pm 0.008$), while the Pareto front is constructed by
+consolidating non-dominated solutions discovered across all seeds.
+Analysis of the
+consolidated front from 20 seeds reveals 4 genuinely non-dominated
+solutions across the three informative objectives (MPO, RRS, PNS).
+Note that SYBA and SA are dominated by oracle fallback defaults
+($\text{SYBA}=0$, $\text{SA}=3$) for generated molecules not present
+in the precomputed C6 library, and are excluded from the Pareto
+dominance computation. The four frontier molecules span MPO from 0.729
+to 0.946 and RRS from 0.141 to 0.223, with PNS taking values of either
+0 or 1, suggesting two clusters: (i) broad-spectrum (PNS${}=1$)
+candidates with high MPO but moderate RRS, and (ii) resistance-focused
+(RRS $> 0.22$) candidates with lower MPO. The complete set of frontier
+molecules is reported in \Cref{tab:pareto_all}.
 
 \begin{table}[htbp]
   \centering
-  \caption{Complete 12-point Pareto front from the Pareto MCTS search.
-    Five lead candidates (P1--P5) show balanced scores across all three
-    objectives, while seven additional non-dominated solutions (A1--A7)
-    extend the front toward high-SYBA and high-SA$^{-1}$ extremes.
-    All 12 points are mutually non-dominated across MPO, SYBA, and SA$^{-1}$.}
+  \caption{Consolidated 4-point Pareto front from the
+    Pareto MCTS implementation with active-objective filtering
+    (20 seeds, 1,000 iterations). The front captures
+    genuine trade-offs between MPO, RRS, and PNS. SYBA and SA are
+    excluded from the dominance computation as they are dominated by
+    oracle fallback defaults for generated molecules.}
   \label{tab:pareto_all}
-  \begin{tabular}{lcccc}
+  \begin{tabular}{lccc}
     \toprule
-    Candidate & MPO $\uparrow$ & SYBA $\uparrow$ & SA$^{-1}$ $\uparrow$ \\
+    Abbreviated SMILES & MPO $\uparrow$ & RRS $\uparrow$ & PNS $\uparrow$ \\
     \midrule
-    P1 & 0.85 & 0.72 & 0.78 \\
-    P2 & 0.82 & 0.68 & 0.74 \\
-    P3 & 0.79 & 0.65 & 0.70 \\
-    P4 & 0.76 & 0.61 & 0.66 \\
-    P5 & 0.74 & 0.58 & 0.63 \\
-    A1 & 0.72 & 0.80 & 0.75 \\
-    A2 & 0.73 & 0.76 & 0.77 \\
-    A3 & 0.71 & 0.78 & 0.78 \\
-    A4 & 0.78 & 0.72 & 0.79 \\
-    A5 & 0.86 & 0.68 & 0.80 \\
-    A6 & 0.88 & 0.66 & 0.78 \\
-    A7 & 0.84 & 0.70 & 0.82 \\
+    M1 & 0.910 & 0.211 & 1.000 \\
+    M2 & 0.945 & 0.196 & 1.000 \\
+    M3 & 0.946 & 0.141 & 0.000 \\
+    M4 & 0.729 & 0.223 & 1.000 \\
     \bottomrule
   \end{tabular}
-
-  \vspace{2pt}
-  {\footnotesize P1--P5: Lead candidates from the Pareto MCTS search.
-  A1--A7: additional non-dominated solutions from the same search.}
+  \small
+  \textbf{Key:} M1 = CNC(=O)c1ccc(OC(C)C(C)(C)C)c(OC)c1;\
+  M2 = COc1c(C)cc(-c2ccc(S(N)(=O)=O)cc2)cc1C;\
+  M3 = CC1CCC(n2cccn2)NC1(c1ccccc1)C1OCCO1;\
+  M4 = COc1cc(CO)c(O)c(C)c1C.\
+  All SMILES are canonical representations. SYBA and SA are
+  excluded from dominance computation (see main text).
 \end{table}
 
 The seven additional solutions (A1--A7) occupy complementary regions:
@@ -313,6 +322,13 @@ within each method. \Cref{tab:diversity} reports the diversity metrics.
     Lipinski violations (mean) & 0.2 & 0.4 & 0.2 & 0.5 \\
     \bottomrule
   \end{tabular}
+  \small
+  \textbf{Key:} M1 = CNC(=O)c1ccc(OC(C)C(C)(C)C)c(OC)c1;\
+  M2 = COc1c(C)cc(-c2ccc(S(N)(=O)=O)cc2)cc1C;\
+  M3 = CC1CCC(n2cccn2)NC1(c1ccccc1)C1OCCO1;\
+  M4 = COc1cc(CO)c(O)c(C)c1C.\
+  All SMILES are canonical representations. SYBA and SA are
+  excluded from dominance computation (see main text).
 \end{table}
 
 Greedy achieves the highest scaffold diversity (mean pairwise
@@ -377,6 +393,13 @@ across 10 independent seeds with $1{,}000$ iterations per seed.
     Minimal & 5 & $0.618 \pm 0.009$ & $-0.006$ \\
     \bottomrule
   \end{tabular}
+  \small
+  \textbf{Key:} M1 = CNC(=O)c1ccc(OC(C)C(C)(C)C)c(OC)c1;\
+  M2 = COc1c(C)cc(-c2ccc(S(N)(=O)=O)cc2)cc1C;\
+  M3 = CC1CCC(n2cccn2)NC1(c1ccccc1)C1OCCO1;\
+  M4 = COc1cc(CO)c(O)c(C)c1C.\
+  All SMILES are canonical representations. SYBA and SA are
+  excluded from dominance computation (see main text).
 \end{table}
 
 Two findings merit attention. First, the medium vocabulary (24 fragments)
@@ -664,8 +687,10 @@ three phases of the MCTS loop:
 
 This Pareto-MCTS integration ensures that the tree search explores diverse
 regions of the trade-off surface rather than collapsing toward a single
-weighted optimum. The resulting front (\Cref{fig:pareto}) contains 14
-non-dominated solutions with a hypervolume of 0.076, including molecules
+weighted optimum. The resulting front (\Cref{fig:pareto}) contains 4
+non-dominated solutions with a normalised hypervolume of 1.1244
+(excluding constant objectives from the dominance computation),
+including molecules
 in concave regions that scalar-weighted optimisation systematically
 overlooks (\Cref{fig:pareto}). The computational overhead of
 maintaining the Pareto front is minimal ($<1\%$ of total search
