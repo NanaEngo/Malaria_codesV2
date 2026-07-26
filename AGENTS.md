@@ -15,7 +15,7 @@
 │   Données brutes (HPC)                                        │
 │        │                                                      │
 │        ▼                                                      │
-│   DATA_ANALYSIS_REPORT_V2607.md ←── BOUSSOLE ──┐             │
+│   BMAD_Q1_DATA_ANALYSIS_REPORT.md ←── BOUSSOLE ──┐           │
 │        │                                        │             │
 │        ▼                                        │             │
 │   Manuscrit P1/P2/P3/P4                         │             │
@@ -31,7 +31,7 @@
 
 ### Règles pour les agents AI
 
-1. **Lire le data analysis report AVANT toute action** — `DATA_ANALYSIS_REPORT_V2607.md` est la boussole
+1. **Lire le data analysis report AVANT toute action** — `BMAD_Q1_DATA_ANALYSIS_REPORT.md` est la boussole
 2. **Toute modification de code, de paramètres ou de protocole** doit être documentée dans le data analysis report AVANT exécution
 3. **Ne jamais modifier le pipeline de benchmark** sans validation préalable dans le data analysis report
 4. **Tout résultat inattendu** (AUC différant de >0.02 de l'attendu) doit être investigué et documenté dans le data analysis report
@@ -41,7 +41,7 @@
 
 ---
 
-## 📊 État des Projets (aligné sur DATA_ANALYSIS_REPORT_V2607.md)
+## 📊 État des Projets (aligné sur BMAD_Q1_DATA_ANALYSIS_REPORT.md)
 
 ### P1 — Chemical Space & Docking ✅ (Soumission prête)
 
@@ -77,7 +77,7 @@
 | **QKS canonical** | ✅ Complété | Quantum 0.751 vs RBF 0.701 (gamma-tuned) |
 | **PHCO corrigé** | ✅ Complété | 0.500→0.801 (GetOnBits fix) |
 | **Phase 1 — Grid search (n=200)** | ✅ **Complété** | **bd=6, nr=1, nk=30 → AUC 0.8534** |
-| **Phase 2 — Re-benchmark (n=1000)** | ✅ **Complété** | Optimised: 0.828±0.037, 0.805±0.035, 0.812±0.040 |
+| **Phase 2 — Re-benchmark (n=5,000)** | ✅ **Complété** | **Combo 1: 0.8283±0.0371 (gagnant), Combo 2: 0.8121, Combo 3: 0.8047** |
 | Figures SM (heatmap, boxplot, table) | ✅ Générées | `results/figures/p3_qp_*.png` |
 | **TNE embeddings (bond_dim=8)** | ✅ **Généré** | 19,836/19,849 valides, 192 dims, 5.9× compression |
 | **TDA fingerprints (19,849 mol.)** | ✅ **Généré** | 19,849/19,849 valides, 0 échecs, 78 features |
@@ -100,19 +100,17 @@
 | `results/eos80ch_malaria_final_activity.csv` | ✅ Existant | 65,856 | Activités |
 | `results/c6_primary_leads_synthesisable.csv` | ✅ Existant | 19,913 | SMILES + scores MPO |
 
-#### Détail Phase 2 (prochaine action P3)
+#### Détail Phase 2 (n=5,000) — ✅ Complété (Jobs 12340-12342)
 
-Exactement comme défini dans `DATA_ANALYSIS_REPORT_V2607.md` §3.4 :
+**Résultats de l'évaluation des 3 combos sur n=5,000 molécules :**
 
-**3 combos à évaluer sur n=5,000 molécules :**
+| Combo | bond_dim | n_repeats | n_kpca | AUC (n=200) | AUC (n=5,000) | Statut |
+|:-----:|:--------:|:---------:|:------:|:-----------:|:-------------:|:------:|
+| **1 (Meilleur)** | **6** | **1** | **30** | **0.8534** | **0.8283 ± 0.0371** | ✅ **Confirmé gagnant** |
+| 2 | 6 | 6 | 30 | ~0.83 | 0.8121 ± 0.0396 | Évalué |
+| 3 | 6 | 6 | 20 | ~0.82 | 0.8047 ± 0.0354 | Évalué |
 
-| Combo | bond_dim | n_repeats | n_kpca | AUC (n=200) |
-|:-----:|:--------:|:---------:|:------:|:-----------:|
-| 1 (meilleur) | 6 | 1 | 30 | **0.8534** |
-| 2 | 6 | 6 | 30 | ~0.83 |
-| 3 | 6 | 6 | 20 | ~0.82 |
-
-**Note :** Le sbatch actuel (`p3_single_combo.sbatch`) est hardcodé pour bd=6,nr=1,nk=30 uniquement. Pour les 3 combos, il faudra soit créer 3 sbatchs, soit modifier le sbatch pour accepter `--bond-dim`, `--n-repeats`, `--n-kpca` via `--export`.
+**Conclusion Phase 2 :** Le combo 1 (`bd=6, nr=1, nk=30`) est confirmé comme la meilleure configuration hyperparamétrique. Prêt pour le benchmark Phase 3 (n=19,849).
 
 ### P4 — Advanced Monte Carlo 🔄 (Manuscrit en rédaction)
 
@@ -134,8 +132,7 @@ Exactement comme défini dans `DATA_ANALYSIS_REPORT_V2607.md` §3.4 :
 ```
 Malaria_codesV2/
 ├── AGENTS.md                              ← Ce fichier (LA BOUSSOLE)
-├── DATA_ANALYSIS_REPORT_V2607.md          ← Data analysis report (SOURCE DE VÉRITÉ)
-├── BMAD_Q1_DATA_ANALYSIS_REPORT.md        ← BMAD compliance report
+├── BMAD_Q1_DATA_ANALYSIS_REPORT.md        ← Data analysis & BMAD report (SOURCE DE VÉRITÉ)
 ├── synthese_audit_adverseriel_V2607.md    ← Audit adverse (P1)
 ├── Nouvel audit adversériel.md            ← Audit adverse (tous projets)
 ├── code_audit_V2607.md                    ← Code audit
@@ -271,9 +268,8 @@ git add -A && git commit -m "message" && git push origin master
 
 | Document | Rôle |
 |:---------|:-----|
-| `DATA_ANALYSIS_REPORT_V2607.md` | **BOUSSOLE** — Toute décision doit s'y référer |
+| `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | **BOUSSOLE** — Data analysis & BMAD report (Toute décision doit s'y référer) |
 | `synthese_audit_adverseriel_V2607.md` | Audit adverse P1 — suggestions traitées ✅ |
-| `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | Rapport BMAD (P1–P3 couverts) |
 | `Project1_Chem_space_antimalarial_V2_CorrectedGrid/README.md` | Notes P1 |
 | `Project4_Advanced_Monte_CarloV2607/P4_MC_Strategies.md` | Stratégie P4 |
 

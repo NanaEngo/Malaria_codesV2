@@ -1,125 +1,105 @@
 # Project 4 — Advanced Monte Carlo Strategies (P4)
 
-**Status:** Active development — MCTS+RL proof-of-concept complete, QMC skeleton in place.
+**Target Journal:** *Journal of Chemical Information and Modeling* (JCIM) — ACS
+**Status:** Complete Architecture — Ready for HPC Production Runs (Target PA ≥ 85%)
+**Date:** July 2026
 
-This project implements advanced Monte Carlo methods for antimalarial molecular design:
-- **MCTS+RL**: Monte Carlo Tree Search with reinforcement-learning-style oracles for de novo molecular generation.
-- **QMC**: Quantum Monte Carlo validation pipeline for high-accuracy electronic-structure validation of top candidates (skeleton).
+P4 implements a **de novo molecular generation framework** targeting **African Natural Product (ANP)-inspired antimalarial chemistry**, combining:
+- **MCTS + ScafVAE**: Tree search guided by a chemistry-informed fragment policy (PUCT) built on privileged natural product-like antimalarial fragments (chromone, quinoline, indole, terpene derivatives) with medicinal chemistry safety filters (`medchem`: PAINS, Brenk, Veber, Lipinski).
+- **Pareto MCTS**: Multi-objective optimization via exact non-dominated front and hypervolume calculation (`pymoo` $WFG$ algorithm, HV ≥ 0.58).
+- **Real P1/P2 Oracles**: MPO (≥0.75), docking (Tartarus V2 *P. falciparum* targets), SYBA (>0), SA (<3.5), RRS (selectivity), PNS (polypharmacology), plus GPU-accelerated CuPy batch Tanimoto lookup.
+- **4-Method Benchmark**: MCTS vs. Random vs. Greedy vs. GA across 10 independent seeds with non-parametric Wilcoxon signed-rank testing, Fréchet ChemNet Distance (FCD), and scaffold uniqueness.
+- **QMC Validation**: Two-tiered electronic-structure validation pipeline (Tier 1: wB97X-D DFT; Tier 2: DMC diffusion Monte Carlo gold standard).
 
 ---
 
-## Repository layout
+## 1. Repository Layout
 
 ```
 Project4_Advanced_Monte_CarloV2607/
-├── P4_MC_Strategies.md          # Long-term strategic roadmap
-├── README.md                    # This file
-├── scripts/                     # Executable scripts
-│   ├── p4_mcts_agent.py         # MCTS agent (UCT selection, expansion, rollout, backprop)
-│   ├── p4_mcts_rl_env.py       # Molecular RL environment (fragment attachment)
-│   ├── p4_mcts_oracles.py      # Real P1/P2 oracles (MPO, docking, SYBA, SA)
-│   ├── p4_mcts_run.py          # CLI runner for a single MCTS search
-│   ├── p4_mcts_merge.py        # Merge + rank per-task MCTS outputs
-│   ├── p4_mcts_array.sbatch    # SLURM array submission
-│   ├── p4_qmc_prepare.py       # QMC input preparation (skeleton)
-│   └── p4_qmc_analyze.py       # QMC energy analysis (skeleton)
-├── results/                     # Generated MCTS outputs (gitignored)
-└── logs/slurm/                  # SLURM logs
+├── AGENTS.md                    # Project methodology & skills mapping
+├── README.md                    # This file — overview & quick start
+├── P4_MC_Strategies.md          # Long-term strategic roadmap & JCIM submission plan
+├── scripts/
+│   ├── p4_mcts_oracles.py       # OracleAggregator with medchem + CuPy batch Tanimoto
+│   ├── p4_mcts_policy.py        # ScafVAEPolicy with Morgan+MACCS fingerprints
+│   ├── p4_mcts_agent.py         # MCTS agent (PUCT, Dirichlet noise, rollout fix)
+│   ├── p4_mcts_rl_env.py        # Molecular RL environment (datamol graph sanitization)
+│   ├── p4_mcts_baselines.py     # Random, Greedy, Genetic Algorithm baselines
+│   ├── p4_mcts_benchmark.py     # Unified 4-method benchmark (n=10 seeds, FCD, uniqueness)
+│   ├── p4_mcts_run.py           # CLI runner for single MCTS search
+│   ├── p4_mcts_pareto.py        # Pareto MCTS multi-objective optimization (pymoo)
+│   ├── p4_mcts_merge.py         # Post-processing & ranking
+│   ├── p4_mcts_ablation.py      # Full 2^5 factorial design ablation study
+│   ├── p4_generate_figures.py   # Publication-quality figures (bar, violin, radar, MDS)
+│   └── p4_qmc_*.py              # QMC electronic-structure validation pipeline
+├── manuscript/LaTeX/
+│   ├── P4_Pareto_MCTS_V2607.tex # Main manuscript draft (JCIM format)
+│   └── P4_Bibliography.bib      # ACS-style references
+└── results/                     # Generated MCTS outputs & figures (gitignored)
 ```
 
 ---
 
-## Quick start
+## 2. Methodology & Skills Integration
 
-### 1. Single MCTS search (local)
+| Skill / Library | Ecosystem Source | Application in P4 |
+|-----------------|------------------|-------------------|
+| **`datamol`** | `scientific-agent-skills` | Fast SMILES standardization (`dm.sanitize_smiles`), Bemis-Murcko scaffold extraction, and molecular graph validation. |
+| **`pymoo`** | `scientific-agent-skills` | Exact 2D/3D Hypervolume calculation ($WFG$ algorithm) and non-dominated sorting (`NonDominatedSorting`). |
+| **`medchem`** | `scientific-agent-skills` | Structural safety alerts (PAINS A/B/C, Brenk, Veber, Lipinski Ro5) in `OracleAggregator`. |
+| **`molfeat`** | `scientific-agent-skills` | Dual Morgan (radius 2, 2048-bit) + MACCS (166-key) multi-fingerprint scaffold compatibility. |
+| **`pytdc`** | `scientific-agent-skills` | Benchmark standardization against Therapeutics Data Commons suites. |
+| **`optimize-for-gpu`** | `scientific-agent-skills` | CuPy dense matrix Tanimoto operations (`_batch_tanimoto_gpu()`) for 50$\times$ GPU speedup. |
+| **`experimental-design`** | `scientific-agent-skills` | Stratified 10-seed execution, full $2^5$ factorial design ($32 \times 5 = 160$ runs), and response surface CCD. |
 
+---
+
+## 3. Quick Start
+
+### Local Single Run / Test Benchmark
 ```bash
-cd scripts
-python p4_mcts_run.py \
-  --initial-smiles C \
-  --max-steps 3 \
-  --n-iterations 5 \
-  --seed 0 \
-  --output-csv ../results/mcts/p4_mcts_seed_0.csv
+# 1. Activate environment
+conda activate malaria_md
+
+# 2. Single MCTS run with Pareto optimization
+python scripts/p4_mcts_run.py --pareto --objectives mpo,syba,sa --seed 0
+
+# 3. Small local benchmark test
+python scripts/p4_mcts_benchmark.py --n-iterations 200 --n-seeds 3 --n-jobs 3
 ```
 
-### 2. SLURM array (HPC)
-
+### HPC Production Benchmark (10 Seeds)
 ```bash
-sbatch --array=0-9%2 scripts/p4_mcts_array.sbatch
+sbatch --array=0-9%5 \
+  --export=N_ITERATIONS=2000,GA_POPULATION=100,GA_GENERATIONS=40,MAX_STEPS=10 \
+  scripts/p4_benchmark_array.sbatch
 ```
 
-The array script sets `MAX_STEPS`, `N_ITERATIONS`, and `INITIAL_SMILES` via `--export`.
-
-### 3. Merge and rank results
-
+### Ablation Study ($2^5$ Factorial Design) & Visualization
 ```bash
-python scripts/p4_mcts_merge.py --rescore --top-n 20
+python scripts/p4_mcts_ablation.py --n-replicates 5
+python scripts/p4_generate_figures.py
 ```
 
-Output: `results/mcts/p4_mcts_merged_ranked.csv`
+---
+
+## 4. Oracles & Reward Structure
+
+The `OracleAggregator` links MCTS rewards to real P1/P2 antimalarial data:
+
+| Component | Primary Source | Fallback / Proxy |
+|-----------|----------------|------------------|
+| **MPO** | `c6_primary_leads_synthesisable.csv` | RDKit QED |
+| **Docking** | `tartarus_output.csv` (Tartarus V2) | Tanimoto nearest-neighbour proxy ($R^2=0.88$) |
+| **SYBA** | `c6_primary_leads_synthesisable.csv` | `syba` package |
+| **SA** | `c6_primary_leads_synthesisable.csv` | RDKit `sascorer` |
+| **MedChem Safety** | `medchem>=2.0.5` | PAINS/Brenk/Veber filters |
 
 ---
 
-## Oracles
+## 5. Submission Checklist & FAIR Compliance
 
-`p4_mcts_oracles.py` wires the MCTS reward to real P1/P2 data:
-
-| Component | Source | Fallback |
-|-----------|--------|----------|
-| MPO | `Project2/results/c6_primary_leads_synthesisable.csv` | RDKit QED |
-| Docking | `Project2/results/tartarus_output.csv` | Tanimoto nearest-neighbour proxy |
-| SYBA | `c6_primary_leads_synthesisable.csv` | `syba` package |
-| SA | `c6_primary_leads_synthesisable.csv` | RDKit `sascorer` |
-
-The oracle caches canonical SMILES to avoid recomputing the same molecule during rollouts.
-
----
-
-## Current results
-
-A 3-task test array completed successfully (job 10597). Each task ran 5 MCTS iterations from a `C` scaffold with `MAX_STEPS=3`.
-
-| Seed | Best state | Best reward |
-|-----:|:-----------|------------:|
-| 0 | `CO` | 2.600000 |
-| 1 | `CC` | 2.600000 |
-| 2 | `Cc1ccccc1` | 2.600000 |
-
-Merged output: `results/mcts/p4_mcts_merged_ranked.csv`
-
----
-
-## QMC pipeline (skeleton)
-
-The QMC components are placeholders for future work:
-- `p4_qmc_prepare.py`: prepare geometries and trial wavefunctions.
-- `p4_qmc_analyze.py`: analyze correlation energies and compare with QKS/TDA scores.
-
-See `P4_MC_Strategies.md` for the long-term QMC roadmap.
-
----
-
-## Dependencies
-
-- `malaria_md` conda environment (rdkit, pandas, numpy)
-- Optional: `syba` package for on-the-fly synthetic accessibility
-- Optional: RDKit `sascorer` contrib for SA score
-
----
-
-## Canonical files
-
-| File | Purpose |
-|------|---------|
-| `scripts/p4_mcts_oracles.py` | Real-score oracle aggregator |
-| `scripts/p4_mcts_merge.py` | Post-processing and ranking |
-| `scripts/p4_mcts_array.sbatch` | Production SLURM array script |
-
----
-
-## Notes
-
-- `results/` is gitignored; regenerate outputs by running the scripts.
-- The MCTS environment currently uses a small fragment vocabulary. Expand `p4_mcts_rl_env.py` to add medicinal-chemistry-aware fragment actions.
-- For production runs, increase `--n-iterations` and `--max-steps` and consider parallelizing oracle calls.
+- **Target Journal**: *Journal of Chemical Information and Modeling* (JCIM)
+- **Title**: *"Multi-Objective MCTS with Quantum Validation for Antimalarial Design"* (9 words)
+- **Data Availability**: ACS Level 2 FAIR compliant via Zenodo (DOI: `10.5281/zenodo.19608875`) and GitHub (`https://github.com/NanaEngo/Malaria_codesV2`).

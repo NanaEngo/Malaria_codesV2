@@ -458,3 +458,29 @@ Grid search systématique sur 32 configurations × 2 seeds (64 évaluations, 30 
 - Named ligand RRS results (job 7948, pending queue — switched to production)
 - Full 1,815-molecule congeneric series TDA + QKS (§5.5 of audit)
 - PfATP4 9N10 chain filtering (PfABP exclusion check)
+
+---
+
+## 6. P3 Physical Validation — Strategic 85% PA Implementation
+
+> **Documenté AVANT exécution** (conformément au workflow AGENTS.md)
+> **Plan :** `P3_Strategic_85PA.md` execution roadmap (Steps 1–4)
+> **Script :** `Project3_.../scripts/p3_physical_validation.py` (nouveau)
+> **Output :** `results/p3_physical_validation/`
+
+### 6.1 Plan d'exécution (documenté avant lancement)
+
+| Step | Analyse | Méthode | Output attendu | Statut avant exécution |
+|:----:|:--------|:--------|:---------------|:---------------------:|
+| 1 | Merge tartarus + TNE + TDA par SMILES | pandas inner join | `p3_merged_dataset.csv` | ⏳ Planifié |
+| 2 | TNE regression → docking ΔG | RandomForestRegressor, 5-fold CV, R² + Spearman ρ + **parity plots** | `p3_tne_regression.csv` + `p3_tne_parity.png` | ⏳ Planifié |
+| 3 | **Real QKS polypharmacology** (remplace le surrogate polynomial classique) | PennyLane IQPEmbedding 8-qubit, n=1000, **10-fold** stratified CV, **Wilcoxon signed-rank** + **Bonferroni correction** | `p3_polypharm_qks.csv` + summary | ⏳ Planifié |
+| 4 | TDA H1 vs binding promiscuity | Spearman ρ + **bootstrap 95% CI** (10000 resamples) + Pearson r | `p3_tda_promiscuity.csv` + figure | ⏳ Planifié |
+
+### 6.2 Correction critique vs implémentation existante
+
+L'implémentation existante (`p3_tartarus_validation.py`, July 8) utilise un **surrogate polynomial classique** (`PCA-8D + SVC(kernel='poly')`) au lieu d'un vrai quantum kernel PennyLane. Le plan stratégique exige `pennylane (QKS)` — un vrai circuit IQPEmbedding 8-qubit. Le nouveau script corrige cela en réutilisant le machinery de `p3_qks_benchmark.py` (`build_quantum_kernel`, `kernel_matrix`, `closest_psd_matrix`).
+
+### 6.3 Résultats (à remplir après exécution)
+
+> ⏳ Les résultats seront documentés ici après l'exécution du script.

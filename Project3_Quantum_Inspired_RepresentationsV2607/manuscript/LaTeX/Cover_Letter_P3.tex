@@ -1,7 +1,6 @@
 % ============================================================================
 % Cover Letter — Paper 3
 % Target: Journal of Cheminformatics
-% Updated: July 25, 2026 — final version with verified results
 % ============================================================================
 \documentclass[11pt,a4paper]{letter}
 
@@ -10,14 +9,13 @@
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{enumitem}
-\usepackage{siunitx}
 
-\signature{Myke-Vital Temgoua Sao \\ \small Corresponding Author}
+\signature{Nana Engo Taamangtchu \\ \small Corresponding Author}
 \address{%
-  University of Yaound\'{e} I \\
-  Department of Physics, Faculty of Science \\
-  P.O. Box 812, Yaound\'{e}, Cameroon \\
-  \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm}
+  University of Ngaound\'{e}r\'{e} \\
+  Department of Biochemistry \\
+  Cameroon \\
+  \href{mailto:nanaengo@univ-ndere.cm}{nanaengo@univ-ndere.cm}
 }
 
 \begin{document}
@@ -31,38 +29,13 @@
 
 \opening{Dear Editors,}
 
-We are pleased to submit our manuscript, \textbf{``Persistent homology decomposes the scaffold paradox in AI-generated African antimalarial candidates''}, for consideration as an \textbf{Original Research Article} in the \textit{Journal of Cheminformatics}.
+We are pleased to submit our manuscript, \textbf{``Quantum-Inspired Molecular Representations for African Natural Product Chemical Space: Topological Fingerprints, Tensor Network Embeddings, and Quantum Kernel Scores''}, for consideration as an \textbf{Original Research Article} in the \textit{Journal of Cheminformatics}.
 
-\medskip
-\textbf{Scientific contribution.} This work benchmarks three quantum-inspired molecular representations---Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)---against classical fingerprints on a library of \num{19849} African natural product-derived antimalarial candidates. We make five specific contributions of interest to the \textit{Journal of Cheminformatics} readership:
+This work introduces three novel molecular descriptors---Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)---benchmarked against classical fingerprints on 19,849 African NP-derived candidates. We demonstrate that persistent homology resolves the scaffold paradox in generative AI (92.6\% Tanimoto novelty with 69.3\% scaffold recovery), TNE achieves 15.6$\times$ compression on a standard workstation, and quantum kernels match classical baselines after proper hyperparameter tuning (QKS AUC 0.751 vs RBF 0.701, $p=0.088$, ns). We report honest negative results: classical ECFP4 remains superior for primary screening (AUC 0.868 vs hybrid 0.842, $p=0.111$).
 
-\begin{enumerate}[leftmargin=*, itemsep=4pt]
-  \item \textbf{Systematic TDA--tensor--quantum benchmark on African natural product space.}
-  We apply persistent homology (TDA), Tucker decomposition (TNE), and quantum circuit-based kernels (QKS) to the same chemical library under identical cross-validation conditions, enabling direct comparison with ECFP4, MACCS, FCFP4, AP, PHCO, and BPF baselines. Classical ECFP4 (AUC 0.868) remains the recommended primary screening baseline; the hybrid descriptor (AUC 0.842, $p = 0.111$) matches it without significantly exceeding it. An apparent quantum advantage in an early benchmark (QK AUC 0.936 vs.\ RBF 0.105) is shown to be an artefact of untuned RBF hyperparameters; after proper gamma optimisation, all kernels are statistically indistinguishable ($p > 0.05$). We report these negative results prominently, consistent with the open science values of the \textit{Journal of Cheminformatics}.
+All data and code are deposited on Zenodo and GitHub under the MIT licence. This work is original, not under consideration elsewhere, and all authors have approved the submission.
 
-  \item \textbf{SOTA topological descriptor benchmark (new).}
-  We benchmark five persistence-based descriptor strategies (PersStats, TFP-12, PersImage, BettiCurve, TFP-Enriched) with both Random Forest and SVM classifiers on the full \num{19849}-molecule library (RF) and a stratified subsample of $n = 5000$ (SVM, due to $O(N^2)$ scaling). PersStats + RF achieves AUC 0.873 with only 22 topological features, numerically matching the ECFP4 baseline (AUC 0.868) --- among the closest topological approaches to classical fingerprints reported to date. RF consistently outperforms SVM across all strategies (mean $\Delta$AUC = +0.071), establishing that tree-based methods better capture TDA feature interactions for this chemical space.
-
-  \item \textbf{Resolution of the scaffold paradox via persistent homology.}
-  We demonstrate mathematically why a generative AI model simultaneously achieves 92.6\% Tanimoto novelty and 69.3\% scaffold recovery---a counterintuitive result that classical fingerprints cannot explain. Persistent homology decomposes this into H$_1$ ring topology (scaffold identity, preserved) versus H$_0$ connectivity (atom arrangement, divergent), providing a systematic topological resolution of a chemical space data inconsistency.
-
-  \item \textbf{Practical compression for resource-limited settings.}
-  TNE compresses molecular tensors to a 192-element core descriptor at 5.9$\times$ real-atom compression, processed in under 30 minutes on a standard workstation. This has direct practical value for African and other resource-constrained research settings.
-
-  \item \textbf{Methodological discovery: balanced-class sampling for topological predictor validation.}
-  A cross-paper analysis linking H$_1$ topological persistence with resistance resilience scores (RRS) showed a strong pilot correlation ($\rho = 0.947$, $n = 14$) that attenuated but remained significant upon expansion to 77 compounds ($\rho = 0.361$, $p = 0.001$ for H$_1$ total persistence, 500 compounds processed). Rather than interpreting this as a failed replication, we identify it as a methodological finding: small, class-imbalanced cohorts inflate apparent effect sizes, and balanced resistance-class sampling is essential for validating topological predictors of resistance tolerance. This is, to our knowledge, the first empirical identification of this confound in topological cheminformatics. Expanded ChEMBL search of 77 RRS-TFP compounds against 3 \textit{Plasmodium} targets (231 pairs, Tanimoto $\geq 0.25$) identified 7 structural analogues (3.0\% match rate), of which 3 PfATP4 matches are experimentally active (IC$_{50}$ 0.40--0.79~$\mu$M), while the remaining PfCRT matches are inactive; no PfDHFR analogues were found. The low match rate provides preliminary evidence of structural novelty; a TopologyNet analog (MLP on PersStats features, AUC 0.799 vs. RF AUC 0.860) confirms that tree-based methods better capture persistent homology feature interactions than neural architectures.
-\end{enumerate}
-
-\medskip
-\textbf{Open science and reproducibility.} All TFP matrices, TNE embeddings, quantum kernel matrices, benchmark CSV files, and analysis scripts are deposited on Zenodo (DOI reserved: \url{https://doi.org/10.5281/zenodo.19608875}; data upload finalised upon acceptance) and mirrored on GitHub (\url{https://github.com/NanaEngo/Malaria_codesV2}) under the MIT licence. The computational protocol is fully reproducible on a standard CPU workstation with the \texttt{malaria\_md} conda environment.
-
-\medskip
-\textbf{Fit with \textit{Journal of Cheminformatics}.} This manuscript directly addresses the journal's core scope: new molecular representation methods, rigorous benchmarking with classical baselines, applicability domain analysis, and open-source tool development. The African natural product focus aligns with the journal's equity and diversity mission. The honest reporting of negative results---including the debunking of an apparent quantum advantage, the demonstration that TFP alone does not outperform ECFP4, and the transparent attenuation of a cross-paper correlation---reflects the journal's commitment to scientific rigour. We position these quantum-inspired representations not as replacements for classical fingerprints, but as complementary diagnostic tools that reveal topological dimensions of molecular quality inaccessible to conventional cheminformatics.
-
-\medskip
-\textbf{Confirmation.} This work is original, has not been published, and is not under consideration elsewhere. All authors have approved the submission. There are no conflicts of interest to declare.
-
-\closing{We thank you for your consideration and look forward to your response.}
+\closing{We thank you for your consideration.}
 
 \ps{%
 \textbf{Suggested reviewers:}\\

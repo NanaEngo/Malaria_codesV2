@@ -191,12 +191,12 @@ def run_nisq_benchmark(
         # ── NISQ quantum kernel ─────────────────────────────────
         n_train = len(X_tr_q)
         print(f"    Building NISQ kernel ({n_train}x{n_train}, {n_train**2:,} evals)...")
-        print(f"    Backend: {backend} | Shots: {shots} | Resilience: {resilience}")
+        print(f"    Backend: {backend} | Shots: {shots}")
         print(f"    ⚠️  This will consume IBM Quantum compute time (~{n_train**2 * 0.005:.0f}s)")
 
         t0_qk = time.perf_counter()
         kernel_fn = _make_nisq_kernel_fn(
-            N_QUBITS, service, backend, resilience, shots
+            N_QUBITS, service, backend, shots
         )
 
         # Compute kernel matrices

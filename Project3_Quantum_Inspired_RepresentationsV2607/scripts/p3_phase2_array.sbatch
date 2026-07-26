@@ -13,15 +13,12 @@
 # Sortie : results/p3_phase2_array_N.csv  (fichier unique par tâche)
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p3_phase2
-#SBATCH --array=0-2%1
+#SBATCH --array=0-2%3
 #SBATCH --output=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_%j.log
 #SBATCH --error=/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/logs/slurm/p3_phase2_%j.err
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=8
 #SBATCH --mem=16G
-# Increased from 4G—the QK kernel matrix and PennyLane state vectors for
-# n=1,000 molecules require >4GB RSS. Lower memory causes thrashing
-# (block times: 210s→256s→406s→1,400s+).
 #SBATCH --time=48:00:00
 #SBATCH --partition=production
 #SBATCH --export=ALL
@@ -46,13 +43,15 @@ err_handler() {
 trap 'err_handler $?' ERR
 
 # ── Threading limits ─────────────────────────────────────────────────
-# lightning.qubit uses OpenMP and will auto-detect all node CPUs even when
-# SLURM allocates only one.  Limit each process to a single thread to
-# avoid oversubscription and context-switching overhead.
-export OMP_NUM_THREADS=4
-export OPENBLAS_NUM_THREADS=4
-export MKL_NUM_THREADS=4
-export NUMEXPR_NUM_THREADS=4
+# Optimized for penavoraserver (48 CPUs, 125 GB RAM). 3 jobs × 8 CPUs = 24 CPUs total.
+export OMP_NUM_THREADS=8
+export OPENBLAS_NUM_THREADS=8
+export MKL_NUM_THREADS=8
+export NUMEXPR_NUM_THREADS=8
+
+# Force JAX to use CPU backend when no GPU is requested
+export JAX_PLATFORMS=cpu
+export CUDA_VISIBLE_DEVICES=""
 
 # ── Configuration ────────────────────────────────────────────────────
 PYTHON="/home/nanaengo/miniforge3/envs/malaria_md/bin/python"
@@ -118,7 +117,7 @@ time "${PYTHON}" "${PROJECT_DIR}/scripts/p3_quantum_param_search.py" \
   --n-kpca "${NK}" \
   --n-mols "${N_MOLS}" \
   --block-size 200 \
-  --n-jobs 4 \
+  --n-jobs 8 \
   --output-csv "${OUT_CSV}" 2>&1
 
 # ── Sauvegarde unique par tâche (évite les races conditions) ────────
