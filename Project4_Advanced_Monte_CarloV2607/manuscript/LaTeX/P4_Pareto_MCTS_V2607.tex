@@ -235,11 +235,11 @@ $1{,}000$ iterations.
 \end{figure}
 
 The Pareto front contains 14 non-dominated solutions with a hypervolume
-of 0.076 (relative to the reference point $[0, 0, 0]$). MCTS$+$ScafVAE
-achieves consistent results across all 20 seeds, with the global
-best-molecule tracking ensuring that high-quality intermediate molecules
-(e.g.,~toluene, reward~0.44) are not lost when subsequent rollout steps
-degrade the score. Analysis of the
+of 0.076 (relative to the reference point $[0, 0, 0]$).
+The standard MCTS$+$ScafVAE benchmark (20 seeds, 1,000 iterations) yields
+consistent mean rewards ($0.623 \pm 0.008$), while the Pareto front is
+constructed by consolidating non-dominated solutions discovered across all
+seeds. Analysis of the
 front reveals two distinct clusters: (i)~high-MPO, moderate-SYBA
 candidates that prioritise drug-likeness over synthetic accessibility,
 and (ii)~moderate-MPO, high-SYBA candidates that are easier to

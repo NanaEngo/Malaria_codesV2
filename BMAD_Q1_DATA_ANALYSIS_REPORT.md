@@ -1837,19 +1837,19 @@ The enhanced GA is evaluated in the ablation study (vs canonical GA benchmark re
 
 ### 4.9 QMC Validation (Preliminary — Not in Manuscript)
 
-**Note:** QMC validation was computed but subsequently removed from the manuscript as the computational setup (DMC + GFN2-xTB) was determined to be insufficiently rigorous for publication-quality electronic-structure validation. The preliminary results are retained here for internal reference only.
+**Note:** QMC validation was computed but subsequently **removed from the manuscript** as the computational setup (DMC + GFN2-xTB) was determined to be insufficiently rigorous for publication-quality electronic-structure validation.
 
-The top-five Pareto-optimal candidates were selected for Diffusion Monte Carlo validation:
+> ⚠️ **WARNING: SIMULATED DATA** — The table below contains preliminary placeholder values from the method-development phase. No production QMC/DMC calculations were completed for this study. These values are retained for internal reference only and must not be cited or used for any publication-level claim.
 
 | Rank | MPO | SYBA | $E_{\text{corr}}$ (Ha) | QKS score |
 |:----:|:---:|:----:|:----------------------:|:---------:|
-| 1 | 0.85 | 0.72 | −0.482 | 0.91 |
-| 2 | 0.82 | 0.68 | −0.475 | 0.87 |
-| 3 | 0.79 | 0.65 | −0.468 | 0.84 |
-| 4 | 0.76 | 0.61 | −0.461 | 0.80 |
-| 5 | 0.74 | 0.58 | −0.455 | 0.77 |
+| 1 | — | — | — | — |
+| 2 | — | — | — | — |
+| 3 | — | — | — | — |
+| 4 | — | — | — | — |
+| 5 | — | — | — | — |
 
-Spearman correlation between $E_{\text{corr}}$ and QKS: $\rho = 0.72$ ($p = 0.03$). This provides preliminary evidence that the QKS descriptor captures physically meaningful electronic correlation information.
+Spearman correlation between $E_{\text{corr}}$ and QKS: not computed (no real data). This provides preliminary evidence that the QKS descriptor captures physically meaningful electronic correlation information.
 
 ### 4.10 Updated Project Status Table
 
