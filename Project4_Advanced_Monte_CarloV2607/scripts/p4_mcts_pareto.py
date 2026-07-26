@@ -31,6 +31,13 @@ class ParetoFront:
     Uses pymoo's non-dominated sorting and hypervolume computation for
     efficient and exact multi-objective optimization metrics.
 
+    **Robust to objectives with no variance**: When an objective has only
+    a single unique value across all solutions (e.g., SYBA=0 for all molecules
+    when the oracle returns a constant fallback), that objective is excluded
+    from the Pareto dominance check and hypervolume computation. This prevents
+    the false collapse of the Pareto front when certain oracles provide no
+    signal for the generated molecules.
+
     Parameters
     ----------
     objectives : list[str]
@@ -48,8 +55,34 @@ class ParetoFront:
         # Store (solution_smiles, vector_of_scores, metadata)
         self._solutions: list[tuple[str, np.ndarray, dict]] = []
 
+    def _detect_active_objectives(self) -> np.ndarray:
+        """Return a boolean mask of objectives that have >1 unique value.
+
+        Objectives with zero variance (all same value) provide no information
+        for Pareto dominance — they are excluded from the check and from the
+        hypervolume computation to prevent false collapse.
+        """
+        if len(self._solutions) < 2:
+            return np.ones(self.n_obj, dtype=bool)
+        vecs = np.array([v for _, v, _ in self._solutions])
+        # An objective is 'active' if it has more than 1 unique value
+        active = np.array([
+            len(np.unique(vecs[:, i])) > 1
+            for i in range(self.n_obj)
+        ])
+        # Ensure at least 2 active objectives for meaningful Pareto analysis
+        if active.sum() < 2:
+            # Fall back to using the first 2 objectives with highest variance
+            variances = vecs.var(axis=0)
+            top2 = np.argsort(variances)[-2:]
+            active[:] = False
+            active[top2] = True
+        return active
+
     def update(self, smiles: str, scores: dict[str, float], metadata: Optional[dict] = None) -> bool:
         """Try to add a new solution using pymoo's non-dominated check.
+
+        Only actively varying objectives are considered for dominance.
         Returns True if Pareto front was updated.
         """
         from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
@@ -59,25 +92,31 @@ class ParetoFront:
             self._solutions.append((smiles, vec, metadata or {}))
             return True
 
-        # Check dominance using pymoo's efficient algorithm
+        # Detect active (non-constant) objectives
+        active_mask = self._detect_active_objectives()
+
+        # Check dominance using only active objectives
         all_vecs = np.array([v for _, v, _ in self._solutions] + [vec])
         # pymoo minimises by default; negate maximised objectives
         sign = np.array([-1.0 if m else 1.0 for m in self.maximize])
         all_vecs_signed = all_vecs * sign[np.newaxis, :]
 
-        # NonDominatedSorting.do() returns a numpy array (not a list)
-        front_indices = NonDominatedSorting().do(all_vecs_signed, only_non_dominated_front=True)
-        non_dominated_mask = np.zeros(len(all_vecs_signed), dtype=bool)
+        # Only check non-dominated on active objectives
+        all_vecs_active = all_vecs_signed[:, active_mask]
+
+        # NonDominatedSorting.do() returns a numpy array
+        front_indices = NonDominatedSorting().do(all_vecs_active, only_non_dominated_front=True)
+        non_dominated_mask = np.zeros(len(all_vecs_active), dtype=bool)
         non_dominated_mask[front_indices] = True
 
-        # Check if new solution (last row) is non-dominated
+        # Check if new solution (last row) is non-dominated on active objectives
         if not non_dominated_mask[-1]:
-            return False  # new solution is dominated
+            return False  # new solution is dominated on active objectives
 
         # Rebuild non-dominated solutions (keep only old non-dominated + new)
         kept = [
-            (smi, vec, meta)
-            for i, (smi, vec, meta) in enumerate(self._solutions)
+            (smi, vec_, meta)
+            for i, (smi, vec_, meta) in enumerate(self._solutions)
             if non_dominated_mask[i]
         ]
         self._solutions = kept + [(smiles, vec, metadata or {})]
@@ -85,21 +124,42 @@ class ParetoFront:
 
     @property
     def solutions(self) -> list[tuple[str, np.ndarray, dict]]:
-        """Return the list of (smiles, score_vector, metadata) for non-dominated solutions."""
+        """Return the list of (smiles, score_vector, metadata) for non-dominated solutions.
+
+        Pareto dominance is evaluated only on actively varying objectives.
+        Constant objectives (e.g., SYBA=0 for all molecules when oracle
+        returns no signal) are excluded from the check.
+        """
         if not self._solutions:
             return []
         from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 
+        active_mask = self._detect_active_objectives()
+
         vecs = np.array([v for _, v, _ in self._solutions])
         sign = np.array([-1.0 if m else 1.0 for m in self.maximize])
-        # NonDominatedSorting.do() returns a numpy array directly
-        front_indices = NonDominatedSorting().do(vecs * sign[np.newaxis, :], only_non_dominated_front=True)
+        vecs_signed = vecs * sign[np.newaxis, :]
+
+        # Only check non-dominated on active objectives
+        vecs_active = vecs_signed[:, active_mask]
+        front_indices = NonDominatedSorting().do(vecs_active, only_non_dominated_front=True)
         return [self._solutions[i] for i in front_indices]
 
     def hypervolume(self, reference: Optional[np.ndarray] = None) -> float:
         """Exact hypervolume indicator using pymoo's algorithm.
 
-        Higher is better. Works for any number of objectives.
+        **Robust hypervolume**:
+        1. Excludes constant objectives (no variance) from the computation
+        2. Min-max normalises remaining objectives to [0, 1] before computing HV
+           to prevent scale differences from distorting the indicator
+        3. The reference point is set to 1.1 (slightly worse than the worst
+           normalised value of 1.0) in each active dimension
+
+        Returns a normalised hypervolume in [0, 1]^k where k is the number
+        of actively varying objectives. Returns 0.0 if fewer than 2 active
+        objectives are available.
+
+        Higher is better.
         """
         sols = self.solutions
         if not sols:
@@ -109,26 +169,33 @@ class ParetoFront:
             from pymoo.indicators.hv import Hypervolume
 
             vecs = np.array([v for _, v, _ in sols])
-            # Negate maximised objectives for pymoo (minimisation convention)
-            sign = np.array([-1.0 if m else 1.0 for m in self.maximize])
-            signed_vecs = vecs * sign[np.newaxis, :]
 
-            if reference is None:
-                # Reference point must be WORSE than all solutions (pymoo minimisation convention):
-                # use max + 10% margin instead of min - 10% margin
-                vmin = signed_vecs.min(axis=0)
-                vmax = signed_vecs.max(axis=0)
-                margin = 0.1 * (vmax - vmin)
-                ref_point = vmax + np.where(margin > 0, margin, 0.1)
-                ref_point = np.where(np.isinf(ref_point), 0.0, ref_point)
-            else:
-                ref_point = reference.copy()
-                for i, m in enumerate(self.maximize):
-                    if m:
-                        ref_point[i] = -ref_point[i]
+            # Exclude constant objectives
+            active_mask = self._detect_active_objectives()
+            if active_mask.sum() < 2:
+                return 0.0
+
+            vecs_active = vecs[:, active_mask]
+            sign_active = np.array([
+                -1.0 if m else 1.0
+                for i, m in enumerate(self.maximize)
+                if active_mask[i]
+            ])
+
+            # Negate maximised objectives for pymoo (minimisation convention)
+            signed_active = vecs_active * sign_active[np.newaxis, :]
+
+            # Min-max normalise each active objective to [0, 1]
+            vmin = signed_active.min(axis=0)
+            vmax = signed_active.max(axis=0)
+            ranges = np.where(vmax - vmin > 1e-10, vmax - vmin, 1.0)
+            normalised = (signed_active - vmin) / ranges
+
+            # Reference point: slightly worse than worst normalised value
+            ref_point = np.ones(active_mask.sum()) * 1.1
 
             hv = Hypervolume(ref_point=ref_point)
-            return hv.do(signed_vecs)
+            return hv.do(normalised)
         except ImportError:
             return 0.0
 
@@ -157,8 +224,8 @@ class PMCTSNode:
         return max(
             self.children.values(),
             key=lambda child: (
-                np.mean(child.value_vectors) if child.value_vectors else 0.0
-            ) / max(child.visits, 1)
+                float(np.sum(np.mean(child.value_vectors, axis=0))) if child.value_vectors else 0.0
+            )
             + c * math.sqrt(math.log(self.visits) / max(child.visits, 1)),
         )
 
@@ -298,17 +365,49 @@ class ParetoMCTSAgent:
         return node
 
     def _puct_best_child(self, node: PMCTSNode) -> PMCTSNode:
-        """Select child with highest PUCT score = Qbar + U - VL."""
+        """Select child with highest normalised multi-objective PUCT score.
+
+        Instead of scalarizing with np.mean() (which collapses all objectives
+        into one), this method:
+        1. Computes per-objective mean scores for each child
+        2. Min-max normalises each objective across all children to [0, 1]
+        3. Sums the normalised scores for the Q term
+
+        This prevents constant objectives (e.g., SYBA=0 for all molecules
+        when oracle returns a default fallback) from dominating the
+        selection, and ensures that objectives with different scales
+        contribute proportionally to the search.
+        """
         sqrt_n = math.sqrt(max(node.visits, 1))
         best_score = -float("inf")
         best_child = None
 
         node_priors = self._get_priors(node.state) if self.policy_fn else {}
         max_visits = max((c.visits for c in node.children.values()), default=1)
+        n_obj = len(self.objectives)
 
+        # Step 1: Compute per-objective mean vectors for all children
+        child_means: dict[str, np.ndarray] = {}
         for action, child in node.children.items():
-            # Q: mean scalar reward across stored multi-objective vectors
-            q = float(np.mean(child.value_vectors)) / max(child.visits, 1) if child.value_vectors else 0.0
+            if child.value_vectors:
+                mean_vec = np.mean(child.value_vectors, axis=0)
+            else:
+                mean_vec = np.zeros(n_obj)
+            child_means[action] = mean_vec
+
+        # Step 2: Min-max normalise each objective across children to [0, 1]
+        if n_obj > 1 and len(child_means) > 1:
+            all_means = np.array(list(child_means.values()))
+            obj_min = all_means.min(axis=0)
+            obj_max = all_means.max(axis=0)
+            obj_range = np.where(obj_max - obj_min > 1e-10, obj_max - obj_min, 1.0)
+            for action in child_means:
+                child_means[action] = (child_means[action] - obj_min) / obj_range
+
+        # Step 3: Select child with best PUCT score using normalised Q
+        for action, child in node.children.items():
+            # Q: sum of normalised per-objective means (already averaged across visits)
+            normalised_q = float(np.sum(child_means[action])) if child.value_vectors else 0.0
 
             # PUCT exploration bonus
             prior = node_priors.get(action, 0.0)
@@ -320,7 +419,7 @@ class ParetoMCTSAgent:
             visit_ratio = child.visits / max_visits if max_visits > 0 else 0.0
             vl = self.virtual_loss * visit_ratio
 
-            score = q + u - vl
+            score = normalised_q + u - vl
             if score > best_score:
                 best_score = score
                 best_child = child

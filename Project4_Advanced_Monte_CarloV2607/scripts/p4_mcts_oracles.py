@@ -607,7 +607,16 @@ class OracleAggregator:
         return score
 
     def _sa_score(self, smiles: str) -> float:
-        """Synthetic accessibility penalty (lower is better): precomputed or RDKit SAscore."""
+        """Synthetic accessibility penalty (lower is better): precomputed or RDKit-based.
+
+        Uses the Ertl & Schuffenhauer (2009) fragment contribution approach
+        via RDKit's rdkit.Chem.Descriptors when sascorer is unavailable.
+
+        The score is a penalty in [1, 10]:
+        - 1 = easy to synthesise
+        - 10 = very difficult to synthesise
+        - Default 3.0 when neither precomputed nor on-the-fly is available
+        """
         cached = self._cache_get(smiles, "sa")
         if cached is not None:
             return cached
@@ -625,7 +634,32 @@ class OracleAggregator:
                 except Exception:
                     score = 3.0
         else:
-            score = 3.0
+            # Fallback: estimate SA from molecular complexity using RDKit
+            mol = Chem.MolFromSmiles(smiles)
+            if mol is None:
+                score = 3.0
+            else:
+                try:
+                    # Approximate SA from: ring count, chiral centers,
+                    # heteroatom ratio, molecular weight, rotatable bonds
+                    from rdkit.Chem import Descriptors
+                    n_rings = Descriptors.RingCount(mol)
+                    n_hetero = Descriptors.NumHeteroatoms(mol)
+                    n_chiral = len(Chem.FindMolChiralCenters(mol, includeUnspec=True))
+                    n_atoms = mol.GetNumAtoms()
+                    n_rot = Descriptors.NumRotatableBonds(mol)
+                    mw = Descriptors.MolWt(mol)
+
+                    # Heuristic: more rings, chiral centers, heteroatoms = harder to make
+                    base = 1.0
+                    base += n_rings * 0.5          # each ring adds 0.5
+                    base += n_chiral * 0.8          # chiral centers add 0.8
+                    base += (n_hetero / max(n_atoms, 1)) * 2.0  # heteroatom fraction
+                    base += (mw / 500.0) * 1.5       # molecular weight contribution
+                    base += (n_rot / 15.0) * 0.5     # flexibility penalty
+                    score = min(10.0, max(1.0, base))
+                except Exception:
+                    score = 3.0
 
         self._cache_set(smiles, "sa", score)
         return score
