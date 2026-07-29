@@ -1,89 +1,50 @@
 #!/bin/bash
-# ═══════════════════════════════════════════════════════════════════════
-# P4 QMC — Array job for preparing Quantum Monte Carlo inputs
-#
-# Usage:
-#   sbatch --array=0-19%8 \
-#     --export=SMILES_FILE=/path/to/candidates.csv,CHUNK_SIZE=10,SKIP_HEADER=1 \
-#     scripts/p4_qmc_array.sbatch
-#
-# Each array task processes a chunk of SMILES from the input CSV and
-# writes QMC input directories under results/qmc_inputs/.
-# ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p4_qmc
-#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_qmc_%j.log
-#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_qmc_%j.err
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=2G
-#SBATCH --time=01:00:00
+#SBATCH --output=logs/slurm/p4_qmc_%A_%a.log
+#SBATCH --error=logs/slurm/p4_qmc_%A_%a.err
 #SBATCH --partition=production
-#SBATCH --export=ALL
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
+#SBATCH --time=24:00:00
+#SBATCH --array=0-4%2
 
 set -euo pipefail
 
-# ── Error trap ───────────────────────────────────────────────────────
+# ── Error trap ─────────────────────────────────────────────────────────
 err_handler() {
-  local exit_code="$1"
-  echo "ERROR: Task ${SLURM_ARRAY_TASK_ID} failed with exit code ${exit_code}" >&2
-  exit "${exit_code}"
+  echo "ERROR: Task ${SLURM_ARRAY_TASK_ID:-?} failed with exit code $1" >&2
+  exit "$1"
 }
 trap 'err_handler $?' ERR
 
-# ── Environment ─────────────────────────────────────────────────────
-PYTHON="/home/nanaengo/miniforge3/envs/malaria_md/bin/python"
-PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607"
-RESULTS_DIR="${PROJECT_DIR}/results"
+# ── Threading (respect --cpus-per-task=8, PySCF uses OpenMP) ──────────
+export OMP_NUM_THREADS=8
+export OPENBLAS_NUM_THREADS=8
+export MKL_NUM_THREADS=8
+export NUMEXPR_NUM_THREADS=8
 
-mkdir -p "${RESULTS_DIR}/qmc_inputs" "${PROJECT_DIR}/logs/slurm"
-
-# ── Log redirect (fix %a→4294967294) ────────────────────────────────
-_LOG_PATH="${PROJECT_DIR}/logs/slurm/p4_qmc_${SLURM_ARRAY_TASK_ID:-unknown}_${SLURM_JOB_ID}.log"
-exec > "${_LOG_PATH}" 2>&1
-
-# ── Configuration (override via --export) ────────────────────────────
-SMILES_FILE="${SMILES_FILE:-${PROJECT_DIR}/data/candidates.csv}"
-CHUNK_SIZE="${CHUNK_SIZE:-10}"
-SKIP_HEADER="${SKIP_HEADER:-1}"
-METHOD="${METHOD:-dft}"
-BASIS="${BASIS:-cc-pVTZ}"
-
-ID=${SLURM_ARRAY_TASK_ID:?ERROR: not running as array job?}
-
-# Compute zero-based line range for this task
-START=$((ID * CHUNK_SIZE + SKIP_HEADER))
-END=$((START + CHUNK_SIZE - 1))
-
-echo "═══ P4 QMC — Task ${ID} ═══"
-echo "  SMILES file: ${SMILES_FILE}"
-echo "  Chunk:       lines ${START}-${END}"
-echo "  Skip header: ${SKIP_HEADER}"
-echo "  Method:      ${METHOD}"
-echo "  Basis:       ${BASIS}"
-echo "  Host:        $(hostname)"
-echo "  Start:       $(date -u -Iseconds)"
-
-# ── Validate input file ─────────────────────────────────────────────
-if [ ! -f "${SMILES_FILE}" ]; then
-  echo "ERROR: SMILES file not found: ${SMILES_FILE}" >&2
+# ── Robust conda activation ───────────────────────────────────────
+# ── Robust conda activation (with fallback) ───────────────────────────
+if [ -d "${HOME}/miniforge3" ]; then
+  CONDA_BASE="${HOME}/miniforge3"
+elif [ -d "${HOME}/miniconda3" ]; then
+  CONDA_BASE="${HOME}/miniconda3"
+else
+  echo "ERROR: No conda installation found in ${HOME}" >&2
   exit 1
 fi
+source "${CONDA_BASE}/etc/profile.d/conda.sh"
+set +u && conda activate malaria_md && set -u
 
-# ── Extract chunk of SMILES ────────────────────────────────────────
-# Read the requested lines into a bash array, then join with spaces for
-# the Python argparse nargs="+" argument.
-mapfile -t SMILES_ARRAY < <(sed -n "${START},${END}p" "${SMILES_FILE}" 2>/dev/null || true)
+# ── Project paths (hard-coded: robust under SLURM temp copy) ─────────
+PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607"
+SCRIPT_DIR="${PROJECT_DIR}/scripts"
+cd "${SCRIPT_DIR}"
+mkdir -p "${PROJECT_DIR}/logs/slurm"
 
-if [ ${#SMILES_ARRAY[@]} -eq 0 ]; then
-  echo "WARNING: No SMILES found for task ${ID} (lines ${START}-${END}); exiting cleanly."
-  exit 0
-fi
-
-# ── Run QMC input preparation ──────────────────────────────────────
-"${PYTHON}" "${PROJECT_DIR}/scripts/p4_qmc_prepare.py" \
-  --smiles "${SMILES_ARRAY[@]}" \
-  --output-dir "${RESULTS_DIR}/qmc_inputs/task_${ID}" \
-  --method "${METHOD}" \
-  --basis "${BASIS}"
-
-echo "═══ Task ${ID} complete: $(date -u -Iseconds) ═══"
+# Run QMC pipeline for specific Pareto candidate
+echo "Starting QMC Tier 1/2 for candidate ${SLURM_ARRAY_TASK_ID} on $(hostname) at $(date -u -Iseconds)"
+python p4_qmc_pipeline.py --array-id "${SLURM_ARRAY_TASK_ID}"
+echo "Finished QMC Tier 1/2 for candidate ${SLURM_ARRAY_TASK_ID} at $(date -u -Iseconds)"

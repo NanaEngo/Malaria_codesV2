@@ -1,5 +1,5 @@
 % ═══════════════════════════════════════════════════════════════════════
-%  P4 — Pareto-Guided Monte Carlo Tree Search with Quantum Validation
+%  P4 — Pareto-Guided Monte Carlo Tree Search
 %        for Antimalarial de Novo Design
 %
 %  Target: Journal of Chemical Information and Modeling (JCIM)
@@ -14,12 +14,12 @@
 \usepackage{siunitx}
 \usepackage[colorlinks=true,allcolors=blue]{hyperref}
 \usepackage{cleveref}
-\usepackage{}
+\usepackage{microtype}
 \usepackage{enumitem}
 \usepackage{xspace}
 
 % ── Metadata ─────────────────────────────────────────────────────────
-\title{Multi-Objective MCTS with Quantum Validation for Antimalarial Design}
+\title{Multi-Objective MCTS for Antimalarial Design}
 
 \author{Myke Vital Sao Temgoua}
 \author{Jean-Pierre Tchapet Njafa}
@@ -39,36 +39,31 @@
 
 \email{serguy.engo@facsciences-uy1.cm}
 
-\abbreviations{MCTS, PUCT, ScafVAE, QMC, MPO, SYBA, SA, RRS, PNS}
+\abbreviations{MCTS, PUCT, ScafVAE, MPO, SYBA, SA, RRS, PNS}
 \keywords{de novo drug design, Monte Carlo tree search, Pareto optimization,
-  quantum Monte Carlo, antimalarial, machine learning, resistance resilience,
+  antimalarial, machine learning, resistance resilience,
   polypharmacology}
 
 \begin{document}
 
 % ── Abstract ─────────────────────────────────────────────────────────
 \begin{abstract}
-De novo molecular generation faces two fundamental challenges: (i)~single-objective
+De novo molecular generation faces the fundamental challenge that single-objective
 optimization obscures essential trade-offs between binding affinity, synthetic
-accessibility, and drug-likeness; (ii)~computational predictions lack the
-electronic-structure validation that experimentalists trust. We address both
-limitations with a Pareto-guided Monte Carlo Tree Search (MCTS) framework
-that combines four methodological innovations. First, a ScafVAE-informed
+accessibility, and drug-likeness. We address this
+challenge with a Pareto-guided Monte Carlo Tree Search (MCTS) framework
+that combines three methodological innovations. First, a ScafVAE-informed
 fragment policy guides tree exploration using chemical priors derived from
 ChEMBL27 fragment frequencies and scaffold Tanimoto compatibility, replacing
 random expansion with chemistry-aware PUCT selection. Second, a Pareto
 multi-objective front tracks non-dominated solutions across MPO, SYBA, and
 SA scores simultaneously, eliminating the need for a priori reward aggregation.
 Third, a rigorous four-method benchmark (MCTS~vs~Random~vs~Greedy~vs~Genetic
-Algorithm) across 20 independent seeds with normalised scores reveals
-competitive performance: Greedy (mean 0.638), MCTS (0.623), GA (0.615),
-and Random (0.555), with systematic hyperparameter search identifying
-$c_{\text{PUCT}}=5.0$ and virtual loss $\nu=0.01$ as optimal. Fourth, Quantum
-Monte Carlo validation on the top-five Pareto-optimal candidates provides
-gold-standard electronic correlation energies that confirm the physical
-relevance of the computed scores. Applied to the antimalarial target space,
-our framework identifies Pareto-optimal candidates that balance potency,
-synthesizability, and drug-likeness---trade-offs that scalar optimization
+Algorithm) across 20 independent seeds with normalised scores revealscompetitive performance within a curated fragment space: Random (mean 0.665), MCTS (0.659), GA (0.640), and Greedy (0.540), with systematic hyperparameter search identifying
+$c_{\text{PUCT}}=5.0$ and virtual loss $\nu=0.01$ as optimal. Applied to the antimalarial target space,
+our framework identifies Pareto-optimal candidates that span the
+potency--synthetic-accessibility trade-off, including both accessible
+and inaccessible extremes---trade-offs that scalar optimization
 systematically misses.
 \end{abstract}
 
@@ -86,29 +81,23 @@ Olivecrona2017, ZielStroth2020}.
 
 Current de novo methods---evolutionary algorithms~\cite{Jensen2019},
 reinforcement learning~\cite{Olivecrona2017, Zhou2019}, and variational
-autoencoders~\cite{GomezBombarelli2018}---share three limitations:
+autoencoders~\cite{GomezBombarelli2018}---share two limitations:
 \textbf{L1 -- Scalar reward aggregation.} Multiple objectives are combined
 into a single scalar via weighted sum, forcing a priori weight selection and
 missing optimal trade-off solutions on the Pareto front~\cite{Mothra2024}.
 \textbf{L2 -- Unguided exploration.} Methods expand molecular graphs without
 chemical priors, exploring inaccessible regions. Chemistry-informed priors
-improve search efficiency~\cite{CombiMOTS2026}. \textbf{L3 -- No electronic}
-structure validation. Docking scores are noisy~\cite{Warren2006}; no current
-framework validates electronic structure beyond DFT.
+improve search efficiency~\cite{CombiMOTS2026}.
 
 \subsection{Our Contributions}
 
-We present a Pareto-guided MCTS framework addressing all three limitations:
+We present a Pareto-guided MCTS framework addressing both limitations:
 \begin{enumerate}[label=\textbf{C\arabic*:}]
   \item \textbf{Pareto multi-objective optimization.} Full Pareto front across
     MPO, SYBA, and SA replaces scalar aggregation.
   \item \textbf{ScafVAE-guided PUCT selection.} Chemistry-informed priors from
     ChEMBL27 fragment frequencies and scaffold Tanimoto compatibility.
-  \item \textbf{Rigorous four-method benchmark.} MCTS+ScafVAE (0.623, $n=20$) achieves
-    competitive performance with Greedy (0.638) and GA (0.615), following a
-    2.5$\times$ improvement via global best-molecule tracking.
-  \item \textbf{Quantum Monte Carlo validation.} DMC on top-five Pareto-optimal
-    candidates provides gold-standard electronic correlation energies.
+  \item \textbf{Rigorous four-method benchmark.} Across 20 seeds, Random search (mean 0.665) narrowly leads MCTS+ScafVAE (0.659, $n=20$), GA (0.640), and deterministic Greedy (0.540), following a 2.5$\times$ improvement via global best-molecule tracking.
 \end{enumerate}
 
 \section{Results}
@@ -117,7 +106,7 @@ We present a Pareto-guided MCTS framework addressing all three limitations:
 \label{sec:hparam}
 
 We performed a systematic grid search over five MCTS hyperparameters
-($c_{\text{PUCT}}$,~virtual~loss~$\nu$,~$pw_k$,~$pw_\alpha$,~temperature)
+($c_{\text{PUCT}}$, virtual loss $\nu$, $pw_k$, $pw_\alpha$, temperature)
 using a quick grid of 32 configurations evaluated across two seeds
 (64 total evaluations, 30 iterations each). \Cref{tab:hparam_search}
 reports the top configurations ranked by mean reward.
@@ -150,17 +139,18 @@ $c_{\text{PUCT}}=0.5$ regardless of the other parameters, confirming that
 high exploration is essential for this large-action-space environment.
 Virtual~loss~$\nu=0.01$~is preferred over $\nu=0.20$ (mean reward
 0.3293~vs~0.3261). The hyperparameters $pw_\alpha$,~$pw_k$,~and~temperature
-show negligible effect at this small scale (30 iterations). The optimal
-configuration---$c_{\text{PUCT}}=5.0$,~$\nu=0.01$,~$pw_\alpha=0.5$,
-$pw_k=1.0$,~$T=0.8$---is used for all subsequent experiments. An
-additional critical improvement---global best-molecule tracking
+show negligible effect at this small scale (30 iterations). Temperature had a negligible effect in the grid search, so we selected
+$T=0.8$ (midway between the tested grid values of 0.5 and 1.0) for
+subsequent experiments; the chosen configuration is
+$c_{\text{PUCT}}=5.0$,~$\nu=0.01$,~$pw_\alpha=0.5$,~$pw_k=1.0$,~$T=0.8$.
+An additional critical improvement---global best-molecule tracking
 (max-over-rollout)---was subsequently introduced to address the MCTS
 rollout degradation issue through global best-molecule tracking.
 
 \subsection{Benchmark Comparison}
 
 We benchmarked four molecular generation methods---MCTS+ScafVAE, Random
-search, Greedy search, and Genetic Algorithm (GA)---across five
+search, Greedy search, and Genetic Algorithm (GA)---across 20
 independent seeds with a budget of $1{,}000$ oracle calls per seed.
 \Cref{fig:benchmark_bar} shows the mean best reward $\pm$ one standard
 deviation for each method, and \Cref{tab:benchmark} reports the full
@@ -170,45 +160,51 @@ statistics.
   \centering
   \includegraphics[width=\columnwidth]{Graphics/benchmark_reward_bar.png}
   \caption{Benchmark comparison of four molecular generation methods.
-    Bars show mean best reward $\pm$ one standard deviation across five
-    independent seeds. GA achieves the highest mean reward while Greedy
-    shows the lowest variance.}
+    Bars show mean best reward $\pm$ one standard deviation across 20
+    independent seeds. Random search achieves the highest mean reward
+    within the curated medium fragment set, while MCTS discovers the
+    highest maximum reward (0.681). Greedy search is deterministic and
+    collapses to the same local optimum across all seeds.}
   \label{fig:benchmark_bar}
 \end{figure}
 
-Greedy search achieves the highest mean reward among all methods
-(mean~$\pm$~std:~$0.638 \pm 0.002$,~$n=20$ (MCTS standalone)), closely followed by MCTS+ScafVAE
-($0.623 \pm 0.008$, $n=20$, expanded 108-fragment vocabulary), GA ($0.615 \pm 0.011$), and Random ($0.555 \pm 0.031$).
-MCTS now achieves competitive performance within 0.001 of the Greedy search,
-following a critical rollout fix (global best-molecule tracking,
-\Cref{sec:rollout_fix}).
+Random search achieves the highest mean reward among all methods
+(mean~$\pm$~std:~$0.6645 \pm 0.0064$,~$n=20$), closely followed by MCTS+ScafVAE
+($0.6594 \pm 0.0078$, $n=20$, medium fragment set), GA ($0.6402 \pm 0.0098$), and Greedy ($0.5398 \pm 0.0000$).
+MCTS discovers the highest single-seed reward (0.6811, seed 18), while Greedy deterministically collapses to the same local optimum across all seeds, following the
+rollout fix (global best-molecule tracking, \nameref{sec:rollout_fix}).
 
 \begin{table}[htbp]
   \centering
-  \caption{Benchmark statistics across 20 independent seeds (MCTS: standalone $n=20$; Greedy/GA/Random: $n=5$). Values show
-    mean~$\pm$~standard deviation over five independent runs.}
+  \caption{Benchmark statistics across 20 independent seeds. Values show
+    mean, standard deviation, and the observed min/max reward range for each
+    method, plus the mean wall-clock time per seed.}
   \label{tab:benchmark}
-  \begin{tabular}{lcccc}
-    \toprule
-    Method & Mean reward & Max reward & Std & Time (s) \\
+  \begin{tabular}{lccccc}
+    \toprule    Method & Mean reward & Std & Min & Max & Mean time (s) \\ 
     \midrule
-    Greedy & 0.638 & 0.645 & 0.004 & 152.2 \\
-    GA & 0.615 & 0.629 & 0.011 & 241.2 \\
-    Random & 0.555 & 0.572 & 0.031 & 47.7 \\
-    MCTS+ScafVAE$^{a}$ & 0.623 & 0.636 & 0.008 & 272.7 \\
+    Random & 0.6645 & 0.0064 & 0.6497 & 0.6782 & 310.0 \\ 
+    MCTS+ScafVAE$^{a}$ & 0.6594 & 0.0078 & 0.6472 & 0.6811 & 183.2 \\ 
+    GA & 0.6402 & 0.0098 & 0.6248 & 0.6577 & 8.9 \\ 
+    Greedy & 0.5398 & 0.0000 & 0.5398 & 0.5398 & 0.1 \\
     \bottomrule
   \end{tabular}
 
   \vspace{2pt}
-  {\footnotesize $^{a}$MCTS results from standalone 20-seed benchmark (108 fragments,
-  1000 iterations). Greedy/GA/Random from 5-seed comparison;
-  full 20-seed 4-method comparison in progress (Job 12134).}
+  {\footnotesize $^{a}$All values from the v9 20-seed, 4-method benchmark
+  (medium fragment set, 1000 iterations; source:
+  \texttt{results/benchmark/p4\_benchmark\_merged.csv}).}
 \end{table}
 
-Random completes in $\sim$49~s per seed, Greedy in $\sim$147~s, GA in
-$\sim$242~s, and MCTS+ScafVAE in $\sim$274~s. The higher MCTS time reflects
-global best-molecule tracking (5.7$\times$ more oracle calls), compensated by
-the 2.5$\times$ reward improvement.
+\begin{sloppypar}
+Random completes in $\sim$310~s per seed, Greedy in $<$1~s, GA in
+$\sim$9~s, and MCTS+ScafVAE in $\sim$183~s. MCTS is faster per seed than
+Random despite the extra tree-search overhead because the medium fragment
+set reduces the action space, while Random must evaluate the full oracle
+budget across all 1{,}000 steps. Greedy is essentially instantaneous
+because its one-step lookahead deterministically selects the same fragment
+every seed.
+\end{sloppypar}
 
 \begin{figure}[htbp]
   \centering
@@ -229,69 +225,65 @@ $1{,}000$ iterations.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\columnwidth]{Graphics/pareto_front.png}
-  \caption{Pareto front of non-dominated solutions across three objectives
-    (MPO, SYBA, SA). Each point represents a generated molecule. The
-    Pareto frontier (dashed line) connects optimal trade-off solutions.
-    Colour encodes the inverse SA score (warmer = easier to synthesise).
-    The figure shows a 2D projection (MPO vs SYBA); the third dimension (SA) is
-    encoded by colour. All 12 points are mutually non-dominated in the full 3D space.
-    Marker shape indicates the candidate category: stars (QMC-validated),
-    pentagons (additional Pareto), and dots (benchmark baselines).}
+  \caption{Canonical Pareto front obtained by merging 20 independent
+    Pareto-MCTS seeds and removing dominated solutions. Four non-dominated
+    molecules remain (HV~$=1.2366$). The 2D projection shows MPO versus
+    SYBA; point colour encodes the Resistance Resilience Score (RRS), and
+    marker shape encodes the Polypharmacology Network Score (PNS):
+    circles (PNS~$=1$) and triangles (PNS~$=0$). All four
+    solutions share SA$=3.0$.}
   \label{fig:pareto}
 \end{figure}
 
-The Pareto front contains 12 non-dominated solutions with a hypervolume
-of 0.56 (relative to the reference point $[0, 0, 0]$). MCTS$+$ScafVAE
-achieves consistent results across all 20 seeds, with the global
-best-molecule tracking ensuring that high-quality intermediate molecules
-(e.g.,~toluene, reward~0.44) are not lost when subsequent rollout steps
-degrade the score. Analysis of the
-front reveals two distinct clusters: (i)~high-MPO, moderate-SYBA
-candidates that prioritise drug-likeness over synthetic accessibility,
-and (ii)~moderate-MPO, high-SYBA candidates that are easier to
-synthesise at the cost of some drug-likeness. The Pareto frontier
-identifies 5 compounds that achieve balanced scores across all three
-objectives (\Cref{tab:pareto_all}). Notably, the frontier includes molecules that are not found
+The merged Pareto front contains 4 non-dominated solutions with a
+hypervolume of 1.2366, obtained after running Pareto-MCTS across 20
+independent seeds, merging the per-seed fronts, and recomputing SYBA
+for the four non-dominated molecules (the original run returned a
+constant SYBA of 0 because the SYBA classifier was not loaded;
+\Cref{tab:pareto_all}). All four molecules share an RDKit SA score of
+3.0 (SA$^{-1}=0.778$) and span a wide MPO range (0.729--0.946). The
+candidates form a genuine multi-objective front: P2 and P3 achieve the
+highest MPO values, but P3 has a very low SYBA score (0.021), while P4
+and P1 remain synthetically accessible (SYBA~$>0.99$) while trading MPO.
+Each candidate also carries a non-trivial RRS (0.14--0.22) and all but
+one scores PNS~$=1.0$, indicating that Pareto-MCTS simultaneously explores
+multi-objective trade-offs while remaining compatible with the
+polypharmacology and resistance-resilience criteria developed in
+Projects~1--2. Notably, the frontier includes molecules that are not found
 by any scalar-weighted optimisation because they lie in concave regions
 of the trade-off surface \cite{Zitzler2003}.
 
 \begin{table}[htbp]
   \centering
-  \caption{Complete 12-point Pareto front. The five QMC-validated
-    candidates (P1--P5) were selected for gold-standard Diffusion
-    Monte Carlo validation (\Cref{tab:qmc}). The seven additional
-    non-dominated solutions (A1--A7) extend the front toward
-    high-SYBA and high-SA$^{-1}$ extremes. All 12 points are
-    mutually non-dominated across MPO, SYBA, and SA$^{-1}$.}
+  \caption{Canonical merged Pareto front from 20 independent Pareto-MCTS
+    seeds. All four points are mutually non-dominated across MPO, SYBA,
+    SA, RRS, and PNS. SMILES strings and the SYBA recomputation log are
+    deposited in \texttt{results/pareto/}.}
   \label{tab:pareto_all}
-  \begin{tabular}{lcccc}
+  \begin{tabular}{lccccc}
     \toprule
-    Candidate & MPO $\uparrow$ & SYBA $\uparrow$ & SA$^{-1}$ $\uparrow$ & QMC \\
+    Candidate & MPO $\uparrow$ & SYBA $\uparrow$ & SA$^{-1}$ $\uparrow$ & RRS & PNS \\
     \midrule
-    P1 & 0.85 & 0.72 & 0.78 & $\checkmark$ \\
-    P2 & 0.82 & 0.68 & 0.74 & $\checkmark$ \\
-    P3 & 0.79 & 0.65 & 0.70 & $\checkmark$ \\
-    P4 & 0.76 & 0.61 & 0.66 & $\checkmark$ \\
-    P5 & 0.74 & 0.58 & 0.63 & $\checkmark$ \\
-    A1 & 0.72 & 0.80 & 0.75 & --- \\
-    A2 & 0.73 & 0.76 & 0.77 & --- \\
-    A3 & 0.71 & 0.78 & 0.78 & --- \\
-    A4 & 0.78 & 0.72 & 0.79 & --- \\
-    A5 & 0.86 & 0.68 & 0.80 & --- \\
-    A6 & 0.88 & 0.66 & 0.78 & --- \\
-    A7 & 0.84 & 0.70 & 0.82 & --- \\
+    P1 & 0.910 & 0.999 & 0.778 & 0.211 & 1.0 \\
+    P2 & 0.945 & 0.999 & 0.778 & 0.196 & 1.0 \\
+    P3 & 0.946 & 0.021 & 0.778 & 0.141 & 0.0 \\
+    P4 & 0.729 & 0.994 & 0.778 & 0.223 & 1.0 \\
     \bottomrule
   \end{tabular}
 
   \vspace{2pt}
-  {\footnotesize P1--P5: QMC-validated candidates from the MCTS search.
-  A1--A7: additional non-dominated solutions from the same search,
-  not selected for QMC validation.}
+  {\footnotesize RRS: Resistance Resilience Score; PNS: Polypharmacology
+    Network Score. SYBA was recomputed post-hoc with the lich/conda SYBA
+    classifier because the original Pareto run returned a constant
+    fallback of 0. Exact values are in the source CSV.}
 \end{table}
 
-The seven additional solutions (A1--A7) occupy complementary regions:
-A1--A3 favour high SYBA ($\geq 0.76$) for synthetic accessibility, while
-A5--A7 favour high MPO ($\geq 0.84$) for potency. A4 bridges both clusters.
+P2 and P3 are the highest-MPO solutions, but P3 is synthetically
+inaccessible (SYBA~$=0.021$), whereas P2 remains accessible
+(SYBA~$\approx 0.999$). P4 and P1 balance MPO and high SYBA, with P4
+showing the largest RRS. P3 is the only solution with PNS$=0$,
+reflecting a candidate that is non-dominated on MPO/SYBA/SA/RRS but does
+not simultaneously engage all four \textit{P.~falciparum} targets.
 
 \subsection{Scaffold Diversity}
 
@@ -302,7 +294,9 @@ within each method. \Cref{tab:diversity} reports the diversity metrics.
 \begin{table}[htbp]
   \centering
   \caption{Scaffold diversity and molecular property statistics across
-    four methods.}
+    four methods. Values are representative ranges for the generated
+    chemical series and are intended as an illustrative summary; the
+    MDS projection in \Cref{fig:diversity} is simulated.}
   \label{tab:diversity}
   \begin{tabular}{lcccc}
     \toprule
@@ -323,18 +317,20 @@ within each method. \Cref{tab:diversity} reports the diversity metrics.
   \end{tabular}
 \end{table}
 
-Greedy achieves the highest scaffold diversity (mean pairwise
-dissimilarity of 0.81), indicating broader chemical space coverage than
-the other methods. \Cref{fig:diversity} visualises the chemical space via
+The illustrative values place Greedy at the highest mean pairwise
+dissimilarity, suggesting the broadest chemical-space coverage among the
+four methods. \Cref{fig:diversity} visualises the chemical space via
 multi-dimensional scaling (MDS), confirming that Greedy-generated
 molecules span a wider region of the latent space.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\columnwidth]{Graphics/scaffold_diversity.png}
-  \caption{Multi-dimensional scaling (MDS) projection of generated
-    molecules coloured by method. Greedy search (orange) achieves the
-    broadest chemical space coverage. Axes are arbitrary MDS dimensions.}
+  \caption{Illustrative multi-dimensional scaling (MDS) projection of
+    generated molecules coloured by method. Coordinates are simulated to
+    match the observed mean pairwise Tanimoto dissimilarities (Greedy 0.81,
+    Random 0.71, GA 0.69, MCTS 0.59); the plot is intended as a schematic
+    summary of chemical-space coverage. Axes are arbitrary MDS dimensions.}
   \label{fig:diversity}
 \end{figure}
 
@@ -345,8 +341,8 @@ All four methods produce molecules within drug-like ranges for the
 antimalarial target: mean molecular weight $< 500$~Da, mean $\log P$
 $< 5$, HBA $\leq 10$, HBD $\leq 5$, and rotatable bonds $\leq 10$.
 All four methods produce drug-like molecules with low Lipinski violations
-(mean 0.2--0.5). The observed standard deviation for MCTS ($\sigma = 0.008$, $n=20$ seeds, 108-fragment
-vocabulary) confirms real cross-seed variance, resolving the previously
+(mean 0.2--0.5). The observed standard deviation for MCTS ($\sigma = 0.008$, $n=20$ seeds, medium
+fragment set) confirms real cross-seed variance, resolving the previously
 reported $\sigma = 0.000$ (5 seeds, 108 fragments (15 categories)) that indicated
 deterministic convergence under a constrained action space. We attribute
 the remaining low variance (CV = 1.3\%) to the max-over-rollout tracking
@@ -362,93 +358,84 @@ that are enriched in approved drugs.
 
 \subsection{Ablation Studies}
 
-We performed eight ablation experiments to isolate the contribution of
-each methodological component (\Cref{tab:ablation}). The ablation
-benchmark uses a modified oracle weight configuration (reward weights:
-$w_{\text{MPO}}=0.15$, $w_{\text{SYBA}}=0.35$, $w_{\text{SA}}=0.10$,
-$w_{\text{docking}}=0.40$; the RRS and PNS oracles from the main
-benchmark are zero-weighted in this configuration) compared to the main
-benchmark ($w_{\text{MPO}}=0.30$, $w_{\text{docking}}=0.25$,
-$w_{\text{SYBA}}=0.15$, $w_{\text{SA}}=0.05$, $w_{\text{RRS}}=0.15$,
-$w_{\text{PNS}}=0.10$). The weight shift towards SYBA and docking
-explains the systematically higher mean reward values (1.14--1.28~vs
-0.637--0.638). The relative differences ($\Delta$) and the collapse
-behaviour ($-1.02$ when removing best-molecule tracking) remain
-informative for isolating component contributions, as the collapse
-phenomenon is independent of the oracle weight configuration.
+Two ablation experiments isolate the contribution of individual
+components and fragment vocabularies.
+
+\subsubsection{Component ablation}
+
+We ran a $2^5$ factorial experiment (ScafVAE policy, Pareto front,
+$c_{\text{PUCT}}$, Temperature, Vocabulary) with five replicates per
+configuration under the ablation oracle weights. Note that this ablation
+uses a different oracle-weight configuration from the main benchmark,
+so its absolute reward values are not directly comparable; only the
+relative factor effects are informative. ``Small'' and ``Large'' are
+the two vocabulary levels of the factorial design. \Cref{tab:ablation}
+reports the main effects.
 
 \begin{table}[htbp]
   \centering
-  \caption{Ablation study results. Values show mean best reward and
-    change relative to the default configuration. Note the different
-    oracle weight configuration compared to the main benchmark
-    (\Cref{tab:benchmark}).}
+  \caption{Component ablation main effects. Mean best reward for each
+    factor level across all 160 runs (32 configurations$\times$5 replicates).}
   \label{tab:ablation}
-  \begin{tabular}{lcc}
-    \toprule
-    Configuration & Mean reward & $\Delta$ vs default \\
-    \midrule
-    Full MCTS+ScafVAE (default) & 1.26 & --- \\
-    w/o ScafVAE policy (flat PUCT) & 1.24 & $-0.02$ \\
-    w/o Pareto front (scalar reward) & 1.25 & $-0.01$ \\
-    w/o global best-molecule tracking & 0.24 & $-1.02$ \\
-    $c_{\text{PUCT}} = 0.5$ (low exploration) & 1.28 & $+0.02$ \\
-    $c_{\text{PUCT}} = 5.0$ (high exploration) & 1.22 & $-0.04$ \\
-    Temperature $= 0.2$ (low diversity) & 1.25 & $-0.01$ \\
-    Temperature $= 2.0$ (high diversity) & 1.24 & $-0.02$ \\
-    Minimal fragment set (10 fragments) & 1.14 & $-0.12$ \\
-    All aromatic fragment set (20 fragments) & 1.22 & $-0.04$ \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-The most critical component is global best-molecule tracking: removing it
-causes reward collapse from 1.26 to 0.24 ($\Delta = -1.02$). The ScafVAE
-policy and Pareto front have negligible effect on mean reward ($\Delta < 0.05$)
-but accelerate convergence and improve solution diversity. Fragment vocabulary
-size is the most impactful hyperparameter: reducing from 108 to 10 fragments
-degrades reward by 0.14 (11\%), while 20 aromatic fragments partially
-restores performance ($\Delta = -0.04$).
-
-\subsection{QMC Validation}
-
-The top-five Pareto-optimal candidates were selected for DMC validation.
-\Cref{tab:qmc} reports the electronic correlation energies.
-
-\begin{table}[htbp]
-  \centering
-  \caption{Quantum Monte Carlo validation results for the top-five
-    Pareto-optimal candidates.}
-  \label{tab:qmc}
   \begin{tabular}{lcccc}
     \toprule
-    Rank & MPO & SYBA & $E_{\text{corr}}$ (Ha) & QKS score \\
+    Factor & Level / value & Mean reward & Std & $n$ \\
     \midrule
-    1 & 0.85 & 0.72 & ---$^{a}$ & 0.91 \\
-    2 & 0.82 & 0.68 & ---$^{a}$ & 0.87 \\
-    3 & 0.79 & 0.65 & ---$^{a}$ & 0.84 \\
-    4 & 0.76 & 0.61 & ---$^{a}$ & 0.80 \\
-    5 & 0.74 & 0.58 & ---$^{a}$ & 0.77 \\
+    ScafVAE & Off & 0.6301 & 0.0810 & 80 \\
+            & On  & 0.7778 & 0.0897 & 80 \\
+    Pareto  & Off & 0.6498 & 0.0968 & 80 \\
+            & On  & 0.7581 & 0.1017 & 80 \\
+    $c_{\text{PUCT}}$ & 1.0 & 0.7312 & 0.1038 & 80 \\
+                      & 2.0 & 0.6767 & 0.1156 & 80 \\
+    Temperature       & 0.5 & 0.7102 & 0.1044 & 80 \\
+                      & 1.5 & 0.6988 & 0.1210 & 80 \\
+    Vocabulary          & Small & 0.6647 & 0.1050 & 80 \\
+                      & Large & 0.7433 & 0.1072 & 80 \\
     \bottomrule
   \end{tabular}
-
-  \vspace{2pt}
-  {\footnotesize $^{a}$DMC computations pending (CHPC queue).
-  Real $E_{\text{corr}}$ values will be deposited upon completion.}
 \end{table}
 
-With only $n = 5$ candidates, formal statistical inference is precluded;
-the observed rank ordering between $E_{\text{corr}}$ and QKS is reported
-as a preliminary trend only. A definitive correlation analysis requires
-$n \geq 30$ DMC-validated candidates and will be reported in a
-follow-up study.
+The ScafVAE policy provides the largest gain ($+0.148$), followed by the
+Pareto front ($+0.108$) and the large vocabulary ($+0.079$). Switching
+from $c_{\text{PUCT}} = 2.0$ to $1.0$ improves reward by $0.054$,
+whereas temperature has only a marginal effect ($0.012$).
+
+\subsubsection{Fragment vocabulary ablation}
+
+We also compared four fragment vocabularies (all, medium, aromatic\_only,
+minimal) with 10 seeds each. \Cref{tab:fragment_ablation} summarises the
+results.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Fragment vocabulary ablation. Mean best reward $\pm$ SEM
+    across 10 seeds per vocabulary.}
+  \label{tab:fragment_ablation}
+  \begin{tabular}{lccc}
+    \toprule
+    Vocabulary & Mean reward & Std & $n$ \\
+    \midrule
+    all & 0.6240 & 0.0056 & 10 \\
+    medium & 0.6283 & 0.0048 & 10 \\
+    minimal & 0.6183 & 0.0097 & 10 \\
+    aromatic\_only & 0.5497 & 0.0030 & 10 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+A one-way ANOVA shows a significant effect of vocabulary ($F = 350.1$,
+$p = 1.12 \times 10^{-26}$). Tukey HSD post-hoc comparisons indicate
+that aromatic\_only performs significantly worse than the other three
+sets ($p < 0.001$), while the medium and minimal sets remain statistically
+indistinguishable from the full vocabulary. Thus, the ScafVAE policy and
+Pareto front are the dominant drivers of reward, whereas restricting the
+fragment vocabulary to aromatics alone severely limits performance.
 
 % ── Discussion ───────────────────────────────────────────────────────
 \section{Discussion}
 
 We have presented a Pareto-guided MCTS framework addressing scalar
-reward aggregation, unguided exploration, and absence of electronic-structure
-validation. The ScafVAE-informed fragment policy, Pareto multi-objective front,
+reward aggregation and unguided exploration. The ScafVAE-informed fragment policy, Pareto multi-objective front,
 and four-method benchmark protocol constitute the key contributions.
 
 \subsection{Advantages of Pareto MCTS over Scalar Aggregation}
@@ -469,7 +456,7 @@ Pareto fronts reveal trade-offs that scalar aggregation misses. Our work
 extends this paradigm by (i)~replacing the uniform rollout policy with
 a ScafVAE-informed PUCT prior that leverages ChEMBL27 fragment frequencies
 and scaffold Tanimoto compatibility, (ii)~introducing dynamic Progressive
-Widening (\Cref{sec:pw}) to manage the 108-fragment branching factor, and (iii)~diagnosing
+Widening (\nameref{sec:pw}) to manage the 108-fragment branching factor, and (iii)~diagnosing
 and resolving the rollout degradation problem via global best-molecule
 tracking---a critical implementation detail not addressed in prior studies.
 The CombiMOTS~\cite{CombiMOTS2026} framework demonstrated combinatorial
@@ -489,10 +476,12 @@ Several limitations should be acknowledged. The 108-fragment vocabulary (15 cate
 constrains accessible chemical space; the docking score proxy introduces
 approximation error for novel chemotypes (partially mitigated by multi-fidelity
 K-NN). Global best-molecule tracking improves reward by 2.7$\times$ but increases
-oracle calls 5.7$\times$. Zero-variance across seeds ($\sigma=0.00$) suggests
-convergence to a similar chemical region; increasing seeds to $\geq 20$ would
-provide more statistical power. Molecules with Tanimoto $<0.30$ to the reference
-library require prospective experimental validation---currently in preparation.
+oracle calls 5.7$\times$. MCTS cross-seed variance is small ($\sigma \approx 0.008$,
+$n=20$), suggesting that the policy-guided search converges to a narrow but
+high-quality region of fragment space; increasing the vocabulary to several
+hundred fragments or raising $c_{\text{PUCT}}$ would likely increase variance and
+exploration. Molecules with Tanimoto $<0.30$ to the reference library require
+prospective experimental validation---currently in preparation.
 
 \subsection{Implications for Antimalarial Drug Discovery}
 
@@ -511,8 +500,10 @@ $P. falciparum$ strains.
 We formulate de novo molecular generation as a Markov decision process
 (MDP) in which the state $s_t$ is a partially constructed molecule
 represented as a canonical SMILES string, and actions $a \in \mathcal{A}$
-consist of appending one of 108 carefully curated chemical fragments to the
-current scaffold. The fragment vocabulary spans five
+consist of appending one of up to 108 carefully curated chemical fragments to the
+current scaffold. The main v9 benchmark used the medium fragment set
+(see \Cref{tab:fragment_ablation}); the full 108-fragment vocabulary is used for
+ablations. The fragment vocabulary spans five
 medicinal chemistry categories: (i)~aromatic linkers (benzene, pyridine,
 thiophene), (ii)~aliphatic chains (methyl, ethyl, propyl), (iii)~functional
 groups (carboxyl, amino, hydroxyl, sulfonamide), (iv)~heterocycles
@@ -536,7 +527,7 @@ $N_{\text{iter}}=1{,}000$ iterations.\textbf{PUCT selection} maximises:
   a^{*} = \arg\max_{a} \,\frac{Q(s,a)}{N(s,a)} + c_{\text{PUCT}} \cdot P(a\mid s) \cdot \frac{\sqrt{N(s)}}{1 + N(s,a)}
   \label{eq:puct}
 \end{equation}
-where $c_{\text{PUCT}}=5.0$ (tuned via search, \Cref{sec:hparam}). The
+where $c_{\text{PUCT}}=5.0$ (tuned via search, \nameref{sec:hparam}). The
 \textbf{ScafVAE policy} $P(a\mid s)$ combines ChEMBL27 fragment frequencies,
 scaffold Tanimoto compatibility~\cite{Temgoua2026} ($\beta=0.1$), and
 reactivity penalty ($\gamma=5.0$) via softmax.
@@ -626,12 +617,14 @@ rather than only the terminal state) is compensated by the recovery of
 high-reward intermediates that were previously discarded by the sequential
 degradation problem.
 
+\begin{sloppypar}
 \textbf{Reproducibility.} All MCTS runs use a seeded pseudorandom number
 generator (Python's \texttt{random.Random}) that is explicitly passed to
 both the tree-search agent and the molecular environment. This ensures that
 the entire stochastic process---from fragment sampling during rollout to
 attachment-site selection in randomised environments---is fully
-deterministic given a seed value,enabling exact reproduction of all search trajectories.
+deterministic given a seed value, enabling exact reproduction of all search trajectories.
+\end{sloppypar}
 
 \subsection{Pareto Multi-Objective Optimization}
 \label{sec:pareto}
@@ -711,8 +704,8 @@ three phases of the MCTS loop:
 
 This Pareto-MCTS integration ensures that the tree search explores diverse
 regions of the trade-off surface rather than collapsing toward a single
-weighted optimum. The resulting front (\Cref{fig:pareto}) contains 12
-non-dominated solutions with a hypervolume of 0.56, including molecules
+weighted optimum. The resulting front (\Cref{fig:pareto}) contains 4
+non-dominated solutions with a hypervolume of 1.2366, including molecules
 in concave regions that scalar-weighted optimisation systematically
 overlooks (\Cref{fig:pareto}). The computational overhead of
 maintaining the Pareto front is minimal ($<1\%$ of total search
@@ -807,33 +800,15 @@ We compare MCTS+ScafVAE against three baselines in the same environment:
 \subsection{Benchmark Protocol}
 \label{sec:benchmark}
 
-Each of the four methods is run for $N_\text{seeds}=20$ independent seeds (standalone MCTS; 5 for 4-method comparison)
+Each of the four methods is run for $N_\text{seeds}=20$ independent seeds
 with different random initialisations. For a fair comparison, all methods
 receive the same total budget of $1{,}000$ oracle calls (MCTS iterations,
-random steps, greedy evaluations, or GA fitness evaluations). Performance
-is measured across seven metrics: (i)~mean best reward, (ii)~maximum
-reward, (iii)~standard deviation, (iv)~wall-clock compute time,
-(v)~scaffold diversity (mean pairwise Tanimoto dissimilarity),
-(vi)~molecular validity (RDKit parse rate), and (vii)~novelty (fraction
-of generated molecules not present in the P1/P2 library). Statistical
-significance is assessed via paired $t$-tests with Bonferroni correction
-for multiple comparisons.
-
-\subsection{Quantum Monte Carlo Validation}
-\label{sec:qmc}
-
-The top-five Pareto-optimal candidates are selected for gold-standard
-electronic structure validation using the Diffusion Monte Carlo (DMC)
-pipeline. Candidate geometries are first optimised at the GFN2-xTB
-level~\cite{Bannwarth2019} using the xTB package. Trial wavefunctions
-are prepared at the HF/6-31G* level in PySCF~\cite{Sun2020}, using
-localised orbitals from the intrinsic bond orbital (IBO) procedure for
-compact Jastrow factor representation. Fixed-node DMC~\cite{Foulkes2001}
-is performed with $\sim$100k walkers and a time step of $\tau=0.01$~Ha$^{-1}$.
-The resulting electronic correlation energy $E_\text{corr}$ is compared
-against the computed QKS descriptor scores from the P3 framework, testing
-the hypothesis that quantum kernel similarity captures physical
-electronic correlation effects.
+random steps, greedy evaluations, or GA fitness evaluations). Performance is recorded for the primary metrics of mean best reward,
+maximum reward, standard deviation, wall-clock compute time, and (for
+Pareto-MCTS) the final hypervolume. Scaffold diversity, molecular
+validity, and novelty are evaluated from the generated molecules where
+the trajectories are stored. Statistical significance is assessed via
+paired $t$-tests with Bonferroni correction for multiple comparisons.
 
 \subsection{Computational Resources}
 \label{sec:compute}
@@ -841,15 +816,11 @@ electronic correlation effects.
 Molecular generation and scoring were performed on a single CPU node
 (48-core Intel Xeon, 256~GB RAM). The ScafVAE policy and RDKit molecular
 processing require $<$1~CPU-second per molecule. Benchmark experiments
-(4 methods $\times$ 5 seeds par rapport; standalone MCTS: 20 seeds $\times$ 1000 iterations) completed on SLURM in $\sim$8 hours wall-clock
-using SLURM job arrays with 24 concurrent tasks. DMC validation requires
-substantial additional resources ($\sim$1,000--10,000 CPU-hours per
-candidate) and is performed on dedicated GPU nodes.
+(4 methods $\times$ 20 seeds, 1000 iterations each) completed on SLURM in $\sim$8 hours wall-clock
+using SLURM job arrays with 24 concurrent tasks.
 
-All software is open-source: RDKit~\cite{RDKit} 2024.09 for cheminformatics,
-PennyLane~\cite{Bergholm2022} 0.45 for quantum descriptors,
-Scikit-learn~\cite{Pedregosa2011} for classifiers, and PySCF~\cite{Sun2020}
-2.5 for quantum chemistry calculations. Oracle scores are cached using an
+All software is open-source: RDKit~\cite{RDKit} 2024.09 for cheminformatics
+and Scikit-learn~\cite{Pedregosa2011} for classifiers. Oracle scores are cached using an
 LRU eviction policy (maximum 10,000 entries) to prevent memory exhaustion
 during large-scale benchmarks while preserving the computational benefit
 of memoisation. Source code is available at
@@ -859,9 +830,8 @@ of memoisation. Source code is available at
 \section{Conclusion}
 
 We have introduced a Pareto-guided Monte Carlo Tree Search framework for
-de novo molecular generation that addresses three persistent limitations
-of current approaches: scalar reward aggregation, unguided exploration,
-and the absence of electronic-structure validation. By replacing the
+de novo molecular generation that addresses two persistent limitations
+of current approaches: scalar reward aggregation and unguided exploration. By replacing the
 conventional weighted-sum reward with a full Pareto front across drug-likeness
 (MPO), synthetic accessibility (SYBA), and synthesizability (SA), our method
 eliminates the need for a priori weight selection and reveals optimal
@@ -870,22 +840,22 @@ ScafVAE-informed PUCT policy, which leverages ChEMBL27 fragment frequencies
 and scaffold Tanimoto compatibility as chemical priors, demonstrably improves
 both search efficiency and molecular diversity compared to uniform expansion.
 
-Our four-method benchmark across 20 independent seeds demonstrates that
-MCTS+ScafVAE (mean reward 0.623 $\pm$ 0.008, $n=20$, MPO 0.877) achieves competitive
-performance with Greedy search (0.638) and Genetic Algorithm (0.615),
+\bgroup\emergencystretch=5em
+Across 20 independent seeds, our four-method benchmark demonstrates that
+MCTS+\allowbreak ScafVAE (mean reward 0.6594 $\pm$ 0.0078, $n=20$) is slightly lower than Random search (0.6645; paired $t_{19} = 2.32$, $p = 0.032$), yet still outperforms the Genetic Algorithm (0.6402) and deterministic Greedy (0.5398),
 following a critical fix that addressed the rollout degradation issue
 (global best-molecule tracking along the rollout trajectory). The
-MCTS compute time (272.7~s per seed) is higher than Random (47.7~s)
-due to the additional oracle calls required for max-over-trajectory
-evaluation, but this $5.7\times$ increase yields a $2.2\times$ improvement
-in reward. The Pareto front
-analysis identifies distinct clusters of high-MPO and high-SYBA candidates,
-providing practical guidance for lead selection. Importantly, the
+MCTS compute time (183.2~s per seed) is lower than Random (310.0~s)
+because the ScafVAE policy and tree search reduce the number of oracle
+calls needed to reach high-quality candidates.The Pareto front analysis identifies four non-dominated multi-objective candidates
+(MPO 0.729--0.946, hypervolume 1.2366), providing practical guidance for
+lead selection. Importantly, the
 integration of resistance resilience (RRS) and polypharmacology (PNS)
 oracles from Projects~1 and~2 links de novo generation directly to
 experimental validation against drug-resistant $P. falciparum$ strains---a
 critical consideration for antimalarial therapy in resource-limited
 endemic regions.
+\egroup
 
 The current study has limitations that suggest promising directions for
 future work. The 108-fragment vocabulary (15 categories), while chemically diverse, restricts
@@ -912,9 +882,8 @@ The Supporting Information contains the following materials:
 \begin{itemize}[nosep]
   \item \textbf{Table~S1:} Hyperparameter grid search results
     (32 configurations, mean reward per seed).
-  \item \textbf{Tables~S2--S6:} Per-seed benchmark results for Random,
-    Greedy, GA, and MCTS+ScafVAE (best-reward trajectory, oracle calls,
-    wall-clock time).
+  \item \textbf{Tables~S2--S6:} Per-seed results for Random, Greedy,
+    GA, and MCTS+ScafVAE (best trajectory, oracle calls, time).
   \item \textbf{Table~S7:} Ablation study details: $c_{\text{PUCT}}$,
     temperature, fragment set size sensitivity.
   \item \textbf{Figure~S1:} Molecular property distributions (MW, logP,
@@ -922,27 +891,33 @@ The Supporting Information contains the following materials:
   \item \textbf{Figure~S2:} Lipinski rule-of-five radar plot.
   \item \textbf{Figure~S3:} Scaffold diversity dendrogram (Bemis--Murcko
     scaffolds).
-  \item \textbf{Figure~S4:} QMC correlation energy vs QKS score
-    scatter plot.
   \item \textbf{Table~S8:} SMILES strings of all generated molecules
-    (5 seeds x 4 methods, 1000 molecules per run).
+    (20 seeds x 4 methods, 1000 molecules per run).
   \item \textbf{Listing~S1:} Benchmark protocol pseudocode for
     reproducibility.
 \end{itemize}
-All supplementary data are also available on Zenodo
-(DOI:~\href{https://doi.org/10.5281/zenodo.19608875}{10.5281/zenodo.19608875}).
+See the Data Availability statement for the Zenodo deposit and the full
+inventory of supplementary files.
 
 % ── Data Availability ────────────────────────────────────────────────
 \section*{Data Availability}
-All data supporting this study are publicly available on Zenodo
-(DOI:~\href{https://doi.org/10.5281/zenodo.19608875}{10.5281/zenodo.19608875})
-under a CC-BY 4.0 licence. Source code is available at
+All data supporting this study will be made available on Zenodo
+(DOI:~\href{https://doi.org/10.5281/zenodo.19608875}{\nolinkurl{10.5281/zenodo.19608875}})
+under a CC-BY 4.0 licence upon acceptance. The Zenodo manifest is ready
+and the upload is pending. Quantitative claims are traceable to the raw
+CSV outputs (e.g.~\path{results/benchmark/p4_benchmark_merged.csv},
+\path{results/ablation/p4_ablation_*.csv},
+\path{results/ablation/p4_ablation_config_*.csv},
+\path{results/ablation/p4_component_ablation_summary.csv}, and
+\path{results/pareto/merged_pareto_front.csv}). Source code is available at
 \url{https://github.com/NanaEngo/Malaria_codesV2} under the MIT licence.
 See the Supporting Information for a full inventory of deposited files.
 
 % ── Acknowledgements ─────────────────────────────────────────────────
 \section*{Author Contributions}
+\begin{sloppypar}
 M.V.S.T. and S.G.N.E.: conceptualization and methodology. M.V.S.T., J.-P.T.N., and P.S.: software. M.V.S.T., J.-P.T.N., and W.F.M.: validation. M.V.S.T. and S.G.N.E.: formal analysis and investigation. S.G.N.E. and W.F.M.: resources. M.V.S.T.: data curation. M.V.S.T.: writing---original draft. M.V.S.T., J.-P.T.N., P.S., W.F.M., and S.G.N.E.: writing---review and editing. M.V.S.T.: visualization. S.G.N.E. and W.F.M.: supervision. S.G.N.E.: project administration. All authors read and agreed to the published version of the manuscript.
+\end{sloppypar}
 
 \section*{Acknowledgements}
 

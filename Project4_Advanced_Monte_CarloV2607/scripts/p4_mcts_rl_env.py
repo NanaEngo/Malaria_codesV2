@@ -1,501 +1,561 @@
 #!/usr/bin/env python3
-"""P4 — Molecular RL environment for MCTS-guided generator.
+"""P4 — Molecular RL Environment for MCTS
 
-This module defines a Gym-compatible environment where:
-- state  : a partial molecular graph / scaffold (SMILES string)
-- action : attachment of a molecular fragment
-- reward : composite pharmacological score (MPO, docking, SYBA, SA)
+Fragment-based molecular generation environment compatible with MCTSAgent.
+Uses RDKit atom-map based fragment attachment to grow molecules step-by-step.
 
-The environment uses RDKit (via datamol) to validate fragment attachments
-and to combine molecules into chemically valid structures. Fragment
-vocabulary has been expanded to cover common medicinal chemistry building
-blocks.
+Interface expected by MCTSAgent:
+    env.state              — current canonical SMILES (str)
+    env.initial_smiles     — starting SMILES (str)
+    env.step_count         — int
+    env.max_steps          — int
+    env.fragment_vocab     — list[str] of SMILES fragments
+    env._fragment_set      — str
+    env.randomize_attachment — bool
+    env.reset()            -> str
+    env.step(action: str)  -> (next_state: str, reward: float, done: bool, info: dict)
+    env._is_terminal(state: str) -> bool
 
-Skills applied:
-- datamol (scientific-agent-skills): simpler SMILES handling, validation
-- rdkit (scientific-agent-skills): rdFingerprintGenerator API
-
-Version: 0.9 — datamol integration + improved SMILES validation.
+Fragment attachment strategy:
+    For each step, a fragment SMILES is appended via a single-bond at a randomly
+    chosen (or highest-degree) attachment point on the current molecule.
+    RDKit's Chem.CombineMols + EditableMol is used for safe, valence-checked bonding.
+    Invalid attachments fall back to returning the current state (no-op).
 """
 
 from __future__ import annotations
 
 import random
-from typing import Any, Optional, Tuple
+import warnings
+from typing import Any, Optional
 
-import logging
-import datamol as dm
-from rdkit import Chem
-from rdkit.Chem import ValenceType
-from rdkit.Chem.Lipinski import RotatableBondSmarts
+import numpy as np
 
-logger = logging.getLogger(__name__)
+try:
+    from rdkit import Chem
+    from rdkit.Chem import RWMol, AllChem, Descriptors
+    HAS_RDKIT = True
+except ImportError:
+    HAS_RDKIT = False
+    print("WARNING: RDKit not available. MolecularEnv will use string concatenation fallback.")
 
 
-# ── Medicinal chemistry fragment vocabulary ──────────────────────────
-# Organised into categories for readability. SMILES use '*' as the
-# attachment point where applicable (connected via a dummy atom).
-FRAGMENT_LIBRARY: dict[str, list[tuple[str, str]]] = {
-    "aromatic": [
-        ("c1ccc([*])cc1",        "Phenyl"),
-        ("c1cc([*])ccn1",        "4-Pyridyl"),
-        ("c1c([*])nccn1",        "Pyrimidin-5-yl"),
-        ("c1cn([*])cn1",         "Imidazol-1-yl"),
-        ("c1c([*])ncs1",         "Thiazol-5-yl"),
+# ═══════════════════════════════════════════════════════════════════════════════
+# Fragment Vocabulary — 108 fragments in 15 categories
+# Selected for medicinal-chemistry relevance to antimalarial scaffolds (P1/P2)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+_FRAGMENTS: dict[str, list[str]] = {
+    # 1. Simple aromatics (12)
+    "simple_aromatics": [
+        "c1ccccc1",           # benzene
+        "c1ccncc1",           # pyridine
+        "c1ccoc1",            # furan
+        "c1ccsc1",            # thiophene
+        "c1ccnc1",            # pyrrole
+        "c1cncc1",            # imidazole
+        "c1cncnc1",           # pyrimidine
+        "c1cnccn1",           # pyrazine
+        "c1ccco1",            # 2H-furan
+        "c1cnoc1",            # isoxazole
+        "c1cnsc1",            # thiazole
+        "c1cncn1",            # 1,2,4-triazole
     ],
-    "saturated_heterocycle": [
-        ("C1CC([*])NCC1",        "4-Piperidinyl"),
-        ("C1COC([*])CN1",        "Morpholin-4-yl"),       # N-attachment
-        ("C1CN([*])CCN1",        "Piperazin-1-yl"),       # N-attachment
-        ("C1CC([*])CN1",         "Pyrrolidin-3-yl"),
+    # 2. Fused ring systems (10)
+    "fused_rings": [
+        "c1ccc2ccccc2c1",     # naphthalene
+        "c1cnc2ccccc2c1",     # quinoline
+        "c1ccc2ncccc2c1",     # isoquinoline
+        "c1ccc2[nH]ccc2c1",   # indole
+        "c1ccc2occc2c1",      # benzofuran
+        "c1ccc2sccc2c1",      # benzothiophene
+        "c1cnc2ccccn12",      # imidazo[1,2-a]pyridine
+        "c1ccc2cnccc2c1",     # quinoxaline
+        "c1cnc2ccccc2n1",     # benzimidazole
+        "c1ccc2c(c1)ccs2",    # thieno[2,3-b]pyridine
     ],
-    "alkyl": [
-        ("[*]C",                 "Methyl"),
-        ("[*]CC",                "Ethyl"),
-        ("[*]C(C)C",             "Isopropyl"),
-        ("[*]C(C)(C)C",          "tert-Butyl"),
-        ("[*]C1CC1",             "Cyclopropyl"),
-        ("[*]CC(F)(F)F",         "Trifluoroethyl"),
+    # 3. Aliphatic chains (8)
+    "aliphatic_chains": [
+        "CC",                 # ethyl
+        "CCC",                # propyl
+        "CCCC",               # butyl
+        "CC(C)C",             # isobutyl
+        "CC(C)(C)C",          # tert-butyl
+        "CCCCC",              # pentyl
+        "CCCCCC",             # hexyl
+        "C(C)CC",             # 2-methylpropyl
     ],
-    "functional_group": [
-        ("[*]O",                 "Hydroxyl"),
-        ("[*]OC",                "Methoxy"),
-        ("[*]OCC",               "Ethoxy"),
-        ("[*]N",                 "Primary amine"),
-        ("[*]N(C)C",             "Dimethylamino"),
-        ("[*]C(=O)O",            "Carboxyl"),
-        ("[*]C(=O)N",            "Primary amide"),
-        ("[*]C(=O)OC",           "Methyl ester"),
-        ("[*]S(=O)(=O)N",        "Sulfonamide"),
+    # 4. Saturated carbocycles (7)
+    "saturated_carbocycles": [
+        "C1CC1",              # cyclopropane
+        "C1CCC1",             # cyclobutane
+        "C1CCCC1",            # cyclopentane
+        "C1CCCCC1",           # cyclohexane
+        "C1CCCCCC1",          # cycloheptane
+        "C1CCC2CCCCC2C1",     # decalin
+        "C1CC2CCCC2CC1",      # bicyclo[2.2.2]octane
     ],
-    "halogen_cn": [
-        ("[*]F",                 "Fluoride"),
-        ("[*]Cl",                "Chloride"),
-        ("[*]Br",                "Bromide"),
-        ("[*]C#N",               "Cyano"),
-        ("[*]C(F)(F)F",          "Trifluoromethyl"),
-        ("[*][N+](=O)[O-]",      "Nitro"),
+    # 5. N-heterocycles (saturated/partial) (10)
+    "n_heterocycles": [
+        "C1CCNC1",            # pyrrolidine
+        "C1CCNCC1",           # piperidine
+        "C1CNCCN1",           # piperazine
+        "C1COCCN1",           # morpholine
+        "C1CCSC1",            # thiolane
+        "C1CN2CCCC2CC1",      # quinuclidine
+        "C1CNCC1",            # azetidine
+        "C1CC1N",             # cyclopropylamine
+        "C1CCNCC1C",          # 3-methylpiperidine
+        "N1CCOCC1",           # morpholine (alt)
     ],
-    "fused_aromatic": [
-        ("c1ccc2c([*])cccc2c1",   "1-Naphthyl"),
-        ("c1cc([*])c2ccccc2n1",   "3-Quinolinyl"),
-        ("c1c([*])cnc2ccccc12",   "4-Isoquinolinyl"),
-        ("c1c([*])[nH]c2ccccc12",  "3-Indolyl"),
-        ("c1c([*])nc2ccccc2n1",   "2-Quinazolinyl"),
-        ("c1c([*])oc2ccccc12",    "2-Benzofuranyl"),
-        ("c1c([*])sc2ccccc12",    "2-Benzothiophenyl"),
-        ("c1c([*])nc2[nH]cnc2n1", "6-Purinyl"),
-        ("c1c([*])nc2ncnn2c1",    "2-Pteridinyl"),
-        ("c1ccc2c([*])ncn2c1",    "4-Quinazolinyl"),
+    # 6. Oxygen-containing groups (8)
+    "oxygen_groups": [
+        "CO",                 # methanol
+        "CCO",                # ethanol
+        "C(O)C",              # isopropanol
+        "OC(=O)C",            # acetic acid
+        "COC",                # dimethyl ether
+        "CCOC",               # diethyl ether
+        "OCC",                # ethylene glycol unit
+        "C1CCOC1",            # tetrahydrofuran
     ],
-    "bridged_bicyclic": [
-        ("C1CC2([*])CCC1C2",      "2-Bicyclo[2.2.1]heptanyl"),
-        ("C1C2CC3([*])CC1CC(C2)C3", "1-Adamantyl"),
-        ("C1CC2([*])CC1C2",       "2-Bicyclo[2.1.1]hexanyl"),
+    # 7. Nitrogen-containing groups (10)
+    "nitrogen_groups": [
+        "CN",                 # methylamine
+        "CCN",                # ethylamine
+        "C(N)C",              # isopropylamine
+        "NC(=O)C",            # acetamide
+        "CNC",                # dimethylamine unit
+        "N(C)C",              # trimethylamine unit
+        "NCC",                # ethylenediamine unit
+        "C(=N)N",             # guanidinium unit
+        "NNC",                # hydrazine unit
+        "NC(=O)N",            # urea
     ],
-    "extended_alkyl": [
-        ("[*]CCC",               "n-Propyl"),
-        ("[*]CCCC",              "n-Butyl"),
-        ("[*]CC(C)CC",           "Isobutyl"),
-        ("[*]C1CCCC1",           "Cyclopentyl"),
-        ("[*]C1CCCCC1",          "Cyclohexyl"),
-        ("[*]CC1CC1",            "Cyclopropylmethyl"),
-        ("[*]C(C)CC",            "sec-Butyl"),
-        ("[*]CCCCCC",            "n-Hexyl"),
+    # 8. Sulphur/halogen groups (8)
+    "s_x_groups": [
+        "CS",                 # methanethiol
+        "CF",                 # fluoromethane
+        "CCl",                # chloromethane
+        "CBr",                # bromomethane
+        "C(F)(F)F",           # trifluoromethyl
+        "SC",                 # thioether
+        "S(=O)(=O)N",         # sulfonamide
+        "S(=O)C",             # sulfoxide
     ],
-    "alkene_alkyne": [
-        ("[*]C=C",               "Vinyl"),
-        ("[*]CC=C",              "Allyl"),
-        ("[*]C#C",               "Ethynyl"),
-        ("[*]CC#C",              "Propargyl"),
-        ("[*]/C=C/c1ccccc1",     "(E)-Styryl"),
-        ("[*]C(C)=C",            "Isopropenyl"),
+    # 9. Carbonyl/acid groups (8)
+    "carbonyl_groups": [
+        "C(=O)C",             # acetyl
+        "C(=O)O",             # carboxyl
+        "C(=O)N",             # amide
+        "C(=O)OC",            # ester
+        "CC(=O)C",            # ketone
+        "C=O",                # aldehyde
+        "C(=S)N",             # thioamide
+        "C(=O)Cl",            # acid chloride
     ],
-    "carbonyl": [
-        ("[*]C(=O)C",            "Acetyl"),
-        ("[*]C(=O)c1ccccc1",     "Benzoyl"),
-        ("[*]C=O",               "Formyl"),
-        ("[*]C(=O)CC",           "Propionyl"),
-        ("[*]C(=O)OC(C)C",       "Isopropyl ester"),
-        ("[*]C(=O)OCC",          "Ethyl ester"),
-        ("[*]C(=O)N(C)C",        "N,N-Dimethylamide"),
-        ("[*]C(=O)NC",           "N-Methylamide"),
-        ("[*]C(=O)CF",           "Fluoroacetyl"),
-        ("[*]OC(=O)C",           "Acetoxy"),
+    # 10. Quinoline/antimalarial privileged scaffolds (10)
+    "antimalarial_privileged": [
+        "c1ccc2nc(Cl)ccc2c1",         # 4-chloroquinoline core (CQ-like)
+        "c1ccc2nc(N)ccc2c1",          # 4-aminoquinoline
+        "Clc1ccnc2ccccc12",           # 8-aminoquinoline-like
+        "c1ccc2c(c1)cncc2",           # acridine core
+        "c1cc2ccccn2cc1",             # 1,8-naphthyridine
+        "c1ccc2[nH]cnc2c1",           # purine-like
+        "c1cnc2c(n1)cccc2",           # 1,6-naphthyridine
+        "O=C1c2ccccc2-c2ccccc21",     # anthraquinone
+        "c1ccc(-c2ccncc2)cc1",        # 4-phenylpyridine
+        "c1ccc2c(c1)-c1ccncc1-2",     # acridine variant
     ],
-    "sulfur_phosphorus": [
-        ("[*]S(=O)(=O)C",        "Methylsulfonyl"),
-        ("[*]S(=O)C",            "Methylsulfinyl"),
-        ("[*]SC",                "Methylthio"),
-        ("[*]S(=O)(=O)CF",       "Triflyl"),
-        ("[*]S(=O)(=O)N(C)C",    "N,N-Dimethylsulfonamide"),
-        ("[*]P(=O)(OC)OC",       "Dimethyl phosphate"),
-        ("[*]S(=O)(=O)c1ccccc1", "Phenylsulfonyl"),
-        ("[*]SCc1ccccc1",        "Benzylthio"),
+    # 11. Spacers/linkers (7)
+    "linkers": [
+        "CC#N",               # acetonitrile
+        "C#C",                # alkyne
+        "C=C",                # alkene
+        "NCC",                # aminoethyl linker
+        "OCC",                # hydroxyethyl linker
+        "CCNCC",              # diamine linker
+        "CC(=O)NCC",          # acetamide linker
     ],
-    "more_heterocycles": [
-        ("C1CC([*])OC1",         "3-Tetrahydrofuranyl"),
-        ("C1CC([*])OCC1",        "4-Tetrahydropyranyl"),
-        ("C1COC([*])O1",         "2-1,3-Dioxolanyl"),
-        ("C1COC([*])OC1",        "4-1,3-Dioxanyl"),
-        ("C1CC([*])NC1",         "3-Azetidinyl"),
-        ("C1COC1([*])",          "3-Oxetanyl"),
-        ("c1cn([*])nn1",          "1-Triazolyl"),
-        ("c1c([*])noc1",          "3-Isoxazolyl"),
-        ("c1cn([*])nc1",          "1-Pyrazolyl"),
-        ("c1c([*])n[nH]c1",       "4-Pyrazolyl"),
+    # 12. Spirocycles (4)
+    "spirocycles": [
+        "C1CCC2(CC1)CCCC2",   # spiro[5.5]undecane
+        "C1CCC2(CC1)CCCCC2",  # spiro[5.5]undecane (large)
+        "O=C1CCC2(CC1)CCCC2", # spiro ketone
+        "N1CCC2(CC1)CCNC2=O", # spiro lactam
     ],
-    "more_halogenated": [
-        ("[*]C(F)F",             "Difluoromethyl"),
-        ("[*]C(Cl)Cl",           "Dichloromethyl"),
-        ("[*]CF",                "Fluoromethyl"),
-        ("[*]OC(F)(F)F",         "Trifluoromethoxy"),
-        ("[*]C(F)(F)CF",         "Pentafluoroethyl"),
-        ("[*]SC(F)(F)F",         "Trifluoromethylthio"),
-        ("[*]OC(F)F",            "Difluoromethoxy"),
+    # 13. Michael acceptors / warheads (4)
+    "warheads": [
+        "C=CC(=O)N",          # acrylamide
+        "C#CC(=O)N",          # propiolamide
+        "C=CS(=O)(=O)N",      # vinyl sulfonamide
+        "C=CC#N",             # acrylonitrile
     ],
-    "amino_acid_like": [
-        ("[*]CC(=O)O",           "Carboxyethyl"),
-        ("[*]CC(=O)N",           "Carbamoylethyl"),
-        ("[*]CN",                "Aminomethyl"),
-        ("[*]CCN",               "Aminoethyl"),
-        ("[*]CCCN",              "Aminopropyl"),
-        ("[*]CN(C)C",            "N,N-Dimethylaminomethyl"),
-        ("[*]CC(=O)NCC(=O)O",    "Glycylglycine-like"),
+    # 14. Bioisosteres (4)
+    "bioisosteres": [
+        "S(=O)(=O)O",         # sulfonate
+        "B(O)O",              # boronic acid
+        "P(=O)(O)O",          # phosphonate
+        "C(F)=O",             # fluoroketone
+    ],
+    # 15. Macrocycle building blocks (6)
+    "macrocycle_units": [
+        "CCCCCCCCCC(=O)O",    # decanoic acid unit
+        "NCCCCCCN",           # hexanediamine unit
+        "OC(=O)CCCCC(=O)O",   # adipic acid unit
+        "CCCCNC(=O)C",        # amide + chain
+        "c1ccc(CCCC)cc1",     # phenylbutyl
+        "C1CCCCCC1C(=O)O",    # cycloheptane acid
     ],
 }
 
-# Flatten to a single list of (smiles, name) pairs for runtime
-FLATTENED_FRAGMENTS: list[tuple[str, str]] = [
-    item for category in FRAGMENT_LIBRARY.values() for item in category
-]
+# Subset definitions
+_SUBSET_KEYS: dict[str, list[str]] = {
+    "all": list(_FRAGMENTS.keys()),
+    "medium": [
+        "simple_aromatics", "aliphatic_chains", "n_heterocycles",
+        "nitrogen_groups", "oxygen_groups", "antimalarial_privileged",
+    ],
+    "aromatic_only": [
+        "simple_aromatics", "fused_rings",
+    ],
+    "minimal": [
+        "simple_aromatics",
+    ],
+}
 
-# Medium-sized vocabulary (~24 fragments) for ablation study:
-# Combines aromatic, saturated_heterocycle, alkyl, and functional_group categories.
-MEDIUM_FRAGMENTS: list[str] = [
-    smi
-    for category_name in ["aromatic", "saturated_heterocycle", "alkyl", "functional_group"]
-    for smi, _ in FRAGMENT_LIBRARY[category_name]
-]
+# Cache for filtered fragment vocabularies keyed by fragment_set
+_FRAGMENT_VOCAB_CACHE: dict[str, list[str]] = {}
 
+
+def _build_vocab(fragment_set: str) -> list[str]:
+    """Return flat list of SMILES for the chosen fragment subset.
+
+    Fragments that cannot be attached to a simple methane seed without
+    triggering RDKit valence/kekulization errors are filtered out at build
+    time. This prevents the environment from repeatedly trying invalid
+    actions during MCTS/baseline runs.
+    """
+    if fragment_set in _FRAGMENT_VOCAB_CACHE:
+        return _FRAGMENT_VOCAB_CACHE[fragment_set]
+
+    keys = _SUBSET_KEYS.get(fragment_set, _SUBSET_KEYS["all"])
+    raw: list[str] = []
+    for k in keys:
+        raw.extend(_FRAGMENTS[k])
+
+    if not HAS_RDKIT:
+        return raw
+
+    # Canonicalize and deduplicate first
+    canon: list[str] = []
+    for smi in raw:
+        mol = Chem.MolFromSmiles(smi)
+        if mol is not None:
+            canon.append(Chem.MolToSmiles(mol))
+    canon = list(dict.fromkeys(canon))
+
+    # Filter out fragments that cannot be attached to a methane seed.
+    # This prevents the environment from repeatedly proposing invalid
+    # actions during MCTS/baseline runs. Expected RDKit warnings are
+    # suppressed here because failure is the signal we use for filtering.
+    from rdkit import RDLogger
+    RDLogger.DisableLog("rdApp.*")
+    try:
+        test_rng = np.random.default_rng(0)
+        valid: list[str] = []
+        for smi in canon:
+            try:
+                attached = _attach_fragment("C", smi, randomize=False, rng=test_rng)
+                if attached is not None and attached != "C":
+                    valid.append(smi)
+            except Exception:
+                pass
+    finally:
+        RDLogger.EnableLog("rdApp.*")
+
+    if len(valid) < len(canon):
+        warnings.warn(
+            f"_build_vocab('{fragment_set}'): {len(canon) - len(valid)} of {len(canon)} "
+            f"fragments removed because they cannot be attached to methane."
+        )
+    _FRAGMENT_VOCAB_CACHE[fragment_set] = valid
+    return valid
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Chemistry helpers
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _canonicalize(smiles: str) -> Optional[str]:
+    """Return canonical SMILES or None if invalid."""
+    if not HAS_RDKIT:
+        return smiles
+    mol = Chem.MolFromSmiles(smiles)
+    return Chem.MolToSmiles(mol) if mol is not None else None
+
+
+def _get_attachment_atom(mol: Any, randomize: bool, rng: np.random.Generator) -> Optional[int]:
+    """
+    Select an atom index suitable for fragment attachment.
+    Prefers atoms with free valence (not fully saturated).
+    """
+    from rdkit.Chem import Atom
+
+    candidates = []
+    for atom in mol.GetAtoms():
+        # Only C, N, O, S attachment points
+        if atom.GetAtomicNum() not in (6, 7, 8, 16):
+            continue
+        # Skip aromatic atoms (would break aromaticity)
+        if atom.GetIsAromatic():
+            continue
+        # Require at least one implicit H (free valence)
+        if atom.GetTotalNumHs() > 0:
+            candidates.append(atom.GetIdx())
+
+    if not candidates:
+        # Fallback: any non-H atom
+        candidates = [a.GetIdx() for a in mol.GetAtoms() if a.GetAtomicNum() != 1]
+
+    if not candidates:
+        return None
+
+    if randomize:
+        return int(rng.choice(candidates))
+    # Deterministic: pick atom with highest degree (most connected)
+    return max(candidates, key=lambda i: mol.GetAtomWithIdx(i).GetDegree())
+
+
+def _attach_fragment(mol_smiles: str, frag_smiles: str,
+                     randomize: bool, rng: np.random.Generator) -> Optional[str]:
+    """
+    Attach fragment to molecule via a new single bond.
+    Returns canonical SMILES of the combined molecule, or None if attachment fails.
+    """
+    if not HAS_RDKIT:
+        return mol_smiles + "." + frag_smiles
+
+    mol = Chem.MolFromSmiles(mol_smiles)
+    frag = Chem.MolFromSmiles(frag_smiles)
+    if mol is None or frag is None:
+        return None
+
+    # Select attachment atoms
+    mol_attach = _get_attachment_atom(mol, randomize, rng)
+    frag_attach = _get_attachment_atom(frag, randomize, rng)
+    if mol_attach is None or frag_attach is None:
+        return None
+
+    # Combine molecules
+    combo = Chem.RWMol(Chem.CombineMols(mol, frag))
+    frag_offset = mol.GetNumAtoms()
+    frag_atom_idx = frag_offset + frag_attach
+
+    try:
+        combo.AddBond(mol_attach, frag_atom_idx, Chem.BondType.SINGLE)
+        Chem.SanitizeMol(combo)
+    except Exception:
+        return None
+
+    result_smi = Chem.MolToSmiles(combo)
+    # Validate result
+    if Chem.MolFromSmiles(result_smi) is None:
+        return None
+    return result_smi
+
+
+def _compute_mw(smiles: str) -> float:
+    """Molecular weight for terminal condition (MW > 800 → too large)."""
+    if not HAS_RDKIT:
+        return 0.0
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return 0.0
+    return Descriptors.MolWt(mol)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MolecularEnv
+# ═══════════════════════════════════════════════════════════════════════════════
 
 class MolecularEnv:
-    """Molecular construction environment with expanded fragment vocabulary.
+    """
+    Fragment-based molecular generation RL environment.
 
     Parameters
     ----------
     initial_smiles : str
-        Starting scaffold SMILES.
+        Starting molecule SMILES (default: 'C' = methane).
     max_steps : int
-        Maximum number of fragment additions before termination.
+        Maximum number of fragment addition steps (default: 8).
     fragment_set : str
-        Which fragment set to use: "all" (default, 99 fragments, 14 categories), "medium"
-        (24 fragments, intermediate for ablation), "minimal" (5 fragments), or "aromatic_only" (5 fragments).
+        Vocabulary subset: 'all' | 'medium' | 'aromatic_only' | 'minimal'.
     randomize_attachment : bool
-        If True, randomly select attachment atoms instead of always picking
-        the first available one. Adds stochasticity for exploration.
+        If True, attachment point is chosen randomly; else by highest degree.
+    max_mw : float
+        Molecular weight ceiling; stepping above this triggers done=True.
+    seed : int or None
+        RNG seed for reproducibility.
     """
 
     def __init__(
         self,
         initial_smiles: str = "C",
-        max_steps: int = 10,
+        max_steps: int = 8,
         fragment_set: str = "all",
         randomize_attachment: bool = False,
+        max_mw: float = 800.0,
         seed: Optional[int] = None,
     ) -> None:
-        # Standardize initial SMILES via datamol (handles tautomers, valences)
-        initial_mol = dm.to_mol(initial_smiles)
-        self.initial_smiles = dm.to_smiles(initial_mol) if initial_mol is not None else initial_smiles
+        # Canonicalize initial SMILES
+        canon = _canonicalize(initial_smiles)
+        if canon is None:
+            raise ValueError(f"Invalid initial_smiles: {initial_smiles!r}")
 
-        self.max_steps = max_steps
+        self.initial_smiles: str = canon
+        self.max_steps: int = max_steps
+        self._fragment_set: str = fragment_set
+        self.randomize_attachment: bool = randomize_attachment
+        self.max_mw: float = max_mw
+
+        # Build vocabulary
+        self.fragment_vocab: list[str] = _build_vocab(fragment_set)
+        if not self.fragment_vocab:
+            raise ValueError(f"Empty vocabulary for fragment_set={fragment_set!r}")
+
+        # RNG (instance-level, thread-safe)
+        self._rng: np.random.Generator = np.random.default_rng(seed)
+
+        # State
         self.state: str = self.initial_smiles
         self.step_count: int = 0
-        self.randomize_attachment = randomize_attachment
-        self._fragment_set = fragment_set
-        self._rng = random.Random(seed)
 
-        # Select fragment vocabulary
-        if fragment_set == "all":
-            self._fragment_vocab = [smi for smi, _ in FLATTENED_FRAGMENTS]
-        elif fragment_set == "medium":
-            self._fragment_vocab = list(MEDIUM_FRAGMENTS)
-        elif fragment_set == "minimal":
-            self._fragment_vocab: list[str] = [
-                "c1ccccc1",  # phenyl
-                "C",         # methyl
-                "N",         # amine
-                "O",         # hydroxyl
-                "Cl",        # chloride
-            ]
-        elif fragment_set == "aromatic_only":
-            self._fragment_vocab = [smi for smi, _ in FRAGMENT_LIBRARY["aromatic"]]
-        else:
-            self._fragment_vocab = [smi for smi, _ in FLATTENED_FRAGMENTS]
+    # ── Gym-like interface ──────────────────────────────────────────────────
 
-    @property
-    def fragment_vocab(self) -> list[str]:
-        """Return the list of available fragment actions."""
-        return self._fragment_vocab
-
-    @property
-    def fragment_names(self) -> dict[str, str]:
-        """Return a mapping from fragment SMILES to human-readable names."""
-        return {smi: name for smi, name in FLATTENED_FRAGMENTS}
-
-    def reset(self, initial_smiles: Optional[str] = None) -> str:
-        """Reset the environment to the initial scaffold."""
-        self.state = initial_smiles or self.initial_smiles
+    def reset(self) -> str:
+        """Reset environment to initial state. Returns initial SMILES."""
+        self.state = self.initial_smiles
         self.step_count = 0
         return self.state
 
-    def step(self, action: str) -> Tuple[str, float, bool, dict[str, Any]]:
-        """Apply one fragment attachment and return (next_state, reward, done, info).
+    def step(self, action: str) -> tuple[str, float, bool, dict]:
+        """
+        Apply fragment addition action.
 
         Parameters
         ----------
         action : str
-            SMILES fragment (with '*' attachment point) to attach.
+            Fragment SMILES to attach to the current molecule.
 
         Returns
         -------
-        tuple
-            (next_state_smiles, reward, done, info)
+        next_state : str
+            SMILES after attachment (or unchanged if attachment fails).
+        reward : float
+            0.0 — reward is computed externally by the oracle in MCTSAgent.
+        done : bool
+            True if max_steps reached or MW ceiling exceeded.
+        info : dict
+            {'valid': bool, 'mw': float, 'n_atoms': int}
         """
-        self.state = self._attach_fragment(self.state, action)
-        self.step_count += 1
+        new_smiles = _attach_fragment(
+            self.state, action,
+            randomize=self.randomize_attachment,
+            rng=self._rng,
+        )
 
-        reward = self._dummy_reward(self.state)
-        done = self.step_count >= self.max_steps or self._is_terminal(self.state)
-        info = {
-            "step": self.step_count,
-            "smiles": self.state,
-            "fragment": action,
-            "fragment_name": self.fragment_names.get(action, "unknown"),
-        }
-        return self.state, reward, done, info
-
-    def _find_attachment_atom(
-        self, mol: Chem.RWMol, num_ref_atoms: int,
-        is_fragment: bool = False, has_dummy: bool = False
-    ) -> int | None:
-        """Find a single atom for bond formation.
-
-        For the scaffold (is_fragment=False): prefers aliphatic (non-ring)
-        atoms with available implicit valence. Falls back to ring atoms.
-
-        For the fragment (is_fragment=True): if has_dummy, returns the
-        neighbour of the '*' dummy atom (preserving regiospecificity).
-        Otherwise returns any atom with available valence.
-
-        Parameters
-        ----------
-        mol : RWMol
-            Combined molecule (scaffold + fragment).
-        num_ref_atoms : int
-            Number of atoms in the scaffold portion.
-        is_fragment : bool
-            If True, search in the fragment portion for attachment.
-        has_dummy : bool
-            If True, look for the '*' dummy atom's neighbour.
-
-        Returns
-        -------
-        int | None
-            Atom index for bond formation, or None if no suitable atom.
-        """
-        if is_fragment and has_dummy:
-            # Find the dummy atom (atomic number 0) in the fragment portion
-            for atom in mol.GetAtoms():
-                if atom.GetAtomicNum() == 0 and atom.GetIdx() >= num_ref_atoms:
-                    neighbors = [nbr.GetIdx() for nbr in atom.GetNeighbors()]
-                    if neighbors:
-                        return neighbors[0]
-            return None
-
-        # Determine which atoms to search
-        if is_fragment:
-            # Without dummy: use any fragment atom with implicit valence
-            candidates = []
-            for atom in mol.GetAtoms():
-                idx = atom.GetIdx()
-                if idx < num_ref_atoms:  # skip scaffold atoms
-                    continue
-                if atom.GetAtomicNum() == 0:  # skip dummy atoms
-                    continue
-                try:
-                    if atom.GetValence(ValenceType.IMPLICIT) > 0:
-                        candidates.append(idx)
-                except Exception:
-                    pass
-            return candidates[0] if candidates else None
-
-        # Scaffold attachment: find atoms with available valence
-        candidates = []
-        for atom in mol.GetAtoms():
-            idx = atom.GetIdx()
-            if idx >= num_ref_atoms:
-                continue
-            if atom.GetAtomicNum() == 0:
-                continue
-            try:
-                implicit = atom.GetValence(ValenceType.IMPLICIT)
-            except Exception:
-                implicit = 0
-            if implicit > 0:
-                candidates.append(idx)
-
-        if not candidates:
-            return None
-
-        if self.randomize_attachment:
-            return self._rng.choice(candidates)
-
-        # Prefer aliphatic (non-ring) attachment sites
-        aliphatic = [i for i in candidates if not mol.GetAtomWithIdx(i).IsInRing()]
-        if aliphatic:
-            return aliphatic[0]
-        return candidates[0]
-
-    def _attach_fragment(self, state: str, fragment_smiles: str) -> str:
-        """Attach a fragment to the current molecule using RDKit.
-
-        The fragment SMILES may contain a '*' dummy atom as the attachment
-        point. If present, the dummy atom is resolved to its neighbour(s)
-        and bonded to the scaffold. If absent, any atom with available
-        valence is used.
-
-        Parameters
-        ----------
-        state : str
-            Current molecular SMILES.
-        fragment_smiles : str
-            Fragment SMILES to attach.
-
-        Returns
-        -------
-        str
-            Resulting SMILES, or the original state if attachment fails.
-        """
-        mol1 = Chem.MolFromSmiles(state)
-        if mol1 is None:
-            return state
-
-        # Handle fragments with '*' attachment points:
-        # Keep the dummy atom through CombineMols to preserve regiospecificity.
-        has_dummy = "*" in fragment_smiles
-        frag_smi_clean = fragment_smiles.replace("[*]", "*") if has_dummy else fragment_smiles
-        mol2 = Chem.MolFromSmiles(frag_smi_clean, sanitize=False)
-
-        if mol2 is None:
-            return state
-
-        # Sanitize: try without dummy first, then with dummy present
-        try:
-            if not has_dummy:
-                Chem.SanitizeMol(mol2)
-        except Exception:
-            return state
-
-        # Combine molecules (dummy atom preserved in mol2)
-        combined = Chem.CombineMols(mol1, mol2)
-        rw_mol = Chem.RWMol(combined)
-        num_mol1_atoms = mol1.GetNumAtoms()
-
-        # Find the attachment point on the scaffold
-        scaffold_attachment = self._find_attachment_atom(rw_mol, num_mol1_atoms, is_fragment=False)
-        if scaffold_attachment is None:
-            return state
-
-        # Find the attachment point on the fragment
-        fragment_attachment = self._find_attachment_atom(rw_mol, num_mol1_atoms, is_fragment=True, has_dummy=has_dummy)
-        if fragment_attachment is None:
-            return state
-
-        # Create the bond
-        rw_mol.AddBond(scaffold_attachment, fragment_attachment, Chem.BondType.SINGLE)
-
-        # Remove the dummy atom if present
-        if has_dummy:
-            # Find dummy atom index (it's now in the combined mol)
-            dummy_idx = None
-            for atom in rw_mol.GetAtoms():
-                if atom.GetAtomicNum() == 0 and atom.GetIdx() >= num_mol1_atoms:
-                    dummy_idx = atom.GetIdx()
-                    break
-            if dummy_idx is not None:
-                rw_mol.RemoveAtom(dummy_idx)
-
-        try:
-            Chem.SanitizeMol(rw_mol)
-            result = Chem.MolToSmiles(rw_mol)
-            if result == state:
-                logger.warning("Fragment attachment produced no change: state=%s fragment=%s", state, fragment_smiles)
-            return result
-        except Exception as exc:
-            logger.debug("Fragment attachment failed: state=%s fragment=%s error=%s", state, fragment_smiles, exc)
-            return state
-
-    def get_fragment_summary(self) -> str:
-        """Return a summary of available fragments by category."""
-        lines = ["Fragment Vocabulary Summary:", "─" * 50]
-        for category, fragments in FRAGMENT_LIBRARY.items():
-            lines.append(f"\n{category.upper()} ({len(fragments)} fragments):")
-            for smi, name in fragments:
-                lines.append(f"  {smi:20s} → {name}")
-        return "\n".join(lines)
-
-    def _dummy_reward(self, state: str) -> float:
-        """Placeholder reward; the real reward is computed by MCTSAgent via oracle."""
-        mol = Chem.MolFromSmiles(state)
-        if mol is None:
-            return 0.0
-        # Simple heuristic: prefer larger molecules (more fragments attached)
-        # up to a reasonable size, then plateau
-        num_atoms = mol.GetNumAtoms()
-        if num_atoms <= 5:
-            return float(num_atoms) / 10.0
-        elif num_atoms <= 20:
-            return 0.5
+        if new_smiles is not None and new_smiles != self.state:
+            self.state = new_smiles
+            valid = True
         else:
-            return 0.3  # decreasing reward for overly large molecules
+            # No-op: attachment failed; state unchanged
+            valid = False
+
+        self.step_count += 1
+        mw = _compute_mw(self.state)
+        done = self.step_count >= self.max_steps or mw > self.max_mw
+
+        info = {
+            "valid": valid,
+            "mw": mw,
+            "n_atoms": Chem.MolFromSmiles(self.state).GetNumAtoms()
+            if HAS_RDKIT and Chem.MolFromSmiles(self.state) is not None
+            else 0,
+        }
+        return self.state, 0.0, done, info
 
     def _is_terminal(self, state: str) -> bool:
-        """Check if the molecule is in a terminal state.
-
-        Terminal if: no available valence sites remain on the scaffold,
-        or the molecule is too large.
         """
+        Check if state is terminal (MW ceiling or invalid SMILES).
+        Called by MCTSAgent rollout to determine early stopping.
+        """
+        if not HAS_RDKIT:
+            return False
         mol = Chem.MolFromSmiles(state)
         if mol is None:
             return True
-        if mol.GetNumAtoms() > 50:
-            return True
-        # Check if any atom has available valence
-        for atom in mol.GetAtoms():
-            try:
-                if atom.GetValence(ValenceType.IMPLICIT) > 0:
-                    return False
-            except Exception:
-                pass
-        return True
+        return Descriptors.MolWt(mol) > self.max_mw
 
+    # ── Serialization helpers (for MCTSAgent._make_env_copy) ───────────────
+
+    def get_config(self) -> dict:
+        """Return constructor kwargs for lightweight copying."""
+        return {
+            "initial_smiles": self.initial_smiles,
+            "max_steps": self.max_steps,
+            "fragment_set": self._fragment_set,
+            "randomize_attachment": self.randomize_attachment,
+            "max_mw": self.max_mw,
+        }
+
+    def __repr__(self) -> str:
+        return (
+            f"MolecularEnv(state={self.state!r}, step={self.step_count}/{self.max_steps}, "
+            f"vocab_size={len(self.fragment_vocab)}, set={self._fragment_set!r})"
+        )
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Smoke test
+# ═══════════════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
-    # Quick test
-    env = MolecularEnv(initial_smiles="C", max_steps=5, fragment_set="all",
-                       randomize_attachment=True)
-    env.reset()
-    print(env.get_fragment_summary())
-    print("\n--- Testing fragment attachments ---")
-    vocab = env.fragment_vocab
-    state = env.state
-    print(f"Initial: {state}")
-    for i, fragment in enumerate(vocab[:10]):
-        state, reward, done, info = env.step(fragment)
-        name = info.get("fragment_name", "unknown")
-        print(f"  + {name:15s} ({fragment:20s}) → {state:30s} reward={reward:.3f} done={done}")
+    import argparse
+
+    parser = argparse.ArgumentParser(description="MolecularEnv smoke test")
+    parser.add_argument("--fragment-set", default="medium",
+                        choices=["all", "medium", "aromatic_only", "minimal"])
+    parser.add_argument("--steps", type=int, default=5)
+    parser.add_argument("--seed", type=int, default=42)
+    args = parser.parse_args()
+
+    print(f"=== MolecularEnv Smoke Test ===")
+    env = MolecularEnv(
+        initial_smiles="c1ccc2nc(Cl)ccc2c1",  # 4-chloroquinoline (CQ scaffold)
+        max_steps=args.steps,
+        fragment_set=args.fragment_set,
+        randomize_attachment=True,
+        seed=args.seed,
+    )
+
+    print(f"  Vocab size ({args.fragment_set}): {len(env.fragment_vocab)}")
+    print(f"  Initial state:   {env.state}")
+    print()
+
+    rng = np.random.default_rng(args.seed)
+    state = env.reset()
+    for i in range(args.steps):
+        action = env.fragment_vocab[rng.integers(len(env.fragment_vocab))]
+        next_state, reward, done, info = env.step(action)
+        print(f"  Step {i+1}: action={action!r:20s} → valid={info['valid']} "
+              f"MW={info['mw']:.1f} atoms={info['n_atoms']} done={done}")
         if done:
             break
-    print(f"\nTotal fragments in vocabulary: {len(vocab)}")
-    print(f"Categories: {list(FRAGMENT_LIBRARY.keys())}")
+
+    print(f"\n  Final state: {env.state}")
+    print(f"  Steps taken: {env.step_count}")
+    print(f"\n  Subset sizes:")
+    for subset in ["all", "medium", "aromatic_only", "minimal"]:
+        v = _build_vocab(subset)
+        print(f"    {subset:20s}: {len(v):3d} fragments")

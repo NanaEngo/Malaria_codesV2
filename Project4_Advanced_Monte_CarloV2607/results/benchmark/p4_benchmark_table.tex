@@ -1,15 +1,11 @@
-\begin{table}[htbp]
-\centering
-\caption{Benchmark comparison of molecular generation methods.}
-\label{tab:p4_benchmark}
-\begin{tabular}{lcccccc}
-\toprule
-Method & Mean Reward $\uparrow$ & Max Reward $\uparrow$ & Std & Time (s) & Diversity $\uparrow$ & MPO \\
-\midrule
-  MCTS + ScafVAE (ours) & 0.6331 & 0.6331 & 0.0000 & 512.6 & 0.000 & 0.923 \\
-  Random Search & 0.4528 & 0.4528 & 0.0000 & 98.4 & 0.000 & 0.421 \\
-  Greedy Search & 0.6335 & 0.6335 & 0.0000 & 1103.8 & 0.000 & 0.930 \\
-  Genetic Algorithm & 0.5886 & 0.5886 & 0.0000 & 253.2 & 0.000 & 0.897 \\
-\bottomrule
+% P4 benchmark summary across all seeds (auto-generated)
+\begin{tabular}{l c c c c c}
+\hline
+Method & Mean reward & Std & Min & Max & Mean time (s) \\
+\hline
+Random & 0.6645 & 0.0064 & 0.6497 & 0.6782 & 310.0 \\
+MCTS+ScafVAE & 0.6594 & 0.0078 & 0.6472 & 0.6811 & 183.2 \\
+GA & 0.6402 & 0.0098 & 0.6248 & 0.6577 & 8.9 \\
+Greedy & 0.5398 & 0.0000 & 0.5398 & 0.5398 & 0.1 \\
+\hline
 \end{tabular}
-\end{table}

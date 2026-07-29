@@ -1,0 +1,28 @@
+{
+  "script": "p4_plot_merged_pareto.py",
+  "generated_utc": "2026-07-29T13:07:24.775053+00:00",
+  "input_csv": "results/pareto/merged_pareto_front.csv",
+  "output_png": "manuscript/LaTeX/Graphics/pareto_front.png",
+  "n_points": 4,
+  "hypervolume": 1.2366,
+  "columns": [
+    "smiles",
+    "mpo",
+    "syba",
+    "sa",
+    "rrs",
+    "pns",
+    "syba_raw",
+    "hypervolume",
+    "seed",
+    "rrs_colour"
+  ],
+  "syba_recomputed": true,
+  "syba_raw": [
+    78.669698,
+    58.128293,
+    -19.250645,
+    25.877384
+  ],
+  "notes": "SYBA values were recomputed post-hoc with the lich/conda SYBA classifier; the original Pareto run returned a constant fallback of 0 because the SYBA classifier was not loaded."
+}

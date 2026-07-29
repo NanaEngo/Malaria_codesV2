@@ -3,13 +3,13 @@
 # P4 MCTS+RL — Array job for molecular generation (production)
 #
 # Uses:
-# - Expanded 108-fragment vocabulary (15 categories) (ScafVAE-guided policy)
+# - Fragment vocabulary selected via FRAGMENT_SET (default: medium, filtered for valence)
 # - Real oracles (MPO + docking + SYBA + SA from P1/P2 libraries)
 # - 20 independent seeds (n=20 for valid variance, per adversarial audit) per run
 #
 # Usage:
 #   sbatch --array=0-19%8 \
-#     --export=INITIAL_SMILES="C",MAX_STEPS=8,N_ITERATIONS=1000 \
+#     --export=INITIAL_SMILES="C",MAX_STEPS=8,N_ITERATIONS=1000,FRAGMENT_SET=medium \
 #     scripts/p4_mcts_array.sbatch
 #
 # Each array task runs an independent MCTS search with a unique seed.
@@ -17,8 +17,8 @@
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p4_mcts
 #SBATCH --array=0-19%8
-#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_mcts_%j.log
-#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_mcts_%j.err
+#SBATCH --output=%x_%j.log
+#SBATCH --error=%x_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=4G
@@ -42,9 +42,23 @@ export OPENBLAS_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 
-# ── Environment ─────────────────────────────────────────────────────
-PYTHON="/home/nanaengo/miniforge3/envs/malaria_md/bin/python"
+# ── Robust conda activation ───────────────────────────────────────
+# ── Robust conda activation (with fallback) ───────────────────────────
+if [ -d "${HOME}/miniforge3" ]; then
+  CONDA_BASE="${HOME}/miniforge3"
+elif [ -d "${HOME}/miniconda3" ]; then
+  CONDA_BASE="${HOME}/miniconda3"
+else
+  echo "ERROR: No conda installation found in ${HOME}" >&2
+  exit 1
+fi
+source "${CONDA_BASE}/etc/profile.d/conda.sh"
+set +u && conda activate malaria_md && set -u
+
+# ── Project paths (hard-coded: robust under SLURM temp copy) ─────────
 PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607"
+SCRIPT_DIR="${PROJECT_DIR}/scripts"
+PYTHON="${CONDA_BASE}/envs/malaria_md/bin/python"
 RESULTS_DIR="${PROJECT_DIR}/results/mcts"
 
 mkdir -p "${RESULTS_DIR}" "${PROJECT_DIR}/logs/slurm"
@@ -57,7 +71,7 @@ exec > "${_LOG_PATH}" 2>&1
 INITIAL_SMILES="${INITIAL_SMILES:-C}"
 MAX_STEPS="${MAX_STEPS:-8}"
 N_ITERATIONS="${N_ITERATIONS:-1000}"
-FRAGMENT_SET="${FRAGMENT_SET:-all}"
+FRAGMENT_SET="${FRAGMENT_SET:-medium}"
 
 # Unique seed per array task for independent searches
 SEED="${SLURM_ARRAY_TASK_ID:?ERROR: not running as array job?}"
@@ -74,7 +88,7 @@ echo "  Host:            $(hostname)"
 echo "  Start:           $(date -u -Iseconds)"
 
 # ── Run MCTS search (ScafVAE policy + real oracles) ─────────────────
-"${PYTHON}" "${PROJECT_DIR}/scripts/p4_mcts_run.py" \
+"${PYTHON}" "${SCRIPT_DIR}/p4_mcts_run.py" \
   --initial-smiles "${INITIAL_SMILES}" \
   --max-steps "${MAX_STEPS}" \
   --n-iterations "${N_ITERATIONS}" \
@@ -82,7 +96,6 @@ echo "  Start:           $(date -u -Iseconds)"
   --c-puct 1.414 \
   --policy-temperature 0.8 \
   --seed "${SEED}" \
-  --output-csv "${OUT_CSV}" \
-  2>&1 | tee "${OUT_LOG}"
+  --output-csv "${OUT_CSV}"
 
 echo "═══ Task ${SEED} complete: $(date -u -Iseconds) ═══"

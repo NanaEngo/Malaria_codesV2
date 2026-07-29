@@ -1,2 +1,2 @@
-seed,initial_smiles,max_steps,n_iterations,fragment_set,policy,best_state,best_reward
-10,C,8,1000,all,scafvae,Cc1c(O)cc(-c2ccccc2)c(C)c1OC1CCCCN1,0.611854
+seed,fragment_set,c_puct,policy_temperature,n_iterations,max_steps,best_smiles,best_reward,elapsed_s
+10,all,1.414,0.8,1000,8,C=C(C1(C2CC2)CCC2(C(=O)Cl)CCCC(Nc3ccc4ccccc4n3)(C3(N)CC3)C21C)S(N)(=O)=O,0.6996,17.32

@@ -18,6 +18,7 @@ Output:
 import argparse
 import csv
 import os
+import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -70,33 +71,52 @@ METHOD_LABELS = {
     "ga": "GA",
     "random": "Random",
 }
-N_SEEDS = 5
+N_SEEDS = 20  # matches --array=0-19 in p4_benchmark_array.sbatch
 
 
 def load_benchmark_data():
-    """Load all seed CSV files and return dict: method -> list of dicts."""
+    """Load benchmark data from the merged CSV (preferred) or per-seed CSVs."""
     data = defaultdict(list)
-    for seed in range(N_SEEDS):
-        csv_path = RESULTS_DIR / f"p4_benchmark_seed_{seed}.csv"
-        if not csv_path.exists():
-            print(f"  WARNING: {csv_path} not found")
-            continue
-        with open(csv_path) as f:
+    merged_path = RESULTS_DIR / "p4_benchmark_merged.csv"
+
+    if merged_path.exists():
+        print(f"  Using merged benchmark data: {merged_path}")
+        with open(merged_path) as f:
             reader = csv.DictReader(f)
             for row in reader:
                 method = row["method"].strip().lower()
                 data[method].append({
                     "seed": int(row["seed"]),
-                    "reward": float(row["best_reward"]),
+                    "reward": float(row.get("best_reward", row.get("reward", 0))),
                     "mpo": float(row.get("mpo", 0)),
                     "docking": float(row.get("docking", 0)),
                     "syba": float(row.get("syba", 0)),
                     "sa": float(row.get("sa", 0)),
-                    "time_s": float(row["time_s"]),
+                    "time_s": float(row.get("time_s", row.get("elapsed_s", 0))),
                 })
+    else:
+        print(f"  WARNING: {merged_path} not found; falling back to per-seed files")
+        for seed in range(N_SEEDS):
+            csv_path = RESULTS_DIR / f"p4_benchmark_seed_{seed}.csv"
+            if not csv_path.exists():
+                print(f"  WARNING: {csv_path} not found")
+                continue
+            with open(csv_path) as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    method = row["method"].strip().lower()
+                    data[method].append({
+                        "seed": int(row["seed"]),
+                        "reward": float(row.get("best_reward", row.get("reward", 0))),
+                        "mpo": float(row.get("mpo", 0)),
+                        "docking": float(row.get("docking", 0)),
+                        "syba": float(row.get("syba", 0)),
+                        "sa": float(row.get("sa", 0)),
+                        "time_s": float(row.get("time_s", row.get("elapsed_s", 0))),
+                    })
     if not data:
         print("  ERROR: No benchmark data loaded! Check results/benchmark/ directory.")
-        print(f"  Expected {N_SEEDS} files: p4_benchmark_seed_[0-{N_SEEDS-1}].csv")
+        print(f"  Expected either p4_benchmark_merged.csv or {N_SEEDS} per-seed files")
         sys.exit(1)
     return data
 
@@ -134,7 +154,8 @@ def plot_reward_bar(data):
     ax.set_ylim(0, max(means) + max(stds) + 0.06)
     ax.yaxis.set_major_locator(mticker.MultipleLocator(0.05))
     ax.yaxis.set_minor_locator(mticker.MultipleLocator(0.01))
-    ax.set_title("Benchmark comparison (5 seeds)", fontsize=11, fontweight="bold")
+    n_seeds_actual = max(len(data[m]) for m in methods if m in data)
+    ax.set_title(f"Benchmark comparison ({n_seeds_actual} seeds)", fontsize=11, fontweight="bold")
 
     # Add significance bracket between Greedy and MCTS
     y_max = max(means) + max(stds) + 0.04
@@ -240,9 +261,8 @@ def plot_pareto_front(data):
     """Pareto front scatter: MPO vs SYBA, coloured by SA⁻¹.
 
     Uses real data from p4_pareto_data.csv (5 QMC-validated Pareto-optimal
-    candidates + 20 best-in-seed benchmark molecules) plus synthetic
-    frontier points matching the manuscript statistics (12 non-dominated
-    solutions, hypervolume 0.58).
+    candidates + additional best-in-seed benchmark molecules) and computes
+    the displayed Pareto frontier directly from the loaded points.
     """
     pareto_data = load_pareto_data()
 
@@ -373,7 +393,14 @@ def plot_pareto_front(data):
 
 # ── Figure 4: Scaffold diversity MDS ─────────────────────────────────
 def plot_diversity(data):
-    """2D projection (simulated MDS) of generated molecules by method."""
+    """2D projection (simulated/illustrative MDS) of generated molecules by method.
+
+    This figure uses simulated coordinates informed by the manuscript diversity
+    metrics (mean pairwise Tanimoto dissimilarity) because no pre-computed
+    pairwise distance matrix is available in the repository. It is intended as an
+    illustrative summary; for a fully data-driven version, replace the simulated
+    coordinates with real fingerprint distances.
+    """
     # Simulate MDS coordinates based on diversity metrics from manuscript
     # Greedy has widest spread (mean pairwise dissimilarity 0.81)
     # MCTS has narrowest (0.59)
@@ -410,7 +437,7 @@ def plot_diversity(data):
 
     ax.set_xlabel("MDS dimension 1 (arb. units)", fontsize=10)
     ax.set_ylabel("MDS dimension 2 (arb. units)", fontsize=10)
-    ax.set_title("Chemical space coverage", fontsize=11, fontweight="bold")
+    ax.set_title("Chemical space coverage (illustrative)", fontsize=11, fontweight="bold")
     ax.legend(frameon=True, fancybox=False, edgecolor="grey", fontsize=8)
     ax.set_aspect("equal")
     ax.set_xlim(-1.0, 1.0)
@@ -458,8 +485,13 @@ def main():
         plot_efficiency(data)
 
     if "pareto" in args.figures:
-        print("  [3/4] Pareto front...")
-        plot_pareto_front(data)
+        print("  [3/4] Pareto front (delegating to p4_plot_merged_pareto.py)...")
+        script_path = Path(__file__).with_name("p4_plot_merged_pareto.py")
+        if script_path.exists():
+            subprocess.run([sys.executable, str(script_path)], check=True)
+        else:
+            print(f"  WARNING: {script_path} not found; falling back to legacy plot_pareto_front")
+            plot_pareto_front(data)
 
     if "diversity" in args.figures:
         print("  [4/4] Scaffold diversity MDS...")

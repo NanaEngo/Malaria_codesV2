@@ -45,6 +45,41 @@ except ImportError:
 
 
 # ═══════════════════════════════════════════════════════════════════════
+#  Unified oracle used by the benchmark and baseline scripts
+# ═══════════════════════════════════════════════════════════════════════
+
+# Module-level singleton so the CSV libraries are loaded only once
+# across thousands of oracle calls during a benchmark run.
+_ORACLE_AGGREGATOR: Optional[OracleAggregator] = None
+
+
+def compute_mpo_reward(smiles: str) -> float:
+    """Return the MPO-based scalar reward for a SMILES string.
+
+    This is the canonical reward function used by `p4_mcts_benchmark.py`.
+    It wraps `OracleAggregator` with precomputed P1/P2 libraries enabled,
+    but disables the RRS/PNS oracles that require external P2 mutant/network
+    data so the benchmark can run from the core P1/P2 score libraries alone.
+    """
+    from p4_mcts_oracles import OracleAggregator
+
+    global _ORACLE_AGGREGATOR
+    if _ORACLE_AGGREGATOR is None:
+        _ORACLE_AGGREGATOR = OracleAggregator(
+            weights={
+                "mpo": 0.40,
+                "docking": 0.35,
+                "syba": 0.15,
+                "sa": 0.10,
+            },
+            use_precomputed=True,
+            use_rrs=False,
+            use_pns=False,
+        )
+    return _ORACLE_AGGREGATOR.reward(smiles)
+
+
+# ═══════════════════════════════════════════════════════════════════════
 #  Baseline 1: Random Search
 # ═══════════════════════════════════════════════════════════════════════
 

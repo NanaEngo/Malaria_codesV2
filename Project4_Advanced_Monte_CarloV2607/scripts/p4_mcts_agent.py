@@ -259,7 +259,9 @@ class MCTSAgent:
         self._root = root
 
         if not root.children:
-            return best_global_smiles if best_global_reward > self.oracle(root_state) else root_state
+            # Cache oracle result to avoid double-call and stochastic inconsistency
+            root_oracle_reward = self.oracle(root_state)
+            return best_global_smiles if best_global_reward > root_oracle_reward else root_state
 
         # Best child by value/visits (MCTS standard)
         best_child = max(root.children.values(),
@@ -392,9 +394,14 @@ class MCTSAgent:
         next_state, _reward, _done, _info = env_copy.step(action)
 
         # Skip states already visited (MCTS-Solver inspired)
-        if next_state in self._visited_states and next_state != node.state:
-            # Try next action instead
-            return node if not node.untried_actions else self._expand(node)
+        # Use a while loop instead of recursion to avoid Python stack overflow
+        # when many states are already visited.
+        while next_state in self._visited_states and next_state != node.state:
+            if not node.untried_actions:
+                return node
+            action = node.untried_actions.pop(0)
+            env_copy = self._make_env_copy(node.state, node.step_count)
+            next_state, _reward, _done, _info = env_copy.step(action)
         self._visited_states.add(next_state)
 
         child = MCTSNode(state=next_state, parent=node, action=action)

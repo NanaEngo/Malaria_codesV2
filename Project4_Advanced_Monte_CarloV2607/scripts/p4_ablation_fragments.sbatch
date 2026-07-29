@@ -6,7 +6,7 @@
 #  from the old 33-fragment ablation.
 #
 #  Usage:
-#    sbatch --array=0-29%8 p4_ablation_fragments.sbatch
+#    sbatch --array=0-39%8 p4_ablation_fragments.sbatch
 #
 #  Array mapping (40 tasks = 4 fragment_sets × 10 seeds):
 #    Tasks  0–9:  fragment_set="all"           (99 fragments, baseline)
@@ -18,7 +18,7 @@
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p4_ablation
 #SBATCH --output=logs/slurm/p4_ablation_%a_%j.log
-#SBATCH --error=logs/slurm/p4_ablation_%a_%j.log
+#SBATCH --error=logs/slurm/p4_ablation_%a_%j.err
 #SBATCH --time=08:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
@@ -30,15 +30,24 @@ set -euo pipefail
 # ── Load environment ──────────────────────────────────────────────────
 # Temporarily disable -u (unbound variable) for conda activate;
 # GROMACS init scripts in malaria_md reference unbound variables.
-source "$(conda info --base)/etc/profile.d/conda.sh"
+# ── Robust conda activation (with fallback) ───────────────────────────
+if [ -d "${HOME}/miniforge3" ]; then
+  CONDA_BASE="${HOME}/miniforge3"
+elif [ -d "${HOME}/miniconda3" ]; then
+  CONDA_BASE="${HOME}/miniconda3"
+else
+  echo "ERROR: No conda installation found in ${HOME}" >&2
+  exit 1
+fi
+source "${CONDA_BASE}/etc/profile.d/conda.sh"
 set +u
 conda activate malaria_md
 set -u
 
-# BASH_SOURCE[0] is unreliable in SLURM (script is copied to a temp dir).
-# Use SLURM_SUBMIT_DIR to find the project root.
-SCRIPT_DIR="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
-cd "$SCRIPT_DIR"
+# ── Project paths (hard-coded: robust under SLURM temp copy) ─────────
+PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607"
+SCRIPT_DIR="${PROJECT_DIR}/scripts"
+cd "$PROJECT_DIR"
 
 # ── Map task ID to fragment_set + seed ────────────────────────────────
 TASK_ID="${SLURM_ARRAY_TASK_ID:-0}"

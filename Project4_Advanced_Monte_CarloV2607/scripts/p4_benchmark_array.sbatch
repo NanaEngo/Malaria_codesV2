@@ -8,7 +8,8 @@
 # Usage:
 #   sbatch --array=0-19%8 scripts/p4_benchmark_array.sbatch
 #
-# Note: Uses 108-fragment vocabulary (same as MCTS array) for fair comparison.
+# Note: Defaults to the 'medium' fragment subset to reduce RDKit valence/kekulization
+# errors. Override with --export=FRAGMENT_SET=all (or aromatic_only/minimal).
 #
 # Output:
 #   results/benchmark/p4_benchmark_seed_N.csv  (per-task)
@@ -17,8 +18,8 @@
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p4_benchmark
 #SBATCH --array=0-19%8
-#SBATCH --output=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_benchmark_%j.log
-#SBATCH --error=/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607/logs/slurm/p4_benchmark_%j.err
+#SBATCH --output=%x_%j.log
+#SBATCH --error=%x_%j.err
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=8G
@@ -42,9 +43,23 @@ export OPENBLAS_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 
-# ── Environment ──────────────────────────────────────────────────────
-PYTHON="/home/nanaengo/miniforge3/envs/malaria_md/bin/python"
+# ── Robust conda activation ───────────────────────────────────
+# ── Robust conda activation (with fallback) ───────────────────────────
+if [ -d "${HOME}/miniforge3" ]; then
+  CONDA_BASE="${HOME}/miniforge3"
+elif [ -d "${HOME}/miniconda3" ]; then
+  CONDA_BASE="${HOME}/miniconda3"
+else
+  echo "ERROR: No conda installation found in ${HOME}" >&2
+  exit 1
+fi
+source "${CONDA_BASE}/etc/profile.d/conda.sh"
+set +u && conda activate malaria_md && set -u
+
+# ── Project paths (hard-coded: robust under SLURM temp copy) ─────────
 PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607"
+SCRIPT_DIR="${PROJECT_DIR}/scripts"
+PYTHON="${CONDA_BASE}/envs/malaria_md/bin/python"
 RESULTS_DIR="${PROJECT_DIR}/results/benchmark"
 
 mkdir -p "${RESULTS_DIR}" "${PROJECT_DIR}/logs/slurm"
@@ -59,10 +74,12 @@ GA_POPULATION="${GA_POPULATION:-50}"
 GA_GENERATIONS="${GA_GENERATIONS:-20}"
 MAX_STEPS="${MAX_STEPS:-10}"
 INITIAL_SMILES="${INITIAL_SMILES:-C}"
+FRAGMENT_SET="${FRAGMENT_SET:-medium}"
 
 SEED="${SLURM_ARRAY_TASK_ID:?ERROR: not running as array job?}"
 OUT_CSV="${RESULTS_DIR}/p4_benchmark_seed_${SEED}.csv"
-OUT_TEX="${RESULTS_DIR}/p4_benchmark_table.tex"
+# Each task writes its own .tex to avoid race conditions; merge post-hoc
+OUT_TEX="${RESULTS_DIR}/p4_benchmark_table_seed_${SEED}.tex"
 
 echo "═══ P4 Benchmark — Task ${SEED} ═══"
 echo "  N_iterations:  ${N_ITERATIONS}"
@@ -73,7 +90,7 @@ echo "  Host:          $(hostname)"
 echo "  Start:         $(date -u -Iseconds)"
 
 # ── Run benchmark (single seed) ──────────────────────────────────────
-"${PYTHON}" "${PROJECT_DIR}/scripts/p4_mcts_benchmark.py" \
+"${PYTHON}" "${SCRIPT_DIR}/p4_mcts_benchmark.py" \
   --n-iterations "${N_ITERATIONS}" \
   --ga-population "${GA_POPULATION}" \
   --ga-generations "${GA_GENERATIONS}" \
@@ -81,6 +98,7 @@ echo "  Start:         $(date -u -Iseconds)"
   --seed "${SEED}" \
   --initial-smiles "${INITIAL_SMILES}" \
   --max-steps "${MAX_STEPS}" \
+  --fragment-set "${FRAGMENT_SET}" \
   --output "${OUT_CSV}" \
   --latex-table "${OUT_TEX}" \
   2>&1

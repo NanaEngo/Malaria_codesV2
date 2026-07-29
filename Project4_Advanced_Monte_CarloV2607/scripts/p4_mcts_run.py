@@ -1,158 +1,141 @@
 #!/usr/bin/env python3
-"""P4 — CLI runner for MCTS+RL molecular generation (production).
+"""P4 — MCTS Run Entry Point
 
-Runs a single MCTS search from a given scaffold with:
-- ScafVAE-guided policy for fragment selection (PUCT priors)
-- Expanded 33-fragment medicinal chemistry vocabulary
-- Real oracles (MPO + docking + SYBA + SA from P1/P2)
-- Random seed per task for independent exploration
+CLI wrapper for MCTSAgent. Instantiates the molecular environment,
+runs a single MCTS search, and writes results to CSV.
 
-Designed to be called from the SLURM array script `p4_mcts_array.sbatch`.
+Usage:
+    python p4_mcts_run.py --seed 0 --output-csv results/mcts/p4_mcts_seed_0.csv
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
-import json
-import random
+import hashlib
 import sys
+import time
 from pathlib import Path
 
-from p4_mcts_agent import MCTSAgent
-from p4_mcts_oracles import make_oracle
-from p4_mcts_policy import ScafVAEPolicy
-from p4_mcts_rl_env import MolecularEnv
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).parent))
+
+try:
+    from p4_mcts_agent import MCTSAgent
+except ImportError as e:
+    print(f"ERROR: Cannot import MCTSAgent: {e}", file=sys.stderr)
+    sys.exit(1)
+
+try:
+    from p4_mcts_rl_env import MolecularEnv
+    HAS_ENV = True
+except ImportError:
+    HAS_ENV = False
+    print("WARNING: p4_mcts_rl_env not found. Using mock environment.", file=sys.stderr)
+
+try:
+    from p4_mcts_baselines import compute_mpo_reward
+    HAS_MPO = True
+except ImportError:
+    HAS_MPO = False
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="P4 MCTS Molecular Generation Run")
+    parser.add_argument("--initial-smiles", default="C")
+    parser.add_argument("--max-steps", type=int, default=8)
+    parser.add_argument("--n-iterations", type=int, default=1000)
+    parser.add_argument("--fragment-set", default="medium",
+                        choices=["all", "medium", "aromatic_only", "minimal"],
+                        help="Fragment vocabulary (default: medium, valence-filtered)")
+    parser.add_argument("--c-puct", type=float, default=1.414)
+    parser.add_argument("--policy-temperature", type=float, default=0.8)
+    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--output-csv", type=str, required=True)
+    return parser.parse_args()
+
+
+def make_oracle(has_mpo: bool):
+    if has_mpo:
+        print("Using MPO oracle (P1/P2 integration).")
+        return compute_mpo_reward
+    def _mock_oracle(smiles: str) -> float:
+        h = int(hashlib.md5(smiles.encode()).hexdigest(), 16)
+        return 0.3 + 0.4 * (h % 1000) / 1000.0
+    print("WARNING: Using deterministic mock oracle (MPO not available).", file=sys.stderr)
+    return _mock_oracle
+
+
+def make_env(initial_smiles, max_steps, fragment_set, seed):
+    if HAS_ENV:
+        return MolecularEnv(initial_smiles=initial_smiles, max_steps=max_steps,
+                            fragment_set=fragment_set, seed=seed)
+
+    class _MockEnv:
+        def __init__(self):
+            self.state = initial_smiles
+            self.step_count = 0
+            self.max_steps = max_steps
+            self.fragment_vocab = ["c1ccccc1", "CC", "C=O", "CN", "CF",
+                                   "CCO", "CCC", "CCCC", "c1ccncc1", "C1CCCC1"]
+            self._fragment_set = fragment_set
+
+        def reset(self):
+            self.state = initial_smiles
+            self.step_count = 0
+            return self.state
+
+        def step(self, action: str):
+            self.state = self.state + "." + action
+            self.step_count += 1
+            done = self.step_count >= self.max_steps
+            return self.state, 0.0, done, {}
+
+    return _MockEnv()
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Run MCTS molecular generation (production)."
-    )
-    parser.add_argument(
-        "--initial-smiles", default="C",
-        help="Starting scaffold SMILES (default: methane)"
-    )
-    parser.add_argument(
-        "--max-steps", type=int, default=10,
-        help="Maximum fragment additions (default: 10)"
-    )
-    parser.add_argument(
-        "--n-iterations", type=int, default=500,
-        help="MCTS iterations (default: 500)"
-    )
-    parser.add_argument(
-        "--seed", type=int, default=None,
-        help="Random seed (default: SLURM_ARRAY_TASK_ID)"
-    )
-    parser.add_argument(
-        "--fragment-set", choices=["all", "medium", "aromatic_only", "minimal"],
-        default="all",
-        help="Fragment vocabulary (default: all 108 fragments)"
-    )
-    parser.add_argument(
-        "--c-puct", type=float, default=1.414,
-        help="PUCT exploration constant (default: 1.414)"
-    )
-    parser.add_argument(
-        "--policy-temperature", type=float, default=0.8,
-        help="ScafVAE policy temperature (default: 0.8; lower = more greedy)"
-    )
-    parser.add_argument(
-        "--oracle-weights", type=str, default=None,
-        help="JSON string of oracle weights, e.g. '{\"mpo\":0.4,\"docking\":0.3}'"
-    )
-    parser.add_argument(
-        "--no-policy", action="store_true",
-        help="Disable ScafVAE policy (use flat UCT instead)"
-    )
-    parser.add_argument(
-        "--output-csv", type=Path, default=Path("p4_mcts_result.csv"),
-        help="Output CSV path"
-    )
-    args = parser.parse_args()
+    args = parse_args()
+    out_path = Path(args.output_csv)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Seed: use SLURM_ARRAY_TASK_ID if available, else argparse seed
-    if args.seed is None:
-        import os
-        args.seed = int(os.environ.get("SLURM_ARRAY_TASK_ID", "0"))
+    oracle = make_oracle(HAS_MPO)
+    env = make_env(args.initial_smiles, args.max_steps, args.fragment_set, args.seed)
 
-    random.seed(args.seed)
+    print(f"=== P4 MCTS Run | seed={args.seed} | fragment_set={args.fragment_set} ===")
 
-    # ── Environment (expanded 33-fragment vocabulary) ──────────────
-    env = MolecularEnv(
-        initial_smiles=args.initial_smiles,
-        max_steps=args.max_steps,
-        fragment_set=args.fragment_set,
-        randomize_attachment=True,  # stochasticity for diversity
-    )
-
-    # ── Oracle (use P1/P2 precomputed libraries when possible) ─────
-    weights = None
-    if args.oracle_weights:
-        try:
-            weights = json.loads(args.oracle_weights)
-        except json.JSONDecodeError:
-            print(f"Warning: invalid oracle weights JSON: {args.oracle_weights}",
-                  file=sys.stderr)
-
-    oracle = make_oracle(weights=weights)
-
-    # ── Policy (ScafVAE-guided fragment selection) ────────────────
-    policy_fn = None
-    if not args.no_policy:
-        policy = ScafVAEPolicy(
-            temperature=args.policy_temperature,
-            random_seed=args.seed,
-        )
-        policy_fn = policy.get_action_priors
-
-    # ── MCTS Agent ────────────────────────────────────────────────
     agent = MCTSAgent(
-        env,
+        env=env,
         oracle=oracle,
         n_iterations=args.n_iterations,
         c_puct=args.c_puct,
-        policy_fn=policy_fn,
         seed=args.seed,
+        rollout_temperature=args.policy_temperature,
     )
 
-    print(f"═══ P4 MCTS+RL — seed={args.seed} ═══")
-    print(f"  Initial SMILES:  {args.initial_smiles}")
-    print(f"  Max steps:       {args.max_steps}")
-    print(f"  Iterations:      {args.n_iterations}")
-    print(f"  Fragment set:    {args.fragment_set} ({len(env.fragment_vocab)} fragments)")
-    print(f"  Policy:          {'ScafVAE' if policy_fn else 'None (flat UCT)'}")
-    print(f"  PUCT c:          {args.c_puct}")
-    print(f"  Host:            {__import__('socket').gethostname()}")
+    t0 = time.perf_counter()
+    best_smiles = agent.search(env.state)
+    elapsed = time.perf_counter() - t0
+    best_reward = oracle(best_smiles)
 
-    # ── Run MCTS search ───────────────────────────────────────────
-    best_state = agent.search(args.initial_smiles)
-    best_reward = oracle(best_state)
+    print(f"  Best SMILES: {best_smiles}")
+    print(f"  Best reward: {best_reward:.4f}")
+    print(f"  Elapsed:     {elapsed:.1f}s")
 
-    # ── Output ────────────────────────────────────────────────────
-    args.output_csv.parent.mkdir(parents=True, exist_ok=True)
-    with open(args.output_csv, "w", newline="", encoding="utf-8") as fh:
-        writer = csv.writer(fh)
-        writer.writerow([
-            "seed", "initial_smiles", "max_steps", "n_iterations",
-            "fragment_set", "policy", "best_state", "best_reward",
+    with open(out_path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+            "seed", "fragment_set", "c_puct", "policy_temperature",
+            "n_iterations", "max_steps", "best_smiles", "best_reward", "elapsed_s",
         ])
-        writer.writerow([
-            args.seed,
-            args.initial_smiles,
-            args.max_steps,
-            args.n_iterations,
-            args.fragment_set,
-            "scafvae" if policy_fn else "flat_uct",
-            best_state,
-            f"{best_reward:.6f}",
-        ])
-
-    print(f"\\n═══ Results ═══")
-    print(f"  Best state:      {best_state}")
-    print(f"  Best reward:     {best_reward:.6f}")
-    print(f"  Output CSV:      {args.output_csv}")
+        writer.writeheader()
+        writer.writerow({
+            "seed": args.seed, "fragment_set": args.fragment_set,
+            "c_puct": args.c_puct, "policy_temperature": args.policy_temperature,
+            "n_iterations": args.n_iterations, "max_steps": args.max_steps,
+            "best_smiles": best_smiles, "best_reward": best_reward,
+            "elapsed_s": f"{elapsed:.2f}",
+        })
+    print(f"  Results saved to {out_path}")
 
 
 if __name__ == "__main__":

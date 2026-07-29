@@ -6,11 +6,14 @@
 # data). Each array task runs an independent Pareto MCTS search with a
 # unique seed and outputs its Pareto front of non-dominated solutions.
 #
+# Fragment set defaults to 'medium' (valence-filtered) for consistency with
+# the benchmark and standard MCTS arrays. Override via --export=FRAGMENT_SET=all.
+#
 # After completion, merge all per-seed CSVs with:
 #   python3 scripts/p4_merge_pareto_fronts.py
 #
 # Usage:
-#   sbatch --array=0-19%8 scripts/p4_pareto_array.sbatch
+#   sbatch --array=0-19%8 --export=FRAGMENT_SET=medium scripts/p4_pareto_array.sbatch
 #
 # ═══════════════════════════════════════════════════════════════════════
 #SBATCH --job-name=p4_pareto
@@ -55,6 +58,7 @@ exec > "${_LOG_PATH}" 2>&1
 INITIAL_SMILES="${INITIAL_SMILES:-c1ccccc1}"
 MAX_STEPS="${MAX_STEPS:-10}"
 N_ITERATIONS="${N_ITERATIONS:-1000}"
+FRAGMENT_SET="${FRAGMENT_SET:-medium}"
 
 # Unique seed per array task
 SEED="${SLURM_ARRAY_TASK_ID:?ERROR: not running as array job?}"
@@ -65,6 +69,7 @@ echo "  Initial SMILES:  ${INITIAL_SMILES}"
 echo "  Max steps:       ${MAX_STEPS}"
 echo "  Iterations:      ${N_ITERATIONS}"
 echo "  Seed:            ${SEED}"
+echo "  Fragment set:    ${FRAGMENT_SET}"
 echo "  Host:            $(hostname)"
 echo "  Start:           $(date -u -Iseconds)"
 
@@ -74,7 +79,7 @@ echo "  Start:           $(date -u -Iseconds)"
   --max-steps "${MAX_STEPS}" \
   --n-iterations "${N_ITERATIONS}" \
   --seed "${SEED}" \
-  --fragment-set "all" \
+  --fragment-set "${FRAGMENT_SET}" \
   --c-puct 5.0 \
   --policy-temperature 0.8 \
   --output-csv "${OUT_CSV}"
