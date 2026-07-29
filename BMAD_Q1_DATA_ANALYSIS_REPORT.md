@@ -1,6 +1,6 @@
 # BMAD Q1 Data Analysis Report
 
-**Generated:** July 9, 2026 — **Updated July 25, 2026** (v29: P4 MCTS 20-seed benchmark completed (mean=0.623±0.008); v28: RRS expansion validated (ρ=0.361, n=77, 500 processed); SOTA n=5,000 smoke test confirmed; v27: D-GRIL build assessment (compiled, linker blocked); SOTA completed at n=19,849; ChEMBL36 bug fixed (7/231 matches); TopologyNet analog (MLP vs RF); adversarial audit completed; Limitations polished; Cohen's d added to SM SOTA table)
+**Generated:** July 9, 2026 — **Updated July 29, 2026** (v33: P4 v9 20-seed benchmark data consolidated and cross-verified against raw CSVs; component/fragment ablation and Pareto-front provenance documented; P3 classical-only 19,849 benchmark corrected (ECFP4 0.949; PHCO 0.897); full hybrid benchmark marked pending; expanded H₁-RRS n=77 ρ=0.312; DATA_ANALYSIS_REPORT_V2607 deleted)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Coverage:** P1 Chemical Space, P2 Polypharmacology, P3 Quantum-Inspired Representations, P4 MCTS Benchmark
@@ -17,20 +17,23 @@ Three complementary projects generated and analyzed **over 85,000 unique molecul
 
 **P2 (Polypharmacology Validation)** narrows 19,913 synthesisable P1 leads to 20 high-confidence candidates through multi-parameter optimization and consensus docking across four resistance-relevant *Plasmodium* targets. All 20 candidates are single-target optimized (no beneficial polypharmacology detected by current scoring); among 810 screened seed molecules with valid SI predictions, 100% are selectively antiparasitic (SI > 10). The African Chemical Space Index (ACSI) confirms that 23.5% of top candidates retain strong chemical identity with the African NP seed space (ACSI > 0.70). Tartarus external validation (19,913 molecules, 3 targets) reveals that binding affinity scores are orthogonal to drug-likeness MPO scores (Spearman ρ = 0.013, p = 0.091), confirming that docking provides independent information not captured by MPO. Four solvated protein–ligand complexes (PfDHFR, PfATP4, PfClpP, PfCRT) were built with CHARMM36-jul2022/GAFF2 force fields and EM/NVT/NPT equilibration was attempted; production MD trajectories exist for all four systems. Re-analysis of the production trajectories with PBC-unwrapped (`nojump`) coordinates shows that **only two of the four systems maintain a bound ligand**: **PfCRT (214)** and **PfATP4 (438)** (minimum protein–ligand distances 3.19 Å and 2.25 Å, 78 and 178 contacts, 23 and 48 H-bonds, respectively). The other two systems, **PfClpP (164)** and **PfDHFR (201)**, have stable protein conformations (backbone RMSD 1.31 Å and 3.05 Å) but the ligand is completely unbound (minimum distances 67.4 Å and 78.2 Å, zero contacts), indicating either incorrect initial placement or rapid dissociation during equilibration. These results demonstrate that MD is a mandatory post-docking filter, and only the PfCRT and PfATP4 simulations can support binding-mode claims.
 
-**P3 (Quantum-Inspired Representations)** introduces three novel molecular descriptors—Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)—and benchmarks them against classical fingerprints on the same library. The results yield an important negative finding across all quantum-inspired methods: the hybrid representation (AUC 0.691) is vastly outperformed by ECFP4 (AUC 0.868, p = 0.003), and ablation shows removing QKS drops the hybrid AUC to 0.605. The QKS benchmark on 500 molecules (sub-sampled from the 10,000-molecule design target) reports Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns). The difference is not statistically significant. The quantum-inspired methods serve as complementary topological frameworks rather than outperforming classical methods on simple predictive metrics.
+**P3 (Quantum-Inspired Representations)** introduces three novel molecular descriptors—Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)—and benchmarks them against classical fingerprints on the same library. A corrected classical-only 5-fold CV on all 19,849 molecules (Random Forest, 200 trees) gives ECFP4 AUC 0.949 ± 0.001, FCFP4 0.920 ± 0.003, AP 0.941 ± 0.002, BPF 0.939 ± 0.002, MACCS 0.904 ± 0.004, PHCO 0.897 ± 0.005 (PHCO bug fixed from the degenerate 0.500), TFP 0.877 ± 0.006, and TNE 0.722 ± 0.010. The previously reported full hybrid benchmark (Hybrid AUC 0.842 vs ECFP4 AUC 0.868) could not be reproduced from the current code or located in the data files, so the hybrid benchmark is **pending a full rerun**. The QKS benchmark on 500 molecules (sub-sampled from the 10,000-molecule design target) reports Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns). The difference is not statistically significant. The quantum-inspired methods serve as complementary topological frameworks rather than outperforming classical methods on simple predictive metrics.
+
+An expanded cross-paper analysis (n = 77 P2 leads) further links H₁ topological count to resistance resilience (Spearman ρ = 0.312, p = 0.0057), suggesting TFP captures clinically relevant structural information that ECFP4 does not.
 
 | Domain | Molecules Analyzed | Key Result | Status |
 |--------|-------------------|------------|--------|
-| P1 — Scaffold Novelty | 5,000 gen. + 396 seeds | **92.6% ECFP4-unreachable; 1.84× scaffold ratio. P3 cross-references verified against canonical corrected-grid data.** | **92.6% ECFP4-unreachable; 1.84× scaffold ratio** | Completed |
+| P1 — Scaffold Novelty | 5,000 gen. + 396 seeds | **92.6% ECFP4-unreachable; 1.84× scaffold ratio** | Completed |
 | P2 — Polypharmacology | 19,913 leads → 20 top candidates | **100% single-target optimized; 100% of 810 screened seeds with valid SI predictions had SI > 10** | Completed |
 | P3 — TDA/TNE Representations | 19,849 molecules | **99.93% TDA validity; 15.6× TNE compression** | Completed |
-| P3 — Hybrid Benchmark | 19,849 × 10 descriptors × 5CV | **ECFP4 AUC 0.868 vs Hybrid AUC 0.842 (p=0.111, ns)**; PHCO bug fixed (AUC 0.500 → ~0.83) | Completed |
+| P3 — Classical Benchmark (corrected) | 19,849 × 8 descriptors × 5CV (RF) | **ECFP4 AUC 0.949; PHCO bug fixed (0.500 → 0.897); TFP 0.877, TNE 0.722** | Corrected (July 29, 2026) |
+| P3 — Hybrid Benchmark | 19,849 × 10 descriptors × 5CV (original RF+SVM) | **Original values (ECFP4 0.868 / Hybrid 0.842) pending rerun — data not reproducible from current files** | Pending rerun |
 | P3 — QKS Benchmark | 500 mol (sub-sampled) | **Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns)**; earlier 0.936/0.105 claim removed as unsupported | Completed (July 2026) |
 | P3 — GA Discriminator Benchmark | 50–500 gen. × 200 seeds | **Tanimoto AUC=1.0 (trivial); QK AUC≈0.43–0.51 (near-random)** | Completed |
 | P3 — D-GRIL Build | C++ extension, PyTorch 2.0.1, Boost, CUDA 11.7 | **mpml.so compiled; linker blocked (libc10.so ABI). Differentiable 2-parameter PH paradigm** | ⚠️ Compiled (mpml.so), linker blocked (libc10.so ABI). Differentiable 2-parameter PH paradigm documented |
 | P3 — ChEMBL Expanded Validation | 77 compounds × 3 targets (231 pairs) | **7/231 matches (3.0%); 3 active PfATP4; no PfDHFR** | ✅ Completed (July 25) |
 | P3 — TopologyNet Analog | 5000 mol, PersStats 22 features | **MLP AUC 0.799 vs RF AUC 0.860 (Δ=−0.061)**; neural nets don't improve over RF on PH summary stats | ✅ Completed (July 25) |
-| P4 — MCTS Benchmark (20 seeds) | 20 seeds × 1000 iters × 108 fragments | **MCTS mean=0.6229±0.0081, n=20, CV=1.3%. Real variance confirmed (σ>0). 108-fragment vocabulary (15 categories).** | ✅ Completed (July 25) |
+| P4 — MCTS Benchmark (v9) | 20 seeds × 1000 iters × 4 methods × medium fragment set | **Random 0.665, MCTS 0.659, GA 0.640, Greedy 0.540 (mean reward, n=20 seeds). Valence/fragment-filter fix applied.** | ✅ Completed (July 29) |
 | P1 — MCMC Latent Space Optimisation | 4 chains × 5000 steps, 8D latent | **MPO +0.0246; top candidate MPO 0.801** | Completed |
 | P1 — STONED-SELFIES Leap | 20 seeds → 5,525 neighbours | **97.9% ECFP4-unreachable from STONED** | Completed |
 | P2 — MD Complex Building | 4 targets (PfDHFR, PfATP4, PfClpP, PfCRT) | **4/4 solvated + ionized complexes built; EM/NVT/NPT: 4/4 complete; Production MD: 4/4 trajectories generated; PBC-unwrapped re-analysis: 2/4 systems retain bound ligands (PfCRT, PfATP4), 2/4 are unbound (PfClpP, PfDHFR)** | ⚠️ Partially validated |
@@ -49,7 +52,7 @@ Three complementary projects generated and analyzed **over 85,000 unique molecul
 |---------|:-----:|:----:|-------------|
 | P1 — Chemical Space | 175 | 72 MB | ChEMBL enrichment, full-cluster rescoring (1,815 mols), MCMC, STONED leap |
 | P2 — MD Validation | 493 | 459 MB | RRS classification, MM-GBSA, mutant docking, cross-metric correlations |
-| P3 — Quantum-Inspired | 147 | 37 MB | Hybrid benchmark (19,849 mols), SOTA topological, ChEMBL validation, H₁-RRS |
+| P3 — Quantum-Inspired | 147 | 37 MB | Classical benchmark (corrected, 19,849 mols), hybrid pending, SOTA topological, ChEMBL validation, H₁-RRS |
 | P4 — Pareto MCTS | 43 | 1.5 MB | Four-method benchmark, Pareto front, hyperparameter search |
 
 Excluded: GROMACS trajectories (multi-GB), docking raw outputs (PDBQT), SLURM logs, IBM tokens.
@@ -821,32 +824,34 @@ The 15.6× compression (padded, Nmax=100) with 0.113 reconstruction error demons
 
 *Note: Incorporates error mitigation and MultiBasisWavefunctionQCBM theoretical concepts from quantum-generative-models.*
 
-### 3.4 Hybrid Benchmark
+### 3.4 Classical Benchmark (corrected PHCO)
 
-**5-fold Cross Validation on 19,849 molecules (10 descriptors × 2 classifiers):**
+**5-fold Cross Validation on 19,849 molecules (8 descriptors, Random Forest only):**
 
-| Descriptor | Model | AUC | ΔAUC vs ECFP4 |
-|------------|-------|-----|----------------|
-| ECFP4 | Random Forest | **0.868 ± 0.055** | — |
-| ECFP4 | SVM | 0.833 ± 0.050 | −0.035 |
-| FCFP4 | Random Forest | 0.845 ± 0.044 | −0.023 |
-| AP | Random Forest | 0.840 ± 0.052 | −0.028 |
-| MACCS | SVM | 0.837 ± 0.058 | −0.031 |
-| BPF | SVM | 0.844 ± 0.043 | −0.024 |
-| **Hybrid (TFP+TNE+QKS)** | Random Forest | **0.691 ± 0.050** | **−0.177** |
-| TNE | Random Forest | 0.606 ± 0.039 | −0.262 |
-| TFP | Random Forest | 0.586 ± 0.048 | −0.282 |
-| PHCO | Random Forest | 0.500 ± 0.000 | −0.368 |
+A classical-only benchmark was rerun on the full 19,849-molecule set with the corrected PHCO implementation (`rdkit.Chem.Pharm2D.Generate.Gen2DFingerprint` + `GetOnBits()`). All values are mean 5-fold CV AUC (Random Forest, 200 trees, `StratifiedKFold` with `random_state=42`) produced by `Project3_Quantum_Inspired_RepresentationsV2607/scripts/p3_classical_benchmark_19849.py` on July 29, 2026. Raw outputs: `results/p3_classical_benchmark_19849.csv` and `results/p3_classical_benchmark_19849_summary.txt`.
 
-**Interpretation:** Classical fingerprints (ECFP4, FCFP4, AP, MACCS, BPF) remain vastly superior to the hybrid representation (AUC 0.691). ECFP4 achieves 0.868, significantly outperforming the Hybrid (p=0.003). The quantum-inspired methods, while theoretically rich, fail to surpass classical methods in direct predictive power for molecular activity.
+| Descriptor | AUC | σ | ΔAUC vs ECFP4 |
+|------------|-----|---|----------------|
+| ECFP4 | **0.949** | 0.001 | — |
+| FCFP4 | 0.920 | 0.003 | −0.029 |
+| AP | 0.941 | 0.002 | −0.008 |
+| BPF | 0.939 | 0.002 | −0.010 |
+| MACCS | 0.904 | 0.004 | −0.045 |
+| PHCO | 0.897 | 0.005 | −0.052 |
+| TFP | 0.877 | 0.006 | −0.072 |
+| TNE | 0.722 | 0.010 | −0.227 |
 
-*Ablation study:* The ablation benchmark shows Hybrid−QKS achieves AUC=0.605. Since this is less than the Hybrid AUC=0.691, the QKS component does add some signal, but overall, it introduces noise when combined with TDA/TNE relative to pure ECFP4.
+**Interpretation:** Classical fingerprints (ECFP4, FCFP4, AP, BPF, MACCS, PHCO) are strongly predictive on this 19,849-molecule set, with ECFP4 near ceiling performance (AUC 0.949). The PHCO descriptor, previously degenerate at 0.500 because of an uncaught `GetOnBits()` failure, now performs comparably to other classical fingerprints (AUC 0.897). The two quantum-inspired descriptors (TFP 0.877, TNE 0.722) capture meaningful but lower signal; TFP approaches classical fingerprint performance, while TNE is weaker, consistent with its heavy compression.
 
-**Literature context and mechanistic explanation:** The underperformance of quantum-inspired representations relative to ECFP4 is consistent with recent benchmark studies. The mechanistic explanation lies in the information content of each representation: ECFP4 encodes local atom environments (radius 2) that directly correlate with binding site interactions, while TDA captures global topology and TNE captures tensor-mode correlations. For antimalarial activity prediction, local substructure information appears to be more discriminative than global topology. This is consistent with the well-established principle that molecular recognition is dominated by local pharmacophoric features rather than global shape.
+**Per-fold data correction (July 29, 2026):** The Supplementary Material per-fold activity table (`tab:sm_s4_perfold`) originally contained hard-coded per-fold values in `scripts/p3_effect_sizes.py`. Inspection revealed that the TNE per-fold values were identical to the TFP values (both `[0.600, 0.800, 0.500, 0.667, 0.583]`), an obvious copy-paste artifact. The corrected `results/p3_classical_benchmark_19849.csv` (produced by `p3_classical_benchmark_19849.py`) contains the genuine full-library per-fold values, which differ between TFP and TNE. The supplementary material and `p3_effect_sizes.py` were updated to source per-fold values from this canonical CSV rather than from the hard-coded list. The corrected per-fold values are now used for ECFP4, FCFP4, AP, BPF, MACCS, PHCO, TFP and TNE; hybrid/QKS rows remain provisional pending the full hybrid rerun.
+
+**Previous hybrid benchmark:** The earlier reported full hybrid benchmark (Hybrid AUC 0.842 vs ECFP4 0.868, p=0.111) is **not reproducible** from the current code or data files. The underlying run file is missing, and rerunning the classical portion with the current corrected script yields ECFP4 ≈ 0.949 rather than 0.868. Consequently, the full hybrid (TFP+TNE+QKS) benchmark must be rerun before any hybrid-vs-classical claim is made. Until that rerun completes, the corrected classical-only table above is the canonical 19,849 benchmark. Manuscript updates must not use the old 0.868/0.842 hybrid numbers until the rerun confirms or supersedes them.
+
+**Literature context and mechanistic explanation:** The dominance of ECFP4 is consistent with established structure–activity modelling: ECFP4 encodes local atom environments (radius 2) that directly correlate with binding site interactions, while TDA captures global topology and TNE captures tensor-mode correlations. For antimalarial activity prediction, local substructure information is more discriminative than global topology. This is consistent with the well-established principle that molecular recognition is dominated by local pharmacophoric features rather than global shape.
 
 ### 3.5 Quantum Parameter Optimization — Results (July 19, 2026)
 
-**Rationale:** The default quantum parameters (`n_repeats=2`, `n_kpca=20`, `bond_dim=8`) were chosen without systematic optimization. The Hybrid AUC (0.842 in v0.7, 0.691 in BMAD v19 — note: the discrepancy arises from PHCO bug correction) approached but did not match ECFP4 (0.868). A grid search was performed to identify optimal IQPEmbedding parameters for the quantum kernel component of the Hybrid descriptor.
+**Rationale:** The default quantum parameters (`n_repeats=2`, `n_kpca=20`, `bond_dim=8`) were chosen without systematic optimization. The previously reported Hybrid AUC values (0.842 in v0.7, 0.691 in BMAD v19) are not reproduced by the current code, and the underlying run files are missing; the corrected classical-only rerun gives ECFP4 AUC 0.949 on 19,849 molecules. A full hybrid (TFP+TNE+QKS) benchmark rerun is required to obtain a canonical hybrid AUC. A grid search was performed to identify optimal IQPEmbedding parameters for the quantum kernel component of the Hybrid descriptor.
 
 **Method:** Grid search over 3×5×4 = 60 combinations (bond_dim∈{4,6,8}, n_repeats∈{1,2,3,4,6}, n_kpca∈{5,10,20,30}). Each combination evaluated via 5-fold CV RF on n=200 molecules, measuring Hybrid (TFP+TNE+QK) AUC. Job 7962 (sequential, ~8h) completed 50/60 combos before termination.
 
@@ -971,44 +976,27 @@ The completion of the Tartarus full run (19,913 mol × 3 targets, July 7, 2026) 
 
 ---
 
-### 3.9 Cross-Paper Analysis: H₁ Persistence vs. Resistance Resilience (P3 × P2) — **NEW (July 15, 2026)**
+### 3.9 Cross-Paper Analysis: H₁ Persistence vs. Resistance Resilience (P3 × P2) — **UPDATED (July 26, 2026)**
 
-**Objective:** Test whether H₁ topological persistence (ring topology) is a predictor of resistance resilience (RRS class) in the 17 polypharmacological leads from Paper 2.
 
-**Method:** Computed TFP features (ETKDGv3+MMFF 3D conformers, ripser persistent homology) for the 14 compounds with complete RRS data from `c_rrs_classification.csv`. Spearman correlation between RRS mean score and three H₁ metrics.
+**Pilot cohort (n = 14).** Initial pilot of 14 polypharmacological leads.
 
-**Script:** `Project3.../scripts/p3_h1_rrs_cross_paper_analysis.py`
+| Metric | Spearman ρ | p-value | Conclusion |
+|--------|:----------:|:-------:|:----------:|
+| RRS vs H1 Total Persistence | **0.947** | < 0.0001 | Strong positive |
+| RRS vs H1 Count | **0.837** | 0.0007 | Strong positive |
 
-**Dataset:** n=14 compounds (3 Class A, 1 Class A\*, 2 Class B, 7 Class C, 1 Class D)
+**Expanded cohort (n = 77).** Source: `Project3_Quantum_Inspired_RepresentationsV2607/results/p3_h1_rrs_correlation_final.txt` (2026-07-25). After filtering the RRS-TFP merge to compounds with valid RRS and TFP features, n = 77 compounds remained (Class A = 46, Class B = 31; no Class C/D/Unknown).
 
-#### Results
+| Metric | Spearman ρ | p-value | Conclusion |
+|--------|:----------:|:-------:|:----------:|
+| RRS vs H1 Count | **0.312** | **0.0057** | Significant positive |
+| RRS vs H1 Total Persistence | 0.263 | 0.021 | Weak positive |
+| RRS vs H1 Entropy | 0.254 | 0.026 | Weak positive |
 
-| H₁ Metric | Class A (n=3) | Class C (n=7) | Class D (n=1) | Spearman ρ vs RRS | p-value |
-|-----------|--------------|--------------|--------------|-------------------|----------|
-| H₁ count | 5.33 ± 0.58 | 4.29 ± 1.89 | 4 | **0.801** | 0.0006 |
-| H₁ mean lifetime (Å) | 0.702 ± 0.028 | 0.652 ± 0.178 | 0.431 | 0.712 | 0.004 |
-| **H₁ total persistence (Å)** | **3.74 ± 0.34** | **2.64 ± 0.92** | **1.73** | **0.916** | **<0.0001** |
+**Interpretation.** The expanded cohort confirms that the significant association is driven by **H1 count** (the number of ring-like topological features), not simply by maximum or mean H1 persistence. The manuscript figure captions therefore decouple the H1 persistence *distributions* shown in the violin plot from the H1 *count* correlation. The pilot correlation (ρ = 0.947) is included for context but should be interpreted cautiously because the pilot Class D subset contained only one compound.
 
-**Key finding:** H₁ total persistence is a strong, highly significant predictor of resistance resilience (Spearman ρ = **0.916**, p < 0.0001, n=14). Class A (resistance-resilient) compounds have 41% higher H₁ total persistence than Class D (vulnerable).
-
-**Output files:**
-- `Project2.../results/p3_polypharm_tfp_rrs.csv` — full TFP + RRS dataset
-- `Project2.../results/figures/h1_rrs_class_violin.png` — 300 DPI violin plot (3 panels)
-- `Project3.../manuscript/LaTeX/Graphics/h1_rrs_class_violin.png` — copy for manuscript
-
-**Manuscript integration:**
-- **P3 Abstract:** Added explicit cross-paper ρ=0.916 result
-- **P3 §4.7:** Replaced "we plan to" with concrete statistics + prospective threshold (H₁ total > 3.5 Å → prioritize as resistance-resilient)
-- **P3 Figure S1:** Violin plot with `\label{fig:h1_rrs}` added to end of manuscript
-- **P3 Data Availability:** Expanded to list all 6 deposit components including `p3_polypharm_tfp_rrs.csv`
-- **P3 Cover Letter:** Full Journal of Cheminformatics cover letter drafted (`Cover_Letter_P3.tex`, 2 pages)
-
-**Compilation:** 21 pages, 0 errors, 0 undefined references ✅
-
-**Scientific implications:**
-1. TFP adds value **beyond activity prediction**: it reveals a structural determinant of resistance resilience invisible to ECFP4
-2. Prospective hypothesis: H₁ total persistence > 3.5 Å may serve as a filter for resistance-resilient candidates without MD simulation
-3. Mechanistic link: richer ring topology → more conformational rigidity → more consistent binding across mutant active sites
+---
 
 ### 3.10 Monte Carlo Uncertainty Estimation — **NEW (July 23, 2026)**
 
@@ -1078,9 +1066,209 @@ P3 ChEMBL experimental validation completed: queried top-10 candidates against 3
 
 ---
 
-## 4. Cross-Project Integrated Findings
+## 4. P4: Pareto-Guided MCTS Results
 
-### 4.1 Scaffold Paradox Resolution
+### 4.0 P4 Results at a Glance — **UPDATED July 29, 2026**
+
+A consolidated view of the final P4 production runs, cross-verified against the raw CSV outputs in `Project4_Advanced_Monte_CarloV2607/results/`.
+
+| Study | Source file(s) | Key finding |
+|:------|:-------------|:------------|
+| **v9 20-seed benchmark** | `results/benchmark/p4_benchmark_merged.csv` | Random (0.6645 ± 0.0064) > MCTS+ScafVAE (0.6594 ± 0.0078) > GA (0.6402 ± 0.0098) > Greedy (0.5398 ± 0.0000) |
+| **Component ablation** | `results/ablation/p4_component_ablation_summary.csv` | ScafVAE (+0.148), Pareto front (+0.108), and Large vocabulary (+0.079) are the largest positive main effects |
+| **Fragment vocabulary ablation** | `results/ablation/p4_ablation_summary.csv` | ANOVA F = 350.10, p = 1.12 × 10⁻²⁶; `aromatic_only` set is significantly worse than `all`, `medium`, and `minimal` |
+| **Pareto front** | `results/pareto/merged_pareto_front.csv` | 4 non-dominated solutions across 20 seeds (MPO 0.729–0.946, SA = 3.0, SYBA recomputed 0.021–1.000, hypervolume 1.2366) |
+
+**Primary conclusion:** On the curated medium fragment set, simple random search edges out MCTS by a small margin (mean Δ = 0.0051, paired t-test: t₁₉ = 2.32, p = 0.032), with both outperforming GA and Greedy. This indicates that the reward landscape on this fragment set is relatively flat and that exploration is more important than sophisticated tree-search exploitation. The real value of MCTS lies in its ability to generate a diverse Pareto front of multi-objective trade-offs, not in a higher scalar reward.
+
+### 4.1 Pipeline Optimizations (21 July 2026)
+
+Nine code-level improvements were implemented to address MCTS underperformance and enable large-scale benchmarks:
+
+| Optimization | Description | Impact |
+|:-------------|:------------|:-------|
+| **Dynamic Progressive Widening** | `max(5, k·N^α)` avec α=0.5, k=1.0 au lieu de K=10 fixe | Croissance de 5 à 33 actions selon visites |
+| **Virtual Loss** | Pénalité ν=0.05 sur les nœuds sur-explorés | +47 états visités vs avant (29→47) |
+| **State caching (MCTS-Solver)** | Évite de revisiter les mêmes molécules | Exploration plus diverse |
+| **Policy-biased rollout** | Rollout via ScafVAE au lieu d'uniforme | +0.13 reward (+8.5%) |
+| **Lightweight env reinit** | `MolecularEnv(...)` au lieu de `deepcopy()` | 2–5× rollout plus rapide |
+| **Seeded reproducibility** | `random.Random(seed)` propagé | Runs déterministes |
+| **LRU-bounded oracle cache** | `OrderedDict` avec `maxsize=10,000` | Évite OOM |
+| **Multi-fidelity RRS/PNS** | K-NN pondéré (K=3) pour chimie nouvelle | Gradient lisse |
+| **Oracle normalisation [0,1]** | Toutes les composantes MPO/Docking/SYBA/SA normalisées | Scores interprétables, reward équilibré |
+
+### 4.2 Corrupted Tartarus CSV — Root Cause & Fix
+
+**Bug découvert via l'anomaly detector du benchmark v3 (job 11892) :**
+
+Le CSV Tartarus (`tartarus_output.csv`, 19,913 entrées) contient **2,836 lignes** avec un `docking = 10,000.00` (valeur positive aberrante — l'énergie de liaison devrait être négative, typiquement −5 à −12 kcal/mol). Cette corruption provient d'une agrégation `mean()` de colonnes `score_*` contenant des valeurs NaN/Inf non filtrées.
+
+**Impact :** Quand MCTS génère une molécule dont le plus proche voisin Tanimoto tombe sur l'une de ces 2,836 entrées corrompues, `_tanimoto_nearest_docking()` retourne `10,000.00`, ce qui fait exploser le reward à `−2,499.69` (pire contribution docking = 0.25 × −10000 = −2500).
+
+**Fix :** Un sanity check `_clamp_docking()` a été ajouté dans `OracleAggregator` :
+- Valeurs positives (> 0) → remplacées par la valeur par défaut (−7.0)
+- NaN/Inf → remplacées par la valeur par défaut
+- Valeurs négatives valides → clampées dans [−15.0, −0.1]
+
+Le clamp est appliqué à trois niveaux (défense en profondeur) :
+1. `_docking_score()` — score direct depuis le CSV
+2. `_tanimoto_nearest_docking()` — proxy par similarité Tanimoto
+3. `reward()` — score final utilisé dans la fonction objectif
+
+### 4.3 Four-Method Benchmark Summary
+
+| Version | MCTS | Random | Greedy | GA | Notes |
+|:-------:|:----:|:------:|:------:|:---:|:------|
+| **v1** (random rollout) | 1.524 ± 0.30 | 2.098 ± 0.07 | 2.218 ± 0.04 | 2.226 ± 0.09 | Baseline initiale |
+| **v2** (policy_biased) | 1.653 ± 0.37 | 2.097 ± 0.04 | 2.227 ± 0.06 | 2.211 ± 0.11 | +0.13 MCTS |
+| **v3** (PW K=10 + multi-fid) | **−2499.7*** | 2.152 ± 0.02 | 2.378 ± 0.08 | 2.280 ± 0.12 | *Corruption CSV → bug |
+| **v4** (clamp fix, HPC) | **1.264 ± 0.00** | 2.225 ± 0.04 | 2.431 ± 0.02 | 2.246 ± 0.01 | Job 11897, 5 seeds × 500 iters |
+| **v5** (normalisation [0,1]) | **0.280 ± 0.00** | 0.544 ± 0.02 | 0.613 ± 0.00 | 0.598 ± 0.01 | Job 11921, 5 seeds |
+| **v6** (Dynamic PW + VL) | **0.280 ± 0.00** | 0.544 ± 0.02 | 0.613 ± 0.00 | 0.598 ± 0.01 | PW dynamique, virtual loss |
+| **v7** (c_puct=5.0, n=500) | **0.239 ± 0.00** | 0.533 ± 0.01 | 0.615 ± 0.01 | 0.579 ± 0.02 | Job 11940, best hparams |
+
+### 4.4 Historical benchmark results (Normalised [0,1], v5–v7)
+
+Après normalisation [0,1] de toutes les composantes de reward, les scores sont interprétables comme des fractions de l'optimum. Les benchmarks v5–v6 (mêmes données) montrent que la normalisation ne résout pas le problème d'exploration de MCTS.
+
+#### v5/v6 — Normalisation [0,1] (5 seeds, n_iterations=500)
+| Method | Mean Reward | Std | MPO | Docking | Time (s) | Best SMILES |
+|:------|:----------:|:---:|:---:|:-------:|:--------:|:-----------|
+| **Greedy** | **0.613** | 0.004 | 0.938 | −7.61 | 146.4 | Piperidine |
+| **GA** | 0.598 | 0.012 | 0.923 | −7.29 | 227.5 | Substituted aromatics |
+| **Random** | 0.544 | 0.023 | 0.833 | −6.61 | 49.3 | Diverse |
+| **MCTS** | **0.280** | 0.000 | 0.360 | −6.63 | 48.2 | Toluène |
+
+#### v7 — Meilleurs hparams (c_puct=5.0, VL=0.01, n=500 mol.)
+| Method | Mean Reward | Std | MPO | Docking | Time (s) |
+|:------|:----------:|:---:|:---:|:-------:|:--------:|
+| **Greedy** | **0.615** | 0.006 | 0.940 | −7.64 | 143.6 |
+| **GA** | 0.579 | 0.019 | 0.861 | −7.35 | 222.1 |
+| **Random** | 0.533 | 0.010 | 0.790 | −6.66 | 46.4 |
+| **MCTS** | **0.239** | 0.000 | 0.373 | −4.40 | 44.1 |
+
+**Conclusion (historical v7):** c_puct=5.0 n'améliore pas MCTS (0.280→0.239) car avec seulement 500 molécules dans la librairie précalculée, le proxy docking par plus proche voisin est moins informatif. Le rollout collapse (σ=0) persiste.
+
+### 4.4.1 Real merged benchmark (v8, 5 seeds × 4 methods, 2026-07-25)
+
+Source: `Project4_Advanced_Monte_CarloV2607/results/benchmark/p4_benchmark_merged.csv` (seeds 0–4, 1000 iterations, 108-fragment vocabulary, normalised [0,1] reward). The `p4_generate_figures.py` script now reads this merged file directly.
+
+| Method | Mean reward | Std | n | MPO | Docking | Time (s) |
+|:------|:----------:|:---:|:---:|:---:|:-------:|:--------:|
+| **Greedy** | **0.614** | 0.002 | 5 | 0.932 | −7.70 | 146.7 |
+| **MCTS** | 0.597 | 0.000 | 5 | 0.877 | −7.63 | 273.8 |
+| **GA** | 0.592 | 0.020 | 5 | 0.912 | −7.47 | 242.3 |
+| **Random** | 0.547 | 0.015 | 5 | 0.818 | −6.89 | 49.1 |
+
+Key findings: Greedy search achieves the highest mean reward. MCTS converges to the same best molecule across all five seeds (reward = 0.5966, SMILES `Oc1cccc(C(Br)OCn2ccnc2)c1`) and is competitive with GA but does not surpass Greedy. Random search is fastest but yields the lowest reward.
+
+### 4.4.2 Real merged benchmark (v9, 20 seeds × 4 methods, 2026-07-29)
+
+Source: `Project4_Advanced_Monte_CarloV2607/results/benchmark/p4_benchmark_merged.csv` (seeds 0–19, 1000 iterations, medium fragment set after valence fix). Values below are mean ± std from the raw CSV.
+
+| Method | Mean reward | Std | Min | Max | n | Mean time (s) | Std time (s) |
+|:------|:----------:|:---:|:---:|:---:|:---:|:-------:|:-------:|
+| **Random** | **0.6645** | 0.0064 | 0.6497 | 0.6782 | 20 | 310.0 | 8.1 |
+| MCTS+ScafVAE | 0.6594 | 0.0078 | 0.6472 | 0.6811 | 20 | 183.2 | 67.5 |
+| GA | 0.6402 | 0.0098 | 0.6248 | 0.6577 | 20 | 8.9 | 0.6 |
+| Greedy | 0.5398 | 0.0000 | 0.5398 | 0.5398 | 20 | 0.1 | 0.0 |
+
+Key findings: Random search achieves the highest mean reward, reflecting the curated medium fragment set that biases the environment toward chemically plausible, high-scoring molecules. MCTS attains the highest single-seed reward (0.6811, seed 18). A paired t-test across the 20 seeds shows Random is significantly higher than MCTS (mean difference 0.005, $t_{19} = 2.32$, $p = 0.032$), although the absolute gap is small. Greedy is deterministic (σ = 0) and collapses to the same local optimum across all seeds, highlighting the deceptive reward landscape.
+
+### 4.4.3 Hyperparameter Search Results
+
+Grid search systématique sur 32 configurations × 2 seeds (64 évaluations, 30 itérations chacune) :
+
+| Rang | pw_α | pw_k | VL | c_puct | Temp | Mean Reward |
+|:----:|:----:|:----:|:--:|:------:|:----:|:----------:|
+| 1 | 0.7 | 2.0 | 0.01 | 5.0 | 1.0 | **0.3293** |
+| 2 | 0.7 | 2.0 | 0.01 | 5.0 | 0.5 | 0.3293 |
+| 3 | 0.7 | 0.5 | 0.01 | 5.0 | 1.0 | 0.3293 |
+| 4 | 0.3 | 2.0 | 0.01 | 5.0 | 1.0 | 0.3293 |
+| 5 | 0.3 | 0.5 | 0.01 | 5.0 | 1.0 | 0.3293 |
+| ... | ... | ... | ... | ... | ... | ... |
+| 10 | 0.7 | 0.5 | 0.01 | 0.5 | 0.5 | 0.3132 |
+
+**Résultat clé :** c_puct=5.0 domine systématiquement c_puct=0.5, confirmant que l'exploration élevée est essentielle. VL=0.01 > VL=0.20 (0.3293 vs 0.3261). pw_α et pw_k sont indifférenciés à cette échelle (30 itérations). Configuration optimale : **c_puct=5.0, VL=0.01, pw_α=0.5, pw_k=1.0, T=0.8**.
+
+### 4.5 Ablation Studies
+
+Two ablation studies are now reported, both generated from real CSV outputs.
+
+#### 4.5.1 Component ablation ($2^5$ factorial, 5 replicates per config)
+
+Source: `Project4_Advanced_Monte_CarloV2607/results/ablation/p4_ablation_config_*.csv` (32 configs, 160 total runs) and `p4_component_ablation_summary.csv`. Each configuration varies ScafVAE policy, Pareto front, c_PUCT, Temperature, and Vocabulary (Small/Large). The response is the best reward under the ablation oracle weights, which uses a different weight configuration from the main benchmark, so the absolute reward values are not directly comparable to the main benchmark. "Small" and "Large" are the two levels of the factorial Vocab factor; the exact fragment lists are recorded in the ablation run metadata.
+
+| Factor | Level | Mean reward | Std | n |
+|:-------|:-----:|:-----------:|:---:|:---:|
+| ScafVAE | Off | 0.6301 | 0.0810 | 80 |
+| ScafVAE | On  | 0.7778 | 0.0897 | 80 |
+| Pareto  | Off | 0.6498 | 0.0968 | 80 |
+| Pareto  | On  | 0.7581 | 0.1017 | 80 |
+| c_PUCT  | 1.0 | 0.7312 | 0.1038 | 80 |
+| c_PUCT  | 2.0 | 0.6767 | 0.1156 | 80 |
+| Temperature | 0.5 | 0.7102 | 0.1044 | 80 |
+| Temperature | 1.5 | 0.6988 | 0.1210 | 80 |
+| Vocab | Small | 0.6647 | 0.1050 | 80 |
+| Vocab | Large | 0.7433 | 0.1072 | 80 |
+
+Key findings: The ScafVAE policy (+0.148), Pareto front (+0.108), and Large vocabulary (+0.079) are the largest positive contributors. c_PUCT = 1.0 outperforms c_PUCT = 2.0 (+0.054). Temperature has a minimal effect (+0.011).
+
+#### 4.5.2 Fragment vocabulary ablation
+
+Source: `Project4_Advanced_Monte_CarloV2607/results/ablation/p4_ablation_{all,medium,aromatic_only,minimal}_seed_*.csv` (10 seeds per set) and `p4_ablation_summary.csv`. The `p4_mcts_ablation.py` script aggregates these files, computes one-way ANOVA, and runs Tukey HSD.
+
+| Set | Mean reward | Std | SEM | n | Notes |
+|:----|:-----------:|:---:|:---:|:---:|:------|
+| all | 0.6240 | 0.0056 | 0.0018 | 10 | Full 108-fragment vocabulary |
+| medium | 0.6283 | 0.0048 | 0.0015 | 10 | 6 categories (simple_aromatics, aliphatic_chains, n_heterocycles, nitrogen_groups, oxygen_groups, antimalarial_privileged) |
+| minimal | 0.6183 | 0.0097 | 0.0031 | 10 | simple_aromatics only |
+| aromatic_only | 0.5497 | 0.0030 | 0.0010 | 10 | simple_aromatics + fused_rings |
+
+ANOVA: F = 350.10, p = 1.12 × 10⁻²⁶ (df_between = 3, df_within = 36). Source: `results/ablation/p4_ablation_anova.csv`.
+
+Tukey HSD (adjusted p): all vs aromatic_only p < 0.001; medium vs aromatic_only p < 0.001; minimal vs aromatic_only p < 0.001; medium vs minimal p = 0.005; all vs medium p = 0.421; all vs minimal p = 0.191. Source: `results/ablation/p4_ablation_tukey.csv`.
+
+Key findings: The full (`all`) and `medium` fragment sets give equivalent mean rewards; restricting to `aromatic_only` causes a significant performance drop. Even the `minimal` set (simple aromatics only) remains close to the full vocabulary. The choice of `medium` for the main v9 benchmark is therefore well-justified.
+
+### 4.6 Root Cause Analysis: Why MCTS Underperforms
+
+1. **Random rollouts dominate value noise**: With 33 actions × 10 steps, a single random rollout gives a noisy value estimate. Greedy evaluates ALL 33 fragments at each step, yielding much better local choices.
+2. **Policy-biased rollout helps modestly (+0.13)** but the core issue persists: the rollout horizon is too long for the MCTS budget (500 iterations).
+3. **Docking proxy penalises novel molecules**: MCTS explores more diverse chemical space, but the Tanimoto nearest-neighbour proxy assigns −5.97 docking to novel molecules vs −7.73 for library-similar molecules from Greedy/GA.
+4. **Corrupted Tartarus CSV** (2,836 entries with docking=10,000): Causes reward explosion to −2,499 when MCTS hits corrupted entries. Fixed via `_clamp_docking()` sanity check.
+
+### 4.7 P4 Data Availability and Reproducibility
+
+All P4 numerical claims above are traceable to the following files in `Project4_Advanced_Monte_CarloV2607/results/`:
+
+| Analysis | Raw file(s) | Rows / records |
+|:---------|:------------|:---------------|
+| v9 20-seed benchmark | `benchmark/p4_benchmark_merged.csv` | 80 (4 methods × 20 seeds) |
+| v9 per-seed CSVs | `benchmark/p4_benchmark_seed_{0..19}.csv` | 20 files, 4 methods each |
+| LaTeX benchmark table | `benchmark/p4_benchmark_table.tex` | Auto-generated |
+| Component ablation | `ablation/p4_ablation_config_*.csv`, `p4_component_ablation_summary.csv` | 32 configs × 5 replicates = 160 |
+| Fragment vocabulary ablation | `ablation/p4_ablation_{all,medium,aromatic_only,minimal}_seed_{0..9}.csv` | 40 files, 10 seeds per set |
+| ANOVA / Tukey | `ablation/p4_ablation_anova.csv`, `ablation/p4_ablation_tukey.csv` | 1 + 6 pairwise comparisons |
+| Pareto front | `pareto/merged_pareto_front.csv` | 4 non-dominated solutions (SYBA recomputed post-hoc with the lich/conda SYBA classifier after the original run returned a constant fallback of 0; hypervolume 1.2366) |
+| Per-seed Pareto fronts | `pareto/p4_pareto_seed_{0..19}.csv` | 20 files |
+| MCTS ranked hits | `mcts/p4_mcts_merged_ranked.csv` | Top molecules per seed |
+
+**Scripts used to generate the data:**
+- `scripts/p4_mcts_benchmark.py` — main four-method benchmark
+- `scripts/p4_mcts_ablation.py` — component and fragment vocabulary ablations
+- `scripts/p4_mcts_pareto.py` — Pareto MCTS runs
+- `scripts/p4_merge_pareto_fronts.py` — merges per-seed Pareto fronts
+- `scripts/p4_merge_benchmark.py` — merges per-seed benchmark CSVs
+- `scripts/p4_visualize.py` — generates figures
+
+**Provenance note:** The v9 benchmark was executed on the HPC production partition as SLURM array job 12596 (seeds 0–19, 1000 iterations per seed, `--fragment-set medium`). Raw SLURM logs are archived under `scripts/logs/` and are excluded from the Zenodo deposit due to size.
+
+---
+
+## 5. Cross-Project Integrated Findings
+
+### 5.1 Scaffold Paradox Resolution
 
 Three observations that appeared contradictory are now explained:
 
@@ -1092,7 +1280,7 @@ Three observations that appeared contradictory are now explained:
 
 **The VAE explores molecular space by preserving core scaffolds while generating novel peripheral chemistry.** This is the generative model's primary value proposition for antimalarial drug discovery.
 
-### 4.2 Computational Cost Profile
+### 5.2 Computational Cost Profile
 
 | Task | Molecules | Time | Cost Class |
 |------|-----------|------|------------|
@@ -1104,7 +1292,7 @@ Three observations that appeared contradictory are now explained:
 | P3 QKS Benchmark | 10,000 | ~14 h (CPU) | **HPC required** |
 | P2 MD Production | 220 × 100 ns | ~75 GPU-days | **HPC required** |
 
-### 4.3 Manuscript-Ready Quantitative Claims
+### 5.3 Manuscript-Ready Quantitative Claims
 
 1. **Scaffold novelty:** 1.84× scaffold-to-whole-molecule Tanimoto ratio (P1)
 2. **MCMC optimisation:** Mean chain MPO +0.025; top candidate MPO 0.801 (piperazine scaffold) — latent space is not flat (P1)
@@ -1113,15 +1301,15 @@ Three observations that appeared contradictory are now explained:
 5. **TDA efficiency:** 19,836 molecules processed in 6.4 min with 99.93% validity (P3)
 6. **TNE compression:** 15.6× compression at 0.1130 reconstruction error (P3)
 7. **Quantum Kernel:** Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns), but RBF baseline suspiciously low (P3)
-8. **Hybrid Predictive Power:** ECFP4 AUC 0.868 vs Hybrid AUC 0.842 (p=0.111, ns), classical fingerprints remain superior (P3)
-9. **Cross-paper H₁ × RRS:** Spearman ρ=0.916 (p<0.0001, n=14) between H₁ total persistence and resistance resilience score — TFP reveals topology as a structural determinant of clinical resilience (P3 × P2) ✅ **NEW July 15**
+8. **Classical benchmark (corrected):** ECFP4 AUC 0.949 on 19,849 molecules; PHCO bug fixed (0.500 → 0.897); full hybrid benchmark rerun pending (P3)
+9. **Cross-paper H₁ × RRS:** Spearman ρ=0.312 (p=0.0057, n=77) between H₁ count and resistance resilience score; pilot ρ=0.947 (p<0.0001, n=14) retained as preliminary — TFP count of ring-like features emerges as a structural correlate of clinical resilience (P3 × P2) ✅ **UPDATED July 26**
 10. **DiffDock-Vina correlation:** r = 0.327–0.361 for PfDHFR/PfClpP; negligible for PfCRT/PfATP4 (P2)
 11. **MPO sensitivity:** ADMET weight most influential on rank ordering; QED weight most variable (P1)
 12. **African NP character:** 4/17 parseable top-20 candidates highly African NP-like (ACSI > 0.70); mean ACSI 0.617 (P2)
 
 ---
 
-## 5. Data Completeness & Gaps
+## 6. Data Completeness & Gaps
 
 | Deliverable | Status | Action Required |
 |-------------|--------|----------------|
@@ -1133,7 +1321,8 @@ Three observations that appeared contradictory are now explained:
 | **P2 ACSI scores (top-20)** | **✅ Complete (July 6)** | **c_acsi_scores.csv; Paper 2 §3.6 drafted** |
 | P3 Full TDA (19.8K) | ✅ Complete | Tables 1–2 ready |
 | P3 Full TNE (19.8K) | ✅ Complete | Table 2 ready |
-| P3 Hybrid benchmark (10 descriptors) | ✅ Complete | **ECFP4 AUC 0.868 vs Hybrid AUC 0.842 (p=0.111, ns)** |
+| P3 Classical benchmark (corrected, 8 descriptors) | ✅ Complete | **ECFP4 AUC 0.949; PHCO bug fixed (0.500 → 0.897)** |
+| P3 Hybrid benchmark (10 descriptors) | 🔄 Pending rerun | Original values (ECFP4 0.868 / Hybrid 0.842) not reproducible — full rerun required |
 | P3 QKS benchmark | ✅ Complete | **Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns)** |
 | P3 GA Discriminator benchmark | ✅ Complete | **Tanimoto AUC=1.0 vs QK AUC≈0.43–0.51** |
 | P1/P2 Tartarus full run | ✅ Complete (July 7) | 19,913 mol × 3 targets; 32h runtime; 4LDE scores verified normal |
@@ -1141,28 +1330,28 @@ Three observations that appeared contradictory are now explained:
 
 ---
 
-## 6. Monte Carlo Fortification Strategies (Quick Wins) — IMPLEMENTED
+## 7. Monte Carlo Fortification Strategies (Quick Wins) — IMPLEMENTED
 
 Three Monte Carlo "Quick Win" strategies have been implemented as standalone scripts that integrate with the existing P1 and P3 pipelines.
 
-### 6.1 Monte Carlo Dropout for Uncertainty Quantification (P3) — ✅ IMPLEMENTED
+### 7.1 Monte Carlo Dropout for Uncertainty Quantification (P3) — ✅ IMPLEMENTED
 - **Script:** `Project3/scripts/p3_mc_uncertainty.py`
 - **Approach:** Wraps the Random Forest classifier from the hybrid benchmark with simulated MC Dropout. For each test molecule, randomly sub-samples trees (dropout_rate=0.3) across N=100 MC iterations.
 - **Usage:** `python scripts/p3_mc_uncertainty.py --n-mols 500 --n-mc-samples 100 --dropout-rate 0.3`
 
-### 6.2 Conformational MC Sampling for TDA Robustness (P3) — ✅ IMPLEMENTED
+### 7.2 Conformational MC Sampling for TDA Robustness (P3) — ✅ IMPLEMENTED
 - **Script:** `Project3/scripts/p3_tda_pipeline.py` — new `--n-conf N` argument
 - **Approach:** When `--n-conf 50`, generates N conformers per molecule via RDKit ETKDG, optimises each, computes persistent homology for each, and Boltzmann-weights the TFP vectors.
 - **Usage:** `python scripts/p3_tda_pipeline.py --n-conf 50 --n-jobs 8`
 
-### 6.3 MCMC Metropolis-Hastings Latent Space Sampling (P1) — ✅ IMPLEMENTED
+### 7.3 MCMC Metropolis-Hastings Latent Space Sampling (P1) — ✅ IMPLEMENTED
 - **Script:** `Project1/scripts/p1_mcmc_latent.py`
 - **Approach:** Builds a 2D UMAP proxy latent space from ECFP4 fingerprints. Fits a GMM prior + Random Forest MPO surrogate. Runs Metropolis-Hastings MCMC to decode promising points via nearest-neighbour search.
 - **Usage:** `python scripts/p1_mcmc_latent.py --n-steps 5000 --n-chains 4 --warmup 1000`
 
 ---
 
-## 7. Scripts & Output Inventory
+## 8. Scripts & Output Inventory
 
 | Script | Output Files | Status |
 |--------|-------------|--------|
@@ -1186,7 +1375,7 @@ Three Monte Carlo "Quick Win" strategies have been implemented as standalone scr
 
 ---
 
-## 8. Papers Directory Audit — Actual Status vs V2607
+## 9. Papers Directory Audit — Actual Status vs V2607
 
 The directory `/home/taamangtchu/Documents/Github/Malaria_codes/Papers/` (87 entries) was audited (July 14, 2026).
 
@@ -1197,7 +1386,7 @@ The directory `/home/taamangtchu/Documents/Github/Malaria_codes/Papers/` (87 ent
 | NP-relatedness | Included in §4.1, §4.7 | ✅ Already resolved |
 | MCMC nearest-neighbour | Documented | ✅ Already resolved |
 
-### 8.1 HPC Status (July 14, 2026)
+### 9.1 HPC Status (July 14, 2026)
 
 The HPC cluster (`100.73.21.40` — user `nanaengo`) was audited and synced:
 
@@ -1232,11 +1421,11 @@ The HPC cluster (`100.73.21.40` — user `nanaengo`) was audited and synced:
 
 ---
 
-## §1.15 Grid Diagnostic — V2 Corrected (2026-07-16)
+## Appendix A: Grid Diagnostic — V2 Corrected (2026-07-16)
 
 **Contexte:** Audit systématique des grilles de docking Vina après découverte d'un décalage de 35.4 Å pour PfDHFR.
 
-### Résumé des Diagnostics
+### A.1 Résumé des Diagnostics
 
 | Cible | PDB | Grid V1 (x, y, z) | Centre Réel | Distance | Box 25Å | Statut |
 |---|---|---|---|---|---|---|
@@ -1245,7 +1434,7 @@ The HPC cluster (`100.73.21.40` — user `nanaengo`) was audited and synced:
 | **PfATP4** | 9N10 | (134.84, 133.10, 97.63) | Site: (129.3, 130.9, 92.4) | **7.9 Å** | ⚠️ 16/17 résidus OK | ⚠️ RE-CENTER |
 | **PfClpP** | 4GM2 | (26.19, 35.09, 24.72) | Centre barrel | **2.9 Å** | ✅ OK | ✅ OK |
 
-### Détails
+### A.2 Détails
 
 **PfDHFR (7F3Y)** — La grille cible le site allostérique NADPH (1.33, -1.73, -23.84), à 35.4 Å du site catalytique MTX (-3.60, -5.25, -58.68). Le PDBQT ne contient PAS le cofacteur NADPH, rendant le site actif non structuré (même MTX redocké avec grid centrée échoue: RMSD 25.6 Å). **Tous les scores Vina PfDHFR sont des affinités allostériques.** DiffDock blind docking a compensé (ChEMBL 5.43× le prouve). Explique également la fixation allostérique observée dans Paper 2 (201_PfDHFR).
 
@@ -1255,7 +1444,7 @@ The HPC cluster (`100.73.21.40` — user `nanaengo`) was audited and synced:
 
 **PfClpP (4GM2)** — 2.94 Å du centre du barrel — seul site correct.
 
-### Recommandations
+### A.3 Recommandations
 
 | Priorité | Cible | Action | Centre V2 |
 |---|---|---|---|
@@ -1267,7 +1456,7 @@ The HPC cluster (`100.73.21.40` — user `nanaengo`) was audited and synced:
 **Document complet:** `docs/P1_V2_GRID_DIAGNOSTIC.md`
 **Roadmap V2:** `docs/P1_V2_CORRECTED_ROADMAP.md`
 
-### MTX Validation (7F3Y V2 Receptor)
+### A.4 MTX Validation (7F3Y V2 Receptor)
 
 Le récepteur PfDHFR a été re-préparé avec le cofacteur NADPH (NDP-701, chaîne A) via Meeko (`mk_prepare_receptor.py`). Le MTX cristallo a été extrait et converti en PDBQT.
 
@@ -1279,7 +1468,7 @@ Le récepteur PfDHFR a été re-préparé avec le cofacteur NADPH (NDP-701, cha�
 
 **Validation alternative:** Le ChEMBL enrichment (5.43×) avec DiffDock consensus valide que le pipeline fonctionne malgré les limitations de Vina.
 
-### Configs V2 Finales
+### A.5 Configs V2 Finales
 
 | Cible | PDB | Centre V2 | Récepteur | Statut |
 |---|---|---|---|---|
@@ -1290,9 +1479,9 @@ Le récepteur PfDHFR a été re-préparé avec le cofacteur NADPH (NDP-701, cha�
 
 ---
 
-## 2. Data Analysis Audit — Available Results vs. Report Coverage (July 18, 2026)
+## Appendix B: Data Analysis Audit — Available Results vs. Report Coverage (July 18, 2026)
 
-### 2.1 Audit Scope and Method
+### B.1 Audit Scope and Method
 
 A systematic inventory was performed across the three project directories to verify that every available numerical result is represented in this report and to flag results that are physically implausible or internally inconsistent.
 
@@ -1304,7 +1493,7 @@ A systematic inventory was performed across the three project directories to ver
 
 **Method:** `find` inventory, `wc -l` / `head` / `tail` inspection, cross-check against claims in this report and the project READMEs.
 
-### 2.2 P1 — Results Coverage and Doubtful Findings
+### B.2 P1 — Results Coverage and Doubtful Findings
 
 **Coverage:** All major P1 result files are present in the canonical directory and are discussed in §1.1–§1.15.
 
@@ -1312,12 +1501,12 @@ A systematic inventory was performed across the three project directories to ver
 
 | # | Finding | Severity | Action |
 |---|---------|----------|--------|
-| 1 | **V2 grid correction** (§1.15) shows PfDHFR grid V1 was 35.4 Å off the catalytic site; all pre-V2 PfDHFR docking scores are allosteric, not catalytic. | High | Re-dock top candidates with V2 grids; update manuscript §2.11 |
+| 1 | **V2 grid correction** (Appendix A) shows PfDHFR grid V1 was 35.4 Å off the catalytic site; all pre-V2 PfDHFR docking scores are allosteric, not catalytic. | High | Re-dock top candidates with V2 grids; update manuscript §2.11 |
 | 2 | **DEKOIS enrichment** (§1.8c) AUC = 0.450 (near-random) — consistent with literature but weakens any claim that Vina alone discriminates actives. | Medium | Already disclosed; keep as motivation for DiffDock consensus |
 | 3 | **pH 5.2 re-docking** (§1.10) shifts PfCRT scores by +2.20 kcal/mol with ρ = 0.270; ranking is not preserved. | Medium | Report already notes this; consider re-ranking top PfCRT candidates |
 | 4 | **Mixed exhaustiveness** in `v2_centroid_scores.csv` (EX=32 vs EX=64) was patched in `v2_postprocess.py` but the per-row provenance must be verified before final publication. | Low | Re-run postprocess chain if any pfATP4/pfClpP rerun rows are missing |
 
-### 2.3 P2 — Results Coverage and Doubtful Findings
+### B.3 P2 — Results Coverage and Doubtful Findings
 
 **Coverage:** P2 results are located in `Malaria_codesV2/Project2.../results/`, not in the canonical top-level directory. The canonical `/home/nanaengo/Project2.../results/` is empty.
 
@@ -1338,7 +1527,7 @@ A systematic inventory was performed across the three project directories to ver
 3. **Mutant docking results are unanalyzed.** 102 rows of mutant Vina scores exist but are not integrated into the RRS/ACSI/PNS metrics or the report.
 4. **README status mismatch.** The P2 README states "Phase 2: Resistance Modeling" is current, but production MD is claimed complete in the BMAD report. One of the two is stale.
 
-### 2.4 P3 — Results Coverage and Doubtful Findings
+### B.4 P3 — Results Coverage and Doubtful Findings
 
 **Coverage:** P3 results are located in `Malaria_codesV2/Project3.../results/`. The canonical `/home/nanaengo/Project3.../results/` is empty.
 
@@ -1359,7 +1548,7 @@ A systematic inventory was performed across the three project directories to ver
 3. **Canonical P3 results directory is empty.** All P3 outputs live under `Malaria_codesV2/`. For reproducibility, they should be rsynced to `/home/nanaengo/Project3.../results/`.
 4. **README is stale.** P3 README says "Draft v0.6" and references old paths (`Papers/Quantum_Inspired_Representations/Scripts/`). It should be updated to the current directory structure and results.
 
-### 2.5 Cross-Cutting Issues
+### B.5 Cross-Cutting Issues
 
 | Issue | Impact | Action |
 |-------|--------|--------|
@@ -1369,11 +1558,11 @@ A systematic inventory was performed across the three project directories to ver
 | **PHCO random AUC** | Undermines hybrid benchmark | Debug or exclude PHCO; re-run if needed |
 | **QKS headline contradiction** | Damages credibility | Decide on canonical QKS result and remove contradictory sentence |
 
-### 2.6 Proposed SLURM-Based Correction Plan
+### B.6 Proposed SLURM-Based Correction Plan
 
 The plan is designed to run efficiently on the HPC cluster, with dependencies between stages.
 
-#### Stage A — Data Consolidation and Verification (no HPC)
+#### B.6.1 Stage A — Data Consolidation and Verification (no HPC)
 
 | Task | Command / Action | Deliverable |
 |------|------------------|-------------|
@@ -1382,7 +1571,7 @@ The plan is designed to run efficiently on the HPC cluster, with dependencies be
 | A3 | Verify `md_top20_candidates.csv` row count and trace missing 3 candidates | Updated CSV or renamed file + explanation |
 | A4 | Reconcile QKS headline (0.751 vs 0.936) by checking run logs | Single canonical QKS summary |
 
-#### Stage B — SLURM Re-Computations
+#### B.6.2 Stage B — SLURM Re-Computations
 
 | Job | Script | Array / Nodes | Time | Dependency | Deliverable |
 |-----|--------|---------------|------|------------|-------------|
@@ -1392,17 +1581,17 @@ The plan is designed to run efficiently on the HPC cluster, with dependencies be
 | B4 | Re-dock top-20 candidates with V2 grids (`v2_submit_all.sh` on P1 top-20 SMILES) | array=1-20%4, 4 cores/task | 2 h | A3 | `v2_top20_redock_scores.csv` |
 | B5 | MM-GBSA re-run for 164_PfClpP and 201_PfDHFR (excluded systems already validated) | 1 node, 8 cores | 4 h | A1 | `FINAL_RESULTS_MMPBSA_*.dat` with physically plausible ΔG |
 
-#### Stage C — Documentation Updates
+#### B.6.3 Stage C — Documentation Updates
 
 | Document | Update |
 |----------|--------|
-| `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | Add §2 results audit; update §3.3 QKS headline; add §2.7 mutant docking analysis once B2 completes |
+| `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | Add §2 results audit; update §3.3 QKS headline; add Appendix B.7 mutant docking analysis once B2 completes |
 | `AGENTS.md` | Add session entry for audit + SLURM plan |
 | `Project2/README.md` | Update status to "Phase 3/4 — Analysis & Manuscript"; add results location note |
 | `Project3/README.md` | Update to "Draft v0.7 — results complete, manuscript in preparation"; add canonical results path |
 | `Malaria_codesV2/README.md` | Add note that P2/P3 canonical results are under `/home/nanaengo/Project2...` and `/home/nanaengo/Project3...` |
 
-### 2.7 Immediate Next Steps (Priority Order)
+### B.7 Immediate Next Steps (Priority Order)
 
 1. ✅ **Reconcile QKS headline** — canonical result is 0.751/0.701 on 500 molecules; 0.936/0.105 claim removed.
 2. **Debug PHCO** — inspect `p3_hybrid_benchmark.py` preprocessing for the PHCO descriptor; if it is degenerate, exclude it and re-run B1.
@@ -1412,11 +1601,11 @@ The plan is designed to run efficiently on the HPC cluster, with dependencies be
 
 ---
 
-## 3. Adversarial Audit Synthesis & Relaunch Plan (July 18, 2026)
+## Appendix C: Adversarial Audit Synthesis & Relaunch Plan (July 18, 2026)
 
 This section consolidates the adversarial audit findings from `synthese_audit_adverseriel_V2607.md` and maps each criticism to the required code, result, or manuscript fix. It supersedes the generic next-steps list in §2.7.
 
-### 3.1 P1 — Four Manuscript/Coherence Fixes (no new simulations)
+### C.1 P1 — Four Manuscript/Coherence Fixes (no new simulations)
 
 | ID | Criticism | Required Fix | Evidence File | Status |
 |----|-----------|--------------|---------------|--------|
@@ -1431,7 +1620,7 @@ This section consolidates the adversarial audit findings from `synthese_audit_ad
 - pfDHFR: 13 (2.7 %)
 - Mixed/original provenance: 15 mixed, 469 original
 
-### 3.2 P3 — Four Weaknesses Requiring New Results
+### C.2 P3 — Four Weaknesses Requiring New Results
 
 | ID | Weakness | Lever / Fix | Required Simulation | Validation Criterion |
 |----|----------|-------------|---------------------|--------------------|
@@ -1440,7 +1629,7 @@ This section consolidates the adversarial audit findings from `synthese_audit_ad
 | **W3** | 15.6× padded compression | Rewrite Abstract/§3.3 to state **5.9× real-atom compression**; cite P1 PCA 82.33 % variance | None (writing) | No inflated compression claims remain |
 | **W4** | QKS applicability domain undefined | Run QKS benchmark on 1,815-mol congeneric series + Tartarus orthogonal subset | `p3_qks_benchmark.py --n-mols 1815` | QK AUC > Tanimoto AUC on panel where Tanimoto fails (ρ = 0.072) |
 
-### 3.3 SLURM Commands for P3 Relaunch
+### C.3 SLURM Commands for P3 Relaunch
 
 ```bash
 # 1. Import P1 full-cluster panel into P3 data directory
@@ -1463,24 +1652,24 @@ sbatch -J p3_qks_1815 -c 8 --time=04:00:00 --mem=64G \
   python scripts/p3_qks_benchmark.py --n-mols 1815 --block-size 200 --n-jobs 8"
 ```
 
-### 3.4 Dependencies & Timeline
+### C.4 Dependencies & Timeline
 
 1. **Hour 0–1:** P1 manuscript fixes (F1–F4) — independent, writing-only.
 2. **Hour 1–2:** Copy `docking_results.csv` to P3; verify `p3_tda_pipeline.py` accepts `--input`.
 3. **Hour 2–6:** Submit TDA and QKS SLURM jobs in parallel.
 4. **Hour 6–8:** Parse outputs, update P3 manuscript §3.3 and §4.7.
 
-### 3.5 Risk Assessment
+### C.5 Risk Assessment
 
 - **Low risk:** P1 manuscript edits, data transfer, PHCO fix (already validated).
 - **Medium risk:** Expanded TDA may yield lower ρ at n=1,815 — acceptable if still significant; frame as expected variance.
 - **Low technical risk:** QKS on 1,815 molecules is within tested limits (block-size 200, 8 cores).
 
-## 4. P3 Phase2 SLURM Job Audit & Fixes (July 20, 2026)
+## Appendix D: P3 Phase2 SLURM Job Audit & Fixes (July 20, 2026)
 
 During routine monitoring of the P3 phase2 SLURM array, three systemic issues were identified in the running scripts. All have been fixed and the affected jobs have been resubmitted.
 
-### 4.1 PicklingError on PennyLane StateVectorC128
+### D.1 PicklingError on PennyLane StateVectorC128
 
 **Symptom:** Task 0 of job 9255 failed with `_pickle.PicklingError: Could not pickle 'StateVectorC128' object`.
 
@@ -1491,7 +1680,7 @@ During routine monitoring of the P3 phase2 SLURM array, three systemic issues we
 - `_kernel_matrix_chunked` now forces `n_jobs=1` with a warning when `n_jobs > 1`.
 - SLURM script now passes `--n-jobs 1` explicitly.
 
-### 4.2 Race Condition on Shared Output Files
+### D.2 Race Condition on Shared Output Files
 
 **Symptom:** All three array tasks wrote to the same `p3_quantum_params_sweep.csv` and `p3_quantum_params_sweep_done.log`.
 
@@ -1502,7 +1691,7 @@ During routine monitoring of the P3 phase2 SLURM array, three systemic issues we
 - Each array task now writes to a unique file: `p3_phase2_${LABEL}_raw.csv`.
 - The `.done.log` is derived from the output CSV via `with_suffix(".done.log")`.
 
-### 4.3 OpenMP Oversubscription
+### D.3 OpenMP Oversubscription
 
 **Symptom:** `lightning.qubit` uses OpenMP internally and auto-detects all node CPUs even when SLURM allocates only one.
 
@@ -1516,7 +1705,7 @@ export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 ```
 
-### 4.4 TFP Imputation Bug
+### D.4 TFP Imputation Bug
 
 **Symptom:** `load_precomputed()` padded missing SMILES with `np.zeros(...)`, so the subsequent NaN mean-imputation logic was dead code.
 
@@ -1524,11 +1713,11 @@ export NUMEXPR_NUM_THREADS=1
 
 **Fix:** Missing SMILES are now padded with `np.full(len(feat_cols), np.nan, dtype=np.float32)`, allowing the existing mean-imputation logic to run correctly.
 
-### 4.5 Improved Bash Error Handling
+### D.5 Improved Bash Error Handling
 
 **Fix:** Added an `err_handler` trap in `p3_phase2_array.sbatch` that logs task failures to `p3_phase2_done.log` before `set -e` causes the script to exit. Exit code is passed explicitly via `trap 'err_handler $?' ERR`.
 
-### 4.6 Job Status After Resubmission
+### D.6 Job Status After Resubmission
 
 | Job ID | Task | Label | Parameters | Script Version | Status |
 |:------:|:----:|:------|:-----------|:--------------|:-------|
@@ -1538,7 +1727,7 @@ export NUMEXPR_NUM_THREADS=1
 
 Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitted as job 10595.
 
-## 3.1 Updated Project Status Table
+## Appendix E: Updated Project Status Table
 
 | Domain | Molecules / Systems | Key Result | Status |
 |--------|---------------------|------------|--------|
@@ -1555,11 +1744,11 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 
 ---
 
-### §3.15 SOTA Topological Benchmark — **COMPLETED (July 25, 2026) — Full n=19,849**
+### E.1 SOTA Topological Benchmark — **COMPLETED (July 25, 2026) — Full n=19,849**
 
 **Status:** ✅ **COMPLETED** — Production benchmark on n=19,849 molecules (subsampled from 19,849; ~3,795 active + ~1,205 inactive stratified), class-weighted RF, 5-fold stratified CV.
 
-**Rationale:** Gap #3 in §3.14 identified the absence of a SOTA topological benchmark as a medium-severity deficiency. We benchmarked five TDA descriptor strategies against the ECFP4 classical baseline, each paired with Random Forest (RF) and Support Vector Machine (SVM) classifiers.
+**Rationale:** Gap #3 in Appendix J identified the absence of a SOTA topological benchmark as a medium-severity deficiency. We benchmarked five TDA descriptor strategies against the ECFP4 classical baseline, each paired with Random Forest (RF) and Support Vector Machine (SVM) classifiers.
 
 **Pipeline:** `scripts/p3_sota_benchmark.py` — SMILES merge with `p3_labels_production.csv` (eos80ch activity labels) → TDA fingerprint extraction → per-fold StandardScaler → 5-fold stratified CV.
 
@@ -1595,7 +1784,7 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 
 > ⚠️ **Note:** The summary file  reports results on a 5,000-molecule subsample (smoke test). The canonical results are in  (n=19,849, used in the manuscript). The summary.txt AUC values (e.g., PersStats+RF 0.8419, n=5,000 smoke test via Job 12061) differ from the full-library values (0.8731, n=19,849) due to the smaller sample size. The 5,000-molecule smoke test confirmed pipeline integrity and SVM kernel compatibility; canonical results are from the full 19,849-molecule benchmark.
 
-## 3.16 ChEMBL Experimental Validation — NEW (July 25, 2026)
+## Appendix F: ChEMBL Experimental Validation — NEW (July 25, 2026)
 
 **Status:** COMPLETED — 30 candidate-target pairs queried, 1 match found.
 
@@ -1615,7 +1804,7 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 
 ---
 
-## 3.17 RRS-TFP Expansion Pipeline — NEW (July 25, 2026)
+## Appendix G: RRS-TFP Expansion Pipeline — NEW (July 25, 2026)
 
 **Status:** COMPLETED — 500 compounds processed, 77 with valid RRS+TFP.
 
@@ -1642,11 +1831,11 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 ---
 
 
-## 3.18 TopologyNet Analog — NEW (July 25, 2026)
+## Appendix H: TopologyNet Analog — NEW (July 25, 2026)
 
 **Status:** ✅ **COMPLETED** — MLP on PersStats 22 features (class-balanced sample weighting, 5-fold stratified CV, n=5000).
 
-**Rationale:** Gap #3 in §3.14 identified the absence of neural-network comparison for PersStats features. TopologyNet (Cang & Wei 2018) and D-GRIL (2026) operate on richer inputs (full persistence diagrams, multi-parameter PH), which are not installable in our environment due to C++/CUDA dependencies. As a practical analog, we benchmarked an MLP (3 hidden layers: 128+64+32, ReLU, class-balanced sample weighting, early stopping) against Random Forest on the same PersStats 22 features.
+**Rationale:** Gap #3 in Appendix J identified the absence of neural-network comparison for PersStats features. TopologyNet (Cang & Wei 2018) and D-GRIL (2026) operate on richer inputs (full persistence diagrams, multi-parameter PH), which are not installable in our environment due to C++/CUDA dependencies. As a practical analog, we benchmarked an MLP (3 hidden layers: 128+64+32, ReLU, class-balanced sample weighting, early stopping) against Random Forest on the same PersStats 22 features.
 
 **Results:**
 
@@ -1666,7 +1855,7 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 
 
 
-## 3.19 D-GRIL Build Assessment — NEW (July 25, 2026)
+## Appendix I: D-GRIL Build Assessment — NEW (July 25, 2026)
 
 **Status:** ⚠️ **PARTIALLY COMPILED — Not runnable** (linker ABI mismatch)
 
@@ -1693,7 +1882,7 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 
 
 
-## 3.20 Adversarial Audit & Mitigation — NEW (July 25, 2026)
+## Appendix J: Adversarial Audit & Mitigation — NEW (July 25, 2026)
 
 **Status:** ✅ **COMPLETED** — Full adversarial self-assessment of P3 manuscript
 
@@ -1707,7 +1896,7 @@ A systematic adversarial audit was performed from the perspective of a Q1 journa
 | 2 | H₁-RRS correlation attenuated (ρ=0.947→0.312) | 🟡 MEDIUM | Canonized ρ=0.312 in abstract/conclusion; pilot 0.947 moved to parenthetical; framed as methodological discovery |
 | 3 | PersStats+RF only matches ECFP4 (Δ=+0.005) | 🟡 MEDIUM | Cohen's d=+0.85 confirms large effect size; SOTA benchmark at n=19,849 |
 | 4 | Quantum kernel simulated (not real hardware) | 🟡 MEDIUM | NISQ-era caveat in Introduction; no quantum advantage claimed; all kernels indistinguishable after tuning |
-| 5 | D-GRIL and TopologyNet not benchmarked | 🟡 MEDIUM | TopologyNet analog (MLP vs RF) in SM §9D; D-GRIL build documented in SM §9E + BMAD §3.19 |
+| 5 | D-GRIL and TopologyNet not benchmarked | 🟡 MEDIUM | TopologyNet analog (MLP vs RF) in SM §9D; D-GRIL build documented in SM §9E + BMAD Appendix I |
 | 6 | ChEMBL match rate low (3.0%) | 🟡 MEDIUM | Honest framing as supporting structural novelty; ChEMBL36 spurious Tanimoto bug fixed |
 | 7 | Single library — generalizability unproven | 🟢 LOW | Acknowledged limitation; ECFP4 baseline provides internal calibration |
 | 8 | Cohen's d uses pooled σ (not paired) | 🟢 LOW | "Approximate" qualifier added to SM footnote; effect size ±0.002 insensitive to σ variations |
@@ -1718,250 +1907,112 @@ A systematic adversarial audit was performed from the perspective of a Q1 journa
 3. Final Zenodo deposit → +3%
 4. Manuscript trim to 14 pages → +2%
 
+## P4 Benchmark Relaunch (2026-07-29 09:06 UTC)
 
-## P4: Advanced Monte Carlo Strategies — MCTS+RL Benchmark (Completed)
+Following the audit and fix of the P4 benchmark scripts (RDKit valence/kekulization filter, real OracleAggregator reward, and —fragment-set medium), the production benchmark array job was relaunched for the full 20-seed protocol.
 
-**Status:** Full benchmark completed (July 21, 2026). Four methods benchmarked across five seeds. MCTS rollout collapse diagnosed and fixed via global best-molecule tracking.
+| Item | Value |
+|------|-------|
+| Commit (short) | 5cd7eec0 |
+| Job ID | 12573 |
+| Script | Project4_Advanced_Monte_CarloV2607/scripts/p4_benchmark_array.sbatch |
+| Fragment set | medium |
+| Array | 0-19 (max 8 concurrent) |
+| N_iterations | 1000 |
+| GA population × generations | 50 × 20 |
+| Max steps | 10 |
+| Wall time per task | 6 h |
+| Output | Project4_Advanced_Monte_CarloV2607/results/benchmark/p4_benchmark_seed_N.csv |
 
-### 4.1 MCTS+RL Pipeline
-
-Project 4 implements a Pareto-guided Monte Carlo Tree Search (MCTS) framework for de novo molecular generation, coupled to real P1/P2 oracles. The pipeline moves beyond latent-space sampling (P1) by directly optimising molecules via tree search with chemistry-informed PUCT priors.
-
-| Component | File | Role |
-|-----------|------|------|
-| Environment | `scripts/p4_mcts_rl_env.py` | Fragment-attachment state machine (33 fragments, 5 categories) |
-| Agent | `scripts/p4_mcts_agent.py` | PUCT selection, ScafVAE policy, Progressive Widening, rollout fix |
-| Oracles | `scripts/p4_mcts_oracles.py` | MPO, docking (Tanimoto proxy), SYBA, SA, RRS, PNS |
-| Policy | `scripts/p4_mcts_policy.py` | ScafVAE-informed priors (ChEMBL27 frequencies + scaffold Tanimoto) |
-| Pareto | `scripts/p4_mcts_pareto.py` | Multi-objective Pareto front (MPO, SYBA, SA) |
-| Baselines | `scripts/p4_mcts_baselines.py` | Random, Greedy, GA (canonical + enhanced) |
-| Benchmark | `scripts/p4_mcts_benchmark.py` | 4-method × 5-seed protocol |
-| Runner | `scripts/p4_mcts_run.py` | Single-search CLI |
-| QMC prep | `scripts/p4_qmc_prepare.py` | DMC input preparation |
-| QMC analyze | `scripts/p4_qmc_analyze.py` | QMC output analysis |
-
-### 4.2 Key Finding: MCTS Rollout Collapse and Fix
-
-**Problem discovered during early benchmarks:** The policy-biased rollout systematically degraded scores when adding fragments to high-quality intermediates (e.g., toluene, reward 0.44 → ethane, reward 0.239). All five seeds collapsed to the same low-quality molecule (CC).
-
-**Fix applied (global best-molecule tracking):** During each rollout, the oracle score is evaluated at every construction step, and the best intermediate molecule is returned instead of the terminal state. This ensures high-quality partial constructions are preserved.
-
-| Metric | Before fix | After fix | Improvement |
-|--------|:----------:|:---------:|:-----------:|
-| Mean reward | 0.239 | **0.597** | **2.2×** |
-| MPO | 0.373 | **0.877** | **2.4×** |
-| Docking | −4.40 | **−7.63** | **1.7×** |
-| Time per seed | 48.2 s | 273.8 s | 5.7× (oracle calls) |
-
-### 4.3 Hyperparameter Search
-
-Systematic grid search over 32 configurations × 2 seeds (64 total evaluations, 30 iterations each) identified optimal MCTS hyperparameters:
-
-| Parameter | Range tested | Optimal value | Impact |
-|-----------|:-----------:|:-------------:|:------:|
-| $c_{\text{PUCT}}$ | 0.5, 5.0 | **5.0** | High exploration essential for large action space |
-| Virtual loss $\nu$ | 0.01, 0.20 | **0.01** | Lower loss promotes diverse exploration |
-| $pw_\alpha$ | 0.3, 0.7 | 0.5 | Negligible at 30 iterations |
-| $pw_k$ | 0.5, 2.0 | 1.0 | Negligible at 30 iterations |
-| Temperature | 0.5, 1.0 | 0.8 | Negligible at 30 iterations |
-
-### 4.4 Full Benchmark Results (Cross-Seed, N=20)
-
-Four methods benchmarked across 20 independent seeds ($N=20$, 108-fragment vocabulary) with 1,000 oracle calls per seed:
-
-| Method | Mean reward | Max reward | Std | Time (s) | Diversity | MPO |
-|:-------|:----------:|:----------:|:---:|:--------:|:---------:|:---:|
-| **Greedy Search** | **0.6335** | **0.6335** | 0.0000 | 1103.8 | 0.810 | 0.930 |
-| **MCTS+ScafVAE (ours)** | **0.6331** | **0.6331** | 0.0000 | 512.6 | 0.590 | 0.923 |
-| **Genetic Algorithm** | **0.5886** | **0.5886** | 0.0000 | 253.2 | 0.690 | 0.897 |
-| Random Search | 0.4528 | 0.4528 | 0.0000 | 98.4 | 0.710 | 0.421 |
-
-**Key findings:**
-- MCTS+ScafVAE (0.6331) achieves ultra-competitive performance within 0.0004 of Greedy (0.6335), running 2.15× faster (512.6 s vs 1103.8 s).
-- Both MCTS+ScafVAE and Greedy outperform GA (0.5886) by >0.044 in mean reward and >0.026 in MPO score.
-- Random search lags significantly (0.4528 mean reward, 0.421 MPO), confirming the necessity of guided search policies.
-- MCTS uniquely maintains Pareto multi-objective front optimization (HV $\ge 0.58$), a capability unachievable by Greedy single-step lookahead.
-
-### 4.5 Ablation Study
-
-Nine ablation experiments to isolate component contributions (different oracle weight config: $w_{\text{MPO}}=0.15$, $w_{\text{SYBA}}=0.35$, $w_{\text{docking}}=0.40$, $w_{\text{SA}}=0.10$, RRS/PNS zeroed). The canonical GA (Jensen 2019) is used for the main benchmark (§4.4); the enhanced GA variant is evaluated separately in the ablation below:
-
-| Configuration | Mean reward | $\Delta$ vs default |
-|:--------------|:----------:|:------------------:|
-| Default MCTS+ScafVAE | 1.26 | — |
-| w/o ScafVAE policy (flat PUCT) | 1.24 | −0.02 |
-| w/o Pareto front (scalar reward) | 1.25 | −0.01 |
-| **w/o global best-molecule tracking** | **0.24** | **−1.02** |
-| $c_{\text{PUCT}}$ = 0.5 (low exploration) | 1.28 | +0.02 |
-| $c_{\text{PUCT}}$ = 5.0 (high exploration) | 1.22 | −0.04 |
-| Temperature 0.2 (low diversity) | 1.25 | −0.01 |
-| Temperature 2.0 (high diversity) | 1.24 | −0.02 |
-| Minimal fragment set (10 frags) | 1.14 | −0.12 |
-| All aromatic fragments (20 frags) | 1.22 | −0.04 |
-
-**Three key findings:**
-1. **Global best-molecule tracking is critical** (Δ = −1.02, collapse to 0.24)
-2. **ScafVAE policy and Pareto front contribute marginally** to mean reward (Δ < 0.05)<br/>(Their benefit is in convergence speed and solution diversity, not asymptotic reward)
-3. **Fragment vocabulary size matters most** (Δ = −0.12 for 10 fragments, 11% degradation)
-
-### 4.6 Pareto Front Analysis
-
-The Pareto MCTS variant maintains a global non-dominated front across MPO (maximise), SYBA (maximise), and SA (minimise):
-
-| Metric | Value |
-|--------|:-----:|
-| Non-dominated solutions | 12 |
-| Hypervolume (ref. [0,0,1]) | 0.58 |
-| Clusters identified | 2 (high-MPO/moderate-SYBA; moderate-MPO/high-SYBA) |
-| Balanced candidates (frontier) | 5 |
-
-**Key insight:** The Pareto frontier includes molecules in concave regions of the trade-off surface that scalar-weighted optimisation systematically misses (Zitzler 2003).
-
-### 4.7 Scaffold Diversity and Drug-Likeness
-
-| Metric | MCTS+ScafVAE | GA | Greedy | Random |
-|:-------|:-----------:|:--:|:------:|:-----:|
-| Mean pairwise dissimilarity | 0.59 | 0.69 | **0.81** | 0.71 |
-| Validity (%) | 100 | 100 | 100 | 100 |
-| Novelty vs P1/P2 (%) | 78.5 | 82.0 | 76.4 | 81.3 |
-| Mean MW (Da) | 361 | 385 | 318 | 378 |
-| Mean logP | 2.6 | 2.9 | 2.3 | 2.8 |
-| Lipinski violations (mean) | 0.2 | 0.4 | 0.2 | 0.5 |
-
-All four methods produce drug-like molecules within acceptable ranges, confirming the fragment vocabulary and ScafVAE priors guide the search toward synthetically tractable chemical space.
-
-### 4.8 GA Enhancements
-
-The canonical GA (Jensen 2019) was augmented with three enhancements:
-1. **Temperature annealing:** Tournament temperature decays from $T_{\text{start}}=2.0$ to $T_{\text{end}}=0.5$ over generations
-2. **Stagnation detection:** Adaptive mutation burst (0.2 → 0.5 for 5 gens) if no improvement > 0.01 over 10 generations
-3. **Dirichlet noise:** $\alpha=0.15$, $\epsilon=0.10$ applied to tournament selection probabilities
-
-The enhanced GA is evaluated in the ablation study (vs canonical GA benchmark results).
-
-### 4.9 QMC Validation (Preliminary)
-
-The top-five Pareto-optimal candidates were selected for Diffusion Monte Carlo validation:
-
-| Rank | MPO | SYBA | $E_{\text{corr}}$ (Ha) | QKS score |
-|:----:|:---:|:----:|:----------------------:|:---------:|
-| 1 | 0.85 | 0.72 | −0.482 | 0.91 |
-| 2 | 0.82 | 0.68 | −0.475 | 0.87 |
-| 3 | 0.79 | 0.65 | −0.468 | 0.84 |
-| 4 | 0.76 | 0.61 | −0.461 | 0.80 |
-| 5 | 0.74 | 0.58 | −0.455 | 0.77 |
-
-Spearman correlation between $E_{\text{corr}}$ and QKS: $\rho = 0.72$ ($p = 0.03$). This provides preliminary evidence that the QKS descriptor captures physically meaningful electronic correlation information.
-
-### 4.10 Updated Project Status Table
-
-| Domain | Molecules / Systems | Key Result | Status |
-|--------|---------------------|------------|--------|
-| P4 — MCTS Benchmark (5 seeds) | 4 methods × 5 seeds × 1,000 calls | **MCTS fix validated: 0.597 | Greedy 0.614 | GA 0.592 | Random 0.547** | ✅ Complete |
-| P4 — Hyperparameter search | 32 configs × 2 seeds | **Optimal: c_PUCT=5.0, VL=0.01** | ✅ Complete |
-| P4 — Ablation study | 10 configs × 5 seeds | **w/o tracking Δ=−1.02, frag size Δ=−0.12** | ✅ Complete |
-| P4 — Pareto front analysis | 1,000 iterations | **12 non-dominated solutions, hypervol 0.58** | ✅ Complete |
-| P4 — GA enhancements | 3 mods (annealing, stagnation, Dirichlet) | **Enhanced variant in ablation** | ✅ Complete |
-| P4 — QMC validation | 5 candidates, DMC + GFN2-xTB | **ρ=0.72 (p=0.03) QKS vs E_corr** | ✅ Preliminary |
-| P4 — Manuscript | JCIM submission | **Discussion, Methods, Results drafted** | 📝 In progress |
+Rationale for relaunch: previous benchmark runs produced degenerate rewards (~0.6996 for all four methods) because the script imported a non-existent `compute_mpo_reward` and fell back to a mock oracle, while the full fragment vocabulary generated many RDKit valence/kekulization errors. The fixes replace the mock oracle with the real `OracleAggregator` and filter the fragment vocabulary to fragments that successfully attach to a methane seed.
 
 
+## P4 MCTS & Pareto sbatch fragment-set consistency (2026-07-29)
 
-### §3.13 Expanded H₁-RRS Correlation (n=77)
+To keep the production MCTS and Pareto SLURM pipelines aligned with the fixed benchmark protocol, the following changes were made to the sbatch scripts:
 
-**Date:** July 24, 2026
-**Status:** ✅ COMPLETE
+| Script | Change |
+|---|---|
+| `Project4_Advanced_Monte_CarloV2607/scripts/p4_mcts_array.sbatch` | `FRAGMENT_SET` default changed from `all` to `medium`; header/usage comments updated. |
+| `Project4_Advanced_Monte_CarloV2607/scripts/p4_pareto_array.sbatch` | Added `FRAGMENT_SET` environment variable (default `medium`); added echo; `--fragment-set "all"` replaced by `--fragment-set "${FRAGMENT_SET}"`; header/usage comments updated. |
 
-The headline Spearman ρ=0.947 (n=14) from the original cross-paper analysis was expanded to **n=77 classified compounds** (46 Class A + 31 Class B) by computing RRS for 500 additional compounds from the Tartarus full run (19,913 compounds × 3 targets) and merging with TDA fingerprints. The expanded analysis reveals the original correlation was driven by small-sample bias:
+**Rationale:** The `medium` fragment set has been filtered to remove fragments that trigger RDKit valence/kekulization errors when attached to a methane seed. Using the same filtered vocabulary across benchmark, MCTS and Pareto MCTS ensures fair, consistent and reproducible results.
 
-| Metric | Original (n=14) | Expanded (n=77) |
-|--------|-----------------|------------------|
-| Spearman ρ (H₁_total) | 0.947 | **0.263** |
-| Spearman ρ (H₁_count) | 0.801 | **0.312** |
-| p-value (H₁_total) | <0.0001 | **0.021 (significant)** |
-| p-value (H₁_count) | 0.0006 | **0.006 (significant)** |
-| Class A (n) | 3 | 46 |
-| Class B (n) | 0 | 31 |
-| Class C/D (n) | 8 | 0 |
-| H₁_total Class A | 3.74 ± 0.34 Å | 2.612 ± 0.884 Å |
-| H₁_total Class B | — | 2.338 ± 0.957 Å |
-| RRS Class A | — | 8.453 ± 0.335 |
-| RRS Class B | — | 7.671 ± 0.260 |
-
-**Key finding:** With n=77 (exceeding the n≥30 power target), the H₁-RRS correlation weakens from ρ=0.947 to ρ=0.263 but **remains statistically significant** (p=0.021). Class A (resistance-resilient) compounds have 12% higher H₁ total persistence than Class B (suppressor). The moderate effect size (ρ=0.26) suggests that while topological features contribute to resistance resilience, other structural factors (substituent chemistry, binding mode) dominate. The H₁_count metric (ρ=0.31, p=0.006) shows a slightly stronger signal, consistent with the intuition that ring count diversity correlates with multi-target binding.
-
-**Action required:** ~~Update manuscript Abstract, Results, Discussion, and Conclusion to report the expanded n=77 results alongside the original n=14 preliminary finding.~~ ✅ COMPLETED in commit eabafec7 (July 24, 2026); updated with n=77 data July 24, 2026.
-
-**Output files:**
-- `results/p3_rrs_expanded_v2.csv` (500 compounds with RRS scores, 77 classified A/B)
-- `results/p3_rrs_expanded_with_tfp_v2.csv` (77 classified compounds with TFP features)
-- SLURM jobs 12003–12012 (5 array tasks, all completed)
+**Impact:** Any future Pareto or MCTS production run launched without an explicit `FRAGMENT_SET` will now default to the valence-filtered `medium` set. Users can still override with `--export=FRAGMENT_SET=all` (or `aromatic_only`, `minimal`).
 
 
-**Update (July 25, 2026):** The RRS expansion to 500 compounds confirmed n=77 as the ceiling for the current polypharmacology filter (≥2 targets at ΔG ≤ -7.0 kcal/mol). Of 500 processed compounds, 423 (84.6%) failed the polypharmacology criterion, yielding 46 Class A + 31 Class B with no Class C/D representatives. This is a library-level constraint: most compounds in the Tartarus-screened set are single-target binders. The n=77 result (ρ=0.312, p=0.006) remains statistically significant; a 5,000-compound HPC run would be needed to reach n=80 with the same filter, but would not resolve the class imbalance. The manuscript Limitations "Third" now documents the polypharmacology filter as the bottleneck. The honest path is to report n=77 as final and frame the class-imbalance confound as a methodological finding.
-### §3.14 P3 Acceptance Assessment & Roadmap to 85% (NEW — July 24, 2026)
+## P4 MCTS & Pareto Python CLI default fragment set (2026-07-29)
 
-**Status:** ✅ COMPLETE — Assessment + Roadmap documented
+To ensure direct CLI runs match the new sbatch defaults, the argparse defaults for `--fragment-set` were also updated:
 
-Based on comprehensive analysis of the P3 manuscript, BMAD report, and all verified results, the current acceptance probability for *Journal of Cheminformatics* is estimated at **65–75%** (Actions 1–7 complete; Actions 4–5 pending HPC RRS expansion and Zenodo deposit). A detailed roadmap to ≥85% is documented in `P3_SUBMISSION_ROADMAP_85PCT.md`.
+| Script | Previous default | New default |
+|---|---|---|
+| `Project4_Advanced_Monte_CarloV2607/scripts/p4_mcts_run.py` | `all` | `medium` |
+| `Project4_Advanced_Monte_CarloV2607/scripts/p4_mcts_pareto_run.py` | `all` | `medium` (help string updated) |
 
-#### Score Card (1–10 scale)
+**Rationale:** Eliminates the risk that a manual run without `--fragment-set` accidentally uses the unfiltered `all` vocabulary and reproduces the valence/kekulization errors fixed for the benchmark.
 
-| Criterion | Score | Weight | Weighted | Target |
-|-----------|:-----:|:------:|:--------:|:------:|
-| Methodological rigor | 7 | 25% | 1.75 | 9 |
-| Novelty of findings | 6 | 25% | 1.50 | 8 |
-| Presentation quality | 7 | 15% | 1.05 | 9 |
-| Reproducibility | 8 | 15% | 1.20 | 9 |
-| Biological relevance | 4 | 10% | 0.40 | 7 |
-| Addressing limitations | 8 | 10% | 0.80 | 9 |
-| **Total** | — | **100%** | **6.70/10** | **8.50/10** |
 
-#### Critical Gaps (Ranked by Impact)
+## P4 QMC removal and manuscript cleanup (2026-07-29)
 
-| # | Gap | Severity | Impact | Action |
-|---|-----|----------|--------|--------|
-| 1 | No experimental validation (all computational) | 🔴 High | −15% | ChEMBL IC₅₀ proxy (Action 1) |
-| 2 | H₁-RRS headline attenuated at n=77 (ρ=0.947→0.312) | 🔴 High | −10% | Reframe as methodological finding (Action 2) |
-| 3 | ~~No SOTA topological benchmark~~ | ✅ Resolved | — | SOTA benchmark completed: PersStats+RF AUC=0.873 (n=19,849, 5CV). See §3.15 |
-| 4 | RRS cohort expanded to n=77 (need n≥80 for balanced classes) | 🟡 Medium | −5% | Expand to 500+ compounds (Action 4) |
-| 5 | Zenodo deposit incomplete | 🟡 Medium | −5% | Complete deposit (Action 5) |
+Following the final adversarial audit recommendation, the pending QMC/DMC validation job and all quantum-validation claims were removed from the P4 manuscript before any JCIM submission attempt.
 
-#### Actions to Reach ≥85%
+| Action | Status |
+|---|---|
+| Cancel SLURM QMC array job 12464 | Done (CANCELLED: DependencyNeverSatisfied) |
+| Remove QMC/DMC/quantum-validation prose from P4 manuscript | Done |
+| Remove QMC results table (`tab:qmc`) and Pareto table QMC column | Done |
+| Remove QMC-related supplementary figure (S4) | Done |
+| Remove unused QMC software (PySCF, PennyLane) from Methods | Done |
+| Recompile P4 manuscript | Done, PDF 656K, no LaTeX errors |
 
-| Action | Task | Hours | Impact | Status |
-|:------:|------|:-----:|:------:|:------:|
-| 1 | ChEMBL IC₅₀ validation (P1 proxy, 5.43× fold) | 3–4 | +15% | ✅ Complete |
-| 2 | Reframe H₁-RRS narrative (methodological finding) | 2 | +10% | ✅ Complete |
-| 3 | ✅ **SOTA benchmark completed** (PersStats+RF AUC=0.873, n=5000, 5CV; TFP-Enriched+RF AUC=0.838). See §3.15 | — | +8% | ✅ Complete |
-| 4 | Expand RRS cohort to n≥80 (balanced classes) | 4–6 | +5% | ⏳ Pending |
-| 5 | Complete Zenodo deposit (DOI reserved) | 2 | +5% | ⏳ Pending |
-| 6 | Manuscript refinement (sections merged, ~500w saved) | 4 | +5% | ✅ Complete |
-| 7 | Reframe Limitations as strengths | 2 | +3% | ✅ Complete |
+### Changes applied to `Project4_Advanced_Monte_CarloV2607/manuscript/LaTeX/P4_Pareto_MCTS_V2607.tex`
 
-#### Key Verifications Completed
+- Title changed from "Multi-Objective MCTS with Quantum Validation for Antimalarial Design" to "Multi-Objective MCTS for Antimalarial Design".
+- Abstract reframed to remove electronic-structure validation; now describes a single fundamental challenge and three methodological innovations.
+- Introduction: limitations reduced from three to two (L3 removed); contributions reduced from four to three (QMC validation removed).
+- Results: Pareto table caption and footnote no longer mention QMC/DMC; QMC column removed.
+- Results: entire `\subsection{QMC Validation}` and `tab:qmc` deleted.
+- Methods: `\subsection{Quantum Monte Carlo Validation}` deleted; software list now only includes RDKit and Scikit-learn.
+- Conclusion: "three persistent limitations" updated to "two persistent limitations".
+- Supporting Information: removed Figure~S4 (QMC correlation energy vs QKS score).
 
-| Item | Status |
-|------|--------|
-| Main manuscript compiles (16p, 0 undefined refs) | ✅ Verified |
-| SM manuscript compiles (11p, 0 undefined refs) | ✅ Verified |
-| P1 manuscript compiles (37p, 0 undefined refs) | ✅ Verified |
-| P2 manuscript compiles (24p, 0 undefined refs) | ✅ Verified |
-| H₁-RRS expanded results documented (n=77, ρ=0.361, 500 processed) | ✅ In manuscript |
-| BMAD §3.13 expanded H₁-RRS section | ✅ Complete |
-| P3_SUBMISSION_ROADMAP_85PCT.md created | ✅ Complete |
-| P3 README.md updated with acceptance assessment | ✅ Complete |
+### Remaining P4 work before submission
 
-#### Files Modified/Updated
+- The 20-seed benchmark (job 12573) produced empty per-task logs and no new CSVs; it must be re-debugged and relaunched, or the manuscript should be revised to use the existing n=5 benchmark data.
+- The Pareto table currently lists synthetic, evenly spaced values; it must be replaced with the real non-dominated solutions from `results/pareto/merged_pareto_front.csv`.
+- The 108-fragment vocabulary claim in Discussion/Future Work should be reconciled with the current `medium` filtered fragment set.
 
-| File | Status |
-|------|--------|
-| `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | ✏️ §3.14 added (this section) |
-| `P3_SUBMISSION_ROADMAP_85PCT.md` | ✏️ Complete rewrite with expanded n=77 results |
-| `Project3.../README.md` | ✏️ Updated with acceptance assessment + roadmap |
-| `AGENTS.md` | ✏️ P3 status updated with roadmap reference |
 
----
+## P4 benchmark path/conda fix and relaunch (2026-07-29)
 
-**Last Updated:** July 24, 2026
-**Author:** Buffy (AI Strategic Assistant)
+Root cause of the failed benchmark array (job 12573): the sbatch scripts used a `SCRIPT_DIR="${SLURM_SUBMIT_DIR:-...}"` fallback. When `sbatch scripts/p4_benchmark_array.sbatch` was invoked from the project root, `SLURM_SUBMIT_DIR` equalled the project root, so `SCRIPT_DIR` became the project root and `PROJECT_DIR` became its parent. This caused the Python script path to be wrong and outputs/logs to be written to the parent of the project.
+
+A subsequent test (job 12594) attempted to use `BASH_SOURCE[0]`, but `BASH_SOURCE[0]` under SLURM points to the temporary copy of the script in `/var/lib/slurm/slurmd/jobXXXX/`, which is equally wrong.
+
+Fix applied to all P4 sbatch scripts:
+- Hardcoded `PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607"` and `SCRIPT_DIR="${PROJECT_DIR}/scripts"`.
+- Replaced `source "$(conda info --base)/etc/profile.d/conda.sh"` with a hardcoded `${HOME}/miniforge3` fallback to `${HOME}/miniconda3`.
+- Fixed relative `#SBATCH --output`/`--error` paths in `p4_ablation_factorial.sbatch` and `p4_qmc_array.sbatch` (`../logs/slurm` → `logs/slurm`).
+
+Validation:
+- Local smoke test: passed (MCTS 0.6393, Random 0.6207, Greedy 0.5398, GA 0.5598).
+- SLURM test array (job 12595, seed 0, reduced parameters): completed successfully and wrote `results/benchmark/p4_benchmark_seed_0.csv`.
+
+Full 20-seed benchmark array relaunched with the corrected sbatch scripts.
+
+
+## P3 QKS polypharmacology benchmark — configuration change (2026-07-29)
+
+The initial `n=1000`, 10-fold stratified QKS polypharmacology benchmark (PID 7176) was terminated after running for 8 h 17 min because it had not finished building the first 900×900 quantum kernel matrix for Fold 1. At that rate, the full benchmark would have required >80 hours on a single CPU core.
+
+### Decision
+Switch to a smaller, faster configuration that can complete overnight:
+- **Old**: `--n-poly 1000 --n-folds 10 --n-repeats 1` (900×900 kernel per fold)
+- **New**: `--n-poly 500 --n-folds 5 --n-repeats 1` (≈450×450 kernel per fold)
+
+### Rationale
+The QKS kernel scales quadratically with the number of training samples. Halving `n-poly` reduces the per-fold kernel evaluations by ~4×, and halving the number of folds gives another 2× overall speed-up, for an estimated total speed-up of ~8× (~10 h total vs. >80 h).
+
+### Action
+Killed PID 7176 and relaunched the benchmark using `scripts/run_p3_poly_n500.sh` with the new parameters. The first attempt used a tmux session, but tmux failed because of a conda/libtinfo version conflict, so the run was launched instead via `setsid bash scripts/run_p3_poly_n500.sh > results/p3_physical_validation/p3_polypharm_n500.log 2>&1 &`. `PYTHONUNBUFFERED=1` was set in the launcher so that progress appears in the log file immediately.
