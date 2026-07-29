@@ -64,10 +64,10 @@ To secure an **85% Probability of Acceptance (PA)** and survive severe peer revi
 
 ## 5. Execution Roadmap
 
-- [ ] **Step 1:** Merge `tartarus_output.csv` with `p3_tne_embeddings.csv` and `p3_tda_fingerprints.csv` by SMILES.
-- [ ] **Step 2 (TNE Evaluation):** Train `RandomForestRegressor` on TNE vs ECFP4 for all 3 targets (PfDHFR, PfCRT, PfATP4). Report target-by-target $R^2$ transparently.
-- [ ] **Step 3 (QKS Benchmark):** Define binary label `is_promiscuous = (n_targets_bound >= 2)`. Run 10-fold CV for QKS vs RBF-SVM and report AUC quasi-parity (0.747 vs 0.737).
-- [ ] **Step 4 (TDA Analysis):** Compute Spearman $\rho$ for $H_1$ entropy vs promiscuity ($\rho = -0.161$) and link with $H_1$-RRS correlation ($\rho = 0.916$).
-- [ ] **Step 5 (Manuscript Update):** Update Methods, Results, and Discussion sections with this radical transparency protocol.
+- [x] **Step 1:** Merge `tartarus_output.csv` with `p3_tne_embeddings.csv` and `p3_tda_fingerprints.csv` by SMILES — implemented in `scripts/p3_physical_validation.py`, 17,011 molecules merged.
+- [x] **Step 2 (TNE Evaluation):** Train `RandomForestRegressor` on TNE vs ECFP4 for all 3 targets (PfDHFR, PfCRT, PfATP4). Report target-by-target $R^2$ transparently — parity plots generated at `results/p3_physical_validation/p3_tne_parity.png`.
+- [ ] **Step 3 (QKS Benchmark):** Define binary label `is_promiscuous = (n_targets_bound >= 2)`. Run 10-fold CV for QKS vs RBF-SVM and report AUC — **REAL PennyLane IQPEmbedding QKS n=1000, 10-fold CV launched as background job** (replacing the earlier classical polynomial surrogate; see `results/p3_physical_validation/p3_polypharm_n1000.log`).
+- [x] **Step 4 (TDA Analysis):** Compute Spearman $\rho$ for TDA features vs promiscuity and link with $H_1$-RRS correlation — completed; strongest signals: H$_1$ entropy ($\rho = -0.190$), H$_0$ count ($\rho = -0.249$), H$_0$ entropy ($\rho = -0.243$).
+- [x] **Step 5 (Manuscript Update):** Update Methods, Results, and Discussion sections with this radical transparency protocol — main manuscript §3.6 and Discussion updated with TNE/TDA results; QKS numbers to be refreshed after the real quantum kernel benchmark completes.
 
 This refined strategy anchors our quantum-inspired representations to physical docking data while maintaining total empirical integrity, guaranteeing an **$\ge 85\%$ Probability of Acceptance** at *Journal of Cheminformatics*.
