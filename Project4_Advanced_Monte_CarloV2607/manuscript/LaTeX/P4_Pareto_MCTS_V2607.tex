@@ -400,7 +400,7 @@ reports the main effects.
 The ScafVAE policy provides the largest gain ($+0.148$), followed by the
 Pareto front ($+0.108$) and the large vocabulary ($+0.079$). Switching
 from $c_{\text{PUCT}} = 2.0$ to $1.0$ improves reward by $0.054$,
-whereas temperature has only a marginal effect ($0.012$).
+whereas temperature has only a marginal effect ($0.011$).
 
 \subsubsection{Fragment vocabulary ablation}
 
@@ -428,10 +428,14 @@ results.
 A one-way ANOVA shows a significant effect of vocabulary ($F = 350.1$,
 $p = 1.12 \times 10^{-26}$). Tukey HSD post-hoc comparisons indicate
 that aromatic\_only performs significantly worse than the other three
-sets ($p < 0.001$), while the medium and minimal sets remain statistically
-indistinguishable from the full vocabulary. Thus, the ScafVAE policy and
-Pareto front are the dominant drivers of reward, whereas restricting the
-fragment vocabulary to aromatics alone severely limits performance.
+sets ($p < 0.001$), while both the medium and minimal sets remain
+statistically indistinguishable from the full vocabulary (all vs medium
+$p = 0.421$, all vs minimal $p = 0.191$). However, the medium and
+minimal sets are significantly different from each other ($p = 0.005$),
+indicating a graded effect of vocabulary restriction. Thus, the ScafVAE
+policy and Pareto front are the dominant drivers of reward, whereas
+restricting the fragment vocabulary to aromatics alone severely limits
+performance.
 
 % ── Discussion ───────────────────────────────────────────────────────
 \section{Discussion}
