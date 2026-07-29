@@ -300,12 +300,19 @@ ehthumbs.db
 *.lock
 site-packages/
 
-# SLURM / HPC job logs
+# SLURM / HPC job logs (keep generic *.err; use slurm-*.out for stdout to avoid
+# clashing with LaTeX auxiliary .out files, which are already ignored below)
 *.err
-*.out
+slurm-*.out
 
 # Editor / temporary Python files
-.*.py.*
+*.py~
+*.py.swp
+*.py.swo
+*.py.bak
+.#*.py
+# Hash-suffixed temp files created by some editors (e.g. .p4_mcts_agent.py.2d9HAh)
+.*.py.??????
 
 # Job checkpoints and progress flags
 *checkpoint*.csv
