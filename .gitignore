@@ -132,6 +132,27 @@ Project2_Polypharmacology_MD_ValidationV2607/data/raw/merged_cheese_prop.csv
 *.mmpbsa
 Project2_Polypharmacology_MD_ValidationV2607/results/mmpbsa/*.dat
 
+# Heavy Project 2 MD / docking directories (raw trajectories & pose outputs)
+Project2_Polypharmacology_MD_ValidationV2607/MD_systems/
+Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/docking/Docking_4GM2/
+Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/docking/Docking_6UKJ/
+Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/docking/Docking_7F3Y/
+Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/docking/Docking_9N10/
+Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/docking/results_inference/
+
+# Heavy / duplicated Project 1 data copied into Project 2
+Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/raw/
+Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/external/
+Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/pdb_ligands/
+Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/pdb_ligands_mmv/
+Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/pdbqt_ligands/
+Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/pdbqt_ligands_mmv/
+Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/
+Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/results/
+
+# Prepared protein systems (large; essential structures are in scripts/data/proteins/)
+Project2_Polypharmacology_MD_ValidationV2607/data/proteins/
+
 # GROMACS temporary/checkpoint files
 *.backup
 *.part
