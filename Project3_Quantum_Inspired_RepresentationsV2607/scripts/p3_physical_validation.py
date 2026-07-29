@@ -128,15 +128,24 @@ def load_tartarus() -> pd.DataFrame:
 
 
 def load_tne() -> pd.DataFrame:
-    """Load TNE embeddings (19,836 × 192 dims, no header in CSV)."""
+    """Load TNE embeddings (19,836 × 192 dims)."""
     print(f"[load] TNE: {TNE_CSV}")
-    raw = pd.read_csv(TNE_CSV, header=None)
-    smiles_col = raw.iloc[:, 0]
-    embed_cols = raw.iloc[:, 1:]
-    embed_cols.columns = [f"tne_{i}" for i in range(embed_cols.shape[1])]
-    df = pd.concat([smiles_col.rename("smiles"), embed_cols], axis=1)
+    # Read once with default header inference, then decide if a header exists.
+    peek = pd.read_csv(TNE_CSV)
+    first_col = str(peek.columns[0]).lower().strip()
+    if len(peek.columns) >= 2 and first_col in ("smiles", "smiles_canon"):
+        df = peek.copy()
+        # Rename smiles column if it differs in case
+        if first_col != "smiles":
+            df = df.rename(columns={peek.columns[0]: "smiles"})
+    else:
+        raw = pd.read_csv(TNE_CSV, header=None)
+        smiles_col = raw.iloc[:, 0]
+        embed_cols = raw.iloc[:, 1:]
+        embed_cols.columns = [f"tne_{i}" for i in range(embed_cols.shape[1])]
+        df = pd.concat([smiles_col.rename("smiles"), embed_cols], axis=1)
     df = df.dropna()
-    print(f"       {len(df):,} molecules, {embed_cols.shape[1]}-dim TNE.")
+    print(f"       {len(df):,} molecules, {len(df.columns) - 1}-dim TNE.")
     return df
 
 
@@ -294,7 +303,7 @@ def _parity(ax, y_true, y_pred, label, color, title, r2, rho):
 # ===========================================================================
 
 def analysis_polypharm_qks(merged: pd.DataFrame, n_poly: int = 1000, n_folds: int = 10,
-                           n_repeats: int = 1) -> pd.DataFrame:
+                           n_repeats: int = 1, compute_target_alignment: bool = False) -> pd.DataFrame:
     """Real PennyLane IQPEmbedding quantum kernel vs tuned RBF-SVM on the
     polypharmacology binary task (>=2 targets bound at ΔG <= -7.0 kcal/mol).
 
@@ -389,10 +398,24 @@ def analysis_polypharm_qks(merged: pd.DataFrame, n_poly: int = 1000, n_folds: in
         return best_g
 
     skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=42)
+
+    # Checkpoint file to allow resuming the expensive QKS run
+    checkpoint_path = OUT_DIR / f"p3_polypharm_checkpoint_n{n_poly}_f{n_folds}_r{n_repeats}.csv"
     records = []
+    if checkpoint_path.exists():
+        try:
+            records = pd.read_csv(checkpoint_path).to_dict("records")
+            print(f"  [checkpoint] Resumed {len(records)} prior fold-records from {checkpoint_path}")
+        except Exception:
+            records = []
+    completed_folds = {r["fold"] for r in records}
+
     t0 = time.perf_counter()
 
     for fold, (tr_idx, te_idx) in enumerate(skf.split(X_ecfp, y), start=1):
+        if fold in completed_folds:
+            print(f"  Fold {fold}/{n_folds} already completed — skipping")
+            continue
         t_fold = time.perf_counter()
         X_tr_raw, X_te_raw = X_ecfp[tr_idx], X_ecfp[te_idx]
         y_tr, y_te = y[tr_idx], y[te_idx]
@@ -425,7 +448,9 @@ def analysis_polypharm_qks(merged: pd.DataFrame, n_poly: int = 1000, n_folds: in
         K_tr_q = kernel_matrix(X_tr, X_tr, kfn)
         K_tr_q = closest_psd_matrix(K_tr_q)
         K_te_q = kernel_matrix(X_te, X_tr, kfn)
-        ta_q = float(target_alignment(X_tr, y_tr, kfn))
+        ta_q = np.nan
+        if compute_target_alignment:
+            ta_q = float(target_alignment(X_tr, y_tr, kfn))
         clf_q = SVC(kernel="precomputed", C=1.0, probability=True, class_weight="balanced")
         clf_q.fit(K_tr_q, y_tr)
         proba_q = clf_q.predict_proba(K_te_q)[:, 1]
@@ -467,13 +492,16 @@ def analysis_polypharm_qks(merged: pd.DataFrame, n_poly: int = 1000, n_folds: in
         del K_tr_q, K_te_q, K_tr_r, K_te_r
         gc.collect()
 
+        # Save checkpoint after each completed fold
+        pd.DataFrame(records).to_csv(checkpoint_path, index=False)
+
     results = pd.DataFrame(records)
     out_csv = OUT_DIR / "p3_polypharm_qks.csv"
     results.to_csv(out_csv, index=False)
     print(f"\n  Per-fold results saved: {out_csv}")
 
     # Statistical analysis
-    _write_polypharm_stats(results, prevalence, n_poly, n_folds, n_repeats)
+    _write_polypharm_stats(results, prevalence, n_poly, n_folds, n_repeats, checkpoint_path)
     return results
 
 
@@ -503,7 +531,7 @@ def _bootstrap_ci(data, n_boot=10000, ci=0.95, statistic=np.mean, seed=42):
 
 
 def _write_polypharm_stats(results: pd.DataFrame, prevalence: float, n: int,
-                           n_folds: int, n_repeats: int):
+                           n_folds: int, n_repeats: int, checkpoint_path: Path | None = None):
     """Wilcoxon signed-rank + Bonferroni-Holm + Cliff's delta + bootstrap CI."""
     lines = [
         "P3 Physical Validation — Quantum Kernel Polypharmacology Benchmark",
@@ -532,28 +560,29 @@ def _write_polypharm_stats(results: pd.DataFrame, prevalence: float, n: int,
                 lines.append(f"          target alignment = {ta.mean():.4f} ± {ta.std():.4f}")
     lines.append("")
 
-    # Pairwise Wilcoxon signed-rank tests
+    # Pairwise Wilcoxon signed-rank tests — align by fold to keep pairing correct
     pairs = [("QKS", "RBF"), ("QKS", "Linear"), ("RBF", "Linear")]
     raw_pvals = []
     test_desc = []
+    pivot = results.pivot_table(index="fold", columns="model", values="auc", aggfunc="first")
     for m1, m2 in pairs:
-        a1 = results[results["model"] == m1]["auc"].dropna().values
-        a2 = results[results["model"] == m2]["auc"].dropna().values
-        n_pair = min(len(a1), len(a2))
+        pair_df = pivot[[m1, m2]].dropna()
+        a1, a2 = pair_df[m1].values, pair_df[m2].values
+        n_pair = len(a1)
         if n_pair < 5:
             test_desc.append(f"  {m1} vs {m2}: insufficient paired data (n={n_pair})")
             raw_pvals.append(np.nan)
             continue
         try:
-            stat_w, p_raw = stats.wilcoxon(a1[:n_pair], a2[:n_pair])
+            stat_w, p_raw = stats.wilcoxon(a1, a2)
         except ValueError:
             # All differences zero
             stat_w, p_raw = 0.0, 1.0
-        delta = _cliffs_delta(a1[:n_pair], a2[:n_pair])
-        diff = a1[:n_pair] - a2[:n_pair]
+        delta = _cliffs_delta(a1, a2)
+        diff = a1 - a2
         test_desc.append(
             f"  {m1} vs {m2}: Wilcoxon W={stat_w:.1f}, p_raw={p_raw:.4f}, "
-            f"Cliff's δ={delta:+.3f}, mean ΔAUC={diff.mean():+.4f}"
+            f"Cliff's δ={delta:+.3f}, mean ΔAUC={diff.mean():+.4f} (n={n_pair})"
         )
         raw_pvals.append(p_raw)
 
@@ -580,9 +609,11 @@ def _write_polypharm_stats(results: pd.DataFrame, prevalence: float, n: int,
 
     summary = "\n".join(lines)
     print("\n" + summary)
-    out = OUT_DIR / "p3_polypharm_summary.txt"
+    out = OUT_DIR / f"p3_polypharm_summary_n{n}_f{n_folds}_r{n_repeats}.txt"
     out.write_text(summary)
     print(f"\n  Summary saved: {out}")
+    if checkpoint_path is not None:
+        print(f"  Checkpoint file: {checkpoint_path}")
 
 
 # ===========================================================================
@@ -686,9 +717,12 @@ def write_consolidated_summary(tne_df=None, poly_df=None, tda_df=None, n_poly=10
     if poly_df is not None:
         lines += ["Step 3 — Quantum Kernel Polypharmacology (per-fold AUCs)", "-" * 40,
                   poly_df.to_string(index=False), ""]
-        summary_path = OUT_DIR / "p3_polypharm_summary.txt"
-        if summary_path.exists():
+        summary_paths = list(OUT_DIR.glob("p3_polypharm_summary_n*.txt"))
+        if summary_paths:
+            summary_path = max(summary_paths, key=lambda p: p.stat().st_mtime)
             lines += ["", "Statistical analysis:", summary_path.read_text(), ""]
+        else:
+            lines += ["", "[No polypharm summary found]", ""]
     if tda_df is not None:
         lines += ["Step 4 — TDA Spearman ρ vs #Targets Bound (top 12)", "-" * 40,
                   tda_df.head(12).to_string(index=False), ""]
