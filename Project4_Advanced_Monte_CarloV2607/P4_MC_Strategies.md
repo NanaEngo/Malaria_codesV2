@@ -1,7 +1,7 @@
 # Project 4 — Advanced Monte Carlo Strategies (P4)
 
 **Target journal:** *Journal of Chemical Information and Modeling* (JCIM) — ACS
-**Status:** Complete architecture — ready for HPC production runs
+**Status:** v9 20-seed benchmark complete; manuscript in preparation; QMC validation pending
 **Date:** July 2026
 
 ---
@@ -13,7 +13,7 @@ P4 implements a complete **de novo molecular generation framework** targeting **
 - **MCTS + ScafVAE** — Tree search guided by a chemistry-informed fragment policy (PUCT) built on privileged natural product-like antimalarial fragments (e.g., chromone, indole, quinoline, and terpene derivatives) with medicinal chemistry safety filters (PAINS, Brenk, Veber, Lipinski).
 - **Pareto MCTS** — Multi-objective optimization without a priori scalar aggregation (non-dominated front, hypervolume HV ≥ 0.58).
 - **Real P1/P2 oracles** — MPO (≥0.75), docking (Tartarus V2 *P. falciparum* targets), SYBA (>0), SA (<3.5), RRS (selectivity), PNS (polypharmacology).
-- **4-method benchmark** — MCTS vs Random vs Greedy vs GA across 10 independent seeds with non-parametric statistical significance testing.
+- **4-method benchmark** — MCTS vs Random vs Greedy vs GA across 20 independent seeds (canonical v9) with non-parametric Wilcoxon signed-rank testing.
 - **QMC validation** — Two-tiered electronic-structure validation pipeline (wB97X-D DFT + DMC diffusion Monte Carlo gold standard).
 
 **Quantitative Performance Targets for JCIM Q1 Acceptance:**
@@ -61,7 +61,7 @@ The P4 methodology leverages specialized tools from the `scientific-agent-skills
 ### 2.3 What Makes a Paper Competitive for JCIM?
 
 1. **Demonstrated Methodological Novelty:** Pareto MCTS + ScafVAE policy with exact `pymoo` hypervolume calculations.
-2. **Rigorous Validation:** 4-method $\times$ 10-seed benchmarks, $2^5$ factorial ANOVA ablation, non-parametric Wilcoxon testing.
+2. **Rigorous Validation:** 4-method $\times$ 20-seed benchmarks (canonical v9), $2^5$ factorial ANOVA ablation, non-parametric Wilcoxon testing.
 3. **Data/Code Availability:** FAIR Level 2 compliant, MIT-licensed GitHub repository, Zenodo DOI (`10.5281/zenodo.19608875`).
 4. **Strong Narrative Clarity:** Compelling story arc linking multi-objective tree search to gold-standard electronic structure (QMC).
 
@@ -79,7 +79,7 @@ The P4 methodology leverages specialized tools from the `scientific-agent-skills
 | **MCTS agent (standard)** | `p4_mcts_agent.py` | RDKit / NumPy | ✅ Functional | PUCT (Q + c·P·√N/(1+N_child)), expansion, trajectory rollout fix ($\max_t R(s_t)$) |
 | **Pareto MCTS** | `p4_mcts_pareto.py` | `pymoo` | ✅ Functional | Non-dominated sorting, exact 2D/3D WFG hypervolume, multi-objective selection |
 | **Baselines** | `p4_mcts_baselines.py` | `pytdc` / SciPy | ✅ Functional | Random search, Greedy search, Genetic Algorithm ($k=3$ tournament, crossover, mutation) |
-| **Unified benchmark** | `p4_mcts_benchmark.py` | `experimental-design` | ✅ Functional | 4 methods $\times$ 10 seeds, LaTeX table output, scaffold diversity ($FCD$, uniqueness) |
+| **Unified benchmark** | `p4_mcts_benchmark.py` | `experimental-design` | ✅ Functional | 4 methods $\times$ 20 seeds (canonical v9), LaTeX table output, scaffold diversity ($FCD$, uniqueness) |
 | **CLI runner** | `p4_mcts_run.py` | Python CLI | ✅ Functional | Full args for production SLURM |
 | **SLURM array (MCTS)** | `p4_benchmark_array.sbatch` | SLURM HPC | ✅ Functional | Multi-seed benchmark array (jobs 12082–12281 executed) |
 | **Visualization** | `p4_visualize.py` | `matplotlib` / `seaborn` | ✅ Extended | Pareto front, benchmark bar/violin/radar/efficiency, scaffold diversity MDS |
@@ -151,7 +151,7 @@ The P4 methodology leverages specialized tools from the `scientific-agent-skills
 
 **Pillar 3 — Rigorous benchmark**
 - **4 methods**: MCTS+ScafVAE / Random / Greedy / GA
-- **10 seeds** per method (statistical significance)
+- **20 seeds** per method (statistical significance)
 - **Metrics**: mean reward, max reward, std, compute time, scaffold diversity, MPO
 - **LaTeX tables** JCIM-ready
 - **Figures**: bar chart, violin plot, efficiency scatter, score radar, diversity MDS
@@ -429,7 +429,7 @@ It is possible that GA or Greedy search matches MCTS on mean reward. If this occ
    2.2 MCTS + ScafVAE policy (PUCT, chemistry priors, scaffold compatibility)
    2.3 Pareto multi-objective optimization (Pareto front, hypervolume, 3 objectives)
    2.4 Baselines (Random, Greedy, GA)
-   2.5 Benchmark protocol (10 seeds, 4 methods, 7 metrics)
+   2.5 Benchmark protocol (20 seeds, 4 methods, 7 metrics)
    2.6 Drug-likeness analysis (Lipinski Ro5, MW, logP, HBA, HBD, TPSA)
    2.7 QMC validation pipeline (xTB → PySCF → QMCPACK)
    2.8 Hardware & software
@@ -473,7 +473,7 @@ It is possible that GA or Greedy search matches MCTS on mean reward. If this occ
 
 ## 10. Production SLURM Commands
 
-### Benchmark (10 seeds, statistical power)
+### Benchmark (20 seeds, statistical power)
 
 ```bash
 sbatch --array=0-9%5 \
@@ -529,7 +529,7 @@ a full inventory of deposited files.
 - [ ] Zenodo DOI minted (or placeholder)
 
 ### Rigour
-- [ ] Statistical significance (10 seeds per method)
+- [x] Statistical significance (20 seeds per method)
 - [ ] Ablation studies (5 dimensions: policy, Pareto, c_puct, temperature, fragment set)
 - [ ] Lipinski/Ro5 analysis (MW, logP, HBA, HBD, RotBonds, TPSA)
 - [ ] Scaffold diversity analysis (MDS, pairwise Tanimoto dissimilarity)

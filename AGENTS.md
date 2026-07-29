@@ -1,6 +1,6 @@
 # AGENTS.md — Projet Malaria_codesV2
 
-**Dernière mise à jour :** 21 juillet 2026 - TDA étendu à 19,849 molécules ✅
+**Dernière mise à jour :** 29 juillet 2026 — Benchmark P3 corrigé (n=19,849), benchmark v9 P4 consolidé ✅
 
 **GitHub :** https://github.com/NanaEngo/Malaria_codesV2
 
@@ -72,19 +72,19 @@
 
 | Composant | Statut | Résultat clé |
 |-----------|:------:|:-------------|
-| **Benchmark final (v0.7, n=19,849)** | ✅ Complété | ECFP4=0.868, Hybrid=0.842 |
-| **Ablation study** | ✅ Complété | QKS driver principal (p<0.001) |
-| **QKS canonical** | ✅ Complété | Quantum 0.751 vs RBF 0.701 (gamma-tuned) |
-| **PHCO corrigé** | ✅ Complété | 0.500→0.801 (GetOnBits fix) |
+| **Benchmark classique corrigé (n=19,849)** | ✅ Complété | ECFP4=0.949, PHCO 0.897 (bug fix), TFP 0.877, TNE 0.722 |
+| **Ablation study** | ⏳ **Provisoire** | QKS driver principal (p<0.001) — en attente du rerun hybride pour confirmation |
+| **QKS canonical** | ✅ Complété | Quantum 0.751 vs RBF 0.701 (gamma-tuned) sur sous-échantillon n=500 |
+| **PHCO corrigé** | ✅ Complété | 0.500→0.897 (GetOnBits fix) |
 | **Phase 1 — Grid search (n=200)** | ✅ **Complété** | **bd=6, nr=1, nk=30 → AUC 0.8534** |
 | **Phase 2 — Re-benchmark (n=5,000)** | ✅ **Complété** | **Combo 1: 0.8283±0.0371 (gagnant), Combo 2: 0.8121, Combo 3: 0.8047** |
 | Figures SM (heatmap, boxplot, table) | ✅ Générées | `results/figures/p3_qp_*.png` |
 | **TNE embeddings (bond_dim=8)** | ✅ **Généré** | 19,836/19,849 valides, 192 dims, 5.9× compression |
 | **TDA fingerprints (19,849 mol.)** | ✅ **Généré** | 19,849/19,849 valides, 0 échecs, 78 features |
-| **H₁-RRS expanded (n=33)** | ✅ **Complété** | ρ=0.305, p=0.085 (n.s.) — attenuation vs n=14 |
+| **H₁-RRS expanded (n=77)** | ✅ **Complété** | ρ=0.312, p=0.0057 — cohorte étendue vs pilot n=14 |
 | **RRS expansion SLURM** | ✅ **Fonctionnel** | p3_rrs_expansion.sbatch, 4 tasks, 200 molécules |
-| **Manuscrit (Main 16p + SM 11p)** | ✅ **0 undefined refs** | J Cheminform limit respecté |
-| **Acceptance assessment** | ✅ **45–55%** | Roadmap vers ≥85% documenté |
+| **Manuscrit** | 🔄 **En révision** | Benchmark classique corrigé intégré; résultats hybrides provisoires |
+| **Acceptance assessment** | ✅ **Vers 85%** | Roadmap documentée; validation physique TNE/TDA complète; rerun hybride en cours |
 | 🔴 Action 1: ChEMBL IC₅₀ validation | ⏳ **À faire** | +15% acceptance |
 | 🔴 Action 2: Reframe H₁-RRS narrative | ⏳ **À faire** | +10% acceptance |
 | 🟡 Action 3: Benchmark SOTA topological | ⏳ **À faire** | +8% acceptance |
@@ -120,10 +120,10 @@
 | Pareto multi-objectif | ✅ Implémenté | MPO + SA + SYBA + RRS + PNS |
 | Oracles (RRS, PNS) | ✅ Implémentés | 5 oracles validés |
 | Baselines (Random, Greedy, GA) | ✅ Implémentés | Benchmark protocol défini |
-| Benchmark protocol | ✅ Défini | 7 metrics, 10 seeds, 1000 oracle calls |
-| **Manuscrit — Section Methods** | ✅ **Rédigée** | RRS/PNS intégrés |
-| **.bib** | ✅ **Complété** | 30 entrées, toutes citations résolues |
-| QMC validation | ✅ Implémenté | Pipeline complet |
+| Benchmark protocol | ✅ Défini | 7 metrics, 20 seeds, 1000 oracle calls |
+| **Manuscrit — Section Results/Benchmark** | ✅ **Actualisé** | Benchmark v9 20 seeds intégré; QMC en attente |
+| **.bib** | ✅ **Complété** | 30+ entrées, toutes citations résolues |
+| QMC validation | ⏳ **En attente** | Pipeline implémenté; validation complète en attente de rerun |
 
 ---
 
