@@ -1,0 +1,679 @@
+% Computational Discovery of Antimalarial Candidates
+% from African Natural Product Chemical Space
+%
+% VERSION V2607 - July 2026
+%
+% 1. Document class
+\documentclass[journal=jcisd8,manuscript=article]{achemso}
+
+% 2. Mathematics (BEFORE font packages)
+\usepackage{amsmath, amsfonts, amssymb, mathtools}
+
+% 3. Fonts and encoding (AFTER math packages)
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+% 4. Units : siunitx v3
+\usepackage[detect-all=true, group-minimum-digits=4]{siunitx}
+\DeclareSIUnit\calorie{cal}
+\DeclareSIUnit\angstrom{\text{Å}}
+\DeclareSIUnit\dalton{Da}
+\DeclareSIUnit\molar{M}
+
+% 5. Figures and tables
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{booktabs, tabularx, array, multirow}
+\usepackage{here}
+
+% 6. Color
+\usepackage[table]{xcolor}
+
+% 7. Hyperlinks
+% Hyperlinks and cross-references
+\usepackage{xr}
+\usepackage[hypertexnames=false,colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[noabbrev, capitalize]{cleveref}
+\externaldocument[SM-]{Antimalarial_Candidates_African_NP_V2607_SM}
+
+% 8. Cross-references (MUST be last)
+%\usepackage[noabbrev, capitalize]{cleveref}
+
+% Path configuration
+\graphicspath{{Graphics/}}
+
+% Custom commands
+
+% Author information using achemso format
+\author{Myke Vital Sao Temgoua}
+\email{myke-vital.sao@facsciences-uy1.cm}
+\affiliation{Department of Physics, Faculty of Science, University of Yaoundé I, P.O. Box 812, Yaoundé, Cameroon}
+
+\author{Jean-Pierre Tchapet Njafa}
+\affiliation{Department of Physics, Faculty of Science, University of Yaoundé I, P.O. Box 812, Yaoundé, Cameroon}
+
+\author{Penabei Samafou}
+\affiliation{Department of Medical Imaging and Radiation Sciences, Faculty of Medicine and Health Sciences, Université de Sherbrooke, 3001, 12th Avenue Nord, Sherbrooke, QC J1H 5N4, Canada}
+
+\author{Wilfred Fon Mbacham}
+\affiliation{Department of Biochemistry, Faculty of Science, University of Yaoundé I, P.O. Box 812, Yaoundé, Cameroon}
+
+\author{Serge Guy Nana Engo}
+\affiliation{Department of Physics, Faculty of Science, University of Yaoundé I, P.O. Box 812, Yaoundé, Cameroon}
+
+\title{Computational Discovery of Antimalarial Candidates from African Natural Product Chemical Space}
+\SectionNumbersOn
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Virtual screening of antimalarial targets typically requires tens of thousands of docking runs per target, a computational cost that restricts discovery in resource-limited endemic regions. We developed a centroid-based screening framework that combines variational autoencoder clustering with dual-filter consensus docking (AutoDock Vina + DiffDock) and multi-parameter optimization, reducing screening cost by \qty{99.3}{\percent}. An independent prospective DEKOIS validation (PfDHFR, AutoDock Vina only) establishes that single-method docking yields near-random enrichment (ROC-AUC \num{0.450}), motivating the ML-based DiffDock consensus rescoring; against the MMV Malaria Box positive-control benchmark, the consensus score recovers \qty{69.8}{\percent} of known actives (per-target retrodictive consistency ROC-AUC \numrange{0.924}{1.000}, where three of four targets use score-based stratification rather than external decoys). Application to a \num{65856}-molecule hybrid library derived from \num{396} African natural products and \num{454} synthetic antimalarials yielded \num{19913} computationally predicted synthesizable leads, comprising both single-target optimized and multi-target candidates. All \num{810} screened seed molecules with valid predictions showed a predicted selectivity index $>\num{10}$, and the full dataset is deposited as an open-access community resource (Zenodo DOI: 10.5281/zenodo.19608875).
+\end{abstract}
+
+\noindent\textbf{Keywords:} Antimalarial drug discovery; African natural products; Generative chemical space; Virtual screening; Multi-parameter optimization; Target selectivity
+
+\section{Introduction}
+
+With over \num{247} million cases and \num{619000} deaths reported in 2023, malaria remains a primary global health challenge \cite{WHO2024MalariaReport}. Control efforts are increasingly threatened by the emergence of artemisinin-resistant \textit{P. falciparum} strains in Southeast Asia and Africa \cite{Ariey2014, Ashley2018}. In response, the World Health Organization (WHO) has emphasized an urgent need for new antimalarial scaffolds to combat drug resistance.
+
+Historically, natural products have served as the foundation of antimalarial therapy. Quinine, isolated from \textit{Cinchona} bark, and artemisinin, derived from \textit{Artemisia annua}, represent the most successful examples of nature-inspired drug discovery. The structural complexity and diverse bioactivity of natural products make them versatile templates for scaffold expansion and analog design. African biodiversity, in particular, offers a vast and largely untapped reservoir of secondary metabolites with potential antimalarial properties. Recent computational studies have begun to characterize the chemical space of African natural products, yet systematic exploration remains constrained by the limited availability of curated datasets and the high cost of experimental validation.
+
+Antimalarial drug discovery employs target-based design and phenotypic screening \cite{Wells2015}. Target-based approaches focus on specific \textit{P. falciparum} proteins essential for parasite survival, including dihydrofolate reductase (DHFR) \cite{Costanzo2011}, the chloroquine resistance transporter (\emph{Pf}CRT) \cite{Fidock2000}, and the sarcoplasmic-endoplasmic reticulum calcium ATPase (\emph{Pf}ATP4) \cite{SiqueiraNeto2023}. Whole-cell phenotypic screens identify compounds with alternative mechanisms of action, as exemplified by the Medicines for Malaria Venture (MMV) Malaria Box \cite{Spangenberg2013}. Both approaches have limitations: target-based design may overlook compounds with unknown mechanisms, while phenotypic screens provide limited mechanistic insight.
+
+Synthetic compounds offer tunable structures and defined synthetic routes, exemplified by atovaquone, lumefantrine, and MMV clinical candidates \cite{Kumar2024}. Computational approaches, including fragment-based design and variational autoencoders for molecular embedding, enable optimization of synthetic libraries \cite{Pandey2023, Gorgulla2020, Buskes2023}. However, synthetic libraries typically lack the privileged scaffolds and three-dimensional complexity of natural products \cite{Ancajas2024}. This structural gap motivated the integration of natural product bioactivity with synthetic drug optimization through hybrid pharmacophore design.
+
+Hybrid pharmacophores combining natural product cores with synthetic modifications represent a strategy for antimalarial development \cite{Souza2019}. Preserving binding motifs while introducing synthetic substituents can address pharmacokinetic limitations that hinder clinical progression. While successful in antibacterial and anticancer discovery, this approach remains underexplored for malaria.
+
+Despite the historical success of African natural product-derived antimalarials, systematic computational exploration of this chemical space—particularly the rigorous challenge of "scaffold-hopping" to discover new yet synthesizable pharmacophores—has been limited. Existing generative model applications in drug discovery frequently struggle to navigate beyond simple local neighborhood interpolations of known actives. Most virtual screening approaches typically focus on single targets or employ scoring functions that lack external validation for reliable prioritization. More critically, conventional approaches demand screening of tens of thousands of compounds per target, exceeding \num{1000} CPU-hours per target. Such computational requirements are prohibitively expensive for research groups in malaria-endemic regions, where \qty{94}{\percent} of global cases occur. This resource barrier confines computational drug discovery to well-funded institutions, creating a critical gap in antimalarial development capacity precisely where it is most needed.
+
+We developed a centroid-based sampling strategy to address this bottleneck. The approach achieves a \qty{99.3}{\percent} reduction in screening cost (from \num{65856} compounds to \num{484} representatives) while maintaining predictive accuracy. Variational autoencoders (VAEs) cluster chemical space and identify diverse representatives, enabling comprehensive screening with minimal computational resources. We combined this efficiency innovation with two complementary expansion strategies: the Cheese API \cite{lzicar_cheese_2024} for similarity-based library expansion and STONED-SELFIES \cite{Krenn2020} for systematic perturbation of molecular structures. Specifically, STONED-SELFIES structural mutation analysis was employed to empirically demonstrate that our generative model accesses scaffolds unreachable by simple local search from known antimalarial drugs. These methods generated a \num{65856}-molecule hybrid library from \num{396} African natural products and \num{454} synthetic antimalarials. Dual-filter consensus docking (combining DiffDock and AutoDock Vina) with multi-parameter optimization (MPO) scoring provided orthogonal validation.
+
+To our knowledge, this work presents a computational framework for antimalarial discovery that retrospectively predicts (retrodicts) established \textit{in vitro} ground-truth hits before extrapolating to unexplored natural product space. By explicitly evaluating our protocol against the MMV Malaria Box benchmark (a positive-control set of confirmed antimalarials), the consensus score recovers known actives with early enrichment factors (EF\qty{5}{\percent}) and per-target retrodictive consistency ROC-AUC \numrange{0.924}{1.000} across four \textit{P. falciparum} targets; the prospective DEKOIS benchmark (ROC-AUC \num{0.450} for Vina-only) anchors the discrimination claim to an external decoy set. This validated enrichment, combined with a synthetic accessibility filter (SYBA $> \num{0}$), functions as an orthogonal experimental proxy that justifies hit prioritization in the absence of prospective \textit{in vitro} testing. From \num{396} African natural products and \num{454} synthetic antimalarials, we identified \num{19913} leads predicted to be synthesizable (SYBA $> \num{0}$), with favorable predicted selectivity (\qty{100}{\percent} of \num{810} screened seeds with valid SI predictions had SI $>\num{10}$), comprising both single-target optimized and multi-target candidates, making comprehensive antimalarial screening accessible to research groups in malaria-endemic regions.
+
+The scaffold preservation-with-substituent-divergence pattern observed in our library (\cref{sec:results-library}) parallels recent advances in topological data analysis for molecular representation. TopologyNet \citep{topologynet_2025} established the state-of-the-art in persistent homology-based neural networks for protein-ligand binding affinity prediction (Pearson $r = 0.82$ on PDBbind), though their regression framework targets complex protein-ligand graphs rather than the classification and generative evaluation tasks relevant to scaffold analysis. D-GRIL \citep{dgril_2026} introduced a differentiable two-parameter persistent homology approach for graph bioactivity; complementary topological approaches adopt a more interpretable one-parameter H$_0$/H$_1$ splitting strategy specifically suited for natural product scaffolds. Recent developments further corroborate these methodological choices: Q2SAR \citep{q2sar_2025} demonstrated that quantum multiple kernel learning achieves high accuracy in QSAR classification, and PACTNet \citep{pactnet_2025} showed that cellular complex topological features enable substantial compression of graph networks while maintaining robustness---directly validating the compression ratios achieved by our related tensor network framework. Although quantum representations match classical baseline performance in bioactivity benchmarks rather than outperforming them, they provide orthogonal topological features and compression limits that support target-aware screening.
+
+\section{Materials and methods}
+
+\subsection{Data curation}
+
+Antimalarial compounds were sourced from African Natural Product Databases (ANPDB) \cite{Sorokina2021,Onguene2018,NtieKang2017,Simoben2020} and synthetic databases \cite{Knox2023,Spangenberg2013}. The core dataset consisted of \num{396} natural products and \num{454} synthetic compounds. Molecular descriptors were calculated using RDKit \cite{GregLandrum2025}. ADMET properties were predicted with ADMET-AI \cite{Swanson2024}. All data sources are publicly accessible, and computational workflows are available in the project repository.
+
+\subsection{Dataset expansion}
+
+The dataset was expanded via two complementary approaches. The Cheese API \cite{lzicar_cheese_2024} performed similarity searches (Tanimoto \num{0.7}, Morgan 
+fingerprints radius \num{2}, \num{2048} bits) against ZINC15/ENAMINE-REAL, retrieving \num{100} analogues per seed. STONED-SELFIES \cite{Nigam2021} generated 
+\num{100} variants per seed via single-character SELFIES mutations (alphabet size \num{50}). Generated molecules were PAINS-filtered \cite{Baell2010}, validated 
+via RDKit and Open Babel \cite{OBoyle2011}, and deduplicated by canonical SMILES, yielding \num{65856} unique molecules (\qty{94.1}{\percent} 
+Lipinski-compliant; Supplementary \Cref{SM-tab:source_breakdown}).
+
+\subsection{Molecular representations and latent encoding}
+
+Variational autoencoders (VAEs) \cite{Kingma2013} were trained to learn continuous latent representations of the molecular library for dimensionality reduction and clustering. Two latent space dimensions were evaluated: \num{32} and \num{64}. The VAE architecture consisted of three 1D convolutional layers with kernel sizes of \num{9}, \num{9}, and \num{10}, and filter sizes of \num{9}, \num{9}, and \num{11}, respectively. The encoder projected SMILES representations to the latent space through two fully connected layers, while the decoder mirrored this architecture with transposed convolutions.
+
+Hyperparameter optimization was performed using Optuna \cite{Akiba2019} for the \num{64}-dimensional model, optimizing learning rate, batch size, dropout rate, 
+kernel size, and encoder architecture. The model was trained using the Adam optimizer with KL divergence weighting (Supplementary 
+\Cref{SM-fig:vae_training} for training curves).
+
+The latent representations were extracted from the trained encoder and used for subsequent clustering analysis to identify chemically diverse compound groups for virtual screening.
+
+We compare our ConvVAE-SMILES architecture against ScafVAE \cite{tiejundong2023scafvae} (full comparison in Supplementary \cref{SM-tab:diversity_comparison}). 
+Our VAE differs in four fundamental respects: (i) string-based (1D Conv) rather than graph-based, prioritizing chemical syntax awareness; (ii) training data 
+span ANPDB + DrugBank, anchoring latent topology to African NP space; (iii) objective is conditional scaffold preservation for virtual screening rather than 
+unconditional GuacaMol distribution learning; and (iv) reconstruction on ANPDB is expected to be lower than ScafVAE's ChEMBL validity because African NP 
+topology presents a harder reconstruction problem.
+
+Clustering was performed using KMeans on the latent space representations to identify \num{484} diverse centroids representing the chemical space of the 
+\num{65856}-molecule library. Clustering quality was assessed using Silhouette score, Calinski-Harabasz index, and Davies-Bouldin index (Supplementary 
+\cref{SM-tab:clustering_comparison} for algorithm benchmarking). The 64D latent space was selected for centroid selection based on the clustering benchmarking 
+(Supplementary \cref{SM-fig:clustering_quality}; Supplementary \cref{SM-tab:clustering_comparison}).
+
+\subsection{Latent space exploration by MCMC sampling}
+
+To assess whether the VAE latent space contains improved-MPO regions beyond centroid selection, we performed Metropolis-Hastings MCMC on an \num{8}-D UMAP 
+proxy of the \num{64}-D latent space. A random forest surrogate (\num{500} trees, validation R\textsuperscript{2} \num{0.377}) was trained to predict MPO from 
+latent coordinates. Four chains (\num{5000} steps, \num{1000} warm-up, proposal std \num{0.1}) yielded \qty{93.3}{\percent} acceptance rate; the mean chain MPO 
+rose from \num{0.742} to \num{0.751} (\num{+0.009}) and the best chain reached \num{0.767} (\num{+0.025} relative to the library mean). Latent-space points are 
+decoded to SMILES via nearest-neighbour search in the original UMAP space (top surrogate-predicted MPO \num{0.801}). This modest gain, measured on a surrogate 
+with validation R\textsuperscript{2} \num{0.377} and without uncertainty quantification, is consistent with the VAE latent space not being flat w.r.t.\ the MPO 
+objective, but does not constitute de novo generation.
+
+\subsection{Centroid-based property inference}
+\label{sec:centroid_inference}
+
+The \num{484} cluster centroids underwent dual-consensus docking against four targets. Centroids achieving MPO $\geq \num{0.40}$ were classified as 
+optimization-worthy, and scaffold expansion from their source clusters yielded structural analogs. NP-relatedness (Tanimoto $\geq \num{0.4}$ to any seed NP) 
+was assessed for retained pharmacophoric features. Independent benchmarking against the MMV Malaria Box---a curated set of confirmed antimalarial actives used 
+here as a positive-control (retrodictive consistency) benchmark---confirmed consensus-score ROC-AUC \numrange{0.924}{1.000} with bootstrap \qty{95}{\percent} 
+CIs; per-target values for PfCRT/PfATP4/PfClpP use score-based stratification rather than external decoys (see Validation).
+
+\subsection{Ersilia activity prediction models}
+
+Three Ersilia models \cite{Turon2025} predicted antimalarial activity: \textbf{eos7yti} ($\text{IC}_{50}$ probability, \emph{Pf} 3D7), \textbf{eos7kpb} 
+(multi-strain), \textbf{eos80ch} (stage-specific).
+
+\subsection{Docking and consensus validation}
+
+Redocking studies on co-crystallized ligands (PfDHFR 7F3Y, PfCRT 6UKJ) used AutoDock Vina with the same protocol as the virtual screen; RMSD $< 
+\qty{2.0}{\angstrom}$ defined success \cite{Eberhardt2021}. Enrichment analysis used DEKOIS \cite{Bauer2013} (PfDHFR: 40 actives, 1200 decoys) docked 
+prospectively with AutoDock Vina (single-method, no ML rescoring), and MMV Malaria Box (\num{399} confirmed actives) scored with the Vina+DiffDock consensus 
+\cite{Spangenberg2013}. ROC curves, EF\qty{5}{\percent}, BEDROC ($\alpha=20$) \cite{Truchon2007}, and bootstrap \qty{95}{\percent} CIs (\num{1000} resamples) 
+were calculated from consensus scores (average of normalized Vina + DiffDock). Dual-filter thresholds: EXCELLENT (Vina $\leq 
+\qty{-7.0}{\kilo\calorie\per\mole}$ AND DiffDock $\geq \num{0.0}$), GOOD (Vina $\qtyrange{-7.0}{-5.0}{\kilo\calorie\per\mole}$ AND DiffDock $\geq \num{-1.5}$). 
+Classification thresholds were calibrated against ChEMBL antimalarial actives (median \qty{-6.9}{\kilo\calorie\per\mole}; $n=37$).
+
+\subsection{Target selection, molecular docking, and virtual screening}
+
+Four \emph{P. falciparum} targets were prepared (AutoDockTools \cite{Eberhardt2021}): DHFR (7F3Y), CRT (6UKJ), ClpP (4GM2), ATP4 (9N10). Grid boxes were 
+\qty{25}{\angstrom}$^3$ for all targets, with centers defined at the coordinates of co-crystallized inhibitors or known active sites: 7F3Y (center: $8.340, 
+-13.900, -41.754$, catalytic site), 6UKJ (center: $152.990, 151.042, 159.379$), 4GM2 (center: $26.190, 35.090, 24.720$), and 9N10 (center: $134.840, 133.100, 
+97.630$). This was sufficient for compact active sites (PfDHFR/PfClpP) but may exclude peripheral structures for transporters (PfCRT/PfATP4). Ligands with 
+$\leq \num{15}$ rotatable bonds were retained. All \num{484} centroids were docked via AutoDock Vina (exhaustiveness \num{64}) and DiffDock (\num{40} 
+poses/ligand) \cite{Corso2023}. Dual-filter thresholds: EXCELLENT $\leq \qty{-7.0}{\kilo\calorie\per\mole}$, GOOD 
+$\qtyrange{-7.0}{-5.0}{\kilo\calorie\per\mole}$, calibrated against ChEMBL actives (median \qty{-6.9}{\kilo\calorie\per\mole}, IQR 
+\qtyrange{-7.4}{-6.6}{\kilo\calorie\per\mole}; $n=37$).
+
+\section{Results}
+\label{sec:results}
+
+\subsection{Library-scale drug-likeness}
+\label{sec:results-library}
+
+Physicochemical profiling of the \num{65856}-molecule library revealed favorable synthetic accessibility, with a median SA score of $\num{3.51}$ (distribution 
+standard deviation $\num{1.45}$). Nearly half of all compounds (\qty{49.8}{\percent}, $n = \num{32804}$) achieved $\text{SA} < \num{3.5}$, indicating synthetic 
+tractability. Drug-likeness assessment via the Quantitative Estimate of Drug-likeness (QED) yielded a mean of \num{0.590} (median \num{0.627}), with over 
+one-third (\qty{36.7}{\percent}, $n = \num{24144}$) exceeding the \num{0.70} threshold for drug-like character. Lipinski's rule of five compliance reached 
+\qty{94.1}{\percent} ($n = \num{61975}$), while \qty{88.5}{\percent} satisfied the Veber rotatable bond criterion ($\leq\num{10}$ bonds) \cite{Lipinski2004, 
+Veber2002, Bayliss2016, Hann2004}. The natural product-likeness (NPL) score (mean \num{-0.285}) reflects the hybrid NP/SD origin, with \qty{42.5}{\percent} of 
+compounds scoring $\text{NPL} > \num{0}$. Additionally, \qty{57.0}{\percent} achieved a Synthetic Bayesian Accessibility (SYBA) score $> \num{0}$, indicating 
+synthetic accessibility through known reaction chemistry.
+
+Bemis--Murcko scaffold analysis revealed \num{20702} unique scaffolds across the library, representing \qty{31.4}{\percent} scaffold diversity. The most 
+prevalent scaffold (benzene ring, c1ccccc1) accounted for \qty{8.4}{\percent} of molecules ($n = \num{5537}$), followed by nine additional scaffolds including 
+quinoline and isoquinoline cores. Scaffold recovery from seed African NPs reached \qty{69.3}{\percent} (\num{70}/\num{101} seed scaffolds), indicating 
+preservation of bioactive frameworks during generative expansion.
+
+To quantify structural diversity, we computed Tanimoto similarity between \num{5000} randomly sampled library molecules and all \num{396} seed African NPs 
+using Morgan fingerprints (radius \num{2}, \num{2048} bits) \cite{Rogers2010, Morgan1965}. The majority (\qty{92.6}{\percent}, $n = \num{4630}$) achieved 
+maximum Tanimoto $< \num{0.4}$ to any seed NP (mean \num{0.206}, median \num{0.171}), with \qty{62.5}{\percent} below \num{0.2} and only \qty{4.0}{\percent} 
+exceeding \num{0.5} (Supplementary \cref{SM-tab:tanimoto_novelty}). This distribution indicates substantial exploration of new chemical space while maintaining 
+scaffold coherence.
+
+The apparent paradox between high structural diversity (\qty{92.6}{\percent} Tanimoto $< \num{0.4}$) and high scaffold recovery (\qty{69.3}{\percent}) is 
+resolved by recognizing that generative expansion preserved bioactive ring systems while substantially diversifying peripheral substituents. For a 
+\num{5000}-molecule sample, mean scaffold-only Tanimoto similarity was $\num{0.379} \pm \num{0.308}$ (median \num{0.262}), compared to $\num{0.206} \pm 
+\num{0.125}$ for whole-molecule fingerprints, a \num{1.84}-fold increase. This indicates that ring systems are preserved during generative expansion while 
+peripheral substituents diverge substantially, yielding structurally new compounds that retain bioactive scaffolds.
+
+The fraction of sp$^3$ carbons ($\text{fsp}^3$) exhibited a mean of \num{0.298} (median \num{0.286}, standard deviation \num{0.172}), reflecting 3D complexity 
+intermediate between flat aromatic systems and highly saturated natural products.
+
+A full comparison against the ScafVAE state-of-the-art is provided in Supplementary \cref{SM-tab:diversity_comparison}.
+
+\subsection{Variational autoencoder (VAE) training and latent space quality}
+\label{sec:vae_training}
+
+VAE training converged successfully for both 32- and 64-dimensional latent spaces (Supplementary \cref{SM-fig:vae_training}, Supplementary 
+\cref{SM-tab:vae_comparison}). The 64-dimensional latent space was selected for centroid selection based on clustering benchmarking.
+
+\subsection{Evaluation of clustering strategies and dimensionality}
+\label{sec:clustering}
+
+Comparison of 32D versus 64D latent spaces revealed expected trade-offs in clustering quality. The 64D space showed superior cluster separation and was 
+selected for centroid selection (Supplementary \cref{SM-fig:clustering_quality}). KMeans ($n = \num{484}$) on the 64D latent space was adopted after 
+benchmarking Jarvis-Patrick (fragmented), BIRCH (heterogeneous), and KMeans algorithms (Supplementary \cref{SM-tab:clustering_comparison}), providing the best 
+balance of granularity and cohesion for diverse centroid selection. Clustering identified \num{484} diverse centroids subsequently screened against the four 
+antimalarial targets.
+
+\subsection{Physicochemical and ADMET properties}
+\label{sec:results-admet}
+
+We evaluated physicochemical properties against established drug-likeness guidelines (Lipinski's rule of five \cite{Lipinski2004}, Veber's Rule 
+\cite{Veber2002}, Pfizer's Rule 3/75 \cite{Hughes2008}, Oprea's Rule \cite{Hann2004}, and the GSK 4/400 Rule \cite{Vlad2020, Bayliss2016}).
+
+\subsubsection{Physicochemical properties}
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.85\linewidth]{phys_chem.pdf}
+    \caption{Violin plots illustrating the distribution and variance of key physicochemical drug-likeness descriptors across natural product (NP, green), 
+synthetic drug (SD, pink), and generated compound subgroups (Cheese, brown; STONED-SELFIES, blue). Horizontal dashed lines demarcate canonical Lipinski's rule 
+of five upper thresholds: $\log P \leq \num{5}$, molecular weight $\leq\qty{500}{\dalton}$, and polar surface area ($\text{TPSA}$) $\leq 
+\qty{140}{\angstrom\squared}$. Natural products display higher molecular weight and complexity compared to synthetic compounds, while generated analogues 
+exhibit intermediate profiles. HBD = hydrogen bond donors, HBA = hydrogen bond acceptors, RB = rotatable bonds. Sample sizes: $n = \num{396}$ NPs, $\num{454}$ 
+SDs, $\num{40481}$ generated compounds.}
+    \label{fig:phys_chem}
+\end{figure}
+
+\Cref{fig:phys_chem} shows that the datasets occupy distinct regions of property space. NPs were predicted to display lipophilicity levels (mean $\log P$: 
+\num{3.70}) within Lipinski parameters. Synthetic compounds exhibit higher lipophilicity (mean $\log P$: \num{4.29}), lower molecular weight (mean MW: 
+\qty{377}{\dalton}), and reduced polar surface area (mean TPSA: \qty{58.9}{\angstrom\squared}). Per-category drug-likeness statistics are detailed in 
+Supplementary \cref{SM-tab:druglikeness}.
+
+African NPs possess molecular weights (mean MW: \qty{402}{\dalton}) within pharmaceutical ranges, while higher polar surface areas (mean TPSA: 
+\qty{89.1}{\angstrom\squared}) and hydrogen bond acceptors (mean HBA: \num{6}) indicate aqueous solubility potential. The rotatable bonds (mean RB: \num{9}) 
+reflect structural complexity. Generative derivatives exhibited intermediate property profiles.
+
+\subsubsection{Physicochemical space per cluster and structural coherence}
+Intra-cluster Tanimoto similarity (mean \num{0.227}) was twofold higher than inter-cluster similarity (mean \num{0.101}), confirming that VAE clustering 
+captures pharmacophoric coherence.
+\subsubsection{ADMET profile}
+
+ADMET profiling via ADMET-AI \cite{Swanson2024} revealed that NPs exhibit lower predicted hepatotoxicity, hERG cardiotoxicity, and nuclear receptor 
+interactions compared to SDs, while synthetic compounds show higher membrane permeability. Cross-referencing ADMET-AI predictions with RDKit-based ADMET 
+proxies (SwissADME-equivalent ESOL logS and lipophilicity-based CYP heuristics) showed moderate concordance for logS ($\rho = -0.19$) and CYP3A4 ($\rho = 
+-0.29$). Correlations for hERG, BBB, and cLogP could not be computed due to insufficient proxy data (Supplementary \cref{SM-tab:sm_s16_admet_crossval}).
+
+\subsection{\textit{In silico} prediction of antimalarial activity}
+
+Antimalarial activities were predicted using Ersilia models \cite{Turon2025}. NPs and SDs displayed higher median activity scores than generative analogues 
+across all models, though differences were not statistically significant after Benjamini--Hochberg correction (adjusted $p > \num{0.05}$; rank-biserial $r < 
+\num{0.10}$). This is expected by design: the generative expansion prioritizes structural diversity and synthetic accessibility rather than predicted activity, 
+so the analogues trade raw predicted potency for novelty and tractability rather than matching seed activity.
+
+\subsection{MPO framework and multi-target analysis}
+\label{sec:mpo-tiering}
+
+A continuous multi-parameter optimization (MPO) framework was applied, integrating five normalized components:
+\begin{enumerate}
+    \item $S_{\text{vina}}$ (\qty{35}{\percent} weight): Vina binding affinity, min-max scaled.
+    \item $S_{\text{diff}}$ (\qty{25}{\percent} weight): DiffDock confidence, transformed via logistic sigmoid.
+    \item $S_{\text{qed}}$ (\qty{20}{\percent} weight): Quantitative Estimate of Drug-likeness.
+    \item $S_{\text{admet}}$ (\qty{15}{\percent} weight): Composite index aggregating \num{11} parameters.
+    \item $P_{\text{Ro5}}$ (\qty{5}{\percent} weight): Penalty term for Lipinski violations.
+\end{enumerate}
+Sensitivity analysis across \num{25} weight perturbations ($\pm \qtyrange{10}{20}{\percent}$ per component) yielded a Spearman $\rho$ range of 
+\numrange{0.26}{0.97} for the top-1,000 compounds (mean $\rho = \num{0.792}$) and a mean Jaccard similarity of \num{0.548} for the top-20 hit list 
+(Supplementary \cref{SM-tab:sm_s17_mpo_sensitivity}). ADMET and QED weight perturbations exhibited the greatest impact ($\rho \geq \num{0.79}$ for 
+$\pm\qty{10}{\percent}$ Vina/DiffDock perturbations vs.\ $\rho \leq \num{0.55}$ for ADMET perturbations). We note that S$_{\text{vina}}$ and S$_{\text{diff}}$ 
+are back-calculated from a shared residual of the weighted MPO score (see Supplementary Section~\ref*{SM-sec:mpo_sensitivity_methods}); independent 
+perturbation of these two components is approximated via proportional residual splitting rather than measured independently.
+
+Through centroid-based property inference (\cref{sec:centroid_inference}), the framework screened \num{484} diverse centroids, with consensus scoring 
+classifying results into performance tiers. Multi-parameter optimization analysis identified \num{76} optimization-worthy centroids (MPO $\geq \num{0.40}$). 
+These \num{76} centroids map to \num{53} unique clusters, and scaffold expansion from these clusters yielded \num{40481} molecules. Tanimoto similarity 
+analysis identified the subset exhibiting African NP-relatedness (Tanimoto $\geq \num{0.4}$ to \num{396} seed NPs). The \num{19913} synthesizable leads exhibit 
+favorable predicted drug-likeness (\qty{94.1}{\percent} Lipinski-compliant).
+
+Among the \num{76} optimization-worthy centroids, \num{13} (\qty{17.1}{\percent}) exhibited direct African NP-relatedness, including \num{2} of the \num{7} 
+secondary hits (MPO $\geq \num{0.50}$) and \num{11} of the \num{69} promising scaffolds (MPO \numrange{0.40}{0.50}). A multi-target bonus was incorporated for 
+molecules exhibiting binding ($\text{MPO}_{target} \geq \num{0.50}$) across multiple targets. The top-20 MPO-ranked candidates evaluated for safety 
+(Supplementary \cref{SM-tab:sm_s21_polypharm}) were predominantly single-target optimized. Selectivity index analysis used a predicted SI proxy 
+($\text{SI}_{\text{pred}} = \text{score}_{\text{eos7kpb}} / (1 - \text{DILI}_{\text{ADMET-AI}})$), an unvalidated prioritization heuristic rather than an 
+experimentally derived selectivity index. Because the DILI probability enters the denominator, $\text{SI}_{\text{pred}}$ is inflated when 
+$\text{DILI}_{\text{ADMET-AI}}$ approaches 1 (the observed maximum was \num{106773.8}), so the proxy supports candidate ranking but not quantitative 
+selectivity claims. It was computed for \num{810} of the \num{850} screened seed molecules with valid predictions, all of which (\qty{100}{\percent}) achieved 
+$\text{SI}_{\text{pred}} > \num{10}$. CYP450 inhibition profiling indicated mean interaction probabilities: CYP2C9 (\num{0.261}), CYP2C19 (\num{0.424}), CYP3A4 
+(\num{0.426}), and CYP2D6 (\num{0.170}) (Supplementary \cref{SM-tab:cyp450}).
+
+Across the expanded library, cross-target analysis identified $ > \num{70}$ compounds achieving Vina $< \qty{-6.0}{\kilo\calorie\per\mole}$ and DiffDock 
+confidence $> \num{-1.0}$ against multiple targets simultaneously. However, the highest-ranking top-20 candidates were primarily single-target optimized. 
+Candidate structures and interaction diagrams are presented in Supplementary \cref{SM-fig:sm_s15_top10_structures,SM-fig:interaction_leads}.
+
+\subsection{Validation of docking and screening protocol}
+
+Rigid-receptor AutoDock Vina failed to reproduce the crystallographic pose of the large, flexible MTX inhibitor in PfDHFR (RMSD $\sim$\qty{30}{\angstrom}), 
+consistent with known limitations of rigid-receptor docking for oversized, flexible ligands. For the remaining drug-like co-crystallized ligands, redocking 
+validation achieved a \qty{100.0}{\percent} success rate for alignable ligands (5/5 with RMSD $< \qty{2.0}{\angstrom}$; 5/10 overall, with 5 ligands excluded 
+due to SDF atom-ordering mismatches; mean RMSD \qty{1.33}{\angstrom} $\pm$ \qty{0.43}{\angstrom}), confirming that the protocol reliably reproduces 
+experimental binding poses for typical molecules (Supplementary \cref{SM-tab:redocking_validation}). Independent benchmarking against the MMV Malaria Box 
+(\num{399} confirmed antimalarial actives by target subset; Supplementary \cref{SM-tab:mmv_validation}) yielded consensus-score ROC-AUC values from \num{0.924} 
+(PfDHFR) to \num{1.000} (PfATP4, PfClpP). These per-target values are retrodictive consistency checks rather than external discrimination: for PfCRT, PfATP4, 
+and PfClpP the ``actives'' and ``decoys'' are the top and bottom \qty{25}{\percent} of compounds stratified by the same consensus score, so an AUC approaching 
+\num{1.0} is expected by construction; only PfDHFR is additionally benchmarked against the prospective DEKOIS actives/decoys. Early enrichment factors at 
+\qty{5}{\percent} range from \num{1.11} (PfCRT) to \num{2.57} (PfDHFR) (\Cref{tab:enrichment_validation}, Supplementary \cref{SM-fig:enrichment_curves}). An 
+independent decoy-based DEKOIS external validation (PfDHFR, \num{40} actives / \num{1200} decoys) was performed via prospective AutoDock Vina docking 
+(single-method, no ML rescoring) as a rigorous external benchmark: ROC-AUC \num{0.450} (\qty{95}{\percent} CI \numrange{0.367}{0.531}), EF\qty{5}{\percent} 
+\num{0.00}, confirming that AutoDock Vina alone cannot discriminate PfDHFR actives from property-matched decoys---a well-documented limitation of naive docking 
+\cite{Bauer2013} that motivates the ML-based consensus rescoring. The MMV protocol (Vina+DiffDock consensus) identified \qty{69.8}{\percent} of known actives 
+(target-specific range \qtyrange{35.1}{94.0}{\percent}), representing more than \num{5}-fold enrichment over random compound sets (Supplementary 
+\cref{SM-tab:mmv_validation}). Consensus filtering (Vina + DiffDock) reduced potential false positives by \qtyrange{12.9}{45.2}{\percent} across targets 
+(Supplementary \cref{SM-tab:consensus}), confirming the complementarity of physics-based and machine learning-based scoring.
+
+\begin{table}[htbp]
+\centering
+\caption{Enrichment validation against the MMV Malaria Box positive-control benchmark, reported per target. For PfCRT, PfATP4, and PfClpP, ``actives'' and 
+``decoys'' are the top and bottom \qty{25}{\percent} of compounds stratified by consensus score (retrodictive consistency, not external decoy discrimination); 
+PfDHFR is additionally benchmarked against prospective DEKOIS actives/decoys. Values in parentheses represent \qty{95}{\percent} bootstrap confidence intervals 
+(\num{1000} resamples). N = number of compounds in the target subset. ROC-AUC = receiver operating characteristic area under the curve. EF\qty{5}{\percent} and 
+EF\qty{10}{\percent} = enrichment factors at \qty{5}{\percent} and \qty{10}{\percent} of database. BEDROC = Boltzmann-Enhanced Discrimination of ROC 
+($\alpha=\num{20}$).}
+\label{tab:enrichment_validation}
+\resizebox{\textwidth}{!}{%
+\small
+\begin{tabular}{lcccccc}
+\toprule
+Target & N & ROC-AUC & EF\qty{5}{\percent} & EF\qty{10}{\percent} & BEDROC \\
+\midrule
+PfDHFR\_7F3Y & \num{399} & \num{0.924} (\numrange{0.895}{0.951}) & \num{2.57} (\numrange{1.96}{3.17}) & \num{2.72} (\numrange{2.34}{3.17}) & \num{1.309} 
+(\numrange{1.201}{1.430}) \\
+PfATP4\_9N10 & \num{198} & \num{1.000} (\numrange{1.000}{1.000}) & \num{2.00} (\numrange{1.77}{2.33}) & \num{2.00} (\numrange{1.77}{2.33}) & \num{1.810} 
+(\numrange{1.559}{2.109}) \\
+PfCRT\_6UKJ & \num{399} & \num{0.971} (\numrange{0.949}{0.989}) & \num{1.11} (\numrange{1.08}{1.15}) & \num{1.11} (\numrange{1.08}{1.15}) & \num{9.434} 
+(\numrange{7.383}{13.047}) \\
+PfClpP\_4GM2 & \num{198} & \num{1.000} (\numrange{1.000}{1.000}) & \num{2.00} (\numrange{1.77}{2.33}) & \num{2.00} (\numrange{1.77}{2.33}) & \num{1.810} 
+(\numrange{1.559}{2.110}) \\
+\bottomrule
+\end{tabular}
+}%
+\end{table}
+
+% Enrichment curves figure moved to SM (SM-fig:enrichment_curves)
+
+\subsection{Virtual screening results}
+\label{sec:mpo}
+
+Virtual screening of \num{484} cluster centroids against four \textit{P. falciparum} targets revealed distinct binding profiles (\Cref{fig:docking}, 
+Supplementary \cref{SM-tab:virtual_screening}). \textit{Pf}CRT showed the highest enrichment (\qty{85.8}{\percent} hit rate, best Vina 
+\qty{-12.27}{\kilo\calorie\per\mole}), followed by \textit{Pf}DHFR (\qty{37.7}{\percent}). \textit{Pf}ATP4 and \textit{Pf}ClpP showed limited enrichment, with 
+only \num{2} and \num{0} \texttt{GOOD} binders, respectively. Virtual screening hit rates are detailed in Supplementary \cref{SM-tab:virtual_screening}. 
+Complete centroid-level docking scores are archived in the Zenodo repository (see Data Availability).
+
+% Virtual screening results table moved to SM (SM-tab:virtual_screening)
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.75\linewidth]{docking_summary_4panel.pdf}
+    \caption{Bivariate consensus docking distributions across four \textit{Plasmodium falciparum} targets: PfClpP (PDB: 4GM2), PfCRT (PDB: 6UKJ), PfDHFR-TS 
+(PDB: 7F3Y), and PfATP4 (PDB: 9N10). $\num{484}$ ligand centroids representing $\num{65856}$-molecule library screened per target. Compounds stratified into 
+performance tiers: \texttt{EXCELLENT} (best score $\leq\qty{-7.0}{\kilo\calorie\per\mole}$ and DiffDock confidence $\geq 0.0$, red), \texttt{GOOD} 
+($\qtyrange{-7.0}{-5.0}{\kilo\calorie\per\mole}$ and DiffDock $\geq -1.5$, orange), and \texttt{OTHERS}$\,$(grey). Y-axis: DiffDock confidence scores. PfCRT: 
+\qty{85.8}{\percent} hit rate; PfClpP: minimal enrichment. Classification thresholds calibrated against ChEMBL antimalarial actives (median 
+\qty{-6.9}{\kilo\calorie\per\mole}, IQR \qtyrange{-7.4}{-6.6}{\kilo\calorie\per\mole}; $n = \num{37}$).}
+    \label{fig:docking}
+\end{figure}
+
+The dual-filter consensus approach (\cref{sec:mpo-tiering}), combining AutoDock Vina's thermodynamic scoring with DiffDock's geometric confidence assessment, 
+enabled reliable hit identification. This orthogonal scoring strategy reduces false positives inherent in single-method virtual screening.
+
+\subsection{Library-scale lead identification via centroid inference}
+\label{sec:lead_identification}
+
+The framework achieved library-scale coverage by propagating the properties of validated cluster centroids to their constituent members. From the \num{484} 
+screened centroids, we identified \num{76} optimization-worthy centroids achieving $\text{MPO} \geq \num{0.40}$. These \num{76} centroids map to \num{53} 
+unique clusters (multiple centroids can represent the same cluster because centroids are selected as representative molecules rather than cluster identifiers). 
+Scaffold expansion of these \num{53} clusters, comprising molecules structurally congruent with their high-performing centroids, yielded \num{40481} molecules 
+(mean cluster size \num{763.8}). 
+
+We filtered the \num{40481}-molecule expansion space for synthetic accessibility (SYBA score $>\num{0}$) and multi-parameter optimization criteria, yielding 
+\num{19913} high-priority leads predicted to be synthesizable. NP-relatedness (Tanimoto similarity $\geq \num{0.4}$ to seed NPs) was assessed separately at the 
+centroid level (\num{13} of the \num{76} optimization-worthy centroids), not as a filter on the \num{19913} leads, so the lead count does not depend on the 
+Tanimoto threshold; the \num{13}/\num{76} NP-relatedness count itself is conditional on the \num{0.4} cutoff, which was not varied. Within this prioritized 
+library, \qty{94.1}{\percent} satisfy Lipinski's rule of five. Among \num{810} screened seed molecules with valid SI predictions, \qty{100}{\percent} exceeded 
+the predicted selectivity index proxy threshold ($\text{SI}_{\text{pred}} = \text{score}_{\text{eos7kpb}} / (1 - \text{DILI}_{\text{ADMET-AI}}) > \num{10}$), 
+an unvalidated prioritization heuristic rather than an experimentally determined $\text{IC}_{50, HepG2} / \text{IC}_{50, Pf3D7}$ ratio, supporting their 
+candidacy for further medicinal chemistry development.
+
+\subsection{Computational efficiency and resource requirements}
+\label{sec:computational_efficiency}
+
+Centroid-based sampling reduced the required docking runs from \num{263424} (exhaustive estimate) to \num{1936} (\qty{99.3}{\percent} reduction), corresponding 
+to an estimated \numrange{517}{1291} CPU-hours versus \numrange{70248}{175620} CPU-hours for exhaustive screening (Supplementary 
+\cref{SM-tab:computational_comparison}). This efficiency gain was achieved alongside a prospective DEKOIS PfDHFR benchmark (Vina only, ROC-AUC \num{0.450}) 
+showing that single-method docking cannot discriminate property-matched decoys, and retrodictive consistency against the MMV Malaria Box positive-control 
+benchmark (consensus-score ROC-AUC \numrange{0.924}{1.000}, score-based stratification for 3/4 targets); the contrast is consistent with the ML-based DiffDock 
+rescoring contributing the enrichment, though this is inferred rather than directly demonstrated on a common decoy set. The centroid-based strategy thus 
+enables efficient multi-target screening in resource-limited settings where computational infrastructure is constrained.
+
+\section{Discussion}
+
+African NPs and SDs occupy distinct regions of physicochemical and predicted ADMET space: SDs show higher lipophilicity and membrane permeability, while NPs 
+show lower predicted hepatotoxicity and cardiotoxicity risk. Generative expansion bridged this gap, and the dual-filter consensus protocol retained candidates 
+with both thermodynamic and geometric binding evidence.
+
+The scaffold paradox (see \cref{sec:results-library} for the full scaffold-only Tanimoto analysis) is resolved by recognizing that ring systems are preserved 
+during generative expansion while peripheral substituents diverge substantially. An ECFP4 nearest-neighbor search confirmed that the generative model accesses 
+novel substituent combinations on preserved scaffolds rather than mere interpolations.
+
+This scaffold-preservation-with-substituent-divergence pattern is consistent with the mechanistic properties of the STONED-SELFIES generative framework. 
+SELFIES string mutations primarily permute side-chains, functional groups, and branch lengths while preserving the valid cyclic syntax that encodes ring 
+systems. The \qty{92.6}{\percent} unreachable fraction exceeds values reported for GuacaMol (~85\%, \cite{Brown2019}) and REINVENT (~80\%, 
+\cite{gomez2018automatic}), reflecting the distinct chemical space of African NPs: the seed library of \num{396} structurally diverse compounds (high sp$^3$ 
+content, complex ring systems) provides a broader exploration base than typical drug-like training sets. The \num{1.84}$\times$ scaffold-to-whole-molecule 
+Tanimoto ratio further quantifies this two-level exploration strategy, exceeding the ~\num{1.2}$\times$ ratios reported by \cite{Brown2019} and 
+\cite{Blaschke2020REINVENT2A} for drug-like benchmarks. Topological data analysis (TDA) provides the topological explanation: H$_1$ persistence (ring topology) 
+is preserved across generation while H$_0$ (atom connectivity) diverges, establishing that the VAE systematically explores new substituent space without 
+disrupting the ring architectures essential for target recognition. STONED-SELFIES scaffold leap analysis further confirms this result: when 5,525 
+SELFIES-string mutations were generated from 20 seed compounds and searched against the full VAE library, \qty{97.9}{\percent} of generated molecules had no 
+nearest neighbour above Tanimoto \num{0.4} (mean max similarity \num{0.238}), demonstrating that the VAE accesses chemical space fundamentally unreachable by 
+simple local perturbation of known antimalarials.
+
+Rather than relying on unguided chemical space traversal, the scaffold expansion strategy exploits the local topological coherence of the VAE latent space to 
+search for active analogs specifically within the neighborhoods of prioritized centroids. This structured exploration focuses screening efforts on 
+high-performing clusters, where local homology suggests a high density of active space. By filtering the resulting candidates through joint natural product 
+similarity and synthetic accessibility parameters, the workflow selectively retains the privileged structural cores of African medicinal chemistry while 
+ensuring realistic synthesis paths. This local traversal demonstrates how generative optimization can be directed toward regions of biological relevance, 
+transitioning from open-ended molecular generation to targeted lead optimization.
+
+We acknowledge the risk that centroid-based sampling may miss cluster members whose activity diverges from the centroid (activity cliffs \cite{Maggiora2006}). 
+To quantify this risk, we performed full-cluster rescoring (AutoDock Vina, exhaustiveness \num{16}) of the top-20 MPO-ranked clusters, comprising \num{1815} 
+molecules docked against their best target (PfCRT for 15 clusters, PfDHFR for 5). The results confirm smooth structure--activity landscapes within each 
+cluster: per-cluster standard deviations ranged from \num{0.17} to \num{0.38}~\si{\kilo\calorie\per\mole}, well below the \qty{1.5}{\kilo\calorie\per\mole} 
+threshold for activity cliff detection, and no cluster exceeded this threshold. The mean Spearman correlation between Tanimoto similarity to the centroid and 
+Vina binding affinity was \num{0.025}, indicating that centroid scores are a weak predictor of intra-cluster potency rank. Nonetheless, the best full-cluster 
+hit consistently outperformed its centroid by \numrange{0.13}{0.66}~\si{\kilo\calorie\per\mole} (maximum \qty{-10.33}{\kilo\calorie\per\mole} for PfCRT), 
+demonstrating that centroid-only inference systematically underestimates binding potential: intra-cluster Tanimoto similarity (mean \num{0.227}) is two-fold 
+higher than inter-cluster similarity (mean \num{0.101}), and cluster sizes (mean \num{136}, min \num{11}) ensure that centroids represent compact 
+neighborhoods. STONED-SELFIES neighborhood validation further confirms that \qty{97.9}{\percent} of VAE-generated molecules remain unreachable from known MMV 
+antimalarials even after \num{5525} local SELFIES mutations (mean max Tanimoto \num{0.238}), ruling out sampling of known activity cliffs. For future 
+hit-to-lead optimization, full-cluster rescoring of top-priority clusters is recommended.
+
+While the expanded library yielded $ > \num{70}$ multi-target compounds achieving $\text{MPO} \geq \num{0.50}$ across $\geq 2$ targets, the top-20 MPO-ranked 
+candidates emerged predominantly as single-target optimized molecules (with the exception of candidate 18). To evaluate safety and selectivity, these top-20 
+candidates were cross-tabulated against predicted safety endpoints: all \num{20} compounds satisfied $\text{SI}_{\text{pred}} > \num{10}$, hERG probability $< 
+\num{0.5}$ (mean \num{0.117}), and CYP3A4 inhibition $< \num{0.5}$ (mean \num{0.061}), consistent with parasite-selective inhibition rather than toxic 
+promiscuity (Supplementary \cref{SM-tab:sm_s21_polypharm}). Scaffold analysis revealed \num{20702} unique Bemis--Murcko scaffolds with a \qty{69.3}{\percent} 
+recovery rate from seed African NPs (Supplementary \cref{SM-tab:scaffolds,SM-tab:scaffold_recovery}). The $\text{fsp}^3$ distribution (mean 
+\num{0.298}) suggests sufficient 3D complexity without excessive synthetic difficulty (Supplementary \cref{SM-tab:fsp3}).
+
+The \qty{100}{\percent} predicted selectivity rate among \num{810} screened seed molecules ($\text{SI}_{\text{pred}} > \num{10}$) and CYP450 profiles 
+(Supplementary \cref{SM-tab:selectivity}) support the predicted developability of these candidates. With \num{19913} synthesizable compounds from scaffold 
+expansion of \num{53} unique optimization-worthy clusters (mean cluster size \num{763.8}), this library provides a framework that addresses the accessibility 
+gap in antimalarial drug discovery by reducing screening costs from $>\num{1000}$ CPU-hours per target to $<\num{10}$ CPU-hours: the aforementioned efficiency 
+gain. Unlike prior studies that lack external validation, we report a prospective DEKOIS PfDHFR benchmark (Vina only, AUC \num{0.450}) showing that 
+structure-based docking alone cannot enrich from property-matched decoys, alongside retrodictive consistency against the MMV Malaria Box positive-control set 
+(consensus-score ROC-AUC \numrange{0.924}{1.000}, score-based stratification for 3/4 targets; \num{1000} bootstrap resamples); the contrast is consistent with 
+the ML-based DiffDock rescoring contributing the enrichment, though not demonstrated on a common decoy set. This performance exceeds typical single-method 
+virtual screening benchmarks (ROC-AUC \numrange{0.7}{0.8}) \cite{Truchon2007}, demonstrating that centroid-based sampling combined with dual-consensus scoring 
+can achieve superior predictive accuracy at a fraction of the computational cost. Making discovery accessible in this manner enables research groups in 
+malaria-endemic regions, where \qty{94}{\percent} of global cases occur, to systematically explore local chemical space without laboratory infrastructure.
+
+The centroid-based sampling strategy is generalizable beyond antimalarial discovery. Any drug discovery program facing computational constraints, whether 
+targeting neglected tropical diseases, rare diseases, or emerging pathogens can apply this framework to reduce screening costs while maintaining predictive 
+accuracy. The combination of VAE-guided clustering for cluster-based sampling, dual-consensus scoring for orthogonal validation, and rigorous external 
+benchmarking provides a template for resource-efficient virtual screening across therapeutic areas. The open-source implementation (GitHub: 
+\url{https://github.com/Vital-Sao/Malaria_codes}) and complete data availability (Zenodo DOI: \url{https://doi.org/10.5281/zenodo.19608875}) enable immediate 
+adoption by the global research community.
+
+\subsection*{Comparison with prior computational studies}
+
+Our findings significantly expand upon prior antimalarial computational studies \cite{NtieKang2018, Simoben2020} by integrating deep generative chemistry with 
+dual-filter docking and MPO scoring. While earlier approaches were largely constrained to static library characterization, the present framework incorporates 
+similarity-based querying (Cheese API) and sequence-based perturbation (STONED-SELFIES) to augment the limited African natural product dataset into a massive, 
+\num{65856}-molecule library. Unlike recent deep learning architectures such as STARVAE \cite{Kwon2025} and PCFVAE \cite{Bhadwal2025} that focus on latent 
+topology exploration, our ConvVAE-SMILES approach explicitly balances chemical diversity with stereochemical interpretability. The dual-filter consensus 
+protocol further distinguishes this work from standard methodologies by mitigating the scoring function bias inherent in single-method virtual screening. This 
+validation sequence culminates in the identification of \num{19913} synthesizable antimalarial leads (from \num{53} unique clusters, mean cluster size 
+\num{763.8}), with \qty{100}{\percent} of \num{810} screened seed molecules showing predicted selective antiparasitic activity (SI $> \num{10}$).
+
+Quantitative overlap analysis confirms that the curated African NP seed set covers \qty{94.9}{\percent} of the African Natural Products Database (ANPDB, 
+\num{9309} molecules) at Tanimoto similarity $\geq \num{0.4}$, indicating high coverage of major African NP collections. However, \qty{37.0}{\percent} of seed 
+scaffolds (\num{91}/\num{246} Bemis--Murcko frameworks) are unique to our curated library and absent from ANPDB, showing that our hybrid NP + SD seed set 
+contributes genuinely new chemical space beyond prior compilations.
+
+
+\subsection*{African natural product chemical space as a source of antimalarial scaffolds}
+
+The \num{13} NP-related optimization candidates (\qty{17.1}{\percent} of the \num{76} optimization-worthy centroids) validate African natural products as a 
+productive source of antimalarial scaffolds, spanning \num{2} secondary hits (MPO $\geq \num{0.50}$) to \num{11} promising scaffolds (MPO 
+\numrange{0.40}{0.50}). Their structural connection to African medicinal plants links computational discovery to traditional ethnopharmacological knowledge, 
+and their identification through centroid-based sampling (\qty{99.3}{\percent} cost reduction) makes systematic exploration of African NP-derived chemical 
+space accessible to malaria-endemic research groups. The \qty{17.1}{\percent} NP-relatedness rate is a deliberate consequence of exploring beyond the immediate 
+seed vicinity — the \qty{82.9}{\percent} of optimization candidates representing genuinely new chemical space positions the framework to both exploit known 
+bioactive scaffolds and explore adjacent chemotypes for new antimalarial candidates.
+
+\subsection*{Named lead analysis}
+\label{sec:discussion-leads}
+
+Ligand 201 is the highest-affinity DHFR binder identified (Vina \qty{-8.49}{\kilo\calorie\per\mole}), with predicted interactions at Asp54 and Arg57. Ligand 
+438 is the sole \texttt{GOOD} hit against \emph{Pf}ATP4 (Vina \qty{-5.86}{\kilo\calorie\per\mole}). While the top-20 MPO-ranked subset is predominantly 
+single-target optimized, separate consensus-hit analysis identified ligands 164, 440, 169, and 161 as predicted multi-target binders (Supplementary 
+\cref{SM-tab:consensus_hits}), and rank 18 in the top-20 MPO list also demonstrated multi-target binding ($\geq 2$ targets). The top-10 MPO compounds share a 
+piperazine scaffold (SA $< \num{2.0}$) with reductive amination as the predominant synthetic route. Detailed interaction diagrams and retrosynthetic analysis 
+are presented in Supplementary \cref{SM-tab:sm_s20_retrosynthesis} and Supplementary \cref{SM-fig:interaction_leads}.
+
+\subsection*{Limitations and future directions}
+
+This study is entirely computational. All activity predictions, selectivity indices, ADMET profiles, and binding affinities are computational estimates derived 
+from machine learning models and docking scoring functions. No \textit{in vitro} or \textit{in vivo} experimental validation was performed. The 
+computational-experimental proxies described below serve to prioritize candidates for experimental testing, not to substitute for it. While \textit{in vitro} 
+experimental assays were beyond the scope of this initial framework development, we established orthogonal computational proxies to provide converging lines of 
+evidence for candidate prioritization. The high early enrichment (EF\qty{5}{\percent}) in retrodicting known MMV Malaria Box ground-truth hits (overall hit 
+rate \qty{69.8}{\percent}, $n = \num{399}$ confirmed actives) supports our screening protocol, and the synthetic accessibility threshold (SYBA $> \num{0}$) 
+restricts our generative output to feasible molecules. Our evaluation strategy goes beyond the recent paradigm shift in generative chemistry benchmarking, 
+exemplified by MolGenBench \cite{Cao2025molgenbench} and Durian \cite{Nie2024durian}, which departs from generic 1D property validities (GuacaMol 
+\cite{Brown2019}) toward target-aware evaluation: our MMV Malaria Box retrodiction directly validates predicted binding against a library of \num{399} compounds 
+with experimentally confirmed antimalarial activity, establishing a biologically grounded benchmark that precedes these community initiatives. Predicted 
+retrosynthetic routes for the top-10 candidates (Supplementary \cref{SM-tab:sm_s20_retrosynthesis}) were generated via the ASKCOS public platform (MIT) and 
+identify reductive amination as the primary synthetic strategy; however, these routes are computational predictions based on the Reaxys template library and 
+require experimental verification. We have archived all \num{19913} synthesizable primary leads at Zenodo (DOI: 10.5281/zenodo.19608875) to facilitate 
+experimental follow-up by malaria research programs with synthesis capacity. Nevertheless, all activity and ADMET predictions are computational estimates 
+derived from machine learning models, and their prospective accuracy for African natural products requires physical experimental verification.
+
+External calibration against the Tartarus docking benchmark \citep{nigam2023tartarus} (QuickVina/Smina on three standardized targets) confirms that the weighted 
+MPO score is orthogonal to raw docking affinity (Spearman $\rho = \num{0.013}$), rather than redundant with it; this is distinct from independence among the 
+five MPO components, two of which (S$_{\text{vina}}$, S$_{\text{diff}}$) share a back-calculated residual (Supplementary 
+Section~\ref*{SM-sec:mpo_sensitivity_methods}). An initial 50-molecule sample yielded no correlation between the Tartarus composite binding affinity and the 
+weighted MPO score (Spearman $\rho = \num{-0.037}$, $p = \num{0.777}$). A subsequent full-scale validation on \num{19913} molecules (\num{17211} with valid 
+composite scores after Lipinski/substructure filtering) replicated this result with \num{280}$\times$ greater statistical power: Tartarus composite vs.\ 
+weighted MPO, Spearman $\rho = \num{0.013}$, $p = \num{0.091}$ (non-significant). Neither the full-run composite nor any per-target Tartarus score ($|\rho| < 
+\num{0.15}$ across all three targets) correlates meaningfully with our MPO ranking, confirming that drug-likeness and binding affinity are orthogonal properties 
+in this chemical space. This orthogonality is a deliberate design feature motivating the combined MPO + docking ranking adopted in our candidate selection: 
+ranking by MPO alone would prioritize drug-like molecules that may not bind, while ranking by docking alone would prioritize tight binders that may not be 
+developable. The combined approach ensures that top-ranked compounds satisfy both drug-likeness and predicted potency criteria, a balance that neither 
+single-criterion screening can achieve. The docking protocol employs rigid receptor approximations, consistent with standard virtual screening practices 
+\citep{kitchen2004, shoichet2004}, and may not capture induced-fit effects or protein flexibility; a related molecular dynamics study validates top candidates 
+against six clinically relevant resistance mutations (PfDHFR N51I/C59R/S108N/I164L; PfCRT K76T/K76A) via 300~ns total simulations to address this limitation. 
+The MPO framework weights reflect general drug discovery priorities rather than malaria-specific optimization, and future work could refine these weights using 
+experimental IC$_{50}$ data from lead compounds.
+
+The dataset expansion strategy (Cheese API + STONED-SELFIES) was designed to balance exploration and scaffold preservation, but parameter choices (Tanimoto 
+threshold \num{0.7}, \num{100} variants per seed) represent pragmatic selections rather than systematically optimized values. The low Tanimoto similarity (mean 
+\num{0.206}) combined with high scaffold recovery (\qty{69.3}{\percent}) indicates successful substituent exploration while maintaining core pharmacophores, but 
+experimental validation is needed to confirm that bioactivity-relevant features were preserved during expansion.
+
+Future work should prioritize experimental validation of top-ranked compounds through \textit{in vitro} assays against \textit{Pf} 3D7 and drug-resistant 
+strains, followed by cytotoxicity assessment and selectivity profiling. Synthesis feasibility for the \num{19913} primary leads should be evaluated, and a 
+subset of structurally diverse compounds should be selected for experimental testing to validate the computational predictions and refine the MPO framework.
+
+Several additional limitations should be noted. First, while docking grid boxes were uniformly set to 
+\qty{25}{\angstrom}$\times$\qty{25}{\angstrom}$\times$\qty{25}{\angstrom} for all targets, larger boxes (e.g., \qty{30}{\angstrom} cube) may be warranted to 
+capture peripheral binding interactions for membrane transporters such as PfCRT and PfATP4. Second, protein protonation states were assigned at pH 7.4 without 
+explicit pKa calculations for active-site residues, which may affect hydrogen-bond predictions; PfCRT functions in the acidic digestive vacuole (pH~5.0--5.4), 
+and its protonation state is a specific concern. To quantify this impact, we re-protonated the PfCRT structure at pH 5.2 using pKa predictions from 
+PROPKA3~\cite{Olsson2011} followed by PDBFixer~\cite{Eastman2017} and re-docked the top~100 PfCRT-targeted candidates. Eight active-site residues exhibited 
+shifted protonation states at vacuolar pH (ASP271, pKa~6.27; ASP274, pKa~7.05; GLU49, pKa~7.35; GLU143, pKa~6.53; GLU177, pKa~6.10; HIS68, pKa~6.18; HIS125, 
+pKa~5.78; HIS218, pKa~6.74). The ranking correlation between pH~7.4 and pH~5.2 docking scores was moderate (Spearman $\rho = \num{0.270}$, $p = \num{0.007}$), 
+with a systematic shift of \qty{+2.2}{\kilo\calorie\per\mole} in mean affinity, consistent with fewer charge-assisted interactions under acidic conditions. This 
+confirms that pH correction measurably alters PfCRT rankings and is recommended for future PfCRT-targeted campaigns. Other targets operate at neutral pH and are 
+unaffected. Third, all docking was performed against single static crystal structures without accounting for protein conformational ensembles or resistance 
+mutations (e.g., PfCRT K76T/K76A, PfDHFR N51I/C59R/S108N/I164L). Molecular dynamics simulations would be needed to validate top candidates against these 
+mutations and assess their resilience to these mutations. Fourth, centroid-based sampling may not fully capture activity cliffs within clusters where minor 
+structural changes produce large potency differences; the twofold intra- over inter-cluster Tanimoto separation (mean \num{0.227} vs \num{0.101}) indicates 
+coherent clustering, but we recommend full-cluster rescoring for top-priority clusters during hit-to-lead optimization. We performed this rescoring for the 
+top-20 MPO clusters (\num{1815} molecules) and confirmed smooth landscapes ($\sigma \leq \qty{0.38}{\kilo\calorie\per\mole}$) with no activity cliffs detected, 
+while the best member consistently outperformed its centroid ($\Delta$ up to \qty{-0.66}{\kilo\calorie\per\mole}), confirming the approach's validity. Fifth, 
+the \num{19913} synthesizable leads require experimental IC$_{50}$ testing before any biological conclusions can be drawn. Sixth, polypharmacology predictions 
+(multiple multi-target candidates) are computational hypotheses that require orthogonal experimental confirmation (enzyme assays, cellular phenotypic screens). 
+Seventh, the prospective DEKOIS external validation (PfDHFR, Vina only) achieved ROC-AUC \num{0.450}---near-random enrichment---confirming that AutoDock Vina 
+docking alone cannot discriminate actives from property-matched decoys \cite{Bauer2013}. The consensus MMV enrichment (ROC-AUC \numrange{0.924}{1.000}) 
+incorporates DiffDock ML rescoring, which provides the critical enrichment gain; however, the MMV benchmark remains a positive-control (in-distribution) rather 
+than a fully independent decoy set. The consensus enrichment is also dominated by PfCRT, which accounts for \qty{87.0}{\percent} (\num{421}/\num{484}) of 
+centroid target assignments, whereas only \qty{2.7}{\percent} (\num{13}/\num{484}) of centroids are selected by PfDHFR; the per-target spread in consensus 
+performance (ROC-AUC \num{0.924} for PfDHFR versus \num{1.000} for PfATP4 and PfClpP) therefore reflects the ML-based DiffDock rescoring compensating for the 
+per-target weaknesses of Vina scoring, rather than uniform predictive accuracy across all four targets. Prospective experimental validation of top-ranked 
+compounds against \textit{Pf} 3D7 and drug-resistant strains is therefore essential to confirm the protocol's discriminative power.
+
+Eighth, the PfCRT structure used for docking (PDB: 6UKJ) corresponds to the 3D7 isoform; the chloroquine-resistant 7G8 isoform prevalent in field isolates 
+differs by four key mutations (C72S, K76T, A220S, N326D) that significantly alter the drug-binding pocket geometry. Docking against the 3D7 isoform may not 
+fully recapitulate the binding landscape of the 7G8 variant, and prospective studies should consider isoform-specific docking. Similarly, the PfATP4 docking was 
+performed against an apo-like inward-facing conformation (PDB: 9N10), which may not capture the outward-facing (E2) state critical for ATP-dependent ion efflux. 
+The E1/E2 conformational cycle presents substantially different binding cavities at the membrane-cytosol interface, and our static apo-structure docking cannot 
+account for this conformational plasticity. Membrane-embedded molecular dynamics simulations would also be needed to address these limitations, capture 
+induced-fit stabilization, and account for conformational plasticity of the membrane transporters.
+
+\section{Conclusion}
+
+This study establishes a resource-efficient computational framework for antimalarial drug discovery by integrating deep generative chemistry with a dual-filter 
+consensus docking and multi-parameter optimization (MPO) approach. By employing variational autoencoder (VAE) clustering for centroid-based sampling and 
+Metropolis-Hastings MCMC for latent space exploration, we substantially reduced virtual screening costs. Prospective DEKOIS PfDHFR docking (Vina only, ROC-AUC 
+\num{0.450}) establishes that structure-based docking alone cannot discriminate actives from property-matched decoys; the higher consensus-score ROC-AUC 
+(\numrange{0.924}{1.000}) against the MMV Malaria Box positive-control set is consistent with --- but does not directly demonstrate, as the consensus was not 
+run on the DEKOIS set --- the ML-based DiffDock rescoring providing the enrichment gain. Local exploration of the VAE latent space yielded a modest MPO gain 
+(mean \num{+0.009}, best chain \num{+0.025}) on a weak surrogate (R\textsuperscript{2} \num{0.377}). This methodology enables the systematic exploration of 
+massive molecular libraries (e.g., \num{65856} molecules) using standard hardware, addressing a fundamental computational bottleneck in the characterization of 
+diverse chemical spaces.
+
+Our results demonstrate the effectiveness of combining African natural product motifs with synthetic drug optimization through hybrid pharmacophore design. The 
+identification of \num{19913} leads predicted to be synthesizable (from \num{53} unique clusters, mean cluster size \num{763.8}) with favorable predicted 
+selectivity and drug-likeness confirms that generative expansion can preserve privileged bioactive scaffolds while substantially diversifying chemical space. 
+The contrast between the DEKOIS external validation (AUC \num{0.450} for Vina only) and the MMV consensus enrichment (AUC \numrange{0.924}{1.000}, the latter a 
+retrodictive consistency check rather than external discrimination) is consistent with the ML-based DiffDock rescoring providing the enrichment gain over naive 
+docking, though this is inferred across benchmarks rather than demonstrated by running the consensus on the DEKOIS set; the protocol nonetheless prioritizes 
+candidates across essential \textit{P. falciparum} resistance targets including DHFR, CRT, and ATP4.
+
+The accessibility of validated virtual screening protocols presented here offers a resource-efficient approach to drug discovery in resource-limited settings. 
+By reducing the reliance on massive high-performance computing infrastructure, this framework enables researchers in malaria-endemic regions to systematically 
+prioritize local chemical space for antimalarial candidates. Ultimately, the open-source implementation and computational prioritization of multiple 
+antimalarial leads provide a foundation for collaborative drug development efforts targeting drug-resistant malaria and other neglected tropical diseases.
+
+% ACS-style back matter sections
+
+\section*{Supporting information}
+Supporting information available at the publisher's website. Supplementary Tables~\ref{SM-tab:scaffolds}, \ref{SM-tab:selectivity}, \ref{SM-tab:cyp450}, 
+\ref{SM-tab:stage_activity}, \ref{SM-tab:pca}, \ref{SM-tab:scaffold_recovery}, \ref{SM-tab:fsp3}, \ref{SM-tab:druglikeness}, \ref{SM-tab:consensus_hits}, 
+\ref{SM-tab:source_breakdown}, \ref{SM-tab:pca_variance}, \ref{SM-tab:tanimoto_novelty}, \ref{SM-tab:diffdock_vina_correlation}, 
+\ref{SM-tab:diversity_comparison}, \ref{SM-tab:virtual_screening}, \ref{SM-tab:sm_s16_admet_crossval}, \ref{SM-tab:sm_s17_mpo_sensitivity}, 
+\ref{SM-tab:sm_s18_expansion_sensitivity}, \ref{SM-tab:sm_s18b_chembl_enrichment}, \ref{SM-tab:sm_s21_polypharm}, \ref{SM-tab:sm_s20_retrosynthesis}, 
+\ref{SM-tab:mmv_validation}, \ref{SM-tab:redocking_validation}, \ref{SM-tab:consensus}, \ref{SM-tab:computational_comparison}, 
+\ref{SM-tab:clustering_comparison}, and \ref{SM-tab:vae_comparison} and Supplementary Figures~\ref{SM-fig:vae_training}, \ref{SM-fig:clustering_quality}, 
+\ref{SM-fig:enrichment_curves}, \ref{SM-fig:interaction_leads}, \ref{SM-fig:redocking_rmsd}, \ref{SM-fig:consensus_comparison}, 
+\ref{SM-fig:consensus_correlation}, \ref{SM-fig:sm_s15_top10_structures}, \ref{SM-fig:si_umap_latent}, and \ref{SM-fig:si_phys_chem_clus}. MPO equations 
+archived in repository.
+
+\section*{Author Contributions}
+Conceptualization and methodology, M.V.S.T. and S.G.N.E.; software, M.V.S.T. and J.-P.T.N., P.S.; validation, M.V.S.T., J.-P.T.N. and W.F.M.; formal analysis 
+and investigation, M.V.S.T. and S.G.N.E.; resources, S.G.N.E. and W.F.M., P.S.; data curation, M.V.S.T.; writing--original draft preparation, M.V.S.T.; 
+writing--review and editing, M.V.S.T., J.-P.T.N., P.S., W.F.M. and S.G.N.E.; visualization, M.V.S.T.; supervision, S.G.N.E. and W.F.M.; project administration, 
+S.G.N.E. All authors read and agreed to the published version.
+
+\section*{Notes}
+An AI language model (Claude, Anthropic) was used to assist with manuscript formatting, including condensing the abstract and title to meet journal length 
+requirements. All AI-generated suggestions were critically reviewed, modified, and approved by
+the authors. The scientific content, data analysis, methodology, and interpretation are entirely the work of the authors.
+
+The authors declare no competing financial interest.
+
+\section*{Funding}
+This research received no external funding.
+
+\section*{Acknowledgments}
+We acknowledge the Ersilia Open Source Initiative (\url{https://www.ersilia.io}, accessed on December 2025) for machine learning models, ChEMBL and DrugBank 
+for compound data, MMV for Malaria Box, and RDKit.
+
+\section*{Data availability}
+SMILES strings for all \num{65856} compounds and primary lead structures are available in the Supplementary Materials. 3D ligand structures, computational 
+workflows, and raw docking results have been deposited on Zenodo (DOI: \\url{https://doi.org/10.5281/zenodo.19608875}) and are also archived in the project 
+repository (\url{https://github.com/Vital-Sao/Malaria_codes}, accessed on 16 April 2026). The dataset is FAIR-compliant: \textbf{Findable} (permanent DOI via 
+Zenodo), \textbf{Accessible} (freely downloadable without login), \textbf{Interoperable} (open formats: CSV, SMILES, PDB, PDBQT), and \textbf{Reusable} (CC BY 
+4.0 license). While raw enrichment metric CSVs are not archived as standalone files, the source datasets for docking threshold calibration 
+(\texttt{p1\_threshold\_calibration.csv}) and MMV Malaria Box target consensus docking are fully provided in the repository to support reproducibility.
+
+\bibliography{../bibliography/Sao_Chim_Space}
+
+\begin{tocentry}
+\includegraphics{graphical_abstract.png}
+\end{tocentry}
+
+\end{document}
+
