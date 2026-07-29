@@ -1,6 +1,15 @@
 # ============================================================================
 # MALARIA PROJECT .gitignore
 # ============================================================================
+#
+# REPOSITORY POLICY (Updated July 2026):
+# 1. Manuscripts: Full content of every manuscript/ folder is committed,
+#    including .tex, graphics (.pdf/.png/.jpg/.eps), .bib, etc.  Only
+#    LaTeX auxiliary files (see the LaTeX section below) are excluded.
+# 2. Data & Results: All data/ and results/ subdirectories are committed.
+#    Only genuinely heavy files (MD trajectories, docking poses, model
+#    weights, large logs, archives, temporary build files) are excluded.
+# ============================================================================
 
 # ============================================================================
 # Python & Development
@@ -120,34 +129,22 @@ vfvs_env/
 *_backup.csv
 *_2026*.csv
 *.backup
-# Large/generated project directories
-Project1_Chem_space_antimalarial_V2_CorrectedGrid/data/
-Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/
+# Per-project utility/cache directories (not data/results)
 Project1_Chem_space_antimalarial_V2_CorrectedGrid/logs/
-# Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/  # REMOVED 2026-07-23 — CSV/TXT now tracked
 Project1_Chem_space_antimalarial_V2_CorrectedGrid/output/
 Project1_Chem_space_antimalarial_V2_CorrectedGrid/graphify-out/
 Project1_Chem_space_antimalarial_V2_CorrectedGrid/pdb_prep_Jul7/
 Project1_Chem_space_antimalarial_V2_CorrectedGrid/.archive_*/
 Project2_Polypharmacology_MD_ValidationV2607/HPC_ready/
-Project2_Polypharmacology_MD_ValidationV2607/MD_systems/
 Project2_Polypharmacology_MD_ValidationV2607/Tuto_MD_MC/
-Project2_Polypharmacology_MD_ValidationV2607/data/external/
-Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/
-Project2_Polypharmacology_MD_ValidationV2607/data/proteins/
 Project2_Polypharmacology_MD_ValidationV2607/docs/
 Project2_Polypharmacology_MD_ValidationV2607/environments/
-Project2_Polypharmacology_MD_ValidationV2607/manuscript/Methods/
-# Project2_Polypharmacology_MD_ValidationV2607/results/  # REMOVED 2026-07-23 — CSV/TXT now tracked
-# Project3_Quantum_Inspired_RepresentationsV2607/results/  # REMOVED 2026-07-23 — CSV/TXT now tracked
-# Project4_Advanced_Monte_CarloV2607/results/  # REMOVED 2026-07-23 — CSV/TXT now tracked
-# Top-level generated/cache directories
-data/
+# Top-level utility/cache directories (data/ and results/ are committed)
 docs/
 graphify-out/
 local_askcos/
-# Manuscript figure directories (generated PNGs/PDFs)
-# Ignore generated PNG figures in manuscript directories
+# NOTE: Manuscript .tex, .pdf, .png, .jpg, .eps, and .bib files are tracked.
+# Only LaTeX auxiliary files (see the LaTeX section above) are ignored.
 
 # Temporary status files
 compile
@@ -231,13 +228,13 @@ ehthumbs.db
 site-packages/
 
 # ============================================================================
-# LaTeX
+# LaTeX AUXILIARY FILES ONLY
+# Manuscript .tex, .pdf, .png, .jpg, .eps, .bib files are tracked.
 # ============================================================================
 *.aux
 *.bbl
 *.blg
 *.dvi
-*.eps
 *.fdb_latexmk
 *.fls
 *.lof

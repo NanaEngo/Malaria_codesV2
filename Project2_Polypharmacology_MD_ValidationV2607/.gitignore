@@ -1,6 +1,15 @@
 # ============================================================================
 # MALARIA PROJECT 2 .gitignore - MD Validation & Polypharmacology
 # ============================================================================
+#
+# REPOSITORY POLICY (Updated July 2026):
+# 1. Manuscripts: Full content of every manuscript/ folder is committed,
+#    including .tex, graphics (.pdf/.png/.jpg/.eps), and .bib files.
+#    Only LaTeX auxiliary files (see LaTeX section below) are excluded.
+# 2. Data & Results: All data/ and results/ subdirectories are committed.
+#    Only genuinely heavy files (MD trajectories, docking poses, model
+#    weights, large logs, archives) are excluded by extension.
+# ============================================================================
 
 # Specific large/generated dataset
 data/raw/merged_cheese_prop.csv
@@ -59,9 +68,8 @@ vfvs_env/
 # ============================================================================
 # PROJECT 2 SPECIFIC: MD Simulation Data
 # ============================================================================
-# Large trajectory files (multi-GB each)
-results/trajectories/
-results/md_outputs/
+# Heavy MD files are excluded by extension below; data/ and results/
+# directories themselves are committed per repository policy.
 *.xtc
 *.trr
 *.gro
@@ -74,25 +82,20 @@ results/md_outputs/
 *.ndx
 
 # MM-GBSA outputs (can be large)
-results/mmpbsa/
 *.mmpbsa
-*.dat
+results/mmpbsa/*.dat
 
 # Docking results (large pose files)
-results/docking/
-results/vina_outputs/
-*.pdbqt
-*.dlg
+# *.pdbqt and *.dlg are excluded at repository level; keep this project
+# directory committed per repository policy.
 
 # Protein structure files (large)
-data/proteins/prepared/
-data/proteins/mutants/
-data/md_inputs/systems/
+# Excluded by extension (*.xtc, *.trr, *.gro, etc.) above; prepared/
+# and mutants/ subdirectories are committed per repository policy.
 
 # Large analysis outputs
-results/analysis/raw_data/
-results/analysis/trajectories/
-results/metrics/raw_calculations/
+# results/analysis/ subdirectories are committed per repository policy;
+# only heavy file formats (*.dat, archives) are excluded.
 
 # Temporary MD files
 *.backup
@@ -239,20 +242,19 @@ ehthumbs.db
 site-packages/
 
 # ============================================================================
-# LaTeX
+# LaTeX AUXILIARY FILES ONLY
+# Manuscript .tex, .pdf, .png, .jpg, .eps, and .bib files are tracked.
 # ============================================================================
 *.aux
 *.bbl
 *.blg
 *.dvi
-*.eps
 *.fdb_latexmk
 *.fls
 *.lof
 *.lot
 *.nav
 *.out
-*.pdf
 *.ps
 *.snm
 *.synctex.gz
@@ -305,45 +307,7 @@ bmad_state/
 bmad_cache/
 .bmad-cache/
 .bmad-sessions/
-# Additional GitHub collaboration exclusions
+# Additional GitHub collaboration exclusions (kept minimal)
 # ============================================================================
-# Temporary files
-*.tmp
-*.temp
-*.swp
-*.swo
-*~
-
-# IDE and editor files
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
-
-# OS specific files
-.DS_Store
-Thumbs.db
-ehthumbs.db
-
-# Backup files
-*.bak
-*.backup
-*.orig
-*.rej
-
-# Log files
-nohup.out
-
-# Compressed files (unless specifically needed)
-*.zip
-*.tar.gz
-*.tgz
-*.rar
-
-# Large data files that should be tracked via Git LFS or external storage
-*.h5
-*.hdf5
-*.pkl
-*.pickle
-*.npy
-*.npz
+# Note: Common IDE/OS/Python exclusions are already defined in the root
+# .gitignore; only project-specific additions should go here.
