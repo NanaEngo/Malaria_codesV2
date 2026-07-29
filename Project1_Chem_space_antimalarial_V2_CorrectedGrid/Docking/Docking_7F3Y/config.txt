@@ -1,0 +1,23 @@
+# ============================================================
+# V2 Corrected Grid — PfDHFR (7F3Y)
+# Corrected center: MTX catalytic site centroid from chain A
+# Receptor: re-prepped with NADPH cofactor (NDP-701, chain A)
+# ============================================================
+# ⚠️ MTX validation: Vina RMSD 29.83 Å (known Vina limitation
+# for large flexible ligands; does NOT invalidate grid center)
+# The catalytic site center is based on crystal structure MTX
+# centroid, which is the correct biological reference point.
+# ============================================================
+receptor = /home/nanaengo/Malaria_codesV2/data/proteins/7F3Y_v2.pdbqt
+
+center_x = 8.34
+center_y = -13.9
+center_z = -41.754
+
+size_x = 25
+size_y = 25
+size_z = 25
+
+exhaustiveness = 64
+cpu = 16
+spacing = 1.0

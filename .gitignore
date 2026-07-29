@@ -300,6 +300,20 @@ ehthumbs.db
 *.lock
 site-packages/
 
+# SLURM / HPC job logs
+*.err
+*.out
+
+# Editor / temporary Python files
+.*.py.*
+
+# Job checkpoints and progress flags
+*checkpoint*.csv
+*.flag
+
+# Timestamped archive directories
+archive_*/
+
 # ============================================================================
 # LaTeX AUXILIARY FILES ONLY
 # Manuscript .tex, .pdf, .png, .jpg, .eps, .bib files are tracked.
