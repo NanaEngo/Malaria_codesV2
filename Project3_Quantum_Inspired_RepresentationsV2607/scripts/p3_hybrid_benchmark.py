@@ -389,6 +389,62 @@ def _kernel_matrix_chunked(X: np.ndarray,
 
 
 # ---------------------------------------------------------------------------
+# Rectangular chunked kernel matrix (for test projection)
+# ---------------------------------------------------------------------------
+
+def _compute_block_task_xy(i0: int, i1: int, j0: int, j1: int,
+                            X: np.ndarray, Y: np.ndarray,
+                            n_qubits: int, n_repeats: int) -> np.ndarray:
+    """Compute one rectangular block of the kernel matrix K(X, Y)."""
+    _kfn = _get_kernel_fn(n_qubits, n_repeats)
+    return kernel_matrix(X[i0:i1], Y[j0:j1], _kfn)
+
+
+def _kernel_matrix_chunked_xy(X: np.ndarray, Y: np.ndarray,
+                                block_size: int = 200,
+                                n_jobs: int = 1,
+                                n_qubits: int = 8,
+                                n_repeats: int = 1) -> np.ndarray:
+    """Chunked kernel matrix for rectangular inputs (e.g., test x train).
+
+    Uses joblib Parallel over (block_size x block_size) sub-matrices.
+    No symmetry assumption; every block is computed explicitly.
+    """
+    n_x, n_y = len(X), len(Y)
+    x_ranges = [(i * block_size, min((i + 1) * block_size, n_x))
+                for i in range((n_x + block_size - 1) // block_size)]
+    y_ranges = [(j * block_size, min((j + 1) * block_size, n_y))
+                for j in range((n_y + block_size - 1) // block_size)]
+
+    tasks = []
+    task_idx = []
+    for ib, (i0, i1) in enumerate(x_ranges):
+        for jb, (j0, j1) in enumerate(y_ranges):
+            tasks.append((i0, i1, j0, j1))
+            task_idx.append((ib, jb))
+
+    print(f"        Rectangular QK matrix: {n_x}x{n_y}, block_size={block_size}, n_jobs={n_jobs}, n_repeats={n_repeats}")
+
+    if n_jobs == 1:
+        results = [_compute_block_task_xy(i0, i1, j0, j1, X, Y, n_qubits, n_repeats)
+                   for i0, i1, j0, j1 in tasks]
+    else:
+        from joblib import Parallel, delayed
+        results = Parallel(n_jobs=n_jobs)(
+            delayed(_compute_block_task_xy)(i0, i1, j0, j1, X, Y, n_qubits, n_repeats)
+            for i0, i1, j0, j1 in tasks
+        )
+
+    K = np.zeros((n_x, n_y), dtype=np.float64)
+    for (ib, jb), block in zip(task_idx, results):
+        i0, i1 = x_ranges[ib]
+        j0, j1 = y_ranges[jb]
+        K[i0:i1, j0:j1] = block
+
+    return K
+
+
+# ---------------------------------------------------------------------------
 # QK features (per-fold, no data leakage)
 # ---------------------------------------------------------------------------
 
@@ -474,19 +530,31 @@ def _qk_features_fold(X_ecfp_tr: np.ndarray, X_ecfp_te: np.ndarray,
     qk_tr = kpca.fit_transform(K_tr_psd)
 
     # Step 6: Transform test via kernel + KPCA projection
-    # Test matrix is usually smaller, use direct computation
-    dev_te = qml.device("lightning.qubit", wires=n_qubits)
+    # Use chunked parallel computation if either dimension is large
+    n_te, n_tr = X_q_te.shape[0], X_q_tr.shape[0]
+    if _bs is not None and (n_te > _bs or n_tr > _bs):
+        print("        Computing test kernel matrix (chunked)...")
+        K_te = _kernel_matrix_chunked_xy(
+            X_q_te, X_q_tr,
+            block_size=_bs,
+            n_jobs=n_jobs,
+            n_qubits=n_qubits,
+            n_repeats=n_repeats,
+        )
+    else:
+        # Test matrix is small, use direct computation
+        dev_te = qml.device("lightning.qubit", wires=n_qubits)
 
-    @qml.qnode(dev_te)
-    def _kernel_te(x1, x2):
-        qml.IQPEmbedding(x1, wires=range(n_qubits), n_repeats=n_repeats)
-        qml.adjoint(qml.IQPEmbedding)(x2, wires=range(n_qubits), n_repeats=n_repeats)
-        return qml.probs(wires=range(n_qubits))
+        @qml.qnode(dev_te)
+        def _kernel_te(x1, x2):
+            qml.IQPEmbedding(x1, wires=range(n_qubits), n_repeats=n_repeats)
+            qml.adjoint(qml.IQPEmbedding)(x2, wires=range(n_qubits), n_repeats=n_repeats)
+            return qml.probs(wires=range(n_qubits))
 
-    def kernel_fn_te(a, b):
-        return float(_kernel_te(a, b)[0])
+        def kernel_fn_te(a, b):
+            return float(_kernel_te(a, b)[0])
 
-    K_te = kernel_matrix(X_q_te, X_q_tr, kernel_fn_te)
+        K_te = kernel_matrix(X_q_te, X_q_tr, kernel_fn_te)
     qk_te = kpca.transform(K_te)
 
     # Normalise to unit variance (for stable weighting across folds)
@@ -731,6 +799,8 @@ def main():
                         help="Use only base H features for TFP (no pers_img or betti curves)")
     parser.add_argument("--checkpoint", type=str, default=None,
                         help="Path to JSON checkpoint for fold-by-fold resume (default: None)")
+    parser.add_argument("--skip-ablation", action="store_true",
+                        help="Skip the ablation study (useful for the expensive full-library run)")
     args = parser.parse_args()
 
     DEVICE = "lightning.qubit"  # system-wide PennyLane device
@@ -874,30 +944,31 @@ def main():
     gc.collect()
 
     # Ablation study (per-fold QK, no data leakage)
-    print("\n  Running ablation study...")
-    ablation_records = []
-    for removed in ["TFP", "TNE", "QK"]:
-        ablation_records.extend(_cv_score_ablation_hybrid(
-            X_ecfp, X_tfp, X_tne, y,
-            remove=removed,
-            n_qubits=N_QUBITS,
-            n_kpca=args.n_kpca,
-            n_repeats=args.n_repeats,
-            block_size=args.block_size,
-            n_jobs=args.n_jobs,
-            checkpoint_path=args.checkpoint,
-            completed_folds=ablation_done.get(removed, set()),
-        ))
+    ablation_records: list[dict] = []
+    if not args.skip_ablation:
+        print("\n  Running ablation study...")
+        for removed in ["TFP", "TNE", "QK"]:
+            ablation_records.extend(_cv_score_ablation_hybrid(
+                X_ecfp, X_tfp, X_tne, y,
+                remove=removed,
+                n_qubits=N_QUBITS,
+                n_kpca=args.n_kpca,
+                n_repeats=args.n_repeats,
+                block_size=args.block_size,
+                n_jobs=args.n_jobs,
+                checkpoint_path=args.checkpoint,
+                completed_folds=ablation_done.get(removed, set()),
+            ))
 
-    abl_df = pd.DataFrame(ablation_records)
-    # ── gzip-compressed ablation output (R14) ────────────────────
-    abl_out = RESULTS_DIR / "p3_ablation.csv.gz"
-    abl_df.to_csv(abl_out, index=False, compression="gzip")
-    abl_out_uncomp = RESULTS_DIR / "p3_ablation.csv"
-    abl_df.to_csv(abl_out_uncomp, index=False)
-    print(f"  Saved: {abl_out} (compressed), {abl_out_uncomp} (plain)")
-    del abl_df
-    gc.collect()
+        abl_df = pd.DataFrame(ablation_records)
+        # ── gzip-compressed ablation output (R14) ────────────────────
+        abl_out = RESULTS_DIR / "p3_ablation.csv.gz"
+        abl_df.to_csv(abl_out, index=False, compression="gzip")
+        abl_out_uncomp = RESULTS_DIR / "p3_ablation.csv"
+        abl_df.to_csv(abl_out_uncomp, index=False)
+        print(f"  Saved: {abl_out} (compressed), {abl_out_uncomp} (plain)")
+        del abl_df
+        gc.collect()
 
     # Summary
     lines = ["Hybrid: per-fold QK (no data leakage); RF is scale-invariant (no weights)", ""]
