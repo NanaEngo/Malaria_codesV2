@@ -1,0 +1,20 @@
+======================================================================
+P3 Physical Validation — P3_Strategic_85PA.md Implementation
+======================================================================
+[load] Tartarus: /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/tartarus_output.csv
+       17,083 molecules with >=1 valid (negative) docking score.
+[load] TNE: /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/p3_tne_embeddings.csv
+       19,836 molecules, 192-dim TNE.
+[merge] 17,011 molecules in merged dataset.
+       Saved merged index: /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/p3_physical_validation/p3_merged_dataset.csv
+
+======================================================================
+Step 3 — REAL Quantum Kernel (IQPEmbedding) Polypharmacology Benchmark
+         n=1000, 10-fold stratified CV, n_repeats=1
+======================================================================
+  Class=1 prevalence (>=2 targets bound): 2,043/17,011 (12.0%)
+  Stratified subsample (natural prevalence): n=1000, active=120 (12.0%) — preserves the ~12.0% population rate
+  ECFP4 features: (1000, 2048)
+
+  Fold 1/10  (train=900, test=100, test_pos=12)
+    [QKS] Building kernel matrix (900x900)...

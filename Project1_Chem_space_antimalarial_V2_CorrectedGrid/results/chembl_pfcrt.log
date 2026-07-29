@@ -1,0 +1,25 @@
+
+============================================================
+Part B: ChEMBL-Confirmed Antimalarial Benchmark
+============================================================
+
+  Target: PfCRT_6UKJ (6UKJ, CHEMBL1795182)
+  Fetching ChEMBL bioactivities for CHEMBL1795182...
+  CHEMBL1795182: 34 standardised IC50 records (from 242 total activities).
+  Actives (IC₅₀ < 1 µM):   12 unique compounds
+  Inactives (IC₅₀ > 10 µM): 19 unique compounds
+  Docking 31 compounds against PfCRT_6UKJ...
+/home/nanaengo/miniforge3/envs/malaria_md/lib/python3.11/site-packages/meeko/preparation.py:693: DeprecationWarning: MoleculePreparation.write_pdbqt_string() is deprecated in Meeko v0.5. Pass the MoleculeSetup instance to PDBQTWriterLegacy.write_string(). MoleculePreparation.prepare() returns a list of MoleculeSetup instances.
+  warnings.warn(msg, DeprecationWarning)
+/home/nanaengo/miniforge3/envs/malaria_md/lib/python3.11/site-packages/meeko/preparation.py:467: DeprecationWarning: MoleculePreparation.setup is deprecated in Meeko v0.5. MoleculePreparation.prepare() returns a list of MoleculeSetup instances.
+  warnings.warn(msg, DeprecationWarning)
+  GOOD hit rate — Actives: 100.0% | Inactives: 100.0% | Fold: 1.00x
+  EXCELLENT hit rate — Actives: 100.0% | Inactives: 68.4% | Fold: 1.46x
+
+  Saved: /home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarialV2607/results/p1_enrichment_chembl_benchmark.csv
+
+  Summary saved: /home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarialV2607/results/p1_enrichment_summary.txt
+
+============================================================
+✅ Enrichment validation complete!
+============================================================

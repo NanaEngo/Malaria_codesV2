@@ -1,0 +1,17 @@
+C8: PCA Explained Variance
+========================================
+Method: sklearn PCA on 9 standardised molecular descriptors
+Descriptors: molecular_weight, logP, hydrogen_bond_acceptors, hydrogen_bond_donors, tpsa, QED, sa_score, rotatable_bonds, stereo_centers
+Molecules: 850
+
+pca_1: 0.5171 (51.7%)  cumulative: 51.7%
+pca_2: 0.1757 (17.6%)  cumulative: 69.3%
+pca_3: 0.1305 (13.1%)  cumulative: 82.3%
+pca_4: 0.0686 (6.9%)  cumulative: 89.2%
+
+PC1-3 explained variance: 82.3%
+
+NOTE: PC1 >= PC2 >= PC3 >= PC4 by construction (sklearn PCA).
+      Pre-stored pca_1..pca_4 coordinate columns in eos9gg2 file
+      are NOT ordered by variance — do not use their column variance
+      as explained variance ratios.

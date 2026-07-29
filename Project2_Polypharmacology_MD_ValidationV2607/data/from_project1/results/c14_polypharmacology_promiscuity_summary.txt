@@ -1,0 +1,34 @@
+Polypharmacology vs. Promiscuity Analysis (R8b)
+==================================================
+
+Top-20 Candidate Classification:
+
+                      Beneficial:   0 (0%)
+                       Uncertain:   0 (0%)
+                     Promiscuous:   0 (0%)
+       Single-target (optimized):  20 (100%)
+
+Safety Statistics:
+
+  herg: mean=0.117, median=0.118
+  cyp3a4: mean=0.061, median=0.013
+  logS: mean=0.587, median=0.602
+
+Key Findings:
+
+1. All 20 top-ranked compounds are single-target optimized molecules
+   selected for high MPO score, excellent drug-likeness (QED > 0.9),
+   and high synthetic accessibility (SA < 2.7).
+
+2. No safety flags were triggered — all compounds are within acceptable
+   ranges for hERG, CYP3A4, and selectivity index.
+
+3. The >70 polypharmacological candidates identified in the full library
+   are distinct from the top-20. They arise from K-Means centroids that
+   achieved MPO ≥ 0.50 against multiple targets simultaneously.
+
+4. Of the >70 polypharmacological candidates, detailed classification
+   requires multi-target docking and ADMET prediction for each compound.
+   This analysis is planned for the full library post-R1-A enrichment.
+
+Note: All values are computational estimates requiring experimental validation.

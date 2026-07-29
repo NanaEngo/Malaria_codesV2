@@ -1,0 +1,70 @@
+============================================================
+P3 — MC Dropout Uncertainty Quantification
+  Molecules:      500
+  MC samples:     50
+  Dropout rate:   0.3
+============================================================
+
+  Loading data...
+  500 molecules (active=307, inactive=193)
+  Loading features...
+    TFP loaded: (500, 12)
+    TNE loaded: (500, 192)
+  Feature matrix: (500, 204)
+  Train: 300  Calibration: 100  Test: 100
+
+  Training Standard RF (n_estimators=200) on Train+Cal...
+  Standard RF AUC: 0.5452
+
+  Bootstrap MC (50 samples, subsample_frac=0.7, n_trees=30)...
+    MC sample 25/50
+    MC sample 50/50
+  MC done in 2.0s
+
+  Bootstrap MC AUC:  0.5443
+  Accuracy:          0.6100
+  F1:                0.7578
+  Mean uncertainty:  0.0488
+  Conformal coverage: 0.950 (target 0.95)
+  Avg prediction set size: 1.820
+  Brier score:       0.2346
+  Uncertainty-error ρ: -0.286 (p=0.0039)
+
+  Saved: /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/p3_mc_uncertainty.csv
+  Computing calibration curve...
+  Saved: /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/p3_mc_uncertainty.png
+
+Bootstrap MC Uncertainty Quantification
+==================================================
+Descriptor:           TFP+TNE
+Test molecules:       100
+MC bootstrap samples: 50
+Subsample fraction:   0.7
+Trees per bootstrap:  30
+
+Standard RF (Train+Cal):
+  AUC:                0.5452
+
+Bootstrap MC:
+  AUC:                0.5443
+  Accuracy:           0.6100
+  F1:                 0.7578
+  Brier score:        0.2346
+  Mean uncertainty:   0.0488
+  Expected Calibration Error (ECE): 0.0037
+
+Conformal Prediction (α=0.05):
+  Coverage:           0.950 (target: 0.950)
+  Avg set size:       1.820 (1.0 = always singleton, 2.0 = always both)
+  Quantile threshold: 0.6359
+
+  Uncertainty-error Spearman ρ: -0.286 (p=0.0039)
+
+Interpretation:
+  ✓ ECE < 0.05 — probabilities are well-calibrated.
+  ✓ Conformal coverage 95.0% ≥ 90% — prediction intervals are reliable.
+  △ Avg set size ≥ 1.3 — many predictions are ambiguous (both classes plausible).
+  △ Weak or non-significant uncertainty-error correlation.
+  Saved: /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/p3_mc_uncertainty_summary.txt
+
+  Total wall time: 4.5s

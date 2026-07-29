@@ -1,0 +1,57 @@
+/home/nanaengo/miniforge3/envs/malaria_md/lib/python3.11/site-packages/pennylane/__init__.py:219: PennyLaneDeprecationWarning: PennyLane v0.44 has dropped maintainence support for NumPy < 2.0.0. You have version 1.26.4 installed. Future versions of PennyLane will not work with NumPy<2.0. Please consider upgrading NumPy using `python -m pip install numpy --upgrade`. 
+  warnings.warn(
+============================================================
+Paper 3 — GA Discriminator vs Quantum Kernel
+  Device:    lightning.qubit
+  Seeds:     200
+  N values:  [50, 100, 200, 500]
+  Mutations: 2
+============================================================
+
+  Loading reference molecules...
+  Reference: 200 valid (active=105, inactive=95)
+
+  Building quantum kernel (device=lightning.qubit)...
+
+  --- N=50 generated molecules ---
+  Generating 50 molecules via SELFIES mutations...
+  Generated: 50 valid / 50 requested
+  ECFP4 Tanimoto discriminator AUC: 1.0000
+  Computing quantum kernel (200x200)...
+  Quantum kernel discriminator AUC: 0.4252
+
+  --- N=100 generated molecules ---
+  Generating 100 molecules via SELFIES mutations...
+  Generated: 100 valid / 100 requested
+  ECFP4 Tanimoto discriminator AUC: 1.0000
+  Computing quantum kernel (200x200)...
+  Quantum kernel discriminator AUC: 0.4811
+
+  --- N=200 generated molecules ---
+  Generating 200 molecules via SELFIES mutations...
+  Generated: 200 valid / 200 requested
+  ECFP4 Tanimoto discriminator AUC: 1.0000
+  Computing quantum kernel (200x200)...
+  Quantum kernel discriminator AUC: 0.4755
+
+  --- N=500 generated molecules ---
+  Generating 500 molecules via SELFIES mutations...
+  Generated: 500 valid / 500 requested
+  ECFP4 Tanimoto discriminator AUC: 1.0000
+  Computing quantum kernel (200x200)...
+  Quantum kernel discriminator AUC: 0.5114
+
+  Saved: /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/p3_ga_discriminator.csv
+
+GA Discriminator vs Quantum Kernel (AUC-ROC comparison)
+Device: lightning.qubit | Seeds: 200 | Mutations/mol: 2
+
+ N_gen    AUC_Tanimoto      AUC_QK     Delta
+---------------------------------------------
+    50          1.0000      0.4252   -0.5748
+   100          1.0000      0.4811   -0.5189
+   200          1.0000      0.4755   -0.5245
+   500          1.0000      0.5114   -0.4886
+
+  Summary saved: /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/p3_ga_discriminator.txt
+  Plot skipped: No module named 'matplotlib'

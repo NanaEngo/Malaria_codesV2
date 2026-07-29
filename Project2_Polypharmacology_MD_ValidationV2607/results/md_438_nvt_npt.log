@@ -1,0 +1,36 @@
+
+============================================================
+Running EM → NVT → NPT for: 438_PfATP4
+============================================================
+
+--- Step 1: Energy Minimization ---
+  $ /home/nanaengo/miniforge3/envs/malaria_md/bin.AVX2_256/gmx_mpi grompp -f em.mdp -c ions.gro -p topol.top -o em.tpr -maxwarn 5
+  $ /home/nanaengo/miniforge3/envs/malaria_md/bin.AVX2_256/gmx_mpi mdrun -deffnm em -v -ntomp 8
+  $ echo "10" | /home/nanaengo/miniforge3/envs/malaria_md/bin.AVX2_256/gmx_mpi energy -f em.edr -o em_potential.xvg
+  EM completed successfully
+
+--- Step 2: NVT Equilibration (1 ns) ---
+  $ /home/nanaengo/miniforge3/envs/malaria_md/bin.AVX2_256/gmx_mpi grompp -f nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr -maxwarn 5
+  $ /home/nanaengo/miniforge3/envs/malaria_md/bin.AVX2_256/gmx_mpi mdrun -deffnm nvt -v -ntomp 8
+  NVT completed successfully
+
+--- Step 3: NPT Equilibration (1 ns) ---
+  $ /home/nanaengo/miniforge3/envs/malaria_md/bin.AVX2_256/gmx_mpi grompp -f npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr -maxwarn 5
+  $ /home/nanaengo/miniforge3/envs/malaria_md/bin.AVX2_256/gmx_mpi mdrun -deffnm npt -v -ntomp 8 -nb gpu -pme gpu
+  STDERR: enavoraserver:2996108] [19] /home/nanaengo/miniforge3/envs/malaria_md/bin.AVX2_256/gmx_mpi(+0x888c)[0x61eb0738c88c]
+[penavoraserver:2996108] [20] /lib/x86_64-linux-gnu/libc.so.6(+0x2a1ca)[0x78f17a02a1ca]
+[penavoraserver:2996108] [21] /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x8b)[0x78f17a02a28b]
+[penavoraserver:2996108] [22] /home/nanaengo/miniforge3/envs/malaria_md/bin.AVX2_256/gmx_mpi(+0x88f0)[0x61eb0738c8f0]
+[penavoraserver:2996108] *** End of error message ***
+Aborted (core dumped)
+
+Traceback (most recent call last):
+  File "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/scripts/md_run_em_nvt_npt.py", line 247, in <module>
+    main()
+  File "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/scripts/md_run_em_nvt_npt.py", line 243, in main
+    run_complex(args.complex)
+  File "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/scripts/md_run_em_nvt_npt.py", line 211, in run_complex
+    run_cmd(
+  File "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/scripts/md_run_em_nvt_npt.py", line 39, in run_cmd
+    raise RuntimeError("Failed: %s" % cmd)
+RuntimeError: Failed: /home/nanaengo/miniforge3/envs/malaria_md/bin.AVX2_256/gmx_mpi mdrun -deffnm npt -v -ntomp 8 -nb gpu -pme gpu

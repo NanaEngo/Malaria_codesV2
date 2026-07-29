@@ -1,0 +1,39 @@
+============================================================
+MD Complex Building
+============================================================
+
+============================================================
+Building complex: 201_DHFR
+============================================================
+  Warning: Reference ligand 'NAD' not found in PDB
+  ERROR: Could not auto-detect binding site center
+  Please manually set binding_site_center for 201_DHFR
+
+============================================================
+Building complex: 438_ATP4
+============================================================
+  Warning: Reference ligand 'ATP' not found in PDB
+  ERROR: Could not auto-detect binding site center
+  Please manually set binding_site_center for 438_ATP4
+
+============================================================
+Building complex: 164_ClpP
+============================================================
+  Warning: Reference ligand 'COF' not found in PDB
+  ERROR: Could not auto-detect binding site center
+  Please manually set binding_site_center for 164_ClpP
+
+============================================================
+Building complex: 214_CRT
+============================================================
+  ERROR: Prepared protein not found: /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_CRT/6UKJ_prepared.pdb
+  Run md_prepare_proteins.py first
+
+============================================================
+Complex building complete!
+============================================================
+
+Next steps:
+  1. Run add_ions.sh for each complex to add ions
+  2. Verify solvated.gro and topol.top exist for each complex
+  3. Proceed with energy minimisation

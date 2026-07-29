@@ -1,0 +1,26 @@
+[sudo] password for nanaengo: ========================================
+Tartarus Docking Calibration
+Started: Mon Jul  6 11:27:55 AM UTC 2026
+========================================
+Molecules to dock: 19913
+Targets: 1SYH, 6Y2F, 4LDE (QuickVina)
+
+Pulling Tartarus Docker image...
+  Image already cached.
+
+Running Tartarus docking (--mode docking --parallel)...
+  This will dock 19913 × 3 targets. Estimated time:
+    ~5s/molecule/target × 3 targets = ~15s/molecule
+    Total: ~82h 58min
+
+
+Docking completed in 32h 9min 50s
+Output saved: /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/tartarus_output.csv (19913 molecules scored)
+
+--- Score Summary ---
+  score_1syh: (see output.csv for details)
+  score_6y2f: (see output.csv for details)
+  score_4lde: (see output.csv for details)
+
+Finished: Tue Jul  7 07:37:45 PM UTC 2026
+========================================

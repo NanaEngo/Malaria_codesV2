@@ -1,0 +1,40 @@
+\subsection*{Table S22: Statistical Significance of Activity Comparisons}
+
+\begin{table}[h]
+\centering
+\caption{Benjamini--Hochberg FDR-Corrected Pairwise Comparisons of Antimalarial Activity Scores Across Compound Groups (NP, SD, Cheese, STONED)}
+\label{tab:sm_s22_bh_correction}
+\scriptsize
+\begin{tabular}{@{}l c c c c@{}}
+\toprule
+\textbf{Model} & \textbf{Groups} & \textbf{$p$ (raw)} & \textbf{$p$ (adj)} & \textbf{Sig.} \\
+\midrule
+eos7yti & NP vs SD & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos7yti & NP vs Cheese & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos7yti & NP vs STONED & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos7yti & SD vs Cheese & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos7yti & SD vs STONED & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos7yti & Cheese vs STONED & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos7kpb & NP vs SD & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos7kpb & NP vs Cheese & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos7kpb & NP vs STONED & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos7kpb & SD vs Cheese & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos7kpb & SD vs STONED & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos7kpb & Cheese vs STONED & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos80ch & NP vs SD & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos80ch & NP vs Cheese & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos80ch & NP vs STONED & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos80ch & SD vs Cheese & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos80ch & SD vs STONED & $> \num0.05$ & $> \num0.05$ & n.s. \\
+eos80ch & Cheese vs STONED & $> \num0.05$ & $> \num0.05$ & n.s. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{footnotesize}
+Note: 18 pairwise Mann--Whitney U tests (3 models $\times$ 6 group pairs).
+Benjamini--Hochberg FDR correction applied to control false discovery rate at $\alpha = 0.05$.
+All 18 comparisons: adjusted $p > 0.05$, rank-biserial $r < 0.10$ (negligible effect size).
+Group sample sizes: NP ($n = 396$), SD ($n = 454$), Cheese ($n \approx 32{,}000$), STONED ($n \approx 33{,}000$).
+Computations performed in pipeline notebooks 06--07.
+\end{footnotesize}

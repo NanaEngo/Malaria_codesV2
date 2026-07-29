@@ -1,0 +1,79 @@
+============================================================
+Paper 3 — Quantum Kernel Benchmark  (lightning.qubit)
+============================================================
+  Circuit: IQPEmbedding (1 repeat(s))
+  Qubits:  8
+  Device:  lightning.qubit
+  Noise:   none
+  Block:   full
+  Jobs:    1
+
+  Loaded 500 molecules  (active: 307, inactive: 193)
+  Fold 1/5...
+    Building quantum kernel (400x400, ~200,000 evals)...
+    QK done in 714.2s | Target alignment: 0.5551
+    RBF: tuning gamma on [-1,1] features (same as QK)...
+    RBF: best gamma = 5
+    Linear SVM on same [-1,1] features (honest baseline)...
+    Linear: AUC=0.7179  Acc=0.7300
+  Fold 1 done in 728.3s | ETA: 48.6 min
+  Fold 2/5...
+    Building quantum kernel (400x400, ~200,000 evals)...
+    QK done in 709.8s | Target alignment: 0.5232
+    RBF: tuning gamma on [-1,1] features (same as QK)...
+    RBF: best gamma = 2
+    Linear SVM on same [-1,1] features (honest baseline)...
+    Linear: AUC=0.6755  Acc=0.6800
+  Fold 2 done in 712.0s | ETA: 36.0 min
+  Fold 3/5...
+    Building quantum kernel (400x400, ~200,000 evals)...
+    QK done in 803.7s | Target alignment: 0.5674
+    RBF: tuning gamma on [-1,1] features (same as QK)...
+    RBF: best gamma = 5
+    Linear SVM on same [-1,1] features (honest baseline)...
+    Linear: AUC=0.7280  Acc=0.6900
+  Fold 3 done in 805.8s | ETA: 25.0 min
+  Fold 4/5...
+    Building quantum kernel (400x400, ~200,000 evals)...
+    QK done in 710.7s | Target alignment: 0.5358
+    RBF: tuning gamma on [-1,1] features (same as QK)...
+    RBF: best gamma = 0.5
+    Linear SVM on same [-1,1] features (honest baseline)...
+    Linear: AUC=0.7513  Acc=0.6600
+  Fold 4 done in 712.8s | ETA: 12.3 min
+  Fold 5/5...
+    Building quantum kernel (400x400, ~200,000 evals)...
+    QK done in 711.0s | Target alignment: 0.5344
+    RBF: tuning gamma on [-1,1] features (same as QK)...
+    RBF: best gamma = 1
+    Linear SVM on same [-1,1] features (honest baseline)...
+    Linear: AUC=0.7313  Acc=0.7900
+  Fold 5 done in 713.1s | ETA: 0.0 min
+
+  Saved: /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/p3_qks_benchmark.csv
+
+Quantum Kernel vs RBF-SVM  (5-fold CV)
+Circuit: IQPEmbedding (1 repeats) | Noise: none
+
+QUANTUM kernel:
+  auc                0.7512 ± 0.0334
+  target_alignment   0.5432 ± 0.0177
+  accuracy           0.7180 ± 0.0217
+  f1                 0.7917 ± 0.0153
+
+RBF kernel:
+  auc                0.7007 ± 0.0672
+  target_alignment   0.3343 ± 0.1162
+  accuracy           0.6940 ± 0.0219
+  f1                 0.7668 ± 0.0202
+
+LINEAR kernel:
+  auc                0.7208 ± 0.0281
+  accuracy           0.7100 ± 0.0515
+  f1                 0.7714 ± 0.0397
+
+Paired t-test quantum vs rbf: t=2.248, p=0.0878 (not significant)
+Paired t-test quantum vs linear: t=2.549, p=0.0634 (not significant)
+Paired t-test rbf vs linear: t=-0.962, p=0.3905 (not significant)
+
+  Summary saved: /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/p3_qks_summary.txt

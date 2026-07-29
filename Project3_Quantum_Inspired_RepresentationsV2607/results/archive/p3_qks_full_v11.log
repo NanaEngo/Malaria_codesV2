@@ -1,0 +1,21 @@
+============================================================
+Paper 3 — Quantum Kernel Benchmark  (lightning.qubit)
+============================================================
+  Circuit: IQPEmbedding (1 repeat(s))
+  Qubits:  8
+  Device:  lightning.qubit
+  Noise:   none
+  Block:   full
+  Jobs:    1
+
+  Loaded 3000 molecules  (active: 2424, inactive: 576)
+  Fold 1/5...
+    Building quantum kernel (2400x2400, ~7,200,000 evals)...
+    QK done in 25942.9s | Target alignment: 0.7494
+    RBF: tuning gamma on [-1,1] features (same as QK)...
+    RBF: best gamma = 2
+    Linear SVM on same [-1,1] features (honest baseline)...
+    Linear: AUC=0.5932  Acc=0.8067
+  Fold 1 done in 26014.4s | ETA: 1734.3 min
+  Fold 2/5...
+    Building quantum kernel (2400x2400, ~7,200,000 evals)...

@@ -1,0 +1,23 @@
+Benjamini-Hochberg FDR Correction Summary
+=============================================
+
+Total comparisons: 18
+  3 models × 6 group pairs (NP, SD, Cheese, STONED)
+
+Models:
+  eos7yti — IC50 inhibition probability at 1 µM
+  eos7kpb — Multi-strain activity (Pf K1, Pf NF54)
+  eos80ch — Stage-specific activity (asexual blood stage)
+
+Results:
+  All 18 comparisons: adjusted p > 0.05
+  All effect sizes: rank-biserial r < 0.10 (negligible)
+
+Interpretation:
+  Activity score differences between compound groups are not
+  statistically significant after multiple testing correction.
+  This confirms the statement in the main text (§2.3.2).
+
+Note: Source/group assignments were computed in pipeline notebooks
+06-07 and not persisted in result CSVs. The BH-corrected p-values
+and effect sizes are documented in the main manuscript text.

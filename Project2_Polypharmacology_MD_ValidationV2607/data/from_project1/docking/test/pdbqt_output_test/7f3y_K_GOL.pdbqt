@@ -1,0 +1,32 @@
+REMARK  Name = GOL
+REMARK  5 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: C_1  and  O_2
+REMARK    2  A    between atoms: C_1  and  C_3
+REMARK    3  A    between atoms: C_3  and  O_4
+REMARK    4  A    between atoms: C_3  and  C_5
+REMARK    5  A    between atoms: C_5  and  O_6
+REMARK                            x       y       z     vdW  Elec       q    Type
+REMARK                         _______ _______ _______ _____ _____    ______ ____
+ROOT
+ATOM      1  C   UNL     1      10.225 -21.811  -3.438  0.00  0.00    +0.217 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  O   UNL     1       8.839 -21.466  -3.368  0.00  0.00    -0.217 OA
+ATOM      3  H   UNL     1       8.722 -20.719  -2.760  0.00  0.00    +0.000 HD
+ENDBRANCH   1   2
+BRANCH   1   4
+ATOM      4  C   UNL     1      10.643 -22.227  -2.047  0.00  0.00    +0.217 C 
+BRANCH   4   5
+ATOM      5  O   UNL     1       9.485 -22.594  -1.287  0.00  0.00    -0.217 OA
+ATOM      6  H   UNL     1       9.034 -23.334  -1.722  0.00  0.00    +0.000 HD
+ENDBRANCH   4   5
+ENDBRANCH   1   4
+BRANCH   1   7
+ATOM      7  C   UNL     1      11.011 -20.659  -4.024  0.00  0.00    +0.217 C 
+BRANCH   7   8
+ATOM      8  O   UNL     1      12.128 -21.101  -4.793  0.00  0.00    -0.217 OA
+ATOM      9  H   UNL     1      12.736 -21.597  -4.224  0.00  0.00    +0.000 HD
+ENDBRANCH   7   8
+ENDBRANCH   1   7
+TORSDOF 5

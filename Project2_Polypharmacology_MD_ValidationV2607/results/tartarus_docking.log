@@ -1,0 +1,125 @@
+========================================
+Tartarus Docking Calibration
+Started: Sun Jul  5 19:41:49 UTC 2026
+========================================
+WARNING: docker daemon not accessible directly.
+If permission denied, run via: sg docker -c 'bash Project2_Polypharmacology_MD_ValidationV2607/scripts/run_tartarus_docking.sh '
+Or add yourself to docker group and re-login.
+========================================
+Tartarus Docking Calibration
+Started: Sun Jul  5 19:46:06 UTC 2026
+========================================
+Creating sample of 50 molecules...
+========================================
+Tartarus Docking Calibration
+Started: Sun Jul  5 19:47:31 UTC 2026
+========================================
+Creating sample of 50 molecules...
+Molecules to dock: 50
+Targets: 1SYH, 6Y2F, 4LDE (QuickVina)
+
+Pulling Tartarus Docker image...
+  Image already cached.
+
+Running Tartarus docking (--mode docking --parallel)...
+  This will dock 50 × 3 targets. Estimated time:
+    ~5s/molecule/target × 3 targets = ~15s/molecule
+    Total: ~0h 12min
+
+multiprocessing.pool.RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/opt/conda/envs/tartarus/lib/python3.8/multiprocessing/pool.py", line 125, in worker
+    result = (True, func(*args, **kwds))
+  File "/opt/conda/envs/tartarus/lib/python3.8/multiprocessing/pool.py", line 51, in starmapstar
+    return list(itertools.starmap(args[0], args[1]))
+  File "/benchmark/benchmark.py", line 75, in benchmark_smile
+    result = DockingResult(smile, docking.get_1syh_score(smile, verbose=verbose), docking.get_6y2f_score(smile, verbose=verbose), docking.get_4lde_score(smile, verbose=verbose))
+  File "/benchmark/tartarus/docking.py", line 199, in get_1syh_score
+    score = get_score(smi=smi, docking_target='1syh', verbose=verbose) # '4lde', '6y2f', '1syh'
+  File "/benchmark/tartarus/docking.py", line 187, in get_score
+    return min(scores)
+ValueError: min() arg is an empty sequence
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/benchmark/benchmark.py", line 120, in <module>
+    results = benchmark_smiles(smiles, args.mode, verbose=args.verbose, parallel=args.parallel)
+  File "/benchmark/benchmark.py", line 95, in benchmark_smiles
+    results = p.starmap(benchmark_smile, zip(smiles, repeat(mode), repeat(verbose)))
+  File "/opt/conda/envs/tartarus/lib/python3.8/multiprocessing/pool.py", line 372, in starmap
+    return self._map_async(func, iterable, starmapstar, chunksize).get()
+  File "/opt/conda/envs/tartarus/lib/python3.8/multiprocessing/pool.py", line 771, in get
+    raise self._value
+ValueError: min() arg is an empty sequence
+ERROR conda.cli.main_run:execute(47): `conda run python /benchmark/benchmark.py --mode docking --input_filename input.csv --output_filename output.csv --parallel` failed. (See above for error)
+========================================
+Tartarus Docking Calibration
+Started: Sun Jul  5 19:55:21 UTC 2026
+========================================
+Creating sample of 50 molecules...
+Molecules to dock: 50
+Targets: 1SYH, 6Y2F, 4LDE (QuickVina)
+
+Pulling Tartarus Docker image...
+  Image already cached.
+
+Running Tartarus docking (--mode docking --parallel)...
+  This will dock 50 × 3 targets. Estimated time:
+    ~5s/molecule/target × 3 targets = ~15s/molecule
+    Total: ~0h 12min
+
+
+Docking completed in 0h 4min 2s
+Output saved: /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/tartarus_output.csv (50 molecules scored)
+
+--- Score Summary ---
+  score_1syh: (see output.csv for details)
+  score_6y2f: (see output.csv for details)
+  score_4lde: (see output.csv for details)
+
+Finished: Sun Jul  5 19:59:23 UTC 2026
+========================================
+========================================
+Tartarus Docking Calibration
+Started: Sun Jul  5 20:14:35 UTC 2026
+========================================
+Molecules to dock: 19913
+Targets: 1SYH, 6Y2F, 4LDE (QuickVina)
+
+Pulling Tartarus Docker image...
+  Image already cached.
+
+Running Tartarus docking (--mode docking --parallel)...
+  This will dock 19913 × 3 targets. Estimated time:
+    ~5s/molecule/target × 3 targets = ~15s/molecule
+    Total: ~82h 58min
+
+========================================
+Tartarus Docking Calibration
+Started: Mon Jul  6 11:27:55 AM UTC 2026
+========================================
+Molecules to dock: 19913
+Targets: 1SYH, 6Y2F, 4LDE (QuickVina)
+
+Pulling Tartarus Docker image...
+  Image already cached.
+
+Running Tartarus docking (--mode docking --parallel)...
+  This will dock 19913 × 3 targets. Estimated time:
+    ~5s/molecule/target × 3 targets = ~15s/molecule
+    Total: ~82h 58min
+
+
+Docking completed in 32h 9min 50s
+Output saved: /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/tartarus_output.csv (19913 molecules scored)
+
+--- Score Summary ---
+  score_1syh: (see output.csv for details)
+  score_6y2f: (see output.csv for details)
+  score_4lde: (see output.csv for details)
+
+Finished: Tue Jul  7 07:37:45 PM UTC 2026
+========================================

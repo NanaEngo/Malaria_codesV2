@@ -1,0 +1,35 @@
+[Parallel(n_jobs=8)]: Using backend LokyBackend with 8 concurrent workers.
+============================================================
+Paper 3 — TDA Pipeline
+============================================================
+  Loaded 19849 molecules
+  [PILOT] Using first 100 molecules
+  Processing 100 molecules (n_jobs=8, n_conf=50)...
+  [MC-TDA] Generating 50 conformers per molecule, Boltzmann-weighting via MMFF94 energies...
+[Parallel(n_jobs=8)]: Done   2 tasks      | elapsed:    1.7s
+[Parallel(n_jobs=8)]: Done  56 tasks      | elapsed:   13.5s
+[Parallel(n_jobs=8)]: Done 100 out of 100 | elapsed: 17.4min finished
+  Completed: 99/100 molecules (1 failed 3D embedding)
+
+  Saved: /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/p3_tda_fingerprints_pilot_conf50.csv
+
+Molecules processed : 100
+Valid TFPs          : 99
+Failed (no 3D)      : 1
+Conformers/mol      : 50
+
+TFP feature statistics (valid molecules):
+  H0_entropy            mean=3.5564  std=0.2186  min=2.9124  max=4.0413
+  H0_count              mean=37.1717  std=7.9707  min=19.0000  max=59.0000
+  H0_max_pers           mean=2.2740  std=0.4121  min=2.0172  max=3.4718
+  H0_mean_pers          mean=1.6019  std=0.0485  min=1.4717  max=1.7309
+  H1_entropy            mean=1.7498  std=0.3119  min=0.7974  max=2.5056
+  H1_count              mean=4.1703  std=1.4016  min=1.0000  max=9.0000
+  H1_max_pers           mean=1.3823  std=0.0863  min=0.7927  max=1.4980
+  H1_mean_pers          mean=0.6681  std=0.1230  min=0.4408  max=1.1006
+  H2_entropy            mean=0.7807  std=0.3704  min=-0.0000  max=1.4632
+  H2_count              mean=0.0487  std=0.1790  min=0.0000  max=1.0000
+  H2_max_pers           mean=0.4615  std=0.0728  min=0.1434  max=0.9274
+  H2_mean_pers          mean=0.3786  std=0.0751  min=0.1240  max=0.4886
+
+  Summary saved: /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/p3_tda_summary_pilot_conf50.txt

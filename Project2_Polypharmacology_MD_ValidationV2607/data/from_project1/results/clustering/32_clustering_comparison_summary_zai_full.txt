@@ -1,0 +1,43 @@
+======================================================================
+CLUSTERING RESULTS COMPARISON
+======================================================================
+Generated: 2026-02-14 03:20:37
+Dataset shape: (65856, 32)
+Cluster Range Optimized: 150 - 500
+
+----------------------------------------------------------------------
+KMEANS
+----------------------------------------------------------------------
+Best Parameters:
+  n_clusters: 499
+
+Final Evaluation Metrics (Full Dataset):
+  silhouette: 0.1820
+  calinski_harabasz: 874.6800
+  davies_bouldin: 1.3924
+
+Cluster Sizes: Min=12, Max=454, Mean=132.0
+
+----------------------------------------------------------------------
+BIRCH
+----------------------------------------------------------------------
+Best Parameters:
+  n_clusters: 490
+  threshold: 0.11408873685550036
+  branching_factor: 30
+
+Final Evaluation Metrics (Full Dataset):
+  silhouette: 0.1216
+  calinski_harabasz: 702.6001
+  davies_bouldin: 1.5846
+
+Cluster Sizes: Min=13, Max=820, Mean=134.4
+
+======================================================================
+HEAD-TO-HEAD COMPARISON (Silhouette)
+======================================================================
+KMeans     | Silhouette: 0.1820 | CH: 874.68
+Birch      | Silhouette: 0.1216 | CH: 702.60
+
+🏆 WINNER: KMeans (Silhouette: 0.1820)
+======================================================================
