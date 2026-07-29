@@ -118,7 +118,57 @@ vfvs_env/
 *.tpr
 *.edr
 *.trr
+*.cpt
+*.mdp
 *.log
+
+# ============================================================================
+# MD Simulation & Docking (Project 2 specific)
+# ============================================================================
+# Specific large/generated dataset
+Project2_Polypharmacology_MD_ValidationV2607/data/raw/merged_cheese_prop.csv
+
+# MM-GBSA outputs
+*.mmpbsa
+Project2_Polypharmacology_MD_ValidationV2607/results/mmpbsa/*.dat
+
+# GROMACS temporary/checkpoint files
+*.backup
+*.part
+*.restart
+*.checkpoint
+*_prev.cpt
+*_prev.gro
+*_prev.trr
+*_prev.xtc
+# GROMACS specific
+\#*
+step*.pdb
+confout.gro
+state*.cpt
+ener.edr
+mdout.mdp
+
+# Schrödinger Suite outputs
+*.mae
+*.maegz
+*.cms
+*.msj
+maestro_*.log
+
+# OpenEye outputs
+*.oeb
+*.oez
+*.sdf.gz
+
+# PyMOL sessions
+*.pse
+*.pml
+
+# Legacy/archive directories
+legacy/
+archive/
+.archive_P1_V2607_20260717/
 # Generated result files (large CSVs, figures)
 # results/**/*.csv  # REMOVED 2026-07-23 — CSV/TXT now tracked for reproducibility
 # data/from_project1/**/*.csv  # REMOVED 2026-07-23
@@ -196,6 +246,8 @@ models/
 .idea/
 .qodo/
 .qwen/
+.opencode/
+.ruff_cache/
 *.swp
 *.swo
 *~
