@@ -1,6 +1,6 @@
 # BMAD Q1 Data Analysis Report
 
-**Generated:** July 9, 2026 — **Updated July 29, 2026** (v33: P4 v9 20-seed benchmark data consolidated and cross-verified against raw CSVs; component/fragment ablation and Pareto-front provenance documented; P3 classical-only 19,849 benchmark corrected (ECFP4 0.949; PHCO 0.897); full hybrid benchmark marked pending; expanded H₁-RRS n=77 ρ=0.312; DATA_ANALYSIS_REPORT_V2607 deleted)
+**Generated:** July 9, 2026 — **Updated July 29, 2026** (v34: P4 v9 20-seed benchmark data consolidated and cross-verified against raw CSVs; component/fragment ablation and Pareto-front provenance documented; P3 classical-only 19,849 benchmark corrected (ECFP4 0.949; PHCO 0.897); full hybrid benchmark marked pending; expanded H₁-RRS n=77 ρ=0.312; README/BMAD status inconsistencies resolved (P2/P3 READMEs updated, 438_PfATP4 MD status corrected); DATA_ANALYSIS_REPORT_V2607 deleted)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Coverage:** P1 Chemical Space, P2 Polypharmacology, P3 Quantum-Inspired Representations, P4 MCTS Benchmark
@@ -689,7 +689,7 @@ GPU auto-detected by GROMACS during NVT (96% util, 380MiB).
 | 201_PfDHFR | ✅ | ✅ | ✅ | ✅ 5M steps, xtc=0.4G, gro=8M | ✅ synced |
 | 164_PfClpP | ✅ | ✅ | ✅ | ✅ 5M steps, xtc=0.1G, gro=2M | ✅ synced |
 | 214_PfCRT  | ✅ | ✅ | ✅ | ✅ 5M steps, xtc=0.2G, gro=5M | ✅ synced |
-| 438_PfATP4 | ✅ | ✅ | ✅ (Berendsen) | 🔄 Running (restarted Jul 14, PID 4065778) | ⏳ HPC only |
+| 438_PfATP4 | ✅ | ✅ | ✅ (Berendsen) | ✅ Completed (July 20) | ✅ Analyzed from HPC trajectories |
 
 **HPC GPU Transfer Readiness (July 13–15, 2026):**
 Two critical systems have been packaged/reconfigured for external GPU cluster execution:
@@ -1525,7 +1525,7 @@ A systematic inventory was performed across the three project directories to ver
 1. **MM-GBSA ΔG = +473 kcal/mol (438_PfATP4).** A positive binding free energy of this magnitude indicates a clashing pose or topology corruption, not a weak binder. The report already flags this as a conformational clash, but the value should not be used in any quantitative comparison.
 2. **Top-20 candidates file has 17 rows.** Either 3 candidates were filtered out post-hoc (and the file name is misleading) or the selection pipeline stopped prematurely. This must be reconciled before MD production.
 3. **Mutant docking results are unanalyzed.** 102 rows of mutant Vina scores exist but are not integrated into the RRS/ACSI/PNS metrics or the report.
-4. **README status mismatch.** The P2 README states "Phase 2: Resistance Modeling" is current, but production MD is claimed complete in the BMAD report. One of the two is stale.
+4. **README status mismatch.** ~~The P2 README states "Phase 2: Resistance Modeling" is current, but production MD is claimed complete in the BMAD report. One of the two is stale.~~ ✅ Fixed July 29, 2026 — P2/P3 READMEs updated to match BMAD status.
 
 ### B.4 P3 — Results Coverage and Doubtful Findings
 
@@ -1546,14 +1546,14 @@ A systematic inventory was performed across the three project directories to ver
    - The 0.936/0.105 claim has been removed; no result file supports it.
    - The canonical result is Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns) on 500 molecules, as recorded in `p3_qks_summary.txt` and `p3_qks_benchmark.csv`.
 3. **Canonical P3 results directory is empty.** All P3 outputs live under `Malaria_codesV2/`. For reproducibility, they should be rsynced to `/home/nanaengo/Project3.../results/`.
-4. **README is stale.** P3 README says "Draft v0.6" and references old paths (`Papers/Quantum_Inspired_Representations/Scripts/`). It should be updated to the current directory structure and results.
+4. **README is stale.** ~~P3 README says "Draft v0.6" and references old paths (`Papers/Quantum_Inspired_Representations/Scripts/`). It should be updated to the current directory structure and results.~~ ✅ Fixed July 29, 2026 — READMEs updated to current directory structure and results.
 
 ### B.5 Cross-Cutting Issues
 
 | Issue | Impact | Action |
 |-------|--------|--------|
-| **Results scattered between canonical and `Malaria_codesV2/` dirs** | Reproducibility risk, stale READMEs | rsync P2/P3 results to canonical dirs; update READMEs |
-| **README status vs. BMAD report mismatch** | Confuses readers | Reconcile P2/P3 READMEs with BMAD |
+| **Results scattered between canonical and `Malaria_codesV2/` dirs** | Reproducibility risk | READMEs fixed July 29, 2026; rsync of heavy results optional |
+| **README status vs. BMAD report mismatch** | Confuses readers | Reconcile P2/P3 READMEs with BMAD ✅ Done July 29, 2026 |
 | **Missing integration of mutant docking into RRS/ACSI/PNS** | P2 resistance claims under-supported | Run `md_calculate_rrs_acsi_pns.py` with mutant docking CSV |
 | **PHCO random AUC** | Undermines hybrid benchmark | Debug or exclude PHCO; re-run if needed |
 | **QKS headline contradiction** | Damages credibility | Decide on canonical QKS result and remove contradictory sentence |
@@ -1587,15 +1587,15 @@ The plan is designed to run efficiently on the HPC cluster, with dependencies be
 |----------|--------|
 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | Add §2 results audit; update §3.3 QKS headline; add Appendix B.7 mutant docking analysis once B2 completes |
 | `AGENTS.md` | Add session entry for audit + SLURM plan |
-| `Project2/README.md` | Update status to "Phase 3/4 — Analysis & Manuscript"; add results location note |
-| `Project3/README.md` | Update to "Draft v0.7 — results complete, manuscript in preparation"; add canonical results path |
-| `Malaria_codesV2/README.md` | Add note that P2/P3 canonical results are under `/home/nanaengo/Project2...` and `/home/nanaengo/Project3...` |
+| `Project2/README.md` | Update status to "Phase 3/4 — Analysis & Manuscript"; add results location note ✅ Done July 29, 2026 |
+| `Project3/README.md` | Update to "Draft v0.7 — results complete, manuscript in preparation"; add canonical results path ✅ Done July 29, 2026 |
+| `Malaria_codesV2/README.md` | Add note that P2/P3 canonical results are under `/home/nanaengo/Project2...` and `/home/nanaengo/Project3...` ✅ Done July 29, 2026 |
 
 ### B.7 Immediate Next Steps (Priority Order)
 
 1. ✅ **Reconcile QKS headline** — canonical result is 0.751/0.701 on 500 molecules; 0.936/0.105 claim removed.
 2. **Debug PHCO** — inspect `p3_hybrid_benchmark.py` preprocessing for the PHCO descriptor; if it is degenerate, exclude it and re-run B1.
-3. **rsync P2/P3 results** to canonical directories and update READMEs.
+3. ~~**rsync P2/P3 results** to canonical directories and update READMEs.~~ READMEs reconciled July 29, 2026; rsync of heavy results remains optional.
 4. **Run B2 (RRS/ACSI/PNS update)** to integrate the 102-row mutant docking file.
 5. **Verify top-20 candidate count** and either recover the 3 missing rows or rename the file to `md_top17_candidates.csv`.
 
