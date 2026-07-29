@@ -6,7 +6,7 @@
 > **Project 2 — Molecular Dynamics and Monte Carlo validation of polypharmacological antimalarial candidates against resistance mutations (Project V2607).**
 
 **Target Journal:** *Journal of Chemical Information and Modeling* (IF 5.6)  
-**Status:** ✅ Production MD complete (4/4 systems); 🚧 Mutant integration & MM-GBSA reconciliation in progress  
+**Status:** ✅ Submission-ready (JCIM) — 14 RRS compounds (classes A*–D), PP-11 C59R mechanism resolved, MM-GBSA reconciliation complete  
 **Manuscript:** `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` — canonical V2607 version---
 
 ## 📄 Manuscript Files
@@ -32,7 +32,7 @@
 
 ---
 
-> **Data-analysis audit (2026-07-18):** Active P2 results are currently located under `Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/` and are being consolidated into the canonical top-level directory. Known issues: `md_top20_candidates.csv` contains 17 rows (not 20); 438_PfATP4 MM-GBSA ΔG = +473 kcal/mol is physically implausible and excluded; mutant docking results (102 rows) are not yet integrated into RRS/ACSI/PNS. See `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §2 for the full audit and SLURM correction plan.
+> **Data-analysis audit (2026-07-29):** Active P2 results are consolidated under `Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/`. The canonical RRS/ACSI/PNS metrics, mutant docking, and MM-GBSA reconciled data are committed in the repository. See `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §2 for the full audit.
 ## 📋 Table of Contents
 
 - [Project Overview](#-project-overview)

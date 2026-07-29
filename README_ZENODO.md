@@ -3,7 +3,7 @@
 **DOI:** [10.5281/zenodo.19608875](https://doi.org/10.5281/zenodo.19608875)
 **Repository:** [github.com/NanaEngo/Malaria_codesV2](https://github.com/NanaEngo/Malaria_codesV2)
 **Licence:** MIT (code), CC-BY 4.0 (data)
-**Deposit date:** July 25, 2026
+**Deposit date:** July 29, 2026
 
 ## Scope
 
@@ -52,10 +52,10 @@ This deposit archives all computational results, scripts, and LaTeX source for f
 ### Project 4 — Pareto-Guided MCTS with Quantum Validation
 ~43 files, ~1.5 MB
 
-**Description:** Pareto multi-objective Monte Carlo Tree Search with ScafVAE-informed fragment policy for *de novo* antimalarial design. Four-method benchmark (MCTS, Random, Greedy, GA) across 5 independent seeds with Quantum Monte Carlo validation.
+**Description:** Pareto multi-objective Monte Carlo Tree Search with ScafVAE-informed fragment policy for *de novo* antimalarial design. Canonical v9 four-method benchmark (MCTS, Random, Greedy, GA) across 20 independent seeds with non-parametric Wilcoxon signed-rank testing, Fréchet ChemNet Distance (FCD), and scaffold uniqueness. QMC validation removed pending a reproducible rerun.
 
 **Key data files:**
-- `results/benchmark/p4_benchmark_merged.csv` — Four-method benchmark results
+- `results/benchmark/p4_benchmark_merged.csv` — Canonical v9 20-seed four-method benchmark
 - `results/benchmark/p4_pareto_data.csv` — Pareto front data
 - `manuscript/LaTeX/P4_Pareto_MCTS_V2607.tex` — Main manuscript
 

@@ -1,15 +1,15 @@
 # Project 4 — Advanced Monte Carlo Strategies (P4)
 
 **Target Journal:** *Journal of Chemical Information and Modeling* (JCIM) — ACS
-**Status:** Complete Architecture — Ready for HPC Production Runs (Target PA ≥ 85%)
+**Status:** v9 20-seed benchmark complete; manuscript in preparation (Target PA ≥ 85%)
 **Date:** July 2026
 
 P4 implements a **de novo molecular generation framework** targeting **African Natural Product (ANP)-inspired antimalarial chemistry**, combining:
 - **MCTS + ScafVAE**: Tree search guided by a chemistry-informed fragment policy (PUCT) built on privileged natural product-like antimalarial fragments (chromone, quinoline, indole, terpene derivatives) with medicinal chemistry safety filters (`medchem`: PAINS, Brenk, Veber, Lipinski).
 - **Pareto MCTS**: Multi-objective optimization via exact non-dominated front and hypervolume calculation (`pymoo` $WFG$ algorithm, HV ≥ 0.58).
 - **Real P1/P2 Oracles**: MPO (≥0.75), docking (Tartarus V2 *P. falciparum* targets), SYBA (>0), SA (<3.5), RRS (selectivity), PNS (polypharmacology), plus GPU-accelerated CuPy batch Tanimoto lookup.
-- **4-Method Benchmark**: MCTS vs. Random vs. Greedy vs. GA across 10 independent seeds with non-parametric Wilcoxon signed-rank testing, Fréchet ChemNet Distance (FCD), and scaffold uniqueness.
-- **QMC Validation**: Two-tiered electronic-structure validation pipeline (Tier 1: wB97X-D DFT; Tier 2: DMC diffusion Monte Carlo gold standard).
+- **4-Method Benchmark**: MCTS vs. Random vs. Greedy vs. GA across 20 independent seeds with non-parametric Wilcoxon signed-rank testing, Fréchet ChemNet Distance (FCD), and scaffold uniqueness. The v9 benchmark (20 seeds, 2000 iterations, fixed medium fragment set) is the canonical P4 benchmark.
+- **QMC Validation**: Two-tiered electronic-structure validation pipeline (Tier 1: wB97X-D DFT; Tier 2: DMC diffusion Monte Carlo gold standard). QMC results were removed from the manuscript pending a reproducible validation run.
 
 ---
 
@@ -103,3 +103,4 @@ The `OracleAggregator` links MCTS rewards to real P1/P2 antimalarial data:
 - **Target Journal**: *Journal of Chemical Information and Modeling* (JCIM)
 - **Title**: *"Multi-Objective MCTS with Quantum Validation for Antimalarial Design"* (9 words)
 - **Data Availability**: ACS Level 2 FAIR compliant via Zenodo (DOI: `10.5281/zenodo.19608875`) and GitHub (`https://github.com/NanaEngo/Malaria_codesV2`).
+- **Canonical v9 Benchmark**: `results/benchmark/p4_benchmark_merged.csv` (20 seeds × 4 methods). See `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §4 for the consolidated results.

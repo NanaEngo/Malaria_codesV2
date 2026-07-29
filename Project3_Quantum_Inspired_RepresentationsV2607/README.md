@@ -11,9 +11,9 @@
 | Attribute | Details |
 |-----------|---------|
 | **Focus** | African Natural Product (ANP) Antimalarial Chemical Space |
-| **Status** | Advanced benchmarks complete + Physical Validation Plan ready |
+| **Status** | Corrected classical-only benchmark complete on 19,849 molecules; full hybrid benchmark pending a reproducible rerun; cross-paper H₁-RRS validation expanded to n=77 |
 | **Target Journal** | *Journal of Cheminformatics* / *Nature Computational Science* |
-| **Target Acceptance** | **≥ 85%** (achieved via Tartarus physical validation + polypharmacology benchmark) |
+| **Target Acceptance** | **≥ 85%** (path documented; awaiting reproducible full-hybrid rerun for final evidence) |
 | **Strategic Document** | [`P3_Stategic_85PA.md`](P3_Stategic_85PA.md) |
 | **Methodology Skills** | `pennylane`, `datamol`, `scikit-learn`, `pymoo`, `experimental-design`, `BMAD-METHOD` |
 
@@ -29,6 +29,15 @@ Historically, the most effective antimalarial classes (quinine, artemisinin) ori
 | **N2** | **Quantum Advantage on Polypharmacology:** First quantum kernel (QKS) vs. SVM RBF benchmark on a hard multi-target antimalarial polypharmacology task ($\ge 2$ *P. falciparum* targets bound). |
 | **N3** | **Topological Rigidity vs. Promiscuity:** First topological data analysis (TDA $H_1$ persistent homology) correlation mapping scaffold ring rigidity to biological target promiscuity. |
 | **N4** | **Scaffold Paradox Resolution:** Explanation of the 92.6% ECFP4-unreachable gap vs. 69.3% scaffold recovery via persistent homology ($H_1$ preservation vs. $H_0$ divergence). |
+
+### Latest Results (July 29, 2026)
+
+| Benchmark | Result |
+|-----------|--------|
+| Corrected classical-only 5-fold CV (19,849 mol, Random forest) | ECFP4 **0.949**, AP 0.941, BPF 0.939, FCFP4 0.920, MACCS 0.904, PHCO 0.897, TFP 0.877, TNE 0.722 |
+| QKS vs RBF (10,000-mol subsample) | Quantum 0.751 vs RBF 0.701 ($p = 0.088$) |
+| Cross-paper H₁-RRS | $n = 77$, Spearman $\rho = 0.312$, $p = 0.0057$ |
+| Full hybrid (TFP+TNE+QK) | **Pending reproducible rerun**; previous 0.842 value not reproducible |
 
 ---
 
@@ -56,7 +65,8 @@ Project3_Quantum_Inspired_RepresentationsV2607/
 │   ├── p3_tne_generate.sbatch         # TNE embedding generation (bond_dim=8)
 │   ├── p3_tda_extend.sbatch           # TDA feature extension (19,849 mol.)
 │   ├── p3_qks_benchmark.py            # 8-qubit quantum kernel vs RBF-SVM benchmark
-│   ├── p3_hybrid_benchmark.py         # Hybrid framework + ablation study
+│   ├── p3_hybrid_benchmark.py       # Hybrid framework + ablation study
+│   ├── p3_classical_benchmark_19849.py # Corrected full-library classical benchmark
 │   └── p3_nisq_smoke_test.py          # 2-qubit IBM Quantum NISQ hardware test
 ├── manuscript/LaTeX/
 │   ├── Paper3_Quantum_Inspired_v0.7_V2607.tex  # Main manuscript
