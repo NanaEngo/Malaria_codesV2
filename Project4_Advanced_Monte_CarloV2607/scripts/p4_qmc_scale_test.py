@@ -16,6 +16,19 @@ and prints per-block energies so we can see whether the mean drifts (population
 collapse) or is stable. A Slater-only DMC that lands within a few Eh of SCF
 (above it — fixed-node DMC from an uncorrelated trial should be near, not
 far below, the VKS energy) is the decisive evidence.
+
+SESSION OUTCOME (July 31, 2026) — COMPLETED on HPC, nconfig=300, 2 runs each:
+  S (Slater-only DMC):        -897.4 / -900.7 Eh  +/- 17-18 Eh  (run-to-run
+                              unstable, ~33 Eh below PBE SCF -864.165 —
+                              collapse signature, unphysical)
+  J (Slater+Jastrow, ion_cusp=False): -867.35 / -867.59 Eh  +/- 1.8-2.0 Eh
+                              (stable across runs but still ~3.2 Eh below SCF;
+                              no e-N cusp at 144-e scale)
+=> DMC population-collapse CONFIRMED on both branches at candidate scale;
+   neither energy is publication-grade.
+NOTE: the chkfile SCF was parsed as 0.000000 Eh, so the script's printed
+"dE vs SCF" values are the raw energies converted to eV (vs 0), not real
+differences from the SCF energy.
 """
 
 import os
