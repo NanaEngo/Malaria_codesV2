@@ -249,7 +249,7 @@ git add -A && git commit -m "message" && git push origin master
 
 ## 📋 Prochaines Actions Prioritaires
 
-### 1. P3 — Terminer le benchmark hybride (n=5,000)
+### 1. P3 — Benchmark hybride (n=5,000) ✅ complété ; Phase 3 (n=19,849) en attente
 - ✅ Classiques n=5000 complétés (ECFP4=0.940, TFP=0.765, TNE=0.660)
 - ✅ **QK per-fold complété** (jobs 12651→12660, state-vector QK) → Hybrid RF AUC 0.8423 ± 0.0076
 - ✅ BMAD report mis à jour (v37–v40) ; rapatriement des résultats effectué
