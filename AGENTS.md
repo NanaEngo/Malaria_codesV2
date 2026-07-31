@@ -124,7 +124,7 @@
 | Benchmark protocol | ✅ Défini | 7 metrics, 20 seeds, 1000 oracle calls |
 | **Manuscrit — Section Results/Benchmark** | ✅ **Actualisé** | Benchmark v9 20 seeds intégré; QMC en attente |
 | **.bib** | ✅ **Complété** | 30+ entrées, toutes citations résolues |
-| QMC validation | 🔄 **Tier 1 restauré** (job 12682) | pyscf 2.14.0 + xtb installés; PBE/def2-SVP SCF + molden OK (4/4 candidates) — **Tier 2 (VMC/DMC) bloqué : PyQMC/QMCPACK non installé** |
+| QMC validation | 🔄 **Tier 1 restauré + GPU** (jobs 12682→12686) | pyscf 2.14.0 + xtb + gpu4pyscf 1.8.0 installés; PBE/def2-SVP SCF + molden OK (4/4, GPU ~56 s/cand vs ~131 s CPU) — **Tier 2 (VMC/DMC) bloqué : PyQMC/QMCPACK non installé** |
 
 ---
 

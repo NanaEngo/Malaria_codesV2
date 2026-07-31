@@ -3,6 +3,7 @@
 #SBATCH --output=../logs/slurm/p4_qmc_%A_%a.log
 #SBATCH --error=../logs/slurm/p4_qmc_%A_%a.err
 #SBATCH --partition=production
+#SBATCH --gres=gpu:1
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
