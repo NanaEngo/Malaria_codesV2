@@ -73,7 +73,7 @@
 | Composant | Statut | Résultat clé |
 |-----------|:------:|:-------------|
 | **Benchmark classique corrigé (n=19,849)** | ✅ Complété | ECFP4=0.949, PHCO 0.897 (bug fix), TFP 0.877, TNE 0.722 |
-| **Ablation study** | ⏳ **Provisoire** | QKS driver principal (p<0.001) — rerun hybride n=5000 complété (Hybrid RF AUC 0.8423) ; confirmation sur benchmark complet n=19,849 en attente |
+| **Ablation study** | ⏳ **Provisoire** | QKS driver principal (p<0.001) — rerun hybride n=5,000 complété (Hybrid RF AUC 0.8423) ; confirmation sur benchmark complet n=19,849 en attente |
 | **QKS canonical** | ✅ Complété | Quantum 0.751 vs RBF 0.701 (gamma-tuned) sur sous-échantillon n=500 |
 | **PHCO corrigé** | ✅ Complété | 0.500→0.897 (GetOnBits fix) |
 | **Phase 1 — Grid search (n=200)** | ✅ **Complété** | **bd=6, nr=1, nk=30 → AUC 0.8534** |
@@ -85,7 +85,7 @@
 | **RRS expansion SLURM** | ✅ **Fonctionnel** | p3_rrs_expansion.sbatch, 4 tasks, 200 molécules |
 | **Benchmark classique n=5000 (hybrid pre-phase)** | ✅ **Complété** | ECFP4=0.940, TFP=0.765 (−0.112 vs n=19849), TNE=0.660 (−0.062) |
 | **Manuscrit** | 🔄 **En révision** | Benchmark classique corrigé intégré; résultats hybrides provisoires |
-| **Acceptance assessment** | ✅ **Vers 85%** | Roadmap documentée; validation physique TNE/TDA complète; benchmark hybride n=5000 complété (Hybrid RF AUC 0.8423) |
+| **Acceptance assessment** | ✅ **Vers 85%** | Roadmap documentée; validation physique TNE/TDA complète; benchmark hybride n=5,000 complété (Hybrid RF AUC 0.8423) |
 | 🔴 Action 1: ChEMBL IC₅₀ validation | ⏳ **À faire** | +15% acceptance |
 | 🔴 Action 2: Reframe H₁-RRS narrative | ⏳ **À faire** | +10% acceptance |
 | 🟡 Action 3: Benchmark SOTA topological | ⏳ **À faire** | +8% acceptance |
@@ -250,7 +250,7 @@ git add -A && git commit -m "message" && git push origin master
 ## 📋 Prochaines Actions Prioritaires
 
 ### 1. P3 — Benchmark hybride (n=5,000) ✅ complété ; Phase 3 (n=19,849) en attente
-- ✅ Classiques n=5000 complétés (ECFP4=0.940, TFP=0.765, TNE=0.660)
+- ✅ Classiques n=5,000 complétés (ECFP4=0.940, TFP=0.765, TNE=0.660)
 - ✅ **QK per-fold complété** (jobs 12651→12660, state-vector QK) → Hybrid RF AUC 0.8423 ± 0.0076
 - ✅ BMAD report mis à jour (v37–v40) ; rapatriement des résultats effectué
 
