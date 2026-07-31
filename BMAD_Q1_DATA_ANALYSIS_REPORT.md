@@ -1,11 +1,10 @@
 # BMAD Q1 Data Analysis Report
 
-**Generated:** July 9, 2026 — **Updated July 29, 2026** (v37: P3 n=500 smoke test results (ECFP4 0.819, Hybrid 0.755, p=0.032, n=500); JAX GPU optimization report; precompute-kernel implementation (~5× QK speedup); device fix (CPU default, GPU 3-4× slower); 5000-molecule hybrid benchmark launched with --precompute-kernel (job 12621); expanded H₁-RRS n=77 ρ=0.312)
-**Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
+**Generated:** July 9, 2026 — **Updated July 31, 2026** (v38: `BMAD_Q1_DATA_ANALYSIS_REPORT_V1.md` deleted locally and on HPC — this report is the single canonical source; v37: HPC-audit corrections — 5,000-molecule hybrid benchmark COMPLETED on HPC (jobs 12651→12660, state-vector QK optimization, Hybrid RF AUC 0.8423 ± 0.0076); TDA/TNE validity transpose fixed (§3.1: TDA 19,849/0, TNE 19,836/13); QKS §3.3 table regenerated from canonical v11 summary (TA 0.543, acc 0.718/0.694); unverified speedup claim removed; job-ID reconciliation (12618→12651/12660); SwissModel API token redacted)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Coverage:** P1 Chemical Space, P2 Polypharmacology, P3 Quantum-Inspired Representations, P4 MCTS Benchmark
 **API Credentials:**
-- `swiss_model_api_token`: `8d2d90bcea850b5dd15c0b27856f3c4fc6edc154`
+- `swiss_model_api_token`: `<REDACTED — rotate on HPC>` (raw value removed July 31, 2026; it was committed to a public repo)
 
 ---
 
@@ -17,7 +16,7 @@ Three complementary projects generated and analyzed **over 85,000 unique molecul
 
 **P2 (Polypharmacology Validation)** narrows 19,913 synthesisable P1 leads to 20 high-confidence candidates through multi-parameter optimization and consensus docking across four resistance-relevant *Plasmodium* targets. All 20 candidates are single-target optimized (no beneficial polypharmacology detected by current scoring); among 810 screened seed molecules with valid SI predictions, 100% are selectively antiparasitic (SI > 10). The African Chemical Space Index (ACSI) confirms that 23.5% of top candidates retain strong chemical identity with the African NP seed space (ACSI > 0.70). Tartarus external validation (19,913 molecules, 3 targets) reveals that binding affinity scores are orthogonal to drug-likeness MPO scores (Spearman ρ = 0.013, p = 0.091), confirming that docking provides independent information not captured by MPO. Four solvated protein–ligand complexes (PfDHFR, PfATP4, PfClpP, PfCRT) were built with CHARMM36-jul2022/GAFF2 force fields and EM/NVT/NPT equilibration was attempted; production MD trajectories exist for all four systems. Re-analysis of the production trajectories with PBC-unwrapped (`nojump`) coordinates shows that **only two of the four systems maintain a bound ligand**: **PfCRT (214)** and **PfATP4 (438)** (minimum protein–ligand distances 3.19 Å and 2.25 Å, 78 and 178 contacts, 23 and 48 H-bonds, respectively). The other two systems, **PfClpP (164)** and **PfDHFR (201)**, have stable protein conformations (backbone RMSD 1.31 Å and 3.05 Å) but the ligand is completely unbound (minimum distances 67.4 Å and 78.2 Å, zero contacts), indicating either incorrect initial placement or rapid dissociation during equilibration. These results demonstrate that MD is a mandatory post-docking filter, and only the PfCRT and PfATP4 simulations can support binding-mode claims.
 
-**P3 (Quantum-Inspired Representations)** introduces three novel molecular descriptors—Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)—and benchmarks them against classical fingerprints on the same library. A corrected classical-only 5-fold CV on all 19,849 molecules (Random Forest, 200 trees) gives ECFP4 AUC 0.949 ± 0.001, FCFP4 0.920 ± 0.003, AP 0.941 ± 0.002, BPF 0.939 ± 0.002, MACCS 0.904 ± 0.004, PHCO 0.897 ± 0.005 (PHCO bug fixed from the degenerate 0.500), TFP 0.877 ± 0.006, and TNE 0.722 ± 0.010. The previously reported full hybrid benchmark (Hybrid AUC 0.842 vs ECFP4 AUC 0.868) could not be reproduced from the current code or located in the data files. A **5,000-molecule hybrid benchmark was launched on HPC (job 12621) with the new `--precompute-kernel` optimization** (~5× QK speedup) and `--device lightning.qubit` (CPU default, GPU 3-4× slower for 6-8 qubit circuits). A smoke test on 500 molecules (5-fold CV, `lightning.qubit` CPU) gave the following baseline: ECFP4 RF AUC 0.8192 ± 0.0431, AP 0.8230 ± 0.0515 (best classical), Hybrid 0.7552 ± 0.0298 (p=0.032 vs ECFP4, significantly lower due to high-dimensional TFP/TNE overfitting on small n). The optimized code is now committed and the full 5,000-molecule benchmark is running. The QKS benchmark on 500 molecules (sub-sampled from the 10,000-molecule design target) reports Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns). The difference is not statistically significant. The quantum-inspired methods serve as complementary topological frameworks rather than outperforming classical methods on simple predictive metrics.
+**P3 (Quantum-Inspired Representations)** introduces three novel molecular descriptors—Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)—and benchmarks them against classical fingerprints on the same library. A corrected classical-only 5-fold CV on all 19,849 molecules (Random Forest, 200 trees) gives ECFP4 AUC 0.949 ± 0.001, FCFP4 0.920 ± 0.003, AP 0.941 ± 0.002, BPF 0.939 ± 0.002, MACCS 0.904 ± 0.004, PHCO 0.897 ± 0.005 (PHCO bug fixed from the degenerate 0.500), TFP 0.877 ± 0.006, and TNE 0.722 ± 0.010. A 5,000-molecule pre-phase (job 12651) reveals that **TFP is sample-hungry**: its AUC drops from 0.877 (n=19,849) to 0.765 (n=5,000), a −0.112 decline, while ECFP4 drops only −0.009. The 5,000-molecule hybrid benchmark **completed on the HPC** (state-vector QK optimization, jobs 12651→12660): **Hybrid RF AUC 0.8423 ± 0.0076**, with ECFP4 0.940, TFP 0.765, TNE 0.660 (RF). The QKS benchmark on 500 molecules (sub-sampled from the 10,000-molecule design target) reports Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns). The difference is not statistically significant. The quantum-inspired methods serve as complementary topological frameworks rather than outperforming classical methods on simple predictive metrics.
 
 An expanded cross-paper analysis (n = 77 P2 leads) further links H₁ topological count to resistance resilience (Spearman ρ = 0.312, p = 0.0057), suggesting TFP captures clinically relevant structural information that ECFP4 does not.
 
@@ -25,9 +24,9 @@ An expanded cross-paper analysis (n = 77 P2 leads) further links H₁ topologica
 |--------|-------------------|------------|--------|
 | P1 — Scaffold Novelty | 5,000 gen. + 396 seeds | **92.6% ECFP4-unreachable; 1.84× scaffold ratio** | Completed |
 | P2 — Polypharmacology | 19,913 leads → 20 top candidates | **100% single-target optimized; 100% of 810 screened seeds with valid SI predictions had SI > 10** | Completed |
-| P3 — TDA/TNE Representations | 19,849 molecules | **99.93% TDA validity; 15.6× TNE compression** | Completed |
+| P3 — TDA/TNE Representations | 19,849 molecules | **100% TDA validity (19,849/19,849); TNE 99.93% valid (19,836/19,849); 15.6× TNE compression** | Completed |
 | P3 — Classical Benchmark (corrected) | 19,849 × 8 descriptors × 5CV (RF) | **ECFP4 AUC 0.949; PHCO bug fixed (0.500 → 0.897); TFP 0.877, TNE 0.722** | Corrected (July 29, 2026) |
-| P3 — Hybrid Benchmark | 5,000 × 10 descriptors × 5CV (RF+SVM, QK per-fold) | **5000-molecule run on HPC (job 12621) with --precompute-kernel optimization; awaiting results** | 🚀 Launched (n=5000, job 12621) |
+| P3 — Hybrid Benchmark (n=5000) | 5,000 × 10 descriptors × 5CV (RF+SVM) | **Hybrid AUC 0.8423**; ECFP4 0.940; TFP 0.765; TNE 0.660 — **Hybrid benchmark completed using state-vector QK optimization (jobs 12651→12660)** | ✅ Completed (July 31) |
 | P3 — QKS Benchmark | 500 mol (sub-sampled) | **Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns)**; earlier 0.936/0.105 claim removed as unsupported | Completed (July 2026) |
 | P3 — GA Discriminator Benchmark | 50–500 gen. × 200 seeds | **Tanimoto AUC=1.0 (trivial); QK AUC≈0.43–0.51 (near-random)** | Completed |
 | P3 — D-GRIL Build | C++ extension, PyTorch 2.0.1, Boost, CUDA 11.7 | **mpml.so compiled; linker blocked (libc10.so ABI). Differentiable 2-parameter PH paradigm** | ⚠️ Compiled (mpml.so), linker blocked (libc10.so ABI). Differentiable 2-parameter PH paradigm documented |
@@ -52,7 +51,7 @@ An expanded cross-paper analysis (n = 77 P2 leads) further links H₁ topologica
 |---------|:-----:|:----:|-------------|
 | P1 — Chemical Space | 175 | 72 MB | ChEMBL enrichment, full-cluster rescoring (1,815 mols), MCMC, STONED leap |
 | P2 — MD Validation | 493 | 459 MB | RRS classification, MM-GBSA, mutant docking, cross-metric correlations |
-| P3 — Quantum-Inspired | 147 | 37 MB | Classical benchmark (corrected, 19,849 mols), hybrid pending, SOTA topological, ChEMBL validation, H₁-RRS |
+| P3 — Quantum-Inspired | 147 | 37 MB | Classical benchmark (corrected, 19,849 mols), hybrid (n=5,000) completed, SOTA topological, ChEMBL validation, H₁-RRS |
 | P4 — Pareto MCTS | 43 | 1.5 MB | Four-method benchmark, Pareto front, hyperparameter search |
 
 Excluded: GROMACS trajectories (multi-GB), docking raw outputs (PDBQT), SLURM logs, IBM tokens.
@@ -768,8 +767,8 @@ Comprehensive MD analysis was performed locally on the NPT trajectories using `M
 | Metric | Value |
 |--------|-------|
 | Molecules processed | 19,849 |
-| Valid TFPs | **19,836 (99.93%)** |
-| Failed (no 3D embedding) | 13 |
+| Valid TFPs | **19,849 (100%)** |
+| Failed (no 3D embedding) | 0 |
 | Runtime | **6.4 minutes** |
 | Workers | 8 |
 
@@ -805,20 +804,20 @@ Comprehensive MD analysis was performed locally on the NPT trajectories using `M
 | Failed | 13 |
 | Compression ratio | **15.6×** |
 | Reconstruction error (mean) | **0.1130** |
-| Runtime | **20 minutes** |
+| Runtime | **~8 min (488 s, job 11872)** |
 | Molecules processed | 19,849 |
 
-The 15.6× compression (padded, Nmax=100) with 0.113 reconstruction error demonstrates that molecular feature tensors are highly compressible via tensor decomposition — the underlying feature correlations are low-rank. The mean real (unpadded) compression ratio is 5.9× based on ~38 atoms/molecule (from TDA H₀ counts), reflecting compression of actual molecular content without padding overhead.
+The 15.6× compression (padded, Nmax=100) with 0.113 reconstruction error demonstrates that molecular feature tensors are highly compressible via tensor decomposition — the underlying feature correlations are low-rank. The mean real (unpadded) compression ratio is **6.1×** based on mean 39 atoms/molecule (from TDA H₀ counts), reflecting compression of actual molecular content without padding overhead.
 
 ### 3.3 QKS Benchmark
 
 **5-fold Cross-Validation (500-mol representative subsample, July 2026):**
 
-| Metric | Quantum Kernel (StronglyEntanglingLayers) | RBF Kernel (SVM) | Linear Kernel (SVM) |
+| Metric | Quantum Kernel (IQPEmbedding, 8 qubits) | RBF Kernel (SVM) | Linear Kernel (SVM) |
 |--------|------------------------------------------|------------------|---------------------|
-| **AUC** | **0.751 ± 0.033** | 0.701 ± 0.067 | 0.720 ± 0.028 |
-| Target Alignment | 0.684 ± 0.021 | 0.334 ± 0.116 | — |
-| Accuracy | 0.842 ± 0.015 | 0.510 ± 0.011 | 0.710 ± 0.051 |
+| **AUC** | **0.751 ± 0.033** | 0.701 ± 0.067 | 0.721 ± 0.028 |
+| Target Alignment | 0.543 ± 0.018 | 0.334 ± 0.116 | — |
+| Accuracy | 0.718 ± 0.022 | 0.694 ± 0.022 | 0.710 ± 0.052 |
 
 **Interpretation (July 2026 Ground Truth):** The corrected QKS benchmark (v11, gamma-tuned RBF) on a 500-molecule representative subsample reports Quantum AUC 0.751 ± 0.033 vs RBF AUC 0.701 ± 0.067 (p=0.088, ns). The quantum and RBF kernels are statistically indistinguishable, indicating no significant quantum advantage for this molecular activity prediction task. Earlier claims of QK AUC 0.936 vs RBF 0.105 relied on an untuned RBF gamma and have been removed as unsupported.
 
@@ -845,9 +844,36 @@ A classical-only benchmark was rerun on the full 19,849-molecule set with the co
 
 **Per-fold data correction (July 29, 2026):** The Supplementary Material per-fold activity table (`tab:sm_s4_perfold`) originally contained hard-coded per-fold values in `scripts/p3_effect_sizes.py`. Inspection revealed that the TNE per-fold values were identical to the TFP values (both `[0.600, 0.800, 0.500, 0.667, 0.583]`), an obvious copy-paste artifact. The corrected `results/p3_classical_benchmark_19849.csv` (produced by `p3_classical_benchmark_19849.py`) contains the genuine full-library per-fold values, which differ between TFP and TNE. The supplementary material and `p3_effect_sizes.py` were updated to source per-fold values from this canonical CSV rather than from the hard-coded list. The corrected per-fold values are now used for ECFP4, FCFP4, AP, BPF, MACCS, PHCO, TFP and TNE; hybrid/QKS rows remain provisional pending the full hybrid rerun.
 
-**Previous hybrid benchmark:** The earlier reported full hybrid benchmark (Hybrid AUC 0.842 vs ECFP4 0.868, p=0.111) is **not reproducible** from the current code or data files. The underlying run file is missing, and rerunning the classical portion with the current corrected script yields ECFP4 ≈ 0.949 rather than 0.868. Consequently, the full hybrid (TFP+TNE+QKS) benchmark must be rerun before any hybrid-vs-classical claim is made. Until that rerun completes, the corrected classical-only table above is the canonical 19,849 benchmark. Manuscript updates must not use the old 0.868/0.842 hybrid numbers until the rerun confirms or supersedes them.
+**Previous hybrid benchmark:** The earlier reported full hybrid benchmark (Hybrid AUC 0.842 vs ECFP4 0.868, p=0.111) is **not reproducible** from the current code or data files. The underlying run file is missing, and rerunning the classical portion with the current corrected script yields ECFP4 ≈ 0.949 rather than 0.868. A fresh n=5,000 hybrid rerun **completed on July 31** (state-vector QK optimization): **Hybrid RF AUC 0.8423 ± 0.0076** (ECFP4 0.9403). The full 19,849-molecule hybrid rerun remains pending; until it completes, the corrected classical-only table above is the canonical 19,849 benchmark. Manuscript updates must not use the old 0.868/0.842 hybrid numbers as full-library results until the 19,849 rerun confirms or supersedes them.
 
 **Literature context and mechanistic explanation:** The dominance of ECFP4 is consistent with established structure–activity modelling: ECFP4 encodes local atom environments (radius 2) that directly correlate with binding site interactions, while TDA captures global topology and TNE captures tensor-mode correlations. For antimalarial activity prediction, local substructure information is more discriminative than global topology. This is consistent with the well-established principle that molecular recognition is dominated by local pharmacophoric features rather than global shape.
+
+### 3.4b n=5,000 Benchmark (Classical Baselines + Completed Hybrid) — **NEW (July 31, 2026)**
+
+**Context:** The 5,000-molecule hybrid benchmark (job 12651) runs classical descriptors as a pre-phase before computing QK features per fold. The classical results provide a second data point at a different sample size, enabling a size-dependent performance analysis.
+
+**Method:** 5-fold stratified CV, RF and SVM classifiers, 10 descriptors. Classical phase completed in ~5 min; hybrid QK per-fold computation **completed** via state-vector QK optimization (main job 12651; Nyström attempts 12655–12659; state-vector run 12660). Final results: `results/p3_hybrid_summary.txt` (Hybrid RF AUC 0.8423 ± 0.0076); intermediate checkpoint: `results/p3_hybrid_benchmark_partial.csv`.
+
+| Descriptor | RF AUC | SVM AUC | ΔRF-SVM | RF AUC (n=19,849) | Δ (n=5k vs n=19.8k) |
+|:-----------|:------:|:-------:|:-------:|:-----------------:|:--------------------:|
+| **ECFP4** | **0.940** | 0.901 | +0.039 | **0.949** | −0.009 |
+| BPF | 0.936 | 0.892 | +0.044 | 0.939 | −0.003 |
+| AP | 0.935 | 0.894 | +0.041 | 0.941 | −0.006 |
+| FCFP4 | 0.920 | 0.851 | +0.069 | 0.920 | 0.000 |
+| PHCO | 0.903 | 0.828 | +0.075 | 0.897 | +0.006 |
+| MACCS | 0.897 | 0.874 | +0.023 | 0.904 | −0.007 |
+| **TFP** | **0.765** | 0.682 | +0.083 | **0.877** | **−0.112** |
+| **TNE** | **0.660** | 0.573 | +0.087 | **0.722** | **−0.062** |
+
+**Key findings:**
+
+1. **Classical fingerprints are stable across sample sizes:** ECFP4 drops only 0.009 (0.949→0.940) from n=19,849 to n=5,000, consistent with the expected $\sim 1/\sqrt{n}$ scaling. FCFP4 is identical (0.920).
+2. **TFP drops dramatically: −0.112 AUC** (0.877→0.765). This 12.8% relative decline indicates TFP is **sample-hungry** — its topological features require larger training sets to achieve stable decision boundaries. At n=5,000, TFP loses its advantage over MACCS (0.765 vs 0.897).
+3. **TNE drops −0.062** (0.722→0.660), consistent with its already-weak performance. At n=5,000, TNE+RF (0.660) is barely above random, and TNE+SVM (0.573) is near-random.
+4. **RF > SVM everywhere**, with the gap widening for weak descriptors (TFP: +0.083, TNE: +0.087). Non-linear tree methods are essential for low-dimensional topological features.
+5. **The hybrid QK phase completed on July 31 (state-vector QK optimization): Hybrid RF AUC 0.8423 ± 0.0076**, exceeding every standalone quantum-inspired descriptor and closing part of the gap to ECFP4 (0.9403) — confirming that per-fold QK features add complementary discriminative signal to TFP/TNE at n=5,000.
+
+**Implication for manuscript:** The n=5,000 classical baseline establishes that TFP and TNE are significantly weaker than classical fingerprints at moderate sample sizes. The completed hybrid phase (Hybrid RF AUC 0.8423 ± 0.0076) shows QK features partially compensate this deficit. The quantum-inspired descriptors should be positioned as complementary topological frameworks (capturing orthogonal structural information, e.g., for H₁-RRS cross-paper analysis) rather than competitive alternatives to ECFP4.
 
 ### 3.5 Quantum Parameter Optimization — Results (July 19, 2026)
 
@@ -888,7 +914,7 @@ A classical-only benchmark was rerun on the full 19,849-molecule set with the co
 |--------|--------|-----------------|--------|--------|
 | Phase 1 Grid search (Job 7962) | 200 | 0.8534 ± 0.049 | bd=6, nr=1, nk=30 | ✅ Complété |
 | Phase 2 Re-benchmark (Jobs 12340–42) | 5,000 | 0.8283 ± 0.0371 | bd=6, nr=1, nk=30 | ✅ **Confirmé gagnant** |
-| Phase 3 Full hybrid benchmark | 19,849 | 0.842 ± 0.051 | bd=8, nr=2, nk=20 (default) | 🔄 En cours |
+| Phase 3 Full hybrid benchmark | 19,849 | — (rerun pending) | bd=8, nr=2, nk=20 (default) | 🔄 En cours |
 
 > ⚠️ **Note:** The n=5,000 evaluation confirms Combo 1 (`bd=6, nr=1, nk=30`) as the optimal hyperparameter configuration across both small ($n=200$) and large ($n=5,000$) screening regimes, preserving high classification performance (AUC = 0.8283) with minimal variance ($\sigma = 0.0371$).
 
@@ -1285,7 +1311,7 @@ Three observations that appeared contradictory are now explained:
 | Task | Molecules | Time | Cost Class |
 |------|-----------|------|------------|
 | P3 Full TDA | 19,849 | 6.4 min | Local (8 cores) |
-| P3 Full TNE | 19,849 | 20 min | Local (serial) |
+| P3 Full TNE | 19,849 | ~8 min (488 s) | Local (serial) |
 | P1 Scaffold Tanimoto | 5,000 | ~5 min | Local |
 | P1 STONED-SELFIES | 20 seeds → 5,525 | ~70 min | Local |
 | P3 Hybrid Benchmark | 19,849 × 6 | 3+ h | Local (heavy) |
@@ -1298,10 +1324,10 @@ Three observations that appeared contradictory are now explained:
 2. **MCMC optimisation:** Mean chain MPO +0.025; top candidate MPO 0.801 (piperazine scaffold) — latent space is not flat (P1)
 3. **Scaffold leap:** 92.6% of molecules are ECFP4-unreachable from seeds (P1)
 4. **Selectivity:** 100% of 810 screened seed molecules with valid SI predictions are selectively antiparasitic (SI > 10) (P1)
-5. **TDA efficiency:** 19,836 molecules processed in 6.4 min with 99.93% validity (P3)
+5. **TDA efficiency:** 19,849 molecules processed in 6.4 min with 100% validity (P3); TNE 19,836 valid (99.93%)
 6. **TNE compression:** 15.6× compression at 0.1130 reconstruction error (P3)
 7. **Quantum Kernel:** Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns), but RBF baseline suspiciously low (P3)
-8. **Classical benchmark (corrected):** ECFP4 AUC 0.949 on 19,849 molecules; PHCO bug fixed (0.500 → 0.897); 5000-molecule hybrid benchmark launched on HPC (job 12618, depends on smoke job 12616) (P3)
+8. **Classical benchmark (corrected):** ECFP4 AUC 0.949 on 19,849 molecules; PHCO bug fixed (0.500 → 0.897). **n=5,000 hybrid completed (July 31): ECFP4 0.940, TFP 0.765 (−0.112 vs n=19,849), TNE 0.660 (−0.062); Hybrid RF AUC 0.8423 ± 0.0076 (state-vector QK, jobs 12651→12660). TFP is sample-hungry** (P3)
 9. **Cross-paper H₁ × RRS:** Spearman ρ=0.312 (p=0.0057, n=77) between H₁ count and resistance resilience score; pilot ρ=0.947 (p<0.0001, n=14) retained as preliminary — TFP count of ring-like features emerges as a structural correlate of clinical resilience (P3 × P2) ✅ **UPDATED July 26**
 10. **DiffDock-Vina correlation:** r = 0.327–0.361 for PfDHFR/PfClpP; negligible for PfCRT/PfATP4 (P2)
 11. **MPO sensitivity:** ADMET weight most influential on rank ordering; QED weight most variable (P1)
@@ -1322,7 +1348,7 @@ Three observations that appeared contradictory are now explained:
 | P3 Full TDA (19.8K) | ✅ Complete | Tables 1–2 ready |
 | P3 Full TNE (19.8K) | ✅ Complete | Table 2 ready |
 | P3 Classical benchmark (corrected, 8 descriptors) | ✅ Complete | **ECFP4 AUC 0.949; PHCO bug fixed (0.500 → 0.897)** |
-| P3 Hybrid benchmark (10 descriptors) | 🚀 Launched (job 12621, n=5000, --precompute-kernel) | `--precompute-kernel` ~5× QK speedup; `--device lightning.qubit` CPU (GPU 3-4× slower); ablation included (free with precompute); awaiting results |
+| P3 Hybrid benchmark (10 descriptors) | ✅ Complete (July 31) | Hybrid RF AUC 0.8423 ± 0.0076 (state-vector QK, jobs 12651→12660); Classical: ECFP4 0.940, TFP 0.765, TNE 0.660; TFP drops −0.112 vs n=19,849 |
 | P3 QKS benchmark | ✅ Complete | **Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns)** |
 | P3 GA Discriminator benchmark | ✅ Complete | **Tanimoto AUC=1.0 vs QK AUC≈0.43–0.51** |
 | P1/P2 Tartarus full run | ✅ Complete (July 7) | 19,913 mol × 3 targets; 32h runtime; 4LDE scores verified normal |

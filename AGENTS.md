@@ -1,6 +1,6 @@
 # AGENTS.md — Projet Malaria_codesV2
 
-**Dernière mise à jour :** 29 juillet 2026 — Benchmark P3 corrigé (n=19,849), benchmark v9 P4 consolidé ✅
+**Dernière mise à jour :** 31 juillet 2026 — Benchmark P3 classique n=5000 (job 12651) ; QK per-fold en cours
 
 **GitHub :** https://github.com/NanaEngo/Malaria_codesV2
 
@@ -83,6 +83,7 @@
 | **TDA fingerprints (19,849 mol.)** | ✅ **Généré** | 19,849/19,849 valides, 0 échecs, 78 features |
 | **H₁-RRS expanded (n=77)** | ✅ **Complété** | ρ=0.312, p=0.0057 — cohorte étendue vs pilot n=14 |
 | **RRS expansion SLURM** | ✅ **Fonctionnel** | p3_rrs_expansion.sbatch, 4 tasks, 200 molécules |
+| **Benchmark classique n=5000 (hybrid pre-phase)** | ✅ **Complété** | ECFP4=0.940, TFP=0.765 (−0.112 vs n=19849), TNE=0.660 (−0.062) |
 | **Manuscrit** | 🔄 **En révision** | Benchmark classique corrigé intégré; résultats hybrides provisoires |
 | **Acceptance assessment** | ✅ **Vers 85%** | Roadmap documentée; validation physique TNE/TDA complète; rerun hybride en cours |
 | 🔴 Action 1: ChEMBL IC₅₀ validation | ⏳ **À faire** | +15% acceptance |
@@ -132,7 +133,7 @@
 ```
 Malaria_codesV2/
 ├── AGENTS.md                              ← Ce fichier (LA BOUSSOLE)
-├── BMAD_Q1_DATA_ANALYSIS_REPORT.md        ← Data analysis & BMAD report (SOURCE DE VÉRITÉ)
+├── BMAD_Q1_DATA_ANALYSIS_REPORT.md        ← Data analysis & BMAD report (SOURCE DE VÉRITÉ / CANONIQUE unique — V1 supprimé le 31 juillet 2026)
 ├── synthese_audit_adverseriel_V2607.md    ← Audit adverse (P1)
 ├── Nouvel audit adversériel.md            ← Audit adverse (tous projets)
 ├── code_audit_V2607.md                    ← Code audit
@@ -249,16 +250,12 @@ git add -A && git commit -m "message" && git push origin master
 
 ## 📋 Prochaines Actions Prioritaires
 
-### 1. P3 — Lancer Phase 2 (3 combos, n=5,000)
-- ✅ TNE embeddings disponibles (bond_dim=8, 19,836 molécules)
-- ✅ TDA fingerprints disponibles (19,849 molécules)
-- 🔄 **Lancer le premier combo :** `bd=6, nr=1, nk=30` sur n=5,000
-- Puis combos 2 et 3
+### 1. P3 — Terminer le benchmark hybride (n=5,000)
+- ✅ Classiques n=5000 complétés (ECFP4=0.940, TFP=0.765, TNE=0.660)
+- 🔄 **QK per-fold en cours** (job 12651, 16 CPUs, ETA ~22h)
+- ⏳ Rapatrier résultats + mettre à jour BMAD report
 
-### 2. P3 — Phase 3 (n=19,849)
-- Une fois le meilleur combo confirmé à n=5,000, lancer sur la librairie complète
-
-### 3. P4 — Finaliser manuscrit
+### 2. P4 — Finaliser manuscrit
 - Compléter Introduction et Results (benchmark)
 - Compiler et vérifier les références
 
@@ -268,7 +265,7 @@ git add -A && git commit -m "message" && git push origin master
 
 | Document | Rôle |
 |:---------|:-----|
-| `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | **BOUSSOLE** — Data analysis & BMAD report (Toute décision doit s'y référer) |
+| `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | **BOUSSOLE / SOURCE DE VÉRITÉ UNIQUE** — Data analysis & BMAD report (Toute décision doit s'y référer). ⚠️ **Seule version canonique : `BMAD_Q1_DATA_ANALYSIS_REPORT_V1.md` a été supprimé (local + HPC) le 31 juillet 2026.** |
 | `synthese_audit_adverseriel_V2607.md` | Audit adverse P1 — suggestions traitées ✅ |
 | `Project1_Chem_space_antimalarial_V2_CorrectedGrid/README.md` | Notes P1 |
 | `Project4_Advanced_Monte_CarloV2607/P4_MC_Strategies.md` | Stratégie P4 |
