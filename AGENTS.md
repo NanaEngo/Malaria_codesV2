@@ -265,7 +265,7 @@ git add -A && git commit -m "message" && git push origin master
 
 | Document | Rôle |
 |:---------|:-----|
-| `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | **BOUSSOLE / SOURCE DE VÉRITÉ UNIQUE** — Data analysis & BMAD report (Toute décision doit s'y référer). ⚠️ **Seule version canonique — les versions antérieures et docs BMAD désuets ont été supprimés (local + HPC) le 31 juillet 2026.** |
+| `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | **BOUSSOLE / SOURCE DE VÉRITÉ UNIQUE** — Data analysis & BMAD report (Toute décision doit s'y référer). ⚠️ **Seule version canonique — les versions antérieures et les docs BMAD désuets ont été supprimés (local + HPC) le 31 juillet 2026.** |
 | `synthese_audit_adverseriel_V2607.md` | Audit adverse P1 — suggestions traitées ✅ |
 | `Project1_Chem_space_antimalarial_V2_CorrectedGrid/README.md` | Notes P1 |
 | `Project4_Advanced_Monte_CarloV2607/P4_MC_Strategies.md` | Stratégie P4 |
