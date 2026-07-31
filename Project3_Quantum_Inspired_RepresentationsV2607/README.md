@@ -15,7 +15,7 @@
 | **Target Journal** | *Journal of Cheminformatics* / *Nature Computational Science* |
 | **Target Acceptance** | **≥ 85%** (achieved via Tartarus physical validation + polypharmacology benchmark) |
 | **Strategic Document** | [`P3_Stategic_85PA.md`](P3_Stategic_85PA.md) |
-| **Key Result (n=5000)** | Hybrid RF AUC 0.8423 ± 0.0076; ECFP4=0.940, TFP=0.765 (−0.112 vs n=19,849), TNE=0.660 (−0.062). TFP is sample-hungry. |
+| **Key Result (n=5,000)** | Hybrid RF AUC 0.8423 ± 0.0076; ECFP4=0.940, TFP=0.765 (−0.112 vs n=19,849), TNE=0.660 (−0.062). TFP is sample-hungry. |
 | **Methodology Skills** | `pennylane`, `datamol`, `scikit-learn`, `pymoo`, `experimental-design`, `BMAD-METHOD` |
 
 ---
