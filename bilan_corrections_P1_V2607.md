@@ -7,7 +7,7 @@
 
 **Sources :**
 - [BMAD_Q1_DATA_ANALYSIS_REPORT.md](./BMAD_Q1_DATA_ANALYSIS_REPORT.md) (v17, 16 juillet)
-- [Nouvel audit adversériel.md](./Nouvel%20audit%20advers%C3%A9riel.md) (audit critique)
+- [P1_P4_CONSOLIDATED_ADVERSARIAL_AUDIT.md](./P1_P4_CONSOLIDATED_ADVERSARIAL_AUDIT.md) (audit critique consolidé, 25 juillet 2026 — remplace `Nouvel audit adversériel.md`, supprimé le 31 juillet 2026)
 - `Project1_Chem_space_antimalarialV2607/scripts/v2_submit_all.sh` (pipeline V2)
 - `Project1_Chem_space_antimalarialV2607/scripts/v2_postprocess.py` (provenance)
 - `AGENTS.md` (séquencement des sessions 7 → 17 juillet)

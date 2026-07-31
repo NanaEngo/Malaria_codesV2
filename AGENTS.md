@@ -135,7 +135,6 @@ Malaria_codesV2/
 ├── AGENTS.md                              ← Ce fichier (LA BOUSSOLE)
 ├── BMAD_Q1_DATA_ANALYSIS_REPORT.md        ← Data analysis & BMAD report (SOURCE DE VÉRITÉ / CANONIQUE unique — V1 supprimé le 31 juillet 2026)
 ├── synthese_audit_adverseriel_V2607.md    ← Audit adverse (P1)
-├── Nouvel audit adversériel.md            ← Audit adverse (tous projets)
 ├── code_audit_V2607.md                    ← Code audit
 ├── bilan_corrections_P1_V2607.md          ← Bilan P1
 ├── Project1_Chem_space_antimalarial_V2_CorrectedGrid/  ← P1 (canonique)
