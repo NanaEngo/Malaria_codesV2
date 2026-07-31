@@ -1,6 +1,6 @@
 # AGENTS.md — Projet Malaria_codesV2
 
-**Dernière mise à jour :** 31 juillet 2026 — Benchmark hybride P3 n=5000 complété (jobs 12651→12660, state-vector QK) ; Hybrid RF AUC 0.8423 ± 0.0076
+**Dernière mise à jour :** 31 juillet 2026 — Benchmark hybride P3 n=5,000 complété (jobs 12651→12660, state-vector QK) ; Hybrid RF AUC 0.8423 ± 0.0076
 
 **GitHub :** https://github.com/NanaEngo/Malaria_codesV2
 
