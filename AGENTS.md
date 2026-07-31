@@ -122,9 +122,9 @@
 | Oracles (RRS, PNS) | ✅ Implémentés | 5 oracles validés |
 | Baselines (Random, Greedy, GA) | ✅ Implémentés | Benchmark protocol défini |
 | Benchmark protocol | ✅ Défini | 7 metrics, 20 seeds, 1000 oracle calls |
-| **Manuscrit — Section Results/Benchmark** | ✅ **Actualisé** | Benchmark v9 20 seeds intégré; QMC en attente |
+| **Manuscrit — Section Results/Benchmark** | ✅ **Actualisé** | Benchmark v9 20 seeds intégré; QMC retiré du manuscrit (cleanup 29/07 ; diagnostic Tier 2 non publication-grade) |
 | **.bib** | ✅ **Complété** | 30+ entrées, toutes citations résolues |
-| QMC validation | 🔄 **Tier 1 restauré + GPU** (jobs 12682→12686) | pyscf 2.14.0 + xtb + gpu4pyscf 1.8.0 installés; PBE/def2-SVP SCF + molden OK (4/4, GPU ~56 s/cand vs ~131 s CPU) — **Tier 2 (VMC/DMC) bloqué : PyQMC/QMCPACK non installé** |
+| QMC validation | ⚠️ **Tier 1 GPU OK ; Tier 2 diagnostiqué (non publication-grade)** | pyscf 2.14.0 + xtb + gpu4pyscf 1.8.0 : SCF+molden OK (4/4, GPU ~56 s/cand). **PyQMC 0.8.1 installé** — Slater-only VMC H₂O = −75.09 correct (reproduit l'espérance HF des orbitales PBE) ; **chemin de sommation JastrowSpin défectueux dans cet env** (ex. canonique LiH : VMC −7.39 vs RHF −7.78 — pire qu'un Slater nu, impossible pour un Jastrow valide) ; `ion_cusp=False` valide sur **petits systèmes uniquement** (H₂O VMC −76.53, DMC −76.50 vs SCF −76.33, FCI −76.44) ; **DMC population-collapse sur les 144-e candidats** (cand_0 DMC −1021 vs SCF −864, 92/100 walkers tués, positions 0.25 Bohr) → CSV pollué supprimé + **garde runtime** dans `p4_qmc_pipeline.py` (colonnes DMC vides si non-fini ou >20 Eh sous SCF). Production exigerait un Jastrow fonctionnel (PyQMC patché ou QMCPACK) + OPTIMIZE + nconfig ≥ 1000 + extrapolation τ→0 |
 
 ---
 
