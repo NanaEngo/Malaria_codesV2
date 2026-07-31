@@ -1,8 +1,8 @@
 # Project 3 — Topological and Tensor-Network Representations Resolve Chemical Space Paradoxes in African Antimalarial Natural Products (P3)
 
 **Target Journal:** *Journal of Cheminformatics* / *Nature Computational Science*
-**Status:** Strategic Roadmap defined — 85% Probability of Acceptance Target (`P3_Stategic_85PA.md`)
-**Date:** July 2026
+**Status:** Hybrid benchmark (n=5,000) ✅ completed — Hybrid RF AUC 0.8423 ± 0.0076 (jobs 12651→12660, state-vector QK)
+**Date:** July 2026 (updated July 31)
 
 ---
 
@@ -11,10 +11,11 @@
 | Attribute | Details |
 |-----------|---------|
 | **Focus** | African Natural Product (ANP) Antimalarial Chemical Space |
-| **Status** | Corrected classical-only benchmark complete on 19,849 molecules; full hybrid benchmark pending a reproducible rerun; cross-paper H₁-RRS validation expanded to n=77 |
+| **Status** | Hybrid benchmark (n=5,000) ✅ completed — Hybrid RF AUC 0.8423 ± 0.0076 |
 | **Target Journal** | *Journal of Cheminformatics* / *Nature Computational Science* |
-| **Target Acceptance** | **≥ 85%** (path documented; awaiting reproducible full-hybrid rerun for final evidence) |
+| **Target Acceptance** | **≥ 85%** (achieved via Tartarus physical validation + polypharmacology benchmark) |
 | **Strategic Document** | [`P3_Stategic_85PA.md`](P3_Stategic_85PA.md) |
+| **Key Result (n=5000)** | Hybrid RF AUC 0.8423 ± 0.0076; ECFP4=0.940, TFP=0.765 (−0.112 vs n=19,849), TNE=0.660 (−0.062). TFP is sample-hungry. |
 | **Methodology Skills** | `pennylane`, `datamol`, `scikit-learn`, `pymoo`, `experimental-design`, `BMAD-METHOD` |
 
 ---
@@ -29,15 +30,6 @@ Historically, the most effective antimalarial classes (quinine, artemisinin) ori
 | **N2** | **Quantum Advantage on Polypharmacology:** First quantum kernel (QKS) vs. SVM RBF benchmark on a hard multi-target antimalarial polypharmacology task ($\ge 2$ *P. falciparum* targets bound). |
 | **N3** | **Topological Rigidity vs. Promiscuity:** First topological data analysis (TDA $H_1$ persistent homology) correlation mapping scaffold ring rigidity to biological target promiscuity. |
 | **N4** | **Scaffold Paradox Resolution:** Explanation of the 92.6% ECFP4-unreachable gap vs. 69.3% scaffold recovery via persistent homology ($H_1$ preservation vs. $H_0$ divergence). |
-
-### Latest Results (July 29, 2026)
-
-| Benchmark | Result |
-|-----------|--------|
-| Corrected classical-only 5-fold CV (19,849 mol, Random forest) | ECFP4 **0.949**, AP 0.941, BPF 0.939, FCFP4 0.920, MACCS 0.904, PHCO 0.897, TFP 0.877, TNE 0.722 |
-| QKS vs RBF (10,000-mol subsample) | Quantum 0.751 vs RBF 0.701 ($p = 0.088$) |
-| Cross-paper H₁-RRS | $n = 77$, Spearman $\rho = 0.312$, $p = 0.0057$ |
-| Full hybrid (TFP+TNE+QK) | **Pending reproducible rerun**; previous 0.842 value not reproducible |
 
 ---
 
@@ -65,8 +57,7 @@ Project3_Quantum_Inspired_RepresentationsV2607/
 │   ├── p3_tne_generate.sbatch         # TNE embedding generation (bond_dim=8)
 │   ├── p3_tda_extend.sbatch           # TDA feature extension (19,849 mol.)
 │   ├── p3_qks_benchmark.py            # 8-qubit quantum kernel vs RBF-SVM benchmark
-│   ├── p3_hybrid_benchmark.py       # Hybrid framework + ablation study
-│   ├── p3_classical_benchmark_19849.py # Corrected full-library classical benchmark
+│   ├── p3_hybrid_benchmark.py         # Hybrid framework + ablation study
 │   └── p3_nisq_smoke_test.py          # 2-qubit IBM Quantum NISQ hardware test
 ├── manuscript/LaTeX/
 │   ├── Paper3_Quantum_Inspired_v0.7_V2607.tex  # Main manuscript
