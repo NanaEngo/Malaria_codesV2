@@ -148,7 +148,7 @@ Malaria_codesV2/
 │   ├── scripts/                           ← Benchmarks, param search, TNE, TDA
 │   ├── results/                           ← CSVs, figures
 │   └── logs/slurm/                        ← Logs SLURM
-│   ⚠️ `Project3_Quantum_Inspired_RepresentationsV2607_V2/` (HPC only) : duplicata obsolète conservé volontairement (décision du 31 juillet 2026) — ne pas supprimer, à ignorer dans les audits grep
+│   ⚠️ `Project3_Quantum_Inspired_RepresentationsV2607_V2/` (HPC only) : version de travail du Dr Tchapet Njafa — ne pas supprimer, à ignorer dans les audits grep (conservée volontairement, décision du 31 juillet 2026)
 ├── Project4_Advanced_Monte_CarloV2607/    ← P4
 │   ├── manuscript/LaTeX/                  ← Manuscrit
 │   ├── scripts/                           ← MCTS, Pareto, oracles
