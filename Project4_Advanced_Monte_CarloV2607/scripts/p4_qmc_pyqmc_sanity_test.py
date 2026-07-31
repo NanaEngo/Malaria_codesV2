@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Minimal PyQMC 0.8.1 sanity test on H2O.
+"""DIAGNOSTIC — not production. See session notes (July 31, 2026).
+
+Minimal PyQMC 0.8.1 sanity test on H2O.
 
 Isolates whether the garbage energies seen for candidate_0 are due to a
 PyQMC<->PySCF 2.14 incompatibility (independent of our pipeline) or something

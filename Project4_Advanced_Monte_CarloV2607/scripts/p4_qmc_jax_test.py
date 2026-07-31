@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Test PyQMC 0.8.1 workarounds on H2O (PBE/cc-pvdz, chkfile auto-save).
+"""DIAGNOSTIC — not production. See session notes (July 31, 2026).
+
+Test PyQMC 0.8.1 workarounds on H2O (PBE/cc-pvdz, chkfile auto-save).
 
 Established: default Jastrow (ion cusp ON, acoeff=atom_charges) gives broken
 VMC (-102 vs SCF -76.3); Slater-only (-75.09) and ion_cusp=False (-74.5) are

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Isolation test: which factor (functional or basis) breaks PyQMC's
+"""DIAGNOSTIC — not production. See session notes (July 31, 2026).
+
+Isolation test: which factor (functional or basis) breaks PyQMC's
 wavefunction evaluation?
 
 Hypothesis: the canonical LiH example (RHF/cc-pVDZ) gives a plausible VMC
