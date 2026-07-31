@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """P4 — QMC Tier 1/2 Execution Pipeline
 
-Selects top-5 Pareto candidates from results/pareto/.
-Tier 1: GFN2-xTB 3D geometry optimization + PySCF PBE/def2-SVP (with ECP) trial wavefunctions.
+Selects the Pareto candidates from results/pareto/ (array index 0..N-1).
+Tier 1: GFN2-xTB 3D geometry optimization + PySCF PBE/def2-SVP trial wavefunctions.
 Tier 2: VMC energy evaluation + Slater-Jastrow DMC trial preparation.
+
+Note: Tier 2 (VMC/DMC) currently prints a completion message only — it requires
+PyQMC/QMCPACK, which is not installed. This pipeline restores Tier 1
+(trial-wavefunction generation); it does NOT produce QMC energies.
 """
 
 import argparse
@@ -39,7 +43,7 @@ QMC_DIR = PROJECT_ROOT / "results" / "qmc"
 
 def parse_args():
     parser = argparse.ArgumentParser(description="P4 QMC Pipeline")
-    parser.add_argument("--array-id", type=int, default=None, help="SLURM array ID (0-4)")
+    parser.add_argument("--array-id", type=int, default=None, help="SLURM array ID (0-3)")
     parser.add_argument("--test-run", action="store_true", help="Run a fast mock test")
     return parser.parse_args()
 
@@ -109,7 +113,7 @@ def run_xtb_optimization(smiles, run_dir, name):
 
 def generate_trial_wavefunction(xyz_path, run_dir, name):
     """Tier 1: PySCF PBE/def2-SVP trial wavefunctions with ECP for DMC."""
-    print(f"Generating PBE/def2-SVP (with ECP) trial wavefunction for {name}...")
+    print(f"Generating PBE/def2-SVP trial wavefunction for {name}...")
     if gto is None or dft is None:
         print("PySCF not installed. Skipping.")
         return
@@ -117,7 +121,11 @@ def generate_trial_wavefunction(xyz_path, run_dir, name):
     mol = gto.Mole()
     mol.fromfile(str(xyz_path))
     mol.basis = "def2-svp"
-    mol.ecp = "def2-ecp"  # Use ECP for heavier atoms
+    # def2-ECP is only defined for atoms with Z > 36 (Rb and heavier). All P4
+    # Pareto candidates are light organic molecules (C/H/N/O/S, Z <= 16), so no
+    # ECP is required. Setting ecp=None avoids the 'Unable to parse ECP data'
+    # RuntimeError that occurs with the invalid literal name "def2-ecp".
+    mol.ecp = None
     mol.build()
     
     if has_gpu4pyscf:
@@ -131,10 +139,11 @@ def generate_trial_wavefunction(xyz_path, run_dir, name):
     mf.xc = "pbe"
     mf.kernel()
     
-    print(f"DFT Total Energy (PBE/def2-SVP+ECP): {mf.e_tot:.6f} Eh")
+    print(f"DFT Total Energy (PBE/def2-SVP): {mf.e_tot:.6f} Eh")
     
     # Save molden file for QMC
-    from pyscf import molden
+    # Note: pip-installed PySCF exposes molden under pyscf.tools, not pyscf.molden
+    from pyscf.tools import molden
     molden_path = run_dir / f"{name}_pbe.molden"
     molden.from_mo(mol, str(molden_path), mf.mo_coeff, ene=mf.mo_energy, occ=mf.mo_occ)
     print(f"Saved trial wavefunction to {molden_path}")
