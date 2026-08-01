@@ -3,21 +3,21 @@
 
 \begin{table}[htbp]
 \centering
-\caption{Effect sizes for pairwise AUC comparisons against the corrected full-library ECFP4 baseline (AUC 0.949, 19,849 molecules, 5-fold stratified CV, Random Forest). Cohen's $d$ is computed from the standard deviation of fold-level differences; because the full-library folds are very consistent, the resulting $d$ values are large, so the absolute $\Delta$AUC is the more interpretable effect metric.}
+\caption{Effect sizes for pairwise AUC comparisons against the corrected full-library ECFP4 baseline (AUC 0.948, 19,836 molecules, 5-fold stratified CV, Random Forest). Cohen's $d$ is computed from the standard deviation of fold-level differences; because the full-library folds are very consistent, the resulting $d$ values are large, so the absolute $\Delta$AUC is the more interpretable effect metric.}
 \label{tab:effect_sizes}
 \begin{tabularx}{\textwidth}{l S[table-format=1.3] S[table-format=+1.3] S[table-format=+1.2] l S[table-format=1.4] S[table-format=1.3]}
 \toprule
 Method & {AUC} & {$\Delta$AUC} & {Cohen's $d$} & {Effect} & {$p$-value} & {Power} \\
 \midrule
-FCFP4 & 0.920 & +0.029 & +12.02 & large & 0.0000$^{*}$ & 1.000 \\
-MACCS & 0.904 & +0.045 & +18.64 & large & 0.0000$^{*}$ & 1.000 \\
-AP & 0.941 & +0.008 & +6.54 & large & 0.0001$^{*}$ & 1.000 \\
-PHCO & 0.897 & +0.052 & +14.54 & large & 0.0000$^{*}$ & 1.000 \\
-BPF & 0.939 & +0.010 & +8.30 & large & 0.0000$^{*}$ & 1.000 \\
-TFP & 0.877 & +0.072 & +17.12 & large & 0.0000$^{*}$ & 1.000 \\
-TNE & 0.722 & +0.227 & +24.08 & large & 0.0000$^{*}$ & 1.000 \\
+FCFP4 & 0.918 & +0.029 & +11.61 & large & 0.0000$^{*}$ & 1.000 \\
+MACCS & 0.904 & +0.043 & +14.86 & large & 0.0000$^{*}$ & 1.000 \\
+AP & 0.940 & +0.008 & +4.54 & large & 0.0005$^{*}$ & 1.000 \\
+PHCO & 0.896 & +0.052 & +63.84 & large & 0.0000$^{*}$ & 1.000 \\
+BPF & 0.939 & +0.009 & +5.39 & large & 0.0003$^{*}$ & 1.000 \\
+TFP & 0.876 & +0.072 & +17.25 & large & 0.0000$^{*}$ & 1.000 \\
+TNE & 0.722 & +0.226 & +37.91 & large & 0.0000$^{*}$ & 1.000 \\
 \bottomrule
 \end{tabularx}
 \vspace{1mm}
-\footnotesize $^{*}$ $p < 0.05$ (uncorrected). Bonferroni-corrected $\alpha = 0.05/9 = 0.0056$. Power computed for 80\% target at $\alpha = 0.05$.
+\footnotesize $^{*}$ $p < 0.05$ (uncorrected). Bonferroni-corrected $\alpha = 0.05/7 = 0.0071$. Power computed for 80\% target at $\alpha = 0.05$.
 \end{table}

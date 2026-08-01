@@ -65,9 +65,9 @@ class TestScale:
     """R7: StandardScaler wrapper."""
 
     def test_normalisation(self):
-        from p3_hybrid_benchmark import scale
+        from sklearn.preprocessing import StandardScaler
         X = np.array([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
-        X_tr, X_te = scale(X[:2], X[2:])
+        sc = StandardScaler(); X_tr = sc.fit_transform(X[:2]); X_te = sc.transform(X[2:])
         assert abs(X_tr.mean()) < 1e-10, f"Train mean should be ~0, got {X_tr.mean()}"
         assert abs(X_tr.std() - 1.0) < 1e-6, f"Train std should be ~1, got {X_tr.std()}"
 

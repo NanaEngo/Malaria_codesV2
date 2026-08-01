@@ -54,6 +54,12 @@ CHEMBL_API = 'https://www.ebi.ac.uk/chembl/api/data'
 IC50_THRESHOLD_ACTIVE = 1000    # < 1 uM = active
 IC50_THRESHOLD_INACTIVE = 10000 # > 10 uM = inactive
 
+# Units accepted for direct classification (nM)
+STANDARD_UNITS_ACCEPTED = {'nM'}
+# Conversion to nM for common alternative units
+UNIT_TO_NM = {'uM': 1000.0, 'um': 1000.0, 'micromolar': 1000.0,
+              'nM': 1.0, 'nm': 1.0, 'nanomolar': 1.0}
+
 # Retry configuration
 MAX_RETRIES = 3
 RETRY_DELAY = 2  # seconds, doubles each retry
@@ -88,17 +94,19 @@ def query_chembl_target_activities(target_chembl_id, max_results=100):
                 break
             
             for act in activities:
-                try:
-                    value = float(act.get('standard_value', None))
-                except (TypeError, ValueError):
+                std_value = act.get('standard_value', None)
+                std_units = act.get('standard_units', '')
+                value_nM = value_to_nM(std_value, std_units)
+                if value_nM is None:
                     continue
-                
+
                 record = {
                     'chembl_id': act.get('molecule_chembl_id', ''),
                     'canonical_smiles': act.get('canonical_smiles', ''),
                     'standard_type': act.get('standard_type', ''),
-                    'standard_value_nM': value,
+                    'standard_value_nM': value_nM,
                     'standard_relation': act.get('standard_relation', '='),
+                    'standard_units': std_units,
                     'pchembl_value': act.get('pchembl_value', None),
                     'target': act.get('target_pref_name', ''),
                     'assay_chembl_id': act.get('assay_chembl_id', ''),
@@ -125,14 +133,43 @@ def query_chembl_target_activities(target_chembl_id, max_results=100):
     return all_activities[:max_results], True
 
 
-def classify_activity(ic50_nM):
-    """Classify activity based on IC50 threshold."""
+def classify_activity(ic50_nM, relation='='):
+    """Classify activity based on IC50 threshold, honouring ChEMBL relations.
+
+    ChEMBL reports standard_relation as '<', '=', '>', '<=', '>=' meaning the
+    true value is bounded relative to standard_value. Classification is
+    conservative so relational values are never over-interpreted:
+      - '>' or '>=': true value is AT LEAST standard_value.
+        Firmly Inactive only if even the floor is > 10 uM; never Active.
+      - '<' or '<=': true value is AT MOST standard_value.
+        Firmly Active only if even the ceiling is < 1 uM; never Inactive.
+      - '=': exact value, direct thresholding.
+    """
+    if relation in ('>', '>='):
+        if ic50_nM > IC50_THRESHOLD_INACTIVE:
+            return 'Inactive'  # floor already > 10 uM → true value inactive
+        return 'Intermediate'  # true value may be Active or Intermediate
+    if relation in ('<', '<='):
+        if ic50_nM < IC50_THRESHOLD_ACTIVE:
+            return 'Active'  # ceiling already < 1 uM → true value active
+        return 'Intermediate'  # true value may be Intermediate or Inactive
+    # '=' exact value
     if ic50_nM < IC50_THRESHOLD_ACTIVE:
         return 'Active'
     elif ic50_nM > IC50_THRESHOLD_INACTIVE:
         return 'Inactive'
-    else:
-        return 'Intermediate'
+    return 'Intermediate'
+
+
+def value_to_nM(value, units):
+    """Convert a standard_value to nM given its standard_units."""
+    try:
+        v = float(value)
+    except (TypeError, ValueError):
+        return None
+    if units in UNIT_TO_NM:
+        return v * UNIT_TO_NM[units]
+    return v if units in STANDARD_UNITS_ACCEPTED else None
 
 
 # Check RDKit availability at module level
@@ -191,8 +228,8 @@ def main():
         print(f"  Retrieved {len(activities)} activities")
         
         # Classify by activity
-        active = [a for a in activities if classify_activity(a['standard_value_nM']) == 'Active']
-        inactive = [a for a in activities if classify_activity(a['standard_value_nM']) == 'Inactive']
+        active = [a for a in activities if classify_activity(a['standard_value_nM'], a['standard_relation']) == 'Active']
+        inactive = [a for a in activities if classify_activity(a['standard_value_nM'], a['standard_relation']) == 'Inactive']
         
         print(f"  Active (< {IC50_THRESHOLD_ACTIVE} nM): {len(active)}")
         print(f"  Inactive (> {IC50_THRESHOLD_INACTIVE} nM): {len(inactive)}")
@@ -222,7 +259,8 @@ def main():
                     'Standard_type': best_match['standard_type'],
                     'IC50_nM': best_match['standard_value_nM'],
                     'IC50_uM': round(best_match['standard_value_nM'] / 1000, 2),
-                    'Activity': classify_activity(best_match['standard_value_nM']),
+                    'Relation': best_match['standard_relation'],
+                    'Activity': classify_activity(best_match['standard_value_nM'], best_match['standard_relation']),
                     'pChEMBL': best_match.get('pchembl_value', ''),
                 }
                 all_results.append(result)
@@ -230,7 +268,7 @@ def main():
                 status = '✅' if best_tanimoto > 0.7 else '⚠️'
                 print(f"  {status} Rank {i+1}: Tanimoto={best_tanimoto:.3f}, "
                       f"IC50={best_match['standard_value_nM']:.0f} nM "
-                      f"({classify_activity(best_match['standard_value_nM'])})")
+                      f"({classify_activity(best_match['standard_value_nM'], best_match['standard_relation'])})")
     
     # Save results
     if all_results:

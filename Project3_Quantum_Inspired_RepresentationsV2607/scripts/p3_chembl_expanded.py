@@ -43,6 +43,40 @@ def compute_tanimoto(smi1, smi2):
     except Exception:
         return None
 
+# Units accepted for direct classification (nM)
+UNIT_TO_NM = {'uM': 1000.0, 'um': 1000.0, 'micromolar': 1000.0,
+              'nM': 1.0, 'nm': 1.0, 'nanomolar': 1.0}
+
+def value_to_nM(value, units):
+    """Convert a standard_value to nM given its standard_units."""
+    try:
+        v = float(value)
+    except (TypeError, ValueError):
+        return None
+    if units in UNIT_TO_NM:
+        return v * UNIT_TO_NM[units]
+    return v if units == 'nM' else None
+
+def classify_activity(ic50_nM, relation='='):
+    """Classify activity based on IC50 threshold, honouring ChEMBL relations.
+
+    Conservative: '>'/'>=', firmly Inactive only if floor > 10 uM; '<'/'<=',
+    firmly Active only if ceiling < 1 uM; otherwise 'Intermediate'.
+    """
+    if relation in ('>', '>='):
+        if ic50_nM > 10000:
+            return 'Inactive'
+        return 'Intermediate'
+    if relation in ('<', '<='):
+        if ic50_nM < 1000:
+            return 'Active'
+        return 'Intermediate'
+    if ic50_nM < 1000:
+        return 'Active'
+    elif ic50_nM > 10000:
+        return 'Inactive'
+    return 'Intermediate'
+
 def query_target(target_id, max_results=200):
     """Query ChEMBL activities for a target (with retries)."""
     url = f"{CHEMBL_API}/activity.json"
@@ -59,15 +93,16 @@ def query_target(target_id, max_results=200):
             resp.raise_for_status()
             data = resp.json()
             for act in data.get('activities', []):
-                try:
-                    val = float(act.get('standard_value', None))
-                except (TypeError, ValueError):
+                value_nM = value_to_nM(act.get('standard_value', None),
+                                       act.get('standard_units', ''))
+                if value_nM is None:
                     continue
                 activities.append({
                     'chembl_id': act.get('molecule_chembl_id', ''),
                     'smiles': act.get('canonical_smiles', ''),
                     'type': act.get('standard_type', ''),
-                    'value_nM': val,
+                    'value_nM': value_nM,
+                    'relation': act.get('standard_relation', '='),
                     'pchembl': act.get('pchembl_value', None),
                 })
             break
@@ -133,7 +168,9 @@ def main():
                     'tanimoto': round(best_tan, 3),
                     'ic50_nM': best_act['value_nM'],
                     'ic50_uM': round(best_act['value_nM'] / 1000, 2),
-                    'activity': 'Active' if best_act['value_nM'] < 1000 else ('Inactive' if best_act['value_nM'] > 10000 else 'Intermediate'),
+                    'relation': best_act['relation'],
+                    'type': best_act['type'],
+                    'activity': classify_activity(best_act['value_nM'], best_act['relation']),
                 })
 
     # Save results

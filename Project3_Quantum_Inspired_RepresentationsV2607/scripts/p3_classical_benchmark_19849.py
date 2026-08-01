@@ -36,6 +36,7 @@ from p3_hybrid_benchmark import (
     ecfp4,
     fcfp4,
     load_activity,
+    load_canonical_panel,
     load_precomputed,
     maccs,
     phco,
@@ -50,22 +51,13 @@ def main() -> None:
 
     t0 = time.perf_counter()
 
-    # Use the exact 19,849-molecule panel for which TFP/TNE are available.
-    tfp_df = pd.read_csv(RESULTS_DIR / "p3_tda_fingerprints.csv")
-    if "smiles" not in tfp_df.columns:
-        raise ValueError("p3_tda_fingerprints.csv must contain a 'smiles' column")
-    smiles_list = tfp_df["smiles"].tolist()
-    n_mols = len(smiles_list)
-    print(f"Loaded {n_mols:,} molecules from p3_tda_fingerprints.csv")
-
-    act_df = (
-        load_activity()
-        .drop_duplicates("smiles")  # avoid duplicate rows inflating the length
-        .merge(pd.DataFrame({"smiles": smiles_list}), on="smiles", how="inner")
-    )
-    if len(act_df) != n_mols:
-        missing = n_mols - len(act_df)
-        print(f"  WARNING: {missing:,} SMILES from TFP panel are missing from activity file — excluding them")
+    # Use the canonical panel shared with the hybrid benchmark (C2 fix):
+    # TFP-file order ∩ deduplicated activity ∩ finite-TNE.
+    # Every descriptor is evaluated on exactly the same molecules with the
+    # same fold assignment, so paired comparisons across scripts are valid.
+    act_df = load_canonical_panel(n_mols=None)
+    n_mols = len(act_df)
+    print(f"Loaded {n_mols:,} molecules from canonical panel (TFP ∩ activity ∩ TNE)")
     smiles_list = act_df["smiles"].tolist()
     y = (act_df["activity"].values >= ACT_THRESHOLD).astype(int)
     print(f"Active: {y.sum():,}, Inactive: {(y == 0).sum():,}")

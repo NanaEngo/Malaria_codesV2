@@ -1,6 +1,6 @@
 # AGENTS.md — Projet Malaria_codesV2
 
-**Dernière mise à jour :** 31 juillet 2026 — Benchmark hybride P3 n=5,000 complété (jobs 12651→12660, state-vector QK) ; Hybrid RF AUC 0.8423 ± 0.0076
+**Dernière mise à jour :** 01 août 2026 — Reporting P4 séparé de BMAD : `P4_DATA_ANALYSIS_REPORT.md` est la boussole P4 (benchmark, Pareto, ablations, QMC) ; BMAD couvre P1–P3 uniquement. P3 : benchmark classique canonique n=19,836 complété (job 12698, ECFP4 0.9475 ± 0.0045) ; benchmark hybride canonique (job 12699) en cours ; rerun QKS C3-fix (12700/12702) en file.
 
 **GitHub :** https://github.com/NanaEngo/Malaria_codesV2
 
@@ -10,29 +10,31 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     WORKFLOW OBLIGATOIRE                     │
-│                                                              │
-│   Données brutes (HPC)                                        │
-│        │                                                      │
-│        ▼                                                      │
-│   BMAD_Q1_DATA_ANALYSIS_REPORT.md ←── BOUSSOLE ──┐           │
-│        │                                        │             │
-│        ▼                                        │             │
-│   Manuscrit P1/P2/P3/P4                         │             │
-│        │                                        │             │
-│        └─── Toute modification doit être         │             │
-│             justifiée par le data analysis report│             │
-│                                                    │             │
-│   RÈGLE : Jamais de "navigation à vue"              │             │
-│   Chaque action doit être tracée dans le            │             │
-│   data analysis report AVANT d'être exécutée        │             │
+│                    WORKFLOW OBLIGATOIRE                     │
+│                                                             │
+│                    Données brutes (HPC)                     │
+│                                │                            │
+│                                ▼                            │
+│   BMAD_Q1_DATA_ANALYSIS_REPORT.md  ←──  BOUSSOLE P1/P2/P3   │
+│      P4_DATA_ANALYSIS_REPORT.md       ←──  BOUSSOLE P4      │
+│                                │                            │
+│                                ▼                            │
+│                    Manuscrit P1/P2/P3/P4                    │
+│                                │                            │
+│       └─── Toute modification doit être justifiée par le    │
+│              data analysis report (P1–P3 : BMAD ; P4 :      │
+│                     P4_DATA_ANALYSIS_REPORT.md)             │
+│                                                             │
+│            RÈGLE : Jamais de "navigation à vue"             │
+│    Chaque action doit être tracée dans le data analysis     │
+│                report AVANT d'être exécutée                 │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ### Règles pour les agents AI
 
-1. **Lire le data analysis report AVANT toute action** — `BMAD_Q1_DATA_ANALYSIS_REPORT.md` est la boussole
-2. **Toute modification de code, de paramètres ou de protocole** doit être documentée dans le data analysis report AVANT exécution
+1. **Lire le data analysis report AVANT toute action** — `BMAD_Q1_DATA_ANALYSIS_REPORT.md` est la boussole **P1/P2/P3** ; `P4_DATA_ANALYSIS_REPORT.md` est la boussole **P4** (depuis le 01/08/2026, le reporting P4 — benchmark, Pareto, ablations, QMC — se fait dans le rapport P4 dédié, plus dans BMAD)
+2. **Toute modification de code, de paramètres ou de protocole** doit être documentée dans le data analysis report (P1–P3 : BMAD ; P4 : P4_DATA_ANALYSIS_REPORT.md) AVANT exécution
 3. **Ne jamais modifier le pipeline de benchmark** sans validation préalable dans le data analysis report
 4. **Tout résultat inattendu** (AUC différant de >0.02 de l'attendu) doit être investigué et documenté dans le data analysis report
 5. **Phases P3 à suivre strictement :** Phase 1 (n=200) → Phase 2 (n=5,000) → Phase 3 (n=19,849) — jamais de saut de phase
@@ -41,7 +43,7 @@
 
 ---
 
-## 📊 État des Projets (aligné sur BMAD_Q1_DATA_ANALYSIS_REPORT.md)
+## 📊 État des Projets (aligné sur BMAD_Q1_DATA_ANALYSIS_REPORT.md pour P1–P3 et P4_DATA_ANALYSIS_REPORT.md pour P4)
 
 ### P1 — Chemical Space & Docking ✅ (Soumission prête)
 
@@ -72,20 +74,21 @@
 
 | Composant | Statut | Résultat clé |
 |-----------|:------:|:-------------|
-| **Benchmark classique corrigé (n=19,849)** | ✅ Complété | ECFP4=0.949, PHCO 0.897 (bug fix), TFP 0.877, TNE 0.722 |
-| **Ablation study** | ⏳ **Provisoire** | QKS driver principal (p<0.001) — rerun hybride n=5,000 complété (Hybrid RF AUC 0.8423) ; confirmation sur benchmark complet n=19,849 en attente |
-| **QKS canonical** | ✅ Complété | Quantum 0.751 vs RBF 0.701 (gamma-tuned) sur sous-échantillon n=500 |
+| **Benchmark classique canonique (n=19,836)** | ✅ Complété (job 12698) | ECFP4=0.9475±0.0045, FCFP4 0.9183, MACCS 0.9045, AP 0.9399, PHCO 0.8959, BPF 0.9389, TFP 0.8759, TNE 0.7219 |
+| **Ablation study** | ⏳ **En cours (canonique)** | **Hybrid canonique = 0.8876 ± 0.0065** (RF, 5 folds, job 12699, section `hybrid_done` ; SVM 0.8323) ; ablation pending dans le même job |
+| **QKS canonical** | ✅ Complété | Quantum 0.751 vs RBF 0.701 (gamma-tuned) sur sous-échantillon n=500 — **rerun C3-fix en file (12700 n=19,849 / 12702 n=5,000)** |
 | **PHCO corrigé** | ✅ Complété | 0.500→0.897 (GetOnBits fix) |
 | **Phase 1 — Grid search (n=200)** | ✅ **Complété** | **bd=6, nr=1, nk=30 → AUC 0.8534** |
-| **Phase 2 — Re-benchmark (n=5,000)** | ✅ **Complété** | **Combo 1: 0.8283±0.0371 (gagnant), Combo 2: 0.8121, Combo 3: 0.8047** |
+| **Phase 2 — Re-benchmark (n=5,000)** | ✅ **Complété** | **Combo 1: 0.8283±0.0371 (gagnant, canonique), Combo 2: 0.8121, Combo 3: 0.8047** |
 | Figures SM (heatmap, boxplot, table) | ✅ Générées | `results/figures/p3_qp_*.png` |
-| **TNE embeddings (bond_dim=8)** | ✅ **Généré** | 19,836/19,849 valides, 192 dims, 5.9× compression |
+| **Figure benchmark (bar)** | ✅ **Régénérée 01/08** | `results/figures/p3_auc_benchmark_bar.png` — inclut la ligne **Hybrid 0.8876 ± 0.0065** (canonique) ; valeurs QKS encore non-C3-fixées (12700/12702 PD) |
+| **TNE embeddings (bond_dim=8)** | ✅ **Généré** | 19,836/19,849 valides (13 échecs), 192 dims, 6.1× compression réelle (mean 39.0 atomes) |
 | **TDA fingerprints (19,849 mol.)** | ✅ **Généré** | 19,849/19,849 valides, 0 échecs, 78 features |
 | **H₁-RRS expanded (n=77)** | ✅ **Complété** | ρ=0.312, p=0.0057 — cohorte étendue vs pilot n=14 |
 | **RRS expansion SLURM** | ✅ **Fonctionnel** | p3_rrs_expansion.sbatch, 4 tasks, 200 molécules |
 | **Benchmark classique n=5,000 (hybrid pre-phase)** | ✅ **Complété** | ECFP4=0.940, TFP=0.765 (−0.112 vs n=19,849), TNE=0.660 (−0.062) |
-| **Manuscrit** | 🔄 **En révision** | Benchmark classique corrigé intégré; résultats hybrides provisoires |
-| **Acceptance assessment** | ✅ **Vers 85%** | Roadmap documentée; validation physique TNE/TDA complète; benchmark hybride n=5,000 complété (Hybrid RF AUC 0.8423) |
+| **Manuscrit** | 🔄 **En révision** | Benchmark classique canonique intégré (n=19,836) ; fixes H2/H3/H4/Minor9 appliqués ; résultats hybrides/QKS provisoires tant que 12699/12700/12702 n'ont pas écrit les fichiers finaux |
+| **Acceptance assessment** | ✅ **Vers 85%** | Roadmap documentée; validation physique TNE/TDA complète; benchmark hybride canonique en cours (job 12699) |
 | 🔴 Action 1: ChEMBL IC₅₀ validation | ⏳ **À faire** | +15% acceptance |
 | 🔴 Action 2: Reframe H₁-RRS narrative | ⏳ **À faire** | +10% acceptance |
 | 🟡 Action 3: Benchmark SOTA topological | ⏳ **À faire** | +8% acceptance |
@@ -113,7 +116,23 @@
 
 **Conclusion Phase 2 :** Le combo 1 (`bd=6, nr=1, nk=30`) est confirmé comme la meilleure configuration hyperparamétrique. Prêt pour le benchmark Phase 3 (n=19,849).
 
+### P5 — GNN/Transformer Drug Discovery 🔄 (Roadmap en cours)
+
+| Composant | Statut | Résultat clé |
+|-----------|:------:|:-------------|
+| **Objectif** | 🔄 **Planifié** | GNN (GCN, GAT, GIN) + Transformers (ChemBERTa, Graphormer) pour prédiction d'activité et génération moléculaires |
+| **Lien P3** | ✅ **Défini** | Intégration features TDA/TNE (P3) comme input multi-modal |
+| **Lien P2** | ✅ **Défini** | Validation sur RRS/PNS (P2) comme oracles biologiques |
+| **Dataset** | ⏳ **À préparer** | n=19,849 (P3 benchmark) — même split que P3 pour comparaison directe |
+| **Baselines** | ⏳ **À définir** | ECFP4/TFP (P3), QK (P3), Random Forest — comparaison SOTA |
+| **SOTA topological** | ⏳ **À implémenter** | Benchmark topologique (action 3 P3) comme baseline supplémentaire |
+| **Modèles** | ⏳ **À implémenter** | GCN, GAT, GIN, ChemBERTa, Graphormer — phase 1 |
+| **Multi-modalité** | ⏳ **À implémenter** | Concaténation embeddings GNN + features TDA/TNE |
+| **Validation** | ⏳ **À planifier** | 5-fold CV, même protocol que P3 (n=5000 puis n=19,849) |
+
 ### P4 — Advanced Monte Carlo 🔄 (Manuscrit en rédaction)
+
+> 📄 **Data analysis P4 : `P4_DATA_ANALYSIS_REPORT.md`** (rapport dédié depuis le 01/08/2026 — benchmark v1–v9, Pareto, ablations, QMC Tier 1/2 diagnostic et verdict v46). BMAD ne porte plus le détail P4.
 
 | Composant | Statut | Résultat clé |
 |-----------|:------:|:-------------|
@@ -124,7 +143,7 @@
 | Benchmark protocol | ✅ Défini | 7 metrics, 20 seeds, 1000 oracle calls |
 | **Manuscrit — Section Results/Benchmark** | ✅ **Actualisé** | Benchmark v9 20 seeds intégré; QMC retiré du manuscrit (cleanup 29/07 ; diagnostic Tier 2 non publication-grade) |
 | **.bib** | ✅ **Complété** | 30+ entrées, toutes citations résolues |
-| QMC validation | ⚠️ **Tier 1 GPU OK ; Tier 2 diagnostiqué (non publication-grade)** | pyscf 2.14.0 + xtb + gpu4pyscf 1.8.0 : SCF+molden OK (4/4, GPU ~56 s/cand). **PyQMC 0.8.1 installé** — Slater-only VMC H₂O = −75.09 correct (reproduit l'espérance HF des orbitales PBE) ; **chemin de sommation JastrowSpin défectueux dans cet env** (ex. canonique LiH : VMC −7.39 vs RHF −7.78 — pire qu'un Slater nu, impossible pour un Jastrow valide) ; `ion_cusp=False` valide sur **petits systèmes uniquement** (H₂O VMC −76.53, DMC −76.50 vs SCF −76.33, FCI −76.44) ; **DMC population-collapse sur les 144-e candidats** (cand_0 DMC −1021 vs SCF −864, 92/100 walkers tués, positions 0.25 Bohr) → CSV pollué supprimé + **garde runtime** dans `p4_qmc_pipeline.py` (colonnes DMC vides si non-fini ou >20 Eh sous SCF). Production exigerait un Jastrow fonctionnel (PyQMC patché ou QMCPACK) + OPTIMIZE + nconfig ≥ 1000 + extrapolation τ→0 |
+| QMC validation | ⚠️ **Tier 1 GPU OK ; Tier 2 non publication-grade (diagnostic VMC/DMC terminé — verdict CORRIGÉ 01/08)** | pyscf 2.14.0 + xtb + gpu4pyscf 1.8.0 : SCF+molden OK (4/4, GPU ~56 s/cand). **PyQMC 0.8.1 installé** — Slater-only VMC H₂O = −75.09 correct. ⚠️ **Correction 01/08 (P4_DATA_ANALYSIS_REPORT.md §5.2, verdict v46) : le diagnostic v45 « chemin JastrowSpin défectueux » est RÉTRACTÉ** — `generate_jastrow(ion_cusp=False)` pose le cusp e-e `bcoeff=[-0.25,-0.50,-0.25]` **inconditionnellement**, donc un Jastrow « zéro-paramètre » n'est PAS exp(0)=1 ; le test A0 (acoeff+bcoeff explicitement nuls) donne `max|log J| = 0.000e+00` ⇒ **chemin `recompute()` numba CORRECT**. Backend **JAX cassé dans 0.8.1** (2 bugs `dot_general` (24,) vs (5,) / (24,) vs (25,) — mismatch cartésien/sphérique 24 vs 25 AOs) → **chemin numba = chemin de production**. DMC collapse 144-e confirmé par scale test (Slater-only −897/−900 vs SCF −864 ; Jastrow −867 ; garde runtime dans `p4_qmc_pipeline.py`). Production exigerait OPTIMIZE + nconfig ≥ 1000 + extrapolation τ→0. Doc : `docs/P4_QMC_FIX_STRATEGY.md` §7–8 |
 
 ---
 
@@ -133,7 +152,8 @@
 ```
 Malaria_codesV2/
 ├── AGENTS.md                              ← Ce fichier (LA BOUSSOLE)
-├── BMAD_Q1_DATA_ANALYSIS_REPORT.md        ← Data analysis & BMAD report (SOURCE DE VÉRITÉ / CANONIQUE unique — V1 supprimé le 31 juillet 2026)
+├── BMAD_Q1_DATA_ANALYSIS_REPORT.md        ← Data analysis & BMAD report P1–P3 (SOURCE DE VÉRITÉ / CANONIQUE — V1 supprimé le 31 juillet 2026)
+├── P4_DATA_ANALYSIS_REPORT.md             ← Data analysis report P4 (canonique depuis le 01/08/2026 — benchmark, Pareto, ablations, QMC)
 ├── synthese_audit_adverseriel_V2607.md    ← Audit adverse (P1)
 ├── code_audit_V2607.md                    ← Code audit
 ├── bilan_corrections_P1_V2607.md          ← Bilan P1
@@ -250,10 +270,12 @@ git add -A && git commit -m "message" && git push origin master
 
 ## 📋 Prochaines Actions Prioritaires
 
-### 1. P3 — Benchmark hybride (n=5,000) ✅ complété ; Phase 3 (n=19,849) en attente
-- ✅ Classiques n=5,000 complétés (ECFP4=0.940, TFP=0.765, TNE=0.660)
-- ✅ **QK per-fold complété** (jobs 12651→12660, state-vector QK) → Hybrid RF AUC 0.8423 ± 0.0076
-- ✅ BMAD report mis à jour (v37–v40) ; rapatriement des résultats effectué
+### 1. P3 — Benchmark hybride canonique (n=19,836) en cours ; QKS C3-fix en file
+- ✅ Classiques canoniques n=19,836 complétés (job 12698) : ECFP4=0.9475, PHCO=0.8959, TFP=0.8759, TNE=0.7219
+- 🔄 Hybride canonique (job 12699) : classiques+Hybrid per-fold terminés (`hybrid_done`) ; ablation pending dans le même job
+- ⏳ QKS C3-fix en file (12700 n=19,849 / 12702 n=5,000) — un seul StandardScaler fit sur train
+- ✅ Figure benchmark régénérée (01/08) avec ligne Hybrid canonique 0.8876 ± 0.0065
+- ⏳ Quand 12700/12702 finis : intégrer QKS C3-fix dans la figure + lever "provisoire" dans le manuscrit
 
 ### 2. P4 — Finaliser manuscrit
 - Compléter Introduction et Results (benchmark)
@@ -265,7 +287,8 @@ git add -A && git commit -m "message" && git push origin master
 
 | Document | Rôle |
 |:---------|:-----|
-| `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | **BOUSSOLE / SOURCE DE VÉRITÉ UNIQUE** — Data analysis & BMAD report (Toute décision doit s'y référer). ⚠️ **Seule version canonique — les versions antérieures et les docs BMAD désuets ont été supprimés (local + HPC) le 31 juillet 2026.** |
+| `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | **BOUSSOLE / SOURCE DE VÉRITÉ P1–P3** — Data analysis & BMAD report (Toute décision P1–P3 doit s'y référer). ⚠️ **Seule version canonique — les versions antérieures et les docs BMAD désuets ont été supprimés (local + HPC) le 31 juillet 2026.** Le reporting P4 ne s'y fait plus (depuis v47, 01/08/2026). |
+| `P4_DATA_ANALYSIS_REPORT.md` | **BOUSSOLE / SOURCE DE VÉRITÉ P4** — Data analysis report P4 dédié (benchmark v1–v9, Pareto, ablations, QMC Tier 1/2 diagnostic et verdict v46). Créé le 01/08/2026 (split de BMAD v47). |
 | `synthese_audit_adverseriel_V2607.md` | Audit adverse P1 — suggestions traitées ✅ |
 | `Project1_Chem_space_antimalarial_V2_CorrectedGrid/README.md` | Notes P1 |
 | `Project4_Advanced_Monte_CarloV2607/P4_MC_Strategies.md` | Stratégie P4 |
@@ -278,6 +301,10 @@ git add -A && git commit -m "message" && git push origin master
 |:------:|:-------|:------:|:---------|
 | 11872 | `p3_tne_generate.sbatch` | ✅ Terminé | TNE bond_dim=8, 19,836 valides |
 | 11873 | `p3_tda_extend.sbatch` | ✅ Terminé | TDA 19,849 mol., 0 échec |
+| 12698 | `p3_classical_canonical` | ✅ Terminé | Benchmark classique canonique n=19,836 (ECFP4 0.9475 ± 0.0045) |
+| 12699 | `p3_hybrid_canonical` | 🔄 En cours | Classiques+Hybrid per-fold terminés (`hybrid_done`) ; ablation pending |
+| 12700 | `p3_qks_n19849` | ⏳ PD | Rerun QKS C3-fix n=19,849 |
+| 12702 | `p3_qks_n5000` | ⏳ PD | Rerun QKS C3-fix n=5,000 |
 
 ## ❌ Leçons apprises (Navigation à vue interdite)
 

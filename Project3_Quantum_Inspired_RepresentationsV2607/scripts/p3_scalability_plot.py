@@ -39,7 +39,7 @@ RESULTS_DIR = PROJECT_DIR / "results"
 SCRIPTS_DIR = PROJECT_DIR / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
-N_QUBITS = 8
+N_QUBITS = 6  # Phase-2 optimal: bond_dim=6 (BMAD v51 / Appendix K; was 8)
 N_REPEATS = 1
 
 
@@ -64,7 +64,7 @@ def _make_quantum_kernel(n_qubits: int, n_repeats: int = 1):
 
 
 def _sample_molecules(n: int) -> np.ndarray:
-    """Load n molecules and reduce to 8-D UMAP features."""
+    """Load n molecules and reduce to 6-D UMAP features."""
     from p3_qks_benchmark import load_dataset, reduce_to_qubits
     X, y, _ = load_dataset(n)
     # Use first 80% as "training" for consistent measurement

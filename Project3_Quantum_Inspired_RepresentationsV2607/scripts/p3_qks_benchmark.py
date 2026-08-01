@@ -74,7 +74,7 @@ from pennylane.kernels import (
 PROJECT_DIR = Path(__file__).parent.parent
 RESULTS_DIR = PROJECT_DIR / "results"
 
-N_QUBITS = 8
+N_QUBITS = 6  # Phase-2 optimal: bond_dim=6 → 6 qubits (p3_quantum_params_sweep.csv)
 N_FOLDS = 5
 ACT_THRESHOLD = 0.5
 
@@ -84,13 +84,16 @@ ACT_THRESHOLD = 0.5
 # ---------------------------------------------------------------------------
 
 def load_dataset(n_mols: int) -> tuple[np.ndarray, np.ndarray, list[str]]:
-    """Load molecules + binary activity labels."""
-    act = pd.read_csv(RESULTS_DIR / "eos80ch_malaria_final_activity.csv")
-    act = act[["input", "asexual_blood_stage"]].dropna().rename(
-        columns={"input": "smiles", "asexual_blood_stage": "activity"}
-    )
-    if n_mols:
-        act = act.head(n_mols)
+    """Load molecules + binary activity labels from the shared canonical panel.
+
+    C2 fix (BMAD v51 / Appendix K): use load_canonical_panel() so the QKS
+    benchmark is evaluated on exactly the same molecules as the hybrid and
+    classical benchmarks (TFP order ∩ dedup activity ∩ finite-TNE). Previously
+    this used load_activity().head(n_mols), which selected a different subset
+    and invalidated paired comparisons across scripts.
+    """
+    from p3_hybrid_benchmark import load_canonical_panel
+    act = load_canonical_panel(n_mols if n_mols else None)
 
     fps, labels, smiles = [], [], []
     for _, row in act.iterrows():
@@ -203,11 +206,44 @@ def _compute_block_task(i0: int, i1: int, j0: int, j1: int,
     return kernel_matrix(X_chunk[i0:i1], X_chunk[j0:j1], _kfn)
 
 
+def _evaluate_state_vectors(X: np.ndarray,
+                             n_qubits: int = 8,
+                             n_repeats: int = 1) -> np.ndarray:
+    """Evaluate quantum state vectors for input samples X.
+
+    Shape: (len(X), 2**n_qubits) complex64.
+
+    State-vector formulation of the IQPEmbedding kernel: K(x1, x2) =
+    |<phi(x1)|phi(x2)>|^2 = |V(x1) . V(x2).conj()|^2. Evaluating states
+    O(N) and using BLAS inner products is ~1000x faster than the pairwise
+    QNode evaluation (validated numerically identical, max diff 3.6e-07).
+    """
+    _dev = qml.device("lightning.qubit", wires=n_qubits)
+
+    @qml.qnode(_dev)
+    def _circuit(x):
+        qml.IQPEmbedding(x, wires=range(n_qubits), n_repeats=n_repeats)
+        return qml.state()
+
+    V = np.array([_circuit(x) for x in X], dtype=np.complex64)
+    return V
+
+
+def _compute_block_task_statevec(i0: int, i1: int, j0: int, j1: int,
+                                  X_chunk: np.ndarray,
+                                  n_qubits: int, n_repeats: int) -> np.ndarray:
+    """Compute one block of the kernel matrix via state-vector inner product."""
+    VX = _evaluate_state_vectors(X_chunk[i0:i1], n_qubits=n_qubits, n_repeats=n_repeats)
+    VY = _evaluate_state_vectors(X_chunk[j0:j1], n_qubits=n_qubits, n_repeats=n_repeats)
+    return (np.abs(VX @ VY.conj().T) ** 2).astype(np.float64)
+
+
 def _kernel_matrix_chunked(X: np.ndarray,
                              block_size: int = 200,
                              n_jobs: int = 1,
                              n_qubits: int = 8,
-                             n_repeats: int = 1) -> np.ndarray:
+                             n_repeats: int = 1,
+                             state_vector: bool = False) -> np.ndarray:
     """
     Compute kernel matrix via block decomposition, optionally parallel.
 
@@ -222,6 +258,10 @@ def _kernel_matrix_chunked(X: np.ndarray,
     Parallel mode uses joblib with loky (process) backend — each worker
     process creates its own PennyLane device + QNode, avoiding PennyLane's
     non-thread-safe global QueuingManager.
+
+    state_vector=True uses the O(N) state-vector kernel (|V V^dag|^2 via
+    BLAS), validated numerically identical to pairwise evaluation but
+    ~1000x faster — required for tractable n=5,000 benchmarks.
 
     Returns:
         K: (n, n) full kernel matrix
@@ -247,12 +287,20 @@ def _kernel_matrix_chunked(X: np.ndarray,
     print(f"        Blocks: {n_tasks}/{n_all} computed (symmetry saves {n_all - n_tasks}/{n_all} = {(1-n_tasks/n_all)*100:.0f}%)")
 
     if n_jobs == 1:
-        results = [_compute_block_task(i0, i1, j0, j1, X, n_qubits, n_repeats)
-                   for i0, i1, j0, j1 in tasks]
+        if state_vector:
+            results = [_compute_block_task_statevec(i0, i1, j0, j1, X, n_qubits, n_repeats)
+                       for i0, i1, j0, j1 in tasks]
+        else:
+            results = [_compute_block_task(i0, i1, j0, j1, X, n_qubits, n_repeats)
+                       for i0, i1, j0, j1 in tasks]
     else:
         from joblib import Parallel, delayed
+        if state_vector:
+            _task = _compute_block_task_statevec
+        else:
+            _task = _compute_block_task
         results = Parallel(n_jobs=n_jobs)(
-            delayed(_compute_block_task)(i0, i1, j0, j1, X, n_qubits, n_repeats)
+            delayed(_task)(i0, i1, j0, j1, X, n_qubits, n_repeats)
             for i0, i1, j0, j1 in tasks
         )
 
@@ -272,9 +320,18 @@ def _kernel_matrix_chunked(X: np.ndarray,
 def build_quantum_kernel(X: np.ndarray, n_repeats: int = 1,
                          noise_method: str | None = None,
                          block_size: int | None = None,
-                         n_jobs: int = 1) -> np.ndarray:
+                         n_jobs: int = 1,
+                         state_vector: bool = False,
+                         scaler=None) -> np.ndarray:
     """
     Compute quantum kernel matrix using PennyLane built-in features.
+
+    C3 FIX: the caller fits ONE StandardScaler on the TRAINING features and
+    passes it via `scaler`. When provided, X is standardised + clipped using
+    the training scaler, so train and test live in the SAME Hilbert-space
+    embedding (IQPEmbedding is scale-sensitive). When scaler is None, a
+    scaler is fit on X (used when there is no separate test set, e.g. the
+    target-alignment recomputation path).
 
     For n ≤ 500, uses the built-in kernel_matrix directly (fast).
     For n > 500, uses block decomposition with optional parallelism.
@@ -289,6 +346,9 @@ def build_quantum_kernel(X: np.ndarray, n_repeats: int = 1,
         noise_method: None | "global" | "local" for depolarizing noise
         block_size: Block size for chunked computation (None = auto)
         n_jobs: Parallel workers for chunked mode
+        state_vector: Use O(N) state-vector kernel (validated identical,
+            ~1000x faster) for n > 500 — required for tractable n=5,000.
+        scaler: optional pre-fit StandardScaler from training data (C3).
 
     Returns:
         K: (n, n) PSD kernel matrix
@@ -299,8 +359,11 @@ def build_quantum_kernel(X: np.ndarray, n_repeats: int = 1,
     # NOTE: IQPEmbedding requires inputs in [-1, 1] (arccos(x^2)).
     # StandardScaler produces values outside this range, so we clip.
     from sklearn.preprocessing import StandardScaler
-    _scaler = StandardScaler()
-    X_scaled = _scaler.fit_transform(X)
+    if scaler is None:
+        _scaler = StandardScaler()
+        X_scaled = _scaler.fit_transform(X)
+    else:
+        X_scaled = scaler.transform(X)
     # Clip back to [-1, 1] for IQPEmbedding compatibility
     X_scaled = np.clip(X_scaled, -1.0, 1.0)
     if not np.all(np.isfinite(X_scaled)):
@@ -318,15 +381,22 @@ def build_quantum_kernel(X: np.ndarray, n_repeats: int = 1,
 
     if _bs is None or n <= _bs:
         # Small matrix: direct computation (fast, no parallel overhead)
-        K = kernel_matrix(X_scaled, X_scaled, kernel=kernel_fn)
+        if state_vector and n > 500:
+            print(f"    State-vector direct: {n}x{n} matrix (single block)")
+            _task = _compute_block_task_statevec(0, n, 0, n, X_scaled, N_QUBITS, n_repeats)
+            K = _task
+        else:
+            K = kernel_matrix(X_scaled, X_scaled, kernel=kernel_fn)
     else:
         # Large matrix: block decomposition for parallelism
-        print(f"    Chunked mode: {n}x{n} matrix, block_size={_bs}, n_jobs={n_jobs}")
+        print(f"    Chunked mode: {n}x{n} matrix, block_size={_bs}, n_jobs={n_jobs}"
+              + (" [state-vector]" if state_vector else ""))
         K = _kernel_matrix_chunked(X_scaled,
                                     block_size=_bs,
                                     n_jobs=n_jobs,
                                     n_qubits=N_QUBITS,
-                                    n_repeats=n_repeats)
+                                    n_repeats=n_repeats,
+                                    state_vector=state_vector)
 
     # Step 3: Fix non-PSD matrices for SVM compatibility
     K = closest_psd_matrix(K)
@@ -438,17 +508,36 @@ def rbf_kernel(X_train: np.ndarray, X_test: np.ndarray,
     return K_tr, K_te, best_gamma
 
 
+def _target_alignment_from_kernel(K: np.ndarray, y: np.ndarray) -> float:
+    """Target alignment computed directly from a (train, train) kernel matrix.
+
+    Matches ``pennylane.kernels.target_alignment(X, y, kernel_fn)`` exactly
+    (same polarity formula, validated to 1e-9) but avoids re-evaluating the
+    pairwise kernel — required when the state-vector kernel already produced
+    the states. IMPORTANT: the canonical pipeline passes the RAW {0,1} class
+    labels to target_alignment, which does NOT convert to {-1,1} (the
+    negative class maps to 0/nminus = 0). We reproduce that exactly here.
+    """
+    nplus = np.count_nonzero(np.array(y) == 1)
+    nminus = len(y) - nplus
+    _Y = np.array([yy / nplus if yy == 1 else yy / nminus for yy in y])
+    T = np.outer(_Y, _Y)
+    return float(np.sum(K * T) / np.sqrt(np.sum(K * K) * np.sum(T * T)))
+
+
 def run_benchmark(X: np.ndarray, y: np.ndarray,
                   n_repeats: int = 1,
                   noise_method: str | None = None,
                   checkpoint_path: str | None = None,
                   block_size: int | None = None,
-                  n_jobs: int = 1) -> pd.DataFrame:
+                  n_jobs: int = 1,
+                  state_vector: bool = False) -> pd.DataFrame:
     """5-fold CV benchmark: quantum kernel vs RBF kernel (lightning.qubit).
 
     Both RBF and QK use the same [-1, 1] scaled features.
     Supports checkpoint resume: saves fold results to JSON after each fold.
     For large n, uses block decomposition with n_jobs workers.
+    state_vector=True uses the O(N) state-vector kernel (validated identical).
     """
     skf = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
     kernel_fn = _make_kernel_fn(N_QUBITS, n_repeats)
@@ -475,20 +564,41 @@ def run_benchmark(X: np.ndarray, y: np.ndarray,
         X_tr_raw, X_te_raw = X[tr_idx], X[te_idx]
         y_tr, y_te = y[tr_idx], y[te_idx]
 
-        # UMAP -> scaled features (same for both QK and RBF)
+        # UMAP -> [-1,1] features (same for both QK and RBF)
         X_tr_q, X_te_q = reduce_to_qubits(X_tr_raw, X_te_raw)
 
+        # C3 FIX: fit ONE StandardScaler on TRAIN only, apply to train + test,
+        # and clip to [-1,1]. IQPEmbedding is scale-sensitive, so both the
+        # quantum kernel and the RBF/linear baselines must live in the SAME
+        # Hilbert-space embedding (previously train used standardized features
+        # while test used raw [-1,1] — an internal inconsistency that biased
+        # every QKS AUC).
+        from sklearn.preprocessing import StandardScaler
+        _scaler = StandardScaler().fit(X_tr_q)
+        X_tr_s = np.clip(_scaler.transform(X_tr_q), -1.0, 1.0)
+        X_te_s = np.clip(_scaler.transform(X_te_q), -1.0, 1.0)
+
         # Quantum kernel
-        n_train = len(X_tr_q)
-        n_evals = n_train * n_train + len(X_te_q) * n_train
+        n_train = len(X_tr_s)
+        n_evals = n_train * n_train + len(X_te_s) * n_train
         print(f"    Building quantum kernel ({n_train}x{n_train}, ~{n_evals:,} evals)...")
         if block_size:
             print(f"    Block size={block_size}, n_jobs={n_jobs}")
         t0_qk = time.perf_counter()
         K_tr_q = build_quantum_kernel(X_tr_q, n_repeats, noise_method,
-                                       block_size=block_size, n_jobs=n_jobs)
-        K_te_q = kernel_matrix(X_te_q, X_tr_q, kernel_fn)
-        ta_val = float(target_alignment(X_tr_q, y_tr, kernel_fn))
+                                       block_size=block_size, n_jobs=n_jobs,
+                                       state_vector=state_vector, scaler=_scaler)
+        if state_vector:
+            V_te = _evaluate_state_vectors(X_te_s, n_qubits=N_QUBITS, n_repeats=n_repeats)
+            V_tr = _evaluate_state_vectors(X_tr_s, n_qubits=N_QUBITS, n_repeats=n_repeats)
+            K_te_q = (np.abs(V_te @ V_tr.conj().T) ** 2).astype(np.float64)
+            # TA recomputed from the SAME scaled states (C3: one embedding).
+            K_ta = (np.abs(V_tr @ V_tr.conj().T) ** 2).astype(np.float64)
+            ta_val = _target_alignment_from_kernel(K_ta, y_tr)
+            del K_ta
+        else:
+            K_te_q = kernel_matrix(X_te_s, X_tr_s, kernel_fn)
+            ta_val = float(target_alignment(X_tr_s, y_tr, kernel_fn))
         qk_time = time.perf_counter() - t0_qk
         print(f"    QK done in {qk_time:.1f}s | Target alignment: {ta_val:.4f}")
 
@@ -497,17 +607,17 @@ def run_benchmark(X: np.ndarray, y: np.ndarray,
         rec_q["qk_time_s"] = round(qk_time, 1)
         records.append(rec_q)
 
-        # RBF baseline (gamma-tuned on SAME scaled features)
-        print(f"    RBF: tuning gamma on [-1,1] features (same as QK)...")
+        # RBF baseline (gamma-tuned on the SAME scaled features)
+        print(f"    RBF: tuning gamma on scaled features (same as QK, C3)...")
         K_tr_rbf, K_te_rbf, best_gamma = rbf_kernel(
-            X_tr_q, X_te_q, y_train=y_tr
+            X_tr_s, X_te_s, y_train=y_tr
         )
         print(f"    RBF: best gamma = {best_gamma:.4g}")
 
         def _rbf_fn(a, b, _g=best_gamma):
             return float(_rbf_matrix(a.reshape(1, -1), b.reshape(1, -1), _g)[0, 0])
 
-        ta_rbf = float(target_alignment(X_tr_q, y_tr, _rbf_fn))
+        ta_rbf = float(target_alignment(X_tr_s, y_tr, _rbf_fn))
 
         rec_rbf = evaluate_fold(K_tr_rbf, K_te_rbf, y_tr, y_te, "rbf",
                                 ta_val=ta_rbf)
@@ -515,12 +625,12 @@ def run_benchmark(X: np.ndarray, y: np.ndarray,
         rec_rbf["gamma"] = best_gamma
         records.append(rec_rbf)
 
-        # Linear SVM baseline (same [-1,1] features, no kernel hyperparameters)
-        print(f"    Linear SVM on same [-1,1] features (honest baseline)...")
+        # Linear SVM baseline (same scaled features, no kernel hyperparameters)
+        print(f"    Linear SVM on same scaled features (honest baseline, C3)...")
         clf_lin = SVC(kernel="linear", C=1.0, probability=True, random_state=42)
-        clf_lin.fit(X_tr_q, y_tr)
-        y_prob_lin = clf_lin.predict_proba(X_te_q)[:, 1]
-        y_pred_lin = clf_lin.predict(X_te_q)
+        clf_lin.fit(X_tr_s, y_tr)
+        y_prob_lin = clf_lin.predict_proba(X_te_s)[:, 1]
+        y_pred_lin = clf_lin.predict(X_te_s)
         rec_lin = {
             "model":           "linear",
             "auc":             roc_auc_score(y_te, y_prob_lin) if len(np.unique(y_te)) > 1 else np.nan,
@@ -544,7 +654,7 @@ def run_benchmark(X: np.ndarray, y: np.ndarray,
             print(f"    Checkpoint saved: {checkpoint_path}")
 
         # ── Memory cleanup after each fold (R13) ──────────────────
-        del K_tr_q, K_te_q, X_tr_q, X_te_q, X_tr_raw, X_te_raw
+        del K_tr_q, K_te_q, X_tr_q, X_te_q, X_tr_s, X_te_s, X_tr_raw, X_te_raw
         del K_tr_rbf, K_te_rbf
         gc.collect()
 
@@ -562,6 +672,8 @@ def main():
                         help="Molecules for QK benchmark (default: 3,000; 0 = all)")
     parser.add_argument("--n-repeats", type=int, default=1,
                         help="IQPEmbedding repeat count (default: 1; more = deeper circuit)")
+    parser.add_argument("--n-qubits", type=int, default=6,
+                        help="Number of qubits / UMAP components (default: 6 = Phase-2 optimal)")
     parser.add_argument("--noise", type=str, default=None,
                         choices=[None, "global", "local"],
                         help="Depolarizing noise mitigation method")
@@ -573,7 +685,13 @@ def main():
                         help="Parallel workers for chunked mode (default: 1)")
     parser.add_argument("--hpc", action="store_true",
                         help="HPC mode: block_size=200, n_jobs=max (requires joblib)")
+    parser.add_argument("--state-vector", action="store_true",
+                        help="Use O(N) state-vector kernel (validated numerically identical "
+                             "to pairwise, ~1000x faster) for n > 500")
     args = parser.parse_args()
+
+    global N_QUBITS
+    N_QUBITS = args.n_qubits
 
     DEVICE = "lightning.qubit"  # system-wide PennyLane device
 
@@ -599,6 +717,7 @@ def main():
     print(f"  Noise:   {args.noise or 'none'}")
     print(f"  Block:   {args.block_size or 'full'}")
     print(f"  Jobs:    {args.n_jobs}")
+    print(f"  Kernel:  {'state-vector' if args.state_vector else 'pairwise'}")
     print()
 
     X, y, _ = load_dataset(args.n_mols)
@@ -606,7 +725,8 @@ def main():
     results = run_benchmark(X, y, args.n_repeats, args.noise,
                             checkpoint_path=args.checkpoint,
                             block_size=args.block_size,
-                            n_jobs=args.n_jobs)
+                            n_jobs=args.n_jobs,
+                            state_vector=args.state_vector)
 
     # ── gzip-compressed output (R14) ─────────────────────────────
     out_csv = RESULTS_DIR / "p3_qks_benchmark.csv.gz"
@@ -614,10 +734,6 @@ def main():
     out_csv_uncomp = RESULTS_DIR / "p3_qks_benchmark.csv"
     results.to_csv(out_csv_uncomp, index=False)
     print(f"\n  Saved: {out_csv} (compressed), {out_csv_uncomp} (plain)")
-
-    # Memory cleanup (R13)
-    del X, y, results
-    gc.collect()
 
     # Summary
     lines = [
@@ -649,6 +765,10 @@ def main():
     print("\n" + summary)
     (RESULTS_DIR / "p3_qks_summary.txt").write_text(summary)
     print(f"\n  Summary saved: {RESULTS_DIR / 'p3_qks_summary.txt'}")
+
+    # Memory cleanup (R13)
+    del X, y, results
+    gc.collect()
 
 
 if __name__ == "__main__":

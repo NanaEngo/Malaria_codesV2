@@ -211,7 +211,7 @@ def main():
         f.write("% Effect sizes for all pairwise AUC comparisons (5-fold CV)\n\n")
         f.write("\\begin{table}[htbp]\n")
         f.write("\\centering\n")
-        f.write("\\caption{Effect sizes for pairwise AUC comparisons against the corrected full-library ECFP4 baseline (AUC 0.949, 19,849 molecules, 5-fold stratified CV, Random Forest). Cohen's $d$ is computed from the standard deviation of fold-level differences; because the full-library folds are very consistent, the resulting $d$ values are large, so the absolute $\\Delta$AUC is the more interpretable effect metric.}\n")
+        f.write("\\caption{Effect sizes for pairwise AUC comparisons against the corrected full-library ECFP4 baseline (AUC 0.948, 19,836 molecules, 5-fold stratified CV, Random Forest). Cohen's $d$ is computed from the standard deviation of fold-level differences; because the full-library folds are very consistent, the resulting $d$ values are large, so the absolute $\\Delta$AUC is the more interpretable effect metric.}\n")
         f.write("\\label{tab:effect_sizes}\n")
         f.write("\\begin{tabularx}{\\textwidth}{l S[table-format=1.3] S[table-format=+1.3] S[table-format=+1.2] l S[table-format=1.4] S[table-format=1.3]}\n")
         f.write("\\toprule\n")
@@ -227,7 +227,8 @@ def main():
         f.write("\\bottomrule\n")
         f.write("\\end{tabularx}\n")
         f.write("\\vspace{1mm}\n")
-        f.write("\\footnotesize $^{*}$ $p < 0.05$ (uncorrected). Bonferroni-corrected $\\alpha = 0.05/9 = 0.0056$. Power computed for 80\\% target at $\\alpha = 0.05$.\n")
+        bonf = 0.05 / len(df)
+        f.write(f"\\footnotesize $^{{*}}$ $p < 0.05$ (uncorrected). Bonferroni-corrected $\\alpha = 0.05/{len(df)} = {bonf:.4f}$. Power computed for 80\\% target at $\\alpha = 0.05$.\n")
         f.write("\\end{table}\n")
     
     print(f"LaTeX table saved to: {latex_path}")

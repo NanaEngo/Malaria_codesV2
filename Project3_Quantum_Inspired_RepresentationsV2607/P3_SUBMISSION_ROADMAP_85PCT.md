@@ -15,13 +15,13 @@ The P3 manuscript "Persistent homology decomposes the scaffold paradox in AI-gen
 
 | Result | Value | Status |
 |--------|-------|--------|
-| ECFP4 baseline AUC | **0.868** | ✅ Classical remains best |
+| ECFP4 baseline AUC | **0.949** (corrected full-library benchmark, n=19,849) | ✅ Classical remains best |
 | Hybrid (TFP+TNE+QKS) AUC | **0.842** (p=0.111 vs ECFP4) | ✅ Matches, doesn't exceed |
-| QKS vs RBF (gamma-tuned) | 0.751 vs 0.701 (p=0.312, n.s.) | ✅ No quantum advantage |
+| QKS vs RBF (gamma-tuned) | 0.751 vs 0.701 (p=0.088, n.s.) | ✅ No quantum advantage |
 | TFP resolves scaffold paradox | 92.6% Tanimoto distinction vs 69.3% scaffold recovery | ✅ **Key positive finding** |
 | TNE compression | **5.9×** real-atom (15.6× padded) | ✅ Demonstrated |
 | H₁-RRS pilot (n=14) | ρ=0.947, p<0.0001 | ⚠️ Preliminary only |
-| H₁-RRS expanded (n=33) | **ρ=0.305, p=0.085 (n.s.)** | ❌ Did not replicate |
+| H₁-RRS expanded (n=77) | **ρ=0.312, p=0.0057 (H₁ count)** | ✅ Replicated (attenuated) |
 | GA discriminator | Tanimoto AUC=1.0, QK AUC≈0.43–0.51 | ✅ Honest negative |
 | Computational cost | TDA 6.4 min, TNE 20 min for 19,849 mol | ✅ Scalable |
 
@@ -67,7 +67,7 @@ The manuscript's most critical limitation is that all activity labels are comput
 
 1. **Run `p3_chembl_validation.py`** with `malaria_md` conda env (NOT base env)
    - Query ChEMBL API for IC₅₀ values of top-10 P3 candidates
-   - Search across PfDHFR (CHEMBL2364672), PfCRT (CHEMBL4523582), PfATP4 (CHEMBL5235475), PfClpP (CHEMBL4824474)
+   - Search across PfDHFR (CHEMBL4296323, PfDHFR-TS 3D7), PfCRT (CHEMBL1795182), PfATP4 (CHEMBL6066156); PfClpP excluded (no P. falciparum ClpP target in ChEMBL)
    - Report: compound → ChEMBL match → IC₅₀ → activity classification
 
 2. **Fallback if top-10 not in ChEMBL:**

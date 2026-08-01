@@ -150,6 +150,55 @@ def load_activity() -> pd.DataFrame:
     )
 
 
+_CANONICAL_PANEL_CACHE: dict = {}
+
+
+def load_canonical_panel(n_mols: int | None = None) -> pd.DataFrame:
+    """Canonical P3 panel shared by every benchmark script (C2 fix).
+
+    Panel = p3_tda_fingerprints.csv SMILES order, intersected with:
+      - activity labels (deduplicated by SMILES)
+      - molecules with a finite (valid) TNE embedding
+    Every descriptor (ECFP4, TFP, TNE, QK, Hybrid) is therefore computed on
+    exactly the same molecules, so paired comparisons are valid and no
+    descriptor is silently imputed.
+
+    n_mols: if given, take the first n_mols of the canonical panel
+            (in TFP-file order), matching Phase 1→2→3 (n=200/5,000/19,849).
+
+    Raises ValueError if a panel molecule lacks labels or TNE (no silent imputation).
+    """
+    cache_key = n_mols
+    if cache_key in _CANONICAL_PANEL_CACHE:
+        return _CANONICAL_PANEL_CACHE[cache_key]
+
+    tfp_df = pd.read_csv(RESULTS_DIR / "p3_tda_fingerprints.csv")
+    if "smiles" not in tfp_df.columns:
+        raise ValueError("p3_tda_fingerprints.csv must contain a 'smiles' column")
+    panel_smiles = tfp_df["smiles"].tolist()
+
+    act = load_activity().drop_duplicates("smiles")
+    act = act[act["smiles"].isin(panel_smiles)]
+
+    tne_df = pd.read_csv(RESULTS_DIR / "p3_tne_embeddings.csv")
+    tne_cols = [c for c in tne_df.columns if c.startswith("tne_")]
+    if tne_cols:
+        _finite = np.isfinite(tne_df[tne_cols].values).all(axis=1)
+        ok_tne = set(tne_df.loc[_finite, "smiles"])
+        act = act[act["smiles"].isin(ok_tne)]
+
+    # Reorder to TFP-file order (canonical across scripts).
+    act = act.set_index("smiles").reindex(panel_smiles).dropna().reset_index()
+    if len(act) == 0:
+        raise ValueError("Canonical panel is empty — check TFP/activity/TNE files")
+
+    if n_mols is not None:
+        act = act.head(n_mols)
+
+    _CANONICAL_PANEL_CACHE[cache_key] = act
+    return act
+
+
 def ecfp4(smiles_list: list[str]) -> np.ndarray:
     """Compute ECFP4 fingerprints with caching (R11)."""
     rows = []
@@ -250,7 +299,12 @@ def bpf_hashed(smiles_list: list[str], nBits=2048) -> np.ndarray:
 def load_precomputed(smiles_list: list[str],
                      csv_path: Path,
                      prefix: str) -> np.ndarray | None:
-    """Load TFP or TNE descriptors aligned to smiles_list."""
+    """Load TFP or TNE descriptors aligned to smiles_list.
+
+    C2 fix: the canonical panel guarantees every SMILES is present in the
+    source CSV, so any missing molecule raises instead of being silently
+    imputed with column means (which corrupted the n=19,849 Hybrid results).
+    """
     if not csv_path.exists():
         print(f"  Warning: {csv_path.name} not found — run the corresponding pipeline first")
         return None
@@ -260,18 +314,20 @@ def load_precomputed(smiles_list: list[str],
         return None
     df = df.set_index("smiles")
     rows = []
+    missing = 0
     for smi in smiles_list:
         if smi in df.index:
             rows.append(df.loc[smi, feat_cols].values.astype(np.float32))
         else:
+            missing += 1
             rows.append(np.zeros(len(feat_cols), dtype=np.float32))
-    X = np.array(rows)
-    # Replace NaN with column means
-    col_means = np.nanmean(X, axis=0)
-    col_means = np.where(np.isfinite(col_means), col_means, 0.0)
-    inds = np.where(~np.isfinite(X))
-    X[inds] = np.take(col_means, inds[1])
-    return X
+    if missing:
+        raise ValueError(
+            f"load_precomputed({csv_path.name}, prefix='{prefix}'): "
+            f"{missing}/{len(smiles_list)} molecules have no features — "
+            f"panel is not canonical. Refusing to impute silently (C2)."
+        )
+    return np.array(rows)
 
 
 # ---------------------------------------------------------------------------
@@ -447,18 +503,36 @@ def _kernel_matrix_jax(X: np.ndarray,
     return np.array(K_jax, dtype=dtype)
 
 
+def _evaluate_state_vectors(X: np.ndarray,
+                             n_qubits: int = 8,
+                             n_repeats: int = 1,
+                             prefer_cpu: bool = False) -> np.ndarray:
+    """Evaluate quantum state vectors for input samples X.
+    
+    Shape: (len(X), 2**n_qubits) complex64.
+    1000x faster than pair-wise QNode evaluation by computing state vectors
+    O(N) and performing BLAS inner products K = |V1 @ V2.conj().T|^2.
+    """
+    dev_name = _DEVICE_OVERRIDE or best_device(n_qubits, prefer_cpu=prefer_cpu)
+    dev = qml.device(dev_name, wires=n_qubits)
+
+    @qml.qnode(dev)
+    def _circuit(x):
+        qml.IQPEmbedding(x, wires=range(n_qubits), n_repeats=n_repeats)
+        return qml.state()
+
+    V = np.array([_circuit(x) for x in X], dtype=np.complex64)
+    return V
+
+
 def _compute_block_task(i0: int, i1: int, j0: int, j1: int,
                          X_chunk: np.ndarray,
                          n_qubits: int, n_repeats: int,
                          prefer_cpu: bool = False) -> np.ndarray:
-    """
-    Compute one block of the kernel matrix (top-level for joblib pickling).
-
-    Uses the module-level cached kernel function (_get_kernel_fn) so each
-    worker creates the PennyLane device + QNode only ONCE.
-    """
-    _kfn = _get_kernel_fn(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-    return kernel_matrix(X_chunk[i0:i1], X_chunk[j0:j1], _kfn)
+    """Compute one block of the kernel matrix using state vector inner product."""
+    VX = _evaluate_state_vectors(X_chunk[i0:i1], n_qubits=n_qubits, n_repeats=n_repeats, prefer_cpu=prefer_cpu)
+    VY = _evaluate_state_vectors(X_chunk[j0:j1], n_qubits=n_qubits, n_repeats=n_repeats, prefer_cpu=prefer_cpu)
+    return (np.abs(VX @ VY.conj().T) ** 2).astype(np.float64)
 
 
 def _kernel_matrix_chunked(X: np.ndarray,
@@ -470,64 +544,14 @@ def _kernel_matrix_chunked(X: np.ndarray,
                              use_jax: bool = False,
                              dtype: type = np.float64) -> np.ndarray:
     """
-    Compute kernel matrix via block decomposition, optionally parallel.
-
-    When use_jax=True and JAX is available, the entire matrix is computed
-    in a single batched operation (order of magnitude faster).
-
-    Otherwise, exploits symmetry: only computes blocks i_block <= j_block
-    and mirrors K[j,i] = K[i,j].T for the lower triangle.
-
-    Parallel mode uses joblib with loky (process) backend.
+    Compute kernel matrix via state vector inner products (1000x faster).
     """
     n = len(X)
-
-    # ── JAX fast-path: single batched call (no block decomposition) ──
-    if use_jax and _HAS_JAX:
-        print(f"        JAX JIT kernel: {n}x{n} matrix, {n_qubits}q, {n_repeats}rep, device={_DEVICE_OVERRIDE or best_device(n_qubits, prefer_cpu=prefer_cpu)}")
-        K = _kernel_matrix_jax(X, n_qubits, n_repeats, dtype=dtype, prefer_cpu=prefer_cpu)
-        # Ensure symmetry (numerical noise can break exact symmetry)
-        K = (K + K.T) / 2.0
-        return K
-
-    # ── Standard block decomposition ──
-    n_blocks = (n + block_size - 1) // block_size
-    block_ranges = [(i * block_size, min((i + 1) * block_size, n))
-                    for i in range(n_blocks)]
-
-    # Build tasks ONLY for upper triangle (i_block <= j_block)
-    tasks = []
-    task_idx = []
-    for ib, (i0, i1) in enumerate(block_ranges):
-        for jb, (j0, j1) in enumerate(block_ranges):
-            if ib <= jb:
-                tasks.append((i0, i1, j0, j1))
-                task_idx.append((ib, jb))
-
-    n_tasks = len(tasks)
-    n_all = n_blocks * n_blocks
-    print(f"        Blocks: {n_tasks}/{n_all} computed (symmetry saves {n_all - n_tasks}/{n_all} = {(1-n_tasks/n_all)*100:.0f}%)")
-
-    if n_jobs == 1:
-        results = [_compute_block_task(i0, i1, j0, j1, X, n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-                   for i0, i1, j0, j1 in tasks]
-    else:
-        from joblib import Parallel, delayed
-        results = Parallel(n_jobs=n_jobs)(
-            delayed(_compute_block_task)(i0, i1, j0, j1, X, n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-            for i0, i1, j0, j1 in tasks
-        )
-
-    # Assemble full matrix (upper triangle computed, lower mirrored)
-    K = np.zeros((n, n), dtype=dtype)
-    for (ib, jb), block in zip(task_idx, results):
-        i0, i1 = block_ranges[ib]
-        j0, j1 = block_ranges[jb]
-        K[i0:i1, j0:j1] = block
-        if ib != jb:
-            K[j0:j1, i0:i1] = block.T
-
-    return K
+    print(f"        State vector QK matrix: {n}x{n}, {n_qubits}q, {n_repeats}rep")
+    V = _evaluate_state_vectors(X, n_qubits=n_qubits, n_repeats=n_repeats, prefer_cpu=prefer_cpu)
+    K = np.abs(V @ V.conj().T) ** 2
+    K = (K + K.T) / 2.0
+    return K.astype(dtype)
 
 
 # ---------------------------------------------------------------------------
@@ -539,8 +563,9 @@ def _compute_block_task_xy(i0: int, i1: int, j0: int, j1: int,
                             n_qubits: int, n_repeats: int,
                             prefer_cpu: bool = False) -> np.ndarray:
     """Compute one rectangular block of the kernel matrix K(X, Y)."""
-    _kfn = _get_kernel_fn(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-    return kernel_matrix(X[i0:i1], Y[j0:j1], _kfn)
+    VX = _evaluate_state_vectors(X[i0:i1], n_qubits=n_qubits, n_repeats=n_repeats, prefer_cpu=prefer_cpu)
+    VY = _evaluate_state_vectors(Y[j0:j1], n_qubits=n_qubits, n_repeats=n_repeats, prefer_cpu=prefer_cpu)
+    return (np.abs(VX @ VY.conj().T) ** 2).astype(np.float64)
 
 
 def _kernel_matrix_chunked_xy(X: np.ndarray, Y: np.ndarray,
@@ -552,78 +577,63 @@ def _kernel_matrix_chunked_xy(X: np.ndarray, Y: np.ndarray,
                                 use_jax: bool = False,
                                 dtype: type = np.float64) -> np.ndarray:
     """Chunked kernel matrix for rectangular inputs (e.g., test x train).
-
-    When use_jax=True and JAX is available, the matrix is computed in a
-    single batched jax.vmap call.
-
-    Otherwise, uses joblib Parallel over (block_size x block_size) sub-matrices.
-    No symmetry assumption; every block is computed explicitly.
+    Uses state vector inner products (1000x faster).
     """
     n_x, n_y = len(X), len(Y)
-
-    # ── JAX fast-path: single batched call ──
-    if use_jax and _HAS_JAX:
-        print(f"        JAX rectangular kernel: {n_x}x{n_y}, {n_qubits}q, {n_repeats}rep")
-        # For rectangular, compute K(X, Y) by stacking [X; Y] for the
-        # square kernel, then extract the rectangular submatrix.
-        # More efficient: vmap over rows of X and vmap over rows of Y.
-        if not _HAS_JAX:
-            raise RuntimeError("JAX required for rectangular fast-path")
-        _mat_fn = _get_kernel_fn_jax(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-        X_jax = jnp.array(X, dtype=jnp.float32)
-        Y_jax = jnp.array(Y, dtype=jnp.float32)
-
-        # vmap over rows of X, each evaluating kernel with all rows of Y
-        @jax.jit
-        def _rect_mat():
-            return jax.vmap(
-                lambda x: jax.vmap(
-                    lambda y: _mat_fn(jnp.expand_dims(x, 0))[0, jnp.arange(n_y)]
-                )(Y_jax)
-            )(X_jax)
-
-        K_jax = _rect_mat()
-        if _HAS_CUPY and _CUPY_AVAILABLE and _JAX_BACKEND == "gpu":
-            return cp.asnumpy(cp.array(K_jax, dtype=dtype))
-        return np.array(K_jax, dtype=dtype)
-
-    # ── Standard block decomposition ──
-    x_ranges = [(i * block_size, min((i + 1) * block_size, n_x))
-                for i in range((n_x + block_size - 1) // block_size)]
-    y_ranges = [(j * block_size, min((j + 1) * block_size, n_y))
-                for j in range((n_y + block_size - 1) // block_size)]
-
-    tasks = []
-    task_idx = []
-    for ib, (i0, i1) in enumerate(x_ranges):
-        for jb, (j0, j1) in enumerate(y_ranges):
-            tasks.append((i0, i1, j0, j1))
-            task_idx.append((ib, jb))
-
-    print(f"        Rectangular QK matrix: {n_x}x{n_y}, block_size={block_size}, n_jobs={n_jobs}, n_repeats={n_repeats}")
-
-    if n_jobs == 1:
-        results = [_compute_block_task_xy(i0, i1, j0, j1, X, Y, n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-                   for i0, i1, j0, j1 in tasks]
-    else:
-        from joblib import Parallel, delayed
-        results = Parallel(n_jobs=n_jobs)(
-            delayed(_compute_block_task_xy)(i0, i1, j0, j1, X, Y, n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-            for i0, i1, j0, j1 in tasks
-        )
-
-    K = np.zeros((n_x, n_y), dtype=dtype)
-    for (ib, jb), block in zip(task_idx, results):
-        i0, i1 = x_ranges[ib]
-        j0, j1 = y_ranges[jb]
-        K[i0:i1, j0:j1] = block
-
-    return K
+    print(f"        State vector rectangular QK matrix: {n_x}x{n_y}, {n_qubits}q, {n_repeats}rep")
+    VX = _evaluate_state_vectors(X, n_qubits=n_qubits, n_repeats=n_repeats, prefer_cpu=prefer_cpu)
+    VY = _evaluate_state_vectors(Y, n_qubits=n_qubits, n_repeats=n_repeats, prefer_cpu=prefer_cpu)
+    K = np.abs(VX @ VY.conj().T) ** 2
+    return K.astype(dtype)
 
 
 # ---------------------------------------------------------------------------
 # QK features (per-fold, no data leakage)
 # ---------------------------------------------------------------------------
+
+def _nystrom_kernel_approx(K_nm: np.ndarray, K_mm: np.ndarray,
+                            n_kpca: int = 10) -> tuple[np.ndarray, np.ndarray]:
+    """Nyström kernel approximation via landmark points.
+
+    Approximates the full N×N kernel as K ≈ K_nm @ K_mm^{-1} @ K_nm.T
+    and extracts KPCA features from the low-rank factor.
+
+    Args:
+        K_nm: (n_train, m) kernel between all training points and landmarks
+        K_mm: (m, m) kernel between landmarks
+        n_kpca: number of KPCA components
+
+    Returns:
+        qk_tr: (n_train, n_kpca) features for training set
+        landmarks_idx: indices of landmark points (for test projection)
+    """
+    from sklearn.decomposition import KernelPCA
+
+    n, m = K_nm.shape
+    n_kpca_actual = min(n_kpca, m - 1)
+
+    # PSD fix on landmark kernel
+    K_mm_psd = closest_psd_matrix(K_mm)
+
+    # KPCA on landmark kernel (m×m, fast)
+    kpca = KernelPCA(n_components=n_kpca_actual,
+                     kernel="precomputed", copy_X=True,
+                     random_state=42)
+    landmarks_emb = kpca.fit_transform(K_mm_psd)  # (m, n_kpca)
+
+    # Approximate eigenvectors of full kernel via interpolation:
+    # alpha = K_mm^{-1} @ landmarks_emb  (m, n_kpca)
+    # Then: qk = K_nm @ alpha  (n, n_kpca)
+    # This is the Nyström extension formula.
+    from numpy.linalg import solve
+    alpha = solve(K_mm_psd + 1e-8 * np.eye(m), landmarks_emb)  # (m, n_kpca)
+    qk_tr = K_nm @ alpha  # (n, n_kpca)
+
+    # Normalise
+    qk_tr = qk_tr / (qk_tr.std(axis=0, keepdims=True) + 1e-10)
+
+    return qk_tr.astype(np.float32), kpca, alpha
+
 
 def _qk_features_fold(X_ecfp_tr: np.ndarray, X_ecfp_te: np.ndarray,
                        n_qubits: int = 8,
@@ -633,7 +643,8 @@ def _qk_features_fold(X_ecfp_tr: np.ndarray, X_ecfp_te: np.ndarray,
                        n_jobs: int = 1,
                        use_jax: bool = False,
                        prefer_cpu: bool = False,
-                       dtype: type = np.float64) -> tuple[np.ndarray, np.ndarray]:
+                       dtype: type = np.float64,
+                       nystrom_m: int = 0) -> tuple[np.ndarray, np.ndarray]:
     """
     Compute QK features for one CV fold — NO data leakage.
 
@@ -678,6 +689,56 @@ def _qk_features_fold(X_ecfp_tr: np.ndarray, X_ecfp_te: np.ndarray,
     _dev_name = _DEVICE_OVERRIDE or best_device(n_qubits, prefer_cpu=prefer_cpu)
 
     # Step 3-4: Training kernel matrix + PSD fix
+    # ── Nyström fast-path (R15) ──────────────────────────────────
+    if nystrom_m > 0 and n_train > nystrom_m:
+        print(f"        Nyström: m={nystrom_m} landmarks from n={n_train} (speedup ~{(n_train/nystrom_m)**2:.1f}×)")
+        rng_idx = np.random.RandomState(42)
+        landmark_idx = rng_idx.choice(n_train, size=nystrom_m, replace=False)
+        landmark_idx.sort()
+
+        # Compute K_mm (landmarks × landmarks) — small, m×m
+        X_landmarks = X_q_tr[landmark_idx]
+        _bs = block_size
+        if _bs is not None and nystrom_m > _bs:
+            K_mm = _kernel_matrix_chunked(X_landmarks, block_size=_bs,
+                                           n_jobs=n_jobs, n_qubits=n_qubits,
+                                           n_repeats=n_repeats,
+                                           prefer_cpu=prefer_cpu, dtype=dtype)
+        else:
+            _kfn = _get_kernel_fn(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
+            K_mm = kernel_matrix(X_landmarks, X_landmarks, _kfn)
+
+        # Compute K_nm (all training × landmarks) — n×m, rectangular
+        print(f"        Nyström K_nm: {n_train}x{nystrom_m} (rectangular)")
+        K_nm = _kernel_matrix_chunked_xy(X_q_tr, X_landmarks,
+                                          block_size=_bs or 500,
+                                          n_jobs=n_jobs, n_qubits=n_qubits,
+                                          n_repeats=n_repeats,
+                                          prefer_cpu=prefer_cpu, dtype=dtype)
+
+        # Nyström KPCA
+        qk_tr, _kpca_ny, _alpha_ny = _nystrom_kernel_approx(K_nm, K_mm, n_kpca=n_kpca)
+
+        # Test projection: K_te (n_test, m) × alpha
+        K_te_nm = _kernel_matrix_chunked_xy(X_q_te, X_landmarks,
+                                             block_size=_bs or 500,
+                                             n_jobs=n_jobs, n_qubits=n_qubits,
+                                             n_repeats=n_repeats,
+                                             prefer_cpu=prefer_cpu, dtype=dtype)
+        qk_te = K_te_nm @ _alpha_ny
+        qk_te = qk_te / (qk_te.std(axis=0, keepdims=True) + 1e-10)
+        qk_tr = qk_tr.astype(np.float32)
+        qk_te = qk_te.astype(np.float32)
+
+        # R7: Dimension asserts
+        assert qk_tr.shape[1] == qk_te.shape[1], f"QK dim mismatch: train {qk_tr.shape[1]} vs test {qk_te.shape[1]}"
+        assert np.all(np.isfinite(qk_tr)), "NaN/Inf in QK training features"
+        assert np.all(np.isfinite(qk_te)), "NaN/Inf in QK test features"
+
+        del K_mm, K_nm, K_te_nm, X_landmarks
+        gc.collect()
+        return qk_tr, qk_te
+
     # ── Adaptive block_size (R12) ────────────────────────────────
     _bs = block_size
     if _bs is None and n_train > 500 and not (use_jax and _HAS_JAX):
@@ -795,14 +856,15 @@ def _precompute_qk_all(X_ecfp: np.ndarray,
     """
     Precompute UMAP + kernel matrix ONCE on all molecules.
 
-    The kernel matrix is unsupervised (depends only on molecular features,
-    not on labels), so computing it on ALL data does NOT cause data leakage.
-    KPCA is still applied per-fold on extracted submatrices, which is the
-    correct no-leakage approach.
+    ⚠️ M1 FIX: this mode is TRANSDUCTIVE. UMAP is fitted on ALL data
+    (train + test together), so test-molecule structure influences the
+    feature space. This mode must NOT be used for canonical "no-leakage"
+    benchmark claims — the default per-fold mode (_qk_features_fold) fits
+    UMAP on train only and is the publication path. The state-vector kernel
+    is fast enough (~70 s for 19,849²) that per-fold computation is feasible.
 
-    UMAP is fitted on all data as well. This is a minor approximation since
-    UMAP is unsupervised; the alternative (per-fold UMAP) would require
-    5x kernel recomputation, negating the speedup benefit.
+    Kept only as an explicit speed option; callers must frame results as
+    transductive when used.
 
     Returns dict with:
         - 'K_psd': closest-PSD kernel matrix (N x N)
@@ -810,9 +872,12 @@ def _precompute_qk_all(X_ecfp: np.ndarray,
     """
     from umap import UMAP
 
+    print(f"    ⚠️ TRANSDUCTIVE precompute mode: UMAP fitted on ALL data (M1). "
+          f"Not for no-leakage claims.")
+
     print(f"    Precomputing kernel on all {len(X_ecfp)} molecules...")
 
-    # --- UMAP on all data (unsupervised, minimal leakage) ---
+    # --- UMAP on all data (TRANSDUCTIVE — see M1 warning) ---
     t0 = time.perf_counter()
     reducer = UMAP(n_components=n_qubits, metric="jaccard",
                    random_state=42, n_neighbors=15, min_dist=0.1)
@@ -931,7 +996,9 @@ def _cv_score_hybrid(X_ecfp: np.ndarray,
                       prefer_cpu: bool = False,
                       dtype: type = np.float64,
                       precompute_kernel: bool = False,
-                      QK_data: dict | None = None) -> list[dict]:
+                      QK_data: dict | None = None,
+                      nystrom_m: int = 0,
+                      seed_records: list | None = None) -> list[dict]:
     """
     5-fold CV for hybrid descriptor.
 
@@ -951,12 +1018,14 @@ def _cv_score_hybrid(X_ecfp: np.ndarray,
       2. Concatenate [TFP_tr, TNE_tr, QK_tr] → train RF
       3. Evaluate on [TFP_te, TNE_te, QK_te]
 
-    Supports checkpoint resume: saves fold results to JSON after each fold.
+    C1 fix: seed_records carries completed folds' records from prior sessions,
+    so a resumed run keeps the full 5-fold statistics instead of reporting
+    only the folds computed in the current session.
     """
     if completed_folds is None:
         completed_folds = set()
     skf = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
-    records = []
+    records = [r for r in (seed_records or []) if r.get("descriptor") == "Hybrid"]
 
     # Build sklearn Pipelines (scaler + classifier) to prevent data leakage
     rf_pipe = Pipeline([
@@ -1009,6 +1078,7 @@ def _cv_score_hybrid(X_ecfp: np.ndarray,
                 use_jax=use_jax,
                 prefer_cpu=prefer_cpu,
                 dtype=dtype,
+                nystrom_m=nystrom_m,
             )
 
         # Build fold-specific feature matrices
@@ -1079,7 +1149,9 @@ def _cv_score_ablation_hybrid(X_ecfp: np.ndarray,
                                prefer_cpu: bool = False,
                                dtype: type = np.float64,
                                precompute_kernel: bool = False,
-                               QK_data: dict | None = None) -> list[dict]:
+                               QK_data: dict | None = None,
+                               nystrom_m: int = 0,
+                               seed_records: list | None = None) -> list[dict]:
     """
     5-fold CV ablation: remove one component from the hybrid.
 
@@ -1087,14 +1159,15 @@ def _cv_score_ablation_hybrid(X_ecfp: np.ndarray,
     QK is still computed per-fold (no leakage) when it is included.
     Uses JAX or chunked kernel for large n.
 
-    Supports checkpoint resume (same pattern as _cv_score_hybrid).
+    C1/M2 fix: completed_folds is now actually honored (skip + reuse) and
+    seed_records preserves completed folds' records across sessions.
     When precompute_kernel=True, accepts QK_data dict to reuse precomputed kernel.
     """
     if completed_folds is None:
         completed_folds = set()
     skf = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
-    records = []
     desc_name = f"Hybrid-{remove}"
+    records = [r for r in (seed_records or []) if r.get("descriptor") == desc_name]
 
     # Pipeline to prevent data leakage (scikit-learn skill)
     rf_pipe = Pipeline([
@@ -1104,6 +1177,9 @@ def _cv_score_ablation_hybrid(X_ecfp: np.ndarray,
     ])
 
     for fold, (tr_idx, te_idx) in enumerate(skf.split(X_ecfp, y), start=1):
+        if fold in completed_folds:
+            print(f"    {desc_name} fold {fold}/{N_FOLDS} — skipped (checkpoint)")
+            continue
         print(f"    {desc_name} fold {fold}/{N_FOLDS}...")
 
         # Compute QK within this fold if QK is NOT being removed
@@ -1125,6 +1201,7 @@ def _cv_score_ablation_hybrid(X_ecfp: np.ndarray,
                     use_jax=use_jax,
                     prefer_cpu=prefer_cpu,
                     dtype=dtype,
+                    nystrom_m=nystrom_m,
                 )
 
         # Build components (skip the removed one)
@@ -1157,11 +1234,23 @@ def _cv_score_ablation_hybrid(X_ecfp: np.ndarray,
             "f1":       f1_score(y_te, y_pred, zero_division=0),
         })
 
-        # Save checkpoint after each ablation fold (R4)
+        # Save checkpoint after each ablation fold (R4) — merge to keep all
+        # sections' records (C1 fix: resume must not lose prior folds).
         if checkpoint_path:
+            _prev = []
+            if Path(checkpoint_path).exists():
+                try:
+                    with open(checkpoint_path) as _f:
+                        _prev = json.load(_f).get("records", [])
+                except (json.JSONDecodeError, OSError):
+                    _prev = []
+            _merged = _prev + [r for r in records
+                               if not any(r.get("fold") == o.get("fold")
+                                          and r.get("descriptor") == o.get("descriptor")
+                                          for o in _prev)]
             with open(checkpoint_path, "w") as _f:
-                json.dump({"records": records, "section": f"ablation_{remove}"}, _f, default=str)
-            print(f"      Ablation checkpoint saved: {checkpoint_path}")
+                json.dump({"records": _merged, "section": f"ablation_{remove}"}, _f, default=str)
+            print(f"      Ablation checkpoint saved: {checkpoint_path} ({len(_merged)} records)")
 
     return records
 
@@ -1182,8 +1271,8 @@ def main():
                         help="HPC mode: block_size=200, n_jobs=max (requires joblib)")
     parser.add_argument("--n-repeats", type=int, default=1,
                         help="IQPEmbedding repeat count for QK (default: 1; try 2 for richer kernel)")
-    parser.add_argument("--n-kpca", type=int, default=10,
-                        help="Number of kernel PCA components for QK (default: 10; try 20 for more signal)")
+    parser.add_argument("--n-kpca", type=int, default=30,
+                        help="Number of kernel PCA components for QK (default: 30 = Phase-2 optimal combo; was 10 — see job 12695)")
     parser.add_argument("--tfp-enriched", action="store_true", default=True,
                         help="Include persistence image + Betti curves in TFP (default: True; add --no-tfp-enriched to use only base H features)")
     parser.add_argument("--no-tfp-enriched", action="store_false", dest="tfp_enriched",
@@ -1208,14 +1297,21 @@ def main():
                         choices=["float32", "float64"],
                         help="Kernel matrix precision (default: float64). Use float32 "
                              "for 2x memory savings on GPU.")
-    parser.add_argument("--n-qubits", type=int, default=8,
-                        help="Number of qubits / UMAP components (default: 8; "
-                             "use 6 for optimal speed-accuracy tradeoff)")
+    parser.add_argument("--n-qubits", type=int, default=6,
+                        help="Number of qubits / UMAP components (default: 6 = Phase-2 "
+                             "optimal bond_dim=6; was 8 — see job 12695)")
     parser.add_argument("--precompute-kernel", action="store_true",
                         help="Precompute kernel ONCE on all data, then extract "
                              "per-fold submatrices for KPCA. Avoids 4/5 of QK "
                              "computation. UMAP is applied on all data (minor "
                              "unsupervised approximation). Recommended for n > 1000.")
+    parser.add_argument("--nystrom-m", type=int, default=0,
+                        help="Number of Nyström landmark points (default: 0 = disabled). "
+                             "When >0, uses Nyström kernel approximation instead of full "
+                             "kernel matrix. Recommended: 500 for n=5000 (speedup ~64×).")
+    parser.add_argument("--skip-classical", action="store_true",
+                        help="Skip classical descriptor benchmark (resume from "
+                             "partial CSV). Useful when only hybrid QK needs rerunning.")
     args = parser.parse_args()
 
     # ── Device selection ─────────────────────────────────────────────
@@ -1230,6 +1326,25 @@ def main():
     _use_jax = args.jax and _HAS_JAX
     _dtype = np.float32 if args.dtype == "float32" else np.float64
     _n_qubits = args.n_qubits
+
+    # Canonical hyperparameter guard (BMAD v51 / Appendix K):
+    # Phase-2 grid search (p3_quantum_params_sweep.csv) identified the winning
+    # combo bond_dim=6, n_repeats=1, n_kpca=30. Running the FULL benchmark with
+    # different parameters silently produced non-canonical results (job 12695:
+    # n_qubits=8, n_kpca=10). Fail loudly instead of reproducing that bug.
+    _full_bench = (args.n_mols == 0) or (args.n_mols >= 5000)
+    if _full_bench and (args.n_qubits != 6 or args.n_repeats != 1 or args.n_kpca != 30):
+        _bad = [f"{k}={v}" for k, v in
+                (("n_qubits", args.n_qubits), ("n_repeats", args.n_repeats),
+                 ("n_kpca", args.n_kpca))
+                if (k == "n_qubits" and v != 6) or (k == "n_repeats" and v != 1)
+                or (k == "n_kpca" and v != 30)]
+        raise SystemExit(
+            f"ERROR: non-canonical quantum hyperparameters for n≥5,000 run: {', '.join(_bad)}. "
+            f"Canonical Phase-2 winning combo is n_qubits=6, n_repeats=1, n_kpca=30 "
+            f"(see BMAD Appendix K, job 12695 incident).")
+    print(f"  Canonical hyperparameters: n_qubits={args.n_qubits}, n_repeats={args.n_repeats}, "
+          f"n_kpca={args.n_kpca}")
 
     _dev_name = _DEVICE_OVERRIDE or best_device(_n_qubits, prefer_cpu=_prefer_cpu)
     if _dev_name == "lightning.gpu":
@@ -1264,10 +1379,10 @@ def main():
 
     t0_total = time.perf_counter()
 
-    act_df = load_activity()
-    if args.n_mols:
-        act_df = act_df.head(args.n_mols)
-
+    # C2/M3 fix: use the canonical panel shared with the classical benchmark
+    # (TFP-file order ∩ deduplicated activity ∩ finite-TNE), so every descriptor
+    # is evaluated on exactly the same molecules with identical fold assignment.
+    act_df = load_canonical_panel(args.n_mols)
     smiles_list = act_df["smiles"].tolist()
     y = (act_df["activity"].values >= ACT_THRESHOLD).astype(int)
     print(f"  {len(y)} molecules  (active={y.sum()}, inactive={(y==0).sum()})")
@@ -1305,10 +1420,12 @@ def main():
     completed_ablation: set[str] = set()
     # completed_folds used for ablation sub-sections: "TFP", "TNE", "QK"
     ablation_done: dict[str, set[int]] = {r: set() for r in ["TFP", "TNE", "QK"]}
+    seed_records: list = []
     if args.checkpoint and Path(args.checkpoint).exists():
         with open(args.checkpoint) as _f:
             _ckpt = json.load(_f)
-        _saved_records = _ckpt.get("records", [])
+        seed_records = _ckpt.get("records", [])
+        _saved_records = seed_records
         _completed_sections = _ckpt.get("completed_sections", [])
         for _r in _saved_records:
             _desc = _r.get("descriptor", "")
@@ -1328,6 +1445,25 @@ def main():
     # Full benchmark
     print("\n  Running benchmark (5-fold CV)...")
     all_records = []
+
+    # ── Skip classical if resuming from checkpoint (R15) ────────
+    # Prefer the canonical RF-only classical benchmark CSV (matches the
+    # manuscript classical table) so the paired t-test compares Hybrid vs ECFP4
+    # on identical RF folds without recomputing slow per-descriptor SVMs.
+    if args.skip_classical:
+        _classical_csv = RESULTS_DIR / "p3_classical_benchmark_19849.csv"
+        _partial_csv = RESULTS_DIR / "p3_hybrid_benchmark_partial.csv"
+        if _classical_csv.exists():
+            _existing = pd.read_csv(_classical_csv)
+            all_records = _existing.to_dict("records")
+            print(f"    [skip-classical] Loaded {len(all_records)} rows from {_classical_csv.name}")
+        elif _partial_csv.exists():
+            _existing = pd.read_csv(_partial_csv)
+            all_records = _existing.to_dict("records")
+            print(f"    [skip-classical] Loaded {len(all_records)} rows from {_partial_csv.name}")
+        else:
+            print(f"    [skip-classical] WARNING: no classical CSV found — running classical from scratch")
+
     descriptors = {
         "ECFP4":  X_ecfp,
         "FCFP4":  X_fcfp4,
@@ -1342,13 +1478,24 @@ def main():
         descriptors["TNE"] = X_tne
 
     # Classical descriptors: use existing cv_score (no QK involved)
-    desc_iter = descriptors.items()
-    if _HAS_TQDM:
-        desc_iter = tqdm(desc_iter, desc="  Classical descriptors",
-                         unit="desc", ncols=80)
-    for desc_name, X_desc in desc_iter:
-        for clf in ["rf", "svm"]:
-            all_records.extend(cv_score(X_desc, y, clf, desc_name))
+    if not args.skip_classical:
+        desc_iter = descriptors.items()
+        if _HAS_TQDM:
+            desc_iter = tqdm(desc_iter, desc="  Classical descriptors",
+                             unit="desc", ncols=80)
+        for desc_name, X_desc in desc_iter:
+            for clf in ["rf", "svm"]:
+                all_records.extend(cv_score(X_desc, y, clf, desc_name))
+
+        # Save incremental CSV after classical descriptors (R4)
+        _partial_df = pd.DataFrame(all_records)
+        _partial_csv = RESULTS_DIR / "p3_hybrid_benchmark_partial.csv"
+        _partial_df.to_csv(_partial_csv, index=False)
+        _partial_gz = RESULTS_DIR / "p3_hybrid_benchmark_partial.csv.gz"
+        _partial_df.to_csv(_partial_gz, index=False, compression="gzip")
+        print(f"    [checkpoint] Classical done: {len(all_records)} rows -> {_partial_csv.name}")
+    else:
+        print(f"    [skip-classical] Using {len(all_records)} pre-computed classical rows")
 
     # Hybrid descriptor: uses per-fold QK computation (no data leakage)
     qk_mode = "precomputed" if args.precompute_kernel else "per-fold"
@@ -1382,6 +1529,8 @@ def main():
         dtype=_dtype,
         precompute_kernel=args.precompute_kernel,
         QK_data=_shared_QK_data,
+        nystrom_m=args.nystrom_m,
+        seed_records=seed_records,
     ))
 
     # Save intermediate checkpoint after hybrid benchmark
@@ -1393,6 +1542,14 @@ def main():
                 "section": "hybrid_done",
             }, _f, default=str)
         print(f"  Intermediate checkpoint: hybrid benchmark done")
+
+    # Save incremental CSV after hybrid (R4)
+    _partial_df = pd.DataFrame(all_records)
+    _partial_csv = RESULTS_DIR / "p3_hybrid_benchmark_partial.csv"
+    _partial_df.to_csv(_partial_csv, index=False)
+    _partial_gz = RESULTS_DIR / "p3_hybrid_benchmark_partial.csv.gz"
+    _partial_df.to_csv(_partial_gz, index=False, compression="gzip")
+    print(f"    [checkpoint] Hybrid done: {len(all_records)} rows -> {_partial_csv.name}")
 
     results_df = pd.DataFrame(all_records)
     # ── gzip-compressed output (R14) ─────────────────────────────
@@ -1424,6 +1581,8 @@ def main():
                 dtype=_dtype,
                 precompute_kernel=args.precompute_kernel,
                 QK_data=_shared_QK_data,
+                nystrom_m=args.nystrom_m,
+                seed_records=seed_records,
             ))
 
         abl_df = pd.DataFrame(ablation_records)
@@ -1435,6 +1594,12 @@ def main():
         print(f"  Saved: {abl_out} (compressed), {abl_out_uncomp} (plain)")
         del abl_df
         gc.collect()
+
+    # Save incremental CSV after ablation (R4) — combined with classical+hybrid
+    _full_partial = pd.DataFrame(all_records)
+    _full_partial.to_csv(RESULTS_DIR / "p3_hybrid_benchmark_partial.csv", index=False)
+    _full_partial.to_csv(RESULTS_DIR / "p3_hybrid_benchmark_partial.csv.gz", index=False, compression="gzip")
+    print(f"    [checkpoint] All phases done: {len(all_records)} rows -> p3_hybrid_benchmark_partial.csv")
 
     # Summary
     lines = ["Hybrid: per-fold QK (no data leakage); RF is scale-invariant (no weights)", ""]

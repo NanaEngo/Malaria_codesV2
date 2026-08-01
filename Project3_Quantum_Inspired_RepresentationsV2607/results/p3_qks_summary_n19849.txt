@@ -1,0 +1,23 @@
+Quantum Kernel vs RBF-SVM  (5-fold CV)
+Circuit: IQPEmbedding (1 repeats) | Noise: none
+
+QUANTUM kernel:
+  auc                0.6592 ± 0.0362
+  target_alignment   0.7099 ± 0.0073
+  accuracy           0.7229 ± 0.0234
+  f1                 0.8250 ± 0.0284
+
+RBF kernel:
+  auc                0.8251 ± 0.0022
+  target_alignment   0.2120 ± 0.0153
+  accuracy           0.8184 ± 0.0041
+  f1                 0.8797 ± 0.0030
+
+LINEAR kernel:
+  auc                0.5397 ± 0.0385
+  accuracy           0.7286 ± 0.0001
+  f1                 0.8430 ± 0.0001
+
+Paired t-test quantum vs rbf: t=-9.709, p=0.0006 (significant (p<0.05))
+Paired t-test quantum vs linear: t=5.259, p=0.0063 (significant (p<0.05))
+Paired t-test rbf vs linear: t=16.300, p=0.0001 (significant (p<0.05))

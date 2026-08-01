@@ -34,11 +34,11 @@ TARTARUS_OUTPUT = (
 )
 
 # Target name mapping: Tartarus column -> canonical target name
-# PDB IDs: 1syh=DHFR, 6y2f=CRT, 4lde=ATP4
+# PDB IDs: 1syh=DHFR, 6y2f=ATP4, 4lde=CRT  (per BMAD_Q1 §3.8.1)
 TARGET_MAP = {
     'score_1syh': 'PfDHFR',
-    'score_6y2f': 'PfCRT',
-    'score_4lde': 'PfATP4',
+    'score_6y2f': 'PfATP4',
+    'score_4lde': 'PfCRT',
 }
 
 # RRS thresholds

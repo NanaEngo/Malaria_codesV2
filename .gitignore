@@ -369,3 +369,15 @@ archive_*/
 # ============================================================
 _bmad/
 _bmad-output/
+
+# ============================================================
+# P4 QMC transient diagnostic artifacts (PySCF/xTB/xtbopt)
+# ============================================================
+*.chk
+*.molden
+*.xtbopt.xyz
+.xtboptok
+charges
+wbo
+xtbrestart
+xtbtopo.mol
