@@ -32,7 +32,7 @@ Dear Editor-in-Chief,
 \vspace{1em}
 
 \noindent
-We are pleased to submit our manuscript entitled \textbf{``Advanced Monte Carlo Strategies for Multi-Objective Molecular Optimization: A ScafVAE-Guided Approach with Quantum Validation''} for consideration as a full Article in the \textit{Journal of Chemical Information and Modeling}.
+We are pleased to submit our manuscript entitled \textbf{``Multi-Objective MCTS for Antimalarial Design''} for consideration as a full Article in the \textit{Journal of Chemical Information and Modeling}.
 
 \vspace{1em}
 
@@ -42,12 +42,12 @@ In this study, we present a novel generative architecture that integrates a Vari
 \vspace{1em}
 
 \noindent
-Furthermore, we rigorously evaluate our generated candidates using a Pareto multi-objective optimization frontier encompassing synthetic accessibility (SA), drug-likeness (QED), and bespoke target affinities. Crucially, the top candidates from our Pareto frontier were subjected to high-fidelity, ab initio quantum chemical validation using Diffusion Monte Carlo (DMC) with trial wavefunctions generated at the PBE/6-31G* level. This rigorous Quantum Monte Carlo (QMC) tier ensures that the generated molecules represent genuine energy minima and stable electronic structures, bridging the gap between generative informatics and physical quantum chemistry.
+We evaluate the generated candidates on a Pareto multi-objective frontier spanning multi-parameter optimization (MPO), synthetic accessibility (SA), and synthesizability (SYBA), with resistance-resilience (RRS) and polypharmacology-network (PNS) oracles linking de novo generation to experimental validation against drug-resistant $P.~falciparum$ strains. Across 20 independent seeds, our four-method benchmark shows that Random search (mean reward 0.6645) narrowly edges out MCTS+ScafVAE (0.6594, paired $t_{19} = 2.32$, $p = 0.032$), yet MCTS is the only method that systematically yields a diverse set of four non-dominated Pareto-optimal candidates (hypervolume 1.2366) spanning the potency--synthetic-accessibility trade-off---trade-offs that scalar optimization systematically misses.
 
 \vspace{1em}
 
 \noindent
-Our factorial ablation studies conclusively demonstrate that the integration of the ScafVAE policy significantly outperforms random rollout strategies, yielding a higher density of Pareto-optimal molecules within the same computational budget. We believe our methodology offers a robust, generalizable framework for multi-objective molecular design and aligns perfectly with JCIM’s scope of advancing computational chemistry methods.
+Our $2^{5}$ factorial ablation (160 runs) identifies the ScafVAE policy ($+0.148$), the Pareto front ($+0.108$), and a large fragment vocabulary ($+0.079$) as the dominant drivers of reward, while a fragment-vocabulary ablation confirms that restricting the vocabulary to aromatics alone severely degrades performance (ANOVA $F = 350.1$, $p = 1.12 \times 10^{-26}$). We believe our methodology offers a robust, generalizable framework for multi-objective molecular design and aligns perfectly with JCIM’s scope of advancing computational chemistry methods.
 
 \vspace{1em}
 
@@ -67,9 +67,9 @@ Sincerely,
 \vspace{3em}
 
 \noindent
-\textbf{[Author Name]}\\
-\textit{[Affiliation]}\\
-\textit{[Email Address]}\\
-\textit{[Phone Number]}
+\textbf{Myke Vital Sao Temgoua} (Corresponding Author)\\
+\textit{Department of Physics, Faculty of Science, University of Yaound\'{e} I}\\
+\textit{P.O. Box 812, Yaound\'{e}, Cameroon}\\
+\href{mailto:myke-vital.sao@facsciences-uy1.cm}{\textit{myke-vital.sao@facsciences-uy1.cm}}
 
 \end{document}
