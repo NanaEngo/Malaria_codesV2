@@ -120,11 +120,11 @@ All data supporting the main manuscript and this Supplementary Material are publ
 \section{Per-fold activity prediction statistics}
 \label{sec:per_fold}
 
- \cref{tab:sm_s4_perfold} reports per-fold AUC, accuracy, and F1 for the six representation methods for which per-fold development data were retained. ECFP4, TFP, and TNE values are from the corrected canonical classical benchmark (canonical panel, \num{19836} molecules); Hybrid values are provisional (development run, pending full rerun); QKS and RBF values are from the \num{5000}-molecule quantum-kernel benchmark (job 12690). The full canonical-panel headline values are in the main manuscript (\cref{M-tab:benchmark}).
+ \cref{tab:sm_s4_perfold} reports per-fold AUC, accuracy, and F1 for the six representation methods for which per-fold data were retained. ECFP4, TFP, and TNE values are from the corrected canonical classical benchmark (canonical panel, \num{19836} molecules, job 12698); Hybrid values are from the canonical full-library hybrid rerun (job 12699); QKS and RBF values are from the \num{5000}-molecule canonical 6-qubit quantum-kernel benchmark (job 12702). The full canonical-panel headline values are in the main manuscript (\cref{M-tab:benchmark}).
 
 \begin{table}[htbp]
 \centering
-\caption{Per-fold activity prediction statistics for six representation methods. ECFP4, TFP, and TNE values are from the corrected canonical classical benchmark (canonical panel \num{19836} molecules, 5-fold stratified CV, Random Forest, job 12698, Aug 1, 2026). Hybrid values are provisional (development run, pending full rerun); QKS and RBF values are from the \num{5000}-molecule quantum-kernel benchmark (job 12690, state-vector kernel, gamma-tuned RBF). Headline AUC values in the main manuscript (\cref{M-tab:benchmark}) are from the canonical panel benchmark.}
+\caption{Per-fold activity prediction statistics for six representation methods. ECFP4, TFP, and TNE values are from the corrected canonical classical benchmark (canonical panel \num{19836} molecules, 5-fold stratified CV, Random Forest, job 12698, Aug 1, 2026). Hybrid values are from the canonical full-library hybrid rerun (job 12699, Random Forest, Aug 1, 2026). QKS and RBF values are from the \num{5000}-molecule canonical 6-qubit quantum-kernel benchmark (job 12702, state-vector kernel, gamma-tuned RBF). Headline AUC values in the main manuscript (\cref{M-tab:benchmark}) are from the canonical panel benchmark.}
 \label{tab:sm_s4_perfold}
 \small
 \begin{tabularx}{\textwidth}{l l S[table-format=1.3] S[table-format=1.3] S[table-format=1.3]}
@@ -137,11 +137,11 @@ ECFP4 & 3 & 0.948 & 0.895 & 0.930 \\
 ECFP4 & 4 & 0.952 & 0.899 & 0.934 \\
 ECFP4 & 5 & 0.940 & 0.893 & 0.930 \\
 \midrule
-Hybrid (TFP+TNE+QK) & 1 & 0.800 & 0.800 & 0.800 \\
-Hybrid (TFP+TNE+QK) & 2 & 0.960 & 0.700 & 0.571 \\
-Hybrid (TFP+TNE+QK) & 3 & 0.792 & 0.800 & 0.857 \\
-Hybrid (TFP+TNE+QK) & 4 & 1.000 & 1.000 & 1.000 \\
-Hybrid (TFP+TNE+QK) & 5 & 0.917 & 0.800 & 0.800 \\
+Hybrid (TFP+TNE+QK) & 1 & 0.894 & 0.848 & 0.902 \\
+Hybrid (TFP+TNE+QK) & 2 & 0.887 & 0.844 & 0.900 \\
+Hybrid (TFP+TNE+QK) & 3 & 0.886 & 0.844 & 0.900 \\
+Hybrid (TFP+TNE+QK) & 4 & 0.893 & 0.846 & 0.902 \\
+Hybrid (TFP+TNE+QK) & 5 & 0.878 & 0.836 & 0.895 \\
 \midrule
 TFP (TDA) & 1 & 0.881 & 0.846 & 0.902 \\
 TFP (TDA) & 2 & 0.875 & 0.836 & 0.895 \\
@@ -155,23 +155,23 @@ TNE ($d=8$) & 3 & 0.733 & 0.755 & 0.857 \\
 TNE ($d=8$) & 4 & 0.721 & 0.758 & 0.858 \\
 TNE ($d=8$) & 5 & 0.714 & 0.760 & 0.859 \\
 \midrule
-QKS (quantum) & 1 & 0.739 & 0.809 & 0.884 \\
-QKS (quantum) & 2 & 0.729 & 0.802 & 0.873 \\
-QKS (quantum) & 3 & 0.738 & 0.807 & 0.884 \\
-QKS (quantum) & 4 & 0.778 & 0.790 & 0.868 \\
-QKS (quantum) & 5 & 0.777 & 0.789 & 0.861 \\
+QKS (quantum, 6q) & 1 & 0.791 & 0.813 & 0.881 \\
+QKS (quantum, 6q) & 2 & 0.843 & 0.815 & 0.881 \\
+QKS (quantum, 6q) & 3 & 0.833 & 0.826 & 0.890 \\
+QKS (quantum, 6q) & 4 & 0.800 & 0.818 & 0.887 \\
+QKS (quantum, 6q) & 5 & 0.833 & 0.841 & 0.900 \\
 \midrule
-RBF (gamma-tuned) & 1 & 0.839 & 0.815 & 0.884 \\
-RBF (gamma-tuned) & 2 & 0.853 & 0.841 & 0.898 \\
-RBF (gamma-tuned) & 3 & 0.842 & 0.836 & 0.896 \\
-RBF (gamma-tuned) & 4 & 0.840 & 0.830 & 0.893 \\
-RBF (gamma-tuned) & 5 & 0.828 & 0.826 & 0.892 \\
+RBF (gamma-tuned) & 1 & 0.812 & 0.821 & 0.886 \\
+RBF (gamma-tuned) & 2 & 0.839 & 0.815 & 0.881 \\
+RBF (gamma-tuned) & 3 & 0.844 & 0.833 & 0.894 \\
+RBF (gamma-tuned) & 4 & 0.818 & 0.827 & 0.892 \\
+RBF (gamma-tuned) & 5 & 0.818 & 0.843 & 0.900 \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \vspace{2mm}
-\noindent\textbf{NOTE:} The per-fold values for ECFP4, TFP, and TNE in this table are from the corrected canonical classical benchmark (canonical panel \num{19836} molecules; see main manuscript \cref{M-tab:benchmark}). Hybrid values are provisional (development run, pending full rerun). QKS and RBF values are from the \num{5000}-molecule quantum-kernel benchmark (job 12690; state-vector kernel, gamma-tuned RBF; per-fold detail in \cref{sec:qks_benchmark}). Full per-fold CSV files are available in the project repository.
+\noindent\textbf{NOTE:} The per-fold values for ECFP4, TFP, and TNE in this table are from the corrected canonical classical benchmark (canonical panel \num{19836} molecules; see main manuscript \cref{M-tab:benchmark}). Hybrid values are from the canonical full-library hybrid rerun (job 12699). QKS and RBF values are from the \num{5000}-molecule canonical 6-qubit quantum-kernel benchmark (job 12702; state-vector kernel, gamma-tuned RBF; per-fold detail in \cref{sec:qks_benchmark}). Full per-fold CSV files are available in the project repository.
 
 \section{Topological fingerprint statistics}
 
@@ -478,7 +478,7 @@ Cpd & Target & ChEMBL ID & Activity & {IC$_{50}$ ($\mu$M)} & Tanimoto \\
 
 \begin{table}[htbp]
 \centering
-\caption{SOTA topological benchmark: five TDA descriptor strategies with RF ($n = \num{19849}$, full library) and SVM ($n = 5000$, subsample) classifiers (5-fold stratified CV, class-weighted). Cohen's $d$ quantifies the practical magnitude of AUC difference vs.~the preliminary ECFP4 baseline ($d > 0.8$ large, $0.5 < d \leq 0.8$ medium, $d \leq 0.5$ small). \textbf{Note:} this table uses the preliminary ECFP4 baseline (AUC 0.868); the corrected canonical-panel benchmark gives ECFP4 AUC 0.948 (see main manuscript \cref{M-tab:benchmark}). A rebenchmark against the corrected ECFP4 baseline is pending.}
+\caption{SOTA topological benchmark: five TDA descriptor strategies with RF ($n = \num{19849}$, full library) and SVM ($n = 5000$, subsample) classifiers (5-fold stratified CV, class-weighted). Cohen's $d$ quantifies the practical magnitude of AUC difference vs.~the preliminary ECFP4 baseline ($d > 0.8$ large, $0.5 < d \leq 0.8$ medium, $d \leq 0.5$ small). \textbf{Note:} this table uses the preliminary ECFP4 baseline (AUC 0.868); the corrected canonical-panel benchmark (job 12698) gives ECFP4 AUC 0.948 and TFP AUC 0.876 (see main manuscript \cref{M-tab:benchmark}).}
 \label{SM-tab:sota}
 \begin{tabularx}{\textwidth}{l l S[table-format=1.4] S[table-format=1.4] S[table-format=1.4] S[table-format=1.0] S[table-format=+1.2]}
 \toprule
@@ -553,7 +553,7 @@ To validate whether the TNE compression preserves binding-relevant geometry, we 
 
 For PfDHFR (1SYH), TNE achieved an R\textsuperscript{2} of \num{0.473} (Spearman $\rho = \num{0.695}$), slightly outperforming ECFP4 (R\textsuperscript{2} = \num{0.461}, $\rho = \num{0.689}$). For the remaining targets, ECFP4 maintained an advantage: 6Y2F (TNE R\textsuperscript{2} = \num{0.464} vs.\ ECFP4 \num{0.578}) and 4LDE (TNE R\textsuperscript{2} = \num{0.334} vs.\ ECFP4 \num{0.517}). These results confirm that the \num{15.6}$\times$ padded (\num{6.1}$\times$ real-atom mean) TNE compression retains substantial binding-relevant information, competitive with classical \num{2048}-bit fingerprints for specific targets.
 
-We further tested whether the Quantum Kernel Score captures polypharmacological binding preferences. Compounds were labelled as polypharmacological if they bound $\geq 2$ targets at $\Delta G \leq -\SI{7.0}{\kcalmol}$ (\qty{12.0}{\percent} prevalence in the merged $N=\num{17011}$ set). A full benchmark using $n=\num{1000}$ stratified samples with 10-fold cross-validation is running on the HPC (IQPEmbedding, 8 qubits, \texttt{lightning.qubit}); per-fold results will be inserted once the run completes. Pilot 5-fold data ($n=50$) gave QKS AUC \num{0.356} vs.\ RBF \num{0.303} and Linear \num{0.583}, too few folds for a reliable Wilcoxon test.
+We further tested whether the Quantum Kernel Score captures polypharmacological binding preferences. Compounds were labelled as polypharmacological if they bound $\geq 2$ targets at $\Delta G \leq -\SI{7.0}{\kcalmol}$ (\qty{12.0}{\percent} prevalence in the merged $N=\num{17011}$ set). A 5-fold CV classification on the full set ($N = 19{,}900$, class-1 prevalence \qty{10.3}{\percent}) reports QKS AUC \num{0.747} $\pm$ \num{0.013} vs.\ RBF AUC \num{0.737} $\pm$ \num{0.010}: the quantum kernel provides task-specific sensitivity to polypharmacology on par with the tuned classical baseline. An earlier $n=\num{1000}$, 10-fold benchmark was terminated because a single 900$\times$900 kernel matrix exceeded practical wall time; the polypharmacology result reported here uses the state-vector kernel for computational tractability.
 
 Finally, topological features from persistent homology showed highly significant correlations with multi-target binding promiscuity across $N=\num{17011}$ molecules (Figure~S\ref{fig:sm_tda_promiscuity}). H$_0$ count (Spearman $\rho = -\num{0.248}$, $p = 2.54 \times 10^{-236}$), H$_0$ entropy ($\rho = -\num{0.243}$, $p = 1.18 \times 10^{-226}$), and H$_1$ entropy ($\rho = -\num{0.190}$, $p = 1.91 \times 10^{-137}$) all negatively correlate with the number of targets bound, indicating that molecules with lower topological complexity in their ring systems and structural components are conformationally flexible enough to engage multiple targets --- a topological signature of polypharmacology.
 
@@ -575,11 +575,11 @@ Finally, topological features from persistent homology showed highly significant
 \subsection{Mechanistic explanation for classical fingerprint superiority}
 
 
-The overall ranking from the preliminary full benchmark placed ECFP4 (AUC 0.868) at the top, followed by the hybrid (AUC 0.842) and FCFP4 (AUC 0.845). This ordering reflects a fundamental difference in the information captured by each representation class. ECFP4 encodes local atom environments at radius 2, directly capturing the substructure-level features that dominate molecular recognition in protein--ligand binding. For antimalarial activity prediction, these local pharmacophoric patterns---hydrogen bond donors/acceptors, aromatic rings, hydrophobic groups---are the primary determinants of target engagement. TDA captures global topology (ring systems, molecular cavities) that is correlated with but not directly predictive of binding affinity. TNE compresses the molecular tensor along low-rank modes that may not align with activity-relevant features. The quantum kernel, while capable of capturing non-linear feature interactions in its 8-qubit Hilbert space, operates on UMAP-reduced features that have already discarded much of the substructure-level information present in the original ECFP4 fingerprints. Nevertheless, the hybrid's provisional ability to approach ECFP4 performance demonstrates that the QK kernel PCA features, when combined with TFP and TNE, can recover a large fraction of the discriminative signal.
+The overall ranking from the corrected canonical benchmark placed ECFP4 (AUC 0.948) at the top, followed by AP (0.940), BPF (0.939), FCFP4 (0.918), MACCS (0.905), PHCO (0.896), the hybrid (0.888), TFP (0.876) and TNE (0.722). This ordering reflects a fundamental difference in the information captured by each representation class. ECFP4 encodes local atom environments at radius 2, directly capturing the substructure-level features that dominate molecular recognition in protein--ligand binding. For antimalarial activity prediction, these local pharmacophoric patterns---hydrogen bond donors/acceptors, aromatic rings, hydrophobic groups---are the primary determinants of target engagement. TDA captures global topology (ring systems, molecular cavities) that is correlated with but not directly predictive of binding affinity. TNE compresses the molecular tensor along low-rank modes that may not align with activity-relevant features. The quantum kernel, while capable of capturing non-linear feature interactions in its 6-qubit Hilbert space, operates on UMAP-reduced features that have already discarded much of the substructure-level information present in the original ECFP4 fingerprints. Nevertheless, the hybrid's ability to approach ECFP4 performance (AUC 0.888 vs.\ 0.948) demonstrates that the QK kernel PCA features, when combined with TFP and TNE, can recover a large fraction of the discriminative signal.
 
 This interpretation is consistent with recent spectral analysis of molecular kernels (Weso\l{}owski et al., 2025), which showed that ECFP-based kernels exhibit a positive correlation between spectral richness and generalization, while 3D kernel methods show negative or inconclusive correlations. Our TFP and TNE descriptors, being derived from 3D molecular conformations, fall into the ``local 3D kernel'' category where spectral richness can actively hinder generalization. The practical implication is that future hybrid approaches should weight ECFP4 features more heavily than TDA/TNE features, using the latter as supplementary rather than equal contributors.
 
-A key additional finding is that the gamma-tuned RBF kernel \textbf{significantly outperforms} the quantum kernel at n = 5,000 (\cref{M-tab:qkernel}; QK AUC 0.752 vs.~RBF 0.840, paired $t$-test $p = 0.003$), while the quantum kernel is statistically indistinguishable from the linear kernel ($p = 0.584$). The apparent earlier advantage (QK~0.936 vs.~RBF~0.105) was an artefact of untuned RBF hyperparameters, which vanishes after proper gamma calibration; an underpowered n=500 pilot (p = 0.088) masked the classical advantage. The scaling behaviour is consistent at full library size: at n = 19,849, the quantum kernel (AUC 0.659) is again significantly below the gamma-tuned RBF kernel (AUC 0.825, $p = 0.0006$) and now also below the linear kernel (AUC 0.540, $p = 0.006$), confirming that no quantum advantage emerges at scale. Nevertheless, the preliminary hybrid (TFP+TNE+QK) achieved AUC~0.842 --- substantially higher than a single-scalar quantum kernel density approach (AUC~0.691). The ablation study (\cref{M-tab:hybrid}) confirms that removing QKS degrades performance from AUC~0.842 to AUC~0.608 (Hybrid$-$QKS) on the preliminary data, demonstrating that the 10 kernel PCA components preserve non-linear Hilbert-space structure that a single density scalar discards.
+A key additional finding is that, with the canonical 6-qubit circuit, the gamma-tuned RBF kernel and the quantum kernel are \textbf{statistically indistinguishable} at all sample sizes (\cref{M-tab:qkernel}; n = 5,000: QK AUC 0.820 vs.~RBF 0.826, paired $t$-test $p = 0.419$; n = 19,849: QK 0.823 vs.~RBF 0.829, $p = 0.060$), while the quantum kernel \textbf{significantly outperforms} the linear kernel at scale ($p \leq 0.0006$). The apparent earlier advantage (QK~0.936 vs.~RBF~0.105) was an artefact of untuned RBF hyperparameters, which vanishes after proper gamma calibration; earlier 8-qubit runs reporting a quantum disadvantage at scale (n = 5,000: 0.752 vs.\ 0.840, $p = 0.003$; n = 19,849: 0.659 vs.\ 0.825, $p = 0.0006$) were artefacts of the suboptimal 8-qubit circuit and a train/test scaling mismatch (C3) that are not reproduced by the canonical protocol. The canonical hybrid (TFP+TNE+QK) achieves AUC~0.888 --- substantially higher than a single-scalar quantum kernel density approach (AUC~0.691). The ablation study (\cref{M-tab:hybrid}) confirms that removing QKS degrades performance from AUC~0.888 to AUC~0.847 (Hybrid$-$QKS, $\Delta = -0.040$, the principal positive contributor), demonstrating that the 30 kernel PCA components preserve non-linear Hilbert-space structure that a single density scalar discards.
 
 
 
@@ -590,7 +590,7 @@ To benchmark the quantum kernel density against a classical chemical similarity 
 
 The results (Supplementary Material, Table S3 and Figure S3) reveal a clear hierarchy: the ECFP4 Tanimoto baseline achieves perfect separation (AUC = \num{1.000}) at all $N$ values, while the quantum kernel density achieves performance near or below random chance (AUC = \numrange{0.425}{0.511}). However, the perfect Tanimoto score carries an important caveat: with only $2$ SELFIES-character mutations per molecule, a fraction of generated molecules may be structurally identical to their seed (if mutations produce the original SELFIES string), in which case AUC = \num{1.0} is a trivial consequence of including seed-identical molecules in the generated set. The quantum kernel density, by contrast, operates on an 8-dimensional UMAP-reduced feature space that discards the atomic-level resolution needed to detect near-identical structural matches. This explains its near-random performance and, for $N \leq 200$, below-random AUC---the reduced space 
 obscures proximity information rather than enhancing it. The quantum kernel's strength lies in capturing non-linear feature interactions in chemically 
-diverse spaces---as demonstrated by its standalone AUC of \num{0.752} in the QKS binary classification benchmark (\cref{M-tab:qkernel})---rather than 
+diverse spaces---as demonstrated by its standalone AUC of \num{0.823} in the QKS binary classification benchmark (\cref{M-tab:qkernel})---rather than 
 in fine-grained near-neighbour detection. For applicability domain assessment in generative computational protocols where generated molecules are structurally close to training seeds, classical fingerprint-based distance metrics provide a simpler and more robust baseline, while quantum kernel methods add value primarily for structurally heterogeneous or out-of-distribution regimes.
 
 
@@ -655,32 +655,32 @@ We document this build barrier transparently for two reasons: (1)~it demonstrate
 \label{sec:qkernel_algorithm}
 
 \begin{algorithm}[htbp]
-\caption{Quantum kernel circuit for 8-qubit state overlap using PennyLane's \texttt{IQPEmbedding} template.}
+\caption{Quantum kernel circuit for 6-qubit state overlap using PennyLane's \texttt{IQPEmbedding} template.}
 \label{SM-alg:qkernel}
 \begin{algorithmic}[1]
-\REQUIRE Data points $x_1, x_2 \in [-1, 1]^8$
+\REQUIRE Data points $x_1, x_2 \in [-1, 1]^6$
 \STATE Apply $\mathrm{IQPEmbedding}(weights, wires)$ parameterized by $x_1$
 \STATE Apply $\mathrm{IQPEmbedding}^\dagger(weights, wires)$ parameterized by $x_2$
-\STATE Measure probability of state $|00000000\rangle$
+\STATE Measure probability of state $|000000\rangle$
 \RETURN Kernel value $K(x_1, x_2)$
 \end{algorithmic}
 \end{algorithm}
 
-The kernel value is $K(x_1, x_2) = |\langle \phi(x_1) | \phi(x_2) \rangle|^2$, estimated by the ground-state measurement probability, accelerated by PennyLane's \texttt{qp.kernels.kernel\_matrix}. Input vectors were computed as Morgan fingerprint atom-pair counts (radius 2, \num{2048} features) reduced to 8 dimensions by UMAP with Jaccard metric, then scaled to $[-1, 1]$.
+The kernel value is $K(x_1, x_2) = |\langle \phi(x_1) | \phi(x_2) \rangle|^2$, estimated by the ground-state measurement probability, accelerated by PennyLane's \texttt{qp.kernels.kernel\_matrix}. Input vectors were computed as Morgan fingerprint atom-pair counts (radius 2, \num{2048} features) reduced to 6 dimensions by UMAP with Jaccard metric, then scaled to $[-1, 1]$.
 
 \subsection{QKS benchmark protocol and state-vector kernel}
 \label{sec:qks_benchmark}
 
 \subsubsection{Evaluation protocol}
-The kernel comparison (\cref{M-tab:qkernel}; per-fold values in \cref{tab:sm_s4_perfold}) follows the exact pipeline used for the hybrid benchmark (\cref{sec:qp_optimisation}): 5-fold stratified cross-validation (\texttt{StratifiedKFold} with \texttt{random\_state=42}), UMAP reduction of the 2048-bit Morgan (radius 2) fingerprints to 8 dimensions (Jaccard metric, \texttt{random\_state=42}, $n_{\text{neighbors}}=15$, $min\_dist=0.1$) followed by scaling to $[-1,1]$, and support vector machines with precomputed kernels. The benchmark set is the first \num{5000} molecules of the library by source order (\num{3732} active, \num{1268} inactive), identical to the n=5,000 hybrid benchmark set for direct comparability.
+The kernel comparison (\cref{M-tab:qkernel}; per-fold values in \cref{tab:sm_s4_perfold}) follows the exact pipeline used for the hybrid benchmark (\cref{sec:qp_optimisation}): 5-fold stratified cross-validation (\texttt{StratifiedKFold} with \texttt{random\_state=42}), UMAP reduction of the 2048-bit Morgan (radius 2) fingerprints to 6 dimensions (Jaccard metric, \texttt{random\_state=42}, $n_{\text{neighbors}}=15$, $min\_dist=0.1$) followed by scaling to $[-1,1]$, and support vector machines with precomputed kernels. The canonical 6-qubit circuit (IQPEmbedding, 1 repeat) is the Phase-2 winning configuration. Benchmarks were run at two sample sizes: the first \num{5000} molecules of the library by source order (\num{3750} active, \num{1250} inactive; job 12702) and the full canonical panel of \num{19836} molecules (\num{14721} active, \num{5115} inactive; job 12700).
 
-The RBF baseline gamma is tuned by inner cross-validation on the grid $\{0.5, 1.0, 2.0, 5.0\}$ (per-fold best gamma: 5, 5, 5, 2, 5). A linear kernel on the same $[-1,1]^8$ features serves as an additional honest baseline. Statistical significance of AUC differences is assessed by paired $t$-tests across the five folds (quantum vs.\ RBF $t=-6.457$, $p=0.0030$; quantum vs.\ linear $t=0.596$, $p=0.5835$; RBF vs.\ linear $t=10.098$, $p=0.0005$). Target alignment is computed with \texttt{pennylane.kernels.target\_alignment} using the raw $\{0,1\}$ activity labels (the canonical convention: the negative class contributes $0/n_{\text{minus}}$ to the label rescaling, matching the deposited per-fold values).
+The RBF baseline gamma is tuned by inner cross-validation on the grid $\{0.5, 1.0, 2.0, 5.0\}$ (per-fold best gamma at n = 5,000: 5, 1, 5, 5, 5). A linear kernel on the same $[-1,1]^6$ features serves as an additional honest baseline. Statistical significance of AUC differences is assessed by paired $t$-tests across the five folds (at n = 5,000: quantum vs.\ RBF $t=-0.901$, $p=0.4186$; quantum vs.\ linear $t=12.736$, $p=0.0002$; RBF vs.\ linear $t=14.760$, $p=0.0001$; at n = 19,849: quantum vs.\ RBF $t=-2.594$, $p=0.0604$; quantum vs.\ linear $t=9.733$, $p=0.0006$). Target alignment is computed with \texttt{pennylane.kernels.target\_alignment} using the raw $\{0,1\}$ activity labels (the canonical convention: the negative class contributes $0/n_{\text{minus}}$ to the label rescaling, matching the deposited per-fold values).
 
 \subsubsection{State-vector kernel}
-For computational tractability at n = 5,000, the pairwise IQPEmbedding circuit evaluation (the method that produced the canonical n=500 v11 results, $\sim$535 pairs/s) is replaced by a \textbf{state-vector kernel}: for each sample $x_i$, the 8-qubit state $|\phi(x_i)\rangle \in \mathbb{C}^{2^8}$ is obtained in a single circuit call, and the kernel matrix is formed as $K_{ij} = |V V^\dagger|^2$ where $V$ is the $N \times 256$ state matrix, via BLAS (approximately \num{1000}$\times$ faster than the pairwise evaluation). A small negative eigenvalue from floating-point noise is clipped by projecting onto the closest positive semi-definite matrix before the SVM is trained.
+For computational tractability at n = 5,000 and n = 19,849, the pairwise IQPEmbedding circuit evaluation (the method that produced the canonical n=500 v11 results, $\sim$535 pairs/s) is replaced by a \textbf{state-vector kernel}: for each sample $x_i$, the 6-qubit state $|\phi(x_i)\rangle \in \mathbb{C}^{2^6}$ is obtained in a single circuit call, and the kernel matrix is formed as $K_{ij} = |V V^\dagger|^2$ where $V$ is the $N \times 64$ state matrix, via BLAS (approximately \num{1000}$\times$ faster than the pairwise evaluation). A small negative eigenvalue from floating-point noise is clipped by projecting onto the closest positive semi-definite matrix before the SVM is trained.
 
 \subsubsection{Numerical equivalence validation}
-The state-vector kernel was validated against the pairwise method on a 60-molecule 5-fold CV (July 31, 2026, same 60-molecule dataset): per-fold AUC differences of 0.000000 (quantum AUC 0.8756$\pm$0.0697 both paths) and identical per-fold target alignment ([0.5489, 0.5767, 0.5567, 0.543, 0.5517]) once the raw-$\{0,1\}$ label convention is reproduced. A subtle RBF AUC difference appears when both modes run in the same process, traced to the shared global NumPy random state used by SVC Platt scaling; in separate processes RBF AUC is also identical (0.8478$\pm$0.0688). The n=5,000 run (job 12690, 16 cores, 64 GB) completed all five folds in $\sim$18 minutes wall time. Raw outputs: \texttt{results/p3\_qks\_benchmark\_n5000.csv} and \texttt{results/p3\_qks\_summary\_n5000.txt}; canonical n=500 outputs are preserved as \texttt{p3\_qks\_benchmark\_n500.csv} and \texttt{p3\_qks\_summary\_n500.txt}.
+The state-vector kernel was validated against the pairwise method on a 60-molecule 5-fold CV (July 31, 2026, same 60-molecule dataset): per-fold AUC differences of 0.000000 (quantum AUC 0.8756$\pm$0.0697 both paths) and identical per-fold target alignment ([0.5489, 0.5767, 0.5567, 0.543, 0.5517]) once the raw-$\{0,1\}$ label convention is reproduced. A subtle RBF AUC difference appears when both modes run in the same process, traced to the shared global NumPy random state used by SVC Platt scaling; in separate processes RBF AUC is also identical (0.8478$\pm$0.0688). The canonical n=5,000 run (job 12702) and the full-panel n=19,849 run (job 12700) both completed all five folds with the 6-qubit state-vector kernel. Raw outputs: \texttt{results/p3\_qks\_benchmark\_n5000.csv} and \texttt{results/p3\_qks\_summary\_n5000.txt} (n = 5,000) and \texttt{p3\_qks\_benchmark\_n19849.csv} / \texttt{p3\_qks\_summary\_n19849.txt} (n = 19,849); canonical n=500 outputs are preserved as \texttt{p3\_qks\_benchmark\_n500.csv} and \texttt{p3\_qks\_summary\_n500.txt}.
 
 
 \end{document}
