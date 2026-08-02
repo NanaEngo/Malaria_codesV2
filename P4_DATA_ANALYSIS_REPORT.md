@@ -9,7 +9,9 @@
 
 ## Executive Summary
 
-**P4 (Pareto-Guided MCTS for Antimalarial Design)** implements a Monte-Carlo-tree-search generative agent that assembles antimalarial candidates fragment-by-fragment, scored by a multi-objective oracle (MPO + docking proxy + SA + SYBA + RRS + PNS). On the curated `medium` fragment set (6 categories), the canonical **v9 20-seed benchmark** shows **Random (0.6645 ± 0.0064) > MCTS+ScafVAE (0.6594 ± 0.0078) > GA (0.6402 ± 0.0098) > Greedy (0.5398 ± 0.0000)**. Random edges out MCTS by a small margin (paired t-test: t₁₉ = 2.32, p = 0.032) — the reward landscape on this fragment set is relatively flat, and exploration matters more than tree-search exploitation. The real value of MCTS is the **diverse Pareto front of multi-objective trade-offs** (4 non-dominated solutions across 20 seeds, hypervolume 1.2366), not a higher scalar reward.
+**P4 (Pareto-Guided MCTS for Antimalarial Design)** implements a Monte-Carlo-tree-search generative agent that assembles antimalarial candidates fragment-by-fragment, scored by a multi-objective oracle (MPO + docking proxy + SA + SYBA + RRS + PNS). On the curated `medium` fragment set (6 categories), the canonical **v11 20-seed benchmark** (2026-08-02, re-run with the screened optimal MCTS configuration) shows **Random (0.7335 ± 0.0063) > MCTS+ScafVAE (0.7276 ± 0.0090) > GA (0.7027 ± 0.0152) > Greedy (0.6147 ± 0.0000)**. Random narrowly edges out MCTS (paired t-test: t₁₉ = 2.41, p = 0.026, mean Δ = 0.006), and MCTS significantly outperforms GA (t₁₉ = 5.55, p < 0.0001). The real value of MCTS is the **diverse Pareto front of multi-objective trade-offs** (4 non-dominated solutions across 20 seeds, hypervolume 1.2366), not a higher scalar reward.
+
+> ⚠️ **v9 → v10 → v11 re-benchmark (2026-08-02):** (1) the v9 deposited rewards (Random 0.6645, MCTS 0.6594, GA 0.6402, Greedy 0.5398) could **not** be reproduced from the committed code + data (the docking oracle's Tartarus library state differed at run time) → v10 re-run with a **value-preserving vectorisation of the docking Tanimoto scan** (~4700× faster, verified identical on held-out molecules); (2) a P0 audit then found the v10 benchmark MCTS ran with **default hyperparameters** (c_puct=1.414, uniform priors, NO ScafVAE policy) while the manuscript claimed the screened-optimal config (c_PUCT=5.0, ν=0.01, T=0.8 + ScafVAE) was retained for all experiments → **v11 re-run (job 12725) with the optimal config wired into the benchmark** (`results/benchmark_molecules_opt/`, canonical). MCTS rose 0.7149 → 0.7276 and now wins 5/20 seeds; ranking Random > MCTS > GA > Greedy is preserved in all three runs. The v10 default-config CSVs remain in `results/benchmark_molecules/` as a sensitivity comparison (§1.8).
 
 **Component ablation (2⁵ factorial, 160 runs):** ScafVAE policy (+0.148), Pareto front (+0.108), and Large vocabulary (+0.079) are the largest positive main effects.
 
@@ -30,12 +32,54 @@ A consolidated view of the final P4 production runs, cross-verified against the 
 
 | Study | Source file(s) | Key finding |
 |:------|:-------------|:------------|
-| **v9 20-seed benchmark** | `results/benchmark/p4_benchmark_merged.csv` | Random (0.6645 ± 0.0064) > MCTS+ScafVAE (0.6594 ± 0.0078) > GA (0.6402 ± 0.0098) > Greedy (0.5398 ± 0.0000) |
+| **v11 20-seed benchmark (CANONICAL)** | `results/benchmark_molecules_opt/p4_benchmark_merged.csv` | Random (0.7335 ± 0.0063) > MCTS+ScafVAE (0.7276 ± 0.0090) > GA (0.7027 ± 0.0152) > Greedy (0.6147 ± 0.0000); MCTS vs Random t₁₉ = 2.41, p = 0.026, Δ=0.006; MCTS vs GA t₁₉ = 5.55, p < 0.0001 |
 | **Component ablation** | `results/ablation/p4_component_ablation_summary.csv` | ScafVAE (+0.148), Pareto front (+0.108), and Large vocabulary (+0.079) are the largest positive main effects |
 | **Fragment vocabulary ablation** | `results/ablation/p4_ablation_summary.csv` | ANOVA F = 350.10, p = 1.12 × 10⁻²⁶; `aromatic_only` set is significantly worse than `all`, `medium`, and `minimal` |
 | **Pareto front** | `results/pareto/merged_pareto_front.csv` | 4 non-dominated solutions across 20 seeds (MPO 0.729–0.946, SA = 3.0, SYBA recomputed 0.021–1.000, hypervolume 1.2366) |
 
-**Primary conclusion:** On the curated medium fragment set, simple random search edges out MCTS by a small margin (mean Δ = 0.0051, paired t-test: t₁₉ = 2.32, p = 0.032), with both outperforming GA and Greedy. This indicates that the reward landscape on this fragment set is relatively flat and that exploration is more important than sophisticated tree-search exploitation. The real value of MCTS lies in its ability to generate a diverse Pareto front of multi-objective trade-offs, not in a higher scalar reward.
+**Primary conclusion:** On the curated medium fragment set, simple random search narrowly edges out MCTS at its screened optimal configuration (mean Δ = 0.006, paired t-test: t₁₉ = 2.41, p = 0.026), and MCTS significantly edges out GA (t₁₉ = 5.55, p < 0.0001). The real value of MCTS lies in its ability to generate a diverse Pareto front of multi-objective trade-offs, not in a higher scalar reward. The v11 re-benchmark (§1.8) preserves the v9/v10 ranking with a much smaller MCTS–Random gap and fully reproducible per-seed outputs.
+
+### 1.8 Canonical re-benchmarks v10/v11 (20 seeds × 4 methods, 2026-08-02) — **v11 CANONICAL (supersedes v10, which supersedes v9)**
+
+> **Why a re-run:** during P0 pre-submission verification (Pareto provenance lock + diversity recompute), the v9 deposited rewards could not be reproduced from the committed code + data. Greedy is deterministic, so the observed v9-vs-regenerated mismatch (Greedy 0.5398 vs 0.6147; Random 0.6645 vs 0.7329) is proof of **oracle/library state drift at v9 run time**, not stochasticity. Investigation (2026-08-02): the oracle script and pipeline are byte-identical between the v9 deposit commit (`81ee79a56`) and HEAD; the v9 timing profile (Random 310 s/seed, Greedy 0.12 s) implies a **different Tartarus docking library state at run time** (docstring references a ~2,800-row library; the committed file has 19,913 rows, committed in `5cd7eec03` together with the v9 results). None of the tested oracle configurations (full 6-objective vs reduced `compute_mpo_reward`) reproduced the v9 values.
+
+**Value-preserving optimisation:** `_docking_score` rebuilt a 19,913×2048 dense fingerprint matrix **on every call** (~4.7 s/call). Fix: precompute the dense matrix + norms once at init, vectorise the Tanimoto scan (~1 ms/call, ~4700× faster). **Verified value-equivalent**: identical similarity + index on 10 held-out molecules (10/10). This changes runtime only, never reward semantics.
+
+**Run:** v10 — SLURM array job 12705 (`p4_benchmark_molecules_array.sbatch`), outputs in `results/benchmark_molecules/`. v11 (optimal MCTS config) — SLURM array job 12725 (`p4_benchmark_molecules_opt_array.sbatch`), outputs in `results/benchmark_molecules_opt/` (**canonical**). Determinism check: seed 13 regenerated twice → identical rewards.
+
+| Method | Mean reward | Std | Min | Max | n | Mean time (s) | Std time (s) |
+|:------|:----------:|:---:|:---:|:---:|:---:|:-------:|:-------:|
+| **Random** | **0.7335** | 0.0063 | 0.7227 | 0.7481 | 20 | 42.4 | 1.4 |
+| MCTS+ScafVAE | 0.7149 | 0.0105 | 0.6891 | 0.7328 | 20 | 59.6 | 8.8 |
+| GA | 0.7027 | 0.0152 | 0.6749 | 0.7311 | 20 | 1.9 | 0.2 |
+| Greedy | 0.6147 | 0.0000 | 0.6147 | 0.6147 | 20 | 0.1 | 0.0 |
+
+**Key findings (v10, default config — sensitivity comparison only):**
+- Ranking Random > MCTS > GA > Greedy; MCTS–Random Δ = 0.0186, t₁₉ = 6.59, p < 0.0001.
+- Retained for comparison: `results/benchmark_molecules/` (per-seed rewards + best-SMILES).
+
+**Key findings (v11, optimal MCTS config — CANONICAL):**
+- **MCTS config fix:** benchmark MCTS previously ran with defaults (c_puct=1.414, uniform priors, no ScafVAE). v11 wires the screened-optimal config (c_PUCT=5.0, virtual_loss=0.01, T=0.8, ScafVAE policy) into `run_mcts`.
+- **Ranking unchanged:** Random > MCTS > GA > Greedy (identical to v9/v10).
+- **MCTS much closer to Random:** mean Δ = 0.0059 (v10: 0.0186), t₁₉ = 2.41, p = 0.026, Cohen's d = −0.54; **MCTS wins 5/20 seeds** (seeds 0, 6, 8, 10, 19) vs 0 in v10.
+- **Best/worst seeds:** Random best 0.7481 (seed 1); MCTS best 0.7442 (seed 8); GA best 0.7311 (seed 9); Greedy constant 0.6147.
+- **Timing:** MCTS 82.2 ± 11.8 s/seed (ScafVAE policy adds overhead), Random 42.2 ± 1.2 s.
+- **Molecule sets deposited:** best-SMILES per method per seed (`p4_benchmark_molecules_seed_N.csv` in `benchmark_molecules_opt/`) → real diversity analysis (§1.9).
+
+**Manuscript impact:** Table 1 (tab:benchmark), abstract, Results, Discussion, Limitations, Methods, cover letters, and the new Supplementary Material (SM S2 diversity table + SM S3 reproducibility) all updated to v10. Ablation results (different oracle-weight config) and the Pareto front (independent of the scalar benchmark) are **unchanged**.
+
+### 1.9 Real molecular diversity of the four methods (2026-08-02)
+
+Computed by `scripts/p4_compute_diversity.py` from the deposited best-in-seed molecule sets (20 molecules/method; ECFP4 radius 2, 2048 bits; Bemis–Murcko scaffolds) — v11 optimal-config sets. Reported in SM S2 only (main text keeps diversity out, per the P0-2 decision).
+
+| Method | n | Mean pairwise Tanimoto dissimilarity | Unique BM scaffolds | Unique scaffold fraction |
+|:------|:--:|:---:|:---:|:---:|
+| MCTS+ScafVAE | 20 | 0.8023 | 19 | 0.950 |
+| Random | 20 | 0.7806 | 20 | 1.000 |
+| GA | 20 | 0.8332 | 17 | 0.850 |
+| Greedy | 20 | 0.0000 | 1 | 0.050 |
+
+Key findings: all three stochastic methods are structurally diverse (mean pairwise dissimilarity 0.78–0.83; ≥17/20 unique scaffolds); Random achieves full scaffold coverage (20/20); MCTS with the optimal config achieves 19/20 unique scaffolds; Greedy deterministically collapses to a single molecule (dissimilarity 0, 1 scaffold) — confirming the "deceptive flat landscape" narrative with real deposited data. Outputs: `results/diversity/p4_diversity_metrics.csv`, `p4_diversity_mds.csv`.
 
 ### 1.2 Pipeline Optimizations (21 July 2026)
 
@@ -337,8 +381,11 @@ All P4 numerical claims above are traceable to the following files in `Project4_
 
 | Analysis | Raw file(s) | Rows / records |
 |:---------|:------------|:---------------|
-| v9 20-seed benchmark | `benchmark/p4_benchmark_merged.csv` | 80 (4 methods × 20 seeds) |
-| v9 per-seed CSVs | `benchmark/p4_benchmark_seed_{0..19}.csv` | 20 files, 4 methods each |
+| v11 20-seed benchmark (CANONICAL) | `benchmark_molecules_opt/p4_benchmark_merged.csv` | 80 (4 methods × 20 seeds) |
+| v11 per-seed CSVs + molecule sets | `benchmark_molecules_opt/p4_benchmark_seed_{0..19}.csv`, `benchmark_molecules_opt/p4_benchmark_molecules_seed_{0..19}.csv` | 20 files each |
+| v10 default-config run (sensitivity) | `benchmark_molecules/p4_benchmark_merged.csv`, `benchmark_molecules/p4_benchmark_seed_{0..19}.csv` | kept for comparison |
+| v10 diversity metrics | `diversity/p4_diversity_metrics.csv`, `diversity/p4_diversity_mds.csv` | 4 + 60 rows |
+| v9 20-seed benchmark (superseded archive) | `benchmark/p4_benchmark_merged.csv` | 80 (kept for provenance) |
 | LaTeX benchmark table | `benchmark/p4_benchmark_table.tex` | Auto-generated |
 | Component ablation | `ablation/p4_ablation_config_*.csv`, `p4_component_ablation_summary.csv` | 32 configs × 5 replicates = 160 |
 | Fragment vocabulary ablation | `ablation/p4_ablation_{all,medium,aromatic_only,minimal}_seed_{0..9}.csv` | 40 files, 10 seeds per set |
@@ -349,25 +396,28 @@ All P4 numerical claims above are traceable to the following files in `Project4_
 | QMC Tier 1 outputs | `qmc/candidate_{0..4}/` | SCF energies + `*_pbe.molden` trial wavefunctions |
 
 **Scripts used to generate the data:**
-- `scripts/p4_mcts_benchmark.py` — main four-method benchmark
+- `scripts/p4_mcts_benchmark.py` — main four-method benchmark (+ `--molecules-out` best-SMILES recording; v11 wires screened-optimal MCTS config: c_PUCT=5.0, ν=0.01, T=0.8, ScafVAE policy)
 - `scripts/p4_mcts_ablation.py` — component and fragment vocabulary ablations
 - `scripts/p4_mcts_pareto.py` — Pareto MCTS runs
 - `scripts/p4_merge_pareto_fronts.py` — merges per-seed Pareto fronts
 - `scripts/p4_merge_benchmark.py` — merges per-seed benchmark CSVs
+- `scripts/p4_compute_diversity.py` — real diversity metrics (v10 molecule sets)
+- `scripts/p4_pareto_provenance_check.py` — P0-1 provenance lock (all checks PASS)
+- `scripts/p4_benchmark_stats.py` — canonical benchmark statistics + paired tests
 - `scripts/p4_visualize.py` — generates figures
 - `scripts/p4_qmc_pipeline.py` — Tier 1 SCF + molden (Tier 2 guarded by runtime sanity check)
 - `scripts/p4_qmc_jax_identity_test.py` — v46 decisive A0 / e-N cusp / JAX validation
 
-**Provenance note:** The v9 benchmark was executed on the HPC production partition as SLURM array job 12596 (seeds 0–19, 1000 iterations per seed, `--fragment-set medium`). Raw SLURM logs are archived under `scripts/logs/` and excluded from the Zenodo deposit due to size.
+**Provenance note:** The v9 benchmark was executed on the HPC production partition as SLURM array job 12596 (seeds 0–19, 1000 iterations per seed, `--fragment-set medium`); the v10 re-benchmark as job 12705 (default MCTS config, `p4_benchmark_molecules_array.sbatch`); the **v11 canonical re-benchmark** as job 12725 (optimal MCTS config, `p4_benchmark_molecules_opt_array.sbatch`). Raw SLURM logs are archived under `scripts/logs/` and excluded from the Zenodo deposit due to size.
 
 ---
 
 ## 8. Remaining P4 Work Before Submission
 
-1. **Manuscript finalisation** — complete Introduction and Results (benchmark v9 integrated; QMC removed). Compile and verify all references (`.bib` complete, 30+ entries).
+1. **Manuscript finalisation** — Introduction and Results updated to **v11 canonical benchmark** (optimal MCTS config, re-run 2026-08-02, job 12725); SM (S1 Pareto provenance, S2 real diversity, S3 reproducibility) drafted; QMC removed. Compile and verify all references (`.bib` complete, 30+ entries).
 2. **QMC section** — only re-enter if the production protocol (§5.2.4) is executed: OPTIMIZE + nconfig ≥ 1000 + τ→0. Tier 1 SCF is publication-ready.
-3. **Zenodo deposit** — P4 subset (43 files, 1.5 MB) is in the manifest (`zenodo_manifest.txt`); upload pending.
-4. **Benchmark stats** — v9 is canonical (20 seeds). The paired t-test Random vs MCTS (p=0.032) should be reported with effect size in the manuscript.
+3. **Zenodo deposit** — P4 subset (43 files, 1.5 MB) is in the manifest (`zenodo_manifest.txt`); **must be refreshed to include the v10 benchmark + molecule + diversity CSVs**; upload pending.
+4. **Benchmark stats** — v11 is canonical (20 seeds, reproducible, optimal MCTS config). Paired t-tests Random vs MCTS (t₁₉ = 2.41, p = 0.026) and MCTS vs GA (t₁₉ = 5.55, p < 0.0001) are reported in the manuscript with the honest re-benchmark narrative.
 
 ---
 

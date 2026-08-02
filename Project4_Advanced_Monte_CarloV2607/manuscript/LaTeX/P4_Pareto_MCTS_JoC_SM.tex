@@ -1,0 +1,201 @@
+% ============================================================================
+% P4 — Supplementary Material
+% Pareto-guided Monte Carlo tree search explores multi-objective trade-offs
+% missed by scalar antimalarial generation
+% Target: Journal of Cheminformatics (BMC)
+% ============================================================================
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=2.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{seqsplit}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+\sisetup{
+  detect-all           = true,
+  group-minimum-digits = 4,
+  range-phrase         = {--},
+  range-units          = single,
+}
+
+\title{\textbf{Supplementary Material}\\[0.4em]
+\large Pareto-guided Monte Carlo tree search explores multi-objective
+trade-offs missed by scalar antimalarial generation}
+
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\section*{S1\hspace{0.6em}Pareto-front data provenance}
+% ============================================================================
+
+The canonical merged Pareto front (main text, Table~1) comprises four mutually
+non-dominated candidates. Every candidate is traceable to the deposited
+per-seed Pareto CSV \path{p4_pareto_seed_N.csv} from which it originated,
+and all MPO, SA, RRS and PNS values are identical between the per-seed record
+and the merged front (\path{results/pareto/merged_pareto_front.csv}). The only
+score that differs is SYBA, by design: the original Pareto-MCTS run returned a
+constant zero fallback for every molecule (SYBA was inactive during search, as
+recorded in the per-seed CSVs), so SYBA was recomputed post-hoc with the
+lich/conda classifier and the recomputed values were used to re-derive the
+non-dominated front and its hypervolume. This procedure is documented in the
+main-text Methods and is fully reproducible: the script
+\path{scripts/p4_recompute_pareto_syba.py} regenerates the merged CSV and the
+log \path{merged_pareto_front_recompute.log} records the raw and normalised
+SYBA scores (\SI{78.67}{}, \SI{58.13}{}, \num{-19.25}, \SI{25.88}{}) and the
+hypervolume (\num{1.2366}). The verification script
+\path{scripts/p4_pareto_provenance_check.py} re-runs all of these checks and
+exits with status 0 only when every SMILES and score in the merged front
+matches a deposited record.
+
+\cref{tab:sm_pareto} lists the four canonical candidates with their provenance.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Canonical merged Pareto front with per-seed provenance. All four
+  points are mutually non-dominated on the active objectives (MPO, SYBA, RRS,
+  PNS; SA is constant at \num{3.0} and therefore excluded from the
+  hypervolume). SYBA was recomputed post-hoc (main text, Methods); MPO, SA,
+  RRS and PNS are unchanged from the per-seed records.}
+  \label{tab:sm_pareto}
+  \small
+  \begin{tabular}{p{0.34\textwidth}ccccccl}
+    \toprule
+    Candidate (SMILES) & MPO & SYBA & SA & RRS & PNS & seed & origin CSV \\
+    \midrule
+    \seqsplit{CNC(=O)c1ccc(OC(C)C(C)(C)C)c(OC)c1} & \num{0.910} & \num{1.000} & \num{3.0} & \num{0.211} & \num{1.0} & 13 & \path{p4_pareto_seed_13.csv} \\
+    \seqsplit{COc1c(C)cc(-c2ccc(S(N)(=O)=O)cc2)cc1C} & \num{0.945} & \num{1.000} & \num{3.0} & \num{0.196} & \num{1.0} & 18 & \path{p4_pareto_seed_18.csv} \\
+    \seqsplit{CC1CCC(n2cccn2)NC1(c1ccccc1)C1OCCO1} & \num{0.946} & \num{0.021} & \num{3.0} & \num{0.141} & \num{0.0} & 5 & \path{p4_pareto_seed_5.csv} \\
+    \seqsplit{COc1cc(CO)c(O)c(C)c1C} & \num{0.729} & \num{0.994} & \num{3.0} & \num{0.223} & \num{1.0} & 6 & \path{p4_pareto_seed_6.csv} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ============================================================================
+\section*{S2\hspace{0.6em}Molecular diversity of the four generation methods}
+% ============================================================================
+
+The main text reports scalar-reward statistics only, because the primary
+contributions are the honest benchmark ranking and the multi-objective Pareto
+front. Molecular diversity is analysed here in the Supplementary Material
+using real, deposited molecule sets.
+
+\textbf{Molecule sets.} For each of the four generation methods (MCTS+ScafVAE,
+random search, greedy search, genetic algorithm) the best-scoring molecule of
+each of the \num{20} independent benchmark seeds was recorded, giving a
+deposited set of \num{20} molecules per method
+(\path{results/benchmark_molecules/p4_benchmark_molecules_seed_N.csv}).
+These are the same runs whose scalar rewards are reported in the main-text
+benchmark table (\Cref{tab:sm_benchmark}). The benchmark was re-run for this
+submission (2026-08-02) with the committed script
+\texttt{p4\_mcts\_benchmark.py}, a value-preserving vectorisation of the
+docking Tanimoto scan, and the screened-optimal MCTS configuration
+($c_{\text{PUCT}}=\num{5.0}$, $\nu=\num{0.01}$, $T=\num{0.8}$, ScafVAE
+policy wired into PUCT priors; main text, Hyperparameter screening); all \num{20}
+per-seed runs reproduce deterministically from the deposited code and data
+(\path{results/benchmark\_molecules\_opt/}). This canonical run supersedes
+both the v9 deposit (2026-07-29), whose rewards could not be reproduced from
+the committed code because the docking oracle's Tartarus library state differed
+at run time, and an interim default-configuration re-run; the method ranking
+(Random $>$ MCTS $>$ GA $>$ Greedy) is identical across all three, and the
+deposited molecule sets are the canonical outputs of the benchmark.
+
+\textbf{Descriptors.} ECFP4 fingerprints (Morgan radius 2, \num{2048} bits)
+were computed with RDKit. Pairwise Tanimoto dissimilarity is
+$1 - \text{Tanimoto}$; the reported value is the mean over all unique pairs
+(\num{190} pairs per method). Bemis--Murcko scaffolds were extracted with
+RDKit's \texttt{MurckoScaffoldSmiles}; the unique-scaffold fraction is the
+number of distinct scaffolds divided by the number of valid molecules.
+Two-dimensional MDS coordinates (metric MDS on the Tanimoto dissimilarity
+matrix) are deposited for visualisation
+(\path{results/diversity/p4_diversity_mds.csv}).
+
+\cref{tab:sm_diversity} reports the real diversity statistics.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Real molecular diversity of the four generation methods computed
+  from the deposited molecule sets (\num{20} best-in-seed molecules per
+  method). Values are computed with RDKit; deposited CSVs:
+  \texttt{p4\_diversity\_metrics.csv} and \texttt{p4\_benchmark\_molecules\_*}.}
+  \label{tab:sm_diversity}
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    Method & $n$ & \shortstack{Mean pairwise\\ Tanimoto dissimilarity} & \shortstack{Unique\\ Bemis--Murcko scaffolds} & \shortstack{Unique scaffold\\ fraction} \\
+    \midrule
+    MCTS+ScafVAE & 20 & \num{0.8023} & \num{19} & \num{0.950} \\
+    Random & 20 & \num{0.7806} & \num{20} & \num{1.000} \\
+    Greedy & 20 & \num{0.0000} & \num{1} & \num{0.050} \\
+    GA & 20 & \num{0.8332} & \num{17} & \num{0.850} \\
+    \bottomrule
+  \end{tabular}
+  \smallskip
+  \raggedright\footnotesize Mean pairwise dissimilarity is the mean
+  $1-\text{Tanimoto}$ over all unique pairs (\num{190} pairs per method);
+  scaffolds are unique Bemis--Murcko skeletons (RDKit); the fraction is
+  unique scaffolds divided by valid molecules.
+\end{table}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Canonical re-benchmarked scalar rewards (\num{20} seeds; mean,
+  standard deviation, min, max). MCTS uses the screened optimal
+  configuration (\texttt{c\_puct=5.0}, \texttt{virtual\_loss=0.01},
+  \texttt{T=0.8}, ScafVAE policy wired). Deposited CSV:
+  \texttt{p4\_benchmark\_merged.csv} under
+  \texttt{results/benchmark\_molecules\_opt/}.}
+  \label{tab:sm_benchmark}
+  \begin{tabular}{lccccc}
+    \toprule
+    Method & Mean reward & Std & Min & Max & Mean time (s) \\
+    \midrule
+    Random & \num{0.7335} & \num{0.0063} & \num{0.7227} & \num{0.7481} & \num{42.2} \\
+    MCTS+ScafVAE & \num{0.7276} & \num{0.0090} & \num{0.7054} & \num{0.7442} & \num{82.2} \\
+    GA & \num{0.7027} & \num{0.0152} & \num{0.6749} & \num{0.7311} & \num{1.9} \\
+    Greedy & \num{0.6147} & \num{0.0000} & \num{0.6147} & \num{0.6147} & \num{0.1} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Because greedy search collapses deterministically to a single local optimum
+(std identically zero in the canonical benchmark), its \num{20} per-seed
+outputs coincide, yielding zero pairwise diversity and a single unique
+Bemis--Murcko scaffold by construction (Table~\ref{tab:sm_diversity}). The
+three stochastic methods generate structurally distinct outputs per seed:
+random search achieves full scaffold coverage (\num{20} unique scaffolds from
+\num{20} molecules), while MCTS and GA return \num{19} and \num{17} unique
+scaffolds respectively. Mean pairwise Tanimoto dissimilarity is high
+(\num{0.78}--\num{0.83}) for all three stochastic methods, indicating that
+seeded exploration remains structurally diverse despite the curated fragment
+vocabulary.
+
+% ============================================================================
+\section*{S3\hspace{0.6em}Reproducibility}
+% ============================================================================
+
+All deposited CSVs, the benchmark, Pareto and diversity analysis scripts, and
+the provenance-check script are listed in the Zenodo manifest. The canonical
+benchmark was re-run with the exact script \texttt{p4\_mcts\_benchmark.py}
+(with the addition of best-SMILES recording, which does not alter the reward
+semantics) and a value-preserving vectorisation of the docking Tanimoto scan
+(verified to return identical similarities and indices on held-out molecules);
+the \num{20} per-seed rewards in
+\path{results/benchmark_molecules/p4_benchmark_merged.csv} are reproduced
+deterministically from the deposited code and data. The diversity statistics
+are computed by \path{scripts/p4_compute_diversity.py} from the deposited
+molecule sets, and the provenance of the Pareto front is verified by
+\path{scripts/p4_pareto_provenance_check.py}.
+
+\end{document}

@@ -170,6 +170,11 @@ class OracleAggregator:
         self._tartarus_smiles: list[str] = []
         self._tartarus_fingerprints: list = []
         self._tartarus_target_cols: list[str] = []  # detected dynamically
+        # Dense fingerprint matrix + bit-count norms precomputed once at load
+        # (value-preserving speedup: same float32 Tanimoto as _batch_tanimoto_gpu,
+        #  but built once instead of rebuilt on every oracle call).
+        self._tartarus_dense = None
+        self._tartarus_norms = None
 
         # RRS reference fingerprints (only if RRS enabled)
         self._rrs_ref_fps: list = []
@@ -367,11 +372,14 @@ class OracleAggregator:
                 self._tartarus_fingerprints = self._compute_fingerprints(
                     self._tartarus_smiles
                 )
+                self._build_tartarus_dense()
             except Exception as exc:  # pragma: no cover
                 warnings.warn(f"Failed to load Tartarus library: {exc}")
                 self._tartarus = {}
                 self._tartarus_smiles = []
                 self._tartarus_fps = None
+                self._tartarus_dense = None
+                self._tartarus_norms = None
 
     # ── Scoring helpers ────────────────────────────────────────────────
     def _canonical_smiles(self, smiles: str) -> str:
@@ -405,6 +413,60 @@ class OracleAggregator:
         if canon not in self._runtime_cache and len(self._runtime_cache) >= self._cache_maxsize:
             self._runtime_cache.pop(next(iter(self._runtime_cache)), None)
         self._runtime_cache.setdefault(canon, {})[key] = value
+
+    def _build_tartarus_dense(self) -> None:
+        """Precompute the dense fingerprint matrix and bit-count norms once.
+
+        The per-call Tanimoto scan then becomes a single dense matvec
+        (value-identical to the per-call dense build in `_batch_tanimoto_gpu`,
+        which is preserved as a fallback).
+        """
+        n_lib = len(self._tartarus_fingerprints)
+        if n_lib == 0:
+            self._tartarus_dense = None
+            self._tartarus_norms = None
+            return
+        if _HAS_CUPY:
+            lib_dense = cp.zeros((n_lib, 2048), dtype=cp.float32)
+        else:
+            lib_dense = np.zeros((n_lib, 2048), dtype=np.float32)
+        for i, fp in enumerate(self._tartarus_fingerprints):
+            if fp is not None:
+                onbits = list(fp.GetOnBits())
+                if onbits:
+                    lib_dense[i, onbits] = 1.0
+        self._tartarus_dense = lib_dense
+        self._tartarus_norms = lib_dense.sum(axis=1)
+
+    def _nearest_precomputed(self, query_fp) -> tuple[float, int]:
+        """Best Tanimoto to the Tartarus library via the precomputed dense matrix.
+
+        Value-identical to `_batch_tanimoto_gpu` (same float32 formula and
+        same first-maximum tie-breaking) but O(1) matrix is reused across calls.
+        """
+        if self._tartarus_dense is None:
+            return -1.0, 0
+        onbits = list(query_fp.GetOnBits())
+        query_norm = float(len(onbits))
+        if _HAS_CUPY and isinstance(self._tartarus_dense, cp.ndarray):
+            query_dense = cp.zeros(2048, dtype=cp.float32)
+            if onbits:
+                query_dense[onbits] = 1.0
+            intersection = self._tartarus_dense @ query_dense
+            denominator = query_norm + self._tartarus_norms - intersection
+            cp.maximum(denominator, 1e-8, out=denominator)
+            scores = intersection / denominator
+            best_idx = int(cp.argmax(scores))
+            return float(scores[best_idx]), best_idx
+        query_dense = np.zeros(2048, dtype=np.float32)
+        if onbits:
+            query_dense[onbits] = 1.0
+        intersection = self._tartarus_dense @ query_dense
+        denominator = query_norm + self._tartarus_norms - intersection
+        denominator = np.maximum(denominator, 1e-8)
+        scores = intersection / denominator
+        best_idx = int(np.argmax(scores))
+        return float(scores[best_idx]), best_idx
 
     def _compute_fingerprints(self, smiles_list: list[str]) -> list:
         """Compute Morgan bit-vector fingerprints for a list of SMILES.
@@ -535,8 +597,14 @@ class OracleAggregator:
         gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
         query_fp = gen.GetFingerprint(mol)
 
-        # Batch Tanimoto (GPU-accelerated if available)
-        best_sim, best_idx = self._batch_tanimoto_gpu(query_fp, self._tartarus_fingerprints)
+        # Precomputed dense matvec when available (value-identical), else
+        # the original per-call batch Tanimoto (GPU-accelerated if available)
+        if self._tartarus_dense is not None:
+            best_sim, best_idx = self._nearest_precomputed(query_fp)
+        else:
+            best_sim, best_idx = self._batch_tanimoto_gpu(
+                query_fp, self._tartarus_fingerprints
+            )
         best_smi = self._tartarus_smiles[best_idx]
         raw_score = float(self._tartarus[best_smi].get("docking", -7.0))
         return self._clamp_docking(raw_score)

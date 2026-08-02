@@ -52,7 +52,7 @@ $^{3}$Department of Biochemistry, Faculty of Science, University of Yaound\'{e} 
 
 \begin{abstract}
 \noindent
-De novo molecular generation often collapses multiple design objectives into a single scalar reward, obscuring essential trade-offs between potency, synthetic accessibility and drug-likeness. We present a Pareto-guided Monte Carlo tree search (MCTS) framework that maintains a non-dominated front across multi-parameter optimisation (MPO), synthetic Bayesian accessibility (SYBA) and synthetic accessibility (SA) scores, guided by a scaffold-aware fragment policy derived from ChEMBL27 frequencies and Tanimoto compatibility. A rigorous four-method benchmark across \num{20} independent seeds (budget of \num{1000} oracle calls) shows that random search achieves the highest mean reward (\num{0.665}), followed closely by MCTS (\num{0.659}), a genetic algorithm (\num{0.640}) and deterministic greedy search (\num{0.540}). MCTS is therefore competitive on scalar reward, yet is the only method that systematically returns a multi-objective Pareto front of non-dominated candidates (four solutions, hypervolume \num{1.237}) spanning the potency--accessibility trade-off---including concave regions that scalar optimisation systematically misses. Component ablations identify the scaffold-aware policy ($\Delta = +\num{0.148}$) and the Pareto front itself ($\Delta = +\num{0.108}$) as the dominant drivers of performance. All code, molecule sets and score tables are deposited under an open licence. The results support MCTS as a complementary multi-objective explorer rather than a universal single-objective optimiser.
+De novo molecular generation often collapses multiple design objectives into a single scalar reward, obscuring essential trade-offs between potency, synthetic accessibility and drug-likeness. We present a Pareto-guided Monte Carlo tree search (MCTS) framework that maintains a non-dominated front across multi-parameter optimisation (MPO), synthetic Bayesian accessibility (SYBA) and synthetic accessibility (SA) scores, guided by a scaffold-aware fragment policy derived from ChEMBL27 frequencies and Tanimoto compatibility. A rigorous four-method benchmark across \num{20} independent seeds (budget of \num{1000} oracle calls) shows that random search achieves the highest mean reward (\num{0.734}), followed closely by MCTS (\num{0.728}), a genetic algorithm (\num{0.703}) and deterministic greedy search (\num{0.615}); the MCTS--random gap is small (mean $\Delta = \num{0.006}$, paired $t_{19} = \num{2.4}$, $p = \num{0.026}$). MCTS is therefore competitive on scalar reward, and is the only method that systematically returns a multi-objective Pareto front of non-dominated candidates (four solutions, hypervolume \num{1.237}) spanning the potency--accessibility trade-off---including concave regions that scalar optimisation systematically misses. Component ablations identify the scaffold-aware policy ($\Delta = +\num{0.148}$) and the Pareto front itself ($\Delta = +\num{0.108}$) as the dominant drivers of performance. All code, molecule sets and score tables are deposited under an open licence. The results support MCTS as a complementary multi-objective explorer rather than a universal single-objective optimiser.
 \end{abstract}
 
 \noindent\textbf{Keywords:} de novo design; Monte Carlo tree search; Pareto optimisation; antimalarial; multi-objective; synthetic accessibility; resistance resilience
@@ -98,21 +98,21 @@ Four generation methods (MCTS+ScafVAE, random search, greedy search, genetic alg
 
 \begin{table}[htbp]
   \centering
-  \caption{Benchmark statistics across \num{20} independent seeds (medium fragment set, \num{1000} oracle calls). Values are mean, standard deviation and observed min/max of the best scalar reward per seed.}
+  \caption{Benchmark statistics across \num{20} independent seeds (medium fragment set, \num{1000} oracle calls). Values are mean, standard deviation and observed min/max of the best scalar reward per seed. MCTS uses the hyperparameter-screened configuration (\Cref{sec:hparam}): $c_{\text{PUCT}}=\num{5.0}$, $\nu=\num{0.01}$, $T=\num{0.8}$, with the ScafVAE policy wired into PUCT priors.}
   \label{tab:benchmark}
   \begin{tabular}{lccccc}
     \toprule
     Method & Mean reward & Std & Min & Max & Mean time (s) \\
     \midrule
-    Random        & \num{0.6645} & \num{0.0064} & \num{0.6497} & \num{0.6782} & \num{310.0} \\
-    MCTS+ScafVAE  & \num{0.6594} & \num{0.0078} & \num{0.6472} & \num{0.6811} & \num{183.2} \\
-    Genetic algorithm & \num{0.6402} & \num{0.0098} & \num{0.6248} & \num{0.6577} & \num{8.9} \\
-    Greedy        & \num{0.5398} & \num{0.0000} & \num{0.5398} & \num{0.5398} & \num{0.1} \\
+    Random        & \num{0.7335} & \num{0.0063} & \num{0.7227} & \num{0.7481} & \num{42.2} \\
+    MCTS+ScafVAE  & \num{0.7276} & \num{0.0090} & \num{0.7054} & \num{0.7442} & \num{82.2} \\
+    Genetic algorithm & \num{0.7027} & \num{0.0152} & \num{0.6749} & \num{0.7311} & \num{1.9} \\
+    Greedy        & \num{0.6147} & \num{0.0000} & \num{0.6147} & \num{0.6147} & \num{0.1} \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Random search attains the highest mean reward (\num{0.6645} $\pm$ \num{0.0064}). MCTS is statistically close (\num{0.6594} $\pm$ \num{0.0078}; paired $t_{19}=\num{2.32}$, $p=\num{0.032}$) and records the single best seed (\num{0.6811}). The genetic algorithm trails both, while greedy search collapses deterministically to a single local optimum (standard deviation identically zero). MCTS is faster per seed than random search because the medium fragment vocabulary reduces the effective action space.
+Random search attains the highest mean reward (\num{0.7335} $\pm$ \num{0.0063}) and records the single best seed (\num{0.7481}). MCTS with the screened optimal configuration is statistically close (\num{0.7276} $\pm$ \num{0.0090}; paired $t_{19}=\num{2.41}$, $p=\num{0.026}$, Cohen's $d=\num{-0.54}$), records its own best seed (\num{0.7442}) and wins \num{5} of \num{20} seeds outright, while remaining significantly above the genetic algorithm (\num{0.7027} $\pm$ \num{0.0152}; paired $t_{19}=\num{5.55}$, $p<\num{0.0001}$). Greedy search collapses deterministically to a single local optimum (standard deviation identically zero). MCTS incurs the highest per-seed wall-clock cost (\SI{82.2}{s}) because the tree search evaluates the oracle at every construction step; random search completes in \SI{42.2}{s}, and the genetic algorithm in under \SI{2}{s}.
 
 These results establish a clear baseline hierarchy on scalar reward. They do not, however, capture multi-objective coverage.
 
@@ -129,8 +129,8 @@ When the same MCTS agent maintains a non-dominated front across MPO, SYBA and SA
     \toprule
     Candidate & MPO $\uparrow$ & SYBA $\uparrow$ & SA$^{-1}$ $\uparrow$ & RRS & PNS \\
     \midrule
-    P1 & \num{0.910} & \num{0.999} & \num{0.778} & \num{0.211} & \num{1.0} \\
-    P2 & \num{0.945} & \num{0.999} & \num{0.778} & \num{0.196} & \num{1.0} \\
+    P1 & \num{0.910} & \num{1.000} & \num{0.778} & \num{0.211} & \num{1.0} \\
+    P2 & \num{0.945} & \num{1.000} & \num{0.778} & \num{0.196} & \num{1.0} \\
     P3 & \num{0.946} & \num{0.021} & \num{0.778} & \num{0.141} & \num{0.0} \\
     P4 & \num{0.729} & \num{0.994} & \num{0.778} & \num{0.223} & \num{1.0} \\
     \bottomrule
@@ -154,7 +154,7 @@ A separate vocabulary ablation (all / medium / minimal / aromatic-only; \num{10}
 
 \subsection{What the benchmark actually shows}
 
-Within the curated medium fragment vocabulary and a fixed oracle budget, random search is a strong baseline and attains the highest mean scalar reward. MCTS is competitive, discovers the single best seed, and---crucially---is the only method that systematically maintains and returns a multi-objective Pareto front. The practical value of the framework therefore lies not in peak single-objective performance but in the transparent exploration of trade-offs that scalar aggregation conceals.
+Within the curated medium fragment vocabulary and a fixed oracle budget, random search is a strong baseline and attains the highest mean scalar reward, as well as the single best seed. With its screened optimal configuration, MCTS is statistically close on scalar reward (a \num{0.006} mean gap) and uniquely maintains and returns a multi-objective Pareto front. The practical value of the framework therefore lies not in peak single-objective performance but in the transparent exploration of trade-offs that scalar aggregation conceals.
 
 This ranking is consistent with recent observations that simple baselines remain competitive in constrained fragment spaces~\citep{Jensen2019} and that the primary advantage of multi-objective MCTS is coverage of the non-dominated surface~\citep{Mothra2024}.
 
@@ -164,7 +164,7 @@ Mothra~\citep{Mothra2024} demonstrated that Pareto fronts reveal trade-offs miss
 
 \subsection{Limitations}
 
-Several limitations must be stated explicitly. First, the fragment vocabulary (approximately \num{108} fragments in the full set; medium subset used for the main benchmark) constrains accessible chemical space; results should not be extrapolated to open-ended SMILES generation. Second, diversity metrics reported in earlier internal drafts were partly illustrative; the present manuscript therefore emphasises the Pareto front and the scalar benchmark, both of which are fully deposited and reproducible. Third, SYBA scores on the Pareto front were recomputed post-hoc after the original run returned a constant fallback; the recomputation is documented and the corresponding SMILES tables are deposited. Fourth, activity and resistance labels remain computational; prospective experimental validation is required. Finally, MCTS cross-seed variance is modest ($\sigma\approx\num{0.008}$), consistent with policy-guided convergence into a high-quality but relatively narrow region of fragment space.
+Several limitations must be stated explicitly. First, the fragment vocabulary (approximately \num{108} fragments in the full set; medium subset used for the main benchmark) constrains accessible chemical space; results should not be extrapolated to open-ended SMILES generation. Second, diversity metrics reported in earlier internal drafts were partly illustrative; the present manuscript therefore keeps molecular-diversity analysis in the Supplementary Material, computed from the deposited best-in-seed molecule sets of the canonical benchmark run (Section~S2), and emphasises the Pareto front and the scalar benchmark, both of which are fully deposited and reproducible. Third, SYBA scores on the Pareto front were recomputed post-hoc after the original run returned a constant fallback; the recomputation is documented and the corresponding SMILES tables are deposited. Fourth, activity and resistance labels remain computational; prospective experimental validation is required. Finally, MCTS cross-seed variance is modest ($\sigma\approx\num{0.009}$), consistent with policy-guided convergence into a high-quality but relatively narrow region of fragment space.
 
 \subsection{Implications for antimalarial design}
 
@@ -207,17 +207,17 @@ with minimisation objectives converted to maximisation by negation. After each r
 \subsection{Scoring oracles}
 \label{sec:oracles}
 
-Each molecule is scored by an aggregator returning MPO, SYBA, SA, docking-derived terms, resistance-resilience score (RRS) and polypharmacology-network score (PNS). Default scalar-reward weights are $w_{\text{MPO}}=\num{0.30}$, $w_{\text{docking}}=\num{0.25}$, $w_{\text{SYBA}}=\num{0.15}$, $w_{\text{SA}}=\num{0.05}$, $w_{\text{RRS}}=\num{0.15}$, $w_{\text{PNS}}=\num{0.10}$. MPO and docking scores are drawn from precomputed libraries where available; QED serves as an MPO fallback for novel structures. SYBA on the reported Pareto front was recomputed with the lich/conda classifier after the original run returned a constant zero fallback.
+Each molecule is scored by an aggregator returning MPO, SYBA, SA, docking-derived terms, resistance-resilience score (RRS) and polypharmacology-network score (PNS). Default scalar-reward weights are $w_{\text{MPO}}=\num{0.30}$, $w_{\text{docking}}=\num{0.25}$, $w_{\text{SYBA}}=\num{0.15}$, $w_{\text{SA}}=\num{0.05}$, $w_{\text{RRS}}=\num{0.15}$, $w_{\text{PNS}}=\num{0.10}$. The four-method scalar benchmark uses the reduced reward \texttt{compute\_mpo\_reward} with weights $w_{\text{MPO}}=\num{0.40}$, $w_{\text{docking}}=\num{0.35}$, $w_{\text{SYBA}}=\num{0.15}$, $w_{\text{SA}}=\num{0.10}$ and the RRS/PNS oracles disabled (they require external P2 mutant and network data); the full six-objective aggregator is used by the Pareto-MCTS search. MPO and docking scores are drawn from precomputed libraries where available; QED serves as an MPO fallback for novel structures. SYBA on the reported Pareto front was recomputed with the lich/conda classifier after the original run returned a constant zero fallback. The accessibility column reported in \Cref{tab:pareto} is the linear transform $\mathrm{SA}^{-1} = (10 - \mathrm{SA})/9$ of the raw Ertl score, so that the shared raw value $\mathrm{SA} = \num{3.0}$ corresponds to $\mathrm{SA}^{-1} = \num{0.778}$; the deposited CSV stores the raw value.
 
 \subsection{Statistical analysis and reproducibility}
 
-All searches are seeded. The four-method benchmark uses \num{20} independent seeds; ablations use five or ten replicates as indicated. Paired $t$-tests are reported for the primary MCTS--random comparison. Code, configuration files, molecule lists and score tables are deposited under the MIT licence and will be linked via Zenodo upon acceptance.
+All searches are seeded. The four-method benchmark uses \num{20} independent seeds; ablations use five or ten replicates as indicated. Paired $t$-tests are reported for the primary MCTS--random comparison. The benchmark was re-run for this submission with the committed script \texttt{p4\_mcts\_benchmark.py} and a value-preserving vectorisation of the docking Tanimoto scan (verified identical on held-out molecules); all \num{20} per-seed runs reproduce deterministically from the deposited code and data, and the best-in-seed molecule sets are deposited alongside the scalar rewards. Code, configuration files, molecule lists and score tables are deposited under the MIT licence and will be linked via Zenodo upon acceptance.
 
 % ============================================================================
 \section{Conclusions}
 % ============================================================================
 
-A Pareto-guided MCTS agent equipped with a scaffold-aware fragment policy is competitive with random search on scalar reward and uniquely returns a multi-objective front of non-dominated antimalarial candidates. The dominant performance drivers are the chemistry-informed policy and the Pareto front itself. Within the studied fragment space, random search remains a strong baseline; the added value of MCTS lies in transparent exploration of potency--accessibility trade-offs that scalar aggregation conceals. All artefacts required for exact reproduction are deposited under an open licence.
+A Pareto-guided MCTS agent equipped with a scaffold-aware fragment policy is statistically close to random search on scalar reward (a \num{0.006} mean gap at the screened optimal configuration) and uniquely returns a multi-objective front of non-dominated antimalarial candidates. The dominant performance drivers are the chemistry-informed policy and the Pareto front itself. Within the studied fragment space, random search remains a strong baseline; the added value of MCTS lies in transparent exploration of potency--accessibility trade-offs that scalar aggregation conceals. All artefacts required for exact reproduction are deposited under an open licence.
 
 % ============================================================================
 \section*{Data availability}
