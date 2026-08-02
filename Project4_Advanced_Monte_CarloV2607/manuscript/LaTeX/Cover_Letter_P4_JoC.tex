@@ -1,0 +1,51 @@
+% ============================================================================
+% Cover Letter — Paper 4 (JoC / BMC)
+% ============================================================================
+\documentclass[11pt,a4paper]{letter}
+
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\signature{Myke Vital Sao Temgoua \\ \small Corresponding Author}
+\address{%
+  University of Yaound\'{e} I \\
+  Department of Physics, Faculty of Science \\
+  P.O. Box 812, Yaound\'{e}, Cameroon \\
+  \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm}
+}
+
+\begin{document}
+
+\begin{letter}{%
+  The Editors \\
+  \textit{Journal of Cheminformatics} \\
+  BioMed Central
+}
+
+\opening{Dear Editors,}
+
+We are pleased to submit our manuscript, \textbf{``Pareto-guided Monte Carlo tree search explores multi-objective trade-offs missed by scalar antimalarial generation''}, for consideration as a Research Article in the \textit{Journal of Cheminformatics}.
+
+The work addresses a recurring limitation of de novo molecular design: scalar reward aggregation that conceals trade-offs between potency, synthetic accessibility and drug-likeness. We introduce a Pareto-guided Monte Carlo tree search (MCTS) agent that maintains a non-dominated front across MPO, SYBA and SA scores, guided by a scaffold-aware fragment policy.
+
+A four-method, 20-seed benchmark under a fixed oracle budget yields a deliberately honest ranking: random search achieves the highest mean scalar reward (0.665), followed by MCTS (0.659), a genetic algorithm (0.640) and deterministic greedy search (0.540). MCTS is therefore competitive on single-objective performance, yet is the only method that systematically returns a multi-objective Pareto front of non-dominated candidates (four solutions, hypervolume 1.237) spanning the potency--accessibility trade-off, including concave regions that scalar optimisation misses. Component ablations identify the chemistry-informed policy and the Pareto front itself as the dominant performance drivers.
+
+We believe this transparent, methods-focused contribution aligns closely with the scope of the \textit{Journal of Cheminformatics}: rigorous benchmarking, open deposition of code and molecule sets, and honest reporting of both strengths and limitations of a multi-objective search strategy. All data and code will be deposited under the MIT licence.
+
+This work is original, is not under consideration elsewhere, and all authors have approved the submission.
+
+\closing{We thank you for your consideration.}
+
+\ps{%
+\textbf{Suggested reviewers:}\\
+\begin{itemize}[leftmargin=*, itemsep=1pt]
+  \item Dr.\ Jan H.\ Jensen (graph-based genetic algorithms / MCTS for chemical space)
+  \item Prof.\ Gisbert Schneider (generative molecular design)
+  \item Dr.\ Ola Engkvist (de novo design, multi-objective optimisation)
+\end{itemize}
+}
+
+\end{letter}
+\end{document}
