@@ -145,7 +145,8 @@ Les références suivantes confirment et orientent la stratégie P5 :
 
 | # | Source | URL | Point clé | Implication P5 |
 |---|--------|-----|-----------|----------------|
-| 1 | **BIB 2025‑2026** | https://academic.oup.com/bib/article/25/5/bbae391/7733456 | Fusion GCN + ChemBERTa optimale sur petits panneaux | Confirme le paradigme *GNN + transf‑seq* ; justifie l'arm ChemBERTa |
+| 1 | **BIB 2024 (Nałęcz‑Charkiewicz & Charkiewicz)** | https://academic.oup.com/bib/article/25/5/bbae391/7733456 | Revue systématique du quantum computing en bioinformatique (mapping) | Contexte NISQ/QC pour P3 (QKS : preuve de concept NISQ) |
+| 1b | **MolPROP (J. Cheminformatics 2024)** | https://doi.org/10.1186/s13321-024-00846-9 | Fusion par concaténation GCN + ChemBERTa‑2 (MLM), meilleure sur petits jeux | Confirme le paradigme *GNN + transf‑seq* ; justifie l'arm ChemBERTa pour P5 |
 | 2 | **IEEE‑Xplore** | https://ieeexplore.ieee.org/document/10466774 | Contrôle de biais dans les transferts de modèle | Renforce l'utilisation des tests DeLong + BH FDR (§5) |
 | 3 | **ACM‑DL** | https://dl.acm.org/doi/fullHtml/10.1145/3575879.3576024 | MorphML : modèle morphologique multi‑graph | Inspire une éventuelle extension phase 2 (topologie + morphologie) |
 | 4 | **Kaggle MOA** | https://www.kaggle.com/competitions/lish-moa/discussion/181113 | Méthodes de pooling des votes (RF, GNN, Transformer) | Justifie le script `p5_ensemble.py` (voting classifier hybride) |

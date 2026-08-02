@@ -686,7 +686,8 @@ The state-vector kernel was validated against the pairwise method on a 60-molecu
 \centering
 \caption{Kernel comparison for activity prediction at two sample sizes (5-fold cross-validation, 6-qubit IQPEmbedding, state-vector kernel; $n = 5{,}000$ job 12702; $n = 19{,}849$ job 12700). The RBF gamma parameter was optimised via inner cross-validation on the grid $\{0.5, 1.0, 2.0, 5.0\}$ (per-fold best gamma at $n = 5{,}000$: 5, 1, 5, 5, 5). With the canonical circuit, the gamma-tuned RBF kernel and the quantum kernel are \textbf{statistically indistinguishable} at both scales ($p = 0.419$ at $n = 5{,}000$; $p = 0.060$ at $n = 19{,}849$, paired $t$-test), while the quantum kernel \textbf{significantly outperforms} the linear kernel at scale ($p \leq 0.0006$). \textit{Note:} an earlier benchmark with untuned RBF (gamma at default) yielded an apparent quantum advantage that was not supported by any deposited result file; earlier 8-qubit runs reporting a quantum disadvantage (n = 5,000: 0.752 vs.\ 0.840, $p = 0.003$; n = 19,849: 0.659 vs.\ 0.825, $p = 0.0006$) were artefacts of the suboptimal circuit and a train/test scaling mismatch (C3) and are \textbf{not} reproduced by the canonical protocol.}
 \label{SM-tab:qkernel}
-\begin{tabularx}{\textwidth}{l S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] l}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] l}
 \toprule
 Kernel & {AUC ($n$=5,000)} & {TA ($n$=5,000)} & {AUC ($n$=19,849)} & {TA ($n$=19,849)} & {$p$ vs.~RBF} \\
 \midrule
@@ -694,7 +695,8 @@ Quantum (IQPEmbedding, 6 qubits) & 0.820 & 0.592 & 0.823 & 0.622 & {$p$ = 0.419 
 RBF (gamma-tuned, SVM) & 0.826 & 0.199 & 0.829 & 0.145 & {---} \\
 Linear & 0.517 & {---} & 0.537 & {---} & {$p$ $<$ 0.001, sig.} \\
 \bottomrule
-\end{tabularx}
+\end{tabular}%
+}
 \vspace{1mm}
 \footnotesize Paired $t$-test (5 folds), quantum vs.\ linear: $p = 0.0002$ ($n = 5{,}000$) and $p = 0.0006$ ($n = 19{,}849$), both significant. Quantum target alignment (0.592--0.622) exceeds RBF target alignment (0.145--0.199) yet does not translate into a discrimination advantage.
 \end{table}
