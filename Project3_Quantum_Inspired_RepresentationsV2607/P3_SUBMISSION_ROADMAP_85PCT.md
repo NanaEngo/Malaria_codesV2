@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-The P3 manuscript "Persistent homology decomposes the scaffold paradox in AI-generated African antimalarial candidates" is scientifically sound, unusually honest, and methodologically rigorous. However, five critical gaps prevent confident submission to a Q1 journal. This roadmap provides a phased plan to address each gap, with estimated time, impact on acceptance probability, and concrete deliverables.
+The P3 manuscript "Quantum-inspired molecular representations for AI-generated African antimalarial candidates: persistent homology, tensor networks, and quantum kernels" (état final 02/08/2026 : main 18 p. / 7 230 mots, SM 18 p., cover letter 1 p. — fusion des tables benchmark/hybrid, `tab:qkernel`→SM S13) is scientifically sound, unusually honest, and methodologically rigorous. However, five critical gaps prevent confident submission to a Q1 journal. This roadmap provides a phased plan to address each gap, with estimated time, impact on acceptance probability, and concrete deliverables.
 
 ### Key Scientific Findings (Verified)
 

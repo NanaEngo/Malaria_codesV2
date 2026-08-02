@@ -56,12 +56,13 @@
 - H1-RRS n=77 ρ=0.312, p=0.0057; MW–H1_count ρ=0.718 (recomputed) ✓
 - ChEMBL 231 pairs, 7 analogues (3.0%), 3 active PfATP4 ✓; effect sizes Cohen's d ✓
 
-### Compilation (Aug 2, 2026)
-- Main: 25 pp., **0 errors, 0 unresolved references** ✓
-- SM: 16 pp., **0 errors, 0 unresolved references** ✓
+### Compilation (Aug 2, 2026, post-trim v3.1)
+- Main: **18 pp.** (7 230 mots), **0 errors, 0 unresolved references** ✓
+- SM: **18 pp.**, **0 errors, 0 unresolved references** ✓
+- Cover letter: **1 p.** ✓
 
-### Acceptance probability after v3
-- ~85–88% (Zenodo upload and 14–15-page trim remain).
+### Acceptance probability after v3.1
+- ~79–82% (ChEMBL honnête négatif 02/08 −5% ; Zenodo ⚠️ PENDING +3% → ~82% ; cible ≥85% via Zenodo + actions restantes).
 
 ---
 
