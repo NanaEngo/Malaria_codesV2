@@ -1,6 +1,6 @@
 # AGENTS.md — Projet Malaria_codesV2
 
-**Dernière mise à jour :** 01 août 2026 — Reporting P4 séparé de BMAD : `P4_DATA_ANALYSIS_REPORT.md` est la boussole P4 (benchmark, Pareto, ablations, QMC) ; BMAD couvre P1–P3 uniquement. P3 : **benchmarks canoniques COMPLETS** (jobs 12698/12699/12700/12702) — classique n=19,836 (ECFP4 0.9475 ± 0.0045), **hybride canonique Hybrid RF AUC 0.8876 ± 0.0065** (p<0.0001 vs ECFP4), **ablation : QK = principal contributeur (Δ=−0.040)**, **QKS 6q C3-fix : quantum ≈ RBF à toutes les échelles** (n=5,000 p=0.419 ; n=19,849 p=0.060).
+**Dernière mise à jour :** 02 août 2026 — Reporting P4 séparé de BMAD : `P4_DATA_ANALYSIS_REPORT.md` est la boussole P4 (benchmark, Pareto, ablations, QMC) ; BMAD couvre P1–P3 uniquement. P3 : **benchmarks canoniques COMPLETS** (jobs 12698/12699/12700/12702) — classique n=19,836 (ECFP4 0.9475 ± 0.0045), **hybride canonique Hybrid RF AUC 0.8876 ± 0.0065** (p<0.0001 vs ECFP4), **ablation : QK = principal contributeur (Δ=−0.040)**, **QKS 6q C3-fix : quantum ≈ RBF à toutes les échelles** (n=5,000 p=0.419 ; n=19,849 p=0.060). **Manuscrit trimé 26→18 p.** (main 18 p. / 7 230 mots, SM 18 p., cover letter 1 p. ; fusion tables benchmark/hybrid, `tab:qkernel`→SM S13, titre harmonisé — BMAD §3.14, audit v3.1). **ChEMBL validation exécutée** : 10 leads queryés, analogues tous Inactive (Tanimoto 0.229–0.379) — résultat honnête négatif.
 
 **GitHub :** https://github.com/NanaEngo/Malaria_codesV2
 
@@ -88,13 +88,13 @@
 | **H₁-RRS expanded (n=77)** | ✅ **Complété** | ρ=0.312, p=0.0057 — cohorte étendue vs pilot n=14 |
 | **RRS expansion SLURM** | ✅ **Fonctionnel** | p3_rrs_expansion.sbatch, 4 tasks, 200 molécules |
 | **Benchmark classique n=5,000 (hybrid pre-phase)** | ✅ **Complété** | ECFP4=0.940, TFP=0.765 (−0.112 vs n=19,849), TNE=0.660 (−0.062) |
-| **Manuscrit** | ✅ **Réconcilié BMAD v49** | Main + SM + cover letter alignés sur les benchmarks canoniques (hybrid 0.888, ablation QK Δ=−0.040, QKS 6q ≈ RBF) ; compile propre (0 erreur, 0 réf. non définie) |
-| **Acceptance assessment** | ✅ **Vers 85%** | Roadmap documentée; validation physique TNE/TDA complète; benchmark hybride canonique + QKS 6q terminés |
-| 🔴 Action 1: ChEMBL IC₅₀ validation | ⏳ **À faire** | +15% acceptance |
-| 🔴 Action 2: Reframe H₁-RRS narrative | ⏳ **À faire** | +10% acceptance |
+| **Manuscrit** | ✅ **Réconcilié BMAD v50 + trim 26→18 p.** | Main + SM + cover letter alignés sur les benchmarks canoniques (hybrid 0.888, ablation QK Δ=−0.040, QKS 6q ≈ RBF) ; **trim 26→18 p.** (02/08) : main 18 p./7 230 mots, SM 18 p., cover letter 1 p. ; fusion tables benchmark/hybrid, `tab:qkernel`→SM S13, titre harmonisé « Quantum-inspired molecular representations for AI-generated African antimalarial candidates: persistent homology, tensor networks, and quantum kernels » ; compile propre (0 erreur, 0 réf. non définie) |
+| **Acceptance assessment** | ✅ **Vers ~82% (cible ≥85%)** | Roadmap documentée; validation physique TNE/TDA complète; benchmark hybride canonique + QKS 6q terminés; trim + déduplication fait (audit v3.1 : ~79–82%, ChEMBL honnête négatif 02/08 −5%, Zenodo ⚠️ PENDING +3% → ~82% ; cible ≥85% via Zenodo + actions restantes) |
+| 🔴 Action 1: ChEMBL IC₅₀ validation | ✅ **Exécutée 02/08** | 10 leads top queryés — analogues ChEMBL tous **Inactive** (Tanimoto 0.229–0.379) ; résultat honnête négatif = nouveauté chimique, pas de validation positive (+0% acceptance, narration adaptée) |
+| 🔴 Action 2: Reframe H₁-RRS narrative | ✅ **Fait** | ρ=0.312 (n=77) présenté avec caveat confounding MW ; effet size-médié (ρ_partial ≈ 0) — intégré manuscrit + BMAD |
 | 🟡 Action 3: Benchmark SOTA topological | ⏳ **À faire** | +8% acceptance |
 | 🟡 Action 4: Expand RRS to n≥80 | ⏳ **À faire** | +5% acceptance |
-| 🟡 Action 5: Zenodo deposit | ⏳ **À faire** | +5% acceptance |
+| 🟡 Action 5: Zenodo deposit | ⏳ **À faire** | +5% acceptance (DOI réservé 10.5281/zenodo.19608875, upload manquant) |
 
 #### Fichiers de données P3 — État actuel
 
@@ -289,7 +289,7 @@ git add -A && git commit -m "message" && git push origin master
 - ✅ Hybride canonique (job 12699) : **Hybrid RF AUC 0.8876 ± 0.0065** (p<0.0001 vs ECFP4) + ablation (QK Δ=−0.040 principal, TFP Δ=−0.014, TNE Δ=+0.011)
 - ✅ QKS 6q C3-fix (12700 n=19,849 / 12702 n=5,000) : quantum ≈ RBF à toutes les échelles (p=0.060/0.419, ns) ; quantum > linear (p≤0.0006)
 - ✅ Figure benchmark régénérée (01/08) avec ligne Hybrid canonique 0.8876 ± 0.0065 et QKS 6q C3-fix
-- ✅ Manuscrit (main + SM + cover letter) réconcilié avec BMAD v49 — compile propre ; plus aucun "provisoire" ni "rerun pending" dans le manuscrit
+- ✅ Manuscrit (main + SM + cover letter) réconcilié avec BMAD v50 + **trim 26→18 p.** (02/08) — main 18 p./7 230 mots, SM 18 p., cover letter 1 p. ; fusion tables benchmark/hybrid, `tab:qkernel`→SM S13, titre harmonisé ; compile propre (0 erreur, 0 réf. non définie) ; plus aucun "provisoire" ni "rerun pending" dans le manuscrit
 
 ### 2. P4 — Finaliser manuscrit
 - Compléter Introduction et Results (benchmark)

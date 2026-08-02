@@ -21,7 +21,7 @@ from pathlib import Path
 # Configuration
 # ---------------------------------------------------------------------------
 SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parent.parent  # Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607
+PROJECT_ROOT = SCRIPT_DIR.parent  # Project3_Quantum_Inspired_RepresentationsV2607 (not the repo root)
 OUTPUT_DIR = PROJECT_ROOT / 'results' / 'p3_chembl_validation'
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 

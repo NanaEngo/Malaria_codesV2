@@ -8,7 +8,7 @@
 |---|-----------|-------|--------|
 | **1** | `Project1_Chem_space_antimalarial_V2_CorrectedGrid/` | AI discovery of antimalarials from African chemical space | ✅ Submission-ready (JCIM) |
 | **2** | `Project2_Polypharmacology_MD_ValidationV2607/` | MD/MC validation of polypharmacological leads | ✅ Submission-ready (JCIM) |
-| **3** | `Project3_Quantum_Inspired_RepresentationsV2607/` | Quantum-inspired ML for molecular representation | 🔄 Manuscript in revision — corrected classical benchmark complete (ECFP4 AUC 0.949); full hybrid rerun pending |
+| **3** | `Project3_Quantum_Inspired_RepresentationsV2607/` | Quantum-inspired ML for molecular representation | ✅ Submission-ready — canonical benchmarks complete (ECFP4 0.9475, Hybrid 0.8876, QKS 6q parity); manuscript trimmed 26→18 p. (main 18 p. / SM 18 p. / cover letter 1 p., 0 erreur / 0 réf. indéfinie) |
 | **4** | `Project4_Advanced_Monte_CarloV2607/` | Pareto MCTS for de novo antimalarial design | 🔄 Manuscript in preparation — v9 20-seed benchmark complete |
 
 ## Quick Reference
@@ -43,7 +43,7 @@ Project4_Advanced_Monte_CarloV2607/ → Pareto MCTS + QMC validation
 | GitHub | https://github.com/NanaEngo/Malaria_codesV2 |
 | Zenodo | 10.5281/zenodo.19608875 |
 
-**Version:** V2607 (July 29, 2026)
+**Version:** V2607 (Aug 2, 2026)
 
 ## Data Analysis & Provenance
 

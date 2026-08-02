@@ -1,7 +1,7 @@
 # P3 Submission Roadmap: From 45–55% to ≥85% Acceptance Probability
 
 **Target:** *Journal of Cheminformatics* (IF ≈ 6.5)
-**Current estimate:** 65–75% acceptance probability (Actions 1-7 complete)
+**Current estimate:** ⚠️ **HEADER SUPERSEDED — voir audit v3.1 + BMAD v50 (02/08/2026)** : ~79–82% acceptance probability après trim 26→18 p. + ChEMBL honnête négatif ; Zenodo ⚠️ PENDING +3% (ce document est un plan de travail historique — les chiffres d'état à jour sont dans `P3_ADVERSARIAL_AUDIT_MITIGATION.md` §Acceptance Probability Breakdown et `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §3.14)
 **Target:** ≥85% acceptance probability
 **Generated:** July 24, 2026
 
