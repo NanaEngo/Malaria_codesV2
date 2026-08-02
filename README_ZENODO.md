@@ -49,15 +49,19 @@ This deposit archives all computational results, scripts, and LaTeX source for f
 - `manuscript/LaTeX/Paper3_Quantum_InspiredV2607.tex` — Main manuscript
 - `manuscript/LaTeX/Paper3_Quantum_Inspired_SM_V2607.tex` — Supplementary Material
 
-### Project 4 — Pareto-Guided MCTS with Quantum Validation
-~43 files, ~1.5 MB
+### Project 4 — Pareto-Guided MCTS
+~139 files, ~2.4 MB
 
-**Description:** Pareto multi-objective Monte Carlo Tree Search with ScafVAE-informed fragment policy for *de novo* antimalarial design. Canonical v9 four-method benchmark (MCTS, Random, Greedy, GA) across 20 independent seeds with non-parametric Wilcoxon signed-rank testing, Fréchet ChemNet Distance (FCD), and scaffold uniqueness. QMC validation removed pending a reproducible rerun.
+**Description:** Pareto multi-objective Monte Carlo Tree Search with ScafVAE-informed fragment policy for *de novo* antimalarial design. Canonical v11 four-method benchmark (MCTS+ScafVAE, Random, Greedy, GA) across 20 independent seeds with the hyperparameter-screened configuration (c_PUCT=5.0, ν=0.01, T=0.8), paired t-testing, and real best-in-seed molecule sets. Diversity metrics are computed from the deposited molecule sets (Supplementary S2). The earlier draft (V2607) is retained for historical reference only.
 
 **Key data files:**
-- `results/benchmark/p4_benchmark_merged.csv` — Canonical v9 20-seed four-method benchmark
+- `results/benchmark_molecules_opt/p4_benchmark_merged.csv` — Canonical v11 20-seed four-method benchmark (optimal MCTS config)
+- `results/benchmark_molecules/p4_benchmark_merged.csv` — v10 sensitivity run (default MCTS config)
+- `results/diversity/p4_diversity_metrics.csv` — Real diversity metrics from deposited molecule sets
 - `results/benchmark/p4_pareto_data.csv` — Pareto front data
-- `manuscript/LaTeX/P4_Pareto_MCTS_V2607.tex` — Main manuscript
+- `manuscript/LaTeX/P4_Pareto_MCTS_JoC_refined.tex` — **Main manuscript (canonical, JoC)**
+- `manuscript/LaTeX/P4_Pareto_MCTS_JoC_SM.tex` — Supplementary Material (S1 Pareto provenance, S2 diversity, S3 reproducibility)
+- `manuscript/LaTeX/Cover_Letter_P4_JoC.tex` — Cover letter
 
 ## File Manifest
 
@@ -67,7 +71,7 @@ A complete file listing with sizes is available in `zenodo_manifest.txt` at the 
 
 1. All Python scripts use conda environment `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 2. SLURM scripts target the University of Yaoundé I HPC facility
-3. LaTeX manuscripts target *Journal of Cheminformatics* (P1, P3), *Journal of Chemical Information and Modeling* (P4), and *ACS Infectious Diseases* (P2)
+3. LaTeX manuscripts target *Journal of Cheminformatics* (P1, P3, P4), *Journal of Chemical Information and Modeling* (P2), and *ACS Infectious Diseases* (P2 companion); the canonical P4 manuscript is `P4_Pareto_MCTS_JoC_refined.tex`
 4. See individual project README.md files for detailed instructions
 
 ## Citation

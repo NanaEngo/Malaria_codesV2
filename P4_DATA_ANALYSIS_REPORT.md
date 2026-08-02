@@ -1,9 +1,9 @@
 # P4 Data Analysis Report — Pareto-Guided MCTS & QMC Validation
 
-**Generated:** July 29, 2026 — **Split from BMAD** August 1, 2026
+**Generated:** July 29, 2026 — **Split from BMAD** August 1, 2026 — **Updated** August 2, 2026 (v11 canonical re-benchmark)
 **Canonical:** ✅ This report is the **single source of truth for all P4 data analysis**. It was split from `BMAD_Q1_DATA_ANALYSIS_REPORT.md` (v47, August 1, 2026) because the QMC validation effort (Tier 1 SCF + Tier 2 VMC/DMC deep-diagnostic) became complex enough to deserve a dedicated report. **All future P4 data-analysis decisions are documented HERE, not in BMAD** (which now covers P1–P3 only).
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pyscf 2.14.0, xtb, gpu4pyscf 1.8.0, pyqmc 0.8.1, scikit-learn)
-**Coverage:** P4 only — MCTS benchmark (v1–v9), Pareto front, ablations, QMC Tier 1 (SCF) + Tier 2 (VMC/DMC) validation
+**Coverage:** P4 only — MCTS benchmark (v1–v11, **v11 canonical**), Pareto front, ablations, QMC Tier 1 (SCF) + Tier 2 (VMC/DMC) validation
 
 ---
 
@@ -26,7 +26,7 @@ The **144-electron DMC population collapse remains real and confirmed** by the s
 
 ## 1. MCTS Benchmark Results
 
-### 1.1 P4 Results at a Glance — **UPDATED July 29, 2026**
+### 1.1 P4 Results at a Glance — **UPDATED August 2, 2026 (v11 canonical)**
 
 A consolidated view of the final P4 production runs, cross-verified against the raw CSV outputs in `Project4_Advanced_Monte_CarloV2607/results/`.
 
@@ -47,16 +47,14 @@ A consolidated view of the final P4 production runs, cross-verified against the 
 
 **Run:** v10 — SLURM array job 12705 (`p4_benchmark_molecules_array.sbatch`), outputs in `results/benchmark_molecules/`. v11 (optimal MCTS config) — SLURM array job 12725 (`p4_benchmark_molecules_opt_array.sbatch`), outputs in `results/benchmark_molecules_opt/` (**canonical**). Determinism check: seed 13 regenerated twice → identical rewards.
 
+**v11 canonical table (optimal MCTS config):**
+
 | Method | Mean reward | Std | Min | Max | n | Mean time (s) | Std time (s) |
 |:------|:----------:|:---:|:---:|:---:|:---:|:-------:|:-------:|
-| **Random** | **0.7335** | 0.0063 | 0.7227 | 0.7481 | 20 | 42.4 | 1.4 |
-| MCTS+ScafVAE | 0.7149 | 0.0105 | 0.6891 | 0.7328 | 20 | 59.6 | 8.8 |
+| **Random** | **0.7335** | 0.0063 | 0.7227 | 0.7481 | 20 | 42.2 | 1.2 |
+| MCTS+ScafVAE | 0.7276 | 0.0090 | 0.7054 | 0.7442 | 20 | 82.2 | 11.8 |
 | GA | 0.7027 | 0.0152 | 0.6749 | 0.7311 | 20 | 1.9 | 0.2 |
 | Greedy | 0.6147 | 0.0000 | 0.6147 | 0.6147 | 20 | 0.1 | 0.0 |
-
-**Key findings (v10, default config — sensitivity comparison only):**
-- Ranking Random > MCTS > GA > Greedy; MCTS–Random Δ = 0.0186, t₁₉ = 6.59, p < 0.0001.
-- Retained for comparison: `results/benchmark_molecules/` (per-seed rewards + best-SMILES).
 
 **Key findings (v11, optimal MCTS config — CANONICAL):**
 - **MCTS config fix:** benchmark MCTS previously ran with defaults (c_puct=1.414, uniform priors, no ScafVAE). v11 wires the screened-optimal config (c_PUCT=5.0, virtual_loss=0.01, T=0.8, ScafVAE policy) into `run_mcts`.
@@ -66,7 +64,11 @@ A consolidated view of the final P4 production runs, cross-verified against the 
 - **Timing:** MCTS 82.2 ± 11.8 s/seed (ScafVAE policy adds overhead), Random 42.2 ± 1.2 s.
 - **Molecule sets deposited:** best-SMILES per method per seed (`p4_benchmark_molecules_seed_N.csv` in `benchmark_molecules_opt/`) → real diversity analysis (§1.9).
 
-**Manuscript impact:** Table 1 (tab:benchmark), abstract, Results, Discussion, Limitations, Methods, cover letters, and the new Supplementary Material (SM S2 diversity table + SM S3 reproducibility) all updated to v10. Ablation results (different oracle-weight config) and the Pareto front (independent of the scalar benchmark) are **unchanged**.
+**Key findings (v10, default config — sensitivity comparison only):**
+- Ranking Random > MCTS > GA > Greedy; MCTS–Random Δ = 0.0186, t₁₉ = 6.59, p < 0.0001; MCTS mean 0.7149 ± 0.0105 (time 59.6 ± 8.8 s).
+- Retained for comparison: `results/benchmark_molecules/` (per-seed rewards + best-SMILES).
+
+**Manuscript impact:** Table 1 (tab:benchmark), abstract, Results, Discussion, Limitations, Methods, cover letters, and the new Supplementary Material (SM S2 diversity table + SM S3 reproducibility) all updated to v11. Ablation results (different oracle-weight config) and the Pareto front (independent of the scalar benchmark) are **unchanged**.
 
 ### 1.9 Real molecular diversity of the four methods (2026-08-02)
 
@@ -140,9 +142,9 @@ Source: `Project4_Advanced_Monte_CarloV2607/results/benchmark/p4_benchmark_merge
 
 Key findings: Greedy search achieves the highest mean reward. MCTS converges to the same best molecule across all five seeds (reward = 0.5966, SMILES `Oc1cccc(C(Br)OCn2ccnc2)c1`) and is competitive with GA but does not surpass Greedy. Random search is fastest but yields the lowest reward.
 
-### 1.6 v9 real merged benchmark (20 seeds × 4 methods, 2026-07-29) — **CANONICAL**
+### 1.6 v9 real merged benchmark (20 seeds × 4 methods, 2026-07-29) — **SUPERSEDED (archive only; do not use for claims)**
 
-Source: `Project4_Advanced_Monte_CarloV2607/results/benchmark/p4_benchmark_merged.csv` (seeds 0–19, 1000 iterations, medium fragment set after valence fix). Values below are mean ± std from the raw CSV.
+Source: `Project4_Advanced_Monte_CarloV2607/results/benchmark/p4_benchmark_merged.csv` (seeds 0–19, 1000 iterations, medium fragment set after valence fix). Values below are mean ± std from the raw CSV. ⚠️ The v9 rewards could **not** be reproduced from the committed code + data (oracle/library state drift at run time); the **v11 canonical benchmark (§1.8) supersedes this table** — kept for provenance only.
 
 | Method | Mean reward | Std | Min | Max | n | Mean time (s) | Std time (s) |
 |:------|:----------:|:---:|:---:|:---:|:---:|:-------:|:-------:|
@@ -207,7 +209,7 @@ ANOVA: F = 350.10, p = 1.12 × 10⁻²⁶ (df_between = 3, df_within = 36). Sour
 
 Tukey HSD (adjusted p): all vs aromatic_only p < 0.001; medium vs aromatic_only p < 0.001; minimal vs aromatic_only p < 0.001; medium vs minimal p = 0.005; all vs medium p = 0.421; all vs minimal p = 0.191. Source: `results/ablation/p4_ablation_tukey.csv`.
 
-Key findings: The full (`all`) and `medium` fragment sets give equivalent mean rewards; restricting to `aromatic_only` causes a significant performance drop. Even the `minimal` set (simple aromatics only) remains close to the full vocabulary. The choice of `medium` for the main v9 benchmark is therefore well-justified.
+Key findings: The full (`all`) and `medium` fragment sets give equivalent mean rewards; restricting to `aromatic_only` causes a significant performance drop. Even the `minimal` set (simple aromatics only) remains close to the full vocabulary. The choice of `medium` for the main v11 benchmark is therefore well-justified.
 
 ---
 
@@ -384,7 +386,7 @@ All P4 numerical claims above are traceable to the following files in `Project4_
 | v11 20-seed benchmark (CANONICAL) | `benchmark_molecules_opt/p4_benchmark_merged.csv` | 80 (4 methods × 20 seeds) |
 | v11 per-seed CSVs + molecule sets | `benchmark_molecules_opt/p4_benchmark_seed_{0..19}.csv`, `benchmark_molecules_opt/p4_benchmark_molecules_seed_{0..19}.csv` | 20 files each |
 | v10 default-config run (sensitivity) | `benchmark_molecules/p4_benchmark_merged.csv`, `benchmark_molecules/p4_benchmark_seed_{0..19}.csv` | kept for comparison |
-| v10 diversity metrics | `diversity/p4_diversity_metrics.csv`, `diversity/p4_diversity_mds.csv` | 4 + 60 rows |
+| v11 diversity metrics | `diversity/p4_diversity_metrics.csv`, `diversity/p4_diversity_mds.csv` | 4 + 60 rows |
 | v9 20-seed benchmark (superseded archive) | `benchmark/p4_benchmark_merged.csv` | 80 (kept for provenance) |
 | LaTeX benchmark table | `benchmark/p4_benchmark_table.tex` | Auto-generated |
 | Component ablation | `ablation/p4_ablation_config_*.csv`, `p4_component_ablation_summary.csv` | 32 configs × 5 replicates = 160 |
@@ -401,7 +403,7 @@ All P4 numerical claims above are traceable to the following files in `Project4_
 - `scripts/p4_mcts_pareto.py` — Pareto MCTS runs
 - `scripts/p4_merge_pareto_fronts.py` — merges per-seed Pareto fronts
 - `scripts/p4_merge_benchmark.py` — merges per-seed benchmark CSVs
-- `scripts/p4_compute_diversity.py` — real diversity metrics (v10 molecule sets)
+- `scripts/p4_compute_diversity.py` — real diversity metrics (v11 molecule sets)
 - `scripts/p4_pareto_provenance_check.py` — P0-1 provenance lock (all checks PASS)
 - `scripts/p4_benchmark_stats.py` — canonical benchmark statistics + paired tests
 - `scripts/p4_visualize.py` — generates figures
@@ -416,7 +418,7 @@ All P4 numerical claims above are traceable to the following files in `Project4_
 
 1. **Manuscript finalisation** — Introduction and Results updated to **v11 canonical benchmark** (optimal MCTS config, re-run 2026-08-02, job 12725); SM (S1 Pareto provenance, S2 real diversity, S3 reproducibility) drafted; QMC removed. Compile and verify all references (`.bib` complete, 30+ entries).
 2. **QMC section** — only re-enter if the production protocol (§5.2.4) is executed: OPTIMIZE + nconfig ≥ 1000 + τ→0. Tier 1 SCF is publication-ready.
-3. **Zenodo deposit** — P4 subset (43 files, 1.5 MB) is in the manifest (`zenodo_manifest.txt`); **must be refreshed to include the v10 benchmark + molecule + diversity CSVs**; upload pending.
+3. **Zenodo deposit** — manifest (`zenodo_manifest.txt`) refreshed 2026-08-02 to include the **v11 benchmark + molecule + diversity CSVs**, the JoC manuscript set (main + SM + cover letters), and the two v11 array sbatch scripts (P4 section now 139 files, ~2.4 MB; deposit total 934 files, 170.3 MB); **Zenodo upload still pending** (DOI 10.5281/zenodo.19608875 reserved).
 4. **Benchmark stats** — v11 is canonical (20 seeds, reproducible, optimal MCTS config). Paired t-tests Random vs MCTS (t₁₉ = 2.41, p = 0.026) and MCTS vs GA (t₁₉ = 5.55, p < 0.0001) are reported in the manuscript with the honest re-benchmark narrative.
 
 ---
@@ -430,4 +432,4 @@ All P4 numerical claims above are traceable to the following files in `Project4_
 | `Project4_Advanced_Monte_CarloV2607/docs/P4_QMC_FIX_STRATEGY.md` | Stratégie de correction QMC (sections 7–8 = verdict v46) |
 | `Project4_Advanced_Monte_CarloV2607/P4_MC_Strategies.md` | Stratégie P4 (architecture, analyse plan, roadmap) |
 | `Project4_Advanced_Monte_CarloV2607/P4_Implementation2_.md` | Plan d'implémentation (ablation 2⁵, QMC, figures, cover letter) |
-| `Project4_Advanced_Monte_CarloV2607/manuscript/LaTeX/P4_Pareto_MCTS_V2607.tex` | Manuscrit P4 (QMC retiré) |
+| `Project4_Advanced_Monte_CarloV2607/manuscript/LaTeX/P4_Pareto_MCTS_JoC_refined.tex` | **Manuscrit P4 CANONIQUE (JoC, v11)** — `P4_Pareto_MCTS_V2607.tex` conservé comme historique uniquement |
