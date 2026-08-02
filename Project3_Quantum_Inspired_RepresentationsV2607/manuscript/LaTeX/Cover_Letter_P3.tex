@@ -4,7 +4,7 @@
 % ============================================================================
 \documentclass[11pt,a4paper]{letter}
 
-\usepackage[margin=2.5cm]{geometry}
+\usepackage[margin=2.3cm]{geometry}
 \usepackage{microtype}
 \usepackage{hyperref}
 \usepackage{xcolor}
@@ -27,11 +27,13 @@
   London, UK
 }
 
+\enlargethispage{2\baselineskip}
+
 \opening{Dear Editors,}
 
 We are pleased to submit our manuscript, \textbf{``Quantum-inspired molecular representations for AI-generated African antimalarial candidates: persistent homology, tensor networks, and quantum kernels''}, for consideration as an \textbf{Original Research Article} in the \textit{Journal of Cheminformatics}.
 
-This work introduces three novel molecular descriptors---Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)---benchmarked against classical fingerprints on 19,836 African NP-derived candidates. Persistent homology resolves the scaffold paradox in generative AI (92.6\% Tanimoto novelty with 69.3\% scaffold recovery), TNE achieves 6.1$\times$ real-atom compression on a standard workstation, and quantum kernels are statistically indistinguishable from properly tuned classical kernels at all sample sizes (6-qubit QKS AUC 0.823 vs RBF 0.829 at $n=19{,}849$, $p=0.060$, n.s.). We report honest negative results: on the corrected canonical benchmark, classical ECFP4 remains the strongest single descriptor for primary screening (AUC 0.948); the canonical hybrid descriptor (TFP+TNE+QK) achieves AUC 0.888, significantly below ECFP4 ($p<0.0001$) but above every standalone quantum-inspired descriptor, with QKS as the principal positive contributor (ablation $\Delta=-0.040$). We believe this work fits the \textit{Journal of Cheminformatics} scope: reusable open-source molecular descriptors, a rigorously controlled benchmark protocol with deposited data, and an honest assessment of when quantum-inspired methods do not outperform classical baselines.
+This work introduces three novel molecular descriptors---Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)---benchmarked against classical fingerprints on 19,836 African NP-derived candidates. Persistent homology resolves the scaffold paradox in generative AI (92.6\% Tanimoto novelty with 69.3\% scaffold recovery), TNE achieves 6.1$\times$ real-atom compression on a standard workstation, and quantum kernels are statistically indistinguishable from properly tuned classical kernels at all sample sizes (6-qubit QKS AUC 0.823 vs RBF 0.829 at $n=19{,}849$, $p=0.060$, n.s.). We report honest negative results: on the corrected canonical benchmark, classical ECFP4 remains the strongest single descriptor for primary screening (AUC 0.948); the canonical hybrid descriptor (TFP+TNE+QK) achieves AUC 0.888, significantly below ECFP4 ($p<0.0001$) but above every standalone quantum-inspired descriptor, with QKS as the principal positive contributor (ablation $\Delta=-0.040$). Recent systematic reviews of quantum computing in bioinformatics and drug discovery (\textit{Briefings in Bioinformatics}, 2024; \textit{IEEE Access}, 2024) call for rigorous empirical evaluation of near-term quantum methods; our openly deposited benchmark answers this call. We believe this work fits the \textit{Journal of Cheminformatics} scope: reusable open-source molecular descriptors, a rigorously controlled benchmark protocol with deposited data, and an honest assessment of when quantum-inspired methods do not outperform classical baselines.
 
 All data and code are deposited on Zenodo and GitHub under the MIT licence. This work is original, not under consideration elsewhere, and all authors have approved the submission.
 
@@ -39,7 +41,7 @@ All data and code are deposited on Zenodo and GitHub under the MIT licence. This
 
 \ps{%
 \textbf{Suggested reviewers:}\\
-\begin{itemize}[leftmargin=*, itemsep=2pt]
+\begin{itemize}[leftmargin=*, itemsep=1pt]
   \item Prof.\ Bing Wang (topological methods in drug discovery)
   \item Dr.\ Guillaume Godin (RDKit, natural product cheminformatics)
   \item Prof.\ Gisbert Schneider (generative molecular design)

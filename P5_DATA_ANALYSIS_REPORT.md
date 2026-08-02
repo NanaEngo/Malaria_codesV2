@@ -187,3 +187,41 @@ The submission thesis: *"On a curated natural-product antimalarial panel, compac
 - `P4_DATA_ANALYSIS_REPORT.md` — P4 boussole (same split pattern)
 - `Project5_GNN_Transformer_DrugDiscovery/` — code, results, manuscript
 - Key SOTA: MolGraphBench (arXiv 2602.20573); CardinalGraphFormer (arXiv 2602.02201); BiScale-GTR (arXiv 2604.06336); HimNet (Commun. Chem. 2026); MoleculeFormer (Commun. Biol. 2025); DGT (Nat. Commun. 2026); ChemBERTa-3 (Digital Discovery 2026); "Do Larger Models Really Win?" (2026); DumplingGNN (IJMS 2025); low-data learning-curve benchmark (ChemRxiv 2026)
+
+### Entrées bib préparées pour le manuscrit P5 (prêtes à copier dans le `.bib`)
+
+> **Contexte d'usage P5 :** ces 3 références servent au cadrage (Introduction/Related work) du futur manuscrit P5 — deux **revues** (quantum computing en bioinformatique / drug discovery) pour le contexte NISQ-QML, et **MolPROP** comme preuve de la fusion multimodale GNN+langage (justifie le paradigme GIN + ChemBERTa / fusion de features). Même jeu de clés que `Bibliography_Paper3.bib` (cohérence cross-manuscript) ; les clés `naleczcharkiewicz2024`/`kumar2024quantumdrug`/`rollins2024molprop` sont déjà résolues dans le main P3 (v51).
+
+```bibtex
+@article{naleczcharkiewicz2024,
+  author  = {Na{\l}ecz-Charkiewicz, Katarzyna and Charkiewicz, Kamil},
+  title   = {Quantum Computing in Bioinformatics: A Systematic Review Mapping},
+  journal = {Briefings in Bioinformatics},
+  year    = {2024},
+  volume  = {25},
+  number  = {5},
+  pages   = {bbae391},
+  doi     = {10.1093/bib/bbae391},
+}
+
+@article{kumar2024quantumdrug,
+  author  = {Kumar, Gautam and Yadav, Sahil and Mukherjee, Aniruddha and Hassija, Vikas and Guizani, Mohsen},
+  title   = {Recent Advances in Quantum Computing for Drug Discovery and Development},
+  journal = {IEEE Access},
+  year    = {2024},
+  volume  = {12},
+  pages   = {64491--64509},
+  doi     = {10.1109/ACCESS.2024.3376408},
+}
+
+@article{rollins2024molprop,
+  author  = {Rollins, Zachary A. and Cheng, Alan C. and Metwally, Essam},
+  title   = {{MolPROP}: Molecular Property Prediction with Multimodal Language and Graph Fusion},
+  journal = {Journal of Cheminformatics},
+  year    = {2024},
+  volume  = {16},
+  number  = {1},
+  pages   = {56},
+  doi     = {10.1186/s13321-024-00846-9},
+}
+```

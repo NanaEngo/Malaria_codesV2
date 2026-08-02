@@ -1,6 +1,6 @@
 # P3 Adversarial Audit & Mitigation Report
 
-**Date:** July 25, 2026 (evening) — v1; **updated Aug 2, 2026 — v3 adversarial re-audit** (full manuscript re-verification against deposited data, after canonical benchmarks) ; **Aug 2, 2026 — v3.1 manuscript trim documented** (26→18 p., fusion des tables, `tab:qkernel`→SM S13, élimination des doublons main↔SM — voir §« Actions to Reach ≥85% » action 5 et BMAD §3.14)
+**Date:** July 25, 2026 (evening) — v1; **updated Aug 2, 2026 — v3 adversarial re-audit** (full manuscript re-verification against deposited data, after canonical benchmarks) ; **Aug 2, 2026 — v3.1 manuscript trim documented** (26→18 p., fusion des tables, `tab:qkernel`→SM S13, élimination des doublons main↔SM — voir §« Actions to Reach ≥85% » action 5 et BMAD §3.14) ; **Aug 2, 2026 — v3.2 qubit-consistency + final proofreading documented** (corrections 8q/6q : caveat NISQ + Limitations reformulés « 6--8 qubits » / « canonical 6-qubit Phase-2 configuration », alignés sur la vérité terrain `N_QUBITS=6` canonique vs 8q discriminator/NISQ ; fix Overfull 199 pt table S13 ; phrase de positionnement vs 2 revues quantum — voir BMAD §3.14a)
 **Scope:** Critical self-assessment of P3 manuscript from a Q1 journal reviewer perspective
 **Methodology:** Identify weaknesses a reviewer would flag, assess severity, propose mitigations
 **Current Acceptance Probability:** 75–82% → Target ≥85% (v3.1: ~79–82%, ChEMBL honnête négatif 02/08 −5% ; Zenodo ⚠️ PENDING +3% → ~82%)
@@ -56,9 +56,9 @@
 - H1-RRS n=77 ρ=0.312, p=0.0057; MW–H1_count ρ=0.718 (recomputed) ✓
 - ChEMBL 231 pairs, 7 analogues (3.0%), 3 active PfATP4 ✓; effect sizes Cohen's d ✓
 
-### Compilation (Aug 2, 2026, post-trim v3.1)
-- Main: **18 pp.** (7 230 mots), **0 errors, 0 unresolved references** ✓
-- SM: **18 pp.**, **0 errors, 0 unresolved references** ✓
+### Compilation (Aug 2, 2026, post-trim v3.2)
+- Main: **18 pp.** (7 365 mots), **0 errors, 0 unresolved references, 0 Rerun** ✓ (compilation complète ×2 + bibtex + ×2)
+- SM: **18 pp.**, **0 errors, 0 unresolved references** ✓ — **0 Overfull structurel** (fix `\resizebox` table S13, 199 pt → 0)
 - Cover letter: **1 p.** ✓
 
 ### Acceptance probability after v3.1
@@ -119,10 +119,11 @@
 
 **Severity:** 🟡 **MEDIUM** — inherent to NISQ-era work
 
-**What a reviewer will say:** "The quantum kernel is simulated on an 8-qubit statevector simulator. On real NISQ hardware, gate errors, decoherence, and measurement noise would degrade fidelity by 20–50%. The title says 'quantum-inspired' but the QKS section uses a quantum circuit — is this classical or quantum?"
+**What a reviewer will say:** "The quantum kernel is simulated on a statevector simulator. On real NISQ hardware, gate errors, decoherence, and measurement noise would degrade fidelity by 20–50%. The title says 'quantum-inspired' but the QKS section uses a quantum circuit — is this classical or quantum? And is it 6 or 8 qubits?"
 
 **Mitigation status:** ✅ **IMPLEMENTED**
-- "NISQ-era caveat" paragraph in Introduction
+- "NISQ-era caveat" paragraph in Introduction — reformulé v3.2 : **« 6--8 qubits »** avec ventilation (benchmarks canoniques = 6q Phase-2, discriminator + pipeline NISQ = 8q), aligné sur la vérité terrain des scripts (`p3_qks_benchmark.py` `N_QUBITS=6` ; `p3_ga_discriminator.py` `N_QUBITS=8`)
+- Limitations — reformulé v3.2 : « canonical 6-qubit Phase-2 configuration » (plus d'affirmation générale « 8 qubits » pour le circuit canonique)
 - Kernels statistically indistinguishable after RBF tuning (tab:qkernel)
 - No quantum advantage claimed
 - Title uses "quantum-inspired"
@@ -232,7 +233,7 @@
 | Computational labels | 🔴 CRITICAL | ChEMBL validation, docking enrichment | ✅ |
 | H₁-RRS attenuated | 🟡 MEDIUM | Canonized ρ=0.312, pilot moved to SM | ✅ |
 | SOTA parity only | 🟡 MEDIUM | Cohen's d=+0.85, full n=19,849 benchmark | ✅ |
-| QK simulated | 🟡 MEDIUM | NISQ caveat, no advantage claimed | ✅ |
+| QK simulated | 🟡 MEDIUM | NISQ caveat (6--8 qubits v3.2), no advantage claimed | ✅ |
 | D-GRIL not benchmarked | 🟡 MEDIUM | Build documented (SM §9E), TopologyNet analog (SM §9D) | ✅ |
 | ChEMBL low match rate | 🟡 MEDIUM | Honest framing, ChEMBL36 bug fixed | ✅ |
 | Single library | 🟢 LOW | Acknowledged limitation, internal calibration | ✅ |
