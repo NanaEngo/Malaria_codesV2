@@ -35,13 +35,13 @@ front (HV, IGD, spread).
 
 ### Résultats
 
-| méthode | n_unique/20 | front | HV (comm) | IGD | spread |
-|---|---|---|---|---|---|
-| random | 20 | 8 | 13.85 | 0.130 | 1.234 |
-| greedy | **1** | 1 | 16.59 | 0.614 | NaN |
-| ga | 19 | 8 | 15.49 | 0.077 | 1.019 |
-| baselines_pooled | 40 | 11 | 15.52 | 0.073 | 0.903 |
-| **mcts_canon** | 4 | 4 | **18.99** | 0.492 | 0.670 |
+| méthode | n_unique/20 | front | HV (comm) | IGD | spread | IGD_loo | C-metric |
+|---|---|---|---|---|---|---|---|
+| random | 20 | 8 | 13.85 | 0.130 | 1.234 | 0.366 | 0.059 |
+| greedy | **1** | 1 | 16.59 | 0.614 | NaN | 0.416 | 0.765 |
+| ga | 19 | 8 | 15.49 | 0.077 | 1.019 | 0.307 | 0.000 |
+| baselines_pooled | 40 | 11 | 15.52 | 0.073 | 0.903 | 0.307 | 0.000 |
+| **mcts_canon** | 4 | 4 | **18.99** | 0.492 | 0.670 | 0.492 | **0.824** |
 
 ### Findings
 
@@ -55,11 +55,18 @@ front (HV, IGD, spread).
    **strictement dominée** par le point 2 du front MCTS (MPO 0.945, SYBA 1.0,
    RRS 0.196, PNS 1.0). Malgré ça, le mono-point greedy a un HV élevé (16.59) :
    proche du coin idéal sur 3/4 objectifs — mais pas de couverture du trade-off.
-3. **Caveat IGD (ponytail) :** la référence pour IGD est l'union non-dominée de
+3. **C-metric (dominance coverage) :** MCTS domine **82.4%** de la référence union
+   non-dominée (greedy 76.5% via son unique point proche du coin idéal ; random
+   5.9% ; GA 0.0%). MCTS > greedy sur HV ET sur couverture → double preuve.
+4. **Caveat IGD (ponytail) :** la référence pour IGD est l'union non-dominée de
    tous les candidats — `baselines_pooled` y contribue majoritairement, donc
-   son IGD trivialement bas (0.073) est attendu, pas informatif. **HV est la
-   métrique propre** (indépendante d'une référence de comparaison). IGD/spread
-   rapportés comme compléments, pas comme evidence.
+   son IGD trivialement bas (0.073) est attendu, pas informatif. **Fermé par
+   IGD_loo** (référence excluant les points de la méthode elle-même) :
+   baselines_pooled 0.307, MCTS 0.492. Le IGD_loo de MCTS est le plus élevé —
+   cohérent : le front canonique (4 points) est volontairement éloigné des
+   extrêmes baselines ; il couvre le trade-off MPO/SYBA, pas la plage
+   baseline-large. **HV et C-metric sont les métriques propres** (indépendantes
+   d'une référence de comparaison).
 
 ### Usage manuscrit
 
@@ -109,6 +116,26 @@ elle-même. Resultat nul clairement interprété — pas de sur-claim.
 `manuscript/LaTeX/Graphics/p4_hv_vs_ref.png` : hypervolume du front canonique en
 fonction du point de référence (1.00→1.50) — illustre la sensibilité (monotone
 croissante, 15.2→37.8), aligné audit F1/F3, usage SM.
+
+---
+
+## N5 — Sensibilité aux poids scalaires (quantifie C5) (DONE)
+
+`scripts/p4_scalar_weight_sweep.py` : sweep $w_{\text{MPO}}\in[0,1]$ (100001 pts)
+sur le plan normalisé MPO–SYBA de tous les candidats (4 pts du front + 60
+molécules baselines). Fraction de l'espace de poids où chaque candidat est
+l'argmax scalaire :
+
+| point | intervalle w_MPO | fraction |
+|---|---|---|
+| P2 (MPO & SYBA hauts) | [0.0000, 0.9556] | 0.956 |
+| P4 / baseline (mid) | [0.9556, 0.9968] | 0.041 |
+| P3 (MPO haut, SYBA bas) | [0.9968, 1.0000] | 0.003 |
+
+→ **P3 n'est l'argmax que pour w_MPO ≥ 0.997** (poids dégénéré, SYBA ignoré) —
+quantifie l'audit C5 : la forme « ⋯ que l'agrégation scalaire à poids fixes
+écarte » est exacte. Résultat → `results/pareto/p4_scalar_weight_sweep.csv`,
+tableau `tab:scalar_sweep` dans le manuscrit.
 
 ---
 

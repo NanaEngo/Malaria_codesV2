@@ -78,6 +78,20 @@ def igd(front: pd.DataFrame, ref: np.ndarray) -> float:
     return float(np.mean([np.min(np.linalg.norm(fv - r, axis=1)) for r in ref]))
 
 
+def cmetric(frontA: pd.DataFrame, refB: pd.DataFrame) -> float:
+    """C-metric (Zitzler): fraction of refB points dominated-or-equal by frontA."""
+    fa = frontA[ACTIVE].to_numpy(float)
+    rb = refB[ACTIVE].to_numpy(float)
+    if len(fa) == 0 or len(rb) == 0:
+        return float("nan")
+    count = 0
+    for r in rb:
+        dominated = np.any(np.all(fa >= r, axis=1) & np.any(fa > r, axis=1))
+        if dominated:
+            count += 1
+    return float(count) / len(rb)
+
+
 def spread(front: pd.DataFrame, ref: np.ndarray) -> float:
     """Delta-spread: coverage uniformity of front pts relative to ref extremes."""
     fv = front[ACTIVE].to_numpy(float)
@@ -134,14 +148,31 @@ def main() -> None:
               ("baselines_pooled", ev[ev["method"].isin(["random", "greedy", "ga"])]),
               ("mcts_canon", canon[["smiles"] + ACTIVE])]
 
+    # Per-method reference (leave-one-out): union of ALL candidate non-dominated
+    # points EXCLUDING that method's own candidates, so IGD_loo is not
+    # self-referential. For mcts_canon the exclusion is the canonical front.
+    cand_meta = []
+    for name, sub in groups:
+        for _, r in sub.iterrows():
+            cand_meta.append({"method": name, "smiles": r["smiles"]})
+    cand_meta = pd.DataFrame(cand_meta)
+    # Build union reference once (all candidates), then per method drop own smiles
+    all_raw = allcand[allcand["smiles"].notna()].copy()
+
     summary = []
     for name, sub in groups:
         fr = front_of(sub)
         fr[ACTIVE].to_csv(FR / f"front_{name}.csv", index=False)
-        summary.append({"method": name, "n_unique": len(sub),
-                        "front_size": len(fr),
-                        "hv": hv_normalised(fr, lo, hi),
-                        "igd": igd(fr, ref), "spread": spread(fr, ref)})
+        own_smiles = set(cand_meta[cand_meta["method"] == name]["smiles"])
+        loo = all_raw[~all_raw["smiles"].isin(own_smiles)]
+        ref_loo = front_of(loo)[ACTIVE].to_numpy(float) if len(loo) > 0 else ref
+        row = {"method": name, "n_unique": len(sub),
+               "front_size": len(fr),
+               "hv": hv_normalised(fr, lo, hi),
+               "igd": igd(fr, ref), "spread": spread(fr, ref),
+               "igd_loo": igd(fr, ref_loo),
+               "c_metric": cmetric(fr, all_front)}
+        summary.append(row)
 
     summ = pd.DataFrame(summary)
     print(summ.round(3).to_string(index=False))

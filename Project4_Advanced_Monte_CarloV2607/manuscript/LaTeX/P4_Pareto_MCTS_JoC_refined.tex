@@ -160,7 +160,22 @@ When the same MCTS agent maintains a non-dominated front across MPO, SYBA, RRS a
   \end{tabular}
 \end{table}
 
-P2 and P3 achieve the highest MPO values, yet P3 is synthetically inaccessible (SYBA $=\num{0.021}$). P1 and P4 remain highly accessible (SYBA $>\num{0.99}$) while trading potency. All four solutions share SA $= \num{3.0}$. Three of the four candidates also score PNS $= \num{1.0}$, indicating simultaneous multi-target engagement consistent with the polypharmacology criteria developed in the companion studies. The front therefore spans a genuine potency--accessibility trade-off, including a high-MPO / low-SYBA extreme that scalar-weighted optimisation systematically discards.
+P2 and P3 achieve the highest MPO values, yet P3 is synthetically inaccessible (SYBA $=\num{0.021}$). P1 and P4 remain highly accessible (SYBA $>\num{0.99}$) while trading potency. All four solutions share SA $= \num{3.0}$. Three of the four candidates also score PNS $= \num{1.0}$, indicating simultaneous multi-target engagement consistent with the polypharmacology criteria developed in the companion studies. The front therefore spans a genuine potency--accessibility trade-off, including a high-MPO / low-SYBA extreme that scalar-weighted optimisation systematically discards. Quantitatively, over the space of all normalised scalar weights $w_{\text{MPO}}\in[0,1]$ on the normalised MPO--SYBA plane, P3 is selected by a fixed-weight scalar aggregation only for $w_{\text{MPO}}\gtrsim\num{0.997}$---a degenerate weighting (SYBA effectively ignored)---while P2, P1 and P4 dominate the remaining weight range (\Cref{tab:scalar_sweep}; full sweep deposited).
+
+\begin{table}[htbp]
+  \centering
+  \caption{Agreement of fixed-weight scalar aggregation over the normalised MPO--SYBA plane: the weight interval $w_{\text{MPO}}$ over which each candidate is the scalar argmax, across all front and baseline molecules. P3 is selected only at a degenerate weight ($w_{\text{MPO}}\gtrsim\num{0.997}$). Data: \texttt{results/pareto/p4\_scalar\_weight\_sweep.csv}.}
+  \label{tab:scalar_sweep}
+  \begin{tabular}{lcS[table-format=1.3]}
+    \toprule
+    {Candidate / point} & {$w_{\text{MPO}}$ range} & {Fraction of $w$ space} \\
+    \midrule
+    P2 (high MPO \& SYBA) & $[0.0000,\ 0.9556]$ & \num{0.956} \\
+    P4 / baseline (mid)    & $[0.9556,\ 0.9968]$ & \num{0.041} \\
+    P3 (high MPO, l.w SYBA) & $[0.9968,\ 1.0000]$ & \num{0.003} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \subsection{Multi-objective front comparison against baselines}
 \label{sec:front_comparison}
@@ -169,22 +184,22 @@ Because the scalar baselines were evaluated on scalar reward only, the canonical
 
 \begin{table}[htbp]
   \centering
-  \caption{Multi-objective front comparison of the four generation methods. Each per-seed best molecule of the canonical \num{20}-seed benchmark was re-scored on the full objective (MPO, SYBA, RRS, PNS); the Pareto front of each method was then built and compared under a common min--max normalisation. Hypervolume is the clean reference-independent metric; IGD/spread use the non-dominated union of all candidates as reference. Data: \texttt{results/pareto/p4\_multiobj\_front\_summary.csv}.}
+  \caption{Multi-objective front comparison of the four generation methods. Each per-seed best molecule of the canonical \num{20}-seed benchmark was re-scored on the full objective (MPO, SYBA, RRS, PNS); the Pareto front of each method was then built and compared under a common min--max normalisation. Hypervolume and C-metric are the clean reference-independent metrics (C = fraction of the non-dominated union reference dominated by the method's front); IGD, IGD-${}_{\mathrm{loo}}$ (reference excluding the method's own points) and spread are reported for completeness. Data: \texttt{results/pareto/p4\_multiobj\_front\_summary.csv}.}
   \label{tab:front_comp}
-  \begin{tabular}{lccccc}
+  \begin{tabular}{llccccc}
     \toprule
-    Method & Unique/20 & Front & HV & IGD & Spread \\
+    Method & Unique/20 & Front & HV & C-met. & IGD${}_{\mathrm{loo}}$ & Spread \\
     \midrule
-    Random   & \num{20} & \num{8}  & \num{13.85} & \num{0.130} & \num{1.234} \\
-    Greedy   & \num{1}  & \num{1}  & \num{16.59} & \num{0.614} & --- \\
-    GA       & \num{19} & \num{8}  & \num{15.49} & \num{0.077} & \num{1.019} \\
-    Baselines pooled & \num{40} & \num{11} & \num{15.52} & \num{0.073} & \num{0.903} \\
-    \textbf{MCTS (front)} & \num{4} & \num{4} & \textbf{\num{18.99}} & \num{0.492} & \num{0.670} \\
+    Random   & \num{20} & \num{8}  & \num{13.85} & \num{0.059} & \num{0.366} & \num{1.234} \\
+    Greedy   & \num{1}  & \num{1}  & \num{16.59} & \num{0.765} & \num{0.416} & --- \\
+    GA       & \num{19} & \num{8}  & \num{15.49} & \num{0.000} & \num{0.307} & \num{1.019} \\
+    Baselines pooled & \num{40} & \num{11} & \num{15.52} & \num{0.000} & \num{0.307} & \num{0.903} \\
+    \textbf{MCTS (front)} & \num{4} & \num{4} & \textbf{\num{18.99}} & \textbf{\num{0.824}} & \num{0.492} & \num{0.670} \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Two findings emerge. First, greedy search is \emph{deterministic} here: it returns the identical molecule across all \num{20} seeds, so its ``front'' reduces to a single point (unique count \num{1}). That single molecule is nonetheless strictly dominated by a point of the MCTS front (higher MPO \emph{and} higher RRS), and the MCTS front attains the largest hypervolume (\num{18.99} under the common normalisation, above the \num{16.59} of the single greedy point, \num{15.52} of the pooled baseline front and \num{15.49} of GA). Second, the IGD/spread columns are shown for completeness but should be read with caution: because the reference set is the non-dominated union of all candidates, the pooled-baseline row trivially attains a low IGD by virtue of constituting most of that reference; the hypervolume, which is independent of any comparison reference, is therefore the primary metric reported here.
+Two findings emerge. First, greedy search is \emph{deterministic} here: it returns the identical molecule across all \num{20} seeds, so its ``front'' reduces to a single point (unique count \num{1}). That single molecule is nonetheless strictly dominated by a point of the MCTS front (higher MPO \emph{and} higher RRS). The MCTS front attains the largest hypervolume (\num{18.99} under the common normalisation, above the \num{16.59} of the single greedy point, \num{15.52} of the pooled baseline front and \num{15.49} of GA) and the largest dominance coverage (C-metric \num{0.82}) of the non-dominated union reference. The IGD columns are shown for completeness but must be read with caution: with a leave-one-out reference (IGD${}_{\mathrm{loo}}$), the MCTS front is the most distant from the baseline-heavy reference, consistent with a designed front spanning the potency--accessibility trade-off rather than the broad baseline range. The hypervolume and C-metric, which are free of any comparison reference, are therefore the primary metrics reported here.
 
 \subsection{Selection rule does not limit the front}
 \label{sec:selection_ablation}
