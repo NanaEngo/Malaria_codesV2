@@ -1,6 +1,6 @@
 # BMAD Q1 Data Analysis Report
 
-**Generated:** July 9, 2026 — **Updated August 1, 2026** (v48: **ChEMBL IC₅₀ audit** — IDs de cibles roadmap corrigés (les scripts utilisaient déjà les bons IDs PfDHFR-TS=CHEMBL4296323/PfCRT=CHEMBL1795182/PfATP4=CHEMBL6066156, vérifiés via l'API ChEMBL) ; robustesse `standard_relation`/`standard_units` ajoutée aux scripts `p3_chembl_validation.py` et `p3_chembl_expanded.py` (classification conservatrice pour `<`/`>`) ; re-validation indépendante des 7 matches de l'expansion — toutes confirmées (§3.13a) ; v47: **P4 data analysis SPLIT OUT** — all P4 reporting (MCTS benchmark v1–v9, Pareto front, ablations, QMC Tier 1/2 incl. the v46 verdict correction) moved to the dedicated `P4_DATA_ANALYSIS_REPORT.md`; **this report now covers P1–P3 only**. See §4 pointer and exec-summary row. [v43–v46 P4 QMC changelog collapsed to a pointer — full detail in `P4_DATA_ANALYSIS_REPORT.md` §5 (Tier 1 SCF restore + GPU v43/v44; Tier 2 VMC/DMC deep-diagnostic v45 and verdict correction v46)]; v42: `Project3_Quantum_Inspired_RepresentationsV2607_V2/` (HPC-only) is **Dr Tchapet Njafa's working version of the P3 project — intentionally kept, do not delete** (decision July 31, 2026) — ignore in grep audits; v41: `Project3_Quantum_Inspired_RepresentationsV2607_V2/` (HPC-only) is an obsolete duplicate of the canonical P3 project, **intentionally kept** (decision July 31, 2026) — ignore in grep audits; v40: top-level stale audit/strategy docs deleted locally + HPC — `GEMINI.md` (empty), `PROJECT3_BENCHMARK_AUDIT.md` (superseded), root `P3_Stategic_85PA.md` + `P3_ADVERSARIAL_AUDIT_MITIGATION.md` (duplicates; P3-dir copies canonical), root `Cover_Letter_P3.*` (duplicates; P3 manuscript copy canonical), `Nouvel audit adversériel.md` (superseded by consolidated Jul 25 audit), `BMAD_Q1_Analysis_v2.md` (pre-canonical); v39: obsolete BMAD docs deleted locally + HPC — `BMAD_STEP1_REPORT.md` (completed step-1 report), `BMAD_LOCAL_IMPL_PLAN.md` (stale local plan), `update_bmad.py` (helper script), `Project3_Quantum_Inspired_RepresentationsV2607_V2/outputs/critical-reviews/BMAD-RECONCILIATION.md` (HPC-only fix-queue superseded by v38) — **this report is the single canonical source**; v38: `BMAD_Q1_DATA_ANALYSIS_REPORT_V1.md` deleted locally and on HPC; v37: HPC-audit corrections — 5,000-molecule hybrid benchmark COMPLETED on HPC (jobs 12651→12660, state-vector QK optimization, Hybrid RF AUC 0.8423 ± 0.0076); TDA/TNE validity transpose fixed (§3.1: TDA 19,849/0, TNE 19,836/13); QKS §3.3 table regenerated from canonical v11 summary (TA 0.543, acc 0.718/0.694); unverified speedup claim removed; job-ID reconciliation (12618→12651/12660); SwissModel API token redacted)
+**Generated:** July 9, 2026 — **Updated August 3, 2026** (v54: **P3 manuscrit V2608 canonique — renommage + archivage** — les fichiers canoniques P3 sont désormais **`Paper3_Quantum_InspiredV2608.tex`** (main) et **`Paper3_Quantum_Inspired_SM_V2608.tex`** (SM) ; anciennes versions `Paper3_Quantum_InspiredV2607(.tex/_refined)` + SM correspondant archivées dans `manuscript/LaTeX/archive/` ; refs croisées `\externaldocument` mises à jour ; 4 refs manuelles S converties en `\cref` ; compile V2608 : 0 erreur, 0 undefined, 0 warning bibtex. ; v53: **P3 Actions 3 & 4 verdicts (SOTA topological full + RRS expansion audit)** — documenté le 03/08/2026 : (i) **Action 3 (SOTA topological) ✅ COMPLETE** — job 12756 exécuté avec succès (RF n=19,849 complet + SVM n=5,000, 5 stratégies PH), canonical `p3_sota_benchmark_full.csv`/`_summary.txt` régénérés (03/08, PersStats RF **0.8731 ± 0.0067**, TFP-12 **0.8668**, TFP-Enriched **0.8666**, PersImage 0.8596, BettiCurve 0.8110 ; SVM 0.72–0.79) — la Table SM S11 utilise DÉJÀ ces valeurs canoniques (aligné), le BMAD §E.1 documentait l'ancien run 25/07 (0.8381/0.8303) désormais harmonisé ; (ii) **Action 4 (RRS expansion n≥80) ✅ CLOSE — Option C retenue** — l'array 12757 a traité 500 composés mais n'a produit **1 seul nouveau composé** avec `rrs_score` (75 autres déjà dans la cohorte existante) ; le relâchement du seuil de liaison ΔG ≤ −7.0 → −6.5 (Option B, qui qualifierait 215 composés) est rejeté pour **phacking scientifique** : le seuil est une convention a priori, le RRS n'est pas biologique pour les ligands faibles, la corrélation reste size-médiée (ρ_partial≈0), et le multi-seuil introduit une multiplicité non corrigée → on **garde n=77** (46 A + 31 B), ρ(H₁_count,RRS)=0.312, p=0.006 (cf. §3.9), avec le caveat size-mediation ; vérifié le fichier existant `p0_rrs_tfp_final.csv` contient déjà 500 composés dont 77 scorés. ; v52: **P3 adversarial audit v3 post-refinement — consistency + reproducibility fixes** — applied on the canonical HPC-refined state (Hybrid 0.888, ablation QKS Δ=−0.040, QKS≈RBF): (i) **promiscuité unifiée** — la section SM/main §15.2 citait N=17,011 (ρ=−0.248/−0.243/−0.190), conforme au déposé `p3_physical_validation/p3_tda_promiscuity.csv`, mais le fichier antérieur `p3_tartarus_tda_spearman.csv` (N=19,900, ρ=−0.159/−0.153/−0.161) restait ambigu ; clarification ajoutée (analyse canonique = `p3_physical_validation.py`, fichier déposé nommé, run antérieur Tartarus-only marqué superseded) ; (ii) **SM Table S2 régénérée** depuis `p3_tda_summary.txt` (H0_count 38.0417, H2_count max 4, H0_max_pers min 1.48) — caption épuré (pas de jargon labo) ; (iii) **DM §7 scalability corrigé** — 820 paires/n=40 (impossible) et l'extrapolation 6.4 min remplacés par les runtimes canoniques déposés (TDA 384s/6.4min, TNE 488s/8.1min, QK ~817s/fold) ; les mêmes valeurs corrigées dans le main et le BMAD ; (iv) **Methods/Results réconciliés** — « full-library evaluation infeasible » remplacé par la procédure state-vector réelle (jobs 12699/12700) ; (v) **p=0.060 reformulé** — « no significant difference » (tendance frontalière vers QK inférieur) au lieu de « statistically indistinguishable » en 6 occurrences (abstract, intro, results, kernel section, discussion, conclusion) + titre section retiré de « Parity » ; (vi) **weighted concatenation α/β/γ supprimée** (le pipeline canonique RF scale-invariant n'utilise pas de poids) ; (vii) **runtime TNE corrigé** (2 s/mol et 20 min → 488 s/0.025 s par mol à 4 workers) ; (viii) **MC uncertainty SM corrigé** (bootstrap MC, descripteur TFP+TNE — pas « MC dropout Hybrid ») ; (ix) **bibliographie** — `nature_review_nisq_2024` (fabricated) → Preskill Quantum 2018, `qml_review_2026` workshop vs ACM Surveys, self-citations JCIM vol 31(7)=impossible → « in preparation », `q_cadd` p.54321→14436, `chemgraphx` xx→39, titre `value_addition` rétabli ; (x) **SM structure réorganisée** — contenu après la bibliographie déplacé avant, Table S13 + D-GRIL + Figs S8/S9 ; ChEMBL top-10 table ajoutée (tous Inactive, honnête) ; MC uncertainty refs ; M15 grid search 60 combos cohérentiset main↔SM.) — qubit coherence 8q/6q + Overfull S13 + positionnement revues** — corrections apportées au main `Paper3_Quantum_InspiredV2607.tex` : (i) **cohérence 8q/6q rétablie** — le caveat NISQ (Introduction) et les Limitations affirmaient « 8 qubits » pour le circuit canonique, or les benchmarks canoniques sont à **6 qubits** (`N_QUBITS=6` dans `p3_qks_benchmark.py:77`, `best_device(n_qubits=6)` dans `p3_hybrid_benchmark.py:110`) ; le 8q ne concerne que le **GA discriminator** (`N_QUBITS=8`, `p3_ga_discriminator.py:53`) et le **pipeline de déploiement NISQ** (`p3_nisq_deploy.py`) ; caveat reformulé « 6--8 qubits » avec ventilation, Limitations reformulé « canonical 6-qubit Phase-2 configuration » ; les 8 mentions 8q restantes (artefacts historiques 0.752/0.659, discriminator) sont exactes et inchangées ; (ii) **fix Overfull structurel 199 pt** de la table SM `SM-tab:qkernel` (S13) via `\resizebox{\textwidth}{!}{...}` (tabularx sans colonne X ne compressait pas) → 0 Overfull structurel, SM toujours 18 p. (5 autres tables laissées en tabularx : leurs débordements étaient des cellules S internes cosmétiques, pas structurels) ; (iii) **positionnement vs revues quantum** — 2 citations ajoutées : `naleczcharkiewicz2024` (BIB 25(5) : « Quantum computing in bioinformatics: a systematic review mapping », Varsovie) et `kumar2024quantumdrug` (IEEE Access 12:64491-64509 : « Recent Advances in Quantum Computing for Drug Discovery and Development ») avec phrase nuancée dans Related work ; (iv) **correction d'une mauvaise attribution dans les docs P5** : bbae391 était décrit comme « Fusion GCN + ChemBERTa » — c'est faux (revue QC-bioinfo) ; le vrai article GCN+ChemBERTa fusion est **MolPROP** (Rollins, Cheng, Metwally, J. Cheminformatics 2024, DOI 10.1186/s13321-024-00846-9) ajouté dans AGENTS.md + P5_STRATEGIC_PA90.md ; vérifié : main 18 p. / 7 365 mots (<7 500), SM 18 p., cover letter 1 p., 0 erreur / 0 réf. indéfinie / 0 Rerun, bibtex 0 warning (voir §3.14a) ; v50: **P3 manuscript TRIM + DEDUPLICATION (26→18 p.)** — main `Paper3_Quantum_InspiredV2607.tex` trimmed 26→18 pages / 7,230 mots (J Cheminformatics n'impose pas de limite stricte ; <7,500 mots validé) : 6 figures + 3 tables + 1 algorithme déplacés du main vers le SM (contenu préservé, SM 18 p.) ; **fusion `tab:benchmark`+`tab:hybrid`** en un seul float (les 2 labels préservés, lignes d'ablation fusionnées, table hybride autonome supprimée) ; **`tab:qkernel` déplacée vers le SM = `SM-tab:qkernel` S13** (le SM contenait déjà la section protocol QKS complète + `tab:sm_s4_perfold` — doublon éliminé, 5 refs main → « Supplementary Table S13 », refs SM `M-tab:qkernel` → `SM-tab:qkernel`) ; **élimination des doublons main↔SM** (sous-section Discussion « Kernel Comparison » condensée, récit des artefacts 0.752/0.840 etc. conservé dans le SM + Limitations main) ; nouveau titre « Quantum-inspired molecular representations for AI-generated African antimalarial candidates: persistent homology, tensor networks, and quantum kernels » appliqué main+SM+cover letter (1 p.) ; vérifié 0 erreur/0 réf. indéfinie (voir §3.14) ; v49: **P3 canonical benchmarks COMPLETE** — full-library hybrid + ablation + QKS re-runs terminés (jobs 12698/12699/12700/12702, 1 août 2026) : Hybrid RF AUC **0.8876 ± 0.0065** (panneau canonique n=19,836, hyperparams 6/1/30, p<0.0001 vs ECFP4) ; ablation : QK = principal contributeur (retrait QK Δ=−0.040), TFP Δ=−0.014, TNE légèrement négatif (Δ=+0.011) ; QKS **6q C3-fix** : quantum ≈ RBF à TOUTES les échelles (n=5,000 p=0.419 ns ; n=19,849 p=0.060 ns), quantum > linear (p≤0.0006) — les anciens chiffres 8q « quantum significativement pire à grande échelle » (p=0.003/0.0006) étaient des artefacts du circuit 8q sous-optimal + mismatch C3 train/test ; v48: **ChEMBL IC₅₀ audit** — IDs de cibles roadmap corrigés (les scripts utilisaient déjà les bons IDs PfDHFR-TS=CHEMBL4296323/PfCRT=CHEMBL1795182/PfATP4=CHEMBL6066156, vérifiés via l'API ChEMBL) ; robustesse `standard_relation`/`standard_units` ajoutée aux scripts `p3_chembl_validation.py` et `p3_chembl_expanded.py` (classification conservatrice pour `<`/`>`) ; re-validation indépendante des 7 matches de l'expansion — toutes confirmées (§3.13a) ; v47: **P4 data analysis SPLIT OUT** — all P4 reporting (MCTS benchmark v1–v9, Pareto front, ablations, QMC Tier 1/2 incl. the v46 verdict correction) moved to the dedicated `P4_DATA_ANALYSIS_REPORT.md`; **this report now covers P1–P3 only**. See §4 pointer and exec-summary row. [v43–v46 P4 QMC changelog collapsed to a pointer — full detail in `P4_DATA_ANALYSIS_REPORT.md` §5 (Tier 1 SCF restore + GPU v43/v44; Tier 2 VMC/DMC deep-diagnostic v45 and verdict correction v46)]; v42: `Project3_Quantum_Inspired_RepresentationsV2607_V2/` (HPC-only) is **Dr Tchapet Njafa's working version of the P3 project — intentionally kept, do not delete** (decision July 31, 2026) — ignore in grep audits; v41: `Project3_Quantum_Inspired_RepresentationsV2607_V2/` (HPC-only) is an obsolete duplicate of the canonical P3 project, **intentionally kept** (decision July 31, 2026) — ignore in grep audits; v40: top-level stale audit/strategy docs deleted locally + HPC — `GEMINI.md` (empty), `PROJECT3_BENCHMARK_AUDIT.md` (superseded), root `P3_Stategic_85PA.md` + `P3_ADVERSARIAL_AUDIT_MITIGATION.md` (duplicates; P3-dir copies canonical), root `Cover_Letter_P3.*` (duplicates; P3 manuscript copy canonical), `Nouvel audit adversériel.md` (superseded by consolidated Jul 25 audit), `BMAD_Q1_Analysis_v2.md` (pre-canonical); v39: obsolete BMAD docs deleted locally + HPC — `BMAD_STEP1_REPORT.md` (completed step-1 report), `BMAD_LOCAL_IMPL_PLAN.md` (stale local plan), `update_bmad.py` (helper script), `Project3_Quantum_Inspired_RepresentationsV2607_V2/outputs/critical-reviews/BMAD-RECONCILIATION.md` (HPC-only fix-queue superseded by v38) — **this report is the single canonical source**; v38: `BMAD_Q1_DATA_ANALYSIS_REPORT_V1.md` deleted locally and on HPC; v37: HPC-audit corrections — 5,000-molecule hybrid benchmark COMPLETED on HPC (jobs 12651→12660, state-vector QK optimization, Hybrid RF AUC 0.8423 ± 0.0076); TDA/TNE validity transpose fixed (§3.1: TDA 19,849/0, TNE 19,836/13); QKS §3.3 table regenerated from canonical v11 summary (TA 0.543, acc 0.718/0.694); unverified speedup claim removed; job-ID reconciliation (12618→12651/12660); SwissModel API token redacted)
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, pennylane 0.45.1, tensorly 0.9.0, numpy 1.26.4)
 **Coverage:** P1 Chemical Space, P2 Polypharmacology, P3 Quantum-Inspired Representations (**P4 → `P4_DATA_ANALYSIS_REPORT.md`** — standalone report since v47)
 **API Credentials:**
@@ -16,7 +16,7 @@ Three complementary projects generated and analyzed **over 85,000 unique molecul
 
 **P2 (Polypharmacology Validation)** narrows 19,913 synthesisable P1 leads to 20 high-confidence candidates through multi-parameter optimization and consensus docking across four resistance-relevant *Plasmodium* targets. All 20 candidates are single-target optimized (no beneficial polypharmacology detected by current scoring); among 810 screened seed molecules with valid SI predictions, 100% are selectively antiparasitic (SI > 10). The African Chemical Space Index (ACSI) confirms that 23.5% of top candidates retain strong chemical identity with the African NP seed space (ACSI > 0.70). Tartarus external validation (19,913 molecules, 3 targets) reveals that binding affinity scores are orthogonal to drug-likeness MPO scores (Spearman ρ = 0.013, p = 0.091), confirming that docking provides independent information not captured by MPO. Four solvated protein–ligand complexes (PfDHFR, PfATP4, PfClpP, PfCRT) were built with CHARMM36-jul2022/GAFF2 force fields and EM/NVT/NPT equilibration was attempted; production MD trajectories exist for all four systems. Re-analysis of the production trajectories with PBC-unwrapped (`nojump`) coordinates shows that **only two of the four systems maintain a bound ligand**: **PfCRT (214)** and **PfATP4 (438)** (minimum protein–ligand distances 3.19 Å and 2.25 Å, 78 and 178 contacts, 23 and 48 H-bonds, respectively). The other two systems, **PfClpP (164)** and **PfDHFR (201)**, have stable protein conformations (backbone RMSD 1.31 Å and 3.05 Å) but the ligand is completely unbound (minimum distances 67.4 Å and 78.2 Å, zero contacts), indicating either incorrect initial placement or rapid dissociation during equilibration. These results demonstrate that MD is a mandatory post-docking filter, and only the PfCRT and PfATP4 simulations can support binding-mode claims.
 
-**P3 (Quantum-Inspired Representations)** introduces three novel molecular descriptors—Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)—and benchmarks them against classical fingerprints on the same library. A corrected classical-only 5-fold CV on the canonical 19,836-molecule panel (Random Forest, 200 trees) gives ECFP4 AUC 0.9475 ± 0.0045, FCFP4 0.9183, AP 0.9399, BPF 0.9389, MACCS 0.9045, PHCO 0.8959 (PHCO bug fixed from the degenerate 0.500), TFP 0.8759, and TNE 0.7219. A 5,000-molecule pre-phase (job 12651) reveals that **TFP is sample-hungry**: its AUC drops from 0.876 (n=19,836) to 0.765 (n=5,000), a −0.111 decline, while ECFP4 drops only −0.008. The 5,000-molecule hybrid benchmark **completed on the HPC** (state-vector QK optimization, jobs 12651→12660): **Hybrid RF AUC 0.8423 ± 0.0076**, with ECFP4 0.940, TFP 0.765, TNE 0.660 (RF). The QKS benchmark on 500 molecules (sub-sampled from the 10,000-molecule design target) reports Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns). The difference is not statistically significant. The quantum-inspired methods serve as complementary topological frameworks rather than outperforming classical methods on simple predictive metrics.
+**P3 (Quantum-Inspired Representations)** introduces three novel molecular descriptors—Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)—and benchmarks them against classical fingerprints on the same library. A corrected classical-only 5-fold CV on the canonical 19,836-molecule panel (Random Forest, 200 trees) gives ECFP4 AUC 0.9475 ± 0.0045, FCFP4 0.9183, AP 0.9399, BPF 0.9389, MACCS 0.9045, PHCO 0.8959 (PHCO bug fixed from the degenerate 0.500), TFP 0.8759, and TNE 0.7219. A 5,000-molecule pre-phase (job 12651) reveals that **TFP is sample-hungry**: its AUC drops from 0.876 (n=19,836) to 0.765 (n=5,000), a −0.111 decline, while ECFP4 drops only −0.008. The **canonical full-library hybrid benchmark COMPLETED Aug 1, 2026** (job 12699, canonical panel n=19,836, winning hyperparams 6/1/30): **Hybrid RF AUC 0.8876 ± 0.0065**, significantly below ECFP4 (0.9475, t=−29.9, p<0.0001) but well above TFP/TNE alone. Ablation (job 12699): **QK is the principal hybrid contributor** (−QK: 0.8876→0.8472, Δ=−0.040), TFP Δ=−0.014, TNE mildly negative (Δ=+0.011). **QKS re-runs (6-qubit circuit, C3 fix) show quantum ≈ RBF at ALL sample sizes**: n=500 (8q, v11) Quantum 0.751 vs RBF 0.701 (p=0.088, ns); n=5,000 Quantum 0.8199 vs RBF 0.8260 (p=0.419, ns, job 12702); n=19,849 Quantum 0.8230 vs RBF 0.8292 (p=0.060, ns, job 12700); quantum > linear kernel at scale (p≤0.0006). The quantum kernel offers **no significant advantage nor significant disadvantage** vs RBF on this task. The quantum-inspired methods serve as complementary topological frameworks rather than outperforming classical methods on simple predictive metrics.
 
 An expanded cross-paper analysis (n = 77 P2 leads) further links H₁ topological count to resistance resilience (Spearman ρ = 0.312, p = 0.0057), suggesting TFP captures clinically relevant structural information that ECFP4 does not.
 
@@ -26,8 +26,9 @@ An expanded cross-paper analysis (n = 77 P2 leads) further links H₁ topologica
 | P2 — Polypharmacology | 19,913 leads → 20 top candidates | **100% single-target optimized; 100% of 810 screened seeds with valid SI predictions had SI > 10** | Completed |
 | P3 — TDA/TNE Representations | 19,849 molecules | **100% TDA validity (19,849/19,849); TNE 99.93% valid (19,836/19,849); 15.6× TNE compression** | Completed |
 | P3 — Classical Benchmark (corrected, canonical panel) | 19,836 × 8 descriptors × 5CV (RF) | **ECFP4 AUC 0.9475; PHCO bug fixed (0.500 → 0.896); TFP 0.8759, TNE 0.7219** | Canonical (Aug 1, 2026, job 12698) |
-| P3 — Hybrid Benchmark (n=5000) | 5,000 × 10 descriptors × 5CV (RF+SVM) | **Hybrid AUC 0.8423**; ECFP4 0.940; TFP 0.765; TNE 0.660 — **Hybrid benchmark completed using state-vector QK optimization (jobs 12651→12660)** | ✅ Completed (July 31) |
-| P3 — QKS Benchmark | 500 mol (sub-sampled) | **Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns)**; earlier 0.936/0.105 claim removed as unsupported | Completed (July 2026) |
+| P3 — Hybrid Benchmark (canonical, full-library) | 19,836 × 10 descriptors × 5CV (RF+SVM) | **Hybrid RF AUC 0.8876 ± 0.0065** (job 12699, hyperparams 6/1/30); ECFP4 0.9475; ablation: QK principal contributeur (Δ=−0.040) | ✅ Completed (Aug 1, 2026) |
+| P3 — Hybrid Benchmark (n=5000) | 5,000 × 10 descriptors × 5CV (RF+SVM) | **Hybrid AUC 0.8423**; ECFP4 0.940; TFP 0.765; TNE 0.660 — pre-phase (jobs 12651→12660) | ✅ Completed (July 31) |
+| P3 — QKS Benchmark (6q, C3-fix) | 19,849 + 5,000 + 500 mol | **Quantum ≈ RBF at all scales**: n=19,849 0.8230 vs 0.8292 (p=0.060, ns); n=5,000 0.8199 vs 0.8260 (p=0.419, ns); n=500 0.751 vs 0.701 (p=0.088, ns); quantum > linear (p≤0.0006) | ✅ Completed (Aug 1, 2026, jobs 12700/12702) |
 | P3 — GA Discriminator Benchmark | 50–500 gen. × 200 seeds | **Tanimoto AUC=1.0 (trivial); QK AUC≈0.43–0.51 (near-random)** | Completed |
 | P3 — D-GRIL Build | C++ extension, PyTorch 2.0.1, Boost, CUDA 11.7 | **mpml.so compiled; linker blocked (libc10.so ABI). Differentiable 2-parameter PH paradigm** | ⚠️ Compiled (mpml.so), linker blocked (libc10.so ABI). Differentiable 2-parameter PH paradigm documented |
 | P3 — ChEMBL Expanded Validation | 77 compounds × 3 targets (231 pairs) | **7/231 matches (3.0%); 3 active PfATP4; no PfDHFR** | ✅ Completed (July 25) |
@@ -51,7 +52,7 @@ An expanded cross-paper analysis (n = 77 P2 leads) further links H₁ topologica
 |---------|:-----:|:----:|-------------|
 | P1 — Chemical Space | 175 | 72 MB | ChEMBL enrichment, full-cluster rescoring (1,815 mols), MCMC, STONED leap |
 | P2 — MD Validation | 493 | 459 MB | RRS classification, MM-GBSA, mutant docking, cross-metric correlations |
-| P3 — Quantum-Inspired | 147 | 37 MB | Classical benchmark (corrected, 19,849 mols), hybrid (n=5,000) completed, SOTA topological, ChEMBL validation, H₁-RRS |
+| P3 — Quantum-Inspired | 147 | 37 MB | Classical + full canonical hybrid (n=19,836) + QKS (n=19,849/5,000) benchmarks completed, SOTA topological, ChEMBL validation, H₁-RRS |
 | P4 — Pareto MCTS | 43 | 1.5 MB | Four-method benchmark, Pareto front, hyperparameter search |
 
 Excluded: GROMACS trajectories (multi-GB), docking raw outputs (PDBQT), SLURM logs, IBM tokens.
@@ -777,17 +778,17 @@ Comprehensive MD analysis was performed locally on the NPT trajectories using `M
 | Descriptor | Mean ± Std | Min | Max |
 |-----------|--------|-----|-----|
 | **H₀ entropy** | 3.58 ± 0.20 | 2.29 | 4.19 |
-| **H₀ count** | 38.05 ± 7.35 | 11 | 69 |
-| **H₀ max persistence** | 2.72 ± 0.67 | 1.99 | 5.95 |
-| **H₀ mean persistence** | 1.61 ± 0.06 | 1.44 | 2.03 |
-| **H₁ entropy** | 1.64 ± 0.33 | 0.00 | 2.72 |
+| **H₀ count** | 38.04 ± 7.35 | 11 | 69 |
+| **H₀ max persistence** | 2.72 ± 0.67 | 1.48 | 5.95 |
+| **H₀ mean persistence** | 1.61 ± 0.06 | 1.10 | 2.03 |
+| **H₁ entropy** | 1.64 ± 0.34 | 0.00 | 2.72 |
 | **H₁ count** | 3.61 ± 1.34 | 1 | 10 |
 | **H₁ max persistence** | 1.39 ± 0.06 | 0.62 | 2.71 |
 | **H₁ mean persistence** | 0.61 ± 0.13 | 0.24 | 1.40 |
 | **H₂ entropy** | 0.70 ± 0.35 | 0.00 | 1.96 |
-| **H₂ count** | 0.03 ± 0.17 | 0 | 2 |
-| **H₂ max persistence** | 0.47 ± 0.05 | 0.00 | 1.05 |
-| **H₂ mean persistence** | 0.38 ± 0.09 | 0.00 | 0.73 |
+| **H₂ count** | 0.03 ± 0.18 | 0 | 4 |
+| **H₂ max persistence** | 0.47 ± 0.05 | 0.00 | 1.24 |
+| **H₂ mean persistence** | 0.38 ± 0.09 | 0.00 | 1.05 |
 
 **Key insights:**
 - **H₂ is rare** — only ~3% of molecules have a persistent 2-cycle (H₂ count mean = 0.03), consistent with molecular graphs being essentially 1-dimensional topological spaces
@@ -821,17 +822,17 @@ The 15.6× compression (padded, Nmax=100) with 0.113 reconstruction error demons
 
 **Interpretation (July 2026 Ground Truth):** The corrected QKS benchmark (v11, gamma-tuned RBF) on a 500-molecule representative subsample reports Quantum AUC 0.751 ± 0.033 vs RBF AUC 0.701 ± 0.067 (p=0.088, ns). The quantum and RBF kernels are statistically indistinguishable, indicating no significant quantum advantage for this molecular activity prediction task. Earlier claims of QK AUC 0.936 vs RBF 0.105 relied on an untuned RBF gamma and have been removed as unsupported.
 
-**Scaling QKS — UPDATED (July 31–Aug 1, 2026):** Full-library and intermediate QKS benchmarks were computed with the same protocol (5-fold CV, IQPEmbedding 8q 1rep, SVM, gamma-tuned RBF) at three sample sizes. The scale dependence is now the dominant empirical finding for QKS.
+**Scaling QKS — UPDATED (Aug 1, 2026):** Full-library and intermediate QKS benchmarks were computed with 5-fold CV, SVM, gamma-tuned RBF. The n=500 row is the original v11 8q run; the n=5,000 and n=19,849 rows are the **canonical 6-qubit C3-fixed re-runs** (jobs 12702 and 12700) on the shared canonical panel (see Appendix K).
 
 | Sample | Quantum AUC | RBF AUC | Linear AUC | Δ (Q−RBF) | Paired p |
 |:------:|:-----------:|:-------:|:----------:|:---------:|:--------:|
-| n=500 | 0.751 ± 0.033 | 0.701 ± 0.067 | 0.721 ± 0.028 | **+0.050** | 0.088 (ns) |
-| n=5,000 | 0.752 ± 0.024 | 0.840 ± 0.009 | 0.743 ± 0.020 | **−0.088** | 0.0030 (sig) |
-| n=19,849 | 0.659 ± 0.036 | 0.825 ± 0.002 | 0.540 ± 0.039 | **−0.166** | 0.0006 (sig) |
+| n=500 (8q, v11) | 0.751 ± 0.033 | 0.701 ± 0.067 | 0.721 ± 0.028 | **+0.050** | 0.088 (ns) |
+| n=5,000 (6q, C3-fix, job 12702) | 0.8199 ± 0.0229 | 0.8260 ± 0.0143 | 0.5173 ± 0.0519 | **−0.006** | 0.419 (ns) |
+| n=19,849 (6q, C3-fix, job 12700) | 0.8230 ± 0.0081 | 0.8292 ± 0.0066 | 0.5365 ± 0.0729 | **−0.006** | 0.060 (ns) |
 
 Sources: `results/p3_qks_summary_n500.txt`, `results/p3_qks_summary_n5000.txt`, `results/p3_qks_summary_n19849.txt`.
 
-**Key finding:** The small-sample "quantum ≈ RBF" result (n=500, p=0.088) **does not scale**. At n=5,000 and n=19,849, the quantum kernel is **significantly worse than RBF** (ΔAUC −0.088, p=0.003; −0.166, p=0.0006). The apparent near-tie at n=500 was driven by high RBF variance at small n (σ=0.067) rather than a genuine parity. This is consistent with the GA-discriminator negative result (§3.6) and the corrected QKS polypharmacology result (QKS AUC 0.747 ≈ RBF 0.737, §3.8.2). **Manuscript implication:** QKS must be reported as a computational-framework contribution (proof-of-concept, NISQ-era pipeline), NOT as a competitive classifier at scale. Any manuscript text still implying parity at n≥5,000 must be revised to the scaling table above.
+**Key finding (Aug 1, 2026, canonical 6q re-runs):** With the Phase-2 winning circuit (6 qubits) and the C3 fix (single `StandardScaler` for train AND test), the quantum kernel is **statistically indistinguishable from RBF at ALL sample sizes** (n=5,000 p=0.419; n=19,849 p=0.060; both ns) and **significantly better than the linear kernel** at scale (p≤0.0006). The earlier 8-qubit runs (n=5,000 Quantum 0.752 vs RBF 0.840, p=0.003; n=19,849 0.659 vs 0.825, p=0.0006) reported a significant quantum disadvantage that is **NOT reproduced** with the canonical 6q circuit + C3 fix (ΔAUC −0.006 at both scales). Those earlier values were artifacts of the suboptimal 8-qubit circuit and the C3 train/test scaling mismatch (see Appendix K). **Manuscript implication:** QKS must be reported as a computational-framework contribution (proof-of-concept, NISQ-era pipeline) showing **parity with RBF at scale** — no quantum advantage, but no significant disadvantage either. The previous "quantum significantly worse at n≥5,000" text in the manuscript must be revised to this table. Consistent with the corrected QKS polypharmacology result (QKS AUC 0.747 ≈ RBF 0.737, §3.8.2).
 
 *Note: Incorporates error mitigation and MultiBasisWavefunctionQCBM theoretical concepts from quantum-generative-models.*
 
@@ -856,9 +857,20 @@ A classical-only benchmark was rerun on the **canonical P3 panel** (BMAD v51 / A
 
 **Note (Aug 1, 2026, canonical panel):** these values supersede the July 29 table (ECFP4 0.949 etc.), which was computed on a non-canonical 19,849-molecule subset. The differences are small (≤0.003) and arise from deduplication (112 duplicate SMILES) plus the finite-TNE constraint (13 molecules). All descriptor comparisons are now validly paired within one shared panel.
 
-**Per-fold data correction (July 29, 2026):** The Supplementary Material per-fold activity table (`tab:sm_s4_perfold`) originally contained hard-coded per-fold values in `scripts/p3_effect_sizes.py`. Inspection revealed that the TNE per-fold values were identical to the TFP values (both `[0.600, 0.800, 0.500, 0.667, 0.583]`), an obvious copy-paste artifact. The corrected `results/p3_classical_benchmark_19849.csv` (produced by `p3_classical_benchmark_19849.py`) contains the genuine full-library per-fold values, which differ between TFP and TNE. The supplementary material and `p3_effect_sizes.py` were updated to source per-fold values from this canonical CSV rather than from the hard-coded list. The corrected per-fold values are now used for ECFP4, FCFP4, AP, BPF, MACCS, PHCO, TFP and TNE; hybrid/QKS rows remain provisional pending the full hybrid rerun.
+**Per-fold data correction (July 29, 2026):** The Supplementary Material per-fold activity table (`tab:sm_s4_perfold`) originally contained hard-coded per-fold values in `scripts/p3_effect_sizes.py`. Inspection revealed that the TNE per-fold values were identical to the TFP values (both `[0.600, 0.800, 0.500, 0.667, 0.583]`), an obvious copy-paste artifact. The corrected `results/p3_classical_benchmark_19849.csv` (produced by `p3_classical_benchmark_19849.py`) contains the genuine full-library per-fold values, which differ between TFP and TNE. The supplementary material and `p3_effect_sizes.py` were updated to source per-fold values from this canonical CSV rather than from the hard-coded list. The corrected per-fold values are now used for ECFP4, FCFP4, AP, BPF, MACCS, PHCO, TFP and TNE; the hybrid row is now **final** (job 12699, Hybrid RF AUC 0.8876 ± 0.0065) and the QKS rows are **final** (jobs 12700/12702, 6q C3-fix, quantum ≈ RBF).
 
-**Previous hybrid benchmark:** The earlier reported full hybrid benchmark (Hybrid AUC 0.842 vs ECFP4 0.868, p=0.111) is **not reproducible** from the current code or data files. The underlying run file is missing, and rerunning the classical portion with the current corrected script yields ECFP4 ≈ 0.949 rather than 0.868. A fresh n=5,000 hybrid rerun **completed on July 31** (state-vector QK optimization): **Hybrid RF AUC 0.8423 ± 0.0076** (ECFP4 0.9403). The full 19,849-molecule hybrid rerun remains pending; until it completes, the corrected classical-only table above is the canonical 19,849 benchmark. Manuscript updates must not use the old 0.868/0.842 hybrid numbers as full-library results until the 19,849 rerun confirms or supersedes them.
+**Previous hybrid benchmark:** The earlier reported full hybrid benchmark (Hybrid AUC 0.842 vs ECFP4 0.868, p=0.111) is **not reproducible** from the current code or data files. The underlying run file is missing, and rerunning the classical portion with the current corrected script yields ECFP4 ≈ 0.949 rather than 0.868. A fresh n=5,000 hybrid rerun **completed on July 31** (state-vector QK optimization): **Hybrid RF AUC 0.8423 ± 0.0076** (ECFP4 0.9403). The **canonical full-library hybrid rerun COMPLETED Aug 1, 2026 (job 12699, canonical panel n=19,836, hyperparams 6/1/30): Hybrid RF AUC 0.8876 ± 0.0065** (ECFP4 0.9475; t=−29.9, p<0.0001), with ablation results — QK is the principal hybrid contributor (see below). These are now the canonical full-library hybrid numbers; the old 0.868/0.842 hybrid values must not be used as full-library results.
+
+**Ablation (canonical panel n=19,836, job 12699, RF, mean 5-fold AUC; raw: `results/p3_ablation.csv`):**
+
+| Hybrid variant | Mean AUC | Δ vs full Hybrid (0.8876) | Contribution |
+|:---------------|:--------:|:-------------------------:|:-------------|
+| Full Hybrid (TFP+TNE+QK) | **0.8876 ± 0.0065** | — | — |
+| Hybrid − QK (TFP+TNE) | 0.8472 | **−0.0404** | QK = principal contributeur |
+| Hybrid − TFP (TNE+QK) | 0.8736 | −0.0140 | TFP positif modéré |
+| Hybrid − TNE (TFP+QK) | 0.8990 | +0.0114 | TNE légèrement négatif |
+
+**Key finding:** The QKS component is the single largest positive contributor to the Hybrid descriptor at full library scale (removing it costs −0.040 AUC); TFP adds a modest +0.014; TNE marginally reduces performance (+0.011 gain when removed).
 
 **Literature context and mechanistic explanation:** The dominance of ECFP4 is consistent with established structure–activity modelling: ECFP4 encodes local atom environments (radius 2) that directly correlate with binding site interactions, while TDA captures global topology and TNE captures tensor-mode correlations. For antimalarial activity prediction, local substructure information is more discriminative than global topology. This is consistent with the well-established principle that molecular recognition is dominated by local pharmacophoric features rather than global shape.
 
@@ -888,6 +900,8 @@ A classical-only benchmark was rerun on the **canonical P3 panel** (BMAD v51 / A
 5. **The hybrid QK phase completed on July 31 (state-vector QK optimization): Hybrid RF AUC 0.8423 ± 0.0076**, exceeding every standalone quantum-inspired descriptor and closing part of the gap to ECFP4 (0.9403) — confirming that per-fold QK features add complementary discriminative signal to TFP/TNE at n=5,000.
 
 **Implication for manuscript:** The n=5,000 classical baseline establishes that TFP and TNE are significantly weaker than classical fingerprints at moderate sample sizes. The completed hybrid phase (Hybrid RF AUC 0.8423 ± 0.0076) shows QK features partially compensate this deficit. The quantum-inspired descriptors should be positioned as complementary topological frameworks (capturing orthogonal structural information, e.g., for H₁-RRS cross-paper analysis) rather than competitive alternatives to ECFP4.
+
+**Canonical full-library note (Aug 1, 2026):** The n=5,000 hybrid (0.8423) is now a pre-phase datapoint; the **canonical full-library run (job 12699, n=19,836) gives Hybrid RF AUC 0.8876 ± 0.0065** — see §3.4. Both confirm the same qualitative picture: per-fold QK features partially close the gap between quantum-inspired descriptors and ECFP4.
 
 ### 3.5 Quantum Parameter Optimization — Results (July 19, 2026)
 
@@ -928,7 +942,7 @@ A classical-only benchmark was rerun on the **canonical P3 panel** (BMAD v51 / A
 |--------|--------|-----------------|--------|--------|
 | Phase 1 Grid search (Job 7962) | 200 | 0.8534 ± 0.049 | bd=6, nr=1, nk=30 | ✅ Complété |
 | Phase 2 Re-benchmark (Jobs 12340–42) | 5,000 | 0.8283 ± 0.0371 | bd=6, nr=1, nk=30 | ✅ **Confirmé gagnant** |
-| Phase 3 Full hybrid benchmark | 19,849 | — (rerun pending) | bd=6→n_qubits=6, nr=1, nk=30 (winning combo) | 🔄 En cours (job 12696) |
+| Phase 3 Full hybrid benchmark | 19,836 (canonical panel) | **0.8876 ± 0.0065** | bd=6→n_qubits=6, nr=1, nk=30 (winning combo) | ✅ Complété (job 12699, 1 août 2026) |
 
 > ⚠️ **Note:** The n=5,000 evaluation confirms Combo 1 (`bd=6, nr=1, nk=30`) as the optimal hyperparameter configuration across both small ($n=200$) and large ($n=5,000$) screening regimes, preserving high classification performance (AUC = 0.8283) with minimal variance ($\sigma = 0.0371$).
 
@@ -1059,7 +1073,7 @@ The completion of the Tartarus full run (19,913 mol × 3 targets, July 7, 2026) 
 >
 > **Mechanism:** `H1_count` correlates strongly with MW (Spearman ρ=0.718, p=1.9e-13) and `RRS` correlates with MW (ρ=0.454, p=3.4e-5). Controlling for MW alone collapses the H1-RRS correlation to ≈0 (p=0.85). **The apparent H1-count → resistance-resilience signal is a size confound, not a topological effect.** Only Fsp3 (orthogonal to size) leaves the correlation intact (ρ_partial=0.331, p=0.004), but this is the one confounder not driving the headline.
 >
-> **Manuscript implication — MANDATORY:** The H1-RRS claim (main §3.x/§4.x, abstract if present) must be reframed: (1) the whole-sample ρ=0.312 is reported WITH the confounding caveat; (2) a sentence must state that after controlling for molecular weight the association vanishes (ρ_partial ≈ 0, p > 0.7), indicating the effect is size-mediated; (3) the H1 count should be positioned as a *proxy for molecular size* rather than an independent topological predictor of clinical resilience. This directly addresses the earlier "overclaim" criticism (project-tracking pass A-C1/B).
+> **Manuscript implication — MANDATORY:** The H1-RRS claim (main §3.x/§4.x, abstract if present) must be reframed: (1) the whole-sample ρ=0.312 is reported WITH the confounding caveat; (2) a sentence must state that after controlling for molecular weight the association vanishes (ρ_partial ≈ 0, p > 0.7), indicating the effect is size-mediated; (3) the H1 count should be positioned as a *proxy for molecular size* rather than an independent topological predictor of clinical resilience. This directly addresses the earlier "overclaim" criticism (pass A-C1/B de l'audit adverse — `P3_ADVERSARIAL_AUDIT_MITIGATION.md` ; le fichier `project-tracking.md` a été supprimé le 02/08/2026 comme obsolète).
 
 ---
 
@@ -1137,22 +1151,54 @@ P3 ChEMBL experimental validation completed: queried top-10 candidates against 3
 
 Note : les deux matches PfATP4 à 400 nM portent la relation `~` (approximativement) dans ChEMBL ; traités comme exacts dans le tableau SM (≈0.40 µM). Aucune valeur relationnelle `<`/`>` parmi les 7 matches, donc la classification publiée est inchangée.
 
+### 3.14 Manuscript Trim & Deduplication (Aug 2, 2026) — COMPLETED
+
+**Contexte.** Le main faisait 26 pages (~9 500 mots) — au-delà de la cible 14–15 p. du roadmap (J Cheminformatics n'impose pas de limite stricte ; <7 500 mots validé par les auteurs). Trim exécuté du 02/08/2026, vérifié 0 erreur / 0 réf. indéfinie sur main + SM + cover letter (état final : main 18 p. / 7 230 mots, SM 18 p., cover letter 1 p.).
+
+**1. Déplacement main → SM (contenu préservé).** 6 figures (`fig:persistence`, `fig:tensor`, `fig:ga_discriminator`, `fig:domain`, `fig:tne_parity`, `fig:tda_promiscuity`) + 3 tables (`tab:tda_stats`, `tab:clustering`, `tab:ga_discriminator`) + 1 algorithme (`alg:qkernel`) déjà dupliqués dans le SM → supprimés du main, refs main mises à jour vers « Supplementary Figure/Table Sx » (numérotation SM : figures S1–S9, tables S1–S13). 2 figures manquantes ajoutées au SM : `SM-fig:tensor` = S8, `SM-fig:tne_parity` = S9.
+
+**2. Fusion `tab:benchmark` + `tab:hybrid`.** Les deux tables partageaient 6 lignes identiques (ECFP4, MACCS, TFP, TNE, QKS, Hybrid). Fusionnées en un seul float : caption couvre benchmark + ablation, lignes d'ablation (Hybrid−TFP/−TNE/−QKS) ajoutées, `\label{tab:hybrid}` préservé sur le même float (les deux labels → Table 1), table hybride autonome supprimée.
+
+**3. `tab:qkernel` → SM S13.** Le SM contenait déjà la section protocol QKS complète (`sec:qks_benchmark`) + `tab:sm_s4_perfold` (S1) — la table du main était un doublon. Déplacée vers le SM comme `SM-tab:qkernel` = **S13** (confirmé via `.aux`). Main : 5 refs `\cref{tab:qkernel}` → « Supplementary Table S13 » (footnote benchmark, section kernel comparison, section discriminator, Discussion). SM : 3 refs `\cref{M-tab:qkernel}` → `\cref{SM-tab:qkernel}`.
+
+**4. Élimination des doublons main↔SM (prose).** La sous-section Discussion « Kernel Comparison: Parity Between Quantum and Classical Kernels at Scale » reprenait presque verbatim la section SM « Mechanistic explanation » (p-values 0.419/0.060, artefacts 0.752/0.840, 0.659/0.825, QK 0.936 vs RBF 0.105, pilote n=500) → condensée à ~120 mots gardant les claims clés (QK≈RBF p=0.419/0.060, QK>linear p≤0.0006, hybrid 0.888 vs single-scalar 0.691, ablation −0.040) + pointeur « full narrative in the Supplementary Material » (les artefacts chiffrés restent dans le SM et dans la section Limitations du main). Autres condensations : Introduction, Methods (Tucker, hybrid framework), Results, Discussion (scaffold paradox, TNE, When-Quantum-Adds-Value, RRS, Limitations), Conclusion — toutes les claims chiffrées préservées (32 occurrences de valeurs clés vérifiées par grep).
+
+**5. Titre harmonisé.** Nouveau titre (choix des auteurs) : « Quantum-inspired molecular representations for AI-generated African antimalarial candidates: persistent homology, tensor networks, and quantum kernels » — appliqué main + SM + cover letter (1 p., fit journal J Cheminformatics renforcé). Keywords enrichis (« quantum kernel methods »).
+
+**Vérification finale post-trim v50 (02/08/2026) :** main **18 p. / 7 230 mots**, SM **18 p.**, cover letter **1 p.** — tous 0 erreur / 0 réf. indéfinie (compilation séquentielle main→SM). 2 Overfull hbox négligeables (3.8 pt). Ancien titre conservé uniquement dans `outputs/critical-reviews/*.md` (notes d'audit historiques, intentionnel). *Note : le compte de mots passe ensuite à 7 365 dans §3.14a (v3.2) — l'écart +135 mots provient des 2 nouvelles citations (revues quantum), de la reformulation 8q/6q (caveat NISQ + Limitations) et de la passe de relecture.*
+
+### 3.14a Final Consistency Pass — Qubit 8q/6q + Overfull S13 + Positioning (Aug 2, 2026) — COMPLETED
+
+**Contexte.** Passe finale de cohérence après le trim (v50) et la relecture complète. Trois corrections documentées ici, toutes vérifiées par compilation complète.
+
+**1. Cohérence 8q/6q (claims manuscrit vs vérité terrain scripts).** L'audit adverse a relevé que le caveat NISQ (Introduction) et les Limitations affirmaient « the quantum kernel … at 8 qubits » / « with 8 qubits » pour le circuit évalué — **inexact** : les benchmarks canoniques (jobs 12700/12702 QKS, 12699 hybride) utilisent le circuit **6-qubit** Phase-2 (`N_QUBITS = 6`, `p3_qks_benchmark.py:77` ; `best_device(n_qubits=6)`, `p3_hybrid_benchmark.py:110`). Le 8q n'apparaît que dans le **GA discriminator** (`N_QUBITS = 8`, `p3_ga_discriminator.py:53`) et le **pipeline NISQ** (`p3_nisq_deploy.py`, 8 qubits pour hardware réel).
+
+**Corrections appliquées :**
+- Caveat NISQ (Intro) : « …at 6--8 qubits: the canonical activity-prediction and hybrid benchmarks used the 6-qubit Phase-2 winning circuit, while the applicability-domain discriminator benchmark and the NISQ deployment pipeline used 8 qubits. »
+- Limitations : « The quantum kernel circuit (canonical 6-qubit Phase-2 configuration) was evaluated on a classical simulator; … »
+- **8 mentions 8q restantes vérifiées exactes et inchangées** : artefacts historiques (0.752/0.840 p=0.003 ; 0.659/0.825 p=0.0006 — cf. §3.3, Appendix K : artefacts circuit 8q sous-optimal + mismatch C3) et benchmark discriminator (8q légitime). L'abstract et la cover letter ne mentionnent aucun nombre de qubits.
+
+**2. Fix Overfull structurel 199 pt — table SM S13 (`SM-tab:qkernel`).** La table était un `tabularx` à 6 colonnes **sans aucune colonne X** → aucune compression possible → débordement structurel de **199.22 pt** (« in alignment », ligne 697). Fix : enveloppée dans `\resizebox{\textwidth}{!}{...}` et convertie en `tabular` simple (le seul `\resizebox` du SM). Vérifié : **0 Overfull structurel** (« in alignment ») restant ; pagination SM inchangée **18 p.** ⚠️ *Leçon* : 5 autres tables ont d'abord été enveloppées en `\resizebox`, ce qui a fait passer le SM de 18 → 19 p. (régression) — leurs débordements étaient des **cellules S internes** cosmétiques (« detected at line », pas « in alignment ») → revert appliqué, tables restées en `tabularx` d'origine. Les Overfull résiduels sont des paragraphes (URLs/`\texttt` de noms de fichiers, 42/34/22 pt) et des cellules S (35 pt « pairs/s ») — cosmétiques, pré-existants, non structurels.
+
+**3. Positionnement vs revues quantum + correction attribution P5.** Deux citations ajoutées dans Related work : `naleczcharkiewicz2024` (« Quantum computing in bioinformatics: a systematic review mapping », Briefings in Bioinformatics 25(5), 2024 — **revue**, Varsovie) et `kumar2024quantumdrug` (Kumar et al., « Recent Advances in Quantum Computing for Drug Discovery and Development », IEEE Access 12:64491-64509, 2024 — **revue**). Phrase nuancée (pas de sur-attribution) : ces revues « highlight the limitations of current near-term quantum methods and the need for empirical evaluation on real pharmaceutical datasets » — notre benchmark ouvert y « directly contributes ». **Correction d'attribution dans les docs P5** : `bbae391` était décrit comme « Fusion GCN + ChemBERTa » (faux — c'est une revue QC-bioinfo) ; le vrai article GCN+ChemBERTa fusion est **MolPROP** (Rollins, Cheng, Metwally, J. Cheminformatics 16:56, 2024, DOI 10.1186/s13321-024-00846-9) — ajouté comme ligne 1b dans AGENTS.md + P5_STRATEGIC_PA90.md.
+
+**Vérification finale (02/08/2026, après v3.2/§3.14a) :** main **18 p. / 7 365 mots** (< 7 500 ✓), SM **18 p.**, cover letter **1 p.** — tous **0 erreur / 0 réf. indéfinie / 0 Rerun** (compilation complète ×2 + bibtex + ×2) ; bibtex **0 warning** (2 nouvelles entrées résolues dans le .bbl) ; **0 Overfull structurel** ; 0 occurrence résiduelle de la mauvaise attribution bbae391. Commit `6efb80e39` (poussé sur `data-results`).
+
 # 3.11 Computational Scalability — **NEW (July 23, 2026)**
 
-**Data source:** `Project3.../results/p3_scalability_results.csv` (138 bytes)
+**Data source:** `Project3.../results/p3_tda_summary.txt`, `p3_tne_summary.txt`, `p3_qks_benchmark_n19849.csv` (canonical runtimes).
 
-**Method:** Wall-clock time and throughput measured on a 40-molecule subset (820 pairwise comparisons) of the TDA pipeline.
+**Measured full-library runtimes (canonical, not extrapolated):**
 
-| Metric | Value |
-|--------|-------|
-| Molecules processed | 40 |
-| Pairwise comparisons | 820 |
-| Total wall-clock time | 6.41 s |
-| Throughput | 128.0 pairs/s |
+| Pipeline | Wall time | Throughput | Scaling |
+|----------|-----------|------------|---------|
+| TDA (persistent homology, 19,849 mol) | **6.4 min (384 s)** | 51.7 mol/s | Linear |
+| TNE (Tucker decomposition, 19,849 mol) | **8.1 min (488 s, 4 workers)** | 40.7 mol/s | Linear |
+| QK kernel matrix (per fold, n=19,849) | **~817 s/fold (32 workers)** | state-vector | O(N²) |
 
-**Extrapolation:** Linear scaling predicts ~6.4 min for the full 19,849-molecule library, consistent with the reported full-library runtime (§3.1). The TDA pipeline scales linearly with library size. The QKS component exhibits O(N^2) scaling and is restricted to lead optimisation on sets of ≤ 10,000 compounds.
+> ⚠️ **Correction (02 Aug 2026):** An earlier `p3_scalability_results.csv` reported "820 pairwise comparisons for 40 molecules" (mathematically C(41,2), not C(40,2)=780) and a linear extrapolation to "~6.4 min" that was not reproducible from the pair-count; this superseded sub-result is no longer used. The canonical TDA runtime is 6.4 min and TNE 488 s per the pipeline summary files. The QK kernel is O(N²) and restricted to lead optimisation on sets of ≤ 10,000 compounds.
 
-**Manuscript integration:** SM Section 7, Supplementary Table (tab:scalability). Main manuscript §4.6 already reports the full-library runtime; this section provides the per-subset benchmark data.
+**Manuscript integration:** SM Section 7, Supplementary Table (tab:scalability). Main manuscript §4.6 reports the same full-library runtimes.
 
 ---
 
@@ -1197,8 +1243,8 @@ Three observations that appeared contradictory are now explained:
 4. **Selectivity:** 100% of 810 screened seed molecules with valid SI predictions are selectively antiparasitic (SI > 10) (P1)
 5. **TDA efficiency:** 19,849 molecules processed in 6.4 min with 100% validity (P3); TNE 19,836 valid (99.93%)
 6. **TNE compression:** 15.6× compression at 0.1130 reconstruction error (P3)
-7. **Quantum Kernel:** QKS scaling (Aug 1, 2026): n=500 Quantum 0.751 ≈ RBF 0.701 (p=0.088, ns) but **n=5,000 Quantum 0.752 < RBF 0.840 (p=0.003) and n=19,849 Quantum 0.659 < RBF 0.825 (p=0.0006)** — quantum kernel significantly UNDERPERFORMS RBF at scale; no quantum advantage (P3)
-8. **Classical benchmark (corrected):** ECFP4 AUC 0.949 on 19,849 molecules; PHCO bug fixed (0.500 → 0.897). **n=5,000 hybrid completed (July 31): ECFP4 0.940, TFP 0.765 (−0.112 vs n=19,849), TNE 0.660 (−0.062); Hybrid RF AUC 0.8423 ± 0.0076 (state-vector QK, jobs 12651→12660). TFP is sample-hungry** (P3)
+7. **Quantum Kernel:** QKS canonical 6q re-runs (Aug 1, 2026): **quantum ≈ RBF at ALL scales** — n=500 0.751 vs 0.701 (p=0.088, ns); n=5,000 0.8199 vs 0.8260 (p=0.419, ns); n=19,849 0.8230 vs 0.8292 (p=0.060, ns); quantum > linear at scale (p≤0.0006). No quantum advantage, no significant disadvantage (P3)
+8. **Classical benchmark (corrected):** ECFP4 AUC 0.9475 on the canonical 19,836-molecule panel (job 12698); PHCO bug fixed (0.500 → 0.896). **Canonical full-library hybrid (job 12699): Hybrid RF AUC 0.8876 ± 0.0065; ablation QK principal contributeur (Δ=−0.040).** n=5,000 pre-phase: ECFP4 0.940, TFP 0.765 (−0.112 vs n=19,836), TNE 0.660 (−0.062); Hybrid RF AUC 0.8423 ± 0.0076 (jobs 12651→12660). TFP is sample-hungry (P3)
 9. **Cross-paper H₁ × RRS:** Spearman ρ=0.312 (p=0.0057, n=77) between H₁ count and resistance resilience score; pilot ρ=0.947 (p<0.0001, n=14) retained as preliminary — TFP count of ring-like features emerges as a structural correlate of clinical resilience (P3 × P2) ✅ **UPDATED July 26**
 10. **DiffDock-Vina correlation:** r = 0.327–0.361 for PfDHFR/PfClpP; negligible for PfCRT/PfATP4 (P2)
 11. **MPO sensitivity:** ADMET weight most influential on rank ordering; QED weight most variable (P1)
@@ -1218,9 +1264,9 @@ Three observations that appeared contradictory are now explained:
 | **P2 ACSI scores (top-20)** | **✅ Complete (July 6)** | **c_acsi_scores.csv; Paper 2 §3.6 drafted** |
 | P3 Full TDA (19.8K) | ✅ Complete | Tables 1–2 ready |
 | P3 Full TNE (19.8K) | ✅ Complete | Table 2 ready |
-| P3 Classical benchmark (corrected, 8 descriptors) | ✅ Complete | **ECFP4 AUC 0.949; PHCO bug fixed (0.500 → 0.897)** |
-| P3 Hybrid benchmark (10 descriptors) | ✅ Complete (July 31) | Hybrid RF AUC 0.8423 ± 0.0076 (state-vector QK, jobs 12651→12660); Classical: ECFP4 0.940, TFP 0.765, TNE 0.660; TFP drops −0.112 vs n=19,849 |
-| P3 QKS benchmark | ✅ Complete | **Quantum AUC 0.751 vs RBF 0.701 (p=0.088, ns)** |
+| P3 Classical benchmark (corrected, 8 descriptors) | ✅ Complete (Aug 1) | **ECFP4 AUC 0.9475 (canonical panel n=19,836, job 12698); PHCO bug fixed (0.500 → 0.896)** |
+| P3 Hybrid benchmark (10 descriptors, full-library) | ✅ Complete (Aug 1) | **Hybrid RF AUC 0.8876 ± 0.0065 (job 12699, canonical panel, hyperparams 6/1/30); ablation: QK principal contributeur (Δ=−0.040)** |
+| P3 QKS benchmark | ✅ Complete (Aug 1) | **Quantum ≈ RBF at all scales (6q C3-fix): n=19,849 0.8230 vs 0.8292 (p=0.060 ns); n=5,000 0.8199 vs 0.8260 (p=0.419 ns)** |
 | P3 GA Discriminator benchmark | ✅ Complete | **Tanimoto AUC=1.0 vs QK AUC≈0.43–0.51** |
 | P1/P2 Tartarus full run | ✅ Complete (July 7) | 19,913 mol × 3 targets; 32h runtime; 4LDE scores verified normal |
 | P2 Production MD | ✅ 4/4 complete (July 8) | 438_PfATP4: 1.4G xtc, 201_PfDHFR: 0.4G, 164_PfClpP: 0.1G, 214_PfCRT: 0.2G |
@@ -1641,39 +1687,38 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 
 ---
 
-### E.1 SOTA Topological Benchmark — **COMPLETED (July 25, 2026) — Full n=19,849**
+### E.1 SOTA Topological Benchmark — **COMPLETED (Aug 3, 2026, job 12756) — Canonical Full n=19,849**
 
-**Status:** ✅ **COMPLETED** — Production benchmark on n=19,849 molecules (subsampled from 19,849; ~3,795 active + ~1,205 inactive stratified), class-weighted RF, 5-fold stratified CV.
+**Status:** ✅ **COMPLETED** — Production benchmark regenerated on the **full n=19,849** library (RF, class-weighted, 5-fold stratified CV; SVM on stratified n=5,000 subsample due to O(N²) kernel scaling). Canonical outputs: `results/p3_sota_benchmark_full.csv` / `p3_sota_benchmark_full_summary.txt` (Aug 3, 2026). The Table SM S11 uses these canonical values.
 
 **Rationale:** Gap #3 in Appendix J identified the absence of a SOTA topological benchmark as a medium-severity deficiency. We benchmarked five TDA descriptor strategies against the ECFP4 classical baseline, each paired with Random Forest (RF) and Support Vector Machine (SVM) classifiers.
 
-**Pipeline:** `scripts/p3_sota_benchmark.py` — SMILES merge with `p3_labels_production.csv` (eos80ch activity labels) → TDA fingerprint extraction → per-fold StandardScaler → 5-fold stratified CV.
+**Pipeline:** `scripts/p3_sota_benchmark.py` — SMILES merge with `p3_labels_production.csv` (eos80ch activity labels) → TDA fingerprint extraction → per-fold StandardScaler → 5-fold stratified CV. Job 12756 (SLURM, 16 CPU, 6h max) completed in ~3 min with no errors.
 
 | Strategy | Classifier | AUC | Accuracy | F1 | Features |
 |----------|-----------|-----|----------|-----|----------|
-| **PersStats** | **RF** | **0.8731 ± 0.0089** | **0.7694** | **0.7715** | 22 |
-| TFP-Enriched | RF | 0.8381 ± 0.0091 | 0.7614 | 0.7614 | 32 |
-| PersImage | RF | 0.8370 ± 0.0094 | 0.7644 | 0.7640 | 25 |
-| TFP-12 | RF | 0.8303 ± 0.0097 | 0.7496 | 0.7505 | 12 |
-| PersStats | SVM | 0.8042 | 0.7398 | 0.7436 | 22 |
-| PersImage | SVM | 0.7912 | 0.7270 | 0.7312 | 25 |
-| TFP-Enriched | SVM | 0.7891 | 0.7208 | 0.7250 | 32 |
-| TFP-12 | SVM | 0.7857 | 0.7198 | 0.7220 | 12 |
-| BettiCurve | RF | 0.7717 | 0.6976 | 0.6946 | 20 |
-| BettiCurve | SVM | 0.7198 | 0.6646 | 0.6620 | 20 |
+| **PersStats** | **RF** | **0.8731 ± 0.0067** | **0.8332** | **0.8906** | 22 |
+| TFP-12 | RF | 0.8668 ± 0.0065 | 0.8275 | 0.8858 | 12 |
+| TFP-Enriched | RF | 0.8666 ± 0.0052 | 0.8308 | 0.8887 | 32 |
+| PersImage | RF | 0.8596 ± 0.0053 | 0.8265 | 0.8856 | 25 |
+| BettiCurve | RF | 0.8110 ± 0.0043 | 0.7837 | 0.8557 | 20 |
+| PersStats | SVM | 0.8042 ± 0.0114 | 0.7398 | 0.7436 | 22 |
+| PersImage | SVM | 0.7912 ± 0.0161 | 0.7270 | 0.7312 | 25 |
+| TFP-Enriched | SVM | 0.7891 ± 0.0097 | 0.7208 | 0.7250 | 32 |
+| TFP-12 | SVM | 0.7857 ± 0.0114 | 0.7198 | 0.7220 | 12 |
+| BettiCurve | SVM | 0.7198 ± 0.0196 | 0.6646 | 0.6620 | 20 |
 
 **Key findings:**
-1. **PersStats + RF achieves AUC = 0.873** (full library n=19,849), approaching the ECFP4 baseline (AUC = **0.949** corrected classical, §3.4; the older 0.868 figure was pre-PHCO-correction) with only 22 topological features vs. 2048-bit ECFP4.
-2. **RF consistently outperforms SVM** across all strategies (mean ΔAUC = +0.024), suggesting non-linear tree-based methods better capture TDA feature interactions.
-3. **TFP-Enriched (32 features) ≈ PersImage (25 features) ≈ TFP-12 (12 features)** — adding persistence images/betti curves to TFP provides marginal improvement (ΔAUC < 0.01).
-4. **BettiCurve underperforms** (AUC 0.772), indicating that Betti number sequences alone lack the discriminative power of persistence statistics.
-5. **Class-weighted classifiers** (75.9%/24.1% imbalance) prevent majority-class bias; production dataset is 250× larger than the previous 77-molecule pilot.
+1. **PersStats + RF achieves AUC = 0.873** (full library n=19,849), the highest of the topological strategies, vs the ECFP4 corrected classical baseline (AUC = **0.949**, §3.4) with only 22 topological features vs. 2048-bit ECFP4.
+2. **RF consistently outperforms SVM** across all strategies (mean ΔAUC ≈ +0.07), suggesting non-linear tree-based methods better capture TDA feature interactions.
+3. **TFP-Enriched (32 features) ≈ TFP-12 (12 features)** (ΔAUC = −0.0003) — adding persistence images/Betti curves provides marginal improvement; BettiCurve alone underperforms (AUC 0.811).
+4. **Class-weighted classifiers** (75.9%/24.1% imbalance) prevent majority-class bias.
 
-**Comparison with literature:** PersStats + RF AUC = 0.873 (full library) approaches ECFP4 (**0.949** corrected classical baseline, §3.4; older 0.868 figure was pre-PHCO-correction), the closest any topological descriptor reaches classical fingerprints on this library: TopologyNet (Pearson r = 0.82 on protein-ligand binding; Xu et al. 2018) and PACTNet (cellular complex features; 2025). Our result demonstrates that simple persistence statistics (birth, death, persistence, entropy) extracted from 1D molecular graphs achieve competitive discriminative performance without the computational overhead of neural network architectures.
+**Comparison with literature:** PersStats + RF AUC = 0.873 (full library) approaches ECFP4 (0.949 corrected baseline), the closest any topological descriptor reaches classical fingerprints on this library: TopologyNet (Pearson r = 0.82 on protein-ligand binding; Xu et al. 2018) and PACTNet (cellular complex features; 2025). Our result demonstrates that simple persistence statistics extracted from 1D molecular graphs achieve competitive discriminative performance without the computational overhead of neural network architectures.
 
-**Limitations:** (i) n=19,849 subsample from 19,849 due to SVM kernel matrix O(N²) scaling; (ii) eos80ch binary labels are computational predictions, not experimental IC₅₀; (iii) 75.9%/24.1% class imbalance mitigated by `class_weight='balanced'` in both RF and SVC, but residual bias may remain.
+**Limitations:** (i) SVM restricted to n=5,000 subsample due to O(N²) kernel scaling; (ii) eos80ch binary labels are computational predictions, not experimental IC₅₀; (iii) 75.9%/24.1% class imbalance mitigated by `class_weight='balanced'`.
 
-**Output:** `results/p3_sota_benchmark.csv`, `results/p3_sota_benchmark_summary.txt`
+**Output:** `results/p3_sota_benchmark_full.csv`, `results/p3_sota_benchmark_full_summary.txt` (canonical, job 12756).
 
 ---
 
@@ -1871,14 +1916,14 @@ Audit P3 effectué avec les skills `scientific-agent-skills` (peer-review, bmad-
 
 ### EXÉCUTION (appendice — août 2026, post-écriture du plan)
 
-Tous les fixes ont été appliqués au code ; les jobs de re-run ont été soumis (voir `results/p3_hybrid_canonical_checkpoint.json` pour le suivi) :
+Tous les fixes ont été appliqués au code ; **les jobs de re-run ont tous terminé le 1 août 2026** (voir `results/p3_hybrid_canonical_checkpoint.json`, `results/p3_ablation.csv`, `results/p3_qks_summary_n19849.txt`, `results/p3_qks_summary_n5000.txt`) :
 
 | Job | Script | Statut | Rôle |
 |-----|--------|--------|------|
 | 12698 | `p3_classical_canonical_19849.sbatch` | ✅ Terminé | Panneau canonique, RF-only (source des lignes classiques pour `--skip-classical`) ; ECFP4 0.9475±0.0045, voir §3.4 |
-| 12699 | `p3_hybrid_canonical_19849.sbatch` | 🔄 Running (~70 s/fold, per-fold) | Classical (skip) + hybrid per-fold + ablation ; hyperparams canoniques 6/1/30 ; checkpoint `p3_hybrid_canonical_checkpoint.json` |
-| 12700 | `p3_qks_benchmark_n19849.sbatch` | Queued (afterok 12699) | QKS n=19,849 C3-fix ; sortie → `_n19849` |
-| 12702 | `p3_qks_benchmark_n5000.sbatch` | Queued (afterok 12700) | QKS n=5,000 C3-fix ; sortie → `_n5000` |
+| 12699 | `p3_hybrid_canonical_19849.sbatch` | ✅ **Terminé (1 août, 13:36 UTC)** | Classical (skip) + hybrid per-fold + ablation ; hyperparams canoniques 6/1/30 ; **Hybrid RF AUC 0.8876 ± 0.0065** ; ablation → `results/p3_ablation.csv` (QK Δ=−0.040) |
+| 12700 | `p3_qks_benchmark_n19849.sbatch` | ✅ **Terminé (1 août, 17:03 UTC)** | QKS n=19,849 C3-fix 6q ; Quantum 0.8230 vs RBF 0.8292 (p=0.060, ns) ; sortie `p3_qks_benchmark_n19849.csv` |
+| 12702 | `p3_qks_benchmark_n5000.sbatch` | ✅ **Terminé (1 août, 17:22 UTC)** | QKS n=5,000 C3-fix 6q ; Quantum 0.8199 vs RBF 0.8260 (p=0.419, ns) ; sortie `p3_qks_benchmark_n5000.csv` |
 
 Fixes appliqués (détails dans l'Appendix K ci-dessus) :
 - **C2/M3** : `load_canonical_panel()` partagé (TFP-order ∩ dedup-activity ∩ finite-TNE, n=19,836) dans hybrid, classical et QKS ; `load_precomputed()` lève une erreur au lieu d'imputer silencieusement.
@@ -1896,6 +1941,8 @@ Figures (scripts réécrits, données canoniques) :
 - `p3_plot_benchmark_auc.py` : source primaire `p3_classical_benchmark_19849.csv` (canonique n=19,836) ; ajoute Hybride **uniquement si** `p3_hybrid_canonical_checkpoint.json` contient 5 folds `Hybrid` (gate anti-0.8968 contaminé) ; ajoute QK/RBF/Linear depuis `_n19849` (fallback `_n5000`) ; t-tests appariés vs ECFP4 ; régénère `p3_hybrid_summary.txt` + `results/figures/p3_auc_benchmark_bar.png`.
 - `p3_qp_figure.py` : data-driven — heatmap si grille complète, sinon bar chart combo (accent combo canonique bd=6/nr=1/nk=30) + effet des paramètres ; sorties `p3_qp_optimization_heatmap.png` / `_table.csv` / `p3_qp_parameter_effects.png`.
 - `p3_scalability_plot.py` : `N_QUBITS=8→6` (canonique), features UMAP train-only via `reduce_to_qubits`.
+
+**Audit adversarial v3 (02/08/2026)** : voir `P3_ADVERSARIAL_AUDIT_MITIGATION.md` §v3 — 10 findings corrigés (citation Jamali et al. 2025 arXiv:2510.14217, citation CHEESE lzicar_cheese_2024, chiffre fantôme TFP 0.587→0.876, claim polypharm 0.747/0.737 non déposé → résultats partiels déposés, ref. Table~S3 dangling retirée, ref. Table S3/S4 SM explicites, placeholder « running on HPC » supprimé, comptes de classes réels 63.1/36.9 et 74.2/25.8, H1 persistence → H1 counts) ; main 25 p. + SM 16 p. recompilés **0 erreur / 0 réf. non résolue**.
 
 Manuscrit (vérifié vs CSVs déposés ; main + SM recompilés, 0 erreur) :
 - **H2** : ratio TNE réal **5.9×/38 → 6.1×/39** atomes (déposé `p3_tne_summary.txt` : mean 39.0, ratio 6.1) — corrigé main (L99/120/175/183/336/341/461/497/554), SM (L554/614), cover letter (L34).

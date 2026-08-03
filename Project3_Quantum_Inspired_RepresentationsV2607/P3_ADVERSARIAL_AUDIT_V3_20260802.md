@@ -136,7 +136,7 @@ Restent en risque résiduel : labels computationnels (Ersilia eos80ch, non expé
 - Tables `p3_scalability` (hybrid cells mol/s, pairs) et `p3_effect_sizes` (p-value `*`) passées en colonnes texte ; overfull 95pt/58pt/22pt SM réparés (chemin fichiers, vecteurs).
 
 ### VÉRIFICATION COMPILE
-- Main `Paper3_Quantum_InspiredV2607.pdf` : **0 erreur, 0 référence/citation undefined, overfull max 10.2pt**.
-- SM `Paper3_Quantum_Inspired_SM_V2607.pdf` : **0 erreur, 0 undefined, overfull max 9.1pt**.
+- Main `Paper3_Quantum_InspiredV2608.pdf` : **0 erreur, 0 référence/citation undefined, overfull max 10.2pt**.
+- SM `Paper3_Quantum_Inspired_SM_V2608.pdf` : **0 erreur, 0 undefined, overfull max 9.1pt**.
 - .bbl reflète ChemRxiv 2025 (temgoua).
 - rsync main+SM+.bib+BMAD à pousser vers HPC (execute).
