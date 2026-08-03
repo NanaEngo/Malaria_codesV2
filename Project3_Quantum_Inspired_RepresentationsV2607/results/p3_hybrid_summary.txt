@@ -1,28 +1,14 @@
-P3 Benchmark Summary (RF, 5-fold CV, canonical panel n=19,836)
-============================================================
+Hybrid: per-fold QK (no data leakage); RF is scale-invariant (no weights)
 
-ECFP4           AUC = 0.9475 ± 0.0040
-AP              AUC = 0.9399 ± 0.0045
-BPF             AUC = 0.9389 ± 0.0042
-FCFP4           AUC = 0.9183 ± 0.0054
-MACCS           AUC = 0.9045 ± 0.0048
-PHCO            AUC = 0.8959 ± 0.0035
-Hybrid          AUC = 0.8876 ± 0.0065
-TFP             AUC = 0.8759 ± 0.0052
-RBF             AUC = 0.8251 ± 0.0022
-TNE             AUC = 0.7219 ± 0.0061
-QK (quantum)    AUC = 0.6592 ± 0.0362
-Linear          AUC = 0.5397 ± 0.0385
+ECFP4        RF  AUC=0.9475±0.0045
+FCFP4        RF  AUC=0.9183±0.0060
+MACCS        RF  AUC=0.9045±0.0054
+AP           RF  AUC=0.9399±0.0051
+PHCO         RF  AUC=0.8959±0.0039
+BPF          RF  AUC=0.9389±0.0046
+TFP          RF  AUC=0.8759±0.0059
+TNE          RF  AUC=0.7219±0.0068
+Hybrid       RF  AUC=0.8876±0.0065
 
-Paired t-tests (vs ECFP4):
-  vs AP            : Δ=+0.0076, t=10.152, p=0.00053 (SIGNIFICANT)
-  vs BPF           : Δ=+0.0086, t=12.051, p=0.00027 (SIGNIFICANT)
-  vs FCFP4         : Δ=+0.0292, t=25.956, p=0.00001 (SIGNIFICANT)
-  vs MACCS         : Δ=+0.0430, t=33.220, p=0.00000 (SIGNIFICANT)
-  vs PHCO          : Δ=+0.0516, t=142.759, p=0.00000 (SIGNIFICANT)
-  vs Hybrid        : Δ=+0.0599, t=29.902, p=0.00001 (SIGNIFICANT)
-  vs TFP           : Δ=+0.0716, t=38.569, p=0.00000 (SIGNIFICANT)
-  vs RBF           : Δ=+0.1224, t=53.237, p=0.00000 (SIGNIFICANT)
-  vs TNE           : Δ=+0.2256, t=84.759, p=0.00000 (SIGNIFICANT)
-  vs QK (quantum)  : Δ=+0.2883, t=18.793, p=0.00005 (SIGNIFICANT)
-  vs Linear        : Δ=+0.4078, t=22.638, p=0.00002 (SIGNIFICANT)
+Paired t-test Hybrid vs ECFP4: t=-29.902, p=0.0000
+Significant (p<0.05)
