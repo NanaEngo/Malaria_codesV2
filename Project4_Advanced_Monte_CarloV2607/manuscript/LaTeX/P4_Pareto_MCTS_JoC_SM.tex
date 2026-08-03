@@ -117,7 +117,19 @@ Two-dimensional MDS coordinates (metric MDS on the Tanimoto dissimilarity
 matrix) are deposited for visualisation
 (\path{results/diversity/p4_diversity_mds.csv}).
 
-\cref{tab:sm_diversity} reports the real diversity statistics.
+\cref{tab:sm_diversity} reports the real diversity statistics, and \Cref{fig:sm_mds} shows the metric-MDS projection of the four molecule sets.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.62\textwidth]{Graphics/scaffold_diversity.png}
+  \caption{Metric multidimensional-scaling (MDS) projection of the deposited
+  best-in-seed molecule sets (\num{20} molecules per method) on ECFP4 Tanimoto
+  dissimilarity. Greedy search collapses to a single point (deterministic local
+  optimum); the three stochastic methods occupy distinct, broad regions of
+  chemical space. Deposited coordinates:
+  \texttt{results/diversity/p4\_diversity\_mds.csv}.}
+  \label{fig:sm_mds}
+\end{figure}
 
 \begin{table}[htbp]
   \centering

@@ -31,7 +31,7 @@ import numpy as np
 
 # ── Paths ────────────────────────────────────────────────────────────
 PROJECT_DIR = Path(__file__).resolve().parent.parent
-RESULTS_DIR = PROJECT_DIR / "results" / "benchmark"
+RESULTS_DIR = PROJECT_DIR / "results" / "benchmark_molecules_opt"
 GRAPHICS_DIR = PROJECT_DIR / "manuscript" / "LaTeX" / "Graphics"
 GRAPHICS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -124,7 +124,7 @@ def load_benchmark_data():
 # ── Figure 1: Benchmark reward bar chart ─────────────────────────────
 def plot_reward_bar(data):
     """Bar chart of mean best reward ± std for each method."""
-    methods = ["mcts", "greedy", "ga", "random"]
+    methods = ["random", "mcts", "greedy", "ga"]
     means = []
     stds = []
     colours = []
@@ -157,10 +157,18 @@ def plot_reward_bar(data):
     n_seeds_actual = max(len(data[m]) for m in methods if m in data)
     ax.set_title(f"Benchmark comparison ({n_seeds_actual} seeds)", fontsize=11, fontweight="bold")
 
-    # Add significance bracket between Greedy and MCTS
-    y_max = max(means) + max(stds) + 0.04
-    ax.plot([0.5, 1.5], [y_max, y_max], "k-", linewidth=0.6)
-    ax.text(1.0, y_max + 0.002, "n.s.", ha="center", fontsize=7, fontstyle="italic")
+    # Significance brackets (paired t-test on 20 seeds; v12 canonical data)
+    y_max = max(means) + max(stds) + 0.06
+    # MCTS vs Random: p = 0.026 (weak nominal significance; random>MCTS)
+    ax.plot([0, 1], [y_max, y_max], "k-", linewidth=0.6)
+    ax.text(0.5, y_max + 0.004, "p = 0.026", ha="center", fontsize=7,
+            fontstyle="italic")
+    # MCTS vs Greedy: p = 0.005 (MCTS > Greedy)
+    y2 = max(means) + max(stds) + 0.11
+    ax.plot([1, 2], [y2, y2], "k-", linewidth=0.6)
+    ax.text(1.5, y2 + 0.004, "p = 0.005", ha="center", fontsize=7,
+            fontstyle="italic")
+    ax.set_ylim(0, y2 + 0.06)
 
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
@@ -208,13 +216,13 @@ def plot_efficiency(data):
               loc="upper left")
 
     # Annotations for method regions
-    ax.annotate("Fast ↔ cheap", xy=(60, 0.54), fontsize=7, fontstyle="italic",
+    ax.annotate("Cheap", xy=(30, 0.706), fontsize=7, fontstyle="italic",
                 color="grey", ha="center")
-    ax.annotate("Slow ↔ accurate", xy=(220, 0.61), fontsize=7, fontstyle="italic",
+    ax.annotate("Costly", xy=(68, 0.706), fontsize=7, fontstyle="italic",
                 color="grey", ha="center")
 
-    ax.set_xlim(0, 320)
-    ax.set_ylim(0.50, 0.64)
+    ax.set_xlim(0, 100)
+    ax.set_ylim(0.69, 0.76)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.yaxis.set_major_locator(mticker.MultipleLocator(0.02))
@@ -393,59 +401,34 @@ def plot_pareto_front(data):
 
 # ── Figure 4: Scaffold diversity MDS ─────────────────────────────────
 def plot_diversity(data):
-    """2D projection (simulated/illustrative MDS) of generated molecules by method.
+    """2D metric MDS projection of the deposited best-in-seed molecule sets."""
+    import pandas as pd
 
-    This figure uses simulated coordinates informed by the manuscript diversity
-    metrics (mean pairwise Tanimoto dissimilarity) because no pre-computed
-    pairwise distance matrix is available in the repository. It is intended as an
-    illustrative summary; for a fully data-driven version, replace the simulated
-    coordinates with real fingerprint distances.
-    """
-    # Simulate MDS coordinates based on diversity metrics from manuscript
-    # Greedy has widest spread (mean pairwise dissimilarity 0.81)
-    # MCTS has narrowest (0.59)
-    np.random.seed(42)
+    mds_path = PROJECT_DIR / "results" / "diversity" / "p4_diversity_mds.csv"
+    if not mds_path.exists():
+        print(f"  WARNING: {mds_path} not found; skipping diversity figure")
+        return
+    mds = pd.read_csv(mds_path)
 
-    method_configs = {
-        "mcts": {"n": 12, "spread": 0.59, "colour": COLOURS["mcts"]},
-        "greedy": {"n": 12, "spread": 0.81, "colour": COLOURS["greedy"]},
-        "ga": {"n": 12, "spread": 0.69, "colour": COLOURS["ga"]},
-        "random": {"n": 12, "spread": 0.71, "colour": COLOURS["random"]},
-    }
     markers = {"mcts": "o", "greedy": "s", "ga": "^", "random": "D"}
 
     fig, ax = plt.subplots(figsize=(4.5, 4.0))
+    for m in ["mcts", "random", "greedy", "ga"]:
+        sub = mds[mds["method"] == m]
+        if sub.empty:
+            continue
+        ax.scatter(sub["mds_x"], sub["mds_y"], c=COLOURS[m],
+                   label=METHOD_LABELS[m], marker=markers[m], s=30,
+                   edgecolors="black", linewidth=0.3, alpha=0.7, zorder=3)
 
-    for m, cfg in method_configs.items():
-        n = cfg["n"]
-        spread = cfg["spread"]
-        # Generate points with spread proportional to diversity metric
-        angles = np.random.uniform(0, 2 * np.pi, n)
-        radii = np.random.uniform(0.1, spread, n)
-        x = radii * np.cos(angles)
-        y = radii * np.sin(angles)
-        ax.scatter(x, y, c=cfg["colour"], label=METHOD_LABELS[m],
-                   marker=markers[m], s=30, edgecolors="black",
-                   linewidth=0.3, alpha=0.7, zorder=3)
-
-    # Add convex hull approximations (dashed circles)
-    for m, cfg in method_configs.items():
-        circle = plt.Circle((0, 0), cfg["spread"], fill=False,
-                            linestyle="--", linewidth=0.6, alpha=0.3,
-                            edgecolor=cfg["colour"])
-        ax.add_patch(circle)
-
-    ax.set_xlabel("MDS dimension 1 (arb. units)", fontsize=10)
-    ax.set_ylabel("MDS dimension 2 (arb. units)", fontsize=10)
-    ax.set_title("Chemical space coverage (illustrative)", fontsize=11, fontweight="bold")
+    ax.set_xlabel("MDS dimension 1", fontsize=10)
+    ax.set_ylabel("MDS dimension 2", fontsize=10)
+    ax.set_title("Chemical space coverage (metric MDS)", fontsize=11,
+                 fontweight="bold")
     ax.legend(frameon=True, fancybox=False, edgecolor="grey", fontsize=8)
     ax.set_aspect("equal")
-    ax.set_xlim(-1.0, 1.0)
-    ax.set_ylim(-1.0, 1.0)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-    ax.set_xticks([])
-    ax.set_yticks([])
 
     out_path = GRAPHICS_DIR / "scaffold_diversity.png"
     fig.savefig(out_path)

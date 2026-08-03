@@ -67,7 +67,7 @@ A second limitation is unguided exploration: many methods expand molecular graph
 
 We address both limitations with a Pareto-guided MCTS agent that:
 \begin{enumerate}[label=\textbf{C\arabic*:},leftmargin=*]
-  \item maintains a non-dominated front across MPO, SYBA and SA, eliminating fixed-weight aggregation;
+  \item maintains a non-dominated front across MPO, SYBA, RRS and PNS, eliminating fixed-weight aggregation;
   \item guides PUCT selection with a scaffold-aware policy (ScafVAE) derived from ChEMBL27 fragment frequencies and scaffold Tanimoto compatibility;
   \item is evaluated in a four-method, \num{20}-seed benchmark against random search, greedy search and a genetic algorithm under a fixed search budget.
 \end{enumerate}
@@ -112,6 +112,13 @@ Four generation methods (MCTS+ScafVAE, random search, greedy search, genetic alg
   \end{tabular}
 \end{table}
 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.80\textwidth]{Graphics/benchmark_reward_bar.png}
+  \caption{Mean best scalar reward per method over \num{20} seeds (\Cref{tab:benchmark}). Error bars are one sample standard deviation. Significance brackets show the paired $t$-tests of the two planned head-to-head comparisons (MCTS--random, $p=\num{0.026}$) and the secondary MCTS--greedy comparison ($p=\num{0.005}$).}
+  \label{fig:benchmark}
+\end{figure}
+
 Random search attains the highest mean reward (\num{0.7335} $\pm$ \num{0.0063}) and records the single best seed (\num{0.7481}). MCTS with the screened optimal configuration is statistically close (\num{0.7276} $\pm$ \num{0.0090}; paired $t_{19}=\num{2.41}$, $p=\num{0.026}$, Cohen's $d=\num{-0.54}$), records its own best seed (\num{0.7442}) and wins \num{5} of \num{20} seeds outright, while remaining significantly above greedy (\num{0.7211}, deterministic; paired $t_{19}=\num{3.22}$, $p=\num{0.005}$) and the genetic algorithm (\num{0.7027} $\pm$ \num{0.0152}; paired $t_{19}=\num{5.55}$, $p<\num{0.0001}$). Greedy search returns the same deterministic local optimum across all \num{20} seeds (standard deviation identically zero). MCTS incurs the highest per-seed wall-clock cost (\SI{82.2}{s}) because the tree search evaluates the oracle at every construction step; random search completes in \SI{42.2}{s}, and the genetic algorithm in under \SI{2}{s}.
 
 These results establish a clear baseline hierarchy on scalar reward. They do not, however, capture multi-objective coverage.
@@ -119,7 +126,14 @@ These results establish a clear baseline hierarchy on scalar reward. They do not
 \subsection{Pareto front}
 \label{sec:pareto_results}
 
-When the same MCTS agent maintains a non-dominated front across MPO, SYBA and SA, the merged front obtained from \num{20} independent seeds contains four mutually non-dominated solutions with hypervolume \num{1.2366} (\Cref{tab:pareto}).
+When the same MCTS agent maintains a non-dominated front across MPO, SYBA, RRS and PNS, the merged front obtained from \num{20} independent seeds contains four mutually non-dominated solutions with hypervolume \num{1.2366} (\Cref{fig:pareto}, \Cref{tab:pareto}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.62\textwidth]{Graphics/pareto_front.png}
+  \caption{Canonical merged Pareto front from \num{20} independent Pareto-MCTS seeds. Marker shape encodes the polypharmacology-network score (PNS); colour encodes the resistance-resilience score (RRS). The four solutions are mutually non-dominated across the active objectives MPO, SYBA, RRS and PNS; SA is constant at \num{3.0} and excluded from the dominance check and the hypervolume. Data: \texttt{results/pareto/merged\_pareto\_front.csv}.}
+  \label{fig:pareto}
+\end{figure}
 
 \begin{table}[htbp]
   \centering
@@ -202,7 +216,7 @@ The agent maintains a global non-dominated front over the objective vector
 \[
 \mathbf{f}(s)=\bigl(f_{\text{MPO}}(s),\,f_{\text{SYBA}}(s),\,f_{\text{RRS}}(s),\,f_{\text{PNS}}(s)\bigr),
 \]
-with minimisation objectives converted to maximisation by negation. Synthetic accessibility (SA) is excluded from the front because it is constant ($\mathrm{SA}=\num{3.0}$) for all reported candidates and therefore carries no discrimination (it is reported in \Cref{tab:pareto} for completeness). After each rollout the best intermediate molecule is tested for dominance; dominated members are removed. The hypervolume indicator is computed with the active (non-constant) objectives only: each active objective is min--max normalised to $[0,1]$, and the hypervolume is evaluated with respect to a reference point $\mathbf{r}=\num{1.1}$ (slightly worse than the worst normalised value of $1$) in each active dimension, so that the reported value lies in $[0,1.1]^{k}$ for $k$ active objectives. For PUCT selection a scalar proxy $Q(s,a)$ is obtained by averaging the three normalised objective components; the full vector is stored for front updates and post-hoc analysis.
+with minimisation objectives converted to maximisation by negation. Synthetic accessibility (SA) is excluded from the front because it is constant ($\mathrm{SA}=\num{3.0}$) for all reported candidates and therefore carries no discrimination (it is reported in \Cref{tab:pareto} for completeness). After each rollout the best intermediate molecule is tested for dominance; dominated members are removed. The hypervolume indicator is computed with the active (non-constant) objectives only: each active objective is min--max normalised to $[0,1]$, and the hypervolume is evaluated with respect to a reference point $\mathbf{r}=\num{1.1}$ (slightly worse than the worst normalised value of $1$) in each active dimension, so that the reported value lies in $[0,1.1]^{k}$ for $k$ active objectives. For PUCT selection a scalar proxy $Q(s,a)$ is obtained by summing the min--max normalised objective components across the four active objectives; the full vector is stored for front updates and post-hoc analysis.
 
 \subsection{Scoring oracles}
 \label{sec:oracles}
@@ -211,7 +225,7 @@ Each molecule is scored by an aggregator returning MPO, SYBA, SA, docking-derive
 
 \subsection{Statistical analysis and reproducibility}
 
-All searches are seeded; the specific seed integers and the random-number generators (NumPy \texttt{default\_rng}, seeded per method and per seed with no cross-method state leakage) are fixed in the committed script. The four-method benchmark uses \num{20} independent seeds; ablations use five or ten replicates as indicated. Paired $t$-tests are reported for the two planned head-to-head comparisons (MCTS--random and MCTS--GA); because both are pre-specified primary comparisons, we report unadjusted two-sided $p$-values and note that the weaker of the two ($p = \num{0.026}$) remains nominally significant at $\alpha = \num{0.05}$ without multiplicity correction. The vocabulary ablation is tested with a one-way ANOVA (three degrees of freedom between groups) followed by pairwise Tukey HSD post-hoc comparisons. The benchmark was re-run for this submission with the committed script \texttt{p4\_mcts\_benchmark.py} and a value-preserving vectorisation of the docking Tanimoto scan (verified identical on held-out molecules); all \num{20} per-seed runs reproduce deterministically from the deposited code and data, and the best-in-seed molecule sets are deposited alongside the scalar rewards. Analyses were executed with Python 3.11, RDKit, NumPy, SciPy and pymoo; exact dependency versions are recorded in the repository environment file. Code, configuration files, molecule lists and score tables are deposited under the MIT licence and will be linked via Zenodo upon acceptance.
+All searches are seeded; the specific seed integers and the random-number generators (NumPy \texttt{default\_rng}, seeded per method and per seed with no cross-method state leakage) are fixed in the committed script. The four-method benchmark uses \num{20} independent seeds; ablations use five or ten replicates as indicated. Paired $t$-tests are reported for the two planned head-to-head comparisons (MCTS--random and MCTS--GA); because both are pre-specified primary comparisons, we report unadjusted two-sided $p$-values and note that the weaker of the two ($p = \num{0.026}$) remains nominally significant at $\alpha = \num{0.05}$ without multiplicity correction. The vocabulary ablation is tested with a one-way ANOVA (three degrees of freedom between groups) followed by pairwise Tukey HSD post-hoc comparisons. The benchmark was re-run for this submission with the committed script \texttt{p4\_mcts\_benchmark.py} and a value-preserving vectorisation of the docking Tanimoto scan (verified identical on held-out molecules); all \num{20} per-seed runs reproduce deterministically from the deposited code and data, and the best-in-seed molecule sets are deposited alongside the scalar rewards. Analyses were executed with Python 3.11, RDKit, NumPy, SciPy and pymoo; exact dependency versions are recorded in the repository environment file. Code, configuration files, molecule lists and score tables are released under the MIT licence in the public repository \url{https://github.com/NanaEngo/Malaria_codesV2} and mirrored on Zenodo (DOI \url{https://doi.org/10.5281/zenodo.19608875}).
 
 % ============================================================================
 \section{Conclusions}
@@ -223,7 +237,7 @@ A Pareto-guided MCTS agent equipped with a scaffold-aware fragment policy is sta
 \section*{Data availability}
 % ============================================================================
 
-All data supporting the conclusions will be deposited on Zenodo and mirrored in the project repository under the MIT licence upon acceptance. The deposit will include: (i)~the canonical 20-seed four-method benchmark tables and best-in-seed SMILES (\texttt{results/benchmark\_molecules\_opt/}); (ii)~per-seed and merged Pareto fronts with the post-hoc SYBA recomputation log (\texttt{results/pareto/}); (iii)~diversity metrics and MDS coordinates (\texttt{results/diversity/}); (iv)~component and vocabulary ablation summaries; and (v)~analysis and provenance-check scripts. Reviewers may request access to the private repository prior to public release.
+All data supporting the conclusions are released under the MIT licence in the public repository \url{https://github.com/NanaEngo/Malaria_codesV2} and are mirrored on Zenodo (reserved DOI \url{https://doi.org/10.5281/zenodo.19608875}), so that reviewers and readers have immediate access at submission time. The deposit includes: (i)~the canonical 20-seed four-method benchmark tables and best-in-seed SMILES (\texttt{results/benchmark\_molecules\_opt/}); (ii)~per-seed and merged Pareto fronts with the post-hoc SYBA recomputation log (\texttt{results/pareto/}); (iii)~diversity metrics and MDS coordinates (\texttt{results/diversity/}); (iv)~component and vocabulary ablation summaries; and (v)~analysis and provenance-check scripts.
 
 \section*{Competing interests}
 The authors declare that they have no competing interests.
@@ -233,6 +247,15 @@ MVST: conceptualization, methodology, software, formal analysis, writing---origi
 
 \section*{Acknowledgements}
 We thank the developers of RDKit, SYBA and the open-source MCTS literature for foundational tools and ideas. Computational resources were provided by the University of Yaound\'{e} I HPC facility.
+
+\section*{Funding}
+This research received no specific external funding. Computational resources were provided by the University of Yaound\'{e} I HPC facility.
+
+\section*{Ethics approval and consent to participate}
+Not applicable.
+
+\section*{Consent for publication}
+Not applicable.
 
 % ============================================================================
 \bibliographystyle{unsrtnat}
