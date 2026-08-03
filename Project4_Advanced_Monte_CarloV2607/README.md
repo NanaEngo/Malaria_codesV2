@@ -19,7 +19,7 @@ P4 implements a **de novo molecular generation framework** targeting **African N
 Project4_Advanced_Monte_CarloV2607/
 ├── AGENTS.md                    # Project methodology & skills mapping
 ├── README.md                    # This file — overview & quick start
-├── P4_MC_Strategies.md          # Long-term strategic roadmap & JCIM submission plan
+├── P4_MC_Strategies.md          # Long-term strategic roadmap
 ├── scripts/
 │   ├── p4_mcts_oracles.py       # OracleAggregator with medchem + CuPy batch Tanimoto
 │   ├── p4_mcts_policy.py        # ScafVAEPolicy with Morgan+MACCS fingerprints

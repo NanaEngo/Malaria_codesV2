@@ -84,7 +84,7 @@ The manuscript's most critical limitation is that all activity labels are comput
 | File | Purpose |
 |------|---------|
 | `results/p3_chembl_validation/p3_chembl_validation.csv` | IC₅₀ results |
-| `manuscript/LaTeX/Paper3_Quantum_Inspired_SM_V2607.tex` | Add Table S7 |
+| `manuscript/LaTeX/Paper3_Quantum_Inspired_SM_V2608.tex` | Add Table S7 |
 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | Add §3.14 |
 
 ---
@@ -159,7 +159,7 @@ The manuscript contextualises against TopologyNet (Pearson r=0.82 for binding af
 |------|---------|
 | `scripts/p3_sota_benchmark.py` | Benchmark TopologyNet/D-GRIL |
 | `results/p3_sota_benchmark.csv` | Results |
-| `manuscript/LaTeX/Paper3_Quantum_Inspired_SM_V2607.tex` | Add Table S9 |
+| `manuscript/LaTeX/Paper3_Quantum_Inspired_SM_V2608.tex` | Add Table S9 |
 
 ---
 
@@ -331,8 +331,8 @@ The manuscript has 6 limitations listed. Rather than apologising, each should be
 | `scripts/p3_rrs_expansion.py` | ✏️ Existing | Expand RRS computation |
 | `scripts/p3_rrs_expansion.sbatch` | ✏️ Existing | SLURM batch for RRS expansion |
 | `scripts/p3_sota_benchmark.py` | ❌ Not created | Action 3 completed via textual comparison (tasks incommensurable) |
-| `manuscript/LaTeX/Paper3_Quantum_InspiredV2607.tex` | ✏️ Modified | Reframe H₁-RRS, add ChEMBL ref, trim |
-| `manuscript/LaTeX/Paper3_Quantum_Inspired_SM_V2607.tex` | ✏️ Modified | Add Tables S7 (ChEMBL), S9 (SOTA) |
+| `manuscript/LaTeX/Paper3_Quantum_InspiredV2608.tex` | ✏️ Modified | Reframe H₁-RRS, add ChEMBL ref, trim |
+| `manuscript/LaTeX/Paper3_Quantum_Inspired_SM_V2608.tex` | ✏️ Modified | Add Tables S7 (ChEMBL), S9 (SOTA) |
 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | ✏️ Modified | Add §3.14 (acceptance assessment) |
 | `P3_SUBMISSION_ROADMAP_85PCT.md` | ✏️ Modified | This file |
 | `AGENTS.md` | ✏️ Modified | Add P3 roadmap reference |

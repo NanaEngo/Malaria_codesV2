@@ -60,7 +60,7 @@ The `_batch_tanimoto_gpu()` method uses CuPy for batch Tanimoto computation, pro
 Project4_Advanced_Monte_CarloV2607/
 ├── AGENTS.md                    # This file — project methodology
 ├── README.md                    # Quick-start guide
-├── P4_MC_Strategies.md          # Long-term strategic roadmap & JCIM submission plan
+├── P4_MC_Strategies.md          # Long-term strategic roadmap
 ├── scripts/
 │   ├── p4_mcts_oracles.py       # OracleAggregator with medchem + CuPy batch Tanimoto
 │   ├── p4_mcts_policy.py        # ScafVAEPolicy with Morgan+MACCS fingerprints
