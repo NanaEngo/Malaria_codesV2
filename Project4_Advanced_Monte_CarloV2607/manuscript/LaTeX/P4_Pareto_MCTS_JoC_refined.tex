@@ -28,7 +28,7 @@
   range-units          = single,
 }
 
-\title{\textbf{Pareto-guided Monte Carlo tree search explores multi-objective trade-offs missed by scalar antimalarial generation}}
+\title{\textbf{Pareto-guided Monte Carlo tree search explores multi-objective\\ trade-offs missed by scalar antimalarial generation}}
 
 \author{
   Myke Vital Sao Temgoua$^{1}$\thanks{Corresponding author: \texttt{myke-vital.sao@facsciences-uy1.cm}},
@@ -122,6 +122,15 @@ Four generation methods (MCTS+ScafVAE, random search, greedy search, genetic alg
 Random search attains the highest mean reward (\num{0.7335} $\pm$ \num{0.0063}) and records the single best seed (\num{0.7481}). MCTS with the screened optimal configuration is statistically close (\num{0.7276} $\pm$ \num{0.0090}; paired $t_{19}=\num{2.41}$, $p=\num{0.026}$, Cohen's $d=\num{-0.54}$), records its own best seed (\num{0.7442}) and wins \num{5} of \num{20} seeds outright, while remaining significantly above greedy (\num{0.7211}, deterministic; paired $t_{19}=\num{3.22}$, $p=\num{0.005}$) and the genetic algorithm (\num{0.7027} $\pm$ \num{0.0152}; paired $t_{19}=\num{5.55}$, $p<\num{0.0001}$). Greedy search returns the same deterministic local optimum across all \num{20} seeds (standard deviation identically zero). MCTS incurs the highest per-seed wall-clock cost (\SI{82.2}{s}) because the tree search evaluates the oracle at every construction step; random search completes in \SI{42.2}{s}, and the genetic algorithm in under \SI{2}{s}.
 
 These results establish a clear baseline hierarchy on scalar reward. They do not, however, capture multi-objective coverage.
+
+Structural diversity of the generated molecule sets is analysed in the Supplementary Material (Section~S2, Figure~S1): the three stochastic methods occupy distinct, broad regions of chemical space (mean pairwise Tanimoto dissimilarity \num{0.78}--\num{0.83}), whereas deterministic greedy search collapses to a single local optimum. Greedy therefore maximises a single reward at the cost of all structural diversity.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.72\textwidth]{Graphics/benchmark_efficiency.png}
+  \caption{Computational efficiency of the four methods: best reward per seed versus wall-clock time (\Cref{tab:benchmark}). Error bars are one sample standard deviation. MCTS incurs the highest cost because the tree search evaluates the oracle at every construction step; greedy and the genetic algorithm are far cheaper.}
+  \label{fig:efficiency}
+\end{figure}
 
 \subsection{Pareto front}
 \label{sec:pareto_results}
