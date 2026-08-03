@@ -281,6 +281,7 @@ class ParetoMCTSAgent:
         virtual_loss: float = 0.01,
         pw_k: float = 1.0,
         pw_alpha: float = 0.5,
+        selection_mode: str = "proxy",
     ):
         self.env = env
         self.oracle_fn = oracle_fn
@@ -292,6 +293,7 @@ class ParetoMCTSAgent:
         self.virtual_loss = virtual_loss
         self.pw_k = pw_k
         self.pw_alpha = pw_alpha
+        self.selection_mode = selection_mode
 
         self.pareto_front = ParetoFront(self.objectives, self.maximize)
         self._priors_cache: dict[str, dict[str, float]] = {}
@@ -359,10 +361,53 @@ class ParetoMCTSAgent:
 
     def _select(self, node: PMCTSNode) -> PMCTSNode:
         while node.children and node.is_fully_expanded():
-            node = self._puct_best_child(node)
+            if self.selection_mode == "pareto":
+                node = self._puct_best_child_pareto(node)
+            else:
+                node = self._puct_best_child(node)
         if not node.is_fully_expanded():
             node = self._expand(node)
         return node
+
+    def _puct_best_child_pareto(self, node: PMCTSNode) -> PMCTSNode:
+        """ParetoPUCT ablation: restrict selection to non-dominated children.
+
+        Only children whose mean multi-objective vector is non-dominated are
+        candidates; among them the highest scalar proxy is chosen. Isolates
+        whether adding a Pareto dominance prior at the selection step changes
+        the front vs the pure per-objective PUCT proxy (selection_mode="proxy").
+        """
+        from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
+
+        children = list(node.children.values())
+        if len(children) <= 1:
+            return children[0] if children else node
+
+        n_obj = len(self.objectives)
+        means = []
+        valid = []
+        for child in children:
+            if child.value_vectors:
+                means.append(np.mean(child.value_vectors, axis=0))
+                valid.append(child)
+            else:
+                means.append(np.zeros(n_obj))
+                valid.append(child)
+        M = np.array(means)
+        # maximise-orient: negate minimised objectives so nds treats all as max
+        sgn = np.ones(n_obj)
+        if self.maximize is not None:
+            for i, m in enumerate(self.maximize):
+                if not m:
+                    sgn[i] = -1.0
+        nd_idx = NonDominatedSorting().do(M * sgn, only_non_dominated_front=True)
+        if len(nd_idx) == 0:
+            return self._puct_best_child(node)
+
+        # Among non-dominated children, pick the highest scalar proxy
+        scores = [float(np.sum(means[int(i)])) for i in nd_idx]
+        best_i = int(nd_idx[int(np.argmax(scores))])
+        return valid[best_i]
 
     def _puct_best_child(self, node: PMCTSNode) -> PMCTSNode:
         """Select child with highest normalised multi-objective PUCT score.

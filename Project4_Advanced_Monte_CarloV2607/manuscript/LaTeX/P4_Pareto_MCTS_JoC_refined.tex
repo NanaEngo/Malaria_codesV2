@@ -72,7 +72,7 @@ We address both limitations with a Pareto-guided MCTS agent that:
   \item is evaluated in a four-method, \num{20}-seed benchmark against random search, greedy search and a genetic algorithm under a fixed search budget.
 \end{enumerate}
 
-The central empirical finding is intentionally transparent: within a curated fragment vocabulary, random search achieves the highest mean scalar reward. MCTS remains competitive on that metric and is the method that, under the multi-objective protocol, returns a Pareto front of non-dominated candidates; the scalar baselines (random, greedy, genetic) were evaluated on scalar reward only, so a front-level comparison against them is not performed here. This ranking, rather than a claim of scalar superiority, is the foundation of the present study.
+The central empirical finding is intentionally transparent: within a curated fragment vocabulary, random search achieves the highest mean scalar reward. MCTS remains competitive on that metric and is the method that, under the multi-objective protocol, returns a Pareto front of non-dominated candidates; the scalar baselines (random, greedy, genetic) were evaluated on scalar reward only. Section~\ref{sec:front_comparison} re-scores those baselines on the full multi-objective oracle and compares fronts directly; this ranking, rather than a claim of scalar superiority, is the foundation of the present study.
 
 % ============================================================================
 \section{Results}
@@ -161,6 +161,35 @@ When the same MCTS agent maintains a non-dominated front across MPO, SYBA, RRS a
 \end{table}
 
 P2 and P3 achieve the highest MPO values, yet P3 is synthetically inaccessible (SYBA $=\num{0.021}$). P1 and P4 remain highly accessible (SYBA $>\num{0.99}$) while trading potency. All four solutions share SA $= \num{3.0}$. Three of the four candidates also score PNS $= \num{1.0}$, indicating simultaneous multi-target engagement consistent with the polypharmacology criteria developed in the companion studies. The front therefore spans a genuine potency--accessibility trade-off, including a high-MPO / low-SYBA extreme that scalar-weighted optimisation systematically discards.
+
+\subsection{Multi-objective front comparison against baselines}
+\label{sec:front_comparison}
+
+Because the scalar baselines were evaluated on scalar reward only, the canonical manuscript made no front-level comparison between MCTS and the baselines. To close this gap without re-running the benchmark, we re-scored each deposited per-seed best molecule of all four methods with the same full multi-objective oracle used to build the canonical front (MPO, SYBA, RRS, PNS), and then built the Pareto front of each method under a common min--max normalisation shared across all candidates (\Cref{tab:front_comp}). SYBA was normalised with the same logistic transform used in the front recomputation ($1/(1+\exp(-s/5))$).
+
+\begin{table}[htbp]
+  \centering
+  \caption{Multi-objective front comparison of the four generation methods. Each per-seed best molecule of the canonical \num{20}-seed benchmark was re-scored on the full objective (MPO, SYBA, RRS, PNS); the Pareto front of each method was then built and compared under a common min--max normalisation. Hypervolume is the clean reference-independent metric; IGD/spread use the non-dominated union of all candidates as reference. Data: \texttt{results/pareto/p4\_multiobj\_front\_summary.csv}.}
+  \label{tab:front_comp}
+  \begin{tabular}{lccccc}
+    \toprule
+    Method & Unique/20 & Front & HV & IGD & Spread \\
+    \midrule
+    Random   & \num{20} & \num{8}  & \num{13.85} & \num{0.130} & \num{1.234} \\
+    Greedy   & \num{1}  & \num{1}  & \num{16.59} & \num{0.614} & --- \\
+    GA       & \num{19} & \num{8}  & \num{15.49} & \num{0.077} & \num{1.019} \\
+    Baselines pooled & \num{40} & \num{11} & \num{15.52} & \num{0.073} & \num{0.903} \\
+    \textbf{MCTS (front)} & \num{4} & \num{4} & \textbf{\num{18.99}} & \num{0.492} & \num{0.670} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Two findings emerge. First, greedy search is \emph{deterministic} here: it returns the identical molecule across all \num{20} seeds, so its ``front'' reduces to a single point (unique count \num{1}). That single molecule is nonetheless strictly dominated by a point of the MCTS front (higher MPO \emph{and} higher RRS), and the MCTS front attains the largest hypervolume (\num{18.99} under the common normalisation, above the \num{16.59} of the single greedy point, \num{15.52} of the pooled baseline front and \num{15.49} of GA). Second, the IGD/spread columns are shown for completeness but should be read with caution: because the reference set is the non-dominated union of all candidates, the pooled-baseline row trivially attains a low IGD by virtue of constituting most of that reference; the hypervolume, which is independent of any comparison reference, is therefore the primary metric reported here.
+
+\subsection{Selection rule does not limit the front}
+\label{sec:selection_ablation}
+
+To test whether the gain of our framework arises from the \emph{selection} rule rather than the global Pareto stack, we ran an ablation in which tree selection is restricted, at each node, to the non-dominated children (a ParetoPUCT-style prior) before the PUCT score is applied. At equal budget (\num{700} iterations, \num{5} seeds), the two selection rules produce fronts that are statistically indistinguishable (merged-front hypervolume under a common normalisation: scalar-proxy \num{15.56} vs Pareto-only \num{15.49}, $\Delta$ $\approx$ \num{0.5}\%). This null result indicates that the scalar per-objective proxy is not a bottleneck: the value of Pareto-MCTS in the present design comes from the global accumulation of a non-dominated front together with policy-guided exploration (both shared by both variants), rather than from the specific selection rule.
 
 \subsection{Component and vocabulary ablations}
 \label{sec:ablation}

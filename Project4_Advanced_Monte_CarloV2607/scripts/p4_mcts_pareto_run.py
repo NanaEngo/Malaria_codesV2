@@ -62,6 +62,11 @@ def main() -> None:
         help="ScafVAE policy temperature (default: 0.8; lower = more greedy)"
     )
     parser.add_argument(
+        "--selection-mode", choices=["proxy", "pareto"], default="proxy",
+        help="Child selection for tree: proxy = scalar per-objective PUCT; "
+             "pareto = ParetoPUCT ablation (restrict to non-dominated children)"
+    )
+    parser.add_argument(
         "--output-csv", type=Path, default=None,
         help="Output CSV path (default: results/pareto/p4_pareto_seed_{seed}.csv)"
     )
@@ -118,6 +123,7 @@ def main() -> None:
         n_iterations=args.n_iterations,
         c_puct=args.c_puct,
         policy_fn=policy_fn,
+        selection_mode=args.selection_mode,
     )
 
     print(f"═══ P4 Pareto MCTS — seed={args.seed} ═══")
@@ -126,6 +132,7 @@ def main() -> None:
     print(f"  Iterations:      {args.n_iterations}")
     print(f"  Fragment set:    {args.fragment_set} ({len(env.fragment_vocab)} fragments)")
     print(f"  PUCT c:          {args.c_puct}")
+    print(f"  Selection mode:  {args.selection_mode}")
     print(f"  Objectives:      {objectives}")
     print(f"  Maximize:        {maximize}")
     print(f"  Host:            {__import__('socket').gethostname()}")
