@@ -109,6 +109,28 @@ du framework MCTS vient donc du **stack Pareto global** (accumulation du front
 non-dominé) + du PUCT/exploration, pas d'un avantage de la règle de sélection
 elle-même. Resultat nul clairement interprété — pas de sur-claim.
 
+### Power test (n=20 ne suffirait PAS)
+
+`scripts/p4_n2_power_test.py` calcule une **différence de HV par seed** (mêmes
+4 objectifs actifs mpo/syba/rrs/pns, sigmoïde SYBA + bornes min-max communes
+N1) puis le *minimal detectable effect* (MDE, α=0.05 bilatéral, power=0.80) à
+n=5 et n=20 :
+
+| métrique | valeur |
+|---|---|
+| dHV par seed (proxy − pareto) | [−1.78, +0.27, +1.81, +1.12, +1.24] |
+| mean dHV | +0.53 ± 1.40 (paired t = 0.85, ns) |
+| **MDE @ n=5** | **1.76** |
+| **MDE @ n=20 (projeté)** | **0.88** |
+| \|mean\| / MDE(n=20) | **0.61** |
+
+Verdict honnête : \|mean dHV\| = 0.53 < MDE(n=20) = 0.88 ⇒ **même à n=20 le
+test ne peut pas discriminer cet effet-là**. Le nul « sélection ≠ goulot
+d'étranglement dans la fenêtre détectable » reste solide — et l'on explique
+clairement que SD est ici figé depuis n=5 (intervalle de confiance large),
+donc un vrai n=20 ne ferait que confirmer l'incapacité à détecter, pas un gain
+réel de la sélection Pareto. Aucune sur-lecture.
+
 ---
 
 ## N3 — Figure HV vs référence (COMPLET, partielle)
