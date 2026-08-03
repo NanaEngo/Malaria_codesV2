@@ -207,4 +207,43 @@ sets. Pareto-front provenance is verified by
 when every SMILES and score in the merged front matches a deposited per-seed
 record.
 
+\section*{S4\hspace{0.6em}Selection mechanism in Pareto-guided MCTS: relation to ParetoDrug and Mothra}
+% ============================================================================
+
+To position the selection scheme used here against the closest Pareto-MCTS
+generators, we state the differences explicitly.
+
+\paragraph{ParetoDrug (Yang et al., Commun.\ Biol.\ 7, 1074, 2024;
+doi:10.1038/s42003-024-06746-w).} ParetoDrug selects the next
+atom symbol with \emph{ParetoPUCT}: it computes a \emph{vector} selection score
+per child, retains the children that are non-dominated in that score space, and
+draws the next action uniformly at random from that Pareto front of children.
+The multi-objective character therefore enters \emph{inside} the tree-selection
+criterion.
+
+\paragraph{Mothra (Suzuki et al., J.~Chem.\ Inf.\ Model.\ 64, 7291--7302,
+2024; doi:10.1021/acs.jcim.4c00759).} Mothra back-propagates a
+\emph{multidimensional reward vector} and ranks Pareto-front nodes during
+selection using a hypervolume indicator with a projected-distance penalty
+(UCB-style bound over the vectorial reward). Again, the Pareto treatment is
+carried through the selection and back-propagation of the search tree.
+
+\paragraph{This work.} The scalar four-method benchmark uses
+\texttt{compute\_mpo\_reward} with fixed weights ($w_{\text{MPO}}=\num{0.40}$,
+$w_{\text{docking}}=\num{0.35}$, $w_{\text{SYBA}}=\num{0.15}$,
+$w_{\text{SA}}=\num{0.10}$); it is a scalar-reward comparison and is reported
+as such. In the Pareto-MCTS search, the objective \emph{vector} is stored for
+the front, while the tree selection uses a \emph{scalar proxy}
+$Q(s,a)$ obtained by summing the min--max normalised objective components
+across the four active objectives (PUCT). That is, in contrast to ParetoDrug
+and Mothra, the multi-objective character enters through the \emph{front
+maintenance} (non-dominated pool per rollout, merged across seeds), not through
+a vectorial or Pareto-ranked selection step. This separation is intentional: it
+lets us attribute the returned front to the front-keeping mechanism rather than
+to a particular vectorial selection heuristic, and it keeps the scalar benchmark
+and the Pareto search on a common PUCT backbone. The consequence is that the
+headline result---a Pareto front spanning the potency--accessibility
+trade-off---is obtained even though tree selection itself is scalar, which is a
+conservative test of the front-keeping contribution.
+
 \end{document}
