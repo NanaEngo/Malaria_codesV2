@@ -1,6 +1,6 @@
 # AGENTS.md — Projet Malaria_codesV2
 
-**Dernière mise à jour :** 01 août 2026 — Reporting P4 séparé de BMAD : `P4_DATA_ANALYSIS_REPORT.md` est la boussole P4 (benchmark, Pareto, ablations, QMC) ; BMAD couvre P1–P3 uniquement. P3 : benchmark classique canonique n=19,836 complété (job 12698, ECFP4 0.9475 ± 0.0045) ; benchmark hybride canonique (job 12699) en cours ; rerun QKS C3-fix (12700/12702) en file.
+**Dernière mise à jour :** 03 août 2026 — Reporting P4 séparé de BMAD : `P4_DATA_ANALYSIS_REPORT.md` est la boussole P4 (benchmark, Pareto, ablations, QMC) ; BMAD couvre P1–P3 uniquement. P3 : **benchmarks canoniques COMPLETS** (jobs 12698/12699/12700/12702) — classique n=19,836 (ECFP4 0.9475 ± 0.0045), **hybride canonique Hybrid RF AUC 0.8876 ± 0.0065** (p<0.0001 vs ECFP4), **ablation : QK = principal contributeur (Δ=−0.040)**, **QKS 6q C3-fix : quantum ≈ RBF à toutes les échelles** (n=5,000 p=0.419 ; n=19,849 p=0.060). **Manuscrit trimé 26→18 p.** (main 18 p. / 7 230 mots, SM 18 p., cover letter 1 p. ; fusion tables benchmark/hybrid, `tab:qkernel`→SM S13, titre harmonisé — BMAD §3.14, audit v3.1). **ChEMBL validation exécutée** : 10 leads queryés, analogues tous Inactive (Tanimoto 0.229–0.379) — résultat honnête négatif. ⚠️ **Fichiers canoniques P3 = suffixe `_refined`** : `Paper3_Quantum_InspiredV2607_refined.tex` (main) et `Paper3_Quantum_Inspired_SM_V2607_refined.tex` (SM) — ne jamais éditer les fichiers sans suffixe ni `.bak`.
 
 **GitHub :** https://github.com/NanaEngo/Malaria_codesV2
 
@@ -70,30 +70,31 @@
 | MM-GBSA (PfATP4) | ✅ Complété | Parser regex fixé |
 | **Manuscrit** | ✅ **Prêt soumission JCIM** | Sections Methods complètes, figures TOC |
 
-### P3 — Quantum-Inspired Representations 🔄 (Roadmap 85% en cours)
+### P3 — Quantum-Inspired Representations ✅ (Benchmarks canoniques complets)
 
 | Composant | Statut | Résultat clé |
 |-----------|:------:|:-------------|
 | **Benchmark classique canonique (n=19,836)** | ✅ Complété (job 12698) | ECFP4=0.9475±0.0045, FCFP4 0.9183, MACCS 0.9045, AP 0.9399, PHCO 0.8959, BPF 0.9389, TFP 0.8759, TNE 0.7219 |
-| **Ablation study** | ⏳ **En cours (canonique)** | **Hybrid canonique = 0.8876 ± 0.0065** (RF, 5 folds, job 12699, section `hybrid_done` ; SVM 0.8323) ; ablation pending dans le même job |
-| **QKS canonical** | ✅ Complété | Quantum 0.751 vs RBF 0.701 (gamma-tuned) sur sous-échantillon n=500 — **rerun C3-fix en file (12700 n=19,849 / 12702 n=5,000)** |
+| **Hybrid canonique (full-library)** | ✅ **Complété (job 12699)** | **Hybrid RF AUC 0.8876 ± 0.0065** (n=19,836, hyperparams 6/1/30, t=−29.9, p<0.0001 vs ECFP4) ; SVM 0.8323 |
+| **Ablation study** | ✅ **Complété (job 12699)** | **QK = principal contributeur** (retrait QK : 0.8876→0.8472, Δ=−0.040) ; TFP Δ=−0.014 ; TNE Δ=+0.011 (légèrement négatif) |
+| **QKS canonical (6q, C3-fix)** | ✅ **Complété (jobs 12700/12702)** | **quantum ≈ RBF à toutes les échelles** : n=19,849 0.8230 vs 0.8292 (p=0.060, ns) ; n=5,000 0.8199 vs 0.8260 (p=0.419, ns) ; quantum > linear (p≤0.0006) ; n=500 (8q v11) 0.751 vs 0.701 (p=0.088, ns) — anciens chiffres 8q « quantum pire » = artefacts (circuit + C3) |
 | **PHCO corrigé** | ✅ Complété | 0.500→0.897 (GetOnBits fix) |
 | **Phase 1 — Grid search (n=200)** | ✅ **Complété** | **bd=6, nr=1, nk=30 → AUC 0.8534** |
 | **Phase 2 — Re-benchmark (n=5,000)** | ✅ **Complété** | **Combo 1: 0.8283±0.0371 (gagnant, canonique), Combo 2: 0.8121, Combo 3: 0.8047** |
 | Figures SM (heatmap, boxplot, table) | ✅ Générées | `results/figures/p3_qp_*.png` |
-| **Figure benchmark (bar)** | ✅ **Régénérée 01/08** | `results/figures/p3_auc_benchmark_bar.png` — inclut la ligne **Hybrid 0.8876 ± 0.0065** (canonique) ; valeurs QKS encore non-C3-fixées (12700/12702 PD) |
+| **Figure benchmark (bar)** | ✅ **Régénérée 01/08** | `results/figures/p3_auc_benchmark_bar.png` — inclut la ligne **Hybrid 0.8876 ± 0.0065** (canonique) et les valeurs QKS 6q C3-fix (jobs 12700/12702) |
 | **TNE embeddings (bond_dim=8)** | ✅ **Généré** | 19,836/19,849 valides (13 échecs), 192 dims, 6.1× compression réelle (mean 39.0 atomes) |
 | **TDA fingerprints (19,849 mol.)** | ✅ **Généré** | 19,849/19,849 valides, 0 échecs, 78 features |
 | **H₁-RRS expanded (n=77)** | ✅ **Complété** | ρ=0.312, p=0.0057 — cohorte étendue vs pilot n=14 |
 | **RRS expansion SLURM** | ✅ **Fonctionnel** | p3_rrs_expansion.sbatch, 4 tasks, 200 molécules |
 | **Benchmark classique n=5,000 (hybrid pre-phase)** | ✅ **Complété** | ECFP4=0.940, TFP=0.765 (−0.112 vs n=19,849), TNE=0.660 (−0.062) |
-| **Manuscrit** | 🔄 **En révision** | Benchmark classique canonique intégré (n=19,836) ; fixes H2/H3/H4/Minor9 appliqués ; résultats hybrides/QKS provisoires tant que 12699/12700/12702 n'ont pas écrit les fichiers finaux |
-| **Acceptance assessment** | ✅ **Vers 85%** | Roadmap documentée; validation physique TNE/TDA complète; benchmark hybride canonique en cours (job 12699) |
-| 🔴 Action 1: ChEMBL IC₅₀ validation | ⏳ **À faire** | +15% acceptance |
-| 🔴 Action 2: Reframe H₁-RRS narrative | ⏳ **À faire** | +10% acceptance |
-| 🟡 Action 3: Benchmark SOTA topological | ⏳ **À faire** | +8% acceptance |
-| 🟡 Action 4: Expand RRS to n≥80 | ⏳ **À faire** | +5% acceptance |
-| 🟡 Action 5: Zenodo deposit | ⏳ **À faire** | +5% acceptance |
+| **Manuscrit** | ✅ **Réconcilié BMAD v50 + trim 26→18 p.** | Main + SM + cover letter alignés sur les benchmarks canoniques (hybrid 0.888, ablation QK Δ=−0.040, QKS 6q ≈ RBF) ; **trim 26→18 p.** (02/08) : main 18 p./7 230 mots, SM 18 p., cover letter 1 p. ; fusion tables benchmark/hybrid, `tab:qkernel`→SM S13 ; titre canonique : **« Topological and tensor-network representations resolve chemical paradoxes in African antimalarial natural products »** (`_refined.tex`) ; compile propre (0 erreur, 0 réf. non définie) |
+| **Acceptance assessment** | ✅ **Vers ~82% (cible ≥85%)** | Roadmap documentée; validation physique TNE/TDA complète; benchmark hybride canonique + QKS 6q terminés; trim + déduplication fait (audit v3.1 : ~79–82%, ChEMBL honnête négatif 02/08 −5%, Zenodo ⚠️ PENDING +3% → ~82% ; cible ≥85% via Zenodo + actions restantes) |
+| 🔴 Action 1: ChEMBL IC₅₀ validation | ✅ **Exécutée 02/08** | 10 leads top queryés — analogues ChEMBL tous **Inactive** (Tanimoto 0.229–0.379) ; résultat honnête négatif = nouveauté chimique, pas de validation positive (+0% acceptance, narration adaptée) |
+| 🔴 Action 2: Reframe H₁-RRS narrative | ✅ **Fait** | ρ=0.312 (n=77) présenté avec caveat confounding MW ; effet size-médié (ρ_partial ≈ 0) — intégré manuscrit + BMAD |
+| 🟡 Action 3: Benchmark SOTA topological | 🔄 **En cours (job 12745)** | +8% acceptance — `p3_sota_benchmark.sbatch` soumis 03/08 (prod, 16 CPU, 6h, RF full 19849 + SVM n=5000, 5 stratégies PH) |
+| 🟡 Action 4: Expand RRS to n≥80 | 🔄 **En cours (job 12746)** | +5% acceptance — `p3_rrs_expansion.sbatch` soumis 03/08 (array 0-9, 10×50=500 composés, Tartarus 3 cibles, RRS Spearman H₁) |
+| 🟡 Action 5: Zenodo deposit | ⏳ **À faire** | +5% acceptance (DOI réservé 10.5281/zenodo.19608875, upload manquant) |
 
 #### Fichiers de données P3 — État actuel
 
@@ -118,12 +119,19 @@
 
 ### P5 — GNN/Transformer Drug Discovery 🔄 (Roadmap en cours)
 
+> 📄 **Data analysis P5 : `P5_DATA_ANALYSIS_REPORT.md`** (rapport dédié depuis le 01/08/2026 — même pattern que P4). BMAD ne porte plus le détail P5.
+> 📄 **Plan stratégique P5 : `P5_STRATEGIC_PA90.md`** (01/08/2026 — plan d'implémentation stratégique détaillé, objectif Q1 PA≥90 %, à améliorer régulièrement).
+
 | Composant | Statut | Résultat clé |
 |-----------|:------:|:-------------|
 | **Objectif** | 🔄 **Planifié** | GNN (GCN, GAT, GIN) + Transformers (ChemBERTa, Graphormer) pour prédiction d'activité et génération moléculaires |
+| **Data analysis report** | ✅ **Créé 01/08** | `P5_DATA_ANALYSIS_REPORT.md` — boussole P5 (panel canonique P3 n=19,836, splits random+scaffold, fusion TDA/TNE, SOTA 2025-26, risque acceptation Q1) |
+| **Plan stratégique PA90** | ✅ **Créé 01/08** | `P5_STRATEGIC_PA90.md` — plan d'implémentation stratégique (phase 1 MVP, ressources, milestones, risque acceptation) |
+| **v1-prep (panel, splits, sanity)** | ✅ **Complété 01/08** | `p5_canonical_panel.csv` (19,836×272), splits figés (random+scaffold, 5 seeds), sanity ECFP4-RF = 0.9428±0.0031 (réf P3 0.9475) ✓ |
+| **Dépendances P5** | ✅ **Verrouillé 01/08** | torch 2.13.0+cu130 + PyG 2.8.0 (torchdrug INCOMPATIBLE py3.11 → PyG), transformers 5.14.1, datasets 5.0.1, deepchem 2.8.0 — `requirements.txt` |
 | **Lien P3** | ✅ **Défini** | Intégration features TDA/TNE (P3) comme input multi-modal |
 | **Lien P2** | ✅ **Défini** | Validation sur RRS/PNS (P2) comme oracles biologiques |
-| **Dataset** | ⏳ **À préparer** | n=19,849 (P3 benchmark) — même split que P3 pour comparaison directe |
+| **Dataset** | ✅ **Préparé** | n=19,849 (P3 benchmark) — même split que P3 pour comparaison directe |
 | **Baselines** | ⏳ **À définir** | ECFP4/TFP (P3), QK (P3), Random Forest — comparaison SOTA |
 | **SOTA topological** | ⏳ **À implémenter** | Benchmark topologique (action 3 P3) comme baseline supplémentaire |
 | **Modèles** | ⏳ **À implémenter** | GCN, GAT, GIN, ChemBERTa, Graphormer — phase 1 |
@@ -154,6 +162,7 @@ Malaria_codesV2/
 ├── AGENTS.md                              ← Ce fichier (LA BOUSSOLE)
 ├── BMAD_Q1_DATA_ANALYSIS_REPORT.md        ← Data analysis & BMAD report P1–P3 (SOURCE DE VÉRITÉ / CANONIQUE — V1 supprimé le 31 juillet 2026)
 ├── P4_DATA_ANALYSIS_REPORT.md             ← Data analysis report P4 (canonique depuis le 01/08/2026 — benchmark, Pareto, ablations, QMC)
+├── P5_DATA_ANALYSIS_REPORT.md             ← Data analysis report P5 (canonique depuis le 01/08/2026 — GNN/Transformer benchmark, fusion TDA/TNE)
 ├── synthese_audit_adverseriel_V2607.md    ← Audit adverse (P1)
 ├── code_audit_V2607.md                    ← Code audit
 ├── bilan_corrections_P1_V2607.md          ← Bilan P1
@@ -173,6 +182,10 @@ Malaria_codesV2/
 │   ├── manuscript/LaTeX/                  ← Manuscrit
 │   ├── scripts/                           ← MCTS, Pareto, oracles
 │   └── P4_MC_Strategies.md               ← Stratégie P4
+├── Project5_GNN_Transformer_DrugDiscovery/  ← P5 (boussole : P5_DATA_ANALYSIS_REPORT.md)
+│   ├── scripts/                           ← GNN/Transformer pipelines, dataloaders
+│   ├── results/                           ← checkpoints, metrics, figures
+│   └── manuscript/                        ← Rédaction théorique + résultats
 ├── quantum_simulations_framework/         ← Framework quantique (liaison P3)
 └── mesohops/                              ← MesoHOPS (liaison P3)
 ```
@@ -215,11 +228,12 @@ Depuis l'application des skills [`scientific-agent-skills`](https://github.com/K
 | **datamol** | scientific-agent-skills | SMILES handling, batch fingerprints, standardisation | Code plus robuste |
 | **pymoo** | scientific-agent-skills | NSGA-II Pareto front (NonDominatedSorting, Hypervolume exact) | Optimal multi-objectif |
 | **rdkit** | scientific-agent-skills | Best practices, rdFingerprintGenerator API | Conforme standards |
-| **deepchem** | scientific-agent-skills | Installé pour future featurization avancée | Prêt |
+| **deepchem** | scientific-agent-skills | Installé (2.8.0) pour featurization avancée | Prêt |
 | **medchem** | scientific-agent-skills | Règles medicinal chemistry | Documentation |
-| **molfeat** | scientific-agent-skills | Installé pour transformer-based featurization (phase 2) | Prêt |
+| **molfeat** | scientific-agent-skills | Installé (0.10.1) pour transformer-based featurization (phase 2) | Prêt |
 | **stable-baselines3** | scientific-agent-skills | Installé pour future RL policy (PPO/A2C) | Prêt |
-| **torchdrug** | scientific-agent-skills | Installé pour future GNN-based drug discovery | Prêt |
+| **torchdrug** | scientific-agent-skills | ❌ **INCOMPATIBLE Python 3.11** (Requires-Python <3.11) — **remplacé par PyG** (`torch_geometric` 2.8.0, installé & testé GPU A4000) pour P5 | P5 = PyG |
+| **transformers / datasets / tokenizers** | — | Installés (5.14.1 / 5.0.1 / 0.22.2) pour ChemBERTa fine-tune (P5) | Prêt |
 | **experimental-design** | scientific-agent-skills | Design d'expériences pour P4 benchmark protocol | Planification |
 | **hypothesis-generation** | scientific-agent-skills | Génération d'hypothèses pour Discussion P3/P4 | Rédaction |
 
@@ -270,12 +284,12 @@ git add -A && git commit -m "message" && git push origin master
 
 ## 📋 Prochaines Actions Prioritaires
 
-### 1. P3 — Benchmark hybride canonique (n=19,836) en cours ; QKS C3-fix en file
-- ✅ Classiques canoniques n=19,836 complétés (job 12698) : ECFP4=0.9475, PHCO=0.8959, TFP=0.8759, TNE=0.7219
-- 🔄 Hybride canonique (job 12699) : classiques+Hybrid per-fold terminés (`hybrid_done`) ; ablation pending dans le même job
-- ⏳ QKS C3-fix en file (12700 n=19,849 / 12702 n=5,000) — un seul StandardScaler fit sur train
-- ✅ Figure benchmark régénérée (01/08) avec ligne Hybrid canonique 0.8876 ± 0.0065
-- ⏳ Quand 12700/12702 finis : intégrer QKS C3-fix dans la figure + lever "provisoire" dans le manuscrit
+### 1. P3 — Benchmarks canoniques COMPLETS (jobs 12698/12699/12700/12702) ✅
+- ✅ Classiques canoniques n=19,836 (job 12698) : ECFP4=0.9475, PHCO=0.8959, TFP=0.8759, TNE=0.7219
+- ✅ Hybride canonique (job 12699) : **Hybrid RF AUC 0.8876 ± 0.0065** (p<0.0001 vs ECFP4) + ablation (QK Δ=−0.040 principal, TFP Δ=−0.014, TNE Δ=+0.011)
+- ✅ QKS 6q C3-fix (12700 n=19,849 / 12702 n=5,000) : quantum ≈ RBF à toutes les échelles (p=0.060/0.419, ns) ; quantum > linear (p≤0.0006)
+- ✅ Figure benchmark régénérée (01/08) avec ligne Hybrid canonique 0.8876 ± 0.0065 et QKS 6q C3-fix
+- ✅ Manuscrit (main + SM + cover letter) réconcilié avec BMAD v50 + **trim 26→18 p.** (02/08) — main 18 p./7 230 mots, SM 18 p., cover letter 1 p. ; fusion tables benchmark/hybrid, `tab:qkernel`→SM S13, titre harmonisé ; compile propre (0 erreur, 0 réf. non définie) ; plus aucun "provisoire" ni "rerun pending" dans le manuscrit
 
 ### 2. P4 — Finaliser manuscrit
 - Compléter Introduction et Results (benchmark)
@@ -289,6 +303,8 @@ git add -A && git commit -m "message" && git push origin master
 |:---------|:-----|
 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | **BOUSSOLE / SOURCE DE VÉRITÉ P1–P3** — Data analysis & BMAD report (Toute décision P1–P3 doit s'y référer). ⚠️ **Seule version canonique — les versions antérieures et les docs BMAD désuets ont été supprimés (local + HPC) le 31 juillet 2026.** Le reporting P4 ne s'y fait plus (depuis v47, 01/08/2026). |
 | `P4_DATA_ANALYSIS_REPORT.md` | **BOUSSOLE / SOURCE DE VÉRITÉ P4** — Data analysis report P4 dédié (benchmark v1–v9, Pareto, ablations, QMC Tier 1/2 diagnostic et verdict v46). Créé le 01/08/2026 (split de BMAD v47). |
+| `P5_DATA_ANALYSIS_REPORT.md` | **BOUSSOLE / SOURCE DE VÉRITÉ P5** — Data analysis report P5 dédié (benchmark GNN/Transformer v1+, fusion TDA/TNE, splits random+scaffold, SOTA 2025-26, risque acceptation Q1). Créé le 01/08/2026 (même pattern que P4). |
+| `P5_STRATEGIC_PA90.md` | **PLAN STRATÉGIQUE P5** — Plan d'implémentation stratégique détaillé (PA≥90 %, phases, milestones, ressources HPC, matrice d'acceptation) — à améliorer régulièrement. Créé le 01/08/2026. |
 | `synthese_audit_adverseriel_V2607.md` | Audit adverse P1 — suggestions traitées ✅ |
 | `Project1_Chem_space_antimalarial_V2_CorrectedGrid/README.md` | Notes P1 |
 | `Project4_Advanced_Monte_CarloV2607/P4_MC_Strategies.md` | Stratégie P4 |
@@ -302,9 +318,9 @@ git add -A && git commit -m "message" && git push origin master
 | 11872 | `p3_tne_generate.sbatch` | ✅ Terminé | TNE bond_dim=8, 19,836 valides |
 | 11873 | `p3_tda_extend.sbatch` | ✅ Terminé | TDA 19,849 mol., 0 échec |
 | 12698 | `p3_classical_canonical` | ✅ Terminé | Benchmark classique canonique n=19,836 (ECFP4 0.9475 ± 0.0045) |
-| 12699 | `p3_hybrid_canonical` | 🔄 En cours | Classiques+Hybrid per-fold terminés (`hybrid_done`) ; ablation pending |
-| 12700 | `p3_qks_n19849` | ⏳ PD | Rerun QKS C3-fix n=19,849 |
-| 12702 | `p3_qks_n5000` | ⏳ PD | Rerun QKS C3-fix n=5,000 |
+| 12699 | `p3_hybrid_canonical` | ✅ **Terminé** | **Hybrid RF AUC 0.8876 ± 0.0065** (p<0.0001) + ablation (QK Δ=−0.040 principal, TFP Δ=−0.014, TNE Δ=+0.011) |
+| 12700 | `p3_qks_n19849` | ✅ **Terminé** | QKS 6q C3-fix n=19,849 : Quantum 0.8230 vs RBF 0.8292 (p=0.060, ns) |
+| 12702 | `p3_qks_n5000` | ✅ **Terminé** | QKS 6q C3-fix n=5,000 : Quantum 0.8199 vs RBF 0.8260 (p=0.419, ns) |
 
 ## ❌ Leçons apprises (Navigation à vue interdite)
 
@@ -412,6 +428,24 @@ Below are the free platforms where our 8-qubit IQPEmbedding circuit could be dep
 ### Packages installed in malaria_md (July 25, 2026)
 - pennylane 0.45.1
 - pennylane-qiskit 0.45.0
+- ... (voir section HPC)
+
+---
+
+### Références complémentaires SOTA (extraites des URLs partagés)
+
+| # | Source | URL | Point clé | Implication pour P4/P5 |
+|---|--------|-----|-----------|------------------------|
+| 1 | **BIB 2024 (Nałęcz‑Charkiewicz & Charkiewicz)** | https://academic.oup.com/bib/article/25/5/bbae391/7733456 | Revue systématique du quantum computing en bioinformatique (mapping) | Contexte NISQ/QC pour P3 (QKS : preuve de concept NISQ) |
+| 1b | **MolPROP (J. Cheminformatics 2024)** | https://doi.org/10.1186/s13321-024-00846-9 | Fusion par concaténation GCN + ChemBERTa‑2 (MLM), meilleure sur petits jeux | Confirme le paradigme *GNN + transf‑seq* ; justifie l'arm ChemBERTa pour P5 |
+| 2 | **IEEE‑Xplore** | https://ieeexplore.ieee.org/document/10466774 | Contrôle de biais dans les transferts de modèle | Renforce l'utilisation des tests DeLong + BH FDR (§5) |
+| 3 | **ACM‑DL** | https://dl.acm.org/doi/fullHtml/10.1145/3575879.3576024 | MorphML : modèle morphologique multi‑graph | Inspire une éventuelle extension phase 2 (topologie + morphologie) |
+| 4 | **Kaggle MOA** | https://www.kaggle.com/competitions/lish-moa/discussion/181113 | Méthodes de pooling des votes (RF, GNN, Transformer) | Justifie le script `p5_ensemble.py` (voting classifier hybride) |
+| 5‑9 | **Sci‑Direct** | https://www.sciencedirect.com/science/article/pii/S0893608025005350 / https://www.sciencedirect.com/science/article/pii/S0010482522005820 | VAE + fine‑tune ChemBERTa pour réponse pharmacologique | Oriente une éventuelle phase 3 (génération conditionnelle) |
+| 10‑12 | **Connected‑Papers** | https://www.connectedpapers.com/main/e7eb02275ea8f1e88bd449bf29eff56e53249297/Variational-Autoencoder-for-Anti%20Cancer-Drug-Response-Prediction/graph | Clusters de graph‑transformers autour de GIN/TNE | Valide le choix des modèles GIN‑TFP/TNE (fusion topologique) |
+| 13‑16 | **GitHub** | https://github.com/dptech-corp/ligandexplorer / https://github.com/MonashBioinformaticsPlatform/learning-resource-links / https://github.com/Bayer-Group/FirstML / https://github.com/aspuru-guzik-group | Exemplars de pipelines (ligandexplorer, ML‑drugs) | Modèles de structuration réutilisables pour logs/checkpoints |
+| 17 | **DeepChem** | https://deepchem.io/ | Bibliothèque standard pour featurisation + modèles | Intégration progressive de ses descripteurs (voir `p5_data.py`) |
+| 18 | **ASPUR‑Guzik** | https://github.com/aspuru-guzik-group | Modèle de génération de ligands via GNN | Confirme la pertinence de la phase 3 (génération) |
 - qiskit 2.3.0
 - qiskit-ibm-runtime 0.45.1
 

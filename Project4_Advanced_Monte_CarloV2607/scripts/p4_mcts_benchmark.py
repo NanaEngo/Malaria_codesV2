@@ -28,6 +28,12 @@ except ImportError:
     HAS_MCTS = False
 
 try:
+    from p4_mcts_policy import ScafVAEPolicy
+    HAS_POLICY = True
+except ImportError:
+    HAS_POLICY = False
+
+try:
     from p4_mcts_rl_env import MolecularEnv
     HAS_ENV = True
 except ImportError:
@@ -60,6 +66,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--output", type=str, required=True)
     parser.add_argument("--latex-table", type=str, required=True)
+    parser.add_argument(
+        "--molecules-out", type=str, default=None,
+        help="Optional: write best-SMILES per method to this CSV "
+             "(method,seed,best_smiles,reward). Does not affect --output.",
+    )
     return parser.parse_args()
 
 
@@ -100,11 +111,21 @@ def make_env(initial_smiles, max_steps, seed, fragment_set="medium"):
 
 
 def run_mcts(env, oracle, args):
+    # Retained configuration from the hyperparameter screening (manuscript
+    # Methods): c_PUCT=5.0, virtual_loss=0.01, pw_alpha=0.5, pw_k=1.0,
+    # T=0.8, with the ScafVAE scaffold-aware policy guiding PUCT priors.
+    policy_fn = None
+    if HAS_POLICY:
+        policy_fn = ScafVAEPolicy(
+            temperature=0.8, random_seed=args.seed
+        ).get_action_priors
     agent = MCTSAgent(env=env, oracle=oracle, n_iterations=args.n_iterations,
-                      c_puct=1.414, seed=args.seed)
+                      c_puct=5.0, policy_fn=policy_fn, seed=args.seed,
+                      pw_alpha=0.5, pw_k=1.0, virtual_loss=0.01,
+                      rollout_temperature=0.8)
     t0 = time.perf_counter()
     best = agent.search(env.state)
-    return oracle(best), time.perf_counter() - t0
+    return best, oracle(best), time.perf_counter() - t0
 
 
 def run_random(env, oracle, args):
@@ -123,12 +144,14 @@ def run_random(env, oracle, args):
                 best_reward, best_smiles = r, state
             if done:
                 break
-    return best_reward, time.perf_counter() - t0
+    return best_smiles, best_reward, time.perf_counter() - t0
 
 
 def run_greedy(env, oracle, args):
     vocab = list(env.fragment_vocab)
     state = env.state
+    # Reward semantics unchanged: reported reward is oracle(final state).
+    best_reward, best_smiles = oracle(state), state
     t0 = time.perf_counter()
     for _ in range(args.max_steps):
         best_r, best_a = -1.0, None
@@ -142,9 +165,12 @@ def run_greedy(env, oracle, args):
         if best_a:
             env.reset()
             state, _, done, _ = env.step(best_a)
+            r = oracle(state)
+            if r > best_reward:
+                best_reward, best_smiles = r, state
             if done:
                 break
-    return oracle(state), time.perf_counter() - t0
+    return best_smiles, oracle(state), time.perf_counter() - t0
 
 
 def run_ga(env, oracle, args):
@@ -156,6 +182,7 @@ def run_ga(env, oracle, args):
     population = [rng.choice(vocab, size=rng.integers(1, args.max_steps + 1)).tolist()
                   for _ in range(pop_size)]
     best_reward = 0.0
+    best_smiles = env.state
     t0 = time.perf_counter()
     for _ in range(n_gen):
         fitnesses = []
@@ -169,6 +196,7 @@ def run_ga(env, oracle, args):
             fitnesses.append(r)
             if r > best_reward:
                 best_reward = r
+                best_smiles = state
         # Tournament selection + crossover (simplified)
         new_pop = []
         for _ in range(pop_size):
@@ -178,7 +206,7 @@ def run_ga(env, oracle, args):
             child = parent[:cut] + [rng.choice(vocab)]
             new_pop.append(child[:args.max_steps])
         population = new_pop
-    return best_reward, time.perf_counter() - t0
+    return best_smiles, best_reward, time.perf_counter() - t0
 
 
 def main() -> None:
@@ -192,24 +220,29 @@ def main() -> None:
     env = make_env(args.initial_smiles, args.max_steps, args.seed, args.fragment_set)
 
     results = {}
+    molecules = {}
     print(f"=== P4 Benchmark | seed={args.seed} | fragment_set={args.fragment_set} ===")
 
     if HAS_MCTS:
-        r, t = run_mcts(make_env(args.initial_smiles, args.max_steps, args.seed, args.fragment_set), oracle, args)
+        smi, r, t = run_mcts(make_env(args.initial_smiles, args.max_steps, args.seed, args.fragment_set), oracle, args)
         results["mcts"] = {"reward": r, "elapsed_s": t}
-        print(f"  MCTS:   {r:.4f} ({t:.1f}s)")
+        molecules["mcts"] = smi
+        print(f"  MCTS:   {r:.4f} ({t:.1f}s)  {smi[:50]}")
 
-    r, t = run_random(make_env(args.initial_smiles, args.max_steps, args.seed, args.fragment_set), oracle, args)
+    smi, r, t = run_random(make_env(args.initial_smiles, args.max_steps, args.seed, args.fragment_set), oracle, args)
     results["random"] = {"reward": r, "elapsed_s": t}
-    print(f"  Random: {r:.4f} ({t:.1f}s)")
+    molecules["random"] = smi
+    print(f"  Random: {r:.4f} ({t:.1f}s)  {smi[:50]}")
 
-    r, t = run_greedy(make_env(args.initial_smiles, args.max_steps, args.seed, args.fragment_set), oracle, args)
+    smi, r, t = run_greedy(make_env(args.initial_smiles, args.max_steps, args.seed, args.fragment_set), oracle, args)
     results["greedy"] = {"reward": r, "elapsed_s": t}
-    print(f"  Greedy: {r:.4f} ({t:.1f}s)")
+    molecules["greedy"] = smi
+    print(f"  Greedy: {r:.4f} ({t:.1f}s)  {smi[:50]}")
 
-    r, t = run_ga(make_env(args.initial_smiles, args.max_steps, args.seed, args.fragment_set), oracle, args)
+    smi, r, t = run_ga(make_env(args.initial_smiles, args.max_steps, args.seed, args.fragment_set), oracle, args)
     results["ga"] = {"reward": r, "elapsed_s": t}
-    print(f"  GA:     {r:.4f} ({t:.1f}s)")
+    molecules["ga"] = smi
+    print(f"  GA:     {r:.4f} ({t:.1f}s)  {smi[:50]}")
 
     # Write CSV
     with open(out_path, "w", newline="") as f:
@@ -219,6 +252,22 @@ def main() -> None:
             writer.writerow({"method": method, "seed": args.seed,
                              "reward": v["reward"], "elapsed_s": f"{v['elapsed_s']:.2f}"})
     print(f"  CSV saved to {out_path}")
+
+    # Optional: best-SMILES per method (molecule-set deposit for diversity analysis)
+    # The reward column is recomputed as oracle(best_smiles) so the SMILES--reward
+    # pairing is always self-consistent, even for greedy where the reported
+    # benchmark reward is oracle(final state) while best_smiles is the best
+    # intermediate (they coincide when rewards are monotonically non-decreasing).
+    if args.molecules_out:
+        mol_path = Path(args.molecules_out)
+        mol_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(mol_path, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=["method", "seed", "best_smiles", "reward"])
+            writer.writeheader()
+            for method, smi in molecules.items():
+                writer.writerow({"method": method, "seed": args.seed,
+                                 "best_smiles": smi, "reward": oracle(smi)})
+        print(f"  Molecules CSV saved to {mol_path}")
 
     # Write per-seed LaTeX snippet
     with open(tex_path, "w") as f:
