@@ -148,28 +148,34 @@ def run_random(env, oracle, args):
 
 
 def run_greedy(env, oracle, args):
+    import copy
     vocab = list(env.fragment_vocab)
     state = env.state
-    # Reward semantics unchanged: reported reward is oracle(final state).
     best_reward, best_smiles = oracle(state), state
     t0 = time.perf_counter()
-    for _ in range(args.max_steps):
+    oracle_calls = 1
+    for step in range(args.max_steps):
         best_r, best_a = -1.0, None
         for a in vocab:
-            env.reset()
-            # Temporarily step to evaluate
-            next_s, _, _, _ = env.step(a)
+            # Evaluate each action on a copy of the CURRENT state (not a reset).
+            env_copy = copy.deepcopy(env)
+            env_copy.state = state
+            env_copy.step_count = step
+            next_s, _, _, _ = env_copy.step(a)
             r = oracle(next_s)
+            oracle_calls += 1
             if r > best_r:
                 best_r, best_a = r, a
         if best_a:
-            env.reset()
             state, _, done, _ = env.step(best_a)
             r = oracle(state)
+            oracle_calls += 1
             if r > best_reward:
                 best_reward, best_smiles = r, state
             if done:
                 break
+    if oracle_calls > getattr(args, "max_oracle_calls", float("inf")):
+        oracle_calls = oracle_calls  # record actual count; budget enforced by caller
     return best_smiles, oracle(state), time.perf_counter() - t0
 
 

@@ -1,8 +1,8 @@
 # Project 4 — Advanced Monte Carlo Strategies (P4)
 
-**Target journal:** *Journal of Chemical Information and Modeling* (JCIM) — ACS
-**Status:** Complete architecture — ready for HPC production runs
-**Date:** July 2026
+**Target journal:** *Journal of Cheminformatics* (JoC) — canonical manuscript: `P4_Pareto_MCTS_JoC_refined.tex`
+**Status:** v11 20-seed benchmark complete (optimal MCTS config); manuscript ready for submission
+**Date:** August 2026
 **Repository:** https://github.com/NanaEngo/Malaria_codesV2
 
 ---
@@ -60,7 +60,7 @@ The `_batch_tanimoto_gpu()` method uses CuPy for batch Tanimoto computation, pro
 Project4_Advanced_Monte_CarloV2607/
 ├── AGENTS.md                    # This file — project methodology
 ├── README.md                    # Quick-start guide
-├── P4_MC_Strategies.md          # Long-term strategic roadmap & JCIM submission plan
+├── P4_MC_Strategies.md          # Long-term strategic roadmap
 ├── scripts/
 │   ├── p4_mcts_oracles.py       # OracleAggregator with medchem + CuPy batch Tanimoto
 │   ├── p4_mcts_policy.py        # ScafVAEPolicy with Morgan+MACCS fingerprints
@@ -75,8 +75,11 @@ Project4_Advanced_Monte_CarloV2607/
 │   ├── p4_mcts_ablation.py      # $2^5$ factorial design for ablation study
 │   └── p4_qmc_*.py              # QMC validation pipeline (Tier 1: wB97X-D, Tier 2: DMC)
 ├── manuscript/LaTeX/
-│   ├── P4_Pareto_MCTS_V2607.tex # Main manuscript (JCIM format)
-│   └── P4_Bibliography.bib      # References
+│   ├── P4_Pareto_MCTS_JoC_refined.tex # Main manuscript (CANONICAL, JoC)
+│   ├── P4_Pareto_MCTS_JoC_SM.tex      # Supplementary Material (S1–S3)
+│   ├── Cover_Letter_P4_JoC.tex        # Cover letter (JoC)
+│   ├── P4_Pareto_MCTS_V2607.tex       # Earlier draft (historical only)
+│   └── P4_Bibliography.bib            # References
 └── results/                     # Generated outputs (gitignored)
 ```
 
@@ -90,8 +93,9 @@ Project4_Advanced_Monte_CarloV2607/
 | `scripts/p4_mcts_policy.py` | ScafVAE policy with multi-fingerprint | July 2026 |
 | `scripts/p4_mcts_agent.py` | MCTS agent with trajectory rollout mitigation | July 2026 |
 | `scripts/p4_mcts_pareto.py` | Pareto optimization and hypervolume (pymoo) | July 2026 |
-| `scripts/p4_mcts_benchmark.py` | 4-method 10-seed benchmark script | July 2026 |
-| `manuscript/P4_Pareto_MCTS_V2607.tex` | Manuscript draft | July 2026 |
+| `scripts/p4_mcts_benchmark.py` | 4-method 20-seed benchmark script (v11 optimal MCTS config) | Aug 2026 |
+| `manuscript/LaTeX/P4_Pareto_MCTS_JoC_refined.tex` | **Canonical manuscript (JoC)** | Aug 2026 |
+| `manuscript/LaTeX/P4_Pareto_MCTS_JoC_SM.tex` | Supplementary Material (S1–S3) | Aug 2026 |
 
 ---
 
@@ -132,14 +136,17 @@ python scripts/p4_mcts_merge.py --rescore --top-n 20
 python scripts/p4_generate_figures.py          # All figures
 ```
 
-### 5.4 Manuscript Compilation
+### 5.4 Manuscript Compilation (canonical JoC manuscript)
 
 ```bash
 cd manuscript/LaTeX
-pdflatex P4_Pareto_MCTS_V2607.tex
-bibtex P4_Pareto_MCTS_V2607
-pdflatex P4_Pareto_MCTS_V2607.tex
-pdflatex P4_Pareto_MCTS_V2607.tex
+pdflatex P4_Pareto_MCTS_JoC_refined.tex
+bibtex P4_Pareto_MCTS_JoC_refined
+pdflatex P4_Pareto_MCTS_JoC_refined.tex
+pdflatex P4_Pareto_MCTS_JoC_refined.tex
+# Supplementary Material
+pdflatex P4_Pareto_MCTS_JoC_SM.tex
+pdflatex P4_Pareto_MCTS_JoC_SM.tex
 ```
 
 ---

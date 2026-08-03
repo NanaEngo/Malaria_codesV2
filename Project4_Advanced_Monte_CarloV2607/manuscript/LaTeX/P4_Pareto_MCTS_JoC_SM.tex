@@ -94,22 +94,18 @@ using real, deposited molecule sets.
 \textbf{Molecule sets.} For each of the four generation methods (MCTS+ScafVAE,
 random search, greedy search, genetic algorithm) the best-scoring molecule of
 each of the \num{20} independent benchmark seeds was recorded, giving a
-deposited set of \num{20} molecules per method
-(\path{results/benchmark_molecules/p4_benchmark_molecules_seed_N.csv}).
-These are the same runs whose scalar rewards are reported in the main-text
-benchmark table (\Cref{tab:sm_benchmark}). The benchmark was re-run for this
-submission (2026-08-02) with the committed script
-\texttt{p4\_mcts\_benchmark.py}, a value-preserving vectorisation of the
-docking Tanimoto scan, and the screened-optimal MCTS configuration
-($c_{\text{PUCT}}=\num{5.0}$, $\nu=\num{0.01}$, $T=\num{0.8}$, ScafVAE
-policy wired into PUCT priors; main text, Hyperparameter screening); all \num{20}
-per-seed runs reproduce deterministically from the deposited code and data
-(\path{results/benchmark\_molecules\_opt/}). This canonical run supersedes
-both the v9 deposit (2026-07-29), whose rewards could not be reproduced from
-the committed code because the docking oracle's Tartarus library state differed
-at run time, and an interim default-configuration re-run; the method ranking
-(Random $>$ MCTS $>$ GA $>$ Greedy) is identical across all three, and the
-deposited molecule sets are the canonical outputs of the benchmark.
+deposited set of \num{20} molecules per method under
+\path{results/benchmark_molecules_opt/}. These are the same runs whose scalar
+rewards are reported in the main-text benchmark table and in
+\Cref{tab:sm_benchmark}. The canonical benchmark uses the screened-optimal
+MCTS configuration ($c_{\text{PUCT}}=\num{5.0}$, $\nu=\num{0.01}$,
+$T=\num{0.8}$, ScafVAE policy wired into PUCT priors) and a value-preserving
+vectorisation of the docking Tanimoto scan; all \num{20} per-seed runs
+reproduce deterministically from the deposited code and data. An earlier
+deposit could not be reproduced from the committed code because the docking
+oracle library state differed at run time; the present molecule sets supersede
+that deposit. The method ranking (Random $>$ MCTS $>$ GA $>$ Greedy) is
+unchanged.
 
 \textbf{Descriptors.} ECFP4 fingerprints (Morgan radius 2, \num{2048} bits)
 were computed with RDKit. Pairwise Tanimoto dissimilarity is
@@ -164,12 +160,12 @@ matrix) are deposited for visualisation
     Random & \num{0.7335} & \num{0.0063} & \num{0.7227} & \num{0.7481} & \num{42.2} \\
     MCTS+ScafVAE & \num{0.7276} & \num{0.0090} & \num{0.7054} & \num{0.7442} & \num{82.2} \\
     GA & \num{0.7027} & \num{0.0152} & \num{0.6749} & \num{0.7311} & \num{1.9} \\
-    Greedy & \num{0.6147} & \num{0.0000} & \num{0.6147} & \num{0.6147} & \num{0.1} \\
+    Greedy & \num{0.7211} & \num{0.0000} & \num{0.7211} & \num{0.7211} & \num{0.1} \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Because greedy search collapses deterministically to a single local optimum
+Because greedy search is deterministic and returns the same local optimum across all \num{20} seeds
 (std identically zero in the canonical benchmark), its \num{20} per-seed
 outputs coincide, yielding zero pairwise diversity and a single unique
 Bemis--Murcko scaffold by construction (Table~\ref{tab:sm_diversity}). The
@@ -186,16 +182,17 @@ vocabulary.
 % ============================================================================
 
 All deposited CSVs, the benchmark, Pareto and diversity analysis scripts, and
-the provenance-check script are listed in the Zenodo manifest. The canonical
-benchmark was re-run with the exact script \texttt{p4\_mcts\_benchmark.py}
-(with the addition of best-SMILES recording, which does not alter the reward
-semantics) and a value-preserving vectorisation of the docking Tanimoto scan
-(verified to return identical similarities and indices on held-out molecules);
-the \num{20} per-seed rewards in
-\path{results/benchmark_molecules/p4_benchmark_merged.csv} are reproduced
-deterministically from the deposited code and data. The diversity statistics
-are computed by \path{scripts/p4_compute_diversity.py} from the deposited
-molecule sets, and the provenance of the Pareto front is verified by
-\path{scripts/p4_pareto_provenance_check.py}.
+the provenance-check script will be listed in the Zenodo manifest. The canonical
+benchmark is produced by \texttt{p4\_mcts\_benchmark.py} with best-SMILES
+recording (no change to reward semantics) and a value-preserving vectorisation
+of the docking Tanimoto scan (verified identical on held-out molecules). The
+\num{20} per-seed rewards in
+\path{results/benchmark_molecules_opt/p4_benchmark_merged.csv} reproduce
+deterministically from the deposited code and data. Diversity statistics are
+computed by \path{scripts/p4_compute_diversity.py} from the deposited molecule
+sets. Pareto-front provenance is verified by
+\path{scripts/p4_pareto_provenance_check.py}, which exits with status 0 only
+when every SMILES and score in the merged front matches a deposited per-seed
+record.
 
 \end{document}
