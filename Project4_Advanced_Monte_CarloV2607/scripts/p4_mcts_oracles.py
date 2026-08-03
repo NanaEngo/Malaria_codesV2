@@ -74,11 +74,34 @@ except ImportError:
 
 
 # ── CuPy for GPU-accelerated batch Tanimoto (scientific-agent-skills: optimize-for-gpu) ──
+# M3 fix (2026-08-03): `_HAS_CUPY` only records that the module imports; it does
+# NOT guarantee a GPU device exists on the current node. Allocating CuPy arrays on
+# a GPU-less node raises, and the broad try/except in `_load_precomputed_libraries`
+# then silently empties the Tartarus library, making rewards node-dependent.
+# We therefore probe for an actual device at runtime and fall back to numpy.
 try:
     import cupy as cp
     _HAS_CUPY = True
 except ImportError:
+    cp = None
     _HAS_CUPY = False
+
+
+def _cupy_available() -> bool:
+    """True only if CuPy imports AND a usable CUDA device is present."""
+    if not _HAS_CUPY:
+        return False
+    try:
+        return cp.cuda.runtime.getDeviceCount() > 0
+    except Exception:
+        return False
+
+
+# Resolve the array backend once at import time (probe the device now).
+_USE_GPU = _cupy_available()
+if _HAS_CUPY and not _USE_GPU:
+    print("[p4_mcts_oracles] CuPy present but no CUDA device found — using numpy backend "
+          "(results are identical, only the backend differs).", flush=True)
 
 
 C6_CSV = (
@@ -426,7 +449,7 @@ class OracleAggregator:
             self._tartarus_dense = None
             self._tartarus_norms = None
             return
-        if _HAS_CUPY:
+        if _USE_GPU:
             lib_dense = cp.zeros((n_lib, 2048), dtype=cp.float32)
         else:
             lib_dense = np.zeros((n_lib, 2048), dtype=np.float32)
@@ -448,7 +471,7 @@ class OracleAggregator:
             return -1.0, 0
         onbits = list(query_fp.GetOnBits())
         query_norm = float(len(onbits))
-        if _HAS_CUPY and isinstance(self._tartarus_dense, cp.ndarray):
+        if _USE_GPU and isinstance(self._tartarus_dense, cp.ndarray):
             query_dense = cp.zeros(2048, dtype=cp.float32)
             if onbits:
                 query_dense[onbits] = 1.0
@@ -475,7 +498,7 @@ class OracleAggregator:
         dm.parallelized() for multi-CPU fingerprint computation,
         falling back to sequential RDKit if datamol unavailable.
 
-        When CuPy is available (`_HAS_CUPY`), batch Tanimoto operations
+        When a usable GPU device is present (`_USE_GPU`), batch Tanimoto operations
         in the oracle also use GPU acceleration via `_batch_tanimoto_gpu()`.
         """
         if not smiles_list:
@@ -543,7 +566,7 @@ class OracleAggregator:
         tuple[float, int]
             (best_similarity, best_index)
         """
-        if not _HAS_CUPY or not lib_fps:
+        if not _USE_GPU or not lib_fps:
             return OracleAggregator._tanimoto_sequential(query_fp, lib_fps)
 
         # GPU path: convert RDKit bit vectors to CuPy dense array
@@ -581,7 +604,7 @@ class OracleAggregator:
         """Return the docking score of the nearest neighbour by Tanimoto similarity.
 
         Uses GPU-accelerated batch Tanimoto when CuPy is available
-        (`_HAS_CUPY`), otherwise falls back to sequential CPU.
+        (`_USE_GPU`), otherwise falls back to sequential CPU.
 
         The score is clamped to a physically reasonable range [-15, -0.1] kcal/mol
         to protect against corrupted entries in the Tartarus library (e.g., 2836

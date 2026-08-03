@@ -26,7 +26,6 @@ export MKL_NUM_THREADS=4
 export NUMEXPR_NUM_THREADS=4
 
 # ── Robust conda activation (works in non-interactive SLURM shells) ────
-# ── Robust conda activation (with fallback) ───────────────────────────
 if [ -d "${HOME}/miniforge3" ]; then
   CONDA_BASE="${HOME}/miniforge3"
 elif [ -d "${HOME}/miniconda3" ]; then
@@ -48,7 +47,18 @@ cd "${SCRIPT_DIR}"
 # Ensure log directory exists before SLURM tries to write to it
 mkdir -p "${PROJECT_DIR}/logs/slurm"
 
-# ── Run ablation script for this design matrix row ─────────────────────
+# ── Run 2^5 factorial generator for this ConfigID (5 replicates each) ─
+# M2 (2026-08-03): previously called `p4_mcts_ablation.py --array-id` which
+# is the vocab-ANALYSIS script (no such flag) — the factorial generator was
+# lost. Reconstructed generator: `p4_mcts_factorial_run.py` (same 5-factor
+# binary design, LSB first). Appends one row per replicate to the config CSV.
 echo "Starting array job ${SLURM_ARRAY_TASK_ID} on $(hostname) at $(date -u -Iseconds)"
-python p4_mcts_ablation.py --array-id "${SLURM_ARRAY_TASK_ID}"
+for REP in 0 1 2 3 4; do
+  python p4_mcts_factorial_run.py \
+    --array-id "${SLURM_ARRAY_TASK_ID}" \
+    --replicate "${REP}" \
+    --n-iterations 200 \
+    --max-steps 8 \
+    --output "${PROJECT_DIR}/results/ablation/p4_ablation_config_${SLURM_ARRAY_TASK_ID}.csv"
+done
 echo "Finished array job ${SLURM_ARRAY_TASK_ID} at $(date -u -Iseconds)"
