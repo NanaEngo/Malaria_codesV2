@@ -175,7 +175,10 @@ class P5Benchmark:
             dl.append(d)
         return dl
 
-    def train_fold(self, fold_idx: int, seed: int) -> float:
+    def train_fold(self, fold_idx: int, seed: int) -> tuple[float, dict | None]:
+        """Returns (test_auc, desc_salience) where desc_salience is None for
+        non-fusion models. desc_salience = mean |W| over head input rows for the
+        descriptor columns (H3 attribution, no gradients needed)."""
         set_seed(seed)
         fold = self.folds[fold_idx][SEEDS.index(seed)]
         tr_idx, val_idx, te_idx = fold["train"], fold["val"], fold["test"]
@@ -251,7 +254,12 @@ class P5Benchmark:
                 te_preds.append(torch.sigmoid(logits).cpu().numpy())
                 te_true.append(batch.y.cpu().numpy())
         te_auc = roc_auc_score(np.concatenate(te_true), np.concatenate(te_preds))
-        return float(te_auc)
+
+        salience = None
+        if self.desc is not None:
+            w = best_state["head.0.weight"]  # [hidden, hidden+n_desc]
+            salience = w[:, HIDDEN:].abs().mean(dim=0).numpy()  # [n_desc]
+        return float(te_auc), salience
 
     def run(self) -> list[dict]:
         results = []
@@ -264,16 +272,32 @@ class P5Benchmark:
                 print(f"Training {self.model_name} fold {f_idx} seed {seed} on {self.device}...")
                 if self.dry_run:
                     te_auc = 0.5  # dummy
+                    salience = None
                 else:
-                    te_auc = self.train_fold(f_idx, seed)
+                    te_auc, salience = self.train_fold(f_idx, seed)
                 results.append({
                     "model": self.model_name, "fold": f_idx, "seed": seed,
                     "test_auc": te_auc, "split": self.split_type,
                 })
+                if salience is not None:
+                    self._accumulate_salience(salience)
                 self.completed.add(key)
                 if not self.dry_run:
                     self._save_ckpt(results)
         return results
+
+    def _accumulate_salience(self, sal: np.ndarray):
+        """Mean |W| desc-projection per dim, accumulated across folds/seeds."""
+        p = P5_ROOT / "results" / f"p5_{self.model_name}_{self.split_type}_salience.json"
+        data = {"dim": list(range(len(sal))), "salience_mean": None, "n_seen": 0}
+        if p.exists():
+            data = json.load(open(p))
+        n = data["n_seen"]
+        old = np.array(data["salience_mean"]) if data["salience_mean"] else np.zeros(len(sal))
+        new_mean = (old * n + sal) / (n + 1)
+        data["salience_mean"] = new_mean.tolist()
+        data["n_seen"] = n + 1
+        json.dump(data, open(p, "w"), indent=2)
 
     def _save_ckpt(self, results: list):
         with open(self.ckpt_path, "w") as f:
@@ -300,8 +324,9 @@ def main():
 
     # stats summary
     aucs = [r["test_auc"] for r in results]
-    print(f"\n{args.model} ({args.split}) mean AUC = {np.mean(aucs):.4f} ± {np.std(aucs):.4f}")
-    print(f"  Per-seed: {np.mean(np.array(aucs).reshape(5,5), axis=1)}")
+    if aucs:
+        print(f"\n{args.model} ({args.split}) mean AUC = {np.mean(aucs):.4f} ± {np.std(aucs):.4f}")
+        print(f"  Per-seed: {np.mean(np.array(aucs).reshape(5,5), axis=1)}")
 
 
 if __name__ == "__main__":

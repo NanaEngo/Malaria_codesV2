@@ -91,7 +91,8 @@ def load_splits(split_type: str = "random") -> list:
 
 
 class ChemBERTaTrainer:
-    def __init__(self, dry_run: bool = False, device: str = "auto"):
+    def __init__(self, split_type: str = "random", dry_run: bool = False, device: str = "auto"):
+        self.split_type = split_type
         self.dry_run = dry_run
         self.device = get_device(device)
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
@@ -102,9 +103,9 @@ class ChemBERTaTrainer:
         self.panel = pd.read_csv(PANEL)
         self.smiles = self.panel["smiles"].tolist()
         self.y = self.panel["activity"].values.astype(np.int64)
-        self.folds = load_splits()
+        self.folds = load_splits(split_type)
         self.completed: set[tuple] = set()
-        self.ckpt_path = P5_ROOT / "results" / "p5_chemberta_ckpt.json"
+        self.ckpt_path = P5_ROOT / "results" / f"p5_chemberta_{split_type}_ckpt.json"
         if self.ckpt_path.exists():
             with open(self.ckpt_path) as f:
                 ckpt = json.load(f)
@@ -190,10 +191,11 @@ class ChemBERTaTrainer:
                     te_auc = self.train_fold(f_idx, seed)
                 results.append({
                     "model": "ChemBERTa", "fold": f_idx, "seed": seed,
-                    "test_auc": te_auc, "split": "random",  # ChemBERTa only random for now
+                    "test_auc": te_auc, "split": self.split_type,
                 })
                 self.completed.add(key)
-                self._save_ckpt(results)
+                if not self.dry_run:
+                    self._save_ckpt(results)
         return results
 
     def _save_ckpt(self, results: list):
@@ -203,18 +205,20 @@ class ChemBERTaTrainer:
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--split", choices=["random", "scaffold"], default="random")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
     args = ap.parse_args()
-    trainer = ChemBERTaTrainer(dry_run=args.dry_run, device=args.device)
+    trainer = ChemBERTaTrainer(split_type=args.split, dry_run=args.dry_run, device=args.device)
     results = trainer.run()
 
-    out_csv = P5_ROOT / "results" / "p5_chemberta_random_results.csv"
-    pd.DataFrame(results).to_csv(out_csv, index=False)
-    print(f"Results written to {out_csv}")
+    if not args.dry_run:
+        out_csv = P5_ROOT / "results" / f"p5_chemberta_{args.split}_results.csv"
+        pd.DataFrame(results).to_csv(out_csv, index=False)
+        print(f"Results written to {out_csv}")
 
     aucs = [r["test_auc"] for r in results]
-    print(f"\nChemBERTa (random) mean AUC = {np.mean(aucs):.4f} ± {np.std(aucs):.4f}")
+    print(f"\nChemBERTa ({args.split}) mean AUC = {np.mean(aucs):.4f} ± {np.std(aucs):.4f}")
 
 
 if __name__ == "__main__":
