@@ -100,15 +100,15 @@ class P5Benchmark:
                 self.desc = torch.zeros((len(self.smiles), n_desc), dtype=torch.float32)
                 # Fill in descriptors based on model type
                 if model_name == "GIN-FP":
-                    self.desc[:, :2048] = self._load_ecfp4()
+                    self.desc[:, :2048] = torch.from_numpy(self._load_ecfp4())
                 elif model_name == "GIN-TFP":
-                    self.desc[:, :78] = self._load_tfp()
+                    self.desc[:, :78] = torch.from_numpy(self._load_tfp())
                 elif model_name == "GIN-TNE":
-                    self.desc[:, :192] = self._load_tne()
+                    self.desc[:, :192] = torch.from_numpy(self._load_tne())
                 elif model_name == "Hybrid-All":
-                    self.desc[:, :2048] = self._load_ecfp4()
-                    self.desc[:, 2048:2048+78] = self._load_tfp()
-                    self.desc[:, 2048+78:] = self._load_tne()
+                    self.desc[:, :2048] = torch.from_numpy(self._load_ecfp4())
+                    self.desc[:, 2048:2048+78] = torch.from_numpy(self._load_tfp())
+                    self.desc[:, 2048+78:] = torch.from_numpy(self._load_tne())
 
         # splits
         self.folds = self._load_splits(split_type)

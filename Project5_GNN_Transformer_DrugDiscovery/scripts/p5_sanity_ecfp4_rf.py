@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
 """
-P5 — Sanity gate (v1-prep, documented in P5_DATA_ANALYSIS_REPORT.md §10).
+P5 — Sanity gate (v1-prep) + ECFP4-RF baselines (random & scaffold).
 
-Re-runs ECFP4-RF on the frozen random split (seed 0, fold 0) and asserts
-AUC ≈ 0.9475 ± 0.01 (P3 canonical ECFP4-RF value) using the SAME descriptor
-and pipeline as P3. This validates the panel + split + pipeline plumbing
-before any GNN training.
+Re-runs ECFP4-RF on the frozen split (5 folds × 5 seeds) and asserts
+random-split AUC ≈ 0.9475 ± 0.01 (P3 canonical ECFP4-RF value) using the SAME
+descriptor and pipeline as P3. Validates the panel + split + pipeline plumbing
+before GNN training, and produces the ECFP4-RF bar for both splits (H1 gate).
 
 Usage:
     python scripts/p5_sanity_ecfp4_rf.py
+    python scripts/p5_sanity_ecfp4_rf.py --split scaffold
 """
 
 from __future__ import annotations
 
+import argparse
+import json
 import sys
 import time
 from pathlib import Path
@@ -30,7 +33,7 @@ from sklearn.preprocessing import StandardScaler
 
 P5_ROOT = Path(__file__).resolve().parent.parent
 PANEL = P5_ROOT / "results" / "p5_canonical_panel.csv"
-SPLIT = P5_ROOT / "results" / "p5_splits_random_5fold_seed0.npy"
+SEEDS = [0, 1, 2, 3, 4]
 
 REF_AUC = 0.9475
 TOL = 0.01
@@ -49,42 +52,58 @@ def ecfp4_matrix(smiles_list: list[str]) -> np.ndarray:
     return np.array(rows)
 
 
-def main() -> None:
-    t0 = time.perf_counter()
+def run_split(split_type: str) -> tuple[list[float], list[float]]:
+    """Return (per-fold mean AUC, per-fold std AUC) across 5 seeds."""
     panel = pd.read_csv(PANEL)
-    folds = np.load(SPLIT, allow_pickle=True)
-    fold = folds[0]
-
     smiles = panel["smiles"].tolist()
     y = panel["activity"].values
-
     X = ecfp4_matrix(smiles)
-    print(f"ECFP4 matrix: {X.shape}")
+    print(f"ECFP4 matrix ({split_type}): {X.shape}")
 
     pipe = Pipeline([
         ("scaler", StandardScaler()),
-        ("rf", RandomForestClassifier(n_estimators=500, n_jobs=32, random_state=0)),
+        ("rf", RandomForestClassifier(n_estimators=500, n_jobs=8, random_state=0)),
     ])
 
-    aucs = []
-    for i, f in enumerate(folds):
-        tr, te = f["train"], f["test"]
-        pipe.fit(X[tr], y[tr])
-        p = pipe.predict_proba(X[te])[:, 1]
-        a = roc_auc_score(y[te], p)
-        aucs.append(a)
-        print(f"  fold {i}: test AUC = {a:.4f}")
+    means, stds = [], []
+    for seed in SEEDS:
+        folds = np.load(P5_ROOT / "results" / f"p5_splits_{split_type}_5fold_seed{seed}.npy", allow_pickle=True)
+        aucs = []
+        for i, f in enumerate(folds):
+            tr, te = f["train"], f["test"]
+            pipe.fit(X[tr], y[tr])
+            p = pipe.predict_proba(X[te])[:, 1]
+            aucs.append(roc_auc_score(y[te], p))
+        means.append(float(np.mean(aucs)))
+        stds.append(float(np.std(aucs)))
+        print(f"  seed {seed}: mean fold AUC = {means[-1]:.4f} ± {stds[-1]:.4f}")
+    return means, stds
 
-    mean = float(np.mean(aucs))
-    std = float(np.std(aucs))
-    print(f"\nMean 5-fold AUC = {mean:.4f} ± {std:.4f}")
-    print(f"P3 reference ECFP4-RF = {REF_AUC}")
-    if abs(mean - REF_AUC) > TOL:
-        raise ValueError(
-            f"Sanity gate FAILED: AUC {mean:.4f} deviates from P3 {REF_AUC} by "
-            f"{abs(mean-REF_AUC):.4f} > {TOL}. Pipeline/panel mismatch — abort P5 training."
-        )
-    print(f"Sanity gate PASSED ✓ (within {TOL} of P3)")
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--split", choices=["random", "scaffold"], default="random")
+    args = ap.parse_args()
+
+    t0 = time.perf_counter()
+    means, stds = run_split(args.split)
+
+    overall = float(np.mean(means))
+    print(f"\nECFP4-RF {args.split}: mean over 5 seeds = {overall:.4f} ± {np.std(means):.4f}")
+
+    if args.split == "random":
+        print(f"P3 reference ECFP4-RF = {REF_AUC}")
+        if abs(overall - REF_AUC) > TOL:
+            raise ValueError(
+                f"Sanity gate FAILED: AUC {overall:.4f} deviates from P3 {REF_AUC} by "
+                f"{abs(overall-REF_AUC):.4f} > {TOL}. Pipeline/panel mismatch — abort P5 training."
+            )
+        print("Sanity gate PASSED ✓ (within 0.01 of P3)")
+
+    out = P5_ROOT / "results" / f"p5_ecfp4rf_{args.split}_baseline.json"
+    json.dump({"split": args.split, "seed_means": means, "seed_stds": stds,
+               "mean": overall, "std": float(np.std(means))}, open(out, "w"), indent=2)
+    print(f"Saved {out}")
     print(f"Elapsed: {time.perf_counter()-t0:.1f}s")
 
 

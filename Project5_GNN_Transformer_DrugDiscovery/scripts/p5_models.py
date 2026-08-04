@@ -55,6 +55,8 @@ class _GraphBase(nn.Module):
         h = self.conv_out(x, edge_index, edge_attr)
         h = global_mean_pool(h, batch)
         if desc is not None:
+            if desc.dim() == 1:
+                desc = desc.reshape(h.shape[0], self.n_desc)
             h = torch.cat([h, desc], dim=1)
         return self.head(h)
 
