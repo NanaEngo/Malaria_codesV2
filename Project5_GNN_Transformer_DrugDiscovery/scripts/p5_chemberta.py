@@ -100,6 +100,9 @@ class ChemBERTaTrainer:
             MODEL_NAME,
             num_labels=2,
         ).to(self.device)
+        # Snapshot pretrained weights once; restore before each fold so folds are
+        # independent (motorformer is otherwise leak across folds). ponytail: per-fold reset.
+        self.pretrained_state = {k: v.cpu().clone() for k, v in self.model.state_dict().items()}
         self.panel = pd.read_csv(PANEL)
         self.smiles = self.panel["smiles"].tolist()
         self.y = self.panel["activity"].values.astype(np.int64)
@@ -119,6 +122,7 @@ class ChemBERTaTrainer:
 
     def train_fold(self, fold_idx: int, seed: int) -> float:
         set_seed(seed)
+        self.model.load_state_dict(self.pretrained_state)  # independent folds (no cross-fold leak)
         fold = self.folds[fold_idx][SEEDS.index(seed)]
         tr_idx, val_idx, te_idx = fold["train"], fold["val"], fold["test"]
         tr_loader = self._make_loader(tr_idx, shuffle=True)
