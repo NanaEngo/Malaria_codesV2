@@ -173,6 +173,7 @@ The submission thesis: *"On a curated natural-product antimalarial panel, compac
 | Version | Date | Models | Split | Result summary | Files |
 |:-------:|:-----|:-------|:------|:---------------|:------|
 | v1 | Aug 1, 2026 | (planned) | random 5-fold | pending | — |
+| v2 | Aug 4, 2026 | design restart (gaps/novelty) | — | Design relancé sur gaps revue GenAI 2026 (`P5_DESIGN_GAPS_NOVELTY.md`) + fix instrument de mesure | fix `self.folds` (`p5_benchmark.py:114`), dry-run ne pollue plus ckpt/CSV, résultats GIN dummy AUC=0.5 supprimés |
 
 ### v1-prep (Aug 1, 2026) — Panel export + dependencies ✅ DONE
 - **Dependencies installed & locked** (see §7): torch 2.13.0+cu130, PyG 2.8.0 (GIN smoke-tested on A4000), transformers 5.14.1, datasets 5.0.1, deepchem 2.8.0. **torchdrug incompatible with Python 3.11 → PyG chosen.** Lock: `Project5_GNN_Transformer_DrugDiscovery/requirements.txt`.

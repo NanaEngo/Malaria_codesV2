@@ -111,7 +111,7 @@ class P5Benchmark:
                     self.desc[:, 2048+78:] = self._load_tne()
 
         # splits
-        self.splits = self._load_splits(split_type)
+        self.folds = self._load_splits(split_type)
 
         # model params
         self.in_dim = len(self.graphs[0]["x"][0])
@@ -271,7 +271,8 @@ class P5Benchmark:
                     "test_auc": te_auc, "split": self.split_type,
                 })
                 self.completed.add(key)
-                self._save_ckpt(results)
+                if not self.dry_run:
+                    self._save_ckpt(results)
         return results
 
     def _save_ckpt(self, results: list):
@@ -291,10 +292,11 @@ def main():
     bench = P5Benchmark(args.model, args.split, args.device, args.dry_run)
     results = bench.run()
 
-    # save CSV
-    out_csv = P5_ROOT / "results" / f"p5_{args.model}_{args.split}_results.csv"
-    pd.DataFrame(results).to_csv(out_csv, index=False)
-    print(f"Results written to {out_csv}")
+    # save CSV (never in dry-run)
+    if not args.dry_run:
+        out_csv = P5_ROOT / "results" / f"p5_{args.model}_{args.split}_results.csv"
+        pd.DataFrame(results).to_csv(out_csv, index=False)
+        print(f"Results written to {out_csv}")
 
     # stats summary
     aucs = [r["test_auc"] for r in results]
