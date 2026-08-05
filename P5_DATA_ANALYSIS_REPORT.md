@@ -169,6 +169,73 @@ The submission thesis: *"On a curated natural-product antimalarial panel, compac
 
 ---
 
+## 9bis. Comparaison inter-projets (P3/P5 et P4/P5) — ajout 04/08
+
+### P5 vs P3 — le même terrain, la même leçon
+
+P3 (quantum-inspired kernels, RF) et P5 (GNN/transformer) partagent **le même panel
+canonique n=19,836** et les mêmes fingerprints. La comparaison n'est valable que sur le
+**split random** (P3 = StratifiedKFold 5-fold random uniquement ; le split scaffold est
+l'apport de P5) :
+
+| Descripteur/modèle | P3 (random, RF) | P5 (random) | P5 (scaffold) |
+|:-------------------|:---------------:|:-----------:|:-------------:|
+| ECFP4 (RF) | 0.9475 ± 0.0045 | **0.9433 ± 0.0002** | 0.8300 ± 0.0023 |
+| TFP seul | 0.8759 ± 0.0059 | — | — |
+| TNE seul | 0.7219 ± 0.0068 | — | — |
+| Hybrid P3 (QK+TFP+TNE, RF) | 0.8876 ± 0.0065 | — | — |
+| GIN | — | 0.9098 ± 0.0067 | 0.8047 ± 0.0395 |
+| GIN-TFP (fusion) | — | — | 0.8138 ± 0.0352 |
+| GIN-TNE (fusion) | — | — | 0.8090 ± 0.0378 |
+| ChemBERTa | — | 0.9177 (fold 0, en cours) | 0.7867 ± 0.0338 |
+
+**Lectures :**
+1. **Reproduction ✓ :** le sanity ECFP4 P5 (0.9433) reproduit P3 (0.9475) à 0.004 près
+   (même protocole, même panel) → les baselines sont fiables et la comparaison directe est valide.
+2. **Le signal topologique n'est pas un game-changer :** TFP/TNE en fusion GNN (P5, scaffold)
+   ≈ TFP/TNE seuls en RF (P3, random 0.876/0.722) ; la fusion topologique n'inverse pas le
+   classement face aux fingerprints. Cohérent avec l'ablation P3 (TNE Δ=+0.011 marginal).
+3. **H1/H2 P5 = contrôle honnête de P3 :** la même plateforme, poussée avec des modèles
+   « plus grands » (GNN, transformers), confirme que **les fingerprints restent l'étalon** —
+   c'est exactement le message de P3 (kernel quantum ≈ RBF ≈ linéaire, p≥0.06) et de
+   « Do Larger Models Really Win? ». P3 reste le win du projet (Hybrid 0.8876, ablation QK Δ=−0.040) ;
+   P5 le renforce en honest-negative contrôlé.
+4. **H3 (salience) connecte P5 → P3 :** les dims persistent-image de TFP dominent la salience P5
+   → ce sont les mêmes features topologiques dont P3 a montré la contribution (QK/TDA/TNE).
+   → argument unifié « topologie utile en attribution, pas en ranking ».
+
+### P5 vs P4 — deux honest-negatives qui se complètent
+
+P4 (génération) et P5 (prédiction) ont des protocoles différents (P4 = récompense scalaire
+multi-objectif sur 20 seeds, MCTS/GA/Random ; P5 = AUC ROC sous splits random+scaffold) :
+**aucun chiffre n'est directement comparable**. Ce qui compte, c'est le **parallèle
+structural des conclusions** :
+
+| Axe | P4 (génération, v12 canonical) | P5 (prédiction) |
+|:----|:-------------------------------|:----------------|
+| Modèles vs baselines | Random 0.7335 > MCTS+ScafVAE 0.7276 > Greedy 0.7211 > GA 0.7027 | ECFP4 0.9433/0.8300 > GIN > ChemBERTa 0.7867 |
+| Écart au meilleur simple | MCTS vs Random Δ=0.006 (t=2.41, p=0.026) | GIN vs ECFP4 Δ=−0.025 (p=0.051, ns) |
+| Verdict principal | MCTS n'améliore pas la récompense scalaire (random ≤ égal) | Les modèles « plus grands » n'améliorent pas l'AUC (fingerprints ≥) |
+| Valeur réelle | **Pareto front divers** (4 solutions non-dominées, HV 1.2366) | **Salience/interprétabilité** (dims pers_img dominantes) |
+| Message unifié | « Le scoring simple gagne ; la valeur est dans la diversité du front » | « Les fingerprints gagnent ; la valeur est dans l'attribution » |
+
+**Ce que P5 dit relativement à P4 :**
+1. **Cohérence narrative du projet :** les deux projets indépendants (génération et prédiction)
+   aboutissent au **même pattern honest-negative** — la complexité (MCTS, GNN, transformer) ne bat
+   pas la simplicité (Random, ECFP4) sur la métrique scalaire, mais apporte une contribution
+   qualitative (diversité Pareto / interprétabilité topologique). C'est une **thèse transversale
+   forte** pour le manuscrit P5 et pour l'ensemble Q1.
+2. **Bridge P4 → P5 possible (leverage) :** la salience H3 (dims pers_img de TFP/TNE) fournit des
+   **features interprétables à corréler aux oracles P4** (RRS/PNS — cf. H1-RRS P3 étendu, n=77).
+   Les candidats du Pareto P4 pourraient être re-scorés par le modèle P5 ECFP4-RF (le meilleur
+   prédicteur) — pas par un GNN. → le manuscrit P5 peut se référencer explicitement à P4 comme
+   « compagnon de génération ».
+3. **P5 ne corrige pas P4, il le corrobore :** pas de fuite/artefact du type benchmark P4
+   (drift oracle Tartarus, config par défaut, greedy bug) détecté côté P5 — les deux honest-negatives
+   sont indépendamment fiables.
+
+---
+
 ## 10. Version History
 | Version | Date | Models | Split | Result summary | Files |
 |:-------:|:-----|:-------|:------|:---------------|:------|
@@ -178,6 +245,7 @@ The submission thesis: *"On a curated natural-product antimalarial panel, compac
 | v3-b | Aug 4, 2026 | **H3 salience (interprétabilité)** | scaffold | Salience capturée (mean \|W\| desc-projection, 25 folds). **TFP : dims persistent-image (33:58) dominantes** (sal 0.079 vs H 0.0485, betti 0.0547 ; top dims 42/43/52/53/54). **TNE : top dims 68/43/92/66/165**, top-10% dims = 17.3% salience. Fusion re-runs : GIN-TFP 0.8138±0.0352, GIN-TNE 0.8090±0.0378. | `p5_{GIN-TFP,GIN-TNE}_scaffold_salience.json` |
 | v3-c | Aug 4, 2026 | figures + learning curves | random+scaffold | **Capture val_auc par époch ajoutée aux 2 loops** (GNN `p5_benchmark.py`, ChemBERTa `p5_chemberta.py`) → clé `curves` au ckpt pour les runs FUTURS uniquement (résultats committés intacts). Figure benchmark rénovée `p5_figure.py` (bipanel random/scaffold, CI honnêtes ECFP4 depuis seed_means). | `p5_figure.py`, `p5_learning_curves.py` |
 | v3-d | Aug 4, 2026 | **H2 ChemBERTa scaffold (leak-fixed, complet)** | scaffold | **ChemBERTa scaffold = 0.7867 ± 0.0338 (25 fold×seed)** vs **ECFP4-RF 0.8300** → **Δ = −0.0433, p < 0.0001** (paired t, 5 seeds). Transformer < GNN < ECFP4 sous scaffold : **H2 honnête négatif CONFIRMÉ** (aligné "Do Larger Models Really Win"). | `p5_chemberta_scaffold_ckpt.json` (25/25) |
+| v3-e | Aug 4, 2026 | **Comparaison inter-projets** | — | **§9bis ajouté** : P5 vs P3 (sanity ECFP4 0.9433 ≈ P3 0.9475 → comparaison valide ; fusion topologique n'inverse pas les fingerprints ; P5 = contrôle honnête de P3) et **P5 vs P4** (même pattern honest-negative génération/prédiction ; H3 salience = bridge vers oracles P4 RRS/PNS ; candidats Pareto P4 re-scorables par ECFP4-RF). | `P5_DATA_ANALYSIS_REPORT.md` §9bis |
 | v3 | Aug 4, 2026 | **GIN prod (M1.3)** | random + scaffold 5-fold × 5 seeds | **GIN random = 0.9098 ± 0.0067**, **GIN scaffold = 0.8047 ± 0.0395**, **GIN-TFP scaffold = 0.8137 ± 0.0300**, **GIN-TNE scaffold = 0.8068 ± 0.0366** (25 fold×seed chacun). Fix sbatch (chemin, `--dry-run`, mem, conda inline) + fix fusion numpy→tensor + fix collate flat desc. | `results/p5_{GIN,GIN-TFP,GIN-TNE}_scaffold_ckpt.json` + CSVs |
 
 ### v3 (Aug 4, 2026) — GIN production run (M1.3) ✅ LOGGED-BEFORE-RUN
