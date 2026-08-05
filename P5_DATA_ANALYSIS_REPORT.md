@@ -234,6 +234,24 @@ structural des conclusions** :
    (drift oracle Tartarus, config par défaut, greedy bug) détecté côté P5 — les deux honest-negatives
    sont indépendamment fiables.
 
+### Figures & tables de perspective (P5/P3, P5/P4) — à produire/déjà produites
+
+| # | Figure/Table | Contenu | Projet | Fichier | Statut |
+|:-:|:-------------|:--------|:-------|:--------|:------:|
+| **F1** | Bar chart bipanel **random/scaffold** P5 (ECFP4-RF vs GIN/GIN-TFP/GIN-TNE/ChemBERTa, mean ± CI, ligne baseline ECFP4 pointillée) | Figure principale manuscrit (Results) | P5 | `results/figures/p5_auc_benchmark.png` | ✅ **Générée 04/08** |
+| **F2** | Bar chart canonique **P3 random** (ECFP4/FCFP4/MACCS/AP/PHCO/BPF/TFP/TNE/Hybrid-QK, RF) | Réf. P3 (compare la plateforme commune) | P3 | `Project3/.../figures/p3_auc_benchmark_bar.png` | ✅ Existe (01/08) |
+| **F3** | **Salience dims TFP/TNE** (heatmap ou bar par groupe H/pers_img/betti) — top dims 42/43/52/53/54 (TFP), 68/43/92/66/165 (TNE) | Figure H3 (interprétabilité, L4) | P5 | `results/p5_{GIN-TFP,GIN-TNE}_scaffold_salience.json` → figure à générer | ⏳ À générer |
+| **F4** | **Courbes d'apprentissage** (val AUC/époch, GNN vs ChemBERTa, par split) | Figure Methods/Results (v3-c) | P5 | `scripts/p5_learning_curves.py` → `results/figures/p5_learning_curves.png` | ⏳ Après job 12815 |
+| **T1** | Tableau comparatif **P5 vs P3** (§9bis ci-dessus) : mêmes panel + fingerprints, split random seul comparable ; sanity ECFP4 0.9433 ≈ 0.9475 | Manuscrit Discussion/Table S | P5/P3 | `P5_DATA_ANALYSIS_REPORT.md` §9bis | ✅ Rédigé 04/08 |
+| **T2** | Tableau **P5 vs P4** (parallèle structural honest-negative : modèles vs baselines, verdict, valeur réelle) | Manuscrit Discussion | P5/P4 | `P5_DATA_ANALYSIS_REPORT.md` §9bis | ✅ Rédigé 04/08 |
+| **T3** | Tableau **hiérarchie scaffold finale** (ECFP4-RF 0.8300 > GIN-TFP 0.8138 > GIN-TNE 0.8090 > GIN 0.8047 > ChemBERTa 0.7867) + statistiques paired | Manuscrit Results (table principale) | P5 | à rédiger dans manuscrit | ⏳ Manuscrit |
+| **T4** | Tableau **références SOTA** : Guo & Ding 2026 (47.4% classiques gagnants, 156 comparaisons), Benchmarking Pretrained Embeddings (25 modèles ≈ ECFP), Boldini 2024 (fingerprints NPs) | Manuscrit Introduction/Discussion (positionnement) | P5 | à rédiger | ⏳ Manuscrit |
+
+**Usage prévu au manuscrit :** F1 = figure principale Results (preuve honnête-négative) ;
+F2 + T1 = ancrage P3 (même plateforme, même panel → la comparaison est contrôlée) ;
+F3 + F4 = contributions qualitatives (interprétabilité topologique + courbes d'apprentissage) ;
+T2 + T4 = cadrage Discussion (parallèle P4 et littérature SOTA 2025-26).
+
 ---
 
 ## 10. Version History
@@ -246,6 +264,7 @@ structural des conclusions** :
 | v3-c | Aug 4, 2026 | figures + learning curves | random+scaffold | **Capture val_auc par époch ajoutée aux 2 loops** (GNN `p5_benchmark.py`, ChemBERTa `p5_chemberta.py`) → clé `curves` au ckpt pour les runs FUTURS uniquement (résultats committés intacts). Figure benchmark rénovée `p5_figure.py` (bipanel random/scaffold, CI honnêtes ECFP4 depuis seed_means). | `p5_figure.py`, `p5_learning_curves.py` |
 | v3-d | Aug 4, 2026 | **H2 ChemBERTa scaffold (leak-fixed, complet)** | scaffold | **ChemBERTa scaffold = 0.7867 ± 0.0338 (25 fold×seed)** vs **ECFP4-RF 0.8300** → **Δ = −0.0433, p < 0.0001** (paired t, 5 seeds). Transformer < GNN < ECFP4 sous scaffold : **H2 honnête négatif CONFIRMÉ** (aligné "Do Larger Models Really Win"). | `p5_chemberta_scaffold_ckpt.json` (25/25) |
 | v3-e | Aug 4, 2026 | **Comparaison inter-projets** | — | **§9bis ajouté** : P5 vs P3 (sanity ECFP4 0.9433 ≈ P3 0.9475 → comparaison valide ; fusion topologique n'inverse pas les fingerprints ; P5 = contrôle honnête de P3) et **P5 vs P4** (même pattern honest-negative génération/prédiction ; H3 salience = bridge vers oracles P4 RRS/PNS ; candidats Pareto P4 re-scorables par ECFP4-RF). | `P5_DATA_ANALYSIS_REPORT.md` §9bis |
+| v3-f | Aug 4, 2026 | **Journal cible + gaps/novelty (web)** | — | **Cible : Journal of Cheminformatics** (Springer, axe éditorial "publishing benchmark studies for ML", collection "Evaluating AI/ML in cheminformatics", précédent direct Boldini 2024 fingerprints NPs). Recherche web SOTA : **Guo & Ding 2026 "Do Larger Models Really Win" (arXiv:2604.26498)** — 156 comparaisons, classiques ML gagnent 47.4%, séquence 28.8%, GNN 21.8%, LLM-SAR 1.9% ; **Benchmarking Pretrained Embeddings (arXiv:2508.06199)** — 25 modèles ≈ ECFP, seul CLAMP gagne ; Boldini 2024 (fingerprints NPs). → **P5 = extension directe de ces 3 références sur panel NPs africaines + contribution interprétabilité (H3)**. Figures/tables de perspective listées (§9bis). | §9bis + web 04/08 |
 | v3 | Aug 4, 2026 | **GIN prod (M1.3)** | random + scaffold 5-fold × 5 seeds | **GIN random = 0.9098 ± 0.0067**, **GIN scaffold = 0.8047 ± 0.0395**, **GIN-TFP scaffold = 0.8137 ± 0.0300**, **GIN-TNE scaffold = 0.8068 ± 0.0366** (25 fold×seed chacun). Fix sbatch (chemin, `--dry-run`, mem, conda inline) + fix fusion numpy→tensor + fix collate flat desc. | `results/p5_{GIN,GIN-TFP,GIN-TNE}_scaffold_ckpt.json` + CSVs |
 
 ### v3 (Aug 4, 2026) — GIN production run (M1.3) ✅ LOGGED-BEFORE-RUN
