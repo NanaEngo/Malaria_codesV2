@@ -35,11 +35,11 @@ La PA se construit par **leviers indépendants**. Chaque levier rempli → point
 |:-:|:-------|:------------:|:-----------------------|:------:|
 | L1 | Panel/protocole reproductible & figé | +20 pts | Panel 19,836 ✓, splits figés ✓, sanity 0.9428 ✓ | ✅ **Fait (v1-prep)** |
 | L2 | Résultat positif significatif | +25 pts | ~~≥1 fusion topologique > ECFP4 sous scaffold (DeLong p<0.05)~~ **`H1 FAIL (04/08)`** | ❌ **Échoué (remplacé)** |
-| L3 | Honest negative / null | +30 pts | **H1 nul**: aucune GNN/fusion > ECFP4-RF scaffold (0.8300) ; GIN −0.025 (p=0.051), GIN-TFP −0.016 (p=0.081), GIN-TNE −0.023 (p=0.015) | ✅ **Fait (04/08)** |
-| L4 | Contribution méthodologique/interprétabilité | +20 pts | Attribution/salience des dims TFP/TNE (H3, bridge P3 H1-RRS) | ⏳ H3 (jobs 12811/12812) |
+| L3 | Honest negative / null | +30 pts | **H1 nul**: aucune GNN/fusion > ECFP4-RF scaffold (0.8300) ; GIN −0.025 (p=0.051), GIN-TFP −0.016 (p=0.081), GIN-TNE −0.023 (p=0.015). **H2 nul**: ChemBERTa scaffold 0.7867 vs 0.8300 (Δ −0.043, p<0.0001) → transformer ≤ GNN ≤ fingerprints | ✅ **Fait (04/08)** |
+| L4 | Contribution méthodologique/interprétabilité | +20 pts | Attribution/salience des dims TFP/TNE (H3, bridge P3 H1-RRS) — **DONNÉES ACQUISES (04/08)** : TFP pers_img dominant (sal 0.079), TNE top dims 68/43/92/66/165 | ✅ **Données faites (04/08)** — écriture L4 en cours |
 | L5 | Benchmark/dataset libéré (Zenodo) | +10 pts | Zenodo deposit (DOI) aligné P1/P3 | ⏳ Phase 3 |
 | L6 | Narration/figures publication-grade | +15 pts | Figures bar + courbes d'apprentissage, manuscrit LaTeX complet | ⏳ Phase 2-3 |
-| | **Total** | **95 pts** | | ~50/95 |
+| | **Total** | **95 pts** | | ~70/95 |
 
 **Gate de décision — EXÉCUTÉ (04/08) :** L2 a échoué (aucune fusion > ECFP4 sous scaffold, voir
 résultats v3 §10). **Thèse basculée sur L3+L4+L5** (honest negative + topologie) — aligné sur le
@@ -75,10 +75,13 @@ significativement pire, GIN p=0.051 ns, TFP p=0.081 ns). → **Pivot L3+L4 actif
 ### Phase 2 — Scaffold + Interprétabilité (v2)
 - [x] Ré-exécuter les modèles sous scaffold split (5 folds × 5 seeds) — **fait (04/08)** : GIN,
   GIN-TFP, GIN-TNE, ECFP4-RF.
-- ⏳ Attribution/salience des dims TFP/TNE (**H3**) — capture salience ajoutée à `p5_benchmark.py`
-  (mean \|W\| sur colonnes desc de `head.0.weight`), re-runs fusion jobs 12811/12812.
-- ⏳ ChemBERTa fine-tune (**H2**) — jobs 12809 (random) / 12810 (scaffold).
-- ⏳ Courbes d'apprentissage (N = 500 → 19,836).
+- ✅ **H3 salience — données ACQUISES (04/08)** : capture salience (mean \|W\| sur colonnes desc de
+  `head.0.weight`) + re-runs fusion jobs 12811/12812 → **TFP : pers_img (33:58) dominant (0.079)**,
+  **TNE : top dims 68/43/92/66/165**, top-10% = 17.3% salience. Écriture contribution L4 en cours.
+- ✅ **ChemBERTa scaffold (H2) COMPLET (04/08, job 12813, leak-fixed)** : **0.7867 ± 0.0338** vs ECFP4-RF
+  0.8300 → **Δ −0.043, p<0.0001** (paired t, 5 seeds). Hiérarchie scaffold : ECFP4-RF > GIN-TFP > GIN-TNE > GIN > ChemBERTa. Transformer ≤ GNN ≤ fingerprints CONFIRMÉ → L3 doublé.
+- 🔄 **ChemBERTa random (H2)** — job 12814 en cours (premier run avec capture `curve` par époch).
+- ⏳ Courbes d'apprentissage (N = 500 → 19,836) — capture par époch prête (`curve` key), à produire après 12814.
 
 ### Phase 3 — Génération (stretch, seulement si Phase 1–2 montrent un gain net)
 - Génération GNN/Transformer validée sur les top-candidats P3, ou réutilisation P4 MCTS.
@@ -140,13 +143,14 @@ featurization/cache.** Un smoke test GPU vs CPU doit être enregistré (rapport 
 1. [x] Instrument de mesure fiabilisé (self.folds, dry-run sans pollution, sbatch corrigé) — **04/08**
 2. [x] Benchmark scaffold M1.3 : GIN, GIN-TFP, GIN-TNE, ECFP4-RF — **04/08** (`H1 FAIL` → pivot L3)
 3. [x] Salience H3 implémentée (mean |W| desc-projection, pas de gradients) — **04/08**
-4. [x] ChemBERTa : `--split` + dry-run propre + sbatch dédié — **04/08**
-5. [ ] **H2** ChemBERTa random + scaffold (jobs 12809/12810 en cours) → verdict transformer ≤ GNN
-6. [ ] **H3** re-runs fusion avec salience (jobs 12811/12812) → top dims TFP/TNE → bridge P3 H1-RRS
-7. [ ] Écrire `p5_figure.py` → bar figure (random + scaffold, 2 panneaux)
-8. [ ] Courbes d'apprentissage (N = 500 → 19,836)
-9. [ ] Manuscrit LaTeX (thèse honest-negative L3 + interprétabilité L4)
-10. [ ] Mise à jour régulière de **ce** document à chaque milestone
+4. [x] ChemBERTa : `--split` + dry-run propre + sbatch dédié + **leak fix (per-fold reset)** — **04/08**
+5. [x] **H2 ChemBERTa scaffold COMPLET (job 12813)** : 0.7867 vs 0.8300, p<0.0001 → transformer ≤ GNN CONFIRMÉ
+6. [x] **H3 re-runs fusion + salience (jobs 12811/12812)** : TFP pers_img dominant, TNE top dims identifiées
+7. [x] **`p5_figure.py` écrit → bar figure** bipanel random/scaffold avec CI honnêtes ECFP4 — **04/08**
+8. [ ] **H2 ChemBERTa random** (job 12814 en cours) → premier run avec courbes par époch
+9. [ ] Courbes d'apprentissage (`p5_learning_curves.py` prêt, à exécuter après 12814)
+10. [ ] Manuscrit LaTeX (thèse honest-negative L3 + interprétabilité L4)
+11. [ ] Mise à jour régulière de **ce** document à chaque milestone
 
 ---
 
