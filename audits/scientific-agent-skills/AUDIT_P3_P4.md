@@ -1,8 +1,8 @@
 # Application formelle de `scientific-agent-skills` — Audit P3 & P4
 
-**Date :** 05 août 2026
+**Date :** 05 août 2026 (rév. 2 — résolution `NO_SOURCE_IDENTIFIER`)
 **Skills appliqués :** `scientific-writing` (v2.0), `peer-review` (v2.1), `literature-review` (v1.7) — repo `/tmp/opencode/scientific-agent-skills` (K-Dense-AI, commit 831d49e)
-**Périmètre :** P3 (`Paper3_Quantum_InspiredV2608.tex` + `Bibliography_Paper3.bib`) et P4 (`P4_Pareto_MCTS_JoC_refined.tex` + `P4_Bibliography.bib`)
+**Périmètre :** P3 (`Paper3_Quantum_InspiredV2608.tex` + `Bibliography_Paper3.bib`), P4 (`P4_Pareto_MCTS_JoC_refined.tex` + `P4_Bibliography.bib`) et P5 (`P5_manuscript_v1.tex` + `Bibliography_P5.bib`)
 **Outils locaux exécutés :** `check_references.py`, `check_consistency.py` (offline, sans réseau)
 
 ---
@@ -13,12 +13,14 @@ Manifests construits par conversion automatique des `.bib` → schéma `source_m
 
 | Projet | Sources auditées | Erreurs | Warnings | Statut |
 |--------|:---------------:|:-------:|:--------:|:------:|
-| **P3** | 66 | **0** | 12 | ✅ pass |
-| **P4** | 33 | **0** | 12 | ✅ pass |
+| **P3** | 65 | **0** | 2 | ✅ pass |
+| **P4** | 33 | **0** | 2 | ✅ pass |
+| **P5** | 18 | **0** | 3 | ✅ pass |
 
-Warnings restants = `NO_IDENTIFIER_TO_CHECK` (entrées sans DOI/PMID/URL dans le `.bib`, à vérifier par un humain) :
-- **P3 (6)** : temgoua2027md (manuscrit compagnon, en préparation), giotto-tda, TensorLy, molecular_fingerprints_2026 (marquée *Unused*), interactive_visualization, WHO 2024.
-- **P4 (6)** : CombiMOTS (résolu après correction, cf. §3), RDKit, PennyLane, scikit-learn, Noisy Networks, P1 (résolu après correction), WHO 2024.
+Warnings restants = `NO_IDENTIFIER_TO_CHECK` — uniquement les **manuscrits compagnons en préparation**, aucun identifiant ne peut exister :
+- **P3 (1)** : temgoua2027md (manuscrit compagnon P2, en préparation).
+- **P4 (1)** : Temgoua2026b (compagnon P2, en préparation).
+- **P5 (3)** : temgoua2027md (compagnon P2), temgoua2027mcts (compagnon P4), temgoua2027quantum (compagnon P3) — tous en préparation.
 
 ### Corrections appliquées (issues réelles trouvées)
 
@@ -29,14 +31,21 @@ Warnings restants = `NO_IDENTIFIER_TO_CHECK` (entrées sans DOI/PMID/URL dans le
    - P4 `P4_Bibliography.bib` : était `J. Chem. Inf. Model., Submitted` → corrigé vers ChemRxiv + DOI ✅
    - P5 `Bibliography_P5.bib` : déjà conforme ✅
 
+3. **Résolution des warnings `NO_SOURCE_IDENTIFIER` (rév. 2, 05/08/2026)** — identifiants réels ajoutés (vérifiés sur le web, aucun inventé) :
+   - **P3** : `umfh_2026` → DOI `10.1016/j.insi.2026.100280` (In Silico Research in Biomedicine) ; `giotto_tda_2021` → URL JMLR `v22/20-325` ; `tensorly_2019` → URL JMLR `v20/18-277` ; `who2024malariareport` → URL WHO `9789240103056`. **Suppression de `molecular_fingerprints_2026`** (marquée *Unused*, jamais citée — vérifié sur les 3 manuscrits).
+   - **P4** : `Bergholm2022` → arXiv `1811.04968` ; `Pedregosa2011` → JMLR `pedregosa11a.html` ; `Fortunato2018` → arXiv `1706.10295` ; `WHO2024MalariaReport` → URL WHO.
+   - **P5** : `who2024malariareport` → URL WHO.
+   - Les 3 manuscrits recompilent proprement (exit 0, `latexmk -halt-on-error`).
+
 ### Vérification usage citations (0 `MISSING`, excédent d'`UNUSED`)
 
 | Projet | Clés bib | Citations tex | Non citées | Manquantes |
 |--------|:-------:|:------------:|:----------:|:----------:|
-| P3 | 66 | 37 | 29 | **0** |
+| P3 | 65 | 37 | 28 | **0** |
 | P4 | 33 | 13 (main+SM+cover) | 20 | **0** |
+| P5 | 18 | 18 | 0 | **0** |
 
-Aucune citation non résolue. Les clés non citées sont du bib conservé (dont `molecular_fingerprints_2026` explicitement marquée *Unused -- retained for completeness*). Recommandation : nettoyage éventuel lors de la soumission, non bloquant.
+Aucune citation non résolue. Les clés non citées restantes sont du bib conservé. Recommandation : nettoyage éventuel lors de la soumission, non bloquant.
 
 ## 2. Audit de cohérence numérique (`check_consistency.py`)
 
