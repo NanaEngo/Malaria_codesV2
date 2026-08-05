@@ -1778,6 +1778,29 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 
 ---
 
+## Appendix I: Resistance Benchmark — NEW (Aug 5, 2026)
+
+**Status:** COMPLETED — Binary classification of RRS Class A (resistance-resilient) from TDA features.
+
+**Molecular Scope:** 2,051 compounds with ≥2 targets bound (docking score ≤ −7.0 kcal/mol), of which 961 are Class A (RRS ≥8.0).
+
+**Results:**
+
+| Strategy | Features | AUC (± std) |
+|----------|----------|-------------|
+| H1+H0 | 22 | **0.8749 ± 0.0134** |
+| pers_img | 25 | 0.8648 ± 0.0080 |
+| H0_stats | 11 | 0.8492 ± 0.0200 |
+| H1_stats | 11 | 0.8366 ± 0.0118 |
+| betti | 20 | 0.8195 ± 0.0123 |
+
+**Interpretation:** La classification binaire "Class A" (résistance résiliente) est **très prédictible** à partir des features TDA (AUC >0.83), contrairement à la corrélation continue RRS qui est confondue par la taille-moléculaire. Cette asymétrie suggère que les features topologiques capturent un signal discriminateur qualitatif distinct de celui qui explique la variance quantitative de RRS. Cette conclusion sera intégrée dans la discussion P3 (section RQS).
+
+**Script:** `scripts/p3_resistance_benchmark.py`
+**Output:** `results/p3_resistance_benchmark.csv`, `results/p3_resistance_benchmark_summary.txt`
+
+---
+
 
 ## Appendix H: TopologyNet Analog — NEW (July 25, 2026)
 
