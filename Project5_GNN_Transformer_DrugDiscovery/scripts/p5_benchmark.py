@@ -202,6 +202,7 @@ class P5Benchmark:
         best_val = -1.0
         best_state = None
         wait = 0
+        curve = []
 
         for epoch in range(EPOCHS):
             model.train()
@@ -229,6 +230,7 @@ class P5Benchmark:
                     val_preds.append(torch.sigmoid(logits).cpu().numpy())
                     val_true.append(batch.y.cpu().numpy())
             val_auc = roc_auc_score(np.concatenate(val_true), np.concatenate(val_preds))
+            curve.append(float(val_auc))
 
             if val_auc > best_val:
                 best_val = val_auc
@@ -259,7 +261,7 @@ class P5Benchmark:
         if self.desc is not None:
             w = best_state["head.0.weight"]  # [hidden, hidden+n_desc]
             salience = w[:, HIDDEN:].abs().mean(dim=0).numpy()  # [n_desc]
-        return float(te_auc), salience
+        return float(te_auc), salience, curve
 
     def run(self) -> list[dict]:
         results = []
@@ -273,11 +275,13 @@ class P5Benchmark:
                 if self.dry_run:
                     te_auc = 0.5  # dummy
                     salience = None
+                    curve = []
                 else:
-                    te_auc, salience = self.train_fold(f_idx, seed)
+                    te_auc, salience, curve = self.train_fold(f_idx, seed)
                 results.append({
                     "model": self.model_name, "fold": f_idx, "seed": seed,
                     "test_auc": te_auc, "split": self.split_type,
+                    "curve": curve,
                 })
                 if salience is not None:
                     self._accumulate_salience(salience)

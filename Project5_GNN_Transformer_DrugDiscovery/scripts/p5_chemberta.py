@@ -135,6 +135,7 @@ class ChemBERTaTrainer:
         best_val = -1.0
         best_state = None
         wait = 0
+        curve = []
 
         for epoch in range(EPOCHS):
             self.model.train()
@@ -156,6 +157,7 @@ class ChemBERTaTrainer:
                     val_preds.append(torch.softmax(logits, dim=1)[:, 1].cpu().numpy())
                     val_true.append(batch["labels"].cpu().numpy())
             val_auc = roc_auc_score(np.concatenate(val_true), np.concatenate(val_preds))
+            curve.append(float(val_auc))
 
             if val_auc > best_val:
                 best_val = val_auc
@@ -178,7 +180,7 @@ class ChemBERTaTrainer:
                 te_preds.append(torch.softmax(logits, dim=1)[:, 1].cpu().numpy())
                 te_true.append(batch["labels"].cpu().numpy())
         te_auc = roc_auc_score(np.concatenate(te_true), np.concatenate(te_preds))
-        return float(te_auc)
+        return float(te_auc), curve
 
     def run(self) -> list[dict]:
         results = []
@@ -191,11 +193,13 @@ class ChemBERTaTrainer:
                 print(f"Training ChemBERTa fold {f_idx} seed {seed} on {self.device}...")
                 if self.dry_run:
                     te_auc = 0.5
+                    curve = []
                 else:
-                    te_auc = self.train_fold(f_idx, seed)
+                    te_auc, curve = self.train_fold(f_idx, seed)
                 results.append({
                     "model": "ChemBERTa", "fold": f_idx, "seed": seed,
                     "test_auc": te_auc, "split": self.split_type,
+                    "curve": curve,
                 })
                 self.completed.add(key)
                 if not self.dry_run:
