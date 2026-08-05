@@ -127,10 +127,13 @@ def main():
 
     target_cols = [v for v in TARGET_MAP.values() if v in df.columns]
 
-    # Pre-filter to compounds with >= 1 target bound (avoid wasting time on non-binders)
-    has_binding = df[target_cols].apply(lambda row: (row <= BINDING_THRESHOLD).any(), axis=1)
+    # Pre-filter to compounds with >= MIN_TARGETS targets bound.
+    # NOTE (Aug 5, 2026): the previous >=1 pre-filter sliced mostly mono-target
+    # binders, but compute_rrs requires MIN_TARGETS=2 -> n=77 plateau despite a
+    # pool of 2051 polypharmacological compounds. Filter on MIN_TARGETS directly.
+    has_binding = df[target_cols].apply(lambda row: (row <= BINDING_THRESHOLD).sum() >= MIN_TARGETS, axis=1)
     df_bound = df[has_binding].reset_index(drop=True)
-    print(f"\nCompounds with >= 1 target bound: {len(df_bound)}/{len(df)}")
+    print(f"\nCompounds with >= {MIN_TARGETS} targets bound: {len(df_bound)}/{len(df)}")
 
     # Slice to task range
     end_idx = min(args.end_idx, len(df_bound))
