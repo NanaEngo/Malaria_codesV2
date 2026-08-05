@@ -9,6 +9,7 @@
 #SBATCH --gpus-per-node=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=16G
+#SBATCH --chdir=/home/nanaengo/Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery
 #SBATCH --output=p5_chemberta.log
 #SBATCH --error=p5_chemberta.err
 
