@@ -13,6 +13,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\graphicspath{{Graphics/}}
 \usepackage{siunitx}
 \usepackage{microtype}
 \usepackage{enumitem}
@@ -76,7 +77,7 @@ We address both limitations with a Pareto-guided MCTS agent that:
   \item is evaluated in a four-method, \num{20}-seed benchmark against random search, greedy search and a genetic algorithm under a fixed search budget.
 \end{enumerate}
 
-The central empirical finding is intentionally transparent: within a curated fragment vocabulary, random search achieves the highest mean scalar reward. MCTS remains competitive on that metric and is the method that, under the multi-objective protocol, returns a Pareto front of non-dominated candidates; the scalar baselines (random, greedy, genetic) were evaluated on scalar reward only. Section~\ref{sec:front_comparison} re-scores those baselines on the full multi-objective oracle and compares fronts directly; this ranking, rather than a claim of scalar superiority, is the foundation of the present study.
+The central empirical finding is intentionally transparent: within a curated fragment vocabulary, random search achieves the highest mean scalar reward. MCTS remains competitive on that metric and is the method that, under the multi-objective protocol, returns a Pareto front of non-dominated candidates; the scalar baselines (random, greedy, genetic) were evaluated on scalar reward only. \Cref{sec:front_comparison} re-scores those baselines on the full multi-objective oracle and compares fronts directly; this ranking, rather than a claim of scalar superiority, is the foundation of the present study.
 
 % ============================================================================
 \section{Results}
