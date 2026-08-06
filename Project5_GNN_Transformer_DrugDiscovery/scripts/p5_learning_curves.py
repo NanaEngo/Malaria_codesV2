@@ -42,11 +42,10 @@ def load_curves() -> dict[str, dict[str, tuple[np.ndarray, np.ndarray, np.ndarra
     for model, splits in out.items():
         result[model] = {}
         for split, curves in splits.items():
-            curves = np.array([np.asarray(c, dtype=float) for c in curves])
             max_len = max(len(c) for c in curves)
             padded = np.full((len(curves), max_len), np.nan)
             for i, c in enumerate(curves):
-                padded[i, : len(c)] = c
+                padded[i, : len(c)] = np.asarray(c, dtype=float)
             mean = np.nanmean(padded, axis=0)
             std = np.nanstd(padded, axis=0, ddof=1)
             result[model][split] = (np.arange(1, max_len + 1), mean, std, len(curves))
