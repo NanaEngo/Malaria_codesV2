@@ -67,7 +67,7 @@ ECFP4--RF (baseline) & 0.9433 $\pm$ 0.0002 & \textbf{0.8300} $\pm$ 0.0023 & --- 
 GIN & 0.9098 $\pm$ 0.0067 & 0.8047 $\pm$ 0.0395 & $-0.025$ ($p=0.051$, ns) \\
 GIN--TFP (topological fusion) & --- & 0.8138 $\pm$ 0.0352 & $-0.016$ ($p=0.081$, ns) \\
 GIN--TNE (tensor fusion) & --- & 0.8090 $\pm$ 0.0378 & $-0.023$ ($p=0.015$*) \\
-ChemBERTa & 0.9177 (fold 0) & 0.7867 $\pm$ 0.0338 & $-0.043$ ($p<0.0001$***) \\
+ChemBERTa & 0.9121 $\pm$ 0.0047 & 0.7867 $\pm$ 0.0338 & $-0.043$ ($p<0.0001$***) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -78,7 +78,7 @@ This is not an implementation artifact: the GNN training is standard (AdamW, pat
 
 \subsection{H2: the sequence transformer is honest, and loses}
 
-ChemBERTa, fine-tuned with per-fold weight reset (see Methods), reaches \textbf{0.7867 $\pm$ 0.0338} under the scaffold split (25 replicates, fold range 0.724--0.836). Against the 0.8300 fingerprint baseline this is a significant deficit ($\Delta = -0.043$, paired $t(4) = -29.96$, $p < 0.0001$). The final scaffold hierarchy is thus:
+ChemBERTa, fine-tuned with per-fold weight reset (see Methods), reaches \textbf{0.7867 $\pm$ 0.0338} under the scaffold split (25 replicates, fold range 0.724--0.836). Against the 0.8300 fingerprint baseline this is a significant deficit ($\Delta = -0.043$, paired $t(4) = -29.96$, $p < 0.0001$). Under the random split it reaches \textbf{0.9121 $\pm$ 0.0047}, narrowly ahead of GIN (0.9098) but still 0.031 below ECFP4--RF (0.9433). The final scaffold hierarchy is thus:
 
 \[
 \text{ECFP4--RF } 0.8300 \;>\; \text{GIN--TFP } 0.8138 \;>\; \text{GIN--TNE } 0.8090 \;>\; \text{GIN } 0.8047 \;>\; \text{ChemBERTa } 0.7867.

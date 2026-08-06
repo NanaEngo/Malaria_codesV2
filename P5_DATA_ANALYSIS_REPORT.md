@@ -187,7 +187,7 @@ l'apport de P5) :
 | GIN | — | 0.9098 ± 0.0067 | 0.8047 ± 0.0395 |
 | GIN-TFP (fusion) | — | — | 0.8138 ± 0.0352 |
 | GIN-TNE (fusion) | — | — | 0.8090 ± 0.0378 |
-| ChemBERTa | — | 0.9177 (fold 0, en cours) | 0.7867 ± 0.0338 |
+| ChemBERTa | — | **0.9121 ± 0.0047** | 0.7867 ± 0.0338 |
 
 **Lectures :**
 1. **Reproduction ✓ :** le sanity ECFP4 P5 (0.9433) reproduit P3 (0.9475) à 0.004 près
@@ -241,7 +241,7 @@ structural des conclusions** :
 | **F1** | Bar chart bipanel **random/scaffold** P5 (ECFP4-RF vs GIN/GIN-TFP/GIN-TNE/ChemBERTa, mean ± CI, ligne baseline ECFP4 pointillée) | Figure principale manuscrit (Results) | P5 | `results/figures/p5_auc_benchmark.png` | ✅ **Générée 04/08** |
 | **F2** | Bar chart canonique **P3 random** (ECFP4/FCFP4/MACCS/AP/PHCO/BPF/TFP/TNE/Hybrid-QK, RF) | Réf. P3 (compare la plateforme commune) | P3 | `Project3/.../figures/p3_auc_benchmark_bar.png` | ✅ Existe (01/08) |
 | **F3** | **Salience dims TFP/TNE** (heatmap ou bar par groupe H/pers_img/betti) — top dims 42/43/52/53/54 (TFP), 68/43/92/66/165 (TNE) | Figure H3 (interprétabilité, L4) | P5 | `results/p5_{GIN-TFP,GIN-TNE}_scaffold_salience.json` → figure à générer | ⏳ À générer |
-| **F4** | **Courbes d'apprentissage** (val AUC/époch, GNN vs ChemBERTa, par split) | Figure Methods/Results (v3-c) | P5 | `scripts/p5_learning_curves.py` → `results/figures/p5_learning_curves.png` | ⏳ Après job 12815 |
+| **F4** | **Courbes d'apprentissage** (val AUC/époch, GNN vs ChemBERTa, par split) | Figure Methods/Results (v3-c) | P5 | `scripts/p5_learning_curves.py` → `results/figures/p5_learning_curves.png` | ⏳ Après runs GNN/ChemBERTa complets (ckpt `curves` dispo depuis v3-c) |
 | **T1** | Tableau comparatif **P5 vs P3** (§9bis ci-dessus) : mêmes panel + fingerprints, split random seul comparable ; sanity ECFP4 0.9433 ≈ 0.9475 | Manuscrit Discussion/Table S | P5/P3 | `P5_DATA_ANALYSIS_REPORT.md` §9bis | ✅ Rédigé 04/08 |
 | **T2** | Tableau **P5 vs P4** (parallèle structural honest-negative : modèles vs baselines, verdict, valeur réelle) | Manuscrit Discussion | P5/P4 | `P5_DATA_ANALYSIS_REPORT.md` §9bis | ✅ Rédigé 04/08 |
 | **T3** | Tableau **hiérarchie scaffold finale** (ECFP4-RF 0.8300 > GIN-TFP 0.8138 > GIN-TNE 0.8090 > GIN 0.8047 > ChemBERTa 0.7867) + statistiques paired | Manuscrit Results (table principale) | P5 | à rédiger dans manuscrit | ⏳ Manuscrit |
@@ -266,6 +266,7 @@ T2 + T4 = cadrage Discussion (parallèle P4 et littérature SOTA 2025-26).
 | v3-e | Aug 4, 2026 | **Comparaison inter-projets** | — | **§9bis ajouté** : P5 vs P3 (sanity ECFP4 0.9433 ≈ P3 0.9475 → comparaison valide ; fusion topologique n'inverse pas les fingerprints ; P5 = contrôle honnête de P3) et **P5 vs P4** (même pattern honest-negative génération/prédiction ; H3 salience = bridge vers oracles P4 RRS/PNS ; candidats Pareto P4 re-scorables par ECFP4-RF). | `P5_DATA_ANALYSIS_REPORT.md` §9bis |
 | v3-f | Aug 4, 2026 | **Journal cible + gaps/novelty (web)** | — | **Cible : Journal of Cheminformatics** (Springer, axe éditorial "publishing benchmark studies for ML", collection "Evaluating AI/ML in cheminformatics", précédent direct Boldini 2024 fingerprints NPs). Recherche web SOTA : **Guo & Ding 2026 "Do Larger Models Really Win" (arXiv:2604.26498)** — 156 comparaisons, classiques ML gagnent 47.4%, séquence 28.8%, GNN 21.8%, LLM-SAR 1.9% ; **Benchmarking Pretrained Embeddings (arXiv:2508.06199)** — 25 modèles ≈ ECFP, seul CLAMP gagne ; Boldini 2024 (fingerprints NPs). → **P5 = extension directe de ces 3 références sur panel NPs africaines + contribution interprétabilité (H3)**. Figures/tables de perspective listées (§9bis). | §9bis + web 04/08 |
 | v3 | Aug 4, 2026 | **GIN prod (M1.3)** | random + scaffold 5-fold × 5 seeds | **GIN random = 0.9098 ± 0.0067**, **GIN scaffold = 0.8047 ± 0.0395**, **GIN-TFP scaffold = 0.8137 ± 0.0300**, **GIN-TNE scaffold = 0.8068 ± 0.0366** (25 fold×seed chacun). Fix sbatch (chemin, `--dry-run`, mem, conda inline) + fix fusion numpy→tensor + fix collate flat desc. | `results/p5_{GIN,GIN-TFP,GIN-TNE}_scaffold_ckpt.json` + CSVs |
+| v3-g | Aug 5, 2026 | **H2 ChemBERTa random (leak-fixed, complet)** | random | **ChemBERTa random = 0.9121 ± 0.0047 (25 fold×seed)** — au-dessus du GIN random (0.9098), sous ECFP4-RF (0.9433, Δ=−0.031). Transformer < fingerprints sous random (attendu, cf. "Do Larger Models Really Win"), mais **meilleur que GIN** à variance moindre (std 0.0047 vs 0.0067). Hiérarchie P5 complète : ECFP4 0.9433 > ChemBERTa 0.9121 > GIN 0.9098 (random) ; ECFP4 0.8300 > GIN-TFP 0.8138 > GIN-TNE 0.8090 > GIN 0.8047 > ChemBERTa 0.7867 (scaffold). | `p5_chemberta_random_ckpt.json` + CSV (25/25, job 12815) |
 
 ### v3 (Aug 4, 2026) — GIN production run (M1.3) ✅ LOGGED-BEFORE-RUN
 - **Instrument fix déjà appliqué** (v2) : `self.folds` l.114, dry-run ne sauvegarde plus ckpt/CSV.
@@ -287,6 +288,22 @@ T2 + T4 = cadrage Discussion (parallèle P4 et littérature SOTA 2025-26).
 - **H3 — Salience des dims TFP/TNE (données 04/08, 25 folds) :** `salience = mean|W|` sur colonnes desc de `head.0.weight` (projection `[128+n_desc→128]`), agrégé fold×seed. **TFP (78 dims) :** groupe **persistent-image (33:58) porte le signal** — salience moy. 0.0790 vs H(0:33) 0.0485 et betti(58:78) 0.0547 ; top-5 dims 42/43/52/53/54 (sal 0.100–0.119). **TNE (192 dims) :** top dims 68/43/92/66/165 (sal 0.096–0.145) ; top-10% des dims = 17.3% de la salience totale (sparsité modérée). → contribution d'interprétabilité (L4) : la géométrie persistante (pers_img) domine la topologie portée par la fusion, cohérente avec le rôle 3D/géométrique (aligné "Do Larger Models Really Win" + agenda RQ5). Bridge P3 H1-RRS : ces dims topologiques sont les candidats à corréler aux scores RRS/PNS.
 - **H2 — ChemBERTa scaffold COMPLET (job 12813, leak-fixed, 25 fold×seed) :** **0.7867 ± 0.0338** (folds 0.724–0.836, pas d'inflation — le fix de fuite tient sur les 25 folds). **Vs ECFP4-RF scaffold 0.8300 : Δ = −0.0433, paired t(4) = −29.96, p < 0.0001.** Hiérarchie scaffold finale : **ECFP4-RF 0.8300 > GIN-TFP 0.8138 > GIN-TNE 0.8090 > GIN 0.8047 > ChemBERTa 0.7867**. Le transformer pré-entraîné n'apporte RIEN sous scaffold — pas même la fusion topologique ne rattrape les fingerprints classiques. **H2 honnête négatif CONFIRMÉ (transformer ≤ GNN ≤ fingerprints)** → narration L3 intacte, doublement soutenue (GNN H1 + transformer H2). Le manuscrit P5 = honest-negative + interprétabilité (H3) + topologie (pers_img), PAS "GNN/transformer > classique".
 - **Logs :** `Project5_GNN_Transformer_DrugDiscovery/logs/p5_GIN/stdout_{random,scaffold}.log`
+
+### v3-g (Aug 5, 2026) — H2 ChemBERTa random COMPLET (leak-fixed, job 12815) ✅
+- **ChemBERTa random = 0.9121 ± 0.0047 (25 fold×seed)** — variance très faible (std 0.0047, range 0.902–0.921), pas d'inflation inter-folds (le fix v3-a tient). **Vs GIN random 0.9098 ± 0.0067 : Δ = +0.0023 (ns)** ; **vs ECFP4-RF 0.9433 : Δ = −0.0312**. 
+- **Hierarchie random finale : ECFP4-RF 0.9433 > ChemBERTa 0.9121 > GIN 0.9098.** Le transformer fine-tuné surclasse légèrement le GNN compact mais reste sous les fingerprints — **H2 random CONFIRMÉ (honnête négatif)** : « plus grand » ≠ « meilleur » sous random split, cohérent avec "Do Larger Models Really Win" (classique ML gagne 47.4 %).
+- **Hiérarchie complète P5 (les 6 lignes finales) :**
+
+| Modèle | Random | Scaffold |
+|:-------|:------:|:--------:|
+| ECFP4-RF (P5 sanity) | **0.9433 ± 0.0002** | **0.8300 ± 0.0023** |
+| ChemBERTa | 0.9121 ± 0.0047 | 0.7867 ± 0.0338 |
+| GIN | 0.9098 ± 0.0067 | 0.8047 ± 0.0395 |
+| GIN-TFP | — | 0.8138 ± 0.0352 |
+| GIN-TNE | — | 0.8090 ± 0.0378 |
+
+- **Verdict global P5 verrouillé :** fingerprints (ECFP4-RF) = étalon sur les 2 splits ; GNN compact ≈ transformer à variance moindre ; fusion topologique (GIN-TFP) = gain modeste sous scaffold. **Honest-negative contrôlé + H3 salience (pers_img) = les contributions de P5.** Benchmarks P5 (v1-prep → v3-g) **terminés** — toutes les barres des figures finales sont remplies (ECFP4, GIN, GIN-TFP, GIN-TNE, ChemBERTa × random/scaffold).
+- **Logs :** `Project5_GNN_Transformer_DrugDiscovery/logs/p5_ChemBERTa/stdout_random.log` (job 12815)
 
 ### v1-prep (Aug 1, 2026) — Panel export + dependencies ✅ DONE
 - **Dependencies installed & locked** (see §7): torch 2.13.0+cu130, PyG 2.8.0 (GIN smoke-tested on A4000), transformers 5.14.1, datasets 5.0.1, deepchem 2.8.0. **torchdrug incompatible with Python 3.11 → PyG chosen.** Lock: `Project5_GNN_Transformer_DrugDiscovery/requirements.txt`.
