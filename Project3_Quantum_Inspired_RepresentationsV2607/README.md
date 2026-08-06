@@ -13,9 +13,10 @@
 | **Focus** | African Natural Product (ANP) Antimalarial Chemical Space |
 | **Status** | ✅ Submission-ready — canonical benchmarks complete (jobs 12698/12699/12700/12702) |
 | **Target Journal** | *Journal of Cheminformatics* |
-| **Manuscript** | Main `Paper3_Quantum_InspiredV2607.tex` (18 p. / 7 230 mots) + SM (18 p.) + cover letter (1 p.) — trim 26→18 p. (02/08/2026), fusion des tables benchmark/hybrid, `tab:qkernel`→SM S13, titre harmonisé |
+| **Manuscript** | Main `Paper3_Quantum_InspiredV2608.tex` (18 p. / 7 230 mots) + SM `Paper3_Quantum_Inspired_SM_V2608.tex` (18 p.) + cover letter (1 p.) — trim 26→18 p. (02/08/2026), fusion des tables benchmark/hybrid, `tab:qkernel`→SM S13, titre harmonisé. ⚠️ V2607 et `_refined` archivés dans `manuscript/LaTeX/archive/` |
 | **Key Results (canonical)** | ECFP4 **0.9475 ± 0.0045** (n=19,836) ; Hybrid RF **0.8876 ± 0.0065** (p<0.0001 vs ECFP4) ; ablation QK Δ=−0.040 (principal contributeur) ; QKS 6q ≈ RBF (p=0.060/0.419, ns) ; TFP 0.8759 ; TNE 0.7219 (6.1× compression réelle) ; 92.6% ECFP4-unreachable / 69.3% scaffold recovery |
 | **ChEMBL validation** | ✅ Exécutée (02/08/2026) — 10 leads top queryés : analogues ChEMBL tous **Inactive**, Tanimoto 0.229–0.379 (résultat honnête négatif = nouveauté chimique, pas de validation expérimentale positive) |
+| **Resistance integration** | Résistance-résilience au cœur : **H₁-RRS** (ρ=0.240, p<0.0001, n=494; pilot n=14: ρ=0.947) — la topologie prédit la résilience de liaison aux mutants (PfDHFR/PfCRT) ; reframing size-médié (ρ_partial ≈ 0) assumé avec caveat MW |
 | **Strategic Docs** | [`P3_ADVERSARIAL_AUDIT_MITIGATION.md`](P3_ADVERSARIAL_AUDIT_MITIGATION.md) (v3.1) · [`P3_SUBMISSION_ROADMAP_85PCT.md`](P3_SUBMISSION_ROADMAP_85PCT.md) · boussole : `BMAD_Q1_DATA_ANALYSIS_REPORT.md` |
 | **Methodology Skills** | `pennylane`, `datamol`, `scikit-learn`, `pymoo`, `experimental-design`, `BMAD-METHOD` |
 
@@ -25,12 +26,17 @@
 
 Historically, the most effective antimalarial classes (quinine, artemisinin) originate from natural products. African natural products (AfroDb, p-ANPDB) feature complex 3D architectures, high $sp^3$ carbon fractions, and rigid polycyclic scaffolds that standard 2D molecular fingerprints (ECFP4) fail to represent accurately.
 
+### Literature gaps (anchored)
+
+The manuscript positions itself against two open gaps: (i) the "larger is better" narrative is untested on antimalarial NP space — this study controls it on a dedicated panel; (ii) quantum kernels and tensor/topological representations are advocated as richer, but their *scalable, honest* benchmark against classical baselines is missing. P3 answers both with canonical, fixed-panel comparisons (n=19,849) and publishes an honest negative (QKS ≈ RBF).
+
 | ID | Distinction / Novelty Claim |
 |----|----------------------------|
 | **N1** | **Physical Pharmacophore Retention:** First proof that Tensor Network Embedding (TNE, 192-dim, 6.1× real compression) retains 3D physical binding affinity across 19,913 molecules (Tartarus docking oracle). |
 | **N2** | **Quantum Kernel Parity at Scale:** First canonical benchmark showing quantum kernel (QKS) ≈ RBF at n=5,000 (p=0.419) and n=19,849 (p=0.060) — honest negative, no quantum advantage claimed. |
 | **N3** | **Topological Rigidity vs. Promiscuity:** First topological data analysis (TDA $H_1$ persistent homology) correlation mapping scaffold ring rigidity to biological target promiscuity. |
 | **N4** | **Scaffold Paradox Resolution:** Explanation of the 92.6% ECFP4-unreachable gap vs. 69.3% scaffold recovery via persistent homology ($H_1$ preservation vs. $H_0$ divergence). |
+| **N5** | **Resistance Resilience as a Topological Signal:** First mapping of $H_1$ count to resistance-resilience scores (RRS) of antimalarial leads — the explicit bridge from representation to the P2 resistance-validation programme. |
 
 ---
 
@@ -62,10 +68,11 @@ Project3_Quantum_Inspired_RepresentationsV2607/
 │   ├── p3_chembl_validation.py          # ChEMBL IC50 validation (top-10 leads)
 │   └── p3_nisq_smoke_test.py            # 2-qubit IBM Quantum NISQ hardware test
 ├── manuscript/LaTeX/
-│   ├── Paper3_Quantum_InspiredV2607.tex        # Main manuscript (18 p.)
-│   ├── Paper3_Quantum_Inspired_SM_V2607.tex    # Supplementary Material (18 p.)
+│   ├── Paper3_Quantum_InspiredV2608.tex        # Main manuscript (18 p.) — CANONIQUE
+│   ├── Paper3_Quantum_Inspired_SM_V2608.tex    # Supplementary Material (18 p.) — CANONIQUE
 │   ├── Cover_Letter_P3.tex                     # Cover letter (1 p.)
-│   └── Bibliography_Paper3.bib        # References
+│   ├── archive/                                # V2607, _refined (tex+pdf) — historiques
+│   └── Bibliography_Paper3.bib                 # References
 └── results/                           # Generated CSVs and figures
 ```
 
