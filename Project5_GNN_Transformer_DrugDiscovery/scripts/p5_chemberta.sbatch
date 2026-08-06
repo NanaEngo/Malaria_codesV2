@@ -1,6 +1,6 @@
 #!/bin/bash
 # ChemBERTa fine-tune (H2 arm) — random + scaffold, 5-fold x 5 seeds.
-# Usage: sbatch scripts/p5_chemberta.sbatch [random|scaffold]
+# Usage: sbatch scripts/p5_chemberta.sbatch [random|scaffold] [curves]
 
 #SBATCH --job-name=p5_chemberta
 #SBATCH --partition=production
@@ -14,9 +14,11 @@
 #SBATCH --error=p5_chemberta.err
 
 SPLIT=${1:-random}
+CURVES=""
+if [ "${2}" == "curves" ]; then CURVES="--curves-only"; fi
 LOG_DIR=$(pwd)/logs/p5_chemberta_${SPLIT}
 mkdir -p ${LOG_DIR}
 
 source /home/nanaengo/miniforge3/etc/profile.d/conda.sh
 conda activate malaria_md
-python scripts/p5_chemberta.py --split ${SPLIT} --device cuda > ${LOG_DIR}/stdout.log 2>&1
+python scripts/p5_chemberta.py --split ${SPLIT} --device cuda ${CURVES} > ${LOG_DIR}/stdout_curves.log 2>&1

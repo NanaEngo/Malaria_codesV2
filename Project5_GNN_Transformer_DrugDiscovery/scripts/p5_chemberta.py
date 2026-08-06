@@ -91,10 +91,12 @@ def load_splits(split_type: str = "random") -> list:
 
 
 class ChemBERTaTrainer:
-    def __init__(self, split_type: str = "random", dry_run: bool = False, device: str = "auto"):
+    def __init__(self, split_type: str = "random", dry_run: bool = False, device: str = "auto",
+                 curves_only: bool = False):
         self.split_type = split_type
         self.dry_run = dry_run
         self.device = get_device(device)
+        self.curves_only = curves_only
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
         self.model = AutoModelForSequenceClassification.from_pretrained(
             MODEL_NAME,
@@ -187,7 +189,7 @@ class ChemBERTaTrainer:
         for f_idx in range(N_FOLDS):
             for s_idx, seed in enumerate(SEEDS):
                 key = (f_idx, seed)
-                if key in self.completed:
+                if not self.curves_only and key in self.completed:
                     print(f"  Skipping completed fold {f_idx} seed {seed}")
                     continue
                 print(f"Training ChemBERTa fold {f_idx} seed {seed} on {self.device}...")
@@ -202,9 +204,17 @@ class ChemBERTaTrainer:
                     "curve": curve,
                 })
                 self.completed.add(key)
-                if not self.dry_run:
+                if not self.dry_run and not self.curves_only:
                     self._save_ckpt(results)
+        if self.curves_only:
+            self._save_curves(results)
         return results
+
+    def _save_curves(self, results: list):
+        p = P5_ROOT / "results" / f"p5_chemberta_{self.split_type}_curves.json"
+        curves = [{"fold": r["fold"], "seed": r["seed"], "curve": r["curve"]} for r in results]
+        json.dump({"model": "ChemBERTa", "split": self.split_type, "curves": curves}, open(p, "w"), indent=2)
+        print(f"Curves written to {p} (canonical ckpt/CSV untouched)")
 
     def _save_ckpt(self, results: list):
         with open(self.ckpt_path, "w") as f:
@@ -216,11 +226,13 @@ def main():
     ap.add_argument("--split", choices=["random", "scaffold"], default="random")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
+    ap.add_argument("--curves-only", action="store_true")
     args = ap.parse_args()
-    trainer = ChemBERTaTrainer(split_type=args.split, dry_run=args.dry_run, device=args.device)
+    trainer = ChemBERTaTrainer(split_type=args.split, dry_run=args.dry_run, device=args.device,
+                               curves_only=args.curves_only)
     results = trainer.run()
 
-    if not args.dry_run:
+    if not args.dry_run and not args.curves_only:
         out_csv = P5_ROOT / "results" / f"p5_chemberta_{args.split}_results.csv"
         pd.DataFrame(results).to_csv(out_csv, index=False)
         print(f"Results written to {out_csv}")

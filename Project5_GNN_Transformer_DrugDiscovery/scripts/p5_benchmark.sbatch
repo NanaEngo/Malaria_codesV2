@@ -4,6 +4,7 @@
 #   sbatch scripts/p5_benchmark.sbatch GIN
 #   sbatch scripts/p5_benchmark.sbatch GIN-TFP scaffold
 #   sbatch scripts/p5_benchmark.sbatch ChemBERTa
+#   sbatch scripts/p5_benchmark.sbatch GIN random curves   # curves-only (F4)
 # GPU vs CPU smoke test automatically recorded in JSON after run
 
 #SBATCH --job-name=p5_bench
@@ -20,11 +21,13 @@
 LOG_DIR=$(pwd)/logs/p5_${1}
 mkdir -p ${LOG_DIR}
 SPLIT=${2:-random}
+CURVES=""
+if [ "${3}" == "curves" ]; then CURVES="--curves-only"; fi
 
 START=$(date +%s)
 source /home/nanaengo/miniforge3/etc/profile.d/conda.sh
 conda activate malaria_md
-python scripts/p5_benchmark.py --model ${1} --split ${SPLIT} --device cuda > ${LOG_DIR}/stdout_${SPLIT}.log 2>&1
+python scripts/p5_benchmark.py --model ${1} --split ${SPLIT} --device cuda ${CURVES} > ${LOG_DIR}/stdout_${SPLIT}_curves.log 2>&1
 END=$(date +%s)
 TIME=$((END-START))
 

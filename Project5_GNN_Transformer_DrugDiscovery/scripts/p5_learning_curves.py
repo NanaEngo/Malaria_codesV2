@@ -25,8 +25,15 @@ OUT_DIR = P5_ROOT / "results"
 
 
 def load_curves() -> dict[str, dict[str, tuple[np.ndarray, np.ndarray, np.ndarray, int]]]:
-    """{model: {split: (epochs, mean, std, n_curves)}} across all runs that have curves."""
+    """{model: {split: (epochs, mean, std, n_curves)}} from *_curves.json and ckpt `curve` keys."""
     out: dict[str, dict[str, list]] = {}
+    for cfile in OUT_DIR.glob("p5_*_curves.json"):
+        try:
+            data = json.load(open(cfile))
+        except Exception:
+            continue
+        key = out.setdefault(data.get("model", cfile.stem), {}).setdefault(data.get("split", "?"), [])
+        key.extend(c["curve"] for c in data.get("curves", []) if c.get("curve"))
     for ckpt in OUT_DIR.glob("p5_*_ckpt.json"):
         try:
             data = json.load(open(ckpt))

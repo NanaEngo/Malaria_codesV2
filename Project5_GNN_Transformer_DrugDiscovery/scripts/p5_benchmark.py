@@ -79,12 +79,13 @@ def load_splits(split_type: str) -> list:
 class P5Benchmark:
     def __init__(self, model_name: str, split_type: str = "random",
                  device: str = "auto", dry_run: bool = False,
-                 ckpt_path: Path | None = None):
+                 ckpt_path: Path | None = None, curves_only: bool = False):
         self.model_name = model_name
         self.split_type = split_type
         self.device = get_device(device)
         self.dry_run = dry_run
         self.ckpt_path = ckpt_path or (P5_ROOT / "results" / f"p5_{model_name}_{split_type}_ckpt.json")
+        self.curves_only = curves_only
 
         panel = pd.read_csv(P5_ROOT / "results" / "p5_canonical_panel.csv")
         self.smiles = panel["smiles"].tolist()
@@ -268,7 +269,7 @@ class P5Benchmark:
         for f_idx in range(N_FOLDS):
             for s_idx, seed in enumerate(SEEDS):
                 key = (f_idx, seed)
-                if key in self.completed:
+                if not self.curves_only and key in self.completed:
                     print(f"  Skipping completed fold {f_idx} seed {seed}")
                     continue
                 print(f"Training {self.model_name} fold {f_idx} seed {seed} on {self.device}...")
@@ -283,12 +284,20 @@ class P5Benchmark:
                     "test_auc": te_auc, "split": self.split_type,
                     "curve": curve,
                 })
-                if salience is not None:
+                if salience is not None and not self.curves_only:
                     self._accumulate_salience(salience)
                 self.completed.add(key)
-                if not self.dry_run:
+                if not self.dry_run and not self.curves_only:
                     self._save_ckpt(results)
+        if self.curves_only:
+            self._save_curves(results)
         return results
+
+    def _save_curves(self, results: list):
+        p = P5_ROOT / "results" / f"p5_{self.model_name}_{self.split_type}_curves.json"
+        curves = [{"fold": r["fold"], "seed": r["seed"], "curve": r["curve"]} for r in results]
+        json.dump({"model": self.model_name, "split": self.split_type, "curves": curves}, open(p, "w"), indent=2)
+        print(f"Curves written to {p} (canonical ckpt/CSV untouched)")
 
     def _accumulate_salience(self, sal: np.ndarray):
         """Mean |W| desc-projection per dim, accumulated across folds/seeds."""
@@ -315,13 +324,14 @@ def main():
     ap.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--epochs", type=int, default=EPOCHS)
+    ap.add_argument("--curves-only", action="store_true")
     args = ap.parse_args()
 
-    bench = P5Benchmark(args.model, args.split, args.device, args.dry_run)
+    bench = P5Benchmark(args.model, args.split, args.device, args.dry_run, curves_only=args.curves_only)
     results = bench.run()
 
-    # save CSV (never in dry-run)
-    if not args.dry_run:
+    # save CSV (never in dry-run or curves-only)
+    if not args.dry_run and not args.curves_only:
         out_csv = P5_ROOT / "results" / f"p5_{args.model}_{args.split}_results.csv"
         pd.DataFrame(results).to_csv(out_csv, index=False)
         print(f"Results written to {out_csv}")
