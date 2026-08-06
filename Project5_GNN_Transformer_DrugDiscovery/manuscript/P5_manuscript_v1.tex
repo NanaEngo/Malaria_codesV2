@@ -97,6 +97,13 @@ Even when predictive gains are absent, learned fusion weights carry interpretabl
 
 This result is methodologically important: it shows that topological representations \emph{contribute} signal to activity prediction --- in line with the companion quantum-representation study \citep{temgoua2027quantum} and with the interpretability argument of topological descriptors \citep{tda_review_2025} --- but that this signal, on this panel, does not translate into a ranking advantage over fingerprints. Interpretability and ranking are separable axes; our fusion architectures capture the former without delivering the latter.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{p5_salience.png}
+\caption{Descriptor salience in the topological fusion heads under the scaffold split (mean $|W|$ of the fusion projection layer across 25 fold--seed replicates). Left: TFP (78 dimensions), colored by block --- homology-0 (dims 0--32, blue), persistent-image (dims 33--57, orange), Betti (dims 58--77, green); the persistent-image block carries the strongest signal. Right: TNE (192 dimensions), sorted descending.}
+\label{fig:salience}
+\end{figure}
+
 \section{Discussion}
 
 \subsection{The verdict is scale-independent and panel-specific}
