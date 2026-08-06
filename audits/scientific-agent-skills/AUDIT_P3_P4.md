@@ -2,7 +2,7 @@
 
 **Date :** 05 août 2026 (rév. 2 — résolution `NO_SOURCE_IDENTIFIER`)
 **Skills appliqués :** `scientific-writing` (v2.0), `peer-review` (v2.1), `literature-review` (v1.7) — repo `/tmp/opencode/scientific-agent-skills` (K-Dense-AI, commit 831d49e)
-**Périmètre :** P3 (`Paper3_Quantum_InspiredV2608.tex` + `Bibliography_Paper3.bib`), P4 (`P4_Pareto_MCTS_JoC_refined.tex` + `P4_Bibliography.bib`) et P5 (`P5_manuscript_v1.tex` + `Bibliography_P5.bib`)
+**Périmètre :** P3 (`Paper3_Quantum_InspiredV2608.tex` + `Bibliography_Paper3.bib`), P4 (`P4_Pareto_MCTS_JoC_refined.tex` + `P4_Bibliography.bib`) et P5 (`P5_manuscript_V2608.tex` + `Bibliography_P5.bib`)
 **Outils locaux exécutés :** `check_references.py`, `check_consistency.py` (offline, sans réseau)
 
 ---

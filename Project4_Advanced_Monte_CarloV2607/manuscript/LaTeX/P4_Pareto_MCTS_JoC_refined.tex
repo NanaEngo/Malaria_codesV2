@@ -55,6 +55,8 @@ $^{3}$Department of Biochemistry, Faculty of Science, University of Yaound\'{e} 
 De novo molecular generation often collapses multiple design objectives into a single scalar reward, obscuring trade-offs between potency, synthetic accessibility and drug-likeness. We present a Pareto-guided Monte Carlo tree search (MCTS) framework that maintains a non-dominated front across multi-parameter optimisation (MPO), synthetic Bayesian accessibility (SYBA), resistance-resilience (RRS) and polypharmacology-network (PNS) scores, guided by a scaffold-aware fragment policy derived from ChEMBL27 frequencies and Tanimoto compatibility. A four-method benchmark across \num{20} independent seeds (fixed search budget) shows that random search achieves the highest mean reward (\num{0.7335}), followed by MCTS (\num{0.7276}), deterministic greedy search (\num{0.7211}) and a genetic algorithm (\num{0.7027}); the MCTS--random gap is small (mean $\Delta = \num{0.0059}$, 95\% CI $[\num{0.0008},\num{0.0110}]$, paired $t_{19} = \num{2.41}$, $p = \num{0.026}$). MCTS is therefore competitive on scalar reward and, within our fragment-vocabulary oracle design, is the method that returns a multi-objective Pareto front of non-dominated candidates (four solutions, hypervolume \num{1.2366}) spanning the potency--accessibility trade-off, including the high-potency / low-accessibility extreme that fixed-weight scalar aggregation discards. To our knowledge this is the first Pareto-guided MCTS to fold resistance-resilience and polypharmacology-network scores into the generation objective, in contrast to generic affinity/drug-likeness metrics in prior Pareto-MCTS generators, with the honest caveat that in the present front these domain scores remain comparatively homogeneous. Component ablations identify the scaffold-aware policy ($\Delta = +\num{0.148}$) and the Pareto front itself ($\Delta = +\num{0.108}$) as the dominant drivers of performance. All code, molecule sets and score tables are deposited under an open licence. These results position MCTS as a complementary multi-objective explorer rather than a universal single-objective optimiser.
 \end{abstract}
 
+\textbf{Scientific Contribution:} We introduce a Pareto-guided MCTS framework for de novo antimalarial design that maintains a non-dominated front across potency, synthetic accessibility, resistance-resilience and polypharmacology-network scores, guided by a scaffold-aware fragment policy. Against a four-method benchmark across 20 seeds, MCTS is competitive with random search on scalar reward while uniquely recovering a multi-objective Pareto front spanning the potency--accessibility trade-off. Component ablations identify the scaffold-aware policy and the Pareto front itself as the dominant drivers of performance.
+
 \noindent\textbf{Keywords:} de novo design; Monte Carlo tree search; Pareto optimisation; antimalarial; multi-objective; synthetic accessibility; resistance resilience
 
 % ============================================================================
@@ -289,6 +291,12 @@ All searches are seeded; the specific seed integers and the random-number genera
 A Pareto-guided MCTS agent equipped with a scaffold-aware fragment policy is statistically close to random search on scalar reward (a \num{0.006} mean gap at the screened optimal configuration) and, under the multi-objective protocol, returns a front of non-dominated antimalarial candidates. The dominant performance drivers are the chemistry-informed policy and the Pareto front itself. Within the studied fragment space, random search remains a strong baseline; the added value of MCTS lies in transparent exploration of potency--accessibility trade-offs that scalar aggregation conceals. All artefacts required for exact reproduction are deposited under an open licence.
 
 % ============================================================================
+\section*{List of Abbreviations}
+% ============================================================================
+
+\textbf{MCTS:} Monte Carlo tree search; \textbf{MPO:} multi-parameter optimisation; \textbf{SYBA:} synthetic Bayesian accessibility; \textbf{SA:} synthetic accessibility score; \textbf{RRS:} resistance resilience score; \textbf{PNS:} polypharmacology-network score; \textbf{GA:} genetic algorithm; \textbf{PUCT:} polynomial upper confidence trees; \textbf{SMILES:} simplified molecular-input line-entry system; \textbf{ChEMBL:} ChEMBL bioactivity database; \textbf{PF-MPO:} parallel fragment multi-objective; \textbf{FCD:} Fr\'echet ChemNet distance; \textbf{HV:} hypervolume; \textbf{MDS:} multidimensional scaling; \textbf{CI:} confidence interval.
+
+% ============================================================================
 \section*{Data availability}
 % ============================================================================
 
@@ -311,6 +319,9 @@ Not applicable.
 
 \section*{Consent for publication}
 Not applicable.
+
+\section*{Use of Artificial Intelligence}
+During the preparation of this work the authors used AI assistants (Claude, Anthropic) to support code development, data analysis scripting, and manuscript drafting and editing. The authors reviewed and edited all AI-assisted output and take full responsibility for the content of this article. No generative AI tool is listed as an author. All computational results, statistical analyses, and quantitative claims were generated, verified, and deposited by the authors.
 
 % ============================================================================
 \bibliographystyle{unsrtnat}

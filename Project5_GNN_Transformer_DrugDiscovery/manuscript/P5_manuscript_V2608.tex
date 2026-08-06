@@ -1,5 +1,5 @@
 % P5 manuscript — target: Journal of Cheminformatics (Springer Nature)
-% Draft v1 — Aug 2026. Initial submission format-flexible.
+% V2608 — Aug 2026.
 \documentclass[11pt,a4paper]{article}
 
 \usepackage[margin=1in]{geometry}
@@ -34,6 +34,8 @@
 \begin{abstract}
 The growing availability of pretrained molecular foundation models and large sequence transformers has fuelled the expectation that ``larger models'' should systematically outperform compact cheminformatics models on molecular property prediction. We test this assumption on a curated panel of \textbf{19,836 African antimalarial natural products} assembled from the eOS80CH screening collection, under both a random and a Bemis--Murcko scaffold five-fold cross-validation (25 fold--seed replicates). We compare a random-forest baseline on ECFP4 fingerprints against a graph isomorphism network (GIN), two topological fusion variants (GIN--TFP and GIN--TNE built on persistent-homology and tensor-network descriptors), and a fine-tuned ChemBERTa sequence transformer. Under the scaffold split -- the practically relevant out-of-distribution setting -- \textbf{ECFP4--RF achieves the highest ROC AUC (0.8300), followed by GIN--TFP (0.8138), GIN--TNE (0.8090), GIN (0.8047), and ChemBERTa (0.7867)}. No GNN or transformer arm significantly outperforms the fingerprint baseline; ChemBERTa is significantly worse ($\Delta = -0.043$, paired $t$, $p < 0.0001$). We further show that a leak-aware analysis is essential: naive per-fold reuse of pretrained weights inflates transformer AUCs by up to 0.15, an artifact we document and correct. Finally, an attribution analysis of the fusion head reveals that \textbf{persistent-image dimensions of the topological fingerprints carry the majority of the predictive signal}, providing an interpretable link to the underlying molecular geometry. Our results mirror and extend the recent ``Do Larger Models Really Win?'' benchmark on a clinically motivated natural-product panel, and support the emerging view that representation--task alignment, not model scale, governs predictive performance in small-molecule activity prediction. Code, frozen splits, and trained checkpoints are released.
 \end{abstract}
+
+\textbf{Scientific Contribution:} We provide a leak-audited, fully reproducible benchmark showing that a random forest on ECFP4 fingerprints outperforms GNNs and a pretrained transformer for antimalarial natural-product activity prediction under scaffold splits. We document and correct a cross-fold pretrained-weight leakage artifact that would otherwise inflate transformer AUCs. We show that persistent-image topological features dominate the fusion head's predictive signal, linking learned representations to molecular geometry.
 
 \noindent\textbf{Keywords:} graph neural networks; molecular fingerprints; antimalarial natural products; scaffold split; benchmark; interpretability; persistent homology
 
@@ -122,6 +124,14 @@ This benchmark shares its frozen 19,836-molecule panel and fingerprint pipeline 
 
 Our panel, while curated and clinically motivated, is a single binary-activity collection assembled from screening data; label noise and class imbalance may differ from public benchmarks. The GNN and fusion models use a single-layer architecture and fixed hyperparameters (hidden 128, 50 epochs, patience 10); deeper or better-tuned architectures could close part of the gap, though prior scale-benchmarks find the classical advantage robust to such tuning \citep{guo_ding_2026}. ChemBERTa was fine-tuned with a fixed learning schedule rather than per-task optimization. The salience measure (mean absolute projection weight) is a first-order attribution; more sophisticated methods (e.g., integrated gradients) could refine the H3 conclusion. Finally, the scaffold split is a proxy for novelty; prospective experimental validation remains the ultimate test. A recent structural-frontier analysis reinforces this caveat: a scaffold identifier captures only one notion of chemical unfamiliarity, and splits that reserve the sparsest, physicochemically remote scaffold groups inflate error further on ADMET tasks \citep{scaffold_frontier_2026}; our verdicts should therefore be read as valid for Bemis--Murcko scaffold held-out series, with harder forms of novelty (e.g., distant scaffold-frontier groups) posing an even steeper generalization test.
 
+\section{Conclusions}
+
+On a frozen panel of 19{,}836 African antimalarial natural products, a random forest on ECFP4 fingerprints outperforms a GIN, two topological-fusion GNN variants, and a fine-tuned ChemBERTa transformer under both random and Bemis--Murcko scaffold cross-validation (25 fold--seed replicates). The scaffold-split hierarchy is ECFP4--RF (0.8300) > GIN--TFP (0.8138) > GIN--TNE (0.8090) > GIN (0.8047) > ChemBERTa (0.7867), with no graph or transformer arm significantly beating the fingerprint baseline. These results extend the recent ``Do Larger Models Really Win?'' benchmark to a clinically motivated natural-product panel and support the emerging view that representation--task alignment, not model scale, governs predictive performance in small-molecule activity prediction. We document a cross-fold pretrained-weight leakage artifact that inflates transformer AUCs by up to 0.15 and publish the corrected protocol; we recommend that transformer benchmarks state explicitly whether pretrained weights are reset per fold. Finally, an attribution analysis shows that persistent-image topological features carry the majority of the predictive signal in the fusion head, providing an interpretable link to molecular geometry even when predictive gains are absent.
+
+\section{List of Abbreviations}
+
+\textbf{ECFP4:} extended-connectivity fingerprint, radius 2; \textbf{RF:} random forest; \textbf{GNN:} graph neural network; \textbf{GIN:} graph isomorphism network; \textbf{TFP:} topological fingerprint (persistent homology); \textbf{TNE:} tensor network embedding; \textbf{ROC AUC:} receiver operating characteristic area under the curve; \textbf{CV:} cross-validation; \textbf{NP:} natural product; \textbf{ADMET:} absorption, distribution, metabolism, excretion, toxicity.
+
 \section{Methods}
 
 \subsection{Data and panel}
@@ -144,15 +154,37 @@ Initial ChemBERTa runs loaded the pretrained model once and reused the same inst
 
 Per model, 25 fold--seed AUCs. Model-vs-baseline comparisons use paired $t$-tests on the five per-seed means (each a mean over the five folds). Significance threshold $\alpha = 0.05$; effect sizes reported as mean difference. Salience is aggregated across the 25 replicates as the per-dimension mean absolute projection weight.
 
-\section{Data and code availability}
+\section{Availability of data and materials}
 
-All scripts, frozen splits, per-fold results, salience data, and figure code are released in the project repository; trained checkpoints and the canonical panel are included. Reproducibility is supported by the frozen split files (random and scaffold), the frozen feature tables, and the pinned environment.
+All code, frozen splits (random and scaffold, five seeds each), per-fold results, salience data, figure scripts, and the canonical 19{,}836-molecule panel are released under the MIT licence in the public repository \url{https://github.com/NanaEngo/Malaria_codesV2}. Trained checkpoints are included. Reproducibility is supported by the frozen split files, the frozen feature tables, and the pinned environment.
 
 \section{Author contributions}
 
-\section{Conflicts of interest}
+MVST conceived the study, designed the benchmark protocol, implemented the GNN/transformer pipelines, and wrote the manuscript. All authors contributed to data analysis, reviewed the results, and approved the final version. (CRediT roles and full author affiliations are listed on the title page.)
+
+\section{Competing interests}
+
+The authors declare no competing interests.
+
+\section{Funding}
+
+This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.
+
+\section{Ethics approval and consent to participate}
+
+Not applicable. This study is entirely computational and uses publicly available chemical databases and in-silico activity predictions; no human or animal subjects or patient data were involved.
+
+\section{Consent for publication}
+
+Not applicable. No individual person's data (including images, videos, or identifiable details) appear in this manuscript.
+
+\section{Use of Artificial Intelligence}
+
+During the preparation of this work the authors used AI assistants (Claude, Anthropic) to support code development, data analysis scripting, and manuscript drafting and editing. The authors reviewed and edited all AI-assisted output and take full responsibility for the content of this article. No generative AI tool is listed as an author. Computational results, statistical analyses, and all quantitative claims were generated, verified, and deposited by the authors.
 
 \section{Acknowledgements}
+
+The authors acknowledge the use of the local high-performance computing (SLURM) cluster for the GPU and CPU benchmark jobs reported here.
 
 \section*{References}
 \bibliographystyle{unsrtnat}
