@@ -8,6 +8,11 @@
 \usepackage{microtype}
 \usepackage{hyperref}
 \usepackage{enumitem}
+\usepackage{siunitx}
+\sisetup{
+  detect-all           = true,
+  group-minimum-digits = 4,
+}
 
 \signature{Myke Vital Sao Temgoua \\ \small Corresponding Author}
 \address{%
@@ -29,9 +34,9 @@
 
 We are pleased to submit our manuscript, \textbf{``Larger models, unchanged verdict: a controlled benchmark of graph neural networks and transformers against ECFP4 fingerprints for antimalarial natural-product activity prediction''}, for consideration as a Research Article in the \textit{Journal of Cheminformatics}.
 
-The ``scale-centric'' narrative in molecular machine learning holds that larger pretrained models should supersede compact cheminformatics baselines. We test this assumption on a frozen panel of 19{,}836 African antimalarial natural products under both random and Bemis--Murcko scaffold cross-validation (25 fold--seed replicates), comparing a random forest on ECFP4 fingerprints against a graph isomorphism network (GIN), two topological-fusion variants (GIN--TFP, GIN--TNE), and a fine-tuned ChemBERTa transformer.
+The ``scale-centric'' narrative in molecular machine learning holds that larger pretrained models should supersede compact cheminformatics baselines. We test this assumption on a frozen panel of \num{19836} African antimalarial natural products under both random and Bemis--Murcko scaffold cross-validation (\num{25} fold--seed replicates), comparing a random forest on ECFP4 fingerprints against a graph isomorphism network (GIN), two topological-fusion variants (GIN--TFP, GIN--TNE), and a fine-tuned ChemBERTa transformer.
 
-Under the scaffold split, the practically relevant out-of-distribution setting, \textbf{ECFP4--RF achieves the highest ROC AUC (0.8300)}, ahead of GIN--TFP (0.8138), GIN--TNE (0.8090), GIN (0.8047) and ChemBERTa (0.7867); no graph or transformer arm significantly outperforms the fingerprint baseline. We document and correct a subtle cross-fold weight-leakage artifact in transformer fine-tuning that would otherwise inflate reported AUCs by up to 0.15, and an attribution analysis shows that persistent-image topological features carry the majority of the predictive signal, linking learned representations to molecular geometry even when predictive gains are absent.
+Under the scaffold split, the practically relevant out-of-distribution setting, \textbf{ECFP4--RF achieves the highest ROC AUC (\num{0.8300})}, ahead of GIN--TFP (\num{0.8138}), GIN--TNE (\num{0.8090}), GIN (\num{0.8047}) and ChemBERTa (\num{0.7867}); no graph or transformer arm significantly outperforms the fingerprint baseline. We document and correct a subtle cross-fold weight-leakage artifact in transformer fine-tuning that would otherwise inflate reported AUCs by up to \num{0.15}, and an attribution analysis shows that persistent-image topological features carry the majority of the predictive signal, linking learned representations to molecular geometry even when predictive gains are absent.
 
 We believe this controlled, leak-audited, fully reproducible benchmark aligns closely with the scope of the \textit{Journal of Cheminformatics}---including its collection on the evaluation of AI and machine learning models in cheminformatics---and contributes an honest-negative result on a clinically motivated natural-product panel, mirroring the emerging consensus that representation--task alignment, not model scale, governs small-molecule activity prediction. Code, frozen splits and trained checkpoints are released under an open licence and are available to reviewers in the public repository (\url{https://github.com/NanaEngo/Malaria_codesV2}).
 
