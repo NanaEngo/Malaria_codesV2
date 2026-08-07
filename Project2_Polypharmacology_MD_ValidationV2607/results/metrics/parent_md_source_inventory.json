@@ -1,0 +1,368 @@
+{
+  "blocked_system_count": 4,
+  "canonical_smiles_bound": false,
+  "coordinates_modified": false,
+  "derived_report_only": true,
+  "eligible_system_count": 0,
+  "final_source_manifest": false,
+  "generated_utc": "2026-08-07T23:42:35.060157+00:00",
+  "gromacs_launched": false,
+  "inventory_only": true,
+  "overall_status": "FAIL_CLOSED_SOURCE_IDENTITY_REVIEW_REQUIRED",
+  "parameters_generated": false,
+  "policy_note": "This candidate inventory does not select source files, does not bind canonical chemistry, does not authorize MD, and cannot replace a reviewed parent_md_source_manifest.json or forcefield_manifest.json.",
+  "read_only_inputs": true,
+  "schema": "p2-parent-md-source-preflight/v1",
+  "selected_source_records": [],
+  "systems": [
+    {
+      "blockers": [
+        "ambiguous ligand source selection: 6 candidates; canonical SMILES/identity review required",
+        "independent receptor-ligand correspondence review required",
+        "canonical SMILES, formal charge, stereochemistry, and docking-pose linkage not yet bound"
+      ],
+      "declared_pdb_id": "7F3Y",
+      "declared_target": "PfDHFR",
+      "lead": "201",
+      "ligand_candidates": [
+        {
+          "atom_count": 37,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/201_PfDHFR/ligand/ligand_201.acpype/ligand_201.pdb",
+          "sha256": "d5c01cb4f73b634ea2675d47b70fac57c0e2af801a56787ad290b2e8a753f211",
+          "size_bytes": 3425
+        },
+        {
+          "atom_count": 37,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/201_PfDHFR/ligand/ligand_201.acpype/ligand_201_NEW.pdb",
+          "sha256": "d08e1f25eaf93071f7ecd85562d023aca4566512d3661d4fc6087d99f0952cb2",
+          "size_bytes": 3015
+        },
+        {
+          "atom_count": 37,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/201_PfDHFR/ligand/ligand_201.pdb",
+          "sha256": "d5c01cb4f73b634ea2675d47b70fac57c0e2af801a56787ad290b2e8a753f211",
+          "size_bytes": 3425
+        },
+        {
+          "atom_count": 44,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/pdb_ligands/ligand_201.pdb",
+          "sha256": "7ce52bf296640420a4ee2ad43baf4b840d909963ad034bafaa2234338e8982ee",
+          "size_bytes": 4170
+        },
+        {
+          "atom_count": 41,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/pdb_ligands_mmv/ligand_201.pdb",
+          "sha256": "f6b033ba4dc97c3abaf0f862515598cb890f7a41cb209547866dcffae00c90eb",
+          "size_bytes": 3888
+        },
+        {
+          "atom_count": 103,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/results/ligands/pdb/ligand_201.pdb",
+          "sha256": "0e4d8bc87172c7561db15172c29c45091344ccdd453708fc526e3af002d682a1",
+          "size_bytes": 9637
+        }
+      ],
+      "receptor_candidates": [
+        {
+          "atom_count": 9868,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/7F3Y.pdb",
+          "sha256": "f630faa7915c4da1db22c9301cc5bbb9dee83558ffe5b4bbe2520f3931701ef4",
+          "size_bytes": 875853
+        },
+        {
+          "atom_count": 9868,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/7F3Y.pdb",
+          "sha256": "f630faa7915c4da1db22c9301cc5bbb9dee83558ffe5b4bbe2520f3931701ef4",
+          "size_bytes": 875853
+        },
+        {
+          "atom_count": 9868,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/wild_type/7F3Y.pdb",
+          "sha256": "f630faa7915c4da1db22c9301cc5bbb9dee83558ffe5b4bbe2520f3931701ef4",
+          "size_bytes": 875853
+        }
+      ],
+      "status": "SOURCE_IDENTITY_BLOCKED",
+      "system_name": "201_PfDHFR",
+      "target_identity_status": "REQUIRES_INDEPENDENT_REVIEW"
+    },
+    {
+      "blockers": [
+        "ambiguous ligand source selection: 11 candidates; canonical SMILES/identity review required",
+        "independent receptor-ligand correspondence review required",
+        "canonical SMILES, formal charge, stereochemistry, and docking-pose linkage not yet bound"
+      ],
+      "declared_pdb_id": "9N10",
+      "declared_target": "PfATP4",
+      "lead": "438",
+      "ligand_candidates": [
+        {
+          "atom_count": 47,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/ligand/ligand_438.acpype/ligand_438.pdb",
+          "sha256": "69ac02777ff64e6b01a40312435db8dbbb2633b411856bf5c0c9b3d79d3880ea",
+          "size_bytes": 4391
+        },
+        {
+          "atom_count": 47,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/ligand/ligand_438.acpype/ligand_438_NEW.pdb",
+          "sha256": "b2e530036566548af582f78f38ad0b97a1cc6d3f0f7f1542bad07ad5ea3a926f",
+          "size_bytes": 3805
+        },
+        {
+          "atom_count": 47,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/ligand/ligand_438.pdb",
+          "sha256": "69ac02777ff64e6b01a40312435db8dbbb2633b411856bf5c0c9b3d79d3880ea",
+          "size_bytes": 4391
+        },
+        {
+          "atom_count": 47,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/ligand_438.pdb",
+          "sha256": "84c2007b9f2d8cc19121d95694097500c6fc7253dab5c61ef6ee34edf181efcb",
+          "size_bytes": 3918
+        },
+        {
+          "atom_count": 47,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/ligand_438_clean.pdb",
+          "sha256": "412bcdffcec8bde3b18b1e4b23e822582521804ce073a96e59bdd5c0dcc8c7c8",
+          "size_bytes": 4977
+        },
+        {
+          "atom_count": 47,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/ligand_438_conect.pdb",
+          "sha256": "a950697d046b2ca87b4895d95867547f4dc8bdc5662bb62ebfdb71a6fffd243b",
+          "size_bytes": 4526
+        },
+        {
+          "atom_count": 47,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/ligand_438_full.pdb",
+          "sha256": "84c2007b9f2d8cc19121d95694097500c6fc7253dab5c61ef6ee34edf181efcb",
+          "size_bytes": 3918
+        },
+        {
+          "atom_count": 47,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/ligand_438_mol2.acpype/ligand_438.pdb",
+          "sha256": "84c2007b9f2d8cc19121d95694097500c6fc7253dab5c61ef6ee34edf181efcb",
+          "size_bytes": 3918
+        },
+        {
+          "atom_count": 47,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/ligand_438_mol2.acpype/ligand_438_mol2_NEW.pdb",
+          "sha256": "85b5aff30a16ecee2e1de78ae6a255bd673b373d36f106f9b3b0f6bfa77a888c",
+          "size_bytes": 3810
+        },
+        {
+          "atom_count": 36,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/pdb_ligands/ligand_438.pdb",
+          "sha256": "4276b22e3b8ee8d3c51009afa0c3341fe6f26363dcf47c5f38a0a7e01478e76f",
+          "size_bytes": 3373
+        },
+        {
+          "atom_count": 39,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/results/ligands/pdb/ligand_438.pdb",
+          "sha256": "86b5fb24deac6451912664d14bfa9fd421352ff75046e3c8b5df79fdc894841f",
+          "size_bytes": 3655
+        }
+      ],
+      "receptor_candidates": [
+        {
+          "atom_count": 8360,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/9N10.pdb",
+          "sha256": "102e55cefea0f918cb003adbdacc2f27651021788c1aebb0a40c020069f75359",
+          "size_bytes": 738396
+        },
+        {
+          "atom_count": 8360,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/9N10.pdb",
+          "sha256": "102e55cefea0f918cb003adbdacc2f27651021788c1aebb0a40c020069f75359",
+          "size_bytes": 738396
+        }
+      ],
+      "status": "SOURCE_IDENTITY_BLOCKED",
+      "system_name": "438_PfATP4",
+      "target_identity_status": "REQUIRES_INDEPENDENT_REVIEW"
+    },
+    {
+      "blockers": [
+        "ambiguous ligand source selection: 6 candidates; canonical SMILES/identity review required",
+        "target identity blocked: historical PDB 4GM2 is PfClpR, not PfClpP",
+        "independent receptor-ligand correspondence review required",
+        "canonical SMILES, formal charge, stereochemistry, and docking-pose linkage not yet bound"
+      ],
+      "declared_pdb_id": "4GM2",
+      "declared_target": "PfClpP",
+      "lead": "164",
+      "ligand_candidates": [
+        {
+          "atom_count": 32,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/164_PfClpP/ligand/ligand_164.acpype/ligand_164.pdb",
+          "sha256": "4ad2f287fe0dc07883d366319359d7f46a4758cf01d101bcda4e1f13da41b230",
+          "size_bytes": 3022
+        },
+        {
+          "atom_count": 32,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/164_PfClpP/ligand/ligand_164.acpype/ligand_164_NEW.pdb",
+          "sha256": "0a6baee3737ad5042d55c0aed829118ddf28ec56c89f3d91653d7236906560e0",
+          "size_bytes": 2620
+        },
+        {
+          "atom_count": 32,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/164_PfClpP/ligand/ligand_164.pdb",
+          "sha256": "4ad2f287fe0dc07883d366319359d7f46a4758cf01d101bcda4e1f13da41b230",
+          "size_bytes": 3022
+        },
+        {
+          "atom_count": 46,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/pdb_ligands/ligand_164.pdb",
+          "sha256": "71d26ad2a0e8ecaa629c31824a8a395ea50d061b9ef432a4f0a2cb1d72bec392",
+          "size_bytes": 4310
+        },
+        {
+          "atom_count": 38,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/pdb_ligands_mmv/ligand_164.pdb",
+          "sha256": "df51d5be0adc7d184e7bbad15e764091c4b9336d2240f2843dca2334b59cebad",
+          "size_bytes": 3552
+        },
+        {
+          "atom_count": 32,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/results/ligands/pdb/ligand_164.pdb",
+          "sha256": "36d8e51a30a50101844c6832197afd973f5236bc0fe4e576e2ad37b38321d7d2",
+          "size_bytes": 3034
+        }
+      ],
+      "receptor_candidates": [
+        {
+          "atom_count": 9611,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/4GM2.pdb",
+          "sha256": "2130e9fdde2a56b5c31eef94a620624679af009f06bbd5e145e6053a82117fcc",
+          "size_bytes": 1655559
+        },
+        {
+          "atom_count": 9611,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/4GM2.pdb",
+          "sha256": "2130e9fdde2a56b5c31eef94a620624679af009f06bbd5e145e6053a82117fcc",
+          "size_bytes": 1655559
+        }
+      ],
+      "status": "SOURCE_IDENTITY_BLOCKED",
+      "system_name": "164_PfClpP",
+      "target_identity_status": "HISTORICAL_PFCLPR_LABEL_NOT_PFCLPP"
+    },
+    {
+      "blockers": [
+        "ambiguous ligand source selection: 7 candidates; canonical SMILES/identity review required",
+        "independent receptor-ligand correspondence review required",
+        "canonical SMILES, formal charge, stereochemistry, and docking-pose linkage not yet bound"
+      ],
+      "declared_pdb_id": "6UKJ",
+      "declared_target": "PfCRT",
+      "lead": "214",
+      "ligand_candidates": [
+        {
+          "atom_count": 38,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT/ligand/ligand_214.acpype/ligand_214.pdb",
+          "sha256": "34d8ab6be7c802216929db9802608747b1455c95716381684d2dac2f520ac6c6",
+          "size_bytes": 3530
+        },
+        {
+          "atom_count": 38,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT/ligand/ligand_214.acpype/ligand_214_NEW.pdb",
+          "sha256": "09200525d04a81e3f353aeaf9d5dd0e761271906f8e5b1cebdb6828f883eaf80",
+          "size_bytes": 3094
+        },
+        {
+          "atom_count": 38,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT/ligand/ligand_214.pdb",
+          "sha256": "34d8ab6be7c802216929db9802608747b1455c95716381684d2dac2f520ac6c6",
+          "size_bytes": 3530
+        },
+        {
+          "atom_count": 29,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT/ligand_214.pdb",
+          "sha256": "18ffedb058e6bb8376888c90ea6a02167503304cefca8b53a8c303f588e01480",
+          "size_bytes": 2504
+        },
+        {
+          "atom_count": 48,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/pdb_ligands/ligand_214.pdb",
+          "sha256": "bf09925ae46dcffa5d7c8cdd78503a17bf6bbd4cf0c7912597bac568856c9c54",
+          "size_bytes": 4504
+        },
+        {
+          "atom_count": 60,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/pdb_ligands_mmv/ligand_214.pdb",
+          "sha256": "f6171519b6ee82479067165b02d88b70e7add0f0eb164ee3b31b3c00890e03d9",
+          "size_bytes": 5582
+        },
+        {
+          "atom_count": 29,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/results/ligands/pdb/ligand_214.pdb",
+          "sha256": "bbab1f81e48924f17500d3535ff3e25a26ced6977144701eae4e458c55012f30",
+          "size_bytes": 2725
+        }
+      ],
+      "receptor_candidates": [
+        {
+          "atom_count": 4625,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/6UKJ.pdb",
+          "sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562",
+          "size_bytes": 438453
+        },
+        {
+          "atom_count": 4625,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/6UKJ.pdb",
+          "sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562",
+          "size_bytes": 438453
+        },
+        {
+          "atom_count": 4625,
+          "exists": true,
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/wild_type/6UKJ.pdb",
+          "sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562",
+          "size_bytes": 438453
+        }
+      ],
+      "status": "SOURCE_IDENTITY_BLOCKED",
+      "system_name": "214_PfCRT",
+      "target_identity_status": "REQUIRES_INDEPENDENT_REVIEW"
+    }
+  ]
+}
