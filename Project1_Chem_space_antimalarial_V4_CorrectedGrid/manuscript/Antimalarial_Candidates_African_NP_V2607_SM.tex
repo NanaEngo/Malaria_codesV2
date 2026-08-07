@@ -70,9 +70,9 @@
 
 This supplementary document details methodological protocols, scoring metrics, and dataset statistics supporting the main text (Temgoua \textit{et al.}, 2026). The main manuscript describes a computational framework for antimalarial drug discovery that integrates African natural products with synthetic antimalarials, identifies antimalarial candidates (including select multi-target hits) through dual-filter consensus docking, and prioritizes leads using multi-parameter optimization scoring.
 
-The supplementary content elaborates the Multi-Parameter Optimization (MPO) scoring framework introduced in the main manuscript (\cref{M-sec:mpo}), presenting mathematical formulations for the five desirability components and the polypharmacology bonus. Tabular summaries detail chemical space analysis, scaffold diversity, and drug-likeness characteristics of the \num{65856}-molecule hybrid library. Additional sections present generative model training and clustering validation, co-crystallized ligand classification for binding mode validation, computational resource comparisons, enrichment curves, UMAP projections of the latent space, and ScafVAE diversity benchmarks. Final tables provide target-specific docking outcomes, selectivity indices, and cytochrome P450 inhibition profiles for the \num{810} screened seed molecules with valid selectivity predictions against four \textit{Plasmodium falciparum} targets: dihydrofolate reductase (DHFR, PDB: 7F3Y), chloroquine resistance transporter (CRT, 6UKJ), ATPase 4 (ATP4, 9N10), and caseinolytic protease (ClpP, 4GM2).
+The supplementary content elaborates the Multi-Parameter Optimization (MPO) scoring framework introduced in the main manuscript (\cref{M-sec:mpo}), presenting mathematical formulations for the five desirability components and the polypharmacology bonus. Tabular summaries detail chemical space analysis, scaffold diversity, and drug-likeness characteristics of the \num{65856}-molecule hybrid library. Additional sections present generative model training and clustering validation, co-crystallized ligand classification for binding mode validation, computational resource comparisons, enrichment curves, UMAP projections of the latent space, and ScafVAE diversity benchmarks. Final tables provide target-specific docking outcomes, selectivity indices, and cytochrome P450 inhibition profiles for the \num{810} screened seed molecules with valid selectivity predictions against four \textit{Plasmodium falciparum} structures: dihydrofolate reductase (DHFR, PDB: 7F3Y), chloroquine resistance transporter (CRT, 6UKJ), ATPase 4 (ATP4, 9N10), and the ClpR paralog/subunit (4GM2). RCSB identifies 4GM2 as ClpR rather than PfClpP; the 4GM2 results are therefore not PfClpP validation.
 
-All calculation results referenced in this supplementary material are archived in the project repository (\url{https://github.com/Vital-Sao/Malaria_codes}) and can be regenerated using the scripts provided in the \texttt{scripts/} directory.
+All calculation results referenced in this supplementary material are archived in the project repository (\url{https://github.com/NanaEngo/Malaria_codesV2}) and can be regenerated using the scripts provided in the \texttt{scripts/} directory.
 
 \clearpage
 
@@ -161,7 +161,7 @@ Compounds exhibiting binding ($\text{MPO}_{\text{target}} \geq \num{0.50}$) agai
 \text{Polypharmacology Bonus}_i = 0.05 \cdot (n_{\text{targets}, i} - 1) \quad \text{if } n_{\text{targets}, i} \geq 2
 \label{eq:poly_bonus}
 \end{equation}
-where $n_{\text{targets}, i}$ is the number of targets against which compound $i$ achieves $\text{MPO}_{\text{target}} \geq \num{0.50}$. This bonus is capped at +0.15 (\num{4} targets). The \num{0.05} increment per additional target represents a modest reward that acknowledges the potential therapeutic advantage of polypharmacology in circumventing resistance mechanisms without disproportionately favoring promiscuous binders. The $\text{MPO} \geq \num{0.50}$ threshold ensures that only compounds meeting minimum quality criteria across all scoring components qualify for the bonus, thereby distinguishing genuine multi-target candidates from non-selective binders with poor drug-likeness or safety profiles.
+where $n_{\text{targets}, i}$ is the number of targets against which compound $i$ achieves $\text{MPO}_{\text{target}} \geq \num{0.50}$. This bonus is capped at +0.15 (\num{4} targets). The \num{0.05} increment per additional target represents a modest computational preference for multi-target profiles that may be relevant to resistance hypotheses; it does not demonstrate resistance circumvention or therapeutic advantage. The $\text{MPO} \geq \num{0.50}$ threshold ensures that only compounds meeting minimum quality criteria across all scoring components qualify for the bonus, thereby distinguishing genuine multi-target candidates from non-selective binders with poor drug-likeness or safety profiles.
 
 \subsection*{Centroid-based screening and MPO stratification}
 
@@ -169,7 +169,7 @@ The MPO framework was applied within a centroid-based virtual screening workflow
 
 \begin{enumerate}
 \item \textbf{K-Means clustering:} The library was partitioned into \num{484} clusters based on \num{64}-dimensional VAE latent representations, with one centroid selected per cluster to represent its chemical neighborhood.
-\item \textbf{Consensus docking:} All \num{484} centroids were docked against four \textit{P. falciparum} targets (PfDHFR, PfCRT, PfATP4, PfClpP) using dual-filter consensus scoring (AutoDock Vina + DiffDock). Centroids were classified as EXCELLENT, GOOD, or OTHERS based on binding affinity and geometric confidence thresholds. Of the \num{1936} centroid--target Vina records, \num{71} (\qty{3.7}{\percent}) yielded no usable pose: \num{67} returned no valid pose and \num{4} produced non-negative (physically implausible) scores, with per-target no-pose counts of PfDHFR \num{33}, PfCRT \num{17}, PfClpP \num{16}, and PfATP4 \num{1}. Failed records were excluded from consensus scoring and MPO calculation, so per-target denominators reflect valid poses only.
+\item \textbf{Consensus docking:} All \num{484} centroids were docked against four \textit{P. falciparum} targets (PfDHFR, PfCRT, PfATP4, PfClpR) using dual-filter consensus scoring (AutoDock Vina + DiffDock). Centroids were classified as EXCELLENT, GOOD, or OTHERS based on binding affinity and geometric confidence thresholds. Of the \num{1936} centroid--target Vina records, \num{71} (\qty{3.7}{\percent}) yielded no usable pose: \num{67} returned no valid pose and \num{4} produced non-negative (physically implausible) scores, with per-target no-pose counts of PfDHFR \num{33}, PfCRT \num{17}, PfClpR \num{16}, and PfATP4 \num{1}. Failed records were excluded from consensus scoring and MPO calculation, so per-target denominators reflect valid poses only.
 \item \textbf{MPO scoring:} \num{93} centroids passing consensus classification (EXCELLENT or GOOD) received full MPO evaluation across all five desirability components (Vina, DiffDock, QED, ADMET, Ro5).
 \item \textbf{Optimization-worthy threshold:} \num{76} centroids achieved $\text{MPO} \geq \num{0.40}$, defining the optimization-worthy tier. Within this tier, \num{7} centroids achieved $\text{MPO} \geq \num{0.50}$ (secondary hits), while \num{69} centroids fell in the \numrange{0.40}{0.50} range (promising scaffolds).
 \item \textbf{Scaffold expansion:} The \num{76} optimization-worthy centroids map to \num{53} unique clusters (multiple centroids can represent the same cluster because centroids are selected as representative molecules rather than cluster identifiers). Scaffold expansion from these \num{53} clusters yielded \num{40481} molecules (mean cluster size: \num{763.8}) for downstream lead optimization. Of these, \num{19913} molecules satisfied the final synthetic accessibility and MPO criteria, defining the final set of synthesizable leads.
@@ -183,7 +183,7 @@ To identify candidates retaining structural features of African natural products
 
 Among the \num{76} optimization-worthy centroids, \num{13} (\qty{17.1}{\percent}) satisfied the NP-relatedness criterion (Tanimoto $\geq \num{0.4}$), representing candidates that combine favorable multi-target profiles with natural product-inspired scaffolds. The remaining \num{63} centroids (\qty{82.9}{\percent}) represent structurally distinct analogues with Tanimoto $< \num{0.4}$, confirming that generative expansion explored new chemical space while preserving drug-like characteristics.
 
-This dual population enables two complementary lead optimization strategies: (1) NP-related candidates ($n = \num{13}$) use validated bioactive scaffolds with potential for reduced toxicity and improved ADMET profiles characteristic of natural products; (2) structurally new candidates ($n = \num{63}$) offer opportunities for intellectual property protection and circumvention of existing resistance mechanisms. The NP-relatedness filter was applied post-MPO scoring to avoid biasing the optimization framework toward natural product-like structures, ensuring that both populations met stringent multi-parameter quality criteria.
+This dual population enables two complementary lead optimization strategies: (1) NP-related candidates ($n = \num{13}$) use scaffolds with prior bioactivity annotations; any toxicity or ADMET advantage remains to be tested experimentally; (2) structurally new candidates ($n = \num{63}$) offer opportunities for chemical exploration and can be evaluated in future resistance panels; they do not yet demonstrate circumvention of existing resistance mechanisms. The NP-relatedness filter was applied post-MPO scoring to avoid biasing the optimization framework toward natural product-like structures, ensuring that both populations met stringent multi-parameter quality criteria.
 
 \subsection*{Framework limitations and sensitivity}
 
@@ -193,7 +193,7 @@ This dual population enables two complementary lead optimization strategies: (1)
 
 The MPO framework represents a pragmatic balance between computational tractability and multi-objective optimization. Component weights were selected based on established drug discovery priorities \cite{Hughes2008, Lipinski2004} rather than target-specific optimization, which would require experimental validation data currently unavailable for the majority of the library. All docking CSVs report provenance fields (target, exhaustiveness, grid version) so that every score can be traced to the receptor preparation and Vina search depth used. The framework's primary limitation is the dataset-dependent nature of min-max scaling for Vina scores, which precludes direct score comparison across different compound libraries without renormalization.
 
-Formal sensitivity analysis across \num{25} weight perturbations ($\pm \qtyrange{10}{20}{\percent}$ per component) yielded mean Spearman rank correlation $\rho = \num{0.792}$ for the top-1,000 compounds and mean Jaccard similarity of \num{0.548} for the top-20 hit list, indicating moderate sensitivity to weight choice (\cref{tab:sm_s17_mpo_sensitivity}). The framework is least sensitive to Vina and DiffDock weight variations (pass rate \qtyrange{40}{60}{\percent}, i.e., \qtyrange{40}{60}{\percent} of perturbations preserved the top-20 ranking), while ADMET weight changes produce the largest rank shifts (pass rate \qtyrange{0}{20}{\percent}); a substantial fraction of perturbations did not pass the stability test, indicating moderate rather than strong robustness to weight choice. The $\text{MPO} \geq \num{0.40}$ threshold for optimization-worthy centroids was selected to balance stringency with practical cluster expansion size, yielding \num{76} centroids that map to \num{53} unique clusters and expand to \num{40481} molecules (\num{19913} final synthesizable leads) representing chemically tractable starting points for medicinal chemistry optimization.
+ Formal sensitivity analysis across \num{25} weight perturbations ($\pm \qtyrange{10}{20}{\percent}$ per component) yielded mean Spearman rank correlation $\rho = \num{0.792}$ for the top-1,000 compounds and mean Jaccard similarity of \num{0.548} for the top-20 hit list, indicating moderate sensitivity to weight choice (\cref{tab:sm_s17_mpo_sensitivity}). When both stability criteria (top-1000 $\rho > \num{0.95}$ and top-20 Jaccard $\geq \num{0.70}$) are required, only \qty{5}{\percent} of non-baseline perturbations passed (DiffDock \qty{25}{\percent}; Vina, QED, ADMET, and Ro5 \qty{0}{\percent}), confirming that the ranking is moderately rather than strongly robust to weight choice; a substantial fraction of perturbations did not pass the stability test. The $\text{MPO} \geq \num{0.40}$ threshold for optimization-worthy centroids was selected to balance stringency with practical cluster expansion size, yielding \num{76} centroids that map to \num{53} unique clusters and expand to \num{40481} molecules (\num{19913} final synthesizable leads) representing chemically tractable starting points for medicinal chemistry optimization.
 
 \clearpage
 
@@ -203,7 +203,7 @@ The following tables summarize the chemical diversity, drug-likeness characteris
 
 \begin{table}[!htbp]
 \centering
-\caption{Top \num{10} most prevalent Bemis--Murcko scaffolds present in the \num{65856}-molecule generative hybrid library, highlighting the structural emphasis on privileged aromatic systems. \textit{The library is dominated by benzene and quinoline-like privileged scaffolds, ensuring structural compatibility with established antimalarial pharmacophores.}}
+\caption{Top \num{10} most prevalent Bemis--Murcko scaffolds present in the \num{65856}-molecule generative hybrid library, highlighting the structural emphasis on privileged aromatic systems. \textit{The library is dominated by benzene and quinoline-like privileged scaffolds; structural compatibility with antimalarial pharmacophores requires experimental or target-specific validation.}}
 \label{tab:scaffolds}
 \begin{tabular}{@{}r l r r l@{}}
 \toprule
@@ -235,8 +235,8 @@ The following tables summarize the chemical diversity, drug-likeness characteris
 \midrule
 Total molecules screened & \num{810} \\
 Selectively antiparasitic ($\text{SI} > \num{10}$) & \qty{100}{\percent} (\num{810}) \\
-Mean selectivity index & \num{947.2} \\
-Median selectivity index & \num{252.9} \\
+Mean selectivity index & \num{993.8} \\
+Median selectivity index & \num{283.5} \\
 Maximum selectivity index & \num{106773.8} \\
 \bottomrule
 \end{tabular}
@@ -292,7 +292,7 @@ PC4 & \num{0.0686} & \qty{6.86}{\percent} & \qty{89.19}{\percent} \\
 
 \begin{table}[!htbp]
 \centering
-\caption{Recovery rate of foundational African natural product (NP) scaffolds within the final expanded generative library, validating the conservation of privileged bioactive cores throughout the STONED-SELFIES and Cheese API expansion steps. \textit{High scaffold recovery confirms that generative expansion preserves the structural integrity of foundational natural product pharmacophores.}}
+\caption{Recovery rate of annotated African natural product (NP) scaffolds within the final expanded generative library, summarizing the retention of privileged bioactive cores throughout the STONED-SELFIES and Cheese API expansion steps. \textit{The observed scaffold recovery is consistent with retention of some seed-framework features, but does not establish preservation of pharmacophore function.}}
 \label{tab:scaffold_recovery}
 \begin{tabular}{@{}l r@{}}
 \toprule
@@ -369,7 +369,7 @@ Final synthesizable leads\textsuperscript{a} & \num{19913} / \num{40481} & SYBA 
 
 \begin{table}[!htbp]
 \centering
-\caption{Selected consensus hits from dual-filter docking, including multi-target candidates (ligands 164, 440, 169, 161) and single-target leads. \textit{Dual-filter screening identifies high-confidence leads with predicted target engagement across one or more parasite targets.}}
+\caption{Selected P1 dual-filter docking hits (Set-A screening outputs), including predicted multi-target candidates (ligands 164, 440, 169, 161) and single-target leads. These labels are docking-based predictions; ligand 164 is also the separately documented parent MD system 164--PfClpP [historical cohort label; receptor identity requires separate verification], and this table must not be read as MD validation of the P2 Set-C polypharmacology cohort.}
 \label{tab:consensus_hits}
 \begin{tabular}{@{}l l r r l@{}}
 \toprule
@@ -377,22 +377,22 @@ Final synthesizable leads\textsuperscript{a} & \num{19913} / \num{40481} & SYBA 
 & & \textbf{(\unit{\kilo\calorie\per\mole})} & \textbf{Conf.} & \\
 \midrule
 \num{201} & PfDHFR & \num{-8.49} & \num{-0.30} & Primary consensus lead \\
-\num{214} & PfDHFR & \num{-8.33} & \num{-0.42} & Primary consensus lead \\
+\num{214}--PfCRT & PfCRT & \num{-8.33} & \num{-0.42} & Named parent lead; MD system \\
 \num{87} & PfDHFR & \num{-8.38} & \num{-0.40} & Primary consensus lead \\
 \num{438} & PfATP4 & \num{-5.86} & \num{-0.95} & Single \texttt{GOOD} hit \\
-\num{164} & PfClpP & \num{-6.19} & \num{-0.40} & Polypharmacological \\
+\num{164} & PfClpR & \num{-6.19} & \num{-0.40} & P1 docking-predicted multi-target; parent MD system 164--PfClpP [historical cohort label; receptor identity requires separate verification] \\
 \num{440} & Multi-target & $< \num{-6.0}$ & $> \num{-1.0}$ & Polypharmacological \\
 \num{169} & Multi-target & $< \num{-6.0}$ & $> \num{-1.0}$ & Polypharmacological \\
 \num{161} & Multi-target & $< \num{-6.0}$ & $> \num{-1.0}$ & Polypharmacological \\
 \midrule
-\multicolumn{5}{l}{\textbf{Total polypharmacological candidates:} $>\num{70}$ compounds engaging $\geq \num{2}$ targets} \\
+\multicolumn{5}{l}{\textbf{Predicted multi-target candidates in the expanded library:} $>\num{70}$ compounds meeting the declared docking/MPO thresholds; experimental confirmation is required} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[!htbp]
 \centering
-\caption{Top-20 compounds ranked by multi-parameter optimization (MPO) score. All compounds achieve perfect Lipinski compliance (\num{4}/\num{4} criteria), high synthetic accessibility (SA $< \num{2.7}$), and were generated via the STONED-SELFIES arm of the generative expansion. SMILES strings are provided for reproducibility. \textit{MPO prioritization identifies highly drug-like candidates with optimized potency, safety, and synthetic feasibility profiles.}}
+\caption{Top-20 compounds ranked by multi-parameter optimization (MPO) score. All compounds achieve perfect Lipinski compliance (\num{4}/\num{4} criteria), high synthetic accessibility (SA $< \num{2.7}$), and were generated via the STONED-SELFIES arm of the generative expansion. SMILES strings are provided for reproducibility. \textit{MPO prioritization identifies candidates with favorable predicted drug-likeness, docking-score, and synthetic-accessibility profiles; these computational estimates require experimental validation.}}
 \label{tab:top20_mpo}
 \small
 \begin{tabular}{@{}c p{8.25cm} c c c c c@{}}
@@ -462,7 +462,7 @@ Number of compounds analyzed & \num{65856} \\
 
 \begin{table}[!htbp]
 \centering
-\caption{Tanimoto structural similarity evaluation comparing generated analogues against seed African natural products. Novelty was assessed using Morgan fingerprints (radius \num{2}, \num{2048} bits), defining structural novelty rigorously as a maximum Tanimoto coefficient $< \num{0.4}$ relative to any foundational seed NP. \textit{Over \qty{92}{\percent} of the library represents structurally new chemical space, confirming the effectiveness of generative expansion in diversifying beyond known natural products.}}
+\caption{Tanimoto structural similarity evaluation comparing generated analogues against seed African natural products. Novelty was assessed using Morgan fingerprints (radius \num{2}, \num{2048} bits), defining structural novelty rigorously as a maximum Tanimoto coefficient $< \num{0.4}$ relative to any foundational seed NP. \textit{Over \qty{92}{\percent} of the library represents structurally new chemical space, showing substantial separation from the evaluated natural-product reference set.}}
 \label{tab:tanimoto_novelty}
 \begin{tabular}{@{}l r r@{}}
 \toprule
@@ -487,7 +487,7 @@ Median max Tanimoto & \num{0.171} & \num{0.262} \\
 
 \begin{table}[!htbp]
 \centering
-\caption{Pearson correlation coefficient ($r$) analysis comparing DiffDock geometric confidence scores against AutoDock Vina thermodynamic binding affinities, statistically validating the orthogonality of the two screening dimensions across all four targets. \textit{The orthogonality of Vina and DiffDock scores provides a effective multi-dimensional filter for mitigating scoring function bias.}}
+\caption{Pearson correlation coefficient ($r$) analysis comparing DiffDock geometric confidence scores against AutoDock Vina thermodynamic binding affinities, characterizing the association between the two screening dimensions across all four targets. \textit{The observed low-to-moderate associations support using Vina and DiffDock as complementary screening dimensions, while not proving independence or eliminating scoring bias.}}
 \label{tab:diffdock_vina_correlation}
 \begin{tabular}{@{}l c c c@{}}
 \toprule
@@ -496,7 +496,7 @@ Median max Tanimoto & \num{0.171} & \num{0.262} \\
 PfDHFR (7F3Y) & \num{280} & \num{0.327} & \num{2.11e-8} \\
 PfCRT (6UKJ) & \num{64} & \num{0.129} & \num{3.08e-1} \\
 PfATP4 (9N10) & \num{447} & \num{0.113} & \num{1.67e-2} \\
-PfClpP (4GM2) & \num{447} & \num{0.361} & \num{3.58e-15} \\
+PfClpR (4GM2) & \num{447} & \num{0.361} & \num{3.58e-15} \\
 \midrule
 All targets (pooled) & \num{1238} & \num{-0.049} & \num{8.19e-2} \\
 \bottomrule
@@ -518,7 +518,7 @@ All targets (pooled) & \num{1238} & \num{-0.049} & \num{8.19e-2} \\
 PfDHFR-TS (7F3Y) & \num{0.924} & \num{2.700} & \num{2.570} & \num{2.720} & \num{1.309} & \num{0.842} & \num{399} & \num{399} \\
 PfATP4 (9N10) & \num{1.000} & \num{2.048} & \num{2.000} & \num{2.000} & \num{1.810} & \num{1.000} & \num{99} & \num{99} \\
 PfCRT (6UKJ) & \num{0.971} & \num{1.110} & \num{1.110} & \num{1.110} & \num{9.434} & \num{0.992} & \num{359} & \num{40} \\
-PfClpP (4GM2) & \num{1.000} & \num{2.048} & \num{2.000} & \num{2.000} & \num{1.810} & \num{1.000} & \num{99} & \num{99} \\
+PfClpR (4GM2) & \num{1.000} & \num{2.048} & \num{2.000} & \num{2.000} & \num{1.810} & \num{1.000} & \num{99} & \num{99} \\
 \midrule
 \multicolumn{9}{l}{\textit{DEKOIS independent docking (Vina only, no ML rescoring):}} \\
 PfDHFR-TS (7F3Y) & \num{0.450} & \num{0.000} & \num{0.500} & \num{1.000} & \num{0.021} & \num{0.032} & \num{40} & \num{1200} \\
@@ -530,7 +530,7 @@ PfDHFR-TS (7F3Y) & \num{0.450} & \num{0.000} & \num{0.500} & \num{1.000} & \num{
 
 \begin{table}[!htbp]
 \centering
-\caption{ChEMBL enrichment validation: hit rates for ChEMBL-confirmed actives vs.\ inactives across four \emph{P. falciparum} targets. \textit{PfDHFR actives are enriched 5.43$\times$ over inactives at the EXCELLENT threshold, validating the use of stringent binding thresholds; PfATP4 shows no compounds reaching EXCELLENT; PfCRT's high inactive hit rate suggests a permissive binding site.}}
+\caption{ChEMBL enrichment validation: hit rates for ChEMBL-confirmed actives vs.\ inactives across four \emph{P. falciparum} targets. \textit{PfDHFR actives are enriched 5.43$\times$ over inactives at the EXCELLENT threshold, supporting the use of stringent binding thresholds in this calibration set; PfATP4 shows no compounds reaching EXCELLENT; PfCRT's high inactive hit rate suggests a permissive binding site.}}
 \label{tab:sm_s18b_chembl_enrichment}
 \scriptsize
 \begin{tabular}{lccccccccc}
@@ -541,10 +541,10 @@ PfDHFR-TS (7F3Y) & \num{0.450} & \num{0.000} & \num{0.500} & \num{1.000} & \num{
 PfDHFR-TS & 7F3Y & \num{53} & \num{18} & \qty{100.0}{\percent} & \qty{100.0}{\percent} & \qty{60.4}{\percent} & \qty{11.1}{\percent} & No & Yes \\
 PfATP4 & 9N10 & \num{73} & \num{87} & \qty{53.4}{\percent} & \qty{63.2}{\percent} & \qty{0.0}{\percent} & \qty{0.0}{\percent} & No & Yes \\
 PfCRT & 6UKJ & \num{12} & \num{19} & \qty{100.0}{\percent} & \qty{100.0}{\percent} & \qty{100.0}{\percent} & \qty{68.4}{\percent} & No & No \\
-PfClpP & 4GM2 & --- & --- & --- & --- & --- & --- & --- & --- \\
+PfClpR & 4GM2 & --- & --- & --- & --- & --- & --- & --- & --- \\
 \bottomrule
 \multicolumn{10}{p{16cm}}{
-\noindent\textbf{Notes:} Actives ($\text{IC}_{\num{50}} < \qty{1}{\micro\molar}$) vs.\ Inactives ($\text{IC}_{\num{50}} > \qty{10}{\micro\molar}$) from ChEMBL. Hit rate thresholds reflect Vina scores (GOOD: $\leq \qty{-5.0}{\kilo\calorie\per\mole}$, EXCELLENT: $\leq \qty{-7.0}{\kilo\calorie\per\mole}$). Pass indicates $\geq \num{2}$-fold enrichment of actives over inactives in the respective tier. PfClpP (CHEMBL4179069) excluded due to persistent ChEMBL API 500 error.}
+\noindent\textbf{Notes:} Actives ($\text{IC}_{\num{50}} < \qty{1}{\micro\molar}$) vs.\ Inactives ($\text{IC}_{\num{50}} > \qty{10}{\micro\molar}$) from ChEMBL. Hit rate thresholds reflect Vina scores (GOOD: $\leq \qty{-5.0}{\kilo\calorie\per\mole}$, EXCELLENT: $\leq \qty{-7.0}{\kilo\calorie\per\mole}$). Pass indicates $\geq \num{2}$-fold enrichment of actives over inactives in the respective tier. PfClpR (CHEMBL4179069) excluded due to persistent ChEMBL API 500 error.}
 \end{tabular}
 \end{table}
 
@@ -573,7 +573,7 @@ included in the ADMET-AI output used for this comparison).}
 
 \begin{table}[!htbp]
 \centering
-\caption{MPO weight sensitivity analysis: \num{25} weight perturbations ($\pm \qtyrange{10}{20}{\percent}$ per component). \textit{Sensitivity analysis confirms that the MPO ranking is stable to moderate weight variations, particularly for the primary docking components.}}
+\caption{MPO weight sensitivity analysis: \num{25} weight perturbations ($\pm \qtyrange{10}{20}{\percent}$ per component). \textit{The MPO ranking is moderately sensitive to weight choice: top-1000 Spearman $\rho$ pass rate ($>\num{0.95}$) is \qty{28}{\percent} and top-20 Jaccard pass rate ($\geq \num{0.70}$) is \qty{32}{\percent}; ADMET and QED weight perturbations produce the largest rank shifts.}}
 \label{tab:sm_s17_mpo_sensitivity}
 \small
 \begin{tabular}{lccccccccc}
@@ -653,7 +653,7 @@ $^\dagger$ Estimated using first-order scaling from the baseline: $N_{\text{est}
 
 \section*{Data availability}
 
-All raw calculation results referenced in this supplementary material are available in the project repository (\url{https://github.com/Vital-Sao/Malaria_codes}):
+All raw calculation results referenced in this supplementary material are available in the project repository (\url{https://github.com/NanaEngo/Malaria_codesV2}):
 
 \begin{itemize}
   \item \texttt{results/c1\_library\_size\_verification.txt}: Library size verification (\num{65856} molecules)
@@ -670,14 +670,14 @@ All raw calculation results referenced in this supplementary material are availa
   \item \texttt{results/c12\_tanimoto\_novelty\_v2.csv}: Tanimoto novelty analysis
   \item \texttt{results/p1\_threshold\_calibration.csv}: Docking threshold calibration dataset
   \item \texttt{results/summary\_consensus\_*.csv}: Consensus docking results for target verification
-  \item \texttt{results/p1\_enrichment\_chembl\_benchmark.csv}: ChEMBL enrichment validation results (3 targets; PfClpP excluded due to API error)
+  \item \texttt{results/p1\_enrichment\_chembl\_benchmark.csv}: ChEMBL enrichment validation results (3 targets; PfClpR excluded due to API error)
 \end{itemize}
 
-The complete SMILES library (\num{65856} compounds) and 3D structure archives (PDB/PDBQT formats) are available in the Zenodo repository (DOI: \url{https://doi.org/10.5281/zenodo.19608875}).
+The complete SMILES library (\num{65856} compounds) and available 3D structure archives (PDB/PDBQT formats) are versioned in the project repository. The Zenodo DOI \url{https://doi.org/10.5281/zenodo.19608875} is reserved, but upload remains pending.
 
 \begin{table}[!htbp]
 \centering
-\caption{Target selectivity and safety profiling (top-20 MPO candidates). \textit{Top candidates are predominantly single-target optimized molecules with favourable predicted selectivity and no major safety flags.}}
+\caption{Target selectivity and safety profiling (top-20 MPO candidates). \textit{Top candidates are predominantly single-target optimized molecules with favourable predicted selectivity; one candidate (rank \num{18}) carries a predicted CYP3A4 inhibition flag.}}
 \label{tab:sm_s21_polypharm}
 \scriptsize
 \begin{tabular}{lcccccc}
@@ -688,9 +688,7 @@ Single-target (opt.) & \num{20} & $n_{\text{tgt}} = \num{1}$, optimized for MPO 
 \bottomrule
 \multicolumn{7}{p{16cm}}{
 \noindent\textbf{Note:} Classification based on selectivity index (SI), hERG inhibition probability,
-and CYP3A4 inhibition risk from ADMET-AI. All \num{20} top candidates are single-target
-optimized molecules, with rank \num{18} the only multi-target binder in this subset. Mean hERG = \num{0.117} (all $<\num{0.5}$); mean CYP3A4 = \num{0.061} (all $<\num{0.5}$
-except rank \num{18} at \num{0.876}). Of the $>\num{70}$ multi-target candidates identified in the full
+and CYP3A4 inhibition risk from ADMET-AI. All \num{20} top candidates are single-target optimized molecules. Mean hERG = \num{0.117} (all $<\num{0.5}$); mean CYP3A4 = \num{0.061}, with \num{19} of \num{20} below \num{0.5} and rank \num{18} carrying a predicted CYP3A4 flag at \num{0.876}. These are computational risk predictions requiring experimental follow-up. Of the $>\num{70}$ multi-target candidates identified in the full
 expansion, \qty{84}{\percent} satisfied at least \num{3}/\num{5} ADMET risk-free criteria.
 All values are computational estimates requiring experimental validation.}
 \end{tabular}
@@ -742,8 +740,7 @@ drug-like space. The top-10 MPO subset is predominantly single-target optimized 
 \begin{table}[!htbp]
 \centering
 \caption{Benjamini--Hochberg FDR-corrected pairwise comparisons of antimalarial activity scores across compound groups (NP, SD, Cheese, STONED). 
-\textit{Multiple comparison testing confirms that generated analogues maintain statistical parity in antimalarial potential with foundational natural products 
-and synthetic drugs.}}
+\textit{Multiple comparison testing found no statistically significant difference in the analysed activity scores between generated analogues and the foundational natural-product and synthetic-drug groups; this does not establish equivalent experimental potency.}}
 \label{tab:sm_s22_bh_correction}
 \small
 \begin{tabular}{m{3cm}m{4.5cm}*{3}{m{2cm}}}
@@ -818,14 +815,13 @@ meaningful bioactive ligands rather than crystallization artifacts.}}
 \cmidrule{2-6}
 9N10 & PfATP4 & --- & No ligands detected & --- & --- \\
 \cmidrule{2-6}
-4GM2 & PfClpP & --- & No ligands detected & --- & --- \\
+4GM2 & PfClpR & --- & No ligands detected & --- & --- \\
 \bottomrule
 \multicolumn{6}{p{14cm}}{
 \noindent\textbf{Note:} LigandExplorer v2.1 (\url{https://github.com/dptech-corp/ligandexplorer}) with GNN backend. UMP (uridine monophosphate) is a nucleotide 
 cofactor of thymidylate synthase; MTX (methotrexate) is a classical DHFR inhibitor; NDP (NADPH) is a nucleotide cofactor; Y01 is a chloroquine analogue; LEU is 
 a leucine residue. GOL (glycerol) is a common crystallization agent correctly identified as a non-biological artifact. 9N10 and 4GM2 store ligands in PDB format 
-variant that differs from the expected LigandExplorer input format; manual inspection confirms their co-crystallized ligands are present in the deposited 
-structures.
+variant that differs from the expected LigandExplorer input format; manual inspection confirms their co-crystallized ligands are present in the source structures.
 }
 \end{tabular}
 \end{table}
@@ -896,13 +892,13 @@ GuacaMol FCD & --- & \num{0.338} \\
   \vspace{0.5cm}
   
   \includegraphics[width=0.85\linewidth]{64_smi_vae_training_history_full.pdf}
-  \caption{VAE training history for 32D (top) and 64D (bottom) latent spaces. Both models converged successfully with stable validation loss in the final epochs. Training curves show reconstruction loss, KL divergence, and validation accuracy over 100 epochs. \textit{VAE training successfully converges for both 32- and 64-dimensional spaces, with the latter selected for its superior chemical resolution.}}
+  \caption{VAE training history for 32D (top) and 64D (bottom) latent spaces. Both models converged successfully with stable validation loss in the final epochs. Training curves show reconstruction loss, KL divergence, and validation accuracy over 100 epochs. \textit{VAE training successfully converges for both 32- and 64-dimensional spaces, with the latter selected for comparative chemical-space resolution; the retained summary does not establish superiority from a complete set of numeric validation indices.}}
   \label{fig:vae_training}
 \end{figure}
 
 \subsection*{Evaluation of clustering strategies and dimensionality}
 
-Comparison of 32-dimensional versus 64-dimensional latent spaces revealed trade-offs in clustering performance (\cref{fig:clustering_quality}). The 64-dimensional space showed superior cluster separation and was selected for centroid selection.
+Comparison of 32-dimensional versus 64-dimensional latent spaces revealed trade-offs in clustering performance (\cref{fig:clustering_quality}). The 64-dimensional space was selected for centroid selection based on comparative clustering analysis and the clustering-quality figure; the retained summary does not provide numeric indices sufficient to claim metric-optimality.
 
 \begin{figure}[!htbp]
   \centering
@@ -911,7 +907,7 @@ Comparison of 32-dimensional versus 64-dimensional latent spaces revealed trade-
   \label{fig:clustering_quality}
 \end{figure}
 
-To partition the library into chemical families, KMeans, BIRCH, and Jarvis-Patrick clustering algorithms were optimized via Optuna \cite{Akiba2019} across 32D and 64D VAE latent spaces. The 64-dimensional KMeans configuration ($n = \num{484}$) provided the best balance of granularity and cohesion (\cref{tab:clustering_comparison}). Jarvis--Patrick yielded fragmented structures (\num{42917}--\num{44040} clusters), while BIRCH produced heterogeneous partitions with poor Silhouette scores.
+To partition the library into chemical families, KMeans, BIRCH, and Jarvis-Patrick clustering algorithms were optimized via Optuna \cite{Akiba2019} across 32D and 64D VAE latent spaces. The 64-dimensional KMeans configuration ($n = \num{484}$) was selected as a practical balance of granularity and cohesion (\cref{tab:clustering_comparison}); the retained summary does not contain the numeric internal indices needed to claim metric-optimality. Jarvis--Patrick yielded fragmented structures (\num{42917}--\num{44040} clusters), while BIRCH produced heterogeneous partitions with poor Silhouette scores.
 
 \begin{table}[!htbp]
 \centering
@@ -945,7 +941,7 @@ The selected \num{64}-D KMeans configuration ($n = \num{484}$) was adopted for c
 
 \subsection*{Docking protocol validation (redocking)}
 
-Redocking studies were performed on co-crystallized ligands from PfDHFR-TS (PDB: 7F3Y) and PfCRT (PDB: 6UKJ). RMSD values between predicted and crystal poses were calculated using RDKit's molecular alignment algorithm. An RMSD threshold of \qty{2.0}{\angstrom} was used to define successful pose reproduction \cite{Eberhardt2021}. Redocking validation achieved a \qty{100.0}{\percent} success rate for alignable ligands (5/5 with RMSD $<$ \qty{2.0}{\angstrom}; 5/10 overall, with 5 ligands excluded due to SDF atom-ordering mismatches), with mean RMSD of \qty{1.33}{\angstrom} $\pm$ \qty{0.43}{\angstrom} (\cref{tab:redocking_validation}, \cref{fig:redocking_rmsd}). Binding affinities of non-aligned ligands (Vina \qtyrange{-7.01}{-7.69}{\kilo\calorie\per\mole}) confirm correct active-site placement.
+Redocking studies were performed on co-crystallized ligands from PfDHFR-TS (PDB: 7F3Y) and PfCRT (PDB: 6UKJ). RMSD values between predicted and crystal poses were calculated using RDKit's molecular alignment algorithm. An RMSD threshold of \qty{2.0}{\angstrom} was used to define successful pose reproduction \cite{Eberhardt2021}. Redocking validation achieved a \qty{100.0}{\percent} success rate for alignable ligands (5/5 with RMSD $<$ \qty{2.0}{\angstrom}; 5/10 overall, with 5 ligands excluded due to SDF atom-ordering mismatches), with mean RMSD of \qty{1.33}{\angstrom} $\pm$ \qty{0.43}{\angstrom} (\cref{tab:redocking_validation}, \cref{fig:redocking_rmsd}). Binding affinities of non-aligned ligands (Vina \qtyrange{-7.01}{-7.69}{\kilo\calorie\per\mole}) provide score context but do not independently establish correct active-site placement.
 
 \begin{table}[!htbp]
 \centering
@@ -971,14 +967,14 @@ Redocking studies were performed on co-crystallized ligands from PfDHFR-TS (PDB:
 \multicolumn{6}{m{12cm}}{\textit{Success Rate: \num{5}/\num{10} (\qty{50.0}{\percent}) overall; \num{5}/\num{5} (\qty{100.0}{\percent}) for alignable ligands}} \\
 \bottomrule
 \multicolumn{6}{m{12cm}}{$^a$RMSD could not be computed via standard protocol due to SDF atom ordering mismatch; cross-analysis with DiffDock confirms ligand dissociation with RMSD $\sim$\qty{30}{\angstrom}, consistent with the inability of rigid-receptor docking to reproduce the flexible DHFR active site MTX binding mode.} \\
-\multicolumn{6}{m{12cm}}{\noindent\textit{Note:} Binding affinities for non-aligned ligands confirm correct active-site placement.} \\
+\multicolumn{6}{m{12cm}}{\noindent\textit{Note:} Binding affinities for non-aligned ligands provide score context only; they do not independently establish correct active-site placement.} \\
 \end{tabular}
 \end{table}
 
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=0.85\linewidth]{redocking_rmsd.pdf}
-  \caption{Redocking validation results showing RMSD between predicted and crystal poses for co-crystallized ligands from PfDHFR-TS (7F3Y) and PfCRT (6UKJ). All successfully aligned ligands achieved RMSD $< \qty{2.0}{\angstrom}$ (red dashed line), demonstrating excellent pose reproduction. \textit{Redocking validation confirms that the AutoDock Vina protocol reliably reproduces experimental binding poses for the evaluated resistance targets.}}
+  \caption{Redocking validation results showing RMSD between predicted and crystal poses for co-crystallized ligands from PfDHFR-TS (7F3Y) and PfCRT (6UKJ). All successfully aligned ligands achieved RMSD $< \qty{2.0}{\angstrom}$ (red dashed line), indicating good pose reproduction for the evaluated alignable ligands. \textit{This computational redocking check does not establish prospective docking accuracy for new compounds.}}
   \label{fig:redocking_rmsd}
 \end{figure}
 
@@ -989,7 +985,7 @@ Comparison of single-method versus dual-filter consensus screening demonstrated 
 \begin{table}[!htbp]
 \centering
 \small
-\caption{Consensus hit rates from Vina-only, DiffDock-only, and dual-filter consensus screening. \textit{Orthogonal screening methods effectively reduce false-positive rates compared to single-method virtual screening.}}
+\caption{Consensus hit rates from Vina-only, DiffDock-only, and dual-filter consensus screening. \textit{The dual filter narrows the computational hit set; an independent inactive panel is required to quantify any false-positive reduction.}}
 \label{tab:consensus}
 \begin{tabular}{lcccc}
 \toprule
@@ -999,7 +995,7 @@ Comparison of single-method versus dual-filter consensus screening demonstrated 
 PfDHFR-TS & \num{94.9} & \num{87.1} & \num{82.0} & \num{12.9} \\
 PfCRT & \num{97.6} & \num{66.3} & \num{64.5} & \num{33.0} \\
 PfATP4 & \num{63.9} & \num{30.8} & \num{18.6} & \num{45.2} \\
-PfClpP & \num{8.9} & \num{53.4} & \num{3.1} & \num{5.8} \\
+PfClpR & \num{8.9} & \num{53.4} & \num{3.1} & \num{5.8} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1007,7 +1003,7 @@ PfClpP & \num{8.9} & \num{53.4} & \num{3.1} & \num{5.8} \\
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=0.95\linewidth]{consensus_hit_rate_comparison.pdf}
-  \caption{Hit rate comparison between single-method and dual-filter consensus screening. Consensus filtering reduces hit rates across all targets, effectively eliminating false positives while retaining high-confidence compounds that pass both thermodynamic (Vina) and geometric (DiffDock) validation. \textit{Consensus filtering significantly narrows the candidate pool to high-confidence hits, particularly for challenging targets like PfATP4.}}
+  \caption{Hit-rate comparison between single-method and dual-filter consensus screening. Consensus filtering reduces the fraction of compounds passing the declared thresholds across targets. This is a screening-set hit-rate change, not a measured false-positive reduction, because an independent inactive panel was not available for all targets. \textit{Consensus filtering narrows the computational candidate pool, particularly for challenging targets such as PfATP4.}}
   \label{fig:consensus_comparison}
 \end{figure}
 
@@ -1033,7 +1029,7 @@ PfClpP & \num{8.9} & \num{53.4} & \num{3.1} & \num{5.8} \\
 PfDHFR & \num{399} & \qty{35.1}{\percent} & \num{132} & \num{8} & \num{-10.12} \\
 PfCRT & \num{399} & \qty{90.7}{\percent} & \num{359} & \num{3} & \num{-13.37} \\
 PfATP4 & \num{184} & \qty{47.3}{\percent} & \num{0} & \num{87} & \num{-6.94} \\
-PfClpP & \num{399} & \qty{94.0}{\percent} & \num{0} & \num{375} & \num{-6.10} \\
+PfClpR & \num{399} & \qty{94.0}{\percent} & \num{0} & \num{375} & \num{-6.10} \\
 \midrule
 \textbf{Overall} & \num{1381} & \qty{69.8}{\percent} & \num{491} & \num{473} & \num{-13.37} \\
 \bottomrule
@@ -1062,7 +1058,7 @@ Cost Reduction & : & \qty{99.3}{\percent} \\
 ROC-AUC (PfDHFR) & Unknown$^b$ & \num{0.924} [\numrange{0.895}{0.951}] \\
 ROC-AUC (PfATP4) & Unknown$^b$ & \num{1.000} [\numrange{1.000}{1.000}] \\
 ROC-AUC (PfCRT) & Unknown$^b$ & \num{0.971} [\numrange{0.949}{0.989}] \\
-ROC-AUC (PfClpP) & Unknown$^b$ & \num{1.000} [\numrange{1.000}{1.000}] \\
+ROC-AUC (PfClpR) & Unknown$^b$ & \num{1.000} [\numrange{1.000}{1.000}] \\
 \midrule
 Accessibility & Limited$^c$ & High \\
 \bottomrule
@@ -1086,7 +1082,7 @@ $^a$ Based on AutoDock Vina (exhaustiveness = \num{64}, \num{32} CPU cores), \nu
 \textbf{Target} & \textbf{PDB} & \textbf{Total} & \textbf{Excellent} & \textbf{Good} & \textbf{Hit Rate} & \textbf{Best Vina} \\
  & & & (\qty{}{\percent}) & (\qty{}{\percent}) & (\qty{}{\percent}) & (\unit{\kilo\calorie\per\mole}) \\
 \midrule
-PfClpP & 4GM2 & \num{484} & \num{0.0} & \num{0.0} & \num{0.0} & \num{-5.91} \\
+PfClpR & 4GM2 & \num{484} & \num{0.0} & \num{0.0} & \num{0.0} & \num{-5.91} \\
 PfATP4 & 9N10 & \num{484} & \num{0.0} & \num{0.4} & \num{0.4} & \num{-7.11} \\
 PfCRT & 6UKJ & \num{484} & \num{20.6} & \num{65.2} & \num{85.8} & \num{-12.27} \\
 PfDHFR-TS & 7F3Y & \num{484} & \num{1.8} & \num{35.9} & \num{37.7} & \num{-9.67} \\
@@ -1112,7 +1108,7 @@ PfDHFR-TS & 7F3Y & \num{484} & \num{1.8} & \num{35.9} & \num{37.7} & \num{-9.67}
     \includegraphics[width=0.32\linewidth]{interaction_214.png}
     \hfill
     \includegraphics[width=0.32\linewidth]{interaction_438.png}
-    \caption{2D protein--ligand interaction diagrams for top-ranked leads. (a) Ligand 201 bound to \emph{Pf}DHFR-TS (7F3Y; Vina \qty{-8.49}{\kilo\calorie\per\mole}), showing predicted hydrogen-bond interactions with Asp54 and Arg57. (b) Ligand 214 bound to \emph{Pf}CRT (6UKJ), showing high DiffDock geometric confidence. (c) Ligand 438 bound to \emph{Pf}ATP4 (9N10; Vina \qty{-5.86}{\kilo\calorie\per\mole}), the sole \texttt{GOOD} hit for this target. Diagrams generated with ChimeraX. Leads selected from the top-20 candidate list.}
+    \caption{2D protein--ligand interaction diagrams for named parent leads. (a) Ligand 201 bound to \emph{Pf}DHFR-TS (7F3Y; Vina \qty{-8.49}{\kilo\calorie\per\mole}), showing predicted hydrogen-bond interactions with Asp54 and Arg57. (b) Ligand 214 bound to \emph{Pf}CRT (6UKJ), showing high DiffDock geometric confidence. (c) Ligand 438 bound to \emph{Pf}ATP4 (9N10; Vina \qty{-5.86}{\kilo\calorie\per\mole}), the sole \texttt{GOOD} hit for this target. Diagrams generated with ChimeraX. These named parent systems are distinct from the P2 Set-C polypharmacology cohort.}
     \label{fig:interaction_leads}
 \end{figure}
 
@@ -1123,7 +1119,7 @@ PfDHFR-TS & 7F3Y & \num{484} & \num{1.8} & \num{35.9} & \num{37.7} & \num{-9.67}
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{si_figure_s14_umap_latent_space.png}
-\caption{UMAP projection of the 64-dimensional VAE latent space, colored by compound source. Natural products (NP, green, $n = \num{396}$), synthetic drugs (SD, red, $n = \num{454}$), and computationally generated analogues (Generated, blue, $n = \num{65856}$) occupy overlapping but distinguishable regions of chemical space. The continuous distribution confirms successful integration of natural product scaffolds with synthetic drug-like properties through generative expansion. NP compounds cluster toward negative UMAP 1 values (centroid: $-\num{0.177}$, $\num{0.191}$), while SD and generated compounds occupy more positive regions (SD centroid: $\num{0.082}$, $\num{0.363}$; Generated centroid: $\num{0.206}$, $\num{0.239}$), reflecting the scaffold diversification achieved through Cheese similarity search and STONED-SELFIES perturbation. UMAP parameters: \texttt{n\_neighbors} = 15, \texttt{min\_dist} = 0.1. \textit{Latent-space projection confirms that generative expansion successfully bridges the chemical space gap between natural products and synthetic antimalarials.}}
+\caption{UMAP projection of the 64-dimensional VAE latent space, colored by compound source. Natural products (NP, green, $n = \num{396}$), synthetic drugs (SD, red, $n = \num{454}$), and computationally generated analogues (Generated, blue, $n = \num{65856}$) occupy overlapping but distinguishable regions of chemical space. The continuous distribution is consistent with integration of natural-product scaffolds and synthetic drug-like properties during generative expansion. NP compounds cluster toward negative UMAP 1 values (centroid: $-\num{0.177}$, $\num{0.191}$), while SD and generated compounds occupy more positive regions (SD centroid: $\num{0.082}$, $\num{0.363}$; Generated centroid: $\num{0.206}$, $\num{0.239}$), reflecting scaffold diversification in the Cheese similarity-search and STONED-SELFIES perturbation arms. UMAP parameters: \texttt{n\_neighbors} = 15, \texttt{min\_dist} = 0.1. \textit{The projection is descriptive and does not by itself establish successful biological integration or activity.}}
 \label{fig:si_umap_latent}
 \end{figure}
 
@@ -1169,7 +1165,7 @@ All validation metrics were calculated from actual docking results with complete
 \textbf{AutoDock Vina/Vinardo Results:}
 \begin{itemize}
   \item \textbf{Source:} Our docking protocol
-  \item \textbf{Targets:} 4 \textit{P. falciparum} proteins (PfDHFR, PfCRT, PfATP4, PfClpP)
+  \item \textbf{Targets:} 4 \textit{P. falciparum} proteins (PfDHFR, PfCRT, PfATP4, PfClpR)
   \item \textbf{Method:} AutoDock Vina 1.2.7 with Vina and Vinardo scoring
   \item \textbf{Parameters:} Exhaustiveness = 64, CPU cores = 32, time per run = 16--40 CPU-minutes
   \item \textbf{Files:} \texttt{Docking/Docking\_[PDB]/mmv\_results\_consensus/summary\_consensus\_[PDB].csv}
@@ -1213,7 +1209,7 @@ Results files:
   \item \texttt{results/validation\_dataset\_PfDHFR\_7F3Y.csv}
   \item \texttt{results/validation\_dataset\_PfATP4\_9N10.csv}
   \item \texttt{results/validation\_dataset\_PfCRT\_6UKJ.csv}
-  \item \texttt{results/validation\_dataset\_PfClpP\_4GM2.csv}
+  \item \texttt{results/validation\_dataset\_PfClpR\_4GM2.csv}
 \end{itemize}
 
 \subsubsection*{Bootstrap confidence interval methodology}
@@ -1256,7 +1252,7 @@ Assesses performance with imbalanced datasets (common in drug discovery where ac
 PfDHFR (7F3Y) & \num{399} & \num{132} & \num{267} & MMV + DEKOIS \\
 PfATP4 (9N10) & \num{198} & \num{99} & \num{99} & MMV (score-based) \\
 PfCRT (6UKJ) & \num{399} & \num{359} & \num{40} & MMV (score-based) \\
-PfClpP (4GM2) & \num{198} & \num{99} & \num{99} & MMV (score-based) \\
+PfClpR (4GM2) & \num{198} & \num{99} & \num{99} & MMV (score-based) \\
 \bottomrule
 \multicolumn{5}{p{14cm}}{
 \noindent\textbf{Note:} PfDHFR validated against DEKOIS benchmark (\num{40} actives, \num{1200} decoys) plus MMV compounds. Other targets validated using MMV Malaria Box with score-based classification (top \qty{25}{\percent} vs bottom \qty{25}{\percent}). All classifications based on actual consensus docking scores (AutoDock Vina/Vinardo + DiffDock).
@@ -1270,7 +1266,7 @@ Due to space constraints, we provide representative subsets of the validation da
 
 \begin{table}[!htbp]
 \centering
-\caption{Representative subset of PfDHFR validation dataset showing actual docking scores and classifications. Complete dataset (399 compounds) available in \texttt{results/validation\_dataset\_PfDHFR\_7F3Y.csv}. \textit{High-resolution validation data confirms the accuracy of the PfDHFR screening workflow against known actives and decoys.}}
+\caption{Representative subset of the PfDHFR docking-validation dataset showing actual docking scores and classifications. The complete dataset (399 compounds) is available in \texttt{results/validation\_dataset\_PfDHFR\_7F3Y.csv}. \textit{These data document performance on the evaluated actives and decoys; prospective screening accuracy remains to be established.}}
 \label{tab:si_pfdhfr_validation}
 \footnotesize
 \begin{tabular}{llcccc}
@@ -1297,7 +1293,7 @@ DEKOIS\_DEC\_003 & DEKOIS & -5.5 & -1.6 & 0.42 & Decoy \\
 
 \begin{table}[H]
 \centering
-\caption{Representative subsets of validation datasets for PfATP4, PfCRT, and PfClpP. Complete datasets available in supplementary data files. \textit{Cross-target validation confirms the generalizability of the consensus docking approach for antimalarial discovery.}}
+\caption{Representative subsets of docking-validation datasets for PfATP4, PfCRT, and PfClpR. Complete datasets are available in the supplementary data files. \textit{These target-specific examples document the evaluated consensus-docking workflow; they do not establish generalizability beyond the tested panels.}}
 \label{tab:si_other_validation}
 \footnotesize
 \begin{tabular}{llcccc}
@@ -1313,12 +1309,12 @@ DEKOIS\_DEC\_003 & DEKOIS & -5.5 & -1.6 & 0.42 & Decoy \\
  & MMV000002 & \num{-7.9} & \num{-0.5} & \num{0.87} & Active \\
  & MMV000350 & \num{-4.8} & \num{-2.0} & \num{0.28} & Decoy \\
 \midrule
-\multirow{3}{*}{PfClpP (4GM2)} & MMV000001 & \num{-6.5} & \num{-0.9} & \num{0.72} & Active \\
+\multirow{3}{*}{PfClpR (4GM2)} & MMV000001 & \num{-6.5} & \num{-0.9} & \num{0.72} & Active \\
  & MMV000002 & \num{-7.2} & \num{-0.6} & \num{0.82} & Active \\
  & MMV000200 & \num{-4.5} & \num{-2.2} & \num{0.25} & Decoy \\
 \bottomrule
 \multicolumn{6}{p{14cm}}{
-\noindent\textbf{Note:} All targets validated using MMV Malaria Box compounds with score-based classification. Actives: top \qty{25}{\percent} by consensus score. Decoys: bottom \qty{25}{\percent} by consensus score. Complete datasets: PfATP4 (\num{198} compounds), PfCRT (\num{399} compounds), PfClpP (\num{198} compounds).
+\noindent\textbf{Note:} All targets validated using MMV Malaria Box compounds with score-based classification. Actives: top \qty{25}{\percent} by consensus score. Decoys: bottom \qty{25}{\percent} by consensus score. Complete datasets: PfATP4 (\num{198} compounds), PfCRT (\num{399} compounds), PfClpR (\num{198} compounds).
 }
 \end{tabular}
 \end{table}
@@ -1329,11 +1325,11 @@ The enrichment validation demonstrated excellent discriminative performance acro
 
 \textbf{PfDHFR (7F3Y):} Achieved ROC-AUC of \num{0.924} [\numrange{0.895}{0.951}] against the challenging DEKOIS benchmark, demonstrating reliable discrimination between \num{132} actives and \num{267} carefully matched decoys. The EF\qty{5}{\percent} of \num{2.57} indicates that actives are enriched \num{2.57}-fold in the top \qty{5}{\percent} of ranked compounds, confirming effective early recognition.
 
-\textbf{PfATP4 (9N10) and PfClpP (4GM2):} Both achieved perfect separation (ROC-AUC = \num{1.000}) using score-based classification, demonstrating that consensus scoring effectively distinguishes high-scoring from low-scoring MMV compounds for these targets.
+\textbf{PfATP4 (9N10) and PfClpR (4GM2):} Both achieved perfect separation (ROC-AUC = \num{1.000}) using score-based classification, demonstrating that consensus scoring effectively distinguishes high-scoring from low-scoring MMV compounds for these targets.
 
 \textbf{PfCRT (6UKJ):} Achieved ROC-AUC of \num{0.971} [\numrange{0.949}{0.989}] with a high BEDROC of \num{9.434}, reflecting the dataset composition (\num{359} actives, \num{40} decoys, \qty{90}{\percent} active rate) where most MMV compounds dock favorably to this target.
 
-These results validate our computational workflow for reliable antimalarial candidate prioritization and support the use of dual-consensus scoring for reducing false positives in virtual screening campaigns.
+These results document the evaluated computational workflow for antimalarial candidate prioritization and support testing dual-consensus scoring as a screening filter; independent inactive panels are required to quantify false-positive reduction.
 
 % References formerly listed in a mid-document "References" section (8 entries).
 % Six are not cited inline in the SM body, so \nocite surfaces them in the

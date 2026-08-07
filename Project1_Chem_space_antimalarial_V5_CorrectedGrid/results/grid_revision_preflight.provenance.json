@@ -1,0 +1,95 @@
+{
+  "acceptance_rule": "Do not score until proposed grid has 68/68 IN_GRID poses and receptor/grid identity is reviewed.",
+  "accepted_for_scoring": false,
+  "audit_csv_sha256": "1a3a1ee8c7cfc476eedb61a19ff2a43cd2c217ff08d175e802ad5e008725389c",
+  "box": [
+    25.0,
+    25.0,
+    25.0
+  ],
+  "consensus_scores_written": false,
+  "current_status_counts": {
+    "IN_GRID": 10,
+    "OUTSIDE_GRID": 44,
+    "PARTIAL_GRID": 14
+  },
+  "generated_utc": "2026-08-07T20:59:05.465706+00:00",
+  "historical_basis": "V2 config.txt files; historical configuration evidence, not new scores",
+  "manifest_sha256": "0cf04d2785e450e91e824340d8b91566f2129796035b6d542ed75ed26554ba53",
+  "output_csv_sha256": "bed56c1f9e7c2a05d7a6d0ad4d4445f711b59f758bffc41c66bc3521d927434a",
+  "pose_translations": false,
+  "proposed_status_counts": {
+    "IN_GRID": 5,
+    "OUTSIDE_GRID": 50,
+    "PARTIAL_GRID": 13
+  },
+  "receptor_modifications": false,
+  "receptor_pdbqt_sha256": {
+    "PfATP4": "bb5cc0940daba17239ef3d101613a3e80316a170ff0c3fbe53910c6b0a7cfbda",
+    "PfCRT": "1bc38247a85986f3d167891f4a2f9db18afabfa51edd5671760a2c649a8ae50b",
+    "PfClpP": "ec08a3ba4ed5cfb2b34687f561cf783b59b0440784c38ad9d43686779c395d3e",
+    "PfDHFR": "7098823dbd4bc5244a43b6ddd9a964d92ebef4bca952c22f25da5098bafadc3a"
+  },
+  "rrs_pns_updated": false,
+  "schema": "p1-v5-grid-revision-preflight/v1",
+  "status": "PROPOSED_V2_GRID_GEOMETRY_ONLY_NOT_ACCEPTED",
+  "targets": {
+    "PfATP4": {
+      "current_center": [
+        134.84,
+        133.1,
+        97.63
+      ],
+      "historical_config": "Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_9N10/config.txt",
+      "pdb_id": "9N10",
+      "proposed_v2_center": [
+        129.3,
+        130.9,
+        92.4
+      ]
+    },
+    "PfCRT": {
+      "current_center": [
+        152.99,
+        151.042,
+        159.379
+      ],
+      "historical_config": "Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_6UKJ/config.txt",
+      "pdb_id": "6UKJ",
+      "proposed_v2_center": [
+        152.5,
+        148.0,
+        154.5
+      ]
+    },
+    "PfClpP": {
+      "current_center": [
+        26.19,
+        35.09,
+        24.72
+      ],
+      "historical_config": "Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_4GM2/config.txt",
+      "pdb_id": "4GM2",
+      "proposed_v2_center": [
+        26.19,
+        35.09,
+        24.72
+      ]
+    },
+    "PfDHFR": {
+      "current_center": [
+        1.33,
+        -1.733,
+        -23.842
+      ],
+      "historical_config": "Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_7F3Y/config.txt",
+      "pdb_id": "7F3Y",
+      "proposed_v2_center": [
+        8.34,
+        -13.9,
+        -41.754
+      ]
+    }
+  },
+  "vina_launched": false
+}

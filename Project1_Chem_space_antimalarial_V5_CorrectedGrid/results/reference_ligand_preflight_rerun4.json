@@ -1,0 +1,131 @@
+{
+  "acceptance_rule": "Extraction is provenance-only. Native pocket conditioning requires independently reviewed ligand identity/site correspondence, exact receptor-frame equivalence, and a successful exact-config smoke; no target is eligible from this artifact alone.",
+  "accepted_for_full_run": false,
+  "completion_status": "INCOMPLETE_EXTRACTION_ARTIFACTS",
+  "consensus_scores_written": false,
+  "diffdock_launched": false,
+  "extraction_failures": [
+    "PfDHFR",
+    "PfCRT"
+  ],
+  "generated_utc": "2026-08-07T21:39:53.781140+00:00",
+  "gromacs_launched": false,
+  "input_read_only": true,
+  "output_dir": "/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/reference_ligands_rerun4",
+  "output_json": "/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/reference_ligand_preflight_rerun4.json",
+  "review_required": true,
+  "rrs_pns_updated": false,
+  "schema": "p1-v5-reference-ligand-preflight/v3",
+  "script_sha256": "f3a18d5e3d408217f5074e381d20989fe4f10e4d9aceb3b72f346869cfbb872d",
+  "status": "REFERENCE_LIGANDS_INVENTORIED_REVIEW_REQUIRED",
+  "targets": {
+    "PfATP4": {
+      "biological_note": "No non-water HETATM anchor was found; target-specific membrane-site evidence is required.",
+      "classification": "NO_STRUCTURAL_LIGAND_ANCHOR_BLOCKED",
+      "declared_residue": null,
+      "diffdock_launched": false,
+      "gromacs_launched": false,
+      "non_water_hetatm_residues_in_pdb": [],
+      "output_immutable": true,
+      "pdb": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/9N10.pdb",
+      "pdb_id": "9N10",
+      "pdb_sha256": "102e55cefea0f918cb003adbdacc2f27651021788c1aebb0a40c020069f75359",
+      "status": "BLOCKED_NO_DECLARED_REFERENCE_LIGAND",
+      "target": "PfATP4",
+      "vina_launched": false
+    },
+    "PfCRT": {
+      "biological_note": "Y01 is inventoried as a structural proxy only; it is not accepted as an inhibitor-pocket anchor.",
+      "classification": "AMBIGUOUS_PROXY_NOT_ACCEPTED",
+      "declared_residue": "Y01",
+      "diffdock_launched": false,
+      "eligible_for_native_pocket_smoke": false,
+      "gromacs_launched": false,
+      "instance_count": 1,
+      "instances": [
+        {
+          "chain": "A",
+          "eligible_for_native_pocket_smoke": false,
+          "error": "bond connectivity mismatch: source=[(4594, 4595), (4595, 4596), (4595, 4597), (4597, 4598), (4598, 4599), (4599, 4600), (4600, 4601), (4600, 4602), (4602, 4603), (4602, 4606), (4603, 4604), (4604, 4605), (4605, 4606), (4605, 4611), (4606, 4607), (4606, 4608), (4608, 4609), (4609, 4610), (4610, 4611), (4610, 4616), (4611, 4612), (4612, 4613), (4613, 4614), (4614, 4615), (4614, 4616), (4615, 4620), (4616, 4617), (4616, 4618), (4618, 4619), (4619, 4620), (4620, 4621), (4621, 4622), (4622, 4623), (4622, 4624), (4624, 4625), (4625, 4626), (4626, 4627), (4626, 4628)], sdf=[(459, 459), (459, 460), (460, 460), (460, 461), (461, 461), (461, 462), (462, 462)]",
+          "icode": "",
+          "native_coordinates_preserved": false,
+          "resseq": 501,
+          "source_atom_count": 35,
+          "status": "EXTRACTION_FAILED"
+        }
+      ],
+      "output_immutable": true,
+      "pdb": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/6UKJ.pdb",
+      "pdb_id": "6UKJ",
+      "pdb_sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562",
+      "status": "EXTRACTION_FAILED",
+      "target": "PfCRT",
+      "vina_launched": false
+    },
+    "PfClpP": {
+      "biological_note": "No non-water HETATM anchor was found; target-specific pocket evidence is required.",
+      "classification": "NO_STRUCTURAL_LIGAND_ANCHOR_BLOCKED",
+      "declared_residue": null,
+      "diffdock_launched": false,
+      "gromacs_launched": false,
+      "non_water_hetatm_residues_in_pdb": [],
+      "output_immutable": true,
+      "pdb": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/4GM2.pdb",
+      "pdb_id": "4GM2",
+      "pdb_sha256": "2130e9fdde2a56b5c31eef94a620624679af009f06bbd5e145e6053a82117fcc",
+      "status": "BLOCKED_NO_DECLARED_REFERENCE_LIGAND",
+      "target": "PfClpP",
+      "vina_launched": false
+    },
+    "PfDHFR": {
+      "biological_note": "MTX instances are inventoried separately; identity, active-site correspondence, and chain selection require independent review.",
+      "classification": "CANDIDATE_STRUCTURAL_ANCHOR_REVIEW_REQUIRED",
+      "declared_residue": "MTX",
+      "diffdock_launched": false,
+      "eligible_for_native_pocket_smoke": false,
+      "gromacs_launched": false,
+      "instance_count": 3,
+      "instances": [
+        {
+          "chain": "A",
+          "eligible_for_native_pocket_smoke": false,
+          "error": "bond connectivity mismatch: source=[(9126, 9127), (9126, 9137), (9127, 9128), (9127, 9129), (9129, 9130), (9130, 9131), (9130, 9132), (9132, 9133), (9132, 9137), (9133, 9134), (9134, 9135), (9134, 9138), (9135, 9136), (9136, 9137), (9138, 9139), (9139, 9140), (9139, 9144), (9141, 9142), (9141, 9146), (9141, 9147), (9142, 9143), (9143, 9144), (9144, 9145), (9145, 9146), (9147, 9148), (9147, 9149), (9149, 9150), (9150, 9151), (9150, 9154), (9151, 9152), (9151, 9153), (9154, 9155), (9155, 9156), (9156, 9157), (9156, 9158)], sdf=[(912, 912), (912, 913), (913, 913), (913, 914), (914, 914), (914, 915), (915, 915)]",
+          "icode": "",
+          "native_coordinates_preserved": false,
+          "resseq": 702,
+          "source_atom_count": 33,
+          "status": "EXTRACTION_FAILED"
+        },
+        {
+          "chain": "A",
+          "eligible_for_native_pocket_smoke": false,
+          "error": "bond connectivity mismatch: source=[(9179, 9180), (9179, 9190), (9180, 9181), (9180, 9182), (9182, 9183), (9183, 9184), (9183, 9185), (9185, 9186), (9185, 9190), (9186, 9187), (9187, 9188), (9187, 9191), (9188, 9189), (9189, 9190), (9191, 9192), (9192, 9193), (9192, 9197), (9194, 9195), (9194, 9199), (9194, 9200), (9195, 9196), (9196, 9197), (9197, 9198), (9198, 9199), (9200, 9201), (9200, 9202), (9202, 9203), (9203, 9204), (9203, 9207), (9204, 9205), (9204, 9206), (9207, 9208), (9208, 9209), (9209, 9210), (9209, 9211)], sdf=[(917, 918), (917, 919), (918, 918), (918, 919), (919, 919), (919, 920), (920, 920), (920, 921)]",
+          "icode": "",
+          "native_coordinates_preserved": false,
+          "resseq": 704,
+          "source_atom_count": 33,
+          "status": "EXTRACTION_FAILED"
+        },
+        {
+          "chain": "B",
+          "eligible_for_native_pocket_smoke": false,
+          "error": "bond connectivity mismatch: source=[(9266, 9267), (9266, 9277), (9267, 9268), (9267, 9269), (9269, 9270), (9270, 9271), (9270, 9272), (9272, 9273), (9272, 9277), (9273, 9274), (9274, 9275), (9274, 9278), (9275, 9276), (9276, 9277), (9278, 9279), (9279, 9280), (9279, 9284), (9281, 9282), (9281, 9286), (9281, 9287), (9282, 9283), (9283, 9284), (9284, 9285), (9285, 9286), (9287, 9288), (9287, 9289), (9289, 9290), (9290, 9291), (9290, 9294), (9291, 9292), (9291, 9293), (9294, 9295), (9295, 9296), (9296, 9297), (9296, 9298)], sdf=[(926, 926), (926, 927), (927, 927), (927, 928), (928, 928), (928, 929), (929, 929)]",
+          "icode": "",
+          "native_coordinates_preserved": false,
+          "resseq": 702,
+          "source_atom_count": 33,
+          "status": "EXTRACTION_FAILED"
+        }
+      ],
+      "output_immutable": true,
+      "pdb": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/7F3Y.pdb",
+      "pdb_id": "7F3Y",
+      "pdb_sha256": "f630faa7915c4da1db22c9301cc5bbb9dee83558ffe5b4bbe2520f3931701ef4",
+      "status": "AMBIGUOUS_INSTANCES_INVENTORIED",
+      "target": "PfDHFR",
+      "vina_launched": false
+    }
+  },
+  "vina_launched": false,
+  "writes_derived_artifacts": true
+}

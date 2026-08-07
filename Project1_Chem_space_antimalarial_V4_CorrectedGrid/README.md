@@ -1,17 +1,19 @@
 # JCIM Manuscript — Organized Structure
 
+> **Target-identity correction (7 August 2026):** PDB 4GM2 is PfClpR, not PfClpP. The canonical V4 manuscript labels the 4GM2 analyses as PfClpR-specific; they must not be interpreted as PfClpP validation. A verified PfClpP structure is required for any future PfClpP-specific analysis.
+
 ## Status
 
 > **Tartarus benchmark:** Full run (19,913 mol × 3 targets) completed Jul 7 2026. Calibration (50 mol) cited in Limitations — full results integrated into P2 correlation analysis. **P1 unblocked.**
 
-**Manuscript V2607:** Finalized — fully compiled (0 errors).
-Latest manuscript and scripts synced from `Malaria_codesV2/Project1_Chem_space_antimalarial_V2_CorrectedGrid/` on 2026-07-20. This directory remains the canonical P1 location.  
+**Manuscript V2607:** Active canonical V4 — final temporary-clone compilation passed on 7 August 2026 after the target-identity and wording corrections.
+This directory is the canonical P1 location; V2 is legacy and must not be used for manuscript edits. The reserved Zenodo DOI is pending upload; the reviewer-accessible source is the public repository.
 
-### External Validation Status (Jul 16, 2026)
-- **R1-B (MMV Malaria Box):** ✅ COMPLETE — hit rates: PfDHFR 35.1%, PfCRT 90.7%, PfATP4 47.3%, PfClpP 94.0% (composite 69.8%). Table `tab:mmv-validation` in SM.
-- **R1-A (DEKOIS 2.0):** ✅ COMPLETE — 1,200 decoys + 40/40 actives docked (1199 decoys valid, uniform Meeko pipeline). Final DEKOIS ROC-AUC is 0.450 (95% CI 0.367–0.531, near-random), honestly reported in manuscript to motivate ML-based DiffDock rescoring.
+### External Computational Benchmark Status (Jul 16, 2026)
+- **R1-B (MMV Malaria Box):** ✅ COMPLETE — hit rates: PfDHFR 35.1%, PfCRT 90.7%, PfATP4 47.3%, PfClpR (4GM2) 94.0% (composite 69.8%); 4GM2 is not PfClpP. Table `tab:mmv-validation` in SM.
+- **R1-A (DEKOIS 2.0):** ✅ COMPLETE as a **historical PfDHFR Vina-only baseline** — source artifact: `Project1_Chem_space_antimalarial_V2_CorrectedGrid/results/v2_dekois/dekois_v2_roc_auc.csv` (SHA-256 prefix `53db3e9d309e`); 1,200 decoys + 40/40 actives were reported with 1,199 decoys valid under the historical uniform-Meeko pipeline. Final DEKOIS ROC-AUC is 0.450 (95% CI 0.367–0.531, near-random). The canonical V4 `results/v2_dekois/` directory has no result file. The independent multi-structure Vina+DiffDock consensus benchmark remains **UNTESTED / preflight-only**; run `scripts/p1_consensus_preflight.py` only after target identities and raw target panels are independently verified.
 - **ChEMBL (Part B):** ✅ COMPLETE — integrated into manuscript §1.12 and SM Table S18 (PfDHFR active EXC hit rate = 60.4%, inactive = 11.1%; PfATP4 active GOOD = 53.4%, inactive = 63.2%; PfCRT active EXC = 100%, inactive = 68.4%).
-- Main manuscript text now attributes ROC-AUC 0.924–1.000 to the **MMV positive-control benchmark** (not DEKOIS); DEKOIS described as a separate independent external benchmark.
+- Main manuscript text now attributes ROC-AUC 0.924–1.000 to the **MMV positive-control benchmark** (not DEKOIS); DEKOIS is described as a separate independent PfDHFR Vina-only baseline. Existing DiffDock summaries are not treated as an independent consensus benchmark without raw-panel and model provenance.
 
 ### What is still pending for Project 1:
 - [x] **ChEMBL Part B Benchmark:** Completed and integrated.
@@ -25,7 +27,7 @@ Latest manuscript and scripts synced from `Malaria_codesV2/Project1_Chem_space_a
 - `SM_Table_S20_top10_retrosynthesis_askcos_stub.tex` — ASKCOS integration framework
 - Run: `cd /home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V2_CorrectedGrid && python3 scripts/r8b/r8b_pipeline.py --askcos`
 
-**Next:** Ready for submission.
+**Next:** V4 is ready for human author approval and submission. A future PfClpP-specific analysis must first replace 4GM2 with a verified PfClpP structure.
 
 ## Directory Structure
 
@@ -97,11 +99,11 @@ pdflatex Antimalarial_Candidates_African_NP.tex   # final pass
 | Supplementary | 41 pages |
 | Citations | 55 unique |
 | Library size | 65,856 molecules |
-| Synthesizable leads | 19,913 (MPO ≥ 0.70, SYBA > 0) |
-| Zenodo DOI | 10.5281/zenodo.19608875 |
+| Predicted synthesizable cluster members | 19,913 (SYBA > 0 plus MPO≥0.40 centroid filter; computational output) |
+| Zenodo DOI | 10.5281/zenodo.19608875 (reserved; upload pending) |
 | GitHub | https://github.com/NanaEngo/Malaria_codesV2 |
 
-## Quality Gates (all passed 2026-04-17)
+## Historical Quality Gates (passed 2026-04-17; current V4 mitigation gate remains open)
 
 | Gate | Status |
 |------|:------:|

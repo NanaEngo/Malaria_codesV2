@@ -1,0 +1,248 @@
+{
+  "schema": "p1-v4-to-v5-migration/v3",
+  "project": "P1",
+  "status": "MIGRATION_IN_PROGRESS_IDENTITY_MISMATCH_RAW_SUPERSEDED_VINA_BLOCKED",
+  "created_date": "2026-08-07",
+  "last_integrity_update": "2026-08-07T22:25:00Z",
+  "source_tree": "Project1_Chem_space_antimalarial_V4_CorrectedGrid",
+  "destination_tree": "Project1_Chem_space_antimalarial_V5_CorrectedGrid",
+  "source_protection": {
+    "claim": "NO_INTENTIONAL_V4_MODIFICATION_BY_THIS_MIGRATION",
+    "source_tree_was_not_written_by_the_migration": true,
+    "verification": "canonical V4 source hashes and reproducible current-tree fingerprint recorded; V4 had pre-existing working-tree changes, so this is not a claim of a clean immutable Git baseline",
+    "v4_tree_fingerprint_final": "92b98df7ff88356113f60b31d358193635c2ceb7ce616d54d7ce76f3ef5bb97a",
+    "v4_canonical_sources": {
+      "manuscript/Antimalarial_Candidates_African_NP_V2607.tex": "98811518aab90711cc0aeca68364ff63d25552f556b2a55766bf97a0b7cdda1b",
+      "manuscript/Antimalarial_Candidates_African_NP_V2607_SM.tex": "98476c4a320b7f15a41409e7096f238796ba11d03a53893cd112b384b3bcd3de",
+      "manuscript/Cover_Letter.tex": "b03e01997f12ae9b463ef3c69a5c358cdba761dd7bc009aea23ae76db08a6b0d"
+    }
+  },
+  "copy_policy": {
+    "type": "full_controlled_copy",
+    "excluded": [
+      "__pycache__/",
+      "*.pyc",
+      "*.aux",
+      "*.bbl",
+      "*.blg",
+      "*.fdb_latexmk",
+      "*.fls",
+      "*.log",
+      "*.out",
+      "*.toc",
+      "*.lof",
+      "*.lot",
+      "*.synctex.gz"
+    ],
+    "source_regular_files_before_exclusion": 161,
+    "destination_regular_files_after_exclusion_at_copy": 131
+  },
+  "renamed_v5_sources": [
+    {
+      "source": "manuscript/Antimalarial_Candidates_African_NP_V2607.tex",
+      "destination": "manuscript/Antimalarial_Candidates_African_NP_V2608.tex",
+      "source_sha256": "2f3046d83fe6566b10e5471222eceb86ef93ba3c1f63c1e34fbe21bd5fcf0d41",
+      "destination_post_edit_sha256": "5af8c94d182db40e33a16fa965704f376e517b02d30567b4faea7b7bbf8f2041",
+      "note": "Renamed in V5; internal V2608 cross-reference and migration-status notice added."
+    },
+    {
+      "source": "manuscript/Antimalarial_Candidates_African_NP_V2607_SM.tex",
+      "destination": "manuscript/Antimalarial_Candidates_African_NP_V2608_SM.tex",
+      "source_sha256": "0b87bbaa3b960f926967f070e5fce2cd9e272b73774c96bc25d6c308051f30ae",
+      "destination_post_edit_sha256": "e6cdac2481df01ddffcbbf5510591806f400829c35a20edb4c0688639af08ee4",
+      "note": "Renamed in V5; internal V2608 cross-reference and migration-status notice added."
+    },
+    {
+      "source": "manuscript/acs-Antimalarial_Candidates_African_NP_V2607.bib",
+      "destination": "manuscript/acs-Antimalarial_Candidates_African_NP_V2608.bib",
+      "source_sha256": "a32ee419e4f1b19c3731ce3e41252920d821ec3ca31d271c17f423c74ed89637",
+      "destination_sha256": "a32ee419e4f1b19c3731ce3e41252920d821ec3ca31d271c17f423c74ed89637",
+      "note": "Renamed auxiliary bibliography/control file; compilation has not been run."
+    },
+    {
+      "source": "manuscript/acs-Antimalarial_Candidates_African_NP_V2607_SM.bib",
+      "destination": "manuscript/acs-Antimalarial_Candidates_African_NP_V2608_SM.bib",
+      "source_sha256": "5b54c4fa125df16a7faec7b6fdad80e767ff91baa80bc6e4c33e97f2ed4c24c1",
+      "destination_sha256": "5b54c4fa125df16a7faec7b6fdad80e767ff91baa80bc6e4c33e97f2ed4c24c1",
+      "note": "Renamed auxiliary bibliography/control file; compilation has not been run."
+    },
+    {
+      "source": "manuscript/Cover_Letter.tex",
+      "destination": "manuscript/Cover_Letter.tex",
+      "destination_sha256": "49c5bd63fc02d5883a8fd34f4a7f85dbf44f5d2919ba5181ce88509cf474836a",
+      "note": "Retained filename; explicit internal-draft notice added."
+    }
+  ],
+  "manuscript_status": {
+    "main_source": "INTERNAL_MIGRATION_DRAFT_INHERITED_V4_CONTENT",
+    "supplementary_source": "INTERNAL_MIGRATION_DRAFT_INHERITED_V4_CONTENT",
+    "cover_letter": "INTERNAL_MIGRATION_DRAFT_INHERITED_V4_CONTENT",
+    "v5_compiled_pdfs": false,
+    "human_author_approval": false,
+    "submission_ready": false
+  },
+  "inherited_pdf_quarantine": {
+    "status": "COMPLETE_PROVENANCE_MOVE",
+    "directory": "manuscript/provenance/inherited_pdfs",
+    "files": {
+      "manuscript/provenance/inherited_pdfs/Antimalarial_Candidates_African_NP_V2607.pdf": "2946ec19c17435f3bc0e75709813969fcef2ca58463b1932248a3ac2cd3de45f",
+      "manuscript/provenance/inherited_pdfs/Antimalarial_Candidates_African_NP_V2607_SM.pdf": "70846c87d0ae28c3cf0b0c08d04d5c62285fcd300faf2201e562f7e8d1388900",
+      "manuscript/provenance/inherited_pdfs/Cover_Letter.pdf": "aaa49ed094c63128112a6758bacfb55a5bb16af3dd1e1db09fcd5bcc349fa2d6",
+      "manuscript/provenance/inherited_pdfs/P1_main.pdf": "9950ff6fdcf002907133fd363e92f43a9e64e9eab68d430707d00bbb2c68336f",
+      "manuscript/provenance/inherited_pdfs/P1_sm.pdf": "7b73d42847c5cbaa51ad87c1c75053ff45adda4c47521e0cd210fc265f181f24"
+    },
+    "reason": "These are not freshly compiled V2608 outputs and must not be used as V5 release artifacts."
+  },
+  "inherited_v4_metadata_quarantine": {
+    "status": "COMPLETE_PROVENANCE_MOVE",
+    "directory": "results/provenance/inherited_v4",
+    "files": {
+      "results/provenance/inherited_v4/audit_canonical_p1_v4.json": "47ab6a779586acc6c31d89624e14f409cca6c6c7982680d562b288f4e22b3d88",
+      "results/provenance/inherited_v4/p1_consensus_preflight.json": "b74883cbbb47a6a59f911cd1fe5ec230ba099be09c784d743d485c3f84332697",
+      "results/provenance/inherited_v4/p1_diffdock_install_manifest.json": "5d3ee1294061b2b3b1221c11a50c194a0d503b703f2859b841c8cc859dc12940"
+    },
+    "reason": "These records refer to V4 paths or artifact/preflight validation and are not V5 inference outputs."
+  },
+  "raw_diffdock_rank1_audit": {
+    "status": "RAW_RANK1_AUDITED_SUPERSEDED_TARGET_IDENTITY_MISMATCH",
+    "audit_script": "scripts/p1_v5_audit_diffdock_rank1.py",
+    "audit_script_sha256": "0bdf239488d2df4b490847f02c86c3dab8c5a7786aef402eb6eb9ccfdd119fce",
+    "audit_csv": "results/diffdock_full_68_verified/independent_rank1_audit.csv",
+    "audit_csv_sha256": "1a3a1ee8c7cfc476eedb61a19ff2a43cd2c217ff08d175e802ad5e008725389c",
+    "audit_provenance": "results/diffdock_full_68_verified/independent_rank1_audit.provenance.json",
+    "audit_provenance_sha256": "6d9a55dc396773f31e8bfc4ad4abb54c5b8beb2c38b1edcc854b61662868d105",
+    "pairs": 68,
+    "rank1_pose_sdfs_readable": 68,
+    "rank1_confidence_sdfs_readable": 68,
+    "secondary_confidence_slots": 612,
+    "secondary_confidence_invalid": 11,
+    "grid_status_counts": {"IN_GRID": 10, "PARTIAL_GRID": 14, "OUTSIDE_GRID": 44},
+    "vina_score_only": "BLOCKED_COORDINATE_FRAME_GRID_MISMATCH",
+    "consensus_scores_written": false,
+    "rrs_pns_updated": false,
+    "diffdock_confidence_is_not_affinity": true,
+    "post_hoc_translation_or_box_expansion": false,
+    "receptor_coordinate_source": "Vina receptor PDBQT files used by score-only runner",
+    "receptor_pdbqt_sha256": {
+      "PfDHFR": "7098823dbd4bc5244a43b6ddd9a964d92ebef4bca952c22f25da5098bafadc3a",
+      "PfCRT": "1bc38247a85986f3d167891f4a2f9db18afabfa51edd5671760a2c649a8ae50b",
+      "PfClpP": "ec08a3ba4ed5cfb2b34687f561cf783b59b0440784c38ad9d43686779c395d3e",
+      "PfATP4": "bb5cc0940daba17239ef3d101613a3e80316a170ff0c3fbe53910c6b0a7cfbda"
+    }
+  },
+  "prepared_diffdock_input_manifest": {
+    "status": "INPUT_MANIFEST_ONLY_NO_INFERENCE",
+    "csv": "results/diffdock_polypharm/diffdock_input_manifest.csv",
+    "csv_sha256": "0cf04d2785e450e91e824340d8b91566f2129796035b6d542ed75ed26554ba53",
+    "provenance_json": "results/diffdock_polypharm/diffdock_input_manifest.provenance.json",
+    "provenance_json_sha256": "81e793527a0df17dc65c377f065689ba85a1dea50718d9e42a34ea5d6b5eff1d",
+    "sentinel": "results/diffdock_polypharm/NO_INFERENCE_SENTINEL",
+    "sentinel_sha256": "43d8a93ad2373c25f9b5b6be7b7ca96dfd47760e17137d1658e9de5ff7377b0d",
+    "pairs": 68,
+    "candidate_ids": "PP-01..PP-17",
+    "targets": ["PfDHFR", "PfCRT", "PfClpP", "PfATP4"],
+    "generator": "scripts/p1_v5_prepare_diffdock_manifest.py",
+    "generator_sha256": "b89bb2f1d557ce424ef87fa51ff559a217c67a22a3726a20bba81db8e5172ed5",
+    "diffdock_tree_sha256": "c53d977e8c567f124b89ffed458ba3d9e1bb2a2e55219d9c69194457e9b2a878",
+    "inference_launched": false,
+    "used_by_raw_execution": true,
+    "scores_written": false,
+    "rrs_pns_updated": false,
+    "note": "The input manifest was used for the retained raw DiffDock run; this object remains input provenance and does not itself contain accepted scores."
+  },
+  "proposed_diffdock_scope": {
+    "cohort": "P2 Set C",
+    "candidates": 17,
+    "targets": ["PfDHFR/7F3Y", "PfCRT/6UKJ", "PfClpP/4GM2", "PfATP4/9N10"],
+    "pairs": 68,
+    "accepted_empirical_outputs": false,
+    "execution_status": "RAW_OUTPUTS_PRESENT_BUT_SUPERSEDED_TARGET_IDENTITY_MISMATCH",
+    "raw_output_audit": "results/diffdock_full_68_verified/independent_rank1_audit.provenance.json",
+    "hardcoded_scores_accepted": false
+  },
+  "reference_ligand_preflight": {
+    "status": "REFERENCE_LIGANDS_INVENTORIED_SUPERSEDED_TARGET_IDENTITY_MISMATCH",
+    "artifact": "results/reference_ligand_preflight_rerun6.json",
+    "artifact_sha256": "a7848c340e74345ce21b4a7ff1b6aa4393d677e564a6d3f0119426208af3320f",
+    "completion_sentinel": "results/reference_ligands_rerun6/PREFLIGHT_COMPLETE.json",
+    "completion_sentinel_sha256": "dcf8163e06631cd3cf6563395a22dc46735ea46960fc7929b5f780309f90d8b9",
+    "sentinel_hash_must_be_bound_in_future_authorization": true,
+    "schema": "p1-v5-reference-ligand-preflight/v3",
+    "completion_status": "COMPLETE_INVENTORY",
+    "accepted_for_full_run": false,
+    "eligible_for_native_pocket_smoke": false,
+    "targets_without_structural_anchor": ["PfATP4"],
+    "target_identity_mismatch": {"declared_target": "PfClpP", "pdb_id": "4GM2", "actual_identity": "PfClpR", "status": "BLOCKED"},
+    "no_diffdock_vina_gromacs_launched": true,
+    "note": "MTX instances and Y01 were coordinate-preserving provenance artifacts only; 4GM2 is PfClpR rather than PfClpP; independent identity/site review remains required."
+  },
+  "independent_structural_review": {
+    "status": "PENDING_INDEPENDENT_REVIEW",
+    "artifact": "results/structural_pocket_independent_review.json",
+    "artifact_sha256": "43b690644cf034790a4d3d2810b8d85ea25b158911290a1bdb7b2abee64aff12",
+    "accepted_for_full_run": false,
+    "all_target_decisions": "PENDING",
+    "note": "No target is independently accepted; this register intentionally cannot authorize docking."
+  },
+  "target_identity_audit": {
+    "status": "IDENTITY_MISMATCH_BLOCKS_INHERITED_V5_PANEL",
+    "artifact": "results/target_identity_audit.json",
+    "artifact_sha256": "22e0b082bff78aaa27f7a44dee6dbc15adc72b8c13db877163cb4bfe18dcae94",
+    "declared_target": "PfClpP",
+    "pdb_id": "4GM2",
+    "actual_identity": "PfClpR",
+    "inherited_panel_status": "SUPERSEDED_NOT_ACCEPTED"
+  },
+  "structural_pocket_preflight": {
+    "status": "REVIEW_REQUIRED_NOT_AUTHORIZED",
+    "artifact_sha256": "75578066e97adda1c5afe28f88a9f3b5d25fde9ea5ebd5f71a081ab682a28963",
+    "artifact": "results/structural_pocket_preflight.json",
+    "script": "scripts/p1_v5_structural_pocket_preflight.py",
+    "independent_review_status": "PENDING",
+    "accepted_for_full_run": false,
+    "read_only": true,
+    "diffdock_launched": false,
+    "vina_launched": false,
+    "gromacs_launched": false,
+    "note": "HETATM inventory and historical centers are evidence for review only; 4GM2 is PfClpR rather than PfClpP; future authorization must bind this artifact hash and the target-identity audit."
+  },
+  "final_technical_smoke_gate": {
+    "status": "TECHNICAL_SMOKE_FAILED_CLOSED",
+    "artifact": "results/diffdock_pocket_smoke_PP01_PfDHFR_rerun6/failure_provenance.json",
+    "supersedes": [
+      "results/diffdock_pocket_smoke_PP01_PfDHFR_rerun4/execution_provenance.json",
+      "results/diffdock_pocket_smoke_PP01_PfDHFR_rerun5/execution_provenance.json"
+    ],
+    "candidate_id": "PP-01",
+    "target": "PfDHFR",
+    "diffdock_internal_failures": 0,
+    "diffdock_internal_skips": 0,
+    "rank1_inside_fraction": 0.7916666666666666,
+    "pdb_pdbqt_ca_common": 1093,
+    "pdb_pdbqt_ca_rmsd_A": 0.0,
+    "biological_validation": false,
+    "accepted_for_full_run": false,
+    "vina_launched": false,
+    "consensus_scores_written": false,
+    "rrs_pns_updated": false,
+    "full_run_authorization_artifact": "ABSENT_BY_DESIGN"
+  },
+  "validation": {
+    "v4_to_v5_copy": "PASS",
+    "v4_final_tree_fingerprint": "92b98df7ff88356113f60b31d358193635c2ceb7ce616d54d7ce76f3ef5bb97a",
+    "v5_final_tree_fingerprint_excluding_this_manifest": "b677f2f434e96ad253e38e4292b266b5378f9d7d2082369980c5955d2ad4281f",
+    "v5_source_rename": "PASS",
+    "v5_manuscript_status_notice": "PASS",
+    "v5_compilation": "PENDING_INHERITED_DRAFT_NOT_COMPILED",
+    "diffdock_input_manifest": "PASS_INPUTS_ONLY",
+    "diffdock_inference": "RAW_ARTIFACTS_AUDITED_SUPERSEDED",
+    "vina_coordinate_gate": "BLOCKED_FRAME_GRID_MISMATCH",
+    "rrs_pns_integration": "BLOCKED_NO_ACCEPTED_VINA_CONSENSUS",
+    "inherited_pdf_quarantine": "PASS",
+    "inherited_v4_metadata_quarantine": "PASS",
+    "final_adversarial_review": "REVIEWED_BLOCKED_V5_NOT_SUBMISSION_READY",
+    "integrity_recomputation": "PASS",
+    "v5_tree_fingerprint_method": "sha256(sorted sha256+relative-path lines), excluding this manifest, __pycache__ directories, and *.pyc",
+    "v5_tree_fingerprint_file_count": 1097
+  }
+}

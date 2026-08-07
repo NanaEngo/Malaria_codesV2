@@ -1,0 +1,49 @@
+{
+  "project": "P1",
+  "canonical_root": "/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V4_CorrectedGrid",
+  "inputs": {
+    "centroids": {
+      "path": "v2_centroid_scores.csv",
+      "rows": 484
+    },
+    "leads": {
+      "path": "c6_primary_leads_synthesisable.csv",
+      "rows": 19913
+    },
+    "si_proxy": {
+      "path": "c3_selectivity_index.csv",
+      "rows": 810
+    }
+  },
+  "docking": {
+    "expected_records": 1936,
+    "no_pose_by_target": {
+      "pfDHFR": 33,
+      "pfCRT": 17,
+      "pfATP4": 1,
+      "pfClpP": 16
+    },
+    "nonnegative_by_target": {
+      "pfDHFR": 2,
+      "pfCRT": 2,
+      "pfATP4": 0,
+      "pfClpP": 0
+    },
+    "failed_records": 67,
+    "nonnegative_records": 4
+  },
+  "si_proxy": {
+    "valid_rows": 810,
+    "all_above_10": true,
+    "minimum": 10.018460367287082,
+    "median": 284.2643788377884,
+    "maximum": 106773.78340926598,
+    "interpretation": "unvalidated ranking heuristic; not an experimental IC50 ratio"
+  },
+  "status": "PASS",
+  "limitations": [
+    "This audit does not establish docking accuracy or biological activity.",
+    "Score-derived MMV labels remain retrodictive consistency checks.",
+    "The P1 V4 top-20 safety/polypharmacology table is audited separately from P2 Sets B/C."
+  ]
+}

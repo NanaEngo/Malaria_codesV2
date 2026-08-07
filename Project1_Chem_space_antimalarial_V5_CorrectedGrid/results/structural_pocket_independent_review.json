@@ -1,0 +1,49 @@
+{
+  "schema": "p1-v5-structural-pocket-independent-review/v1",
+  "status": "PENDING_INDEPENDENT_REVIEW",
+  "reviewer_identity": null,
+  "review_date": null,
+  "signed_review_artifact": null,
+  "signed_review_sha256": null,
+  "detached_signature_artifact": null,
+  "detached_signature_sha256": null,
+  "trusted_public_key_artifact": null,
+  "trusted_public_key_sha256": null,
+  "accepted_for_full_run": false,
+  "criteria": {
+    "target_identity_verified": false,
+    "pocket_residues_or_reference_ligand_justified": false,
+    "receptor_grid_frame_equivalence_verified": false,
+    "exact_config_smoke_rank1_100pct_in_grid": false,
+    "all_four_targets_individually_accepted": false
+  },
+  "targets": {
+    "PfDHFR": {
+      "pdb_id": "7F3Y",
+      "decision": "PENDING",
+      "evidence": "MTX instances A:702, A:704, B:702 extracted with native-coordinate round-trip PASS; identity/site correspondence not independently signed."
+    },
+    "PfCRT": {
+      "pdb_id": "6UKJ",
+      "decision": "PENDING",
+      "evidence": "Y01 A:501 extracted with native-coordinate round-trip PASS; cholesterol-hemisuccinate proxy is not accepted as inhibitor-pocket evidence."
+    },
+    "PfClpP": {
+      "pdb_id": "4GM2",
+      "decision": "PENDING",
+      "evidence": "No non-water HETATM anchor in current PDB; target-specific cavity/residue evidence required."
+    },
+    "PfATP4": {
+      "pdb_id": "9N10",
+      "decision": "PENDING",
+      "evidence": "No HETATM anchor in current PDB; membrane-site/residue evidence required."
+    }
+  },
+  "prohibited_until_pass": [
+    "DiffDock 68-pair execution",
+    "Vina score-only rescoring",
+    "four-target consensus scoring",
+    "RRS/PNS recomputation",
+    "manuscript claim updates"
+  ]
+}

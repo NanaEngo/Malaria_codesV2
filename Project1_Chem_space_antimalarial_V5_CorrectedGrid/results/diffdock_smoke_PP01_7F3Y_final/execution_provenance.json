@@ -1,0 +1,59 @@
+{
+  "command": [
+    "/home/nanaengo/miniforge3/envs/diffdock/bin/python3.9",
+    "/home/nanaengo/software/DiffDock/inference.py",
+    "--config",
+    "/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V5_CorrectedGrid/scripts/p1_v5_diffdock_inference_config.yaml",
+    "--loglevel",
+    "INFO",
+    "--protein_ligand_csv",
+    "/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/diffdock_smoke_PP01_7F3Y_final/smoke_input_manifest.csv",
+    "--out_dir",
+    "/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/diffdock_smoke_PP01_7F3Y_final"
+  ],
+  "config_sha256": "10101ff3955402a042b663c9b4df37454edcd53279678ed32c66e164340dceea",
+  "consensus_scores_written": false,
+  "cwd": "/home/nanaengo/software/DiffDock",
+  "ended_utc": "2026-08-07T19:03:07.693982+00:00",
+  "entrypoint_sha256": "d9a908b3f45672d3f45216070dfd4c1493f50c16882f03489c48f94262856e67",
+  "input_manifest_sha256": "4943f6c9da6527a00f730cd309f45ef89e3e972c7df5b3214fbe0263660bc45f",
+  "log_sha256": "ef6c5599ef4d1290a7b4c6c1d78055102e9bc29d7dd93aea8a51ee1664da6e8f",
+  "mode": "smoke",
+  "python": "/home/nanaengo/miniforge3/envs/diffdock/bin/python3.9",
+  "python_version": "3.9.18",
+  "raw_output_summary": {
+    "expected_pairs": 1,
+    "failures": 0,
+    "outputs": [
+      {
+        "candidate_id": "PP-01",
+        "complex_name": "PP-01_PfDHFR",
+        "confidence_ranks": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "confidence_sdf_count": 10,
+        "rank1_confidence_sdf": "/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/diffdock_smoke_PP01_7F3Y_final/PP-01_PfDHFR/rank1_confidence-0.05.sdf",
+        "rank1_confidence_sdf_sha256": "597ce97d0726cd95456339c5310c20a78f1dfd9dc07cf8541f1c8a0ea4d7f214",
+        "rank1_sdf": "/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/diffdock_smoke_PP01_7F3Y_final/PP-01_PfDHFR/rank1.sdf",
+        "rank1_sdf_sha256": "597ce97d0726cd95456339c5310c20a78f1dfd9dc07cf8541f1c8a0ea4d7f214",
+        "target": "PfDHFR"
+      }
+    ],
+    "samples_per_complex": 10,
+    "skipped": 0
+  },
+  "returncode": 0,
+  "rrs_pns_updated": false,
+  "schema": "p1-v5-diffdock-execution/v1",
+  "started_utc": "2026-08-07T19:01:00.025574+00:00",
+  "status": "RAW_OUTPUTS_VERIFIED"
+}

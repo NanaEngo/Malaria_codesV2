@@ -1,0 +1,142 @@
+{
+  "acceptance_rule": "No grid or 68-pair run may be accepted from geometry/IN_GRID improvement alone; require target-specific structural justification, independent review, exact-config smoke with rank1 100% IN_GRID, and cryptographically bound authorization.",
+  "accepted_for_full_run": false,
+  "consensus_scores_written": false,
+  "diffdock_launched": false,
+  "full_run_authorized": false,
+  "generated_utc": "2026-08-07T22:04:45.904330+00:00",
+  "gromacs_launched": false,
+  "independent_review_status": "PENDING",
+  "read_only": true,
+  "review_required": true,
+  "rrs_pns_updated": false,
+  "schema": "p1-v5-structural-pocket-preflight/v1",
+  "status": "REVIEW_REQUIRED_NOT_AUTHORIZED",
+  "targets": {
+    "PfATP4": {
+      "anchor_policy": "No non-water HETATM anchor detected; membrane-protein site definition must be documented",
+      "box_A": [
+        25.0,
+        25.0,
+        25.0
+      ],
+      "evidence_class": "GEOMETRY_ONLY_REVIEW_REQUIRED",
+      "historical_v2_center_A": [
+        129.3,
+        130.9,
+        92.4
+      ],
+      "non_water_hetatm_anchors": [],
+      "pdb": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/9N10.pdb",
+      "pdb_id": "9N10",
+      "pdb_sha256": "102e55cefea0f918cb003adbdacc2f27651021788c1aebb0a40c020069f75359"
+    },
+    "PfCRT": {
+      "anchor_policy": "Y01 identity and relevance to the inhibitor cavity require independent review",
+      "box_A": [
+        25.0,
+        25.0,
+        25.0
+      ],
+      "evidence_class": "HETATM_PROXY_REVIEW_REQUIRED",
+      "historical_v2_center_A": [
+        152.5,
+        148.0,
+        154.5
+      ],
+      "non_water_hetatm_anchors": [
+        {
+          "atom_count": 35,
+          "centroid_A": [
+            147.070343,
+            170.266771,
+            142.3638
+          ],
+          "distance_to_historical_center_A": 25.93410181558683,
+          "residue": "Y01"
+        }
+      ],
+      "pdb": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/6UKJ.pdb",
+      "pdb_id": "6UKJ",
+      "pdb_sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562"
+    },
+    "PfClpP": {
+      "anchor_policy": "RCSB 4GM2 is PfClpR (inactive paralog/subunit), not PfClpP; do not use this receptor for a PfClpP claim until a PfClpP structure is supplied and independently verified.",
+      "box_A": [
+        25.0,
+        25.0,
+        25.0
+      ],
+      "evidence_class": "TARGET_IDENTITY_MISMATCH_BLOCKED",
+      "historical_v2_center_A": [
+        26.19,
+        35.09,
+        24.72
+      ],
+      "non_water_hetatm_anchors": [],
+      "pdb": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/4GM2.pdb",
+      "pdb_id": "4GM2",
+      "pdb_sha256": "2130e9fdde2a56b5c31eef94a620624679af009f06bbd5e145e6053a82117fcc"
+    },
+    "PfDHFR": {
+      "anchor_policy": "MTX-like HETATM identity is inventoried but not independently validated here; site definition must be explicit and is not replaced by raw centroid",
+      "box_A": [
+        25.0,
+        25.0,
+        25.0
+      ],
+      "evidence_class": "HETATM_LIGAND_CANDIDATE_REVIEW_REQUIRED",
+      "historical_v2_center_A": [
+        8.34,
+        -13.9,
+        -41.754
+      ],
+      "non_water_hetatm_anchors": [
+        {
+          "atom_count": 12,
+          "centroid_A": [
+            1.666083,
+            -25.42625,
+            -8.473667
+          ],
+          "distance_to_historical_center_A": 35.84656454269905,
+          "residue": "GOL"
+        },
+        {
+          "atom_count": 99,
+          "centroid_A": [
+            7.436859,
+            0.560939,
+            -30.11898
+          ],
+          "distance_to_historical_center_A": 18.58246828789285,
+          "residue": "MTX"
+        },
+        {
+          "atom_count": 96,
+          "centroid_A": [
+            0.834938,
+            17.437896,
+            -36.157573
+          ],
+          "distance_to_historical_center_A": 32.70641641159765,
+          "residue": "NDP"
+        },
+        {
+          "atom_count": 40,
+          "centroid_A": [
+            1.61265,
+            -17.626625,
+            -13.460275
+          ],
+          "distance_to_historical_center_A": 29.320297513646576,
+          "residue": "UMP"
+        }
+      ],
+      "pdb": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/7F3Y.pdb",
+      "pdb_id": "7F3Y",
+      "pdb_sha256": "f630faa7915c4da1db22c9301cc5bbb9dee83558ffe5b4bbe2520f3931701ef4"
+    }
+  },
+  "vina_launched": false
+}

@@ -1,5 +1,7 @@
 # Phase 10 Final Pre-Submission Audit — V4 (2026-07-26)
 
+> **SUPERSEDED HISTORICAL AUDIT.** This record documents the 26 July state and is retained for provenance. The authoritative post-correction verdict is `final-submission-audit-20260807.md`, which includes the 4GM2/PfClpR identity correction and the final V4 compilation status.
+
 Run after the Phase 5 critical-review batch fixes were applied + recompiled clean.
 Checklist per article-writing skill Phase 10; evidence from V4 files + Phase 5 reviews.
 
@@ -41,19 +43,20 @@ Checklist per article-writing skill Phase 10; evidence from V4 files + Phase 5 r
 | Cover letter | PASS (per user) | Short, revision of ci-2026-012015, date 2026-07-26 (user chose this framing) |
 | Random seeds / reproducibility | PARTIAL | Seeds stated in Data Availability; per-centroid DiffDock/QED/ADMET not retained (disclosed) |
 
-## Remaining blockers / open items (non-blocking, need co-author — NOT fabricated)
+## Historical remaining blockers / open items (non-blocking, need co-author — NOT fabricated)
 | Item | Severity | Action |
 |---|---|---|
 | S23-1/H1: tab:vae_comparison (SM 851-876) + selected 64D KMeans row (SM 941) are "N/A" | MEDIUM | Needs VAE training logs (loss/KL/recon) + clustering metrics from co-author. Do NOT fabricate. Either restore real values or reframe the table to not claim "optimal/superior" from N/A. |
 | Epic 3 (M2 Tanimoto sensitivity curve; M3/H3 generated-vs-seed activity reframe; M5 ASKCOS synthesizability softening) | LOW | Optional for JCIM revision; not started. |
 | Phase 5 MEDIUM residuals (MPO "stable" wording at SM 202; "therapeutic window" for stage activity at SM 269/275) | LOW | Optional softening; not blocking. |
 
-## Verdict
+## Historical verdict
 Submission-ready pending the S23-1/H1 "N/A" tables (co-author data needed) and the
 optional Epic 3 / MEDIUM residuals. All CRITICAL and HIGH findings from the Phase 5
 adversarial + scientific-critical-thinking + editorial-prose reviews have been addressed
 by disclosure/reframing (no new calculations, per user constraint). Compiles clean;
 anti-AI clean; headline numbers verified against source CSVs + BMAD report.
 
-Recommend: obtain VAE training metrics + 64D KMeans clustering metrics from the co-author
-to fill the two "N/A" tables (or reframe them), then submit.
+The historical recommendation was to obtain VAE training metrics + 64D KMeans clustering
+metrics from the co-author or reframe those tables before submission. See the August 7 audit
+for the current status after those disclosure/reframing actions.

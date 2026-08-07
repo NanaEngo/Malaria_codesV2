@@ -1,0 +1,109 @@
+{
+  "candidate_count": 17,
+  "candidate_file": {
+    "bytes": 3578,
+    "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/candidate_selection/md_top20_candidates_polypharm.csv",
+    "sha256": "5fe90a6b7047626822e378cd0bcb5c41f7458b93a4ee63af3af3ead58ae45c36"
+  },
+  "cohort": "P2_SET_C_POLYPHARM_17",
+  "cohort_boundary": {
+    "p1_set_a": "separate",
+    "p2_set_b_parent_md": "separate",
+    "p2_set_c": "17 candidates used here",
+    "parent_md_systems_not_reused": [
+      "201-PfDHFR",
+      "438-PfATP4",
+      "164-PfClpP",
+      "214-PfCRT"
+    ]
+  },
+  "diffdock_artifacts": {
+    "confidence_checkpoint": {
+      "bytes": 19312669,
+      "path": "/home/nanaengo/software/DiffDock/workdir/confidence_model/best_model_epoch75.pt",
+      "sha256": "18d0fcc97fc55436786db02305ac61c734ad682aa5f8dee601555369c8461a57"
+    },
+    "confidence_model_parameters": {
+      "bytes": 2604,
+      "path": "/home/nanaengo/software/DiffDock/workdir/confidence_model/model_parameters.yml",
+      "sha256": "2fe8d3db566c5758fc2551d9fb3b1605256f72762998574bb893609298d4dd97"
+    },
+    "diffdock_home": {
+      "path": "/home/nanaengo/software/DiffDock"
+    },
+    "entrypoint": {
+      "bytes": 17891,
+      "path": "/home/nanaengo/software/DiffDock/inference.py",
+      "sha256": "d9a908b3f45672d3f45216070dfd4c1493f50c16882f03489c48f94262856e67"
+    },
+    "score_checkpoint": {
+      "bytes": 121063553,
+      "path": "/home/nanaengo/software/DiffDock/workdir/score_model/best_ema_inference_epoch_model.pt",
+      "sha256": "64afbdc97f6c700df0309162eb533ee6f2754c71412aca7a3a534a7239667260"
+    },
+    "score_model_parameters": {
+      "bytes": 4449,
+      "path": "/home/nanaengo/software/DiffDock/workdir/score_model/model_parameters.yml",
+      "sha256": "58c3d2a5da4194fe4ba968363a3f16ccb3c11f2c0898c9d27e62f4b06893f943"
+    }
+  },
+  "diffdock_parameters": {
+    "batch_size": 10,
+    "confidence_checkpoint_explicit": "best_model_epoch75.pt",
+    "inference_steps": 20,
+    "note": "Parameters are recorded for review; this script does not execute them.",
+    "samples_per_complex": 10
+  },
+  "execution": {
+    "gromacs_launched": false,
+    "inference_launched": false,
+    "rrs_pns_updated": false,
+    "scores_written": false,
+    "slurm_submitted": false
+  },
+  "manifest_csv": {
+    "bytes": 20556,
+    "path": "/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/diffdock_polypharm/diffdock_input_manifest.csv",
+    "sha256": "0cf04d2785e450e91e824340d8b91566f2129796035b6d542ed75ed26554ba53"
+  },
+  "pair_count": 68,
+  "project": "P1 V5 migration",
+  "required_raw_outputs_before_rescoring": [
+    "68 non-empty complex directories",
+    "rank1.sdf in every complex directory",
+    "rank1_confidence*.sdf in every complex directory",
+    "immutable execution log with command, environment, timestamps, and exit status",
+    "output-to-manifest candidate/target identity match"
+  ],
+  "schema": "p1-v5-diffdock-input-manifest/v1",
+  "status": "INPUT_MANIFEST_ONLY_NO_INFERENCE",
+  "target_count": 4,
+  "targets": [
+    "PfDHFR",
+    "PfCRT",
+    "PfClpP",
+    "PfATP4"
+  ],
+  "targets_files": {
+    "PfATP4": {
+      "bytes": 738396,
+      "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/9N10.pdb",
+      "sha256": "102e55cefea0f918cb003adbdacc2f27651021788c1aebb0a40c020069f75359"
+    },
+    "PfCRT": {
+      "bytes": 438453,
+      "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/6UKJ.pdb",
+      "sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562"
+    },
+    "PfClpP": {
+      "bytes": 1655559,
+      "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/4GM2.pdb",
+      "sha256": "2130e9fdde2a56b5c31eef94a620624679af009f06bbd5e145e6053a82117fcc"
+    },
+    "PfDHFR": {
+      "bytes": 875853,
+      "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/7F3Y.pdb",
+      "sha256": "f630faa7915c4da1db22c9301cc5bbb9dee83558ffe5b4bbe2520f3931701ef4"
+    }
+  }
+}

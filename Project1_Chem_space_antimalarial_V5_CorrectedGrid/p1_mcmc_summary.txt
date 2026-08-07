@@ -1,0 +1,30 @@
+MCMC Metropolis-Hastings Latent Space Sampling
+=======================================================
+Library molecules:       19913
+Latent space size:       5000
+Latent dimensions:       8D
+MCMC chains:             4
+Steps per chain:         5000
+Warmup (discarded):      1000
+Proposal std:            0.1
+Temperature:             2.0
+Prior weight:            0.2
+
+MPO surrogate R² (val):  0.3768
+Mean AC rate:            93.3%
+Mean MPO (chains):       0.7507
+Final MPO (chain 0):     0.7666
+Library mean MPO:        0.7420
+MPO improvement:         +0.0246
+
+Generated molecules:     8
+
+Top 5 generated molecules:
+  1. MPO=0.8007  Nc1ccc(CN2CCN(Cc3ccc(Cl)cc3)CC2)cc1
+  2. MPO=0.7955  COc1ccccc1CO
+  3. MPO=0.7952  COc1cc(F)c(CN2CCN(Cc3ccccc3)CC2)cc1OC
+  4. MPO=0.7943  CC1(C)C(C(=O)OCc2cccc(F)c2Cl)C1(F)F
+  5. MPO=0.7940  COc1ccc(OC)c(CN2CCN(Cc3ccc(OC)c(O)c3)CC2)c1
+
+Interpretation:
+  ✓ MCMC successfully discovered higher-MPO regions of latent space.

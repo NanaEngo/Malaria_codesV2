@@ -1,0 +1,39 @@
+{
+  "schema": "p1-v5-target-identity-audit/v1",
+  "status": "IDENTITY_MISMATCH_BLOCKS_INHERITED_V5_PANEL",
+  "generated_utc": "2026-08-07",
+  "source": "RCSB PDB entry metadata and local PDB headers",
+  "targets": {
+    "PfDHFR": {
+      "declared_pdb": "7F3Y",
+      "identity": "Wild-type Plasmodium falciparum dihydrofolate reductase-thymidylate synthase",
+      "decision": "IDENTITY_CONFIRMED_REVIEW_REQUIRED"
+    },
+    "PfCRT": {
+      "declared_pdb": "6UKJ",
+      "identity": "Plasmodium falciparum chloroquine resistance transporter 7G8 isoform",
+      "decision": "IDENTITY_CONFIRMED_PROXY_POCKET_NOT_ACCEPTED"
+    },
+    "PfClpP": {
+      "declared_pdb": "4GM2",
+      "identity": "Plasmodium falciparum ClpR (inactive paralog/subunit), not PfClpP",
+      "decision": "TARGET_IDENTITY_MISMATCH_BLOCKED",
+      "authoritative_url": "https://www.rcsb.org/structure/4GM2"
+    },
+    "PfATP4": {
+      "declared_pdb": "9N10",
+      "identity": "Plasmodium falciparum P-type ATPase PfATP4/PfABP complex",
+      "decision": "IDENTITY_CONFIRMED_CAVITY_REVIEW_REQUIRED"
+    }
+  },
+  "consequence": {
+    "inherited_manifest_68_pairs": "SUPERSEDED_NOT_ACCEPTED",
+    "inherited_raw_diffdock_audit": "SUPERSEDED_NOT_ACCEPTED",
+    "vina_score_only": "BLOCKED",
+    "consensus_scores_written": false,
+    "rrs_pns_updated": false,
+    "diffdock_launched_after_correction": false,
+    "gromacs_launched_after_correction": false
+  },
+  "required_repair": "Supply a verified PfClpP structure, regenerate the manifest, and independently review all four receptor identities before any new run."
+}

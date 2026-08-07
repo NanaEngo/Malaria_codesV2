@@ -1,0 +1,69 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=1in, bottom=0.9in}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{siunitx}
+\sisetup{separate-uncertainty=true, range-phrase=--}
+\onehalfspacing
+
+\begin{document}
+
+\noindent\textbf{V5 migration status --- internal draft, not submission-ready.} This cover letter is retained as inherited V4 submission material during the controlled migration. A 68-pair DiffDock raw run is now retained and independently audited, but its Vina score-only gate is blocked by a coordinate-frame/grid mismatch (10/68 rank-1 poses fully in-grid, 14/68 partial, 44/68 outside; 11/612 secondary confidence poses invalid). No V5 consensus, RRS, or PNS result has been accepted. Do not submit this letter until the coordinate gate, V5 manuscript compilation, provenance checks, and author approval are complete.
+
+\begin{flushleft}
+\textbf{Myke Vital Sao Temgoua} \\
+Department of Physics, Faculty of Science \\
+University of Yaound\'{e} I \\
+P.O. Box 812, Yaound\'{e}, Cameroon \\
+\href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[1.5em]
+July 26, 2026
+\end{flushleft}
+
+\begin{flushleft}
+Prof.\ Kenneth M.\ Merz, Jr., Editor-in-Chief \\
+\textit{Journal of Chemical Information and Modeling} \\
+American Chemical Society
+\end{flushleft}
+
+\vspace{0.5em}
+
+\noindent Dear Prof.\ Merz,
+
+We submit our revised manuscript \textbf{``Computational Discovery of Antimalarial Candidates from African Natural Product Chemical Space''} for consideration as an Article in \textit{JCIM} (Manuscript ID: ci-2026-012015). This work addresses a critical computational bottleneck in antimalarial drug discovery: conventional virtual screening approaches require screening tens of thousands of compounds per target (exceeding 1000 CPU-hours), making comprehensive multi-target exploration prohibitively expensive for research groups in malaria-endemic regions where \qty{94}{\percent} of global cases occur.
+
+\textbf{Key innovations and significance:}
+
+\textit{Computationally benchmarked screening framework with dual-benchmark strategy.} We developed a centroid-based screening protocol that achieves \qty{99.3}{\percent} cost reduction (from 263,424 to 1,936 docking runs) while retaining the reported benchmark performance of the evaluated protocols. The evidence is bounded by complementary validation designs: (1) prospective DEKOIS external validation (PfDHFR, 40 actives + 1200 property-matched decoys) showing near-random enrichment for single-method AutoDock Vina docking (ROC-AUC 0.450), and (2) retrodictive consistency against the MMV Malaria Box positive-control benchmark (399 confirmed antimalarial actives), where the dual-consensus protocol (Vina + ML-based DiffDock rescoring) yielded ROC-AUC 0.924--1.000 with bootstrap 95\% confidence intervals across four \textit{P. falciparum} resistance targets. These distinct benchmark designs provide calibration evidence before extrapolation to unexplored African natural product space, but do not establish prospective performance on a common decoy set.
+
+\textit{Generative scaffold-hopping beyond local neighborhood interpolation.} Our ConvVAE-SMILES architecture systematically explores chemically distinct space relative to the evaluated seed and local-perturbation baselines: \qty{92.6}{\percent} of generated molecules are unreachable by local SELFIES perturbations from known antimalarials (mean max Tanimoto 0.206 to seed compounds), yet scaffold recovery reaches \qty{69.3}{\percent} (70/101 bioactive frameworks preserved). The apparent paradox is resolved through topological analysis: the 1.84$\times$ scaffold-to-whole-molecule Tanimoto ratio demonstrates systematic preservation of privileged ring systems while diversifying peripheral substituents. A matched STONED-SELFIES comparison found that \qty{97.9}{\percent} of VAE-generated molecules remained inaccessible even after 5,525 local mutations from known drugs; this supports scaffold diversification beyond the tested local-search baseline, but does not by itself establish biological activity or prospective discovery performance.
+
+\textit{Systematic characterization of African natural product chemical space.} From 396 African natural products and 454 synthetic antimalarials, we generated a 65,856-molecule hybrid library exhibiting 31.4\% scaffold diversity (20,702 unique Bemis--Murcko frameworks) with favorable drug-likeness (\qty{94.1}{\percent} Lipinski-compliant, \qty{57.0}{\percent} SYBA $>$ 0 for synthetic accessibility). Variational autoencoder clustering with KMeans identified 484 diverse centroids for efficient multi-target screening against PfDHFR, PfCRT, PfATP4, and PfClpP. The dual-filter consensus protocol (AutoDock Vina + DiffDock) combines partially distinct physics-based and ML-based screening signals (Spearman $\rho$ = 0.1--0.4), reducing the hit fraction by 12--45\% relative to single-method thresholds while recovering \qty{69.8}{\percent} of MMV Malaria Box actives; this hit-rate change is not a measured false-positive reduction without independent inactive panels.
+
+\textit{Computationally prioritized synthesizable leads with open-access dissemination.} Multi-parameter optimization integrating binding affinity, geometric confidence, drug-likeness (QED), ADMET safety, and Lipinski compliance identified 19,913 synthesizable leads (SYBA $>$ 0) from 53 optimization-worthy clusters. All 810 screened seed molecules with valid predictions exceeded the unvalidated predicted selectivity-proxy threshold $\text{SI}_{\text{pred}} > 10$, and the top-20 MPO-ranked candidates share tractable piperazine scaffolds (SA $<$ 2.0) with computationally predicted retrosynthetic routes dominated by reductive amination chemistry. Importantly, we quantified the orthogonality between drug-likeness and binding affinity through external Tartarus benchmark validation (19,913 molecules, Spearman $\rho$ = 0.013, $p$ = 0.091), indicating that MPO-based ranking adds developability information beyond raw docking scores; this does not establish independence among the individual MPO components. The computational workflow and currently available data are versioned in the public repository (GitHub: \url{https://github.com/NanaEngo/Malaria_codesV2}); the Zenodo DOI 10.5281/zenodo.19608875 is reserved, but upload remains pending.
+
+\textit{Democratizing computational drug discovery in endemic regions.} By reducing per-target screening requirements from $>$1000 CPU-hours to $<$10 CPU-hours, this framework enables comprehensive multi-target antimalarial screening on standard computational infrastructure. This accessibility gain is particularly critical for research institutions in malaria-endemic regions of sub-Saharan Africa, where \qty{94}{\percent} of global malaria burden occurs but computational resources for drug discovery remain severely limited. The observed efficiency--accuracy tradeoff illustrates how resource-constrained settings can evaluate large chemical spaces, while prospective validation remains necessary before claims of predictive quality, positioning local researchers to systematically explore regional chemical biodiversity for therapeutic candidates.
+
+\textbf{Relevance to \textit{JCIM} readership:} This work directly addresses core cheminformatics challenges: (1) generative molecular design with explicit validation of scaffold-hopping versus interpolation, (2) consensus scoring strategies for orthogonal computational evidence integration, (3) benchmarking protocols combining prospective external validation with retrodictive consistency checks, (4) multi-parameter optimization frameworks balancing potency and developability, and (5) computational efficiency innovations enabling drug discovery in resource-limited settings. The bounded validation, open-source implementation, and versioned data dissemination align with \textit{JCIM}'s emphasis on reproducible computational methodologies for chemical biology and drug discovery applications.
+
+\noindent\textbf{Suggested reviewers:}
+\begin{enumerate}
+  \item Dr.\ Maria Sorokina (University of Jena, Germany) --- Expert in natural product cheminformatics and computational analysis of African medicinal plant databases; has published extensively on NP-like chemical space characterization and database curation methodologies.
+  \item Dr.\ Fidele Ntie-Kang (University of Buea, Cameroon) --- Leading researcher in African natural product virtual screening and \textit{in silico} antimalarial drug discovery; founder of the African Natural Products Database initiative.
+  \item Dr.\ David Rogers (Givaudan, USA) --- Developer of extended-connectivity fingerprints and molecular similarity metrics; expert in fingerprint-based virtual screening and molecular diversity assessment.
+\end{enumerate}
+
+\noindent This manuscript represents original work not under consideration elsewhere. All authors have reviewed and approved the submission.
+
+\vspace{1em}
+
+\noindent Sincerely,
+
+\vspace{1em}
+
+\noindent \textbf{Myke Vital Sao Temgoua} \\
+(on behalf of all co-authors)
+
+\end{document}
