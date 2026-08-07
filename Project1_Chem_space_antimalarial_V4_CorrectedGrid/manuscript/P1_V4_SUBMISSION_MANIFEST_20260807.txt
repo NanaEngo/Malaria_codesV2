@@ -1,0 +1,68 @@
+P1 V4 SUBMISSION MANIFEST
+Generated: 2026-08-07
+Status: LOCAL VERIFIED / NOT SUBMITTED
+Target: Journal of Chemical Information and Modeling (JCIM)
+
+This manifest identifies the canonical P1 V4 submission package. It is not a Zenodo
+publication record and does not imply that the reserved Zenodo DOI has been uploaded
+or published. The files below were compiled locally from the canonical V4 sources.
+
+CANONICAL SUBMISSION FILES
+--------------------------
+Path: manuscript/Antimalarial_Candidates_African_NP_V2607.tex
+SHA256: 98811518aab90711cc0aeca68364ff63d25552f556b2a55766bf97a0b7cdda1b
+Role: Main manuscript source
+
+Path: manuscript/Antimalarial_Candidates_African_NP_V2607.pdf
+SHA256: 443edf59e248c221568ecd3d3025087f20b2a52a3e0a96e7402b2cb20b65c8b8
+Role: Main manuscript PDF
+Compilation: 41 pages; final documented LaTeX return code 0
+
+Path: manuscript/Antimalarial_Candidates_African_NP_V2607_SM.tex
+SHA256: 98476c4a320b7f15a41409e7096f238796ba11d03a53893cd112b384b3bcd3de
+Role: Supplementary Material source
+
+Path: manuscript/Antimalarial_Candidates_African_NP_V2607_SM.pdf
+SHA256: 302f35c858b1dfeb5544afedf8be2e13794ac0882dd528ab63259fde99e8e045
+Role: Supplementary Material PDF
+Compilation: 48 pages; final documented LaTeX return code 0
+
+Path: manuscript/Cover_Letter.tex
+SHA256: 66c6783bf0f30ff6be1ee8121e6a9f59aea0aecab150ee89fd680de315022d90
+Role: One-page cover-letter source
+
+Path: manuscript/Cover_Letter.pdf
+SHA256: 38472b4e3c368ab6159572e871c293c85e4d524b2fd7860f1bf005332b4190fd
+Role: Cover-letter PDF
+Compilation: 1 page; final LaTeX return code 0 (two-pass build)
+
+REPRODUCIBILITY SUPPORT
+-----------------------
+Path (project-root relative): Project1_Chem_space_antimalarial_V4_CorrectedGrid/bibliography/Sao_Chim_Space.bib
+Role: Bibliography database referenced by the main and supplementary sources
+
+Path: README.md
+Role: Project provenance, scope, and data-availability notes
+
+VALIDATION STATUS
+-----------------
+- Full-tree temporary-copy compilation: passed.
+- In-place canonical recompilation: passed.
+- Final-pass fatal LaTeX errors: none reported.
+- Final-pass undefined citations/references: none reported.
+- `git diff --check`: passed at manifest-generation time.
+- Zenodo DOI 10.5281/zenodo.19608875: reserved; upload pending.
+- Journal submission: pending human author approval.
+
+EXPLICIT EXCLUSIONS FROM THE SUBMISSION PACKAGE
+------------------------------------------------
+- FINAL_STATUS.txt
+- COVER_LETTER_SUMMARY.md
+- COVER_LETTER_COMPARISON.txt
+- LaTeX auxiliary/build files: *.aux, *.bbl, *.blg, *.log, *.out, *.fdb_latexmk, *.fls
+- Historical V2 manuscript copies and archive-sync paths
+- Credentials, tokens, SLURM logs, GROMACS trajectories, and unrelated project files
+
+Before any Zenodo upload, regenerate hashes and this manifest from the exact final
+archive, perform a rights/licence and secret scan, obtain author approval, and update
+the status only after Zenodo publication succeeds.
