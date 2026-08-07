@@ -75,7 +75,7 @@ La valeur HV 1.2366 (sous réf. 1.1, k=4) est sensible au point-référence : re
 | *Evidence/provenance* | Toutes means/σ/p/HV reproduits depuis data dép; jackknife 0/20 flip. |
 | *Limits-claim* | C5 "concave" = sur-claim mineur, corrigé (F2). C8/C9 restent des caveats honnêtes. |
 | *Représentation* | HV convention-dépendante → explicitée (F1) ; figures v12 déjà real. |
-| *Reproductibility* | GitHub public + Zenodo DOI immédiate ; env versions in repo (déjà OK v12). |
+| *Reproductibility* | GitHub public ; Zenodo DOI reserved but upload pending ; env versions in repo. |
 
 ---
 
@@ -96,7 +96,7 @@ Sur la même matrice pondérée que le 1er audit (critères × poids × risque r
 | Segment | Avant 1er audit | Après 1er audit (F1–F5 + figures) | Après 2nd audit (F1–F3 ajouts) |
 |---------|:---:|:---:|:---:|
 | Vraisemblance statistique / power / multiplicité | 0.72 | ~0.88 | **~0.92** (CI ajouté, multiplicité disclosée, effet directionnel honnête) |
-| Vraisemblance authorability/repro (repo+Zenodo) | élevé | 0.98 | 0.98 |
+| Vraisemblance authorability/repro (repo; Zenodo pending) | élevé | 0.95 | 0.95 |
 | Vraisemblance claim Pareto/HV | 0.70 | 0.85 | **0.90** (concave rewording aligné sur données) |
 | Vraisemblance figures/representation | 0.78 | 0.97 | 0.97 |
 | Risque résiduel global (pondéré) | 2.80 | 1.30 | **~1.15** |

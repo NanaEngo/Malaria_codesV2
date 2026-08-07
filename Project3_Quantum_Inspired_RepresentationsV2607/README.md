@@ -101,6 +101,6 @@ python scripts/p3_chembl_validation.py
 
 ## 6. Citation & Provenance
 
-- **Data DOI:** `10.5281/zenodo.19608875` (reserved)
+- **Data DOI:** `10.5281/zenodo.19608875` (reserved; upload pending) (reserved; Zenodo upload pending)
 - **GitHub Repository:** https://github.com/NanaEngo/Malaria_codesV2
 - **BMAD Compliance:** Full data provenance and canonical directory governance aligned with `BMAD_Q1_DATA_ANALYSIS_REPORT.md` (v50, 02/08/2026).

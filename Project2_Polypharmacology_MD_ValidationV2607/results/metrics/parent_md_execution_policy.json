@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "cohort_id": "P2_PARENT_STUDY_MD_4",
+  "allowed_systems": ["201_DHFR", "438_ATP4", "164_ClpP", "214_CRT"],
+  "required_temperature_k": 310.15,
+  "required_force_fields": {
+    "protein": "CHARMM36m",
+    "ligand": "CGenFF",
+    "water": "TIP3P"
+  },
+  "required_before_execution": [
+    "forcefield_manifest.json",
+    "topol.top",
+    "npt.gro",
+    "npt.cpt"
+  ],
+  "set_c_execution_allowed": false,
+  "note": "The observed historical trajectories used GAFF2/ACPYPE ligands and are not retroactively relabelled as CGenFF. A future publication-grade rerun must provide an approved per-system manifest and pass all preflight checks."
+}

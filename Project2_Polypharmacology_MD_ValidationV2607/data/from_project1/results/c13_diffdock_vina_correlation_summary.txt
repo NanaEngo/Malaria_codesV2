@@ -5,9 +5,11 @@ Per-target Pearson correlations:
   PfDHFR (7F3Y): r = 0.327, p = 2.11e-08 (n = 280)
   PfCRT (6UKJ): r = 0.129, p = 3.08e-01 (n = 64)
   PfATP4 (9N10): r = 0.113, p = 1.67e-02 (n = 447)
-  PfClpP (4GM2): r = 0.361, p = 3.58e-15 (n = 447)
+  PfClpR (4GM2; not PfClpP): r = 0.361, p = 3.58e-15 (n = 447)
 
 Pooled (all targets): r = -0.049, p = 8.19e-02 (n = 1238)
+
+Identity caveat: PDB 4GM2 is PfClpR rather than PfClpP; this historical 4GM2 record is not PfClpP validation.
 
 Interpretation:
   Low correlation (|r| < 0.5) confirms orthogonality of DiffDock (geometric)

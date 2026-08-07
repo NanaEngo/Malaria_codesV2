@@ -73,7 +73,7 @@ TARGET_MAP = {
     "7F3Y": "PfDHFR",
     "6UKJ": "PfCRT",
     "9N10": "PfATP4",
-    "4GM2": "PfClpP",
+    "4GM2": "PfClpR",
 }
 
 # ─── MPO computation ─────────────────────────────────────────────────────────
@@ -398,7 +398,7 @@ def generate_comparison(old: pd.DataFrame, new: pd.DataFrame,
         lines.append("─" * 80)
 
         targets = ["7F3Y", "6UKJ", "9N10", "4GM2"]
-        target_name = {"7F3Y": "PfDHFR", "6UKJ": "PfCRT", "9N10": "PfATP4", "4GM2": "PfClpP"}
+        target_name = {"7F3Y": "PfDHFR", "6UKJ": "PfCRT", "9N10": "PfATP4", "4GM2": "PfClpR"}
 
         for target in targets:
             mpo_col = f"MPO_{target.lower()}"

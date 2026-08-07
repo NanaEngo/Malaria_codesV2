@@ -1,7 +1,7 @@
 # Project 4 — Advanced Monte Carlo Strategies (P4)
 
 **Target Journal:** *Journal of Cheminformatics* (JoC) — canonical manuscript: `P4_Pareto_MCTS_JoC_refined.tex`
-**Status:** v11 20-seed benchmark complete (optimal MCTS config, job 12725); manuscript ready for submission (Target PA ≥ 85%)
+**Status:** v12 20-seed benchmark complete (optimal MCTS config; greedy correction applied); manuscript ready for submission (Target PA ≥ 85%)
 **Date:** August 2026
 
 P4 implements a **de novo molecular generation framework** targeting **African Natural Product (ANP)-inspired antimalarial chemistry**, combining:
@@ -9,7 +9,7 @@ P4 implements a **de novo molecular generation framework** targeting **African N
 - **Pareto MCTS**: Multi-objective optimization via exact non-dominated front and hypervolume calculation (`pymoo` $WFG$ algorithm, HV ≥ 0.58).
 - **Real P1/P2 Oracles**: MPO (≥0.75), docking (Tartarus V2 *P. falciparum* targets), SYBA (>0), SA (<3.5), RRS (selectivity), PNS (polypharmacology), plus GPU-accelerated CuPy batch Tanimoto lookup.
 - **4-Method Benchmark**: MCTS+ScafVAE vs. Random vs. Greedy vs. GA across 20 independent seeds with paired t-testing and real best-in-seed molecule sets. The **v11 benchmark** (20 seeds, screened-optimal MCTS config `c_PUCT=5.0, ν=0.01, T=0.8`, job 12725) is the canonical P4 benchmark; the v10 default-config run is retained as sensitivity comparison. Headline: Random 0.7335 > MCTS 0.7276 > Greedy 0.7211 > GA 0.7027 (MCTS–random Δ=0.006, p=0.026) — honest negative on scalar reward, value in the Pareto front (HV 1.2366, 4 non-dominated solutions).
-- **QMC Validation**: Two-tiered electronic-structure validation pipeline (Tier 1: wB97X-D DFT; Tier 2: DMC diffusion Monte Carlo gold standard). QMC results were removed from the manuscript pending a reproducible validation run.
+- **QMC status**: Tier 1 SCF diagnostics are complete; candidate-level Tier 2 VMC/DMC remains diagnostic and is not publication-grade. QMC claims are excluded from the manuscript.
 
 ## Gaps & Novelty
 
@@ -119,5 +119,5 @@ The `OracleAggregator` links MCTS rewards to real P1/P2 antimalarial data:
 
 - **Target Journal**: *Journal of Cheminformatics* (JoC)
 - **Title**: *"Pareto-guided Monte Carlo tree search explores multi-objective trade-offs missed by scalar antimalarial generation"*
-- **Data Availability**: FAIR compliant via Zenodo (DOI: `10.5281/zenodo.19608875`) and GitHub (`https://github.com/NanaEngo/Malaria_codesV2`).
+- **Data Availability**: Current artefacts are available in the public GitHub repository (`https://github.com/NanaEngo/Malaria_codesV2`). Zenodo DOI `10.5281/zenodo.19608875` is reserved; upload pending.
 - **Canonical v11 Benchmark**: `results/benchmark_molecules_opt/p4_benchmark_merged.csv` (20 seeds × 4 methods, optimal MCTS config). See `P4_DATA_ANALYSIS_REPORT.md` for the consolidated results.

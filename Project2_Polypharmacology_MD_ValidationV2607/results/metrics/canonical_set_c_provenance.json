@@ -1,0 +1,23 @@
+{
+  "schema_version": 2,
+  "cohort_id": "P2_SET_C_POLYPHARM_17",
+  "candidate_file": "results/candidate_selection/md_top20_candidates_polypharm.csv",
+  "candidate_sha256": "5fe90a6b7047626822e378cd0bcb5c41f7458b93a4ee63af3af3ead58ae45c36",
+  "candidate_count": 17,
+  "docking_file": "results/docking_mutants.csv",
+  "docking_system_count": 136,
+  "metrics": [
+    "RRS",
+    "ACSI",
+    "PNS"
+  ],
+  "metric_provenance": "Docking/cheminformatics-derived; no production MD assigned to set C.",
+  "parent_md_systems_excluded": [
+    "201-PfDHFR",
+    "438-PfATP4",
+    "164-PfClpP",
+    "214-PfCRT"
+  ],
+  "interpretable_mmgbsa": "214-PfCRT only; -18.25 +/- 0.40 kcal/mol",
+  "mc_status": "No completed MC trajectories or MC-derived free energies in canonical evidence set"
+}

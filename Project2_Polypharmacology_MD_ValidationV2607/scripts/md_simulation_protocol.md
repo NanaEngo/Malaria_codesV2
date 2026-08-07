@@ -1,11 +1,13 @@
 # GROMACS Molecular Dynamics Simulation Protocol
 ## Paper 2: Resistance-Informed MD Validation
 
-**Targets**: Top 20 candidates (MPO ≥ 0.70, SYBA > 0, SI > 10) from Paper 1  
-**Receptors**: 4 WT targets + 6 resistance mutants = up to 120 systems  
-**Duration**: WT baseline 200 ns; mutant systems 100 ns  
-**Force fields**: CHARMM36m (protein) + CGenFF v4.4 (ligands) + TIP3P (water)  
-**Temperature**: 300 K  
+**Cohorts**: Canonical set C contains 17 polypharmacology candidates for docking/RRS/ACSI/PNS. Production MD was run separately on four named parent-study consensus leads (201-PfDHFR, 438-PfATP4, historical 164-PfClpP cohort label, 214-PfCRT); PDB 4GM2 is PfClpR rather than PfClpP.
+**Cohort boundary**: 17 set-C candidates/136 docking states; four separate parent-study MD complexes (201-PfDHFR, 438-PfATP4, historical 164-PfClpP cohort label, 214-PfCRT).
+**Observed MD**: four parent-study wild-type systems, 10 ns each (40 ns total); no set-C production MD.
+**Force fields observed**: CHARMM36m protein + GAFF2/ACPYPE AM1-BCC ligand topologies + TIP3P; this heterogeneity limits absolute MM-GBSA interpretation.
+**Temperature**: 310.15 K (physiological).
+**Future execution**: guarded scripts default to dry-run; any future run requires `--execute` plus `P2_MD_EXECUTE_CONFIRM=I_UNDERSTAND`.
+
 **Software**: GROMACS 2022.4, gmx_MMPBSA (igb=2, OBC model)  
 
 > **Use the scripts** — this document describes the protocol; the scripts implement it.  
@@ -31,10 +33,13 @@ export SWISSMODEL_TOKEN=<your_token>
 
 ## 1. Candidate Selection
 
+The canonical set-C file is `results/candidate_selection/md_top20_candidates_polypharm.csv` (17 rows). It is distinct from the historical set-B file `results/md_top20_candidates.csv` and from the four parent-study MD systems. Use `scripts/p2_setc_md_pilot.py` for a bounded, fail-closed future-MD preflight; it never launches GROMACS. Before a future system can pass preflight, its directory must contain non-empty `complex.gro`, `topol.top`, and `md.mdp` files plus `system_manifest.json` with exact `set_c_id`, `target`, `mutation`, and canonical `smiles` values matching the selected docking row. No current preparation script writes this manifest; implementing and validating that producer is a prerequisite for any future READY status.
+
+
 ```bash
 python scripts/md_select_top20.py
-# Output: results/md_top20_candidates.csv
-#         results/md_top20_smiles.smi
+# Output: historical candidate-selection artifacts only; do not treat them as the production-MD cohort.
+# Canonical set-C metrics use results/candidate_selection/md_top20_candidates_polypharm.csv.
 ```
 
 Filters: MPO ≥ 0.70 AND SYBA > 0 AND SI > 10.  
@@ -125,18 +130,18 @@ Accepts `ions.gro` (preferred) or `solvated.gro` as input.
 
 ---
 
-## 7. NVT Equilibration (100 ps, 300 K)
+## 7. NVT Equilibration (100 ps, 310.15 K)
 
 ```bash
 bash scripts/md_run_nvt.sh
 ```
 
-Key settings: V-rescale thermostat, τ_T = 0.1 ps, ref_T = 300 K,  
+Key settings: V-rescale thermostat, τ_T = 0.1 ps, ref_T = 310.15 K,
 position restraints 1000 kJ/mol/nm² on protein heavy atoms.
 
 ---
 
-## 8. NPT Equilibration (500 ps, 300 K, 1 bar)
+## 8. NPT Equilibration (500 ps, 310.15 K, 1 bar)
 
 ```bash
 bash scripts/md_run_npt.sh
@@ -147,24 +152,25 @@ compressibility = 4.5×10⁻⁵ bar⁻¹.
 
 ---
 
-## 9. Production MD
+## 9. Production MD (historical results and guarded future workflow)
 
 ```bash
 bash scripts/md_run_production.sh            # all complexes, auto GPU
 bash scripts/md_run_production.sh 201_DHFR 0 # single complex, GPU 0
 ```
 
-- 100 ns (mutants) or 200 ns (WT baseline), 2 fs timestep
-- 3 replicates with unique seeds (12345, 24690, 36935)
-- Output every 10 ps (coordinates), 2 ps (energies)
-- Total: ~14,000 ns across 120 systems
+- **Observed completed result:** four parent-study complexes, 10 ns each (40 ns total), at 310.15 K; no set-C production MD was completed.
+- **Guarded future default:** 10 ns, one replicate, 2 fs timestep; this is a targeted diagnostic, not a convergence claim.
+- A future publication-grade campaign would require pre-specified duration, independent replicates, force-field consistency, integrity checks, and a registered provenance manifest before execution.
+- Output targets are every 10 ps (coordinates) and 2 ps (energies) for the guarded template.
 
-**Hardware**: 4× A100 (80 GB), ~35 days.  
-**Storage**: ~6 TB trajectories. Back up weekly with MD5 checksums.
+**Hardware/storage note:** no future run is implied by this protocol. Large trajectories must be archived with checksums before being described as publicly available.
 
 ---
 
 ## 10. Trajectory Analysis
+
+Only bound, topology-valid parent-study systems may receive an interpretable MM-GBSA endpoint estimate. In the canonical evidence set, this rule retains PfCRT--214 only (−18.25 ± 0.40 kcal/mol); the historically labelled 164--PfClpP cohort and PfDHFR--201 dissociated, and PfATP4--438 was excluded for a CHARMM36-to-AMBER conversion artifact. PDB 4GM2 is PfClpR rather than PfClpP, so the historical 164 label is not structural validation of PfClpP.
 
 ```bash
 python scripts/md_analyse_trajectories.py
@@ -183,11 +189,14 @@ Output: `results/md_results/md_analysis_summary.csv`
 
 ## 11. Paper 2 Metrics
 
+RRS, ACSI, PNS, and the cross-metric analysis are computed for set C and are docking/cheminformatics-based. They must not be described as MD-derived metrics for the four parent-study complexes.
+
+
 ```bash
 python scripts/md_calculate_rrs_acsi_pns.py
 ```
 
-Requires `results/docking_mutants.csv` (Vina scores vs WT + 6 mutants).
+Requires `results/docking_mutants.csv` (Vina scores vs WT + 6 mutants). The canonical set-C run enforces exactly 136 unique candidate/target/mutation rows (17 candidates × 8 PfDHFR/PfCRT states) and embeds the candidate-file path and SHA-256 in each output CSV and the provenance manifest. Explicit custom cohorts receive structural coverage checks but must supply their own expected target/mutation schema.
 
 | Metric | Formula | Output |
 |--------|---------|--------|

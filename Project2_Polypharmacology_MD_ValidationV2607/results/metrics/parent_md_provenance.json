@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "cohort_id": "P2_PARENT_STUDY_MD_4",
+  "purpose": "Targeted post-docking check of four named parent-study consensus complexes; not MD validation of set C.",
+  "systems": [
+    {"lead": "201", "target": "PfDHFR", "duration_ns": 10, "status": "ligand_dissociated", "mmgbsa_interpretable": false},
+    {"lead": "438", "target": "PfATP4", "duration_ns": 10, "status": "ligand_bound_but_mmgbsa_excluded_conversion_artifact", "mmgbsa_interpretable": false},
+    {"lead": "164", "target": "PfClpP", "duration_ns": 10, "status": "ligand_dissociated", "mmgbsa_interpretable": false},
+    {"lead": "214", "target": "PfCRT", "duration_ns": 10, "status": "ligand_bound", "mmgbsa_interpretable": true, "mmgbsa_kcal_mol": -18.25, "mmgbsa_sd_kcal_mol": 0.40}
+  ],
+  "total_duration_ns": 40,
+  "temperature_k": 310.15,
+  "protein_force_field": "CHARMM36m",
+  "ligand_force_field_observed": "GAFF2 via ACPYPE with AM1-BCC charges",
+  "force_field_limitation": "GAFF2/CHARMM36m heterogeneity; absolute energies are not treated as calibrated thermodynamic values.",
+  "set_c_md_completed": false,
+  "gromacs_rebuild_438_status": "not_run_by_mitigation_workflow",
+  "mmgbsa_reporting_rule": "Only bound, non-corrupted systems may receive an interpretable endpoint estimate; dissociated or conversion-corrupted systems are N/A.",
+  "generated_without_gromacs": true
+}

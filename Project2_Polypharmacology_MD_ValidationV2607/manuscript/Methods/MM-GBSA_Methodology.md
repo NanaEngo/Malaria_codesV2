@@ -1,5 +1,8 @@
 # MM-GBSA Calculation Methodology
 
+> **Active P2 boundary:** this document is a general/historical protocol note. The canonical evidence set retains only PfCRT--214 (−18.25 ± 0.40 kcal/mol) as interpretable. Dissociated systems, conversion-corrupted systems, and any unvalidated endpoint are N/A; the examples below must not be read as results for 20 candidates.
+
+
 ## Overview
 
 Molecular Mechanics/Generalized Born Surface Area (MM-GBSA) calculations provide more accurate binding free energy estimates than docking scores by incorporating:
@@ -70,7 +73,7 @@ gmx_MMPBSA --version
 
 ### 3.1 Select Frames
 
-Extract snapshots from the **last 50 ns** of simulation (equilibrated portion):
+Extract snapshots from the equilibrated portion of a validated trajectory. The historical 50 ns/200 ns example below is not applicable to the canonical 10 ns P2 trajectories; the observed PfCRT--214 estimate used 101 snapshots across 10 ns.
 
 ```bash
 # Extract every 100 ps from last 50 ns (500 frames total)
@@ -160,7 +163,7 @@ gmx_MMPBSA -O -i mmpbsa.in \
 **Runtime:** ~1-2 hours per system (500 frames)  
 **Total for 20 systems:** 20-40 hours
 
-### 4.3 Parallel Execution
+### 4.3 Parallel Execution (historical template; not used for canonical P2 results)
 
 ```bash
 #!/bin/bash

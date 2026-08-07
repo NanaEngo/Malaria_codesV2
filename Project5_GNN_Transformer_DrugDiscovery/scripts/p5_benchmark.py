@@ -71,21 +71,75 @@ def get_device(name: str) -> torch.device:
 
 
 def load_splits(split_type: str) -> list:
-    """Returns list of 5 folds, each fold = list of 5 seed dicts"""
-    # For simplicity: return per-seed fold arrays
-    pass
+    """Load and validate frozen split files as ``folds x seeds``.
+
+    Each returned item is a list of five dictionaries with ``train``, ``val``
+    and ``test`` index arrays.  Split files are immutable provenance inputs;
+    missing or malformed files fail loudly rather than silently regenerating
+    folds during a benchmark.
+    """
+    if split_type not in {"random", "scaffold"}:
+        raise ValueError(f"Unsupported split_type={split_type!r}")
+
+    split_files = [
+        P5_ROOT / "results" / f"p5_splits_{split_type}_5fold_seed{seed}.npy"
+        for seed in SEEDS
+    ]
+    missing = [str(path) for path in split_files if not path.exists()]
+    if missing:
+        raise FileNotFoundError(
+            "Missing frozen split file(s); refusing to regenerate splits: "
+            + ", ".join(missing)
+        )
+
+    per_seed = [np.load(path, allow_pickle=True) for path in split_files]
+    if any(len(splits) != N_FOLDS for splits in per_seed):
+        raise ValueError(
+            f"Expected {N_FOLDS} folds for every {split_type} split file"
+        )
+
+    folds = []
+    for fold_idx in range(N_FOLDS):
+        seed_folds = []
+        for seed_idx, splits in enumerate(per_seed):
+            record = splits[fold_idx]
+            if not isinstance(record, dict) or not {"train", "val", "test"}.issubset(record):
+                raise ValueError(
+                    f"Malformed {split_type} split at fold={fold_idx}, "
+                    f"seed={SEEDS[seed_idx]}"
+                )
+            train = np.asarray(record["train"], dtype=np.int64)
+            val = np.asarray(record["val"], dtype=np.int64)
+            test = np.asarray(record["test"], dtype=np.int64)
+            if len(np.unique(train)) != len(train) or len(np.unique(val)) != len(val) or len(np.unique(test)) != len(test):
+                raise ValueError(
+                    f"Duplicate indices in {split_type} split at fold={fold_idx}, "
+                    f"seed={SEEDS[seed_idx]}"
+                )
+            if (set(train) & set(val)) or (set(train) & set(test)) or (set(val) & set(test)):
+                raise ValueError(
+                    f"Overlapping train/val/test indices in {split_type} split at "
+                    f"fold={fold_idx}, seed={SEEDS[seed_idx]}"
+                )
+            seed_folds.append({"train": train, "val": val, "test": test})
+        folds.append(seed_folds)
+    return folds
 
 
 class P5Benchmark:
     def __init__(self, model_name: str, split_type: str = "random",
                  device: str = "auto", dry_run: bool = False,
-                 ckpt_path: Path | None = None, curves_only: bool = False):
+                 ckpt_path: Path | None = None, curves_only: bool = False,
+                 epochs: int = EPOCHS):
         self.model_name = model_name
         self.split_type = split_type
         self.device = get_device(device)
         self.dry_run = dry_run
         self.ckpt_path = ckpt_path or (P5_ROOT / "results" / f"p5_{model_name}_{split_type}_ckpt.json")
         self.curves_only = curves_only
+        if epochs < 1:
+            raise ValueError("epochs must be >= 1")
+        self.epochs = epochs
 
         panel = pd.read_csv(P5_ROOT / "results" / "p5_canonical_panel.csv")
         self.smiles = panel["smiles"].tolist()
@@ -151,16 +205,8 @@ class P5Benchmark:
         return panel[[f"tne_{i}" for i in range(192)]].values.astype(np.float32)
 
     def _load_splits(self, split_type: str) -> list:
-        # Returns list of 5 folds, each fold is list of 5 seed dicts {train,val,test}
-        split_files = []
-        for seed in SEEDS:
-            f = P5_ROOT / "results" / f"p5_splits_{split_type}_5fold_seed{seed}.npy"
-            split_files.append(np.load(f, allow_pickle=True))
-        # transpose: folds x seeds
-        folds = []
-        for f_idx in range(N_FOLDS):
-            folds.append([sf[f_idx] for sf in split_files])
-        return folds
+        """Use the module-level fail-closed frozen-split loader."""
+        return load_splits(split_type)
 
     def _make_data_list(self, indices: np.ndarray) -> list:
         from torch_geometric.data import Data
@@ -205,7 +251,7 @@ class P5Benchmark:
         wait = 0
         curve = []
 
-        for epoch in range(EPOCHS):
+        for epoch in range(self.epochs):
             model.train()
             for batch in tr_loader:
                 batch = batch.to(self.device)
@@ -327,7 +373,14 @@ def main():
     ap.add_argument("--curves-only", action="store_true")
     args = ap.parse_args()
 
-    bench = P5Benchmark(args.model, args.split, args.device, args.dry_run, curves_only=args.curves_only)
+    bench = P5Benchmark(
+        args.model,
+        args.split,
+        args.device,
+        args.dry_run,
+        curves_only=args.curves_only,
+        epochs=args.epochs,
+    )
     results = bench.run()
 
     # save CSV (never in dry-run or curves-only)

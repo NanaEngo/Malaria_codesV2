@@ -1,93 +1,62 @@
-#!/bin/bash
-# MD Simulation: NVT Equilibration (100 ps)
-# Usage: bash scripts/md_run_nvt.sh [complex_name]
+#!/usr/bin/env bash
+# P2 NVT equilibration utility; dry-run by default.
+# Usage: bash scripts/md_run_nvt.sh [--dry-run|--execute] [complex|all]
 
-set -e
-
+set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 MD_DIR="${PROJECT_DIR}/MD_systems"
+# shellcheck source=md_execution_guard.sh
+source "${SCRIPT_DIR}/md_execution_guard.sh"
+md_guard_parse "$@" || { echo "Usage: $0 [--dry-run|--execute] [complex|all]" >&2; exit 64; }
+POSITIONAL=("${MD_GUARD_POSITIONAL[@]}")
+COMPLEX="${POSITIONAL[0]:-all}"
+TEMPERATURE_K="310.15"
+GMX_BIN="${P2_GMX_BIN:-gmx}"
 
-COMPLEX=${1:-"all"}
-
-nvt_equilibrate() {
-    local complex_name=$1
-    local system_dir="${MD_DIR}/${complex_name}"
-
-    echo "=========================================="
-    echo "NVT Equilibration: ${complex_name}"
-    echo "=========================================="
-
-    cd "${system_dir}"
-
-    # Check required files exist
-    if [[ ! -f em.gro ]]; then
-        echo "  Error: em.gro not found in ${system_dir}"
-        echo "  Run minimisation step first"
-        return 1
-    fi
-
-    # Create NVT mdp file
-    cat > nvt.mdp <<EOF
-; NVT equilibration
-integrator               = md
-nsteps                   = 50000    ; 100 ps with 2 fs timestep
-dt                       = 0.002
-nstxout                  = 500      ; Save every 1 ps
-nstvout                  = 500
-nstenergy                = 500
-nstlog                   = 500
-continuation             = no
-constraint_algorithm     = lincs
-constraints              = h-bonds
-lincs_iter               = 1
-lincs_order              = 4
-cutoff-scheme            = Verlet
-ns_type                  = grid
-nstlist                  = 10
-rcoulomb                 = 1.2
-rvdw                     = 1.2
-coulombtype              = PME
-pme_order                = 4
-fourierspacing           = 0.16
-tcoupl                   = V-rescale
-tc-grps                  = System
-tau_t                    = 0.1
-ref_t                    = 300
-pcoupl                   = no
-gen_vel                  = yes
-gen_temp                 = 300
-gen_seed                 = 12345
-; Position restraints on protein heavy atoms (roadmap Step 9: 1000 kJ/mol/nm^2)
-define                   = -DPOSRES
-EOF
-
-    # Run NVT equilibration
-    gmx grompp -f nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr -maxwarn 1
-    gmx mdrun -deffnm nvt -v
-
-    echo "  NVT equilibration complete: ${complex_name}"
-}
-
-if [ "$COMPLEX" = "all" ]; then
-    # FIXED: Removed duplicate 438_ATP4
-    for complex in 201_DHFR 438_ATP4 164_ClpP 214_CRT; do
-        if [ -d "${MD_DIR}/${complex}" ]; then
-            nvt_equilibrate "$complex" || echo "  Warning: ${complex} NVT equilibration failed"
-        else
-            echo "  Warning: ${complex} directory not found, skipping"
-        fi
-    done
-else
-    if [ -d "${MD_DIR}/${COMPLEX}" ]; then
-        nvt_equilibrate "$COMPLEX"
-    else
-        echo "Error: ${COMPLEX} directory not found"
-        exit 1
-    fi
+if [[ "$COMPLEX" == "all" ]]; then COMPLEXES=(201_DHFR 438_ATP4 164_ClpP 214_CRT); else COMPLEXES=("$COMPLEX"); fi
+if [[ "$MD_GUARD_EXECUTE" != "1" ]]; then
+    md_guard_print_plan "md_run_nvt.sh" "NVT equilibration at ${TEMPERATURE_K} K for ${COMPLEXES[*]}"
+    exit 0
 fi
+md_guard_require_authorization || exit $?
 
-echo ""
-echo "=========================================="
-echo "NVT equilibration complete!"
-echo "=========================================="
+for complex_name in "${COMPLEXES[@]}"; do
+    md_guard_check_parent_system "$complex_name"
+    system_dir="${MD_DIR}/${complex_name}"
+    [[ -d "$system_dir" ]] || { echo "ERROR: missing system directory: $system_dir" >&2; exit 1; }
+    [[ -s "$system_dir/em.gro" && -s "$system_dir/topol.top" ]] || { echo "ERROR: missing NVT inputs in $system_dir" >&2; exit 1; }
+    md_guard_validate_forcefield_manifest "$system_dir"
+    (
+        cd "$system_dir"
+        cat > nvt.mdp <<EOF
+; NVT equilibration at physiological temperature
+integrator = md
+nsteps = 50000
+dt = 0.002
+nstxout-compressed = 500
+nstenergy = 500
+nstlog = 500
+continuation = no
+constraint_algorithm = lincs
+constraints = h-bonds
+cutoff-scheme = Verlet
+nstlist = 10
+rlist = 1.2
+rcoulomb = 1.2
+rvdw = 1.2
+coulombtype = PME
+tcoupl = V-rescale
+tc-grps = System
+tau_t = 0.1
+ref_t = ${TEMPERATURE_K}
+pcoupl = no
+gen_vel = yes
+gen_temp = ${TEMPERATURE_K}
+gen_seed = 12345
+define = -DPOSRES
+EOF
+        "$GMX_BIN" grompp -f nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
+        "$GMX_BIN" mdrun -deffnm nvt -v
+    )
+done

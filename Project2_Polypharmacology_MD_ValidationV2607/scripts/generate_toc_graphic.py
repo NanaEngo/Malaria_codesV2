@@ -4,7 +4,7 @@ generate_toc_graphic.py — Generate a dedicated TOC (Table of Contents)
 graphic for the P2 JCIM manuscript.
 
 The graphic summarises the paper's pipeline:
-    African NP compounds ──> MD validation (30,000 ns, 220 systems)
+    African NP compounds ──> set-C docking/RRS + 4-system parent-lead MD
     ──> RRS / ACSI / PNS metrics ──> Resistance classification (A*–D)
 
 Output: PDF (and PNG) saved to manuscript/LaTeX/Graphics/
@@ -115,7 +115,7 @@ draw_box(ax, 3.6, 3.3, 2.6, 0.8, LIGHT_BLUE, text='Generative Expansion\n65,856 
 draw_arrow(ax, 6.2, 3.7, 7.0, 3.7, color=BLUE, linewidth=2.5)
 
 # Box 3: MPO scoring & selection
-draw_box(ax, 7.0, 3.3, 2.6, 0.8, LIGHT_ORANGE, text='MPO Scoring\nTop 20 candidates',
+draw_box(ax, 7.0, 3.3, 2.6, 0.8, LIGHT_ORANGE, text='MPO Scoring\n17 set-C candidates',
          fontsize=8, fontweight='normal')
 
 # Small icon for compounds
@@ -128,7 +128,7 @@ draw_symbol(ax, 8.3, 2.6, '★', fontsize=18, color=ORANGE)
 # ══════════════════════════════════════════════════════════════════════════════
 
 # Background panel label
-ax.text(4.5, 1.9, '② MD Validation Pipeline', fontsize=11, fontweight='bold',
+ax.text(4.5, 1.9, '② Targeted Parent-Lead MD', fontsize=11, fontweight='bold',
         color=DARK, ha='center', va='center')
 
 # Main arrow from top section to bottom
@@ -137,12 +137,12 @@ draw_arrow(ax, 8.3, 3.3, 8.3, 2.5, color=DARK, linewidth=2.5,
 
 # Box: MD simulations
 draw_box(ax, 2.5, 0.8, 3.0, 1.0, LIGHT_BLUE,
-         text='MD Simulations\n30,000 ns • 220 systems\n4 targets × 6 mutants',
+         text='Parent-lead MD\n40 ns • 4 WT systems\nset-C docking: 136 systems',
          fontsize=7.5, fontweight='normal', corner_radius=0.12)
 
 # Box: MM-GBSA + MC
 draw_box(ax, 6.0, 0.8, 2.8, 1.0, LIGHT_ORANGE,
-         text='MM-GBSA\n+ MC Sampling\nBinding free energies',
+         text='MM-GBSA\n214-PfCRT only\nMC: future work',
          fontsize=7.5, fontweight='normal', corner_radius=0.12)
 
 # Arrow between MD and MM-GBSA
@@ -237,9 +237,9 @@ for i, (label, desc, bg, fg) in enumerate(classes):
 # Title at top
 # ══════════════════════════════════════════════════════════════════════════════
 
-ax.text(0.5, 4.85, 'Resistance-Resilient Antimalarial Leads from African NP Space',
+ax.text(0.5, 4.85, 'Resistance-Aware Antimalarial Lead Analysis',
         fontsize=13, fontweight='bold', color=DARK, ha='left', va='center')
-ax.text(0.5, 4.65, 'MD Validation Against Resistance Mutants',
+ax.text(0.5, 4.65, 'Set-C Docking/RRS with Targeted Parent-Lead MD',
         fontsize=10, fontweight='normal', color=GREY, ha='left', va='center',
         style='italic')
 

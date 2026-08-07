@@ -22,9 +22,8 @@
 
 \graphicspath{{../Graphics/}}
 
-\title{Supplementary Information for \\ ``Resistance-Resilient Antimalarial Leads \\
-from African Natural Products: MD Validation \\
-Against Resistance Mutants''}
+\title{Supplementary Information for \\ ``Resistance-Aware Computational Analysis of Antimalarial Leads \\
+from African Natural Products''}
 
 \begin{document}
 \maketitle
@@ -59,19 +58,19 @@ Against Resistance Mutants''}
 % ============================================================================
 \begin{table}[htbp]
 \centering
-\caption{MM-GBSA binding free energies ($\Delta G_{\mathrm{bind}}$, \si{\kcalmol}) for the polypharmacological candidates against wild-type targets. Mean $\pm$ standard deviation from 101 snapshots. Due to GAFF2/CHARMM36 parameter conversion limitations (bond energy overflow errors), mutant calculations were computationally unfeasible; docking-based RRS is used as the primary validation metric.}
+\caption{Endpoint-analysis status for the four parent-study consensus complexes used for production MD. These systems are distinct from the 17 set-C polypharmacology candidates. Mean $\pm$ standard deviation is shown only for the single interpretable MM-GBSA result from 101 snapshots; dissociated or conversion-corrupted systems are reported as N/A. Mutant RRS is a docking-based analysis of set C and is not assigned to these MD systems.}
 \label{tab:s3_mmgbsa_mutants}
 \begin{tabular}{l l S[table-format=-2.2] S[table-format=1.2] l}
 \toprule
-Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Status / RRS Class \\
+Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Status \\
 \midrule
-164 & PfClpP-WT & -8.35$^\ddagger$ & 2.54$^\ddagger$ & Unbound$^\ddagger$ (ligand dissociated) \\
-201 & PfDHFR-WT & -24.74$^\ddagger$ & 4.63$^\ddagger$ & Unbound$^\ddagger$ (Class A*) \\
-214 & PfCRT-WT & -18.25 & 0.40 & Validated (gmx\_MMPBSA) (Class B) \\
-438 & PfATP4-WT & {--} & {--} & Excluded$^\S$ (Class A) \\
-87 & PfDHFR-WT & {--} & {--} & Not simulated (Class C) \\
+164 & Historical PfClpP cohort label$^\ast$-WT & {--} & {--} & N/A; ligand dissociated$^\ddagger$ \\
+201 & PfDHFR-WT & {--} & {--} & N/A; ligand dissociated$^\ddagger$ \\
+214 & PfCRT-WT & -18.25 & 0.40 & Interpretable (gmx\_MMPBSA) \\
+438 & PfATP4-WT & {--} & {--} & N/A; conversion corrupted$^\S$ \\
 \bottomrule
-\multicolumn{5}{l}{$^\ddagger$Binds to allosteric site (NADPH-domain interface), not catalytic site.} \\
+\multicolumn{5}{l}{$^\ast$The 164--PfClpP label is historical; PDB 4GM2 is PfClpR rather than PfClpP and this system is not PfClpP structural validation.} \\
+\multicolumn{5}{l}{$^\ddagger$Ligand dissociated during production; no binding free energy is inferred.} \\
 \multicolumn{5}{l}{$^\S$Excluded due to two-chain topology incompatibility with CHARMM36-to-AMBER conversion.} \\
 \end{tabular}
 \end{table}
@@ -92,7 +91,7 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Status / RRS Clas
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{rrs_radar_profiles.pdf}
-\caption{Per-compound RRS profiles across all six resistance mutations, shown as radar plots for the 14 polypharmacological leads. Each axis represents one mutation; concentric rings indicate \qty{50}{\percent}, \qty{100}{\percent}, and \qty{150}{\percent} RRS (WT-normalised). Class A* and Class A compounds fill the outer region (RRS $>$ \qty{100}{\percent}).}
+\caption{Per-compound, docking-derived RRS profiles across all six resistance mutations for the 17 set-C polypharmacological leads. The four parent-study MD systems are not included. Each axis represents one mutation; concentric rings indicate \qty{50}{\percent}, \qty{100}{\percent}, and \qty{150}{\percent} RRS (WT-normalised). Class A* and Class A compounds fill the outer region (RRS $>$ \qty{100}{\percent}).}
 \label{fig:s4_rrs_radar}
 \end{figure}
 

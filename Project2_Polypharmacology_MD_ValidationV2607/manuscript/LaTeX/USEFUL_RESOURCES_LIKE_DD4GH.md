@@ -188,7 +188,7 @@
 researchers, our work contributes three critical components that can enhance dd4gh's 
 capabilities:
 
-1. Validated training data: 20 MD-validated polypharmacological candidates with 
+1. Validated training data: 17 docking/RRS polypharmacology candidates plus a separate four-complex targeted MD check with
    MM-GBSA binding free energies
 2. Resistance-informed design: RRS metric for African-prevalent mutations
 3. Enhanced molecular representations: TDA, tensor networks, quantum kernels
@@ -287,7 +287,7 @@ Add these to your bibliography files:
 - [x] Compare TFP with ChemGraphX descriptors — *noted in Methods section of draft*
 - [x] Add ToDD citation for TDA context — *cited: `todd_2023`*
 - [x] Add PlasmoDB, WWARN, PfAMR, NAPRECA, Qiskit, ITensor BibTeX entries — *added to `Bibliography_Paper3.bib`*
-- [ ] Archive code on GitHub, data on Zenodo — *after results are generated*
+- [ ] Archive code on GitHub; deposit compact outputs and trajectory checksums on Zenodo before claiming a completed public archive
 
 ### For Both Papers:
 - [x] Consistently cite dd4gh (all 3 references: MMV, TechInformed, deepmirror) — *all 3 entries in both bibliographies*

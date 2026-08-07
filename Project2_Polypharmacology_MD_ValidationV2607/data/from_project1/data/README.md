@@ -13,7 +13,7 @@ data/
 ├── cluster_representatives_nonsmiles.smi
 │
 ├── proteins/                              (8 files — 4 targets × PDB+PDBQT)
-│   ├── 4GM2.pdb / 4GM2.pdbqt             (PfClpP)
+│   ├── 4GM2.pdb / 4GM2.pdbqt             (PfClpR; not PfClpP)
 │   ├── 6UKJ.pdb / 6UKJ.pdbqt             (PfCRT)
 │   ├── 7F3Y.pdb / 7F3Y.pdbqt             (PfDHFR)
 │   └── 9N10.pdb / 9N10.pdbqt             (PfATP4)

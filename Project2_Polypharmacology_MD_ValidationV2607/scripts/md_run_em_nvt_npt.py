@@ -14,7 +14,10 @@ from pathlib import Path
 import argparse
 
 # ── GROMACS paths ────────────────────────────────────────────────────────────
-GMX_MPI = "/home/nanaengo/miniforge3/envs/malaria_md/bin.AVX2_256/gmx_mpi"
+GMX_MPI = os.environ.get(
+    "P2_GMX_BIN",
+    "/home/nanaengo/miniforge3/envs/malaria_md/bin.AVX2_256/gmx_mpi",
+)
 GMX_CMD = GMX_MPI  # alias kept for clarity; both point to the same binary
 
 # Set GMXLIB so GROMACS can locate force-field files at runtime
@@ -143,6 +146,8 @@ comm_mode               = linear
 
 
 def run_complex(complex_name):
+    if complex_name not in {"201_PfDHFR", "438_PfATP4", "164_PfClpP", "214_PfCRT"}:
+        raise ValueError(f"Not an allowlisted parent-study system: {complex_name}")
     cdir = MD_DIR / complex_name
     print("\n%s" % ("=" * 60))
     print("Running EM → NVT → NPT for: %s" % complex_name)
@@ -164,7 +169,7 @@ def run_complex(complex_name):
     em_gro = cdir / "em.gro"
 
     run_cmd(
-        "%s grompp -f em.mdp -c ions.gro -p topol.top -o em.tpr -maxwarn 5" % GMX_MPI,
+        "%s grompp -f em.mdp -c ions.gro -p topol.top -o em.tpr" % GMX_MPI,
         cwd=str(cdir),
     )
     run_cmd(
@@ -187,7 +192,7 @@ def run_complex(complex_name):
     nvt_gro = cdir / "nvt.gro"
 
     run_cmd(
-        "%s grompp -f nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr -maxwarn 5" % GMX_MPI,
+        "%s grompp -f nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr" % GMX_MPI,
         cwd=str(cdir),
     )
     run_cmd(
@@ -205,7 +210,7 @@ def run_complex(complex_name):
     npt_gro = cdir / "npt.gro"
 
     run_cmd(
-        "%s grompp -f npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr -maxwarn 5" % GMX_MPI,
+        "%s grompp -f npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr" % GMX_MPI,
         cwd=str(cdir),
     )
     run_cmd(
@@ -224,7 +229,20 @@ def run_complex(complex_name):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--complex", default="all")
+    parser.add_argument("--execute", action="store_true", help="Run GROMACS only with explicit environment confirmation")
     args = parser.parse_args()
+
+    if not args.execute:
+        print("[DRY RUN] GROMACS execution disabled by default.")
+        print("Pass --execute and export P2_MD_EXECUTE_CONFIRM=I_UNDERSTAND to authorize a future run.")
+        print("GROMACS launched: no")
+        return
+    if os.environ.get("P2_MD_EXECUTE_CONFIRM") != "I_UNDERSTAND":
+        raise SystemExit("--execute requires P2_MD_EXECUTE_CONFIRM=I_UNDERSTAND; no GROMACS command was launched.")
+    raise SystemExit(
+        "This legacy EM/NVT/NPT entry point is execution-disabled. "
+        "Use the guarded md_full_pipeline.sh after force-field manifests pass preflight."
+    )
 
     if args.complex == "all":
         results = {}

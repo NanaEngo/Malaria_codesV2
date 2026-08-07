@@ -157,7 +157,7 @@ On a frozen panel of \num{19836} African antimalarial natural products, a random
 
 \subsection{Data and panel}
 
-We use the frozen canonical panel of \num{19836} molecules with binary antimalarial activity labels from the eOS80CH screening collection, curated and deduplicated by canonical SMILES as described in the companion study \citep{temgoua2026antimalarial}. Features: ECFP4 (\num{1024}-bit Morgan radius-\num{2}), topological fingerprints (TFP, \num{78} dims: persistent homology-0, persistent images, Betti numbers computed by the companion pipeline), and tensor-network embeddings (TNE, \num{192} dims). All features are aligned on the canonical panel indices.
+We use the frozen canonical panel of \num{19836} molecules with binary antimalarial activity labels from the eOS80CH screening collection, curated and deduplicated by canonical SMILES as described in the companion study \citep{temgoua2026antimalarial}. Features: ECFP4 (\num{2048}-bit Morgan radius-\num{2}), topological fingerprints (TFP, \num{78} dims: persistent homology-0, persistent images, Betti numbers computed by the companion pipeline), and tensor-network embeddings (TNE, \num{192} dims). All features are aligned on the canonical panel indices.
 
 \subsection{Splits}
 
@@ -177,7 +177,7 @@ Per model, \num{25} fold--seed AUCs. Model-vs-baseline comparisons use paired $t
 
 \section{Availability of data and materials}
 
-All code, frozen splits (random and scaffold, five seeds each), per-fold results, salience data, figure scripts, and the canonical \num{19836}-molecule panel are deposited on Zenodo (\url{https://doi.org/10.5281/zenodo.19608875}) and available under the MIT licence in the GitHub repository (\url{https://github.com/NanaEngo/Malaria_codesV2}). Trained checkpoints are included. Reproducibility is supported by the frozen split files, the frozen feature tables, and the pinned environment.
+All code, frozen splits (random and scaffold, five seeds each), per-fold results, salience data, figure scripts, and the canonical \num{19836}-molecule panel are available under the MIT licence in the public GitHub repository (\url{https://github.com/NanaEngo/Malaria_codesV2}). The Zenodo DOI \url{https://doi.org/10.5281/zenodo.19608875} is reserved, but the upload remains pending. Trained checkpoints and the frozen feature tables are included in the repository; reproducibility is supported by the frozen split files and pinned environment.
 
 \section{Author contributions}
 
@@ -201,7 +201,7 @@ Not applicable. No individual person's data (including images, videos, or identi
 
 \section{Use of Artificial Intelligence}
 
-During the preparation of this work the authors used AI assistants to support code development and data analysis scripting. The authors reviewed and edited all AI-assisted output and take full responsibility for the content of this article. No generative AI tool is listed as an author. Computational results, statistical analyses, and all quantitative claims were generated, verified, and deposited by the authors.
+During the preparation of this work the authors used AI assistants to support code development and data analysis scripting. The authors reviewed and edited all AI-assisted output and take full responsibility for the content of this article. No generative AI tool is listed as an author. Computational results, statistical analyses, and all quantitative claims were generated and verified by the authors; the public repository contains the currently released artefacts.
 
 \section{Acknowledgements}
 

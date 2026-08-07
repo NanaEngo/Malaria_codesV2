@@ -100,7 +100,7 @@ Our resistance-informed design approach complements emerging AI platforms such a
 dd4gh \cite{mmv2026dd4gh,techinformed2026dd4gh}, which combines predictive and 
 generative AI for neglected disease drug discovery. While dd4gh provides accessible 
 pre-trained models for global health researchers, our pipeline contributes 
-experimentally validated binding free energies (MM-GBSA) and resistance resilience 
+computationally estimated endpoint energies (with only one interpretable MM-GBSA system) (MM-GBSA) and resistance resilience
 scores (RRS) for 20 polypharmacological candidates—data that can serve as high-quality 
 training sets for next-generation AI models. The integration of our MD-validated 
 compounds with dd4gh's active learning framework could accelerate the discovery of 
@@ -202,8 +202,7 @@ enabling researchers in low- and middle-income countries to design and optimize
 compounds without costly commercial software licenses.
 
 Our work complements dd4gh's capabilities in three key ways:
-(1) \textbf{Validated training data:} Our 20 MD-validated polypharmacological 
-candidates with MM-GBSA binding free energies provide high-quality experimental 
+(1) \textbf{Validated training data:}Our 17 docking/RRS polypharmacology candidates plus a separate four-complex targeted MD check with MM-GBSA binding free energies provide high-quality experimental
 proxies for dd4gh's active learning framework.
 (2) \textbf{Resistance-informed design:} Our Resistance Resilience Score (RRS) 
 metric can be integrated with dd4gh's generative models to optimize compounds 

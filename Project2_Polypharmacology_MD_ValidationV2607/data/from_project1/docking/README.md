@@ -6,7 +6,7 @@ This directory contains scripts, configuration files, and results for molecular 
 
 | Metric | Value | Description |
 |--------|-------|-------------|
-| **Docking targets** | **4** | PfDHFR (7F3Y), PfCRT (6UKJ), PfATP4 (9N10), PfClpP (4GM2) |
+| **Docking targets** | **4** | PfDHFR (7F3Y), PfCRT (6UKJ), PfATP4 (9N10), PfClpR (4GM2; not PfClpP) |
 | **Centroids docked** | **~469** | K-Means cluster representatives |
 | **Total docking poses** | **~18,760** | 469 × 4 targets × 10 poses/ligand |
 | **Polypharmacological candidates** | **>70** | Engaging ≥2 targets simultaneously |
@@ -22,7 +22,7 @@ Folders named `Docking_<TargetID>` contain target-specific AutoDock Vina experim
 | `Docking_7F3Y/` | PfDHFR | 7F3Y | Dihydrofolate reductase | 37.2% (8 EXCELLENT, 160 GOOD) |
 | `Docking_6UKJ/` | PfCRT | 6UKJ | Chloroquine resistance transporter | 85.3% (91 EXCELLENT, 294 GOOD) |
 | `Docking_9N10/` | PfATP4 | 9N10 | Sodium efflux pump | 0.2% (1 GOOD: Ligand 438) |
-| `Docking_4GM2/` | PfClpP | 4GM2 | Caseinolytic protease | 0.0% (negative control) |
+| `Docking_4GM2/` | PfClpR | 4GM2 | ClpR paralog/subunit; not PfClpP | 0.0% (historical negative control) |
 
 Each folder typically includes:
 - Target structure in `.pdbqt` format
@@ -95,10 +95,10 @@ Per-target Pearson correlations confirm scoring function independence:
 | PfDHFR (7F3Y) | 0.327 | 2.11×10⁻⁸ | 280 | Weak correlation |
 | PfCRT (6UKJ) | 0.129 | 3.08×10⁻¹ | 64 | Not significant |
 | PfATP4 (9N10) | 0.113 | 1.67×10⁻² | 447 | Weak correlation |
-| PfClpP (4GM2) | 0.361 | 3.58×10⁻¹⁵ | 447 | Weak correlation |
+| PfClpR (4GM2) | 0.361 | 3.58×10⁻¹⁵ | 447 | Weak correlation |
 | **Pooled** | **-0.049** | **8.19×10⁻²** | **1,238** | **Not significant** |
 
-> **Conclusion:** Low correlations (all < 0.5) confirm DiffDock (geometric) and Vina (thermodynamic) capture independent aspects of protein-ligand interaction, validating the dual-filter consensus approach.
+> **Identity caveat:** PDB 4GM2 is PfClpR rather than PfClpP; these historical 4GM2 records must not be used as PfClpP validation.\n\n> **Conclusion:** Low correlations (all < 0.5) confirm DiffDock (geometric) and Vina (thermodynamic) capture independent aspects of protein-ligand interaction, validating the dual-filter consensus approach.
 
 ## Data & Results CSV Files
 

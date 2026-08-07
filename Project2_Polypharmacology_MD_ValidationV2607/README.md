@@ -1,13 +1,14 @@
-# Resistance-Resilient Polypharmacological Antimalarials: MD+MC Validation
+# Resistance-Aware Computational Analysis of Antimalarial Leads
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
-> **Project 2 — Molecular Dynamics and Monte Carlo validation of polypharmacological antimalarial candidates against resistance mutations (Project V2607).**
+> **Project 2 — Set-C polypharmacology docking/RRS analysis plus separate targeted MD of four named parent-study consensus complexes (Project V2607).**
 
 **Target Journal:** *Journal of Chemical Information and Modeling* (IF 5.6)  
-**Status:** ✅ Submission-ready (JCIM) — 14 RRS compounds (classes A*–D), PP-11 C59R mechanism resolved, MM-GBSA reconciliation complete  
-**Manuscript:** `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` — canonical V2607 version---
+**Status:** ✅ Cohort-corrected submission package — 17 set-C candidates for docking/RRS/ACSI/PNS; four separate parent-study MD systems; only 214–PfCRT has interpretable MM-GBSA
+**Manuscript:** `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` — canonical V2607 version
+**Execution safety:** all future GROMACS wrappers are **dry-run by default**; execution requires `--execute` plus `P2_MD_EXECUTE_CONFIRM=I_UNDERSTAND`. The mitigation workflow itself launched no GROMACS job.
 
 ## 📄 Manuscript Files
 
@@ -49,16 +50,16 @@
 
 ## 🎯 Project Overview
 
-This project validates the **top 20 polypharmacological antimalarial candidates** from [Project 1](../Papers/Chem_space_antimalarial_JCIM/) using rigorous MD simulations and MC sampling across wild-type and resistance-mutant *Plasmodium falciparum* targets (PfDHFR, PfCRT, PfATP4, PfClpP).
+This project analyzes the **17 canonical set-C polypharmacology candidates** using docking against wild-type and resistance-mutant PfDHFR/PfCRT structures, followed by RRS, ACSI, PNS, and cross-metric analyses. Separately, production MD was run only for four named parent-study consensus complexes (201–PfDHFR, 438–PfATP4, historical 164–PfClpP cohort label, 214–PfCRT); these four systems are not set-C candidates and do not constitute MD validation of the set-C cohort. The 164 label is not structural PfClpP validation because PDB 4GM2 is PfClpR.
 
 The key innovation is a **resistance-aware validation framework** that quantifies how well each candidate maintains binding against clinically prevalent resistance mutations in African populations.
 
 ### Key Objectives
 
-1. **Homology Modeling** — Generate 6 mutant structures (N51I, C59R, S108N, I164L, K76T, K76A)
-2. **MD Validation** — 30,000 ns of production MD across 220 protein–ligand systems
-3. **Resistance Profiling** — Quantify binding resilience via novel metrics (RRS, ACSI, PNS)
-4. **MC Sampling** — 2.2M Monte Carlo steps for binding free energy landscapes
+1. **Homology Modeling** — Generate six mutant structures (N51I, C59R, S108N, I164L, K76T, K76A)
+2. **Resistance Profiling** — Quantify docking-based binding resilience and chemical/network properties via RRS, ACSI, and PNS
+3. **Targeted parent-lead MD** — Analyze four named wild-type complexes, 10 ns each (40 ns total), separately from set C
+4. **Bounded set-C pilot** — `scripts/p2_setc_md_workflow.py --auto-approved` selects PP-01/PP-02, validates the 136-row docking panel, and preflights candidate-specific MD systems. Any prepared system must include `complex.gro`, `topol.top`, `md.mdp`, `npt.gro`, `npt.cpt`, `system_manifest.json`, and a hash-checked CHARMM36m+CGenFF `forcefield_manifest.json`; otherwise the workflow fails closed without launching GROMACS.
 
 ---
 
@@ -66,16 +67,15 @@ The key innovation is a **resistance-aware validation framework** that quantifie
 
 | Category | Ligands | Targets | Systems | MD (ns/system) | MC Steps | Total MD (ns) |
 |----------|---------|---------|---------|---------------|----------|--------------|
-| **WT Baseline** | 20 | 4 WT | 80 | 200 | 10,000 | 16,000 |
-| **Mutant Panel** | 20 | 6 mutants | 120 | 100 | 10,000 | 12,000 |
-| **Controls** | 5 drugs | 4 targets | 20 | 100 | 10,000 | 2,000 |
-| **Total** | — | — | **220** | — | **2,200,000** | **30,000** |
+| **Set-C docking panel** | 17 | 8 WT/mutant PfDHFR/PfCRT states | 136 | — | — | — |
+| **Parent-study MD complexes** | 4 named leads | 4 WT targets | 4 | 10 ns/system | — | **40 ns** |
+| **Set-C pilot design** | 2 default candidates | selected PfDHFR/PfCRT states | manifest only | — | — | **0 ns launched** |
 
 **Targets:**
 - **PfDHFR-TS (7F3Y)** — WT + N51I, C59R, S108N, I164L (4 mutants)
 - **PfCRT (6UKJ)** — WT + K76T, K76A (2 mutants)
 - **PfATP4 (9N10)** — WT only
-- **PfClpP (4GM2)** — WT only
+- **PfClpR (4GM2; not PfClpP)** — historical docking record only; not accepted as PfClpP validation
 
 **Control Drugs:** Pyrimethamine, Chloroquine, Cipargamin, ADEP, Artemisinin
 
@@ -247,8 +247,10 @@ python scripts/md_prepare_ligands.py
 # 3. Build protein–ligand complexes
 python scripts/md_build_complexes.py
 
-# 4. Run MD simulations (via bash pipeline)
-bash scripts/md_full_pipeline.sh
+# 4. Inspect the guarded MD plan (does not run GROMACS)
+bash scripts/md_full_pipeline.sh --dry-run
+# A future run requires explicit authorization after input review:
+# P2_MD_EXECUTE_CONFIRM=I_UNDERSTAND bash scripts/md_full_pipeline.sh --execute --yes
 
 # 5. Calculate RRS, ACSI, PNS metrics
 python scripts/md_calculate_rrs_acsi_pns.py
@@ -263,20 +265,26 @@ python scripts/generate_all_figures.py
 
 ### Individual MD Steps
 ```bash
-# Energy minimization
-bash scripts/md_run_minimisation.sh
+# All commands below are dry-run unless --execute is explicitly supplied.
+bash scripts/md_run_minimisation.sh --dry-run
+bash scripts/md_run_nvt.sh --dry-run
+bash scripts/md_run_npt.sh --dry-run
+bash scripts/md_run_production.sh --dry-run
 
-# NVT equilibration (1 ns)
-bash scripts/md_run_nvt.sh
-
-# NPT equilibration (1 ns)
-bash scripts/md_run_npt.sh
-
-# Production MD (10+ ns)
-bash scripts/md_run_production.sh
+# Future execution requires BOTH an explicit flag and environment confirmation:
+# export P2_MD_EXECUTE_CONFIRM=I_UNDERSTAND
+# bash scripts/md_run_production.sh --execute 201_DHFR
 ```
 
 ---
+
+## 🔒 Evidence and execution boundaries
+
+- The canonical set-C cohort contains 17 candidates and 136 docking states; RRS, ACSI, PNS, and cross-metric results are docking/cheminformatics-derived.
+- The four parent-study MD systems (201-PfDHFR, 438-PfATP4, historical 164-PfClpP cohort label, 214-PfCRT) are a separate targeted check: 10 ns each, 40 ns total, at 310.15 K. The 164 label is historical and must not be interpreted as PfClpP structural validation from 4GM2, which is PfClpR. They are not set-C MD validation.
+- Only 214-PfCRT has an interpretable MM-GBSA estimate (−18.25 ± 0.40 kcal/mol). Dissociated systems and the 438 conversion-corrupted result are reported as non-interpretable.
+- `results/metrics/canonical_set_c_provenance.json`, `results/metrics/parent_md_provenance.json`, and `results/metrics/parent_md_execution_policy.json` are the provenance/policy records. The set-C pilot manifest is preflight-only and records `gromacs_launched: false`.
+- The reserved Zenodo DOI is not evidence of a completed deposit until the record is publicly populated and independently verifiable.
 
 ## 📐 Novel Metrics
 
@@ -331,14 +339,16 @@ bash scripts/md_run_production.sh
 - [ ] ACSI development (script ready)
 - [ ] PNS implementation (script ready)
 
-### Phase 4: System Preparation
-- [ ] 220 MD systems prepared
-- [ ] Force field parameterization
-- [ ] Solvation and equilibration
+### Phase 4: Cohort-corrected system preparation
+- [x] Four parent-study MD systems identified and re-analyzed (10 ns each)
+- [ ] Set-C-specific pilot complexes prepared and validated (workflow: `scripts/p2_setc_md_workflow.py`; current preflight is fail-closed)
+- [ ] Force-field parameterization, solvation, and equilibration for any future set-C pilot
 
-### Phase 5: Production (Aug–Oct 2026)
-- [ ] MD simulations (30,000 ns)
-- [ ] MC sampling (2.2M steps)
+### Phase 5: Bounded future production
+- [x] Pilot selector/preflight manifest generated without launching GROMACS
+- [ ] Implement the prepared-system producer that writes the required identity manifest and validates coordinates/topology before any future READY status
+- [ ] Explicitly approved set-C MD production
+- [ ] Any future MC sampling, with results and convergence diagnostics recorded before manuscript use
 
 ### Phase 6: Analysis (Nov 2026)
 - [ ] Trajectory analysis
@@ -373,5 +383,5 @@ bash scripts/md_run_production.sh
 
 ---
 
-**Last Updated:** July 20, 2026  
+**Last Updated:** August 7, 2026 — cohort provenance, fail-closed MD wrappers, and evidence boundaries updated
 **Contact:** myke-vital.sao@facsciences-uy1.cm

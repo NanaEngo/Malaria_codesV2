@@ -57,7 +57,7 @@ All checked against the deposited v12 data:
 ### F4 — DATA AVAILABILITY wording invites the review-stick “data not provided at review time”
 **Location:** main text Data availability (end) + Methods (end).
 **Problem:** says data “will be deposited on Zenodo **upon acceptance**” and “wire-request may request access to the **private** repository”. A reviewer needing access to verify SMILES / HV may find the door “private + upon acceptance” a red flag, and it contradicts the fact that the repository is **already public** on GitHub and a **Zenodo DOI already reserved (10.5281/zenodo.19608875, deposit pending)**.
-**Fix:** state data/code are released under MIT in the public repository (URL) and cite the reserved Zenodo DOI; provide link. Keep a short “reviewer may access the public repository now” note.
+**Fix:** state data/code are released under MIT in the public repository (URL), cite the reserved Zenodo DOI as pending, and keep a short “reviewers may access the public repository now” note.
 **Severity:** yellow (reviewer-access friction).
 
 ### F5 — BMC (desk) requirements absent: Funding + Ethics/Consent
@@ -90,7 +90,7 @@ Method used: decompose acceptance into the review dimensions weighted for a BMC 
 Pre-fix weighted risk = 0.30·2 + 0.25·1 + 0.15·3 + 0.10·6 + 0.20·2 + 0.05·7 + 0.05·3 = 0.6 + 0.25 + 0.45 + 0.6 + 0.4 + 0.35 + 0.15 = 2.80.
 Post-fix weighted risk = 0.30 + 0.25 + 0.15 + 0.10 + 0.40 + 0.05 + 0.05 = 1.30.
 
-Baseline acceptance (lower bound for a sound BMC desk+review process): complement on a saturating curve. Prior audit landed the old JCIM draft at parts−; the current v12 are already honest + deposits they did→ 45–75%. With the residual weighted-risk dropping from 2.80 → 1.30, the corresponding acceptance estimate rises from **≈ 0.55–0.6 → ≈ 0.9–0.95**. The last hurdle is these low-key residuals being resolved as per this doc.
+Baseline acceptance (lower bound for a sound BMC desk+review process): complement on a saturating curve. Prior audit landed the old JCIM draft at parts−; the current v12 are already honest + deposits they did→ 45–75%. With the residual weighted-risk dropping from 2.80 → 1.30, the corresponding acceptance estimate rises from **≈ 0.55–0.6 → ≈ 0.85–0.92**, with the pending Zenodo upload still a residual risk. The last hurdle is these low-key residuals being resolved as per this doc.
 
 ### 3.2 Claimed estimate
 
@@ -106,7 +106,7 @@ Remaining contributors to the residual ~5% (not fully eliminable): a reviewer re
 - [x] F1 reword C1 + line 122 (MPO, SYBA, RRS, PNS)
 - [x] F2 fix Q(s,a) description (sum active objectives, 4, not "average three")
 - [x] F3 regenerate all figures from v12 + real MDS; add figures to main & SM
-- [x] F4 data-availability: public GitHub URL + Zenodo DOI now
+- [x] F4 data-availability: public GitHub URL + reserved Zenodo DOI, explicitly marked pending
 - [x] F5 add Funding + Ethics/Consent declarations
 - [ ] Recompile main-SM-cover (0 errors, 0 undefined)
 - [ ] git commit + push `data-results`, update TODO/report

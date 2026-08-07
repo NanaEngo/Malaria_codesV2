@@ -1,7 +1,7 @@
 # Project 4 — Advanced Monte Carlo Strategies (P4)
 
 **Target journal:** *Journal of Chemical Information and Modeling* (JCIM) — ACS
-**Status:** v9 20-seed benchmark complete; manuscript in preparation; QMC validation pending
+**Status:** superseded planning document; v12 benchmark is canonical; candidate-level QMC Tier 2 remains diagnostic and publication-grade validation is pending
 **Date:** July 2026
 
 ---
@@ -13,8 +13,8 @@ P4 implements a complete **de novo molecular generation framework** targeting **
 - **MCTS + ScafVAE** — Tree search guided by a chemistry-informed fragment policy (PUCT) built on privileged natural product-like antimalarial fragments (e.g., chromone, indole, quinoline, and terpene derivatives) with medicinal chemistry safety filters (PAINS, Brenk, Veber, Lipinski).
 - **Pareto MCTS** — Multi-objective optimization without a priori scalar aggregation (non-dominated front, hypervolume HV ≥ 0.58).
 - **Real P1/P2 oracles** — MPO (≥0.75), docking (Tartarus V2 *P. falciparum* targets), SYBA (>0), SA (<3.5), RRS (selectivity), PNS (polypharmacology).
-- **4-method benchmark** — MCTS vs Random vs Greedy vs GA across 20 independent seeds (canonical v9) with non-parametric Wilcoxon signed-rank testing.
-- **QMC validation** — Two-tiered electronic-structure validation pipeline (wB97X-D DFT + DMC diffusion Monte Carlo gold standard).
+- **4-method benchmark** — MCTS vs Random vs Greedy vs GA across 20 independent seeds (canonical v12) with paired tests and documented multiple-comparison caveats.
+- **QMC diagnostics** — Tier 1 SCF is validated; Tier 2 VMC/DMC is retained as a guarded diagnostic pipeline and is not publication-grade for the 144-electron candidates.
 
 **Quantitative Performance Targets for JCIM Q1 Acceptance:**
 - **Primary Lead Quality:** Mean MPO ≥ 0.75, SA score ≤ 3.5, SYBA score > 0.
@@ -22,7 +22,7 @@ P4 implements a complete **de novo molecular generation framework** targeting **
 - **Pareto Efficiency:** Hypervolume (HV) improvement ≥ 25% over GA and Greedy baselines.
 - **Statistical Rigour:** Wilcoxon signed-rank test $p < 0.01$ with Bonferroni correction across 10 random seeds.
 
-**Novelty statement:** To our knowledge, this is the first integration of (1) Pareto-MCTS with a ScafVAE-informed fragment policy incorporating PAINS/Brenk safety priors for African natural product-inspired antimalarial design, (2) a 4-method benchmark featuring Fréchet ChemNet Distance (FCD) and natural product scaffold diversity metrics, and (3) QMC-based electronic correlation validation within a single de novo design framework.
+**Novelty statement:** To our knowledge, this is the first integration of (1) Pareto-MCTS with a ScafVAE-informed fragment policy incorporating PAINS/Brenk safety priors for African natural product-inspired antimalarial design, and (2) a four-method benchmark with multi-objective Pareto and scaffold-diversity analysis. QMC remains a guarded diagnostic pipeline and is not claimed as candidate-level validation.
 
 ---
 
@@ -56,14 +56,14 @@ The P4 methodology leverages specialized tools from the `scientific-agent-skills
 | **Figures** | 300 DPI, Arial/Helvetica, embedded inline (fast format) | All figures 300 DPI, colourblind-friendly palette |
 | **Cover letter** | Mandatory, ≤1 page, justify importance & fit | To write — **must NOT reference companion papers (P1, P2, P3)** — JCIM evaluates each manuscript independently |
 | **Supporting Info** | Separate file, described before Acknowledgments | Full benchmark tables + ablation details |
-| **Data availability** | ACS Level 2 (FAIR) | Zenodo DOI + GitHub — see Section 11 for exact wording |
+| **Data availability** | Public GitHub release; Zenodo pending | Reserved DOI + GitHub — see Section 11 for exact wording |
 
 ### 2.3 What Makes a Paper Competitive for JCIM?
 
 1. **Demonstrated Methodological Novelty:** Pareto MCTS + ScafVAE policy with exact `pymoo` hypervolume calculations.
 2. **Rigorous Validation:** 4-method $\times$ 20-seed benchmarks (canonical v9), $2^5$ factorial ANOVA ablation, non-parametric Wilcoxon testing.
-3. **Data/Code Availability:** FAIR Level 2 compliant, MIT-licensed GitHub repository, Zenodo DOI (`10.5281/zenodo.19608875`).
-4. **Strong Narrative Clarity:** Compelling story arc linking multi-objective tree search to gold-standard electronic structure (QMC).
+3. **Data/Code Availability:** MIT-licensed public GitHub repository; Zenodo DOI `10.5281/zenodo.19608875` reserved, upload pending.
+4. **Narrative scope:** multi-objective tree search with honest computational-oracle limitations; QMC is not used as a validation claim.
 
 ---
 
@@ -111,7 +111,7 @@ The P4 methodology leverages specialized tools from the `scientific-agent-skills
 | **MCTS + random policy** | Unguided expansion, inefficient exploration | ✅ **ScafVAE policy**: ChEMBL27 priors, scaffold compatibility, PUCT |
 | **RL generation** (GCPN, MolDQN, REINVENT) | Long training, limited interpretability, no standardised benchmark | ✅ **4-method benchmark**: MCTS vs Random vs Greedy vs GA, N seeds, LaTeX tables |
 | **Genetic Algorithm** (Jensen 2019, Nigam 2020) | Blind crossover, no directed exploration; limited diversity | ✅ **ScafVAE diversity**: directed exploration + MDS scaffold diversity |
-| **Docking-only validation** | Unreliable scoring functions, no electronic-structure validation | ✅ **QMC validation**: electronic correlation energy as gold standard |
+| **Docking/oracle validation** | Computational proxies require calibration | ✅ **Guarded Tier 1/QMC diagnostics**; no candidate-level QMC validation claim |
 | **Single-objective evaluation** (GuacaMol, MOSES) | Hides trade-offs between affinity, synthesis, ADME | ✅ **Multi-objective metrics**: Pareto front + hypervolume |
 
 ### 4.2 The Four Pillars
@@ -156,10 +156,10 @@ The P4 methodology leverages specialized tools from the `scientific-agent-skills
 - **LaTeX tables** JCIM-ready
 - **Figures**: bar chart, violin plot, efficiency scatter, score radar, diversity MDS
 
-**Pillar 4 — QMC validation (gold standard, ongoing work)**
-- VMC/DMC computation on top-5 candidates
-- Correlation: QMC energy vs QKS/TDA scores
-- Validates that quantum descriptors capture true electronic correlation effects
+**Pillar 4 — QMC diagnostics (not a publication-grade validation claim)**
+- Tier 1 SCF and small-system diagnostics are available
+- Candidate-level 144-electron VMC/DMC showed population-collapse risk
+- No QMC energy–QKS/TDA validation claim is made until optimized Jastrow, adequate sampling and τ→0 extrapolation are completed
 - Beyond DFT (B3LYP/wB97X-D) limitations
 - **Note for submission:** If QMC results are unavailable at submission, Pillar 4 is presented as planned validation with preliminary single-molecule demonstration
 
@@ -254,15 +254,15 @@ Docking is excluded from the Pareto front because:
 - It correlates strongly with MPO in our P1/P2 library (Pearson r ≈ 0.6)
 - Three objectives suffice for a tractable, interpretable Pareto front
 
-### 5.4 QMC Pipeline (Gold Standard)
+### 5.4 QMC Pipeline (guarded diagnostic)
 
 ```
 SMILES → Geometry optimization (xTB/GFN2-xTB)
        → Trial orbitals (PySCF: HF/6-31G*)
        → Simple VMC (Slater determinant + Jastrow factor)
        → DMC (diffusion Monte Carlo, ~100k walkers)
-       → Electronic correlation energy
-       → Comparison: E_corr(QMC) vs QKS/P3 scores
+       → Diagnostic VMC/DMC outputs (guarded)
+       → No candidate-level comparison with QKS/P3 is claimed
 ```
 
 **Estimated cost:** ~1,000–10,000 CPU-hours per 40-atom molecule.
@@ -512,8 +512,7 @@ python scripts/p4_mcts_run.py --pareto --objectives mpo,syba,sa
 
 ```
 Data Availability
-All data supporting this study are publicly available on Zenodo 
-(DOI: 10.5281/zenodo.XXXXX) under a CC-BY 4.0 licence. 
+Current data and code are publicly available in the GitHub repository. The Zenodo DOI `10.5281/zenodo.19608875` is reserved; upload pending.
 Source code is available at https://github.com/NanaEngo/Malaria_codesV2 
 under the MIT licence. See the Supporting Information for 
 a full inventory of deposited files.

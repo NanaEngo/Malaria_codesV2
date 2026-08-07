@@ -12,6 +12,9 @@ Usage:
     python scripts/md_analyse_trajectories.py
 """
 
+import argparse
+import os
+import shlex
 import subprocess
 import re
 from pathlib import Path
@@ -26,6 +29,8 @@ RESULTS_DIR = PROJECT_DIR / "results" / "md_results"
 DT_PS = 0.002  # timestep in ps
 NSTXOUT = 5000  # output frequency in steps
 OUTPUT_INTERVAL_PS = DT_PS * NSTXOUT  # 10 ps
+GMX_BIN = shlex.quote(os.environ.get("P2_GMX_BIN", "gmx"))
+N_REPLICATES = int(os.environ.get("P2_MD_REPLICATES", "1"))
 
 COMPLEXES = {
     '201_DHFR': {
@@ -99,7 +104,7 @@ def compute_rmsd(complex_name, replicate_dir, ligand_resname='LIG'):
 
     # Backbone RMSD
     bb_rmsd_file = replicate_dir / "rmsd_bb.xvg"
-    cmd = f"gmx rms -s {tpr_file} -f {xtc_file} -o {bb_rmsd_file} -tu ns"
+    cmd = f"{GMX_BIN} rms -s {tpr_file} -f {xtc_file} -o {bb_rmsd_file} -tu ns"
     if not run_gmx_command(cmd, b"Backbone\n"):
         return None, None
 
@@ -108,11 +113,11 @@ def compute_rmsd(complex_name, replicate_dir, ligand_resname='LIG'):
     index_file = replicate_dir / "index.ndx"
 
     # Create index for ligand
-    cmd = f"gmx make_ndx -f {tpr_file} -o {index_file}"
+    cmd = f"{GMX_BIN} make_ndx -f {tpr_file} -o {index_file}"
     run_gmx_command(cmd, f"r {ligand_resname}\nq\n".encode())
 
     # Calculate ligand RMSD
-    cmd = f"gmx rms -s {tpr_file} -f {xtc_file} -n {index_file} -o {lig_rmsd_file} -tu ns"
+    cmd = f"{GMX_BIN} rms -s {tpr_file} -f {xtc_file} -n {index_file} -o {lig_rmsd_file} -tu ns"
     if not run_gmx_command(cmd, f"r {ligand_resname}\nr {ligand_resname}\n".encode()):
         return None, None
 
@@ -138,7 +143,7 @@ def compute_rmsf(complex_name, replicate_dir):
     xtc_file = replicate_dir / "production.xtc"
     rmsf_file = replicate_dir / "rmsf.xvg"
 
-    cmd = f"gmx rmsf -s {tpr_file} -f {xtc_file} -o {rmsf_file} -res"
+    cmd = f"{GMX_BIN} rmsf -s {tpr_file} -f {xtc_file} -o {rmsf_file} -res"
     if not run_gmx_command(cmd, b"Backbone\n"):
         return None
 
@@ -158,12 +163,12 @@ def compute_hbonds(complex_name, replicate_dir, key_residues, ligand_resname='LI
     index_file = replicate_dir / "index.ndx"
 
     # Create index for ligand
-    cmd = f"gmx make_ndx -f {tpr_file} -o {index_file}"
+    cmd = f"{GMX_BIN} make_ndx -f {tpr_file} -o {index_file}"
     run_gmx_command(cmd, f"r {ligand_resname}\nq\n".encode())
 
     # Compute H-bonds between protein and ligand
     hbond_file = replicate_dir / "hbonds.xvg"
-    cmd = f"gmx hbond -s {tpr_file} -f {xtc_file} -n {index_file} -num {hbond_file}"
+    cmd = f"{GMX_BIN} hbond -s {tpr_file} -f {xtc_file} -n {index_file} -num {hbond_file}"
     if not run_gmx_command(cmd, b"Protein\nr LIG\n"):
         return None
 
@@ -272,7 +277,7 @@ def compute_mm_gbsa(complex_name, replicate_dir, ligand_resname='LIG', timeout=3
         return None
 
     # Create index file
-    cmd = f"gmx make_ndx -f {tpr_file} -o {index_file}"
+    cmd = f"{GMX_BIN} make_ndx -f {tpr_file} -o {index_file}"
     if not run_gmx_command(cmd, f"r {ligand_resname}\nq\n".encode()):
         print("  Warning: Failed to create index file for MM-GBSA")
         return None
@@ -420,7 +425,7 @@ def analyse_complex(complex_name):
         'mm_gbsa_means': [],
     }
 
-    for rep in range(1, 4):
+    for rep in range(1, N_REPLICATES + 1):
         rep_dir = complex_dir / f"replicate_{rep}"
         if not rep_dir.exists():
             print(f"  Warning: replicate {rep} not found for {complex_name}")
@@ -471,6 +476,23 @@ def analyse_complex(complex_name):
     return stats
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--execute", action="store_true", help="Run trajectory analysis commands")
+    parser.add_argument("--dry-run", action="store_true", help="Explicitly retain dry-run mode")
+    args = parser.parse_args()
+    if args.execute and args.dry_run:
+        raise SystemExit("--execute and --dry-run cannot be combined")
+    if N_REPLICATES < 1:
+        raise SystemExit("P2_MD_REPLICATES must be a positive integer")
+    if not args.execute:
+        print("[DRY RUN] Trajectory analysis is disabled by default; no GROMACS command was launched.")
+        print("Pass --execute and P2_MD_EXECUTE_CONFIRM=I_UNDERSTAND for an authorized future analysis.")
+        return
+    if os.environ.get("P2_MD_EXECUTE_CONFIRM") != "I_UNDERSTAND":
+        raise SystemExit("--execute requires P2_MD_EXECUTE_CONFIRM=I_UNDERSTAND; no GROMACS command was launched.")
+    provenance = PROJECT_DIR / "MD_systems" / "parent_md_run_manifest.json"
+    if not provenance.is_file():
+        raise SystemExit(f"FAIL-CLOSED: missing parent MD provenance manifest: {provenance}")
     print("=" * 60)
     print("MD Trajectory Analysis")
     print("=" * 60)
