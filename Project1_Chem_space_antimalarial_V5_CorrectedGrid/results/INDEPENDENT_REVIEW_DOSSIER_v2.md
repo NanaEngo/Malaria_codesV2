@@ -164,6 +164,22 @@ réel) :** clé ed25519 générée, signature détachée vérifiée
 registre falsifié (note modifiée) échoue la vérification (RC=1). La procédure
 openssl du dossier est donc opérationnelle telle quelle pour le relecteur.
 
+**Ouverture automatique du gate après signature (script dédié, testé) :**
+
+```bash
+cd Project1_Chem_space_antimalarial_V5_CorrectedGrid
+python scripts/p1_v5_apply_review_signature.py --reviewer "IDENTITÉ_DU_RELECTEUR" \
+    --date 2026-08-XX --sig results/structural_pocket_independent_review.json.sig \
+    --pubkey results/reviewer_ed25519_public.pem
+```
+
+Le script **vérifie d'abord la signature détachée contre la clé publique** (openssl
+ed25519 ou gpg) et ne modifie le register qu'après vérification réussie
+(`status = STRUCTURAL_POCKET_REVIEWED_AND_ACCEPTED`, `accepted_for_full_run = true`,
+décisions PASS ×4). Testé : clé erronée → FAIL-CLOSED (register non modifié) ;
+clé correcte → gate OUVERT. Après ouverture, les gates consensus/RRS/PNS
+de P1 V5 (fail-closed `p1_v5_consensus_rrs_gate.py`) passent automatiquement.
+
 Ensuite, mettre à jour le register **par la procédure** (script dédié ou mise à
 jour humaine tracée) avec les champs signés : `reviewer_identity`,
 `review_date`, `signed_review_artifact` (= chemin du `.sig`),
