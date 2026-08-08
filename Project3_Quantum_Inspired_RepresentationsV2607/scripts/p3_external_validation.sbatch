@@ -8,6 +8,12 @@
 #SBATCH --output=logs/p3_external_validation_%j.log
 #SBATCH --error=logs/p3_external_validation_%j.err
 set -eo pipefail
+# Thread-control exports: ripser/numpy/BLAS otherwise oversubscribe the node
+# with 16 joblib workers each spawning multithreaded kernels (thrashing, ~4x slower).
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
 source /home/nanaengo/miniforge3/etc/profile.d/conda.sh
 conda activate malaria_md
 cd /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607
