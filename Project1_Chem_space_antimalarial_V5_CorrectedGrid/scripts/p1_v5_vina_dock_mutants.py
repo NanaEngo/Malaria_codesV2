@@ -19,7 +19,7 @@ Outputs:
   results/rrs_pilot/vina_scores/execution_provenance_<TARGET>.json
 
 The per-target CSV avoids clobbering when the PfDHFR and PfCRT panels run as
-two parallel SLURM jobs (12892/12893); p1_v5_rrs_merge_scores.py merges them
+two parallel SLURM jobs (12897/12898); p1_v5_rrs_merge_scores.py merges them
 into v5_mutant_vina_scores.csv for p1_v5_rrs_pilot.py.
 """
 from __future__ import annotations
@@ -167,8 +167,15 @@ def main() -> int:
     ap.add_argument("--exhaustiveness", type=int, default=EXHAUSTIVENESS)
     args = ap.parse_args()
 
+    # Resolve to absolute paths: the sbatch passes --output-root as a
+    # repo-relative path, but Vina is launched with cwd=ROOT (two levels above
+    # the V5 tree), so a relative ligand path would fail to open. Absolute
+    # paths keep the ligand, receptor, and output resolvable for any caller.
+    args.output_root = args.output_root.resolve()
     if args.out_csv is None:
         args.out_csv = args.output_root / f"v5_mutant_vina_scores_{args.target}.csv"
+    else:
+        args.out_csv = args.out_csv.resolve()
 
     spec = TARGETS[args.target]
     require_file(Path(VINA), "AutoDock Vina")
