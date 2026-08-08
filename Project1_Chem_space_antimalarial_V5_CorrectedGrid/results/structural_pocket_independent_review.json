@@ -1,5 +1,5 @@
 {
-  "schema": "p1-v5-structural-pocket-independent-review/v1",
+  "schema": "p1-v5-structural-pocket-independent-review/v2",
   "status": "PENDING_INDEPENDENT_REVIEW",
   "reviewer_identity": null,
   "review_date": null,
@@ -10,40 +10,54 @@
   "trusted_public_key_artifact": null,
   "trusted_public_key_sha256": null,
   "accepted_for_full_run": false,
+  "updated_utc": "2026-08-08T11:00:00Z",
   "criteria": {
     "target_identity_verified": false,
     "pocket_residues_or_reference_ligand_justified": false,
     "receptor_grid_frame_equivalence_verified": false,
     "exact_config_smoke_rank1_100pct_in_grid": false,
-    "all_four_targets_individually_accepted": false
+    "all_four_targets_individually_accepted": false,
+    "three_target_evidence_complete_awaiting_review": true
   },
   "targets": {
     "PfDHFR": {
       "pdb_id": "7F3Y",
-      "decision": "PENDING",
-      "evidence": "MTX instances A:702, A:704, B:702 extracted with native-coordinate round-trip PASS; identity/site correspondence not independently signed."
+      "decision": "EVIDENCE_COMPLETE_AWAITING_REVIEW",
+      "anchor": "MTX catalytic-site copy A702 (33 atoms, centroid [-3.596, -5.249, -58.677])",
+      "anchor_justification": "Contact analysis: MTX A702 contacts canonical DHFR pocket residues Phe58/Phe116/Ile14/Ile164/Cys15/Asp54; B702 is the dimer mirror; A704 contacts surface residues only. Old V5 center (1.33, -1.733, -23.842) was the receptor centroid (35.5 A from A702).",
+      "evidence": "17/17 polypharm pairs pass the composite Vina gate (job 12859): affinities -4.86 to -6.35 kcal/mol, pose-to-MTX-A702 minima 3.0-3.5 A, in-box fractions 0.944-1.0. CA frame PDB/PDBQT exact (rmsd 0).",
+      "independent_signature": null
     },
     "PfCRT": {
       "pdb_id": "6UKJ",
-      "decision": "PENDING",
-      "evidence": "Y01 A:501 extracted with native-coordinate round-trip PASS; cholesterol-hemisuccinate proxy is not accepted as inhibitor-pocket evidence."
+      "decision": "EVIDENCE_COMPLETE_AWAITING_REVIEW",
+      "anchor": "Y01 (cholesterol hemisuccinate) A501 — membrane-mimetic PROXY, not an inhibitor",
+      "anchor_justification": "Y01 is the only non-water HETATM; single instance A501. Per structural dossier PROXY_NOT_ACCEPTED: docked poses are valid relative to the Y01 cavity but are exploratory only, not potency claims.",
+      "evidence": "17/17 polypharm pairs pass the composite Vina gate (job 12855): affinities -5.12 to -7.91 kcal/mol, pose-to-Y01 minima 3.0-4.1 A, in-box fractions 1.0.",
+      "independent_signature": null
     },
     "PfClpP": {
-      "pdb_id": "4GM2",
-      "decision": "PENDING",
-      "evidence": "No non-water HETATM anchor in current PDB; target-specific cavity/residue evidence required."
+      "pdb_id": "2F6I",
+      "decision": "EVIDENCE_COMPLETE_AWAITING_REVIEW",
+      "anchor": "Chain A catalytic triad Ser252/His223/Asp219 (centroid [-24.276, 17.28, -2.901])",
+      "anchor_justification": "4GM2 is PfClpR (inactive paralog), NOT PfClpP — replaced by genuine PfClpP 2F6I (EC 3.4.21.92, UniProt O97252; active-site Ser289 = 2F6I Ser252, offset 37). Triad geometrically complete in all 7 chains; old V5 center was the barrel-channel centroid (22 A from nearest triad).",
+      "evidence": "17/17 polypharm pairs pass the composite Vina gate (job 12854): affinities -5.05 to -7.03 kcal/mol, pose-to-triad minima 3.3-8.9 A, in-box fractions 0.963-1.0.",
+      "independent_signature": null
     },
     "PfATP4": {
       "pdb_id": "9N10",
-      "decision": "PENDING",
-      "evidence": "No HETATM anchor in current PDB; membrane-site/residue evidence required."
+      "decision": "BLOCKED",
+      "anchor": "None",
+      "anchor_justification": "No co-crystallized small-molecule anchor (protein-partner PfABP only); CAVITY_EVIDENCE_REQUIRED. Excluded from the primary three-target V5 claim unless independently supported cavity evidence is provided.",
+      "evidence": "Runner refuses with FAIL-CLOSED CAVITY_EVIDENCE_REQUIRED.",
+      "independent_signature": null
     }
   },
   "prohibited_until_pass": [
-    "DiffDock 68-pair execution",
-    "Vina score-only rescoring",
-    "four-target consensus scoring",
+    "four-target consensus scoring (PfATP4 excluded)",
+    "three-target consensus scoring",
     "RRS/PNS recomputation",
-    "manuscript claim updates"
-  ]
+    "manuscript claim updates from V5 docking"
+  ],
+  "note": "The three-target Vina evidence (jobs 12854/12855/12859) is complete and machine-verified, but this register remains PENDING_INDEPENDENT_REVIEW until a qualified reviewer signs each target decision. No scoring, consensus, RRS, or PNS may be computed from the V5 docking panel before signature."
 }
