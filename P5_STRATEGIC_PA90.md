@@ -1,6 +1,6 @@
 # P5 — Plan Stratégique d'Implémentation (PA ≥ 90 %)
 
-**Version:** v1 (01/08/2026)
+**Version:** v2 (08/08/2026)
 **Statut:** 🔄 Document vivant — **à améliorer régulièrement** à chaque milestone
 **Boussole liée:** `P5_DATA_ANALYSIS_REPORT.md` (données), `AGENTS.md` (workflow)
 
@@ -13,9 +13,9 @@
 ## 1. Thèse & Déclaration de Nouveauté (le « pourquoi » de la soumission)
 
 > *« Sur un panel de produits naturels antimalariens curé (n = 19,836), les GNN compacts avec
-> fusion de descripteurs topologiques (TDA/TFP, TNE) réduisent l'écart — et sous scaffold split
-> dépassent — les fingerprints classiques, tandis que les transformers n'offrent aucun "free lunch"
-> à cette échelle. »*
+> fusion de descripteurs topologiques (TDA/TFP, TNE) apportent un signal interprétable mais ne
+> dépassent pas les fingerprints classiques sous scaffold split, tandis que les transformers
+> n'offrent aucun "free lunch" à cette échelle. »*
 
 **3 piliers défendables (Q1):**
 1. **Référence inter-projet unique** : mêmes panel, splits, protocole que P3 → comparaison directe
@@ -35,9 +35,9 @@ La PA se construit par **leviers indépendants**. Chaque levier rempli → point
 |:-:|:-------|:------------:|:-----------------------|:------:|
 | L1 | Panel/protocole reproductible & figé | +20 pts | Panel 19,836 ✓, splits figés ✓, sanity 0.9428 ✓ | ✅ **Fait (v1-prep)** |
 | L2 | Résultat positif significatif | +25 pts | ~~≥1 fusion topologique > ECFP4 sous scaffold (DeLong p<0.05)~~ **`H1 FAIL (04/08)`** | ❌ **Échoué (remplacé)** |
-| L3 | Honest negative / null | +30 pts | **H1 nul**: aucune GNN/fusion > ECFP4-RF scaffold (0.8300) ; GIN −0.025 (p=0.051), GIN-TFP −0.016 (p=0.081), GIN-TNE −0.023 (p=0.015). **H2 nul**: ChemBERTa scaffold 0.7867 vs 0.8300 (Δ −0.043, p<0.0001) → transformer ≤ GNN ≤ fingerprints | ✅ **Fait (04/08)** |
+| L3 | Honest negative / null | +30 pts | **H1 confirmé sous les 2 splits** : aucune GNN/fusion > ECFP4-RF (scaffold 0.8300 ; random 0.9433). Scaffold : GIN −0.025 (p=0.018), GIN-TFP −0.016 (p=0.025), GIN-TNE −0.021 (p=0.038), ChemBERTa −0.043 (p<0.0001), tous BH-FDR. **Random (08/08, jobs 12841/12842)** : GIN-TFP 0.9084 (Δ −0.035, p<0.0001), GIN-TNE 0.8918 (Δ −0.052, p<0.0001), GIN (Δ −0.033), ChemBERTa (Δ −0.031) — **les 4 bras significativement pires sur les 2 splits** (BH-FDR p<0.0001). **H2 nul**: ChemBERTa scaffold 0.7867 vs 0.8300 (Δ −0.043, p<0.0001) → transformer ≤ GNN ≤ fingerprints | ✅ **Fait (06/08, complété 08/08)** |
 | L4 | Contribution méthodologique/interprétabilité | +20 pts | Attribution/salience des dims TFP/TNE (H3, bridge P3 H1-RRS) — **DONNÉES ACQUISES (04/08)** : TFP pers_img dominant (sal 0.079), TNE top dims 68/43/92/66/165 | ✅ **Données faites (04/08)** — écriture L4 en cours |
-| L5 | Benchmark/dataset libéré (Zenodo) | +10 pts | Zenodo deposit (DOI) aligné P1/P3 | ⏳ Phase 3 |
+| L5 | Benchmark/dataset libéré | +10 pts | Public GitHub release; Zenodo DOI reserved, upload pending | ⏳ Phase 3 |
 | L6 | Narration/figures publication-grade | +15 pts | Figures bar + courbes d'apprentissage, manuscrit LaTeX complet | ⏳ Phase 2-3 |
 | | **Total** | **95 pts** | | ~70/95 |
 
@@ -68,9 +68,17 @@ famille GNN/fusion ≤ fingerprints sous OOD scaffold »), documenté avec p-val
 | M1.6 | **Résultats v1 + analyse statistique** | — | L2/L3 évalués |
 
 **Configuration v1 (Phase 1) :** deployé 04/08 — **`H1 FAIL`** : GIN random 0.9098±0.0067,
-GIN scaffold 0.8047±0.0395, GIN-TFP 0.8137±0.0300, GIN-TNE 0.8068±0.0366 vs ECFP4-RF scaffold
-**0.8300** (random 0.9433). Aucune GNN/fusion ne bat ECFP4-RF sous scaffold (paired t : TNE p=0.015
-significativement pire, GIN p=0.051 ns, TFP p=0.081 ns). → **Pivot L3+L4 actif.**
+GIN scaffold 0.8047±0.0395, GIN-TFP 0.8138±0.0352, GIN-TNE 0.8090±0.0378 vs ECFP4-RF scaffold
+**0.8300** (random 0.9433). Aucune GNN/fusion ne bat ECFP4-RF sous scaffold ; les quatre bras sont
+significativement inférieurs après appariement par moyennes par seed et correction BH-FDR (GIN
+p=0.018, GIN-TFP p=0.025, GIN-TNE p=0.038). → **Pivot L3+L4 confirmé.**
+
+**Complétion random fusion (08/08, jobs 12841/12842) :** GIN-TFP random = **0.9084 ± 0.0060**,
+GIN-TNE random = **0.8918 ± 0.0060** (25 fold×seed). Paired t sur 5 per-seed means vs ECFP4-RF 0.9433 :
+GIN-TFP Δ −0.035 (t(4) −60.7), GIN-TNE Δ −0.052 (t(4) −60.3), GIN Δ −0.033 (t(4) −27.9),
+ChemBERTa Δ −0.031 (t(4) −65.9) — tous p<0.0001, tous BH-FDR significatifs. **Benchmark P5 complet :
+les 8 cellules (4 bras × 2 splits) sont remplies.** Hiérarchie random : ECFP4-RF 0.9433 > ChemBERTa
+0.9121 > GIN 0.9098 > GIN-TFP 0.9084 > GIN-TNE 0.8918.
 
 ### Phase 2 — Scaffold + Interprétabilité (v2)
 - [x] Ré-exécuter les modèles sous scaffold split (5 folds × 5 seeds) — **fait (04/08)** : GIN,
@@ -78,10 +86,10 @@ significativement pire, GIN p=0.051 ns, TFP p=0.081 ns). → **Pivot L3+L4 actif
 - ✅ **H3 salience — données ACQUISES (04/08)** : capture salience (mean \|W\| sur colonnes desc de
   `head.0.weight`) + re-runs fusion jobs 12811/12812 → **TFP : pers_img (33:58) dominant (0.079)**,
   **TNE : top dims 68/43/92/66/165**, top-10% = 17.3% salience. Écriture contribution L4 en cours.
-- ✅ **ChemBERTa scaffold (H2) COMPLET (04/08, job 12813, leak-fixed)** : **0.7867 ± 0.0338** vs ECFP4-RF
+- ✅ **ChemBERTa scaffold (H2) COMPLET (06/08, job 12813, leak-fixed)** : **0.7867 ± 0.0338** vs ECFP4-RF
   0.8300 → **Δ −0.043, p<0.0001** (paired t, 5 seeds). Hiérarchie scaffold : ECFP4-RF > GIN-TFP > GIN-TNE > GIN > ChemBERTa. Transformer ≤ GNN ≤ fingerprints CONFIRMÉ → L3 doublé.
-- 🔄 **ChemBERTa random (H2)** — job 12814 en cours (premier run avec capture `curve` par époch).
-- ⏳ Courbes d'apprentissage (N = 500 → 19,836) — capture par époch prête (`curve` key), à produire après 12814.
+- ✅ **ChemBERTa random (H2)** — job 12815 terminé, 0.9121 ± 0.0047 (leak-fixed).
+- ✅ Courbes d'apprentissage — capture par époque et figure générées à partir des runs leak-fixed ; les courbes décrivent la convergence, pas une validation indépendante.
 
 ### Phase 3 — Génération (stretch, seulement si Phase 1–2 montrent un gain net)
 - Génération GNN/Transformer validée sur les top-candidats P3, ou réutilisation P4 MCTS.
@@ -147,10 +155,11 @@ featurization/cache.** Un smoke test GPU vs CPU doit être enregistré (rapport 
 5. [x] **H2 ChemBERTa scaffold COMPLET (job 12813)** : 0.7867 vs 0.8300, p<0.0001 → transformer ≤ GNN CONFIRMÉ
 6. [x] **H3 re-runs fusion + salience (jobs 12811/12812)** : TFP pers_img dominant, TNE top dims identifiées
 7. [x] **`p5_figure.py` écrit → bar figure** bipanel random/scaffold avec CI honnêtes ECFP4 — **04/08**
-8. [ ] **H2 ChemBERTa random** (job 12814 en cours) → premier run avec courbes par époch
-9. [ ] Courbes d'apprentissage (`p5_learning_curves.py` prêt, à exécuter après 12814)
-10. [ ] Manuscrit LaTeX (thèse honest-negative L3 + interprétabilité L4)
-11. [ ] Mise à jour régulière de **ce** document à chaque milestone
+8. [x] **H2 ChemBERTa random** (job 12815) : 0.9121 ± 0.0047, leak-fixed
+9. [x] Courbes d'apprentissage (`p5_learning_curves.py`) générées à partir des runs leak-fixed
+10. [x] Manuscrit LaTeX (thèse honest-negative L3 + interprétabilité L4)
+11. [x] **GIN-TFP / GIN-TNE random COMPLETS (jobs 12841/12842, 08/08)** : 0.9084 ± 0.0060 / 0.8918 ± 0.0060 — les 4 bras random significativement sous ECFP4 (p<0.0001, BH-FDR) → **benchmark P5 100% complet (8 cellules)**
+12. [ ] Mise à jour régulière de **ce** document à chaque milestone
 
 ---
 
