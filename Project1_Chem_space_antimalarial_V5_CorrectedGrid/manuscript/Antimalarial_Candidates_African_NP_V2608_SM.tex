@@ -165,7 +165,7 @@ Compounds exhibiting binding ($\text{MPO}_{\text{target}} \geq \num{0.50}$) agai
 \text{Polypharmacology Bonus}_i = 0.05 \cdot (n_{\text{targets}, i} - 1) \quad \text{if } n_{\text{targets}, i} \geq 2
 \label{eq:poly_bonus}
 \end{equation}
-where $n_{\text{targets}, i}$ is the number of targets against which compound $i$ achieves $\text{MPO}_{\text{target}} \geq \num{0.50}$. This bonus is capped at +0.15 (\num{4} targets). The \num{0.05} increment per additional target represents a modest computational preference for multi-target profiles that may be relevant to resistance hypotheses; it does not demonstrate resistance circumvention or therapeutic advantage. The $\text{MPO} \geq \num{0.50}$ threshold ensures that only compounds meeting minimum quality criteria across all scoring components qualify for the bonus, thereby distinguishing genuine multi-target candidates from non-selective binders with poor drug-likeness or safety profiles.
+where $n_{\text{targets}, i}$ is the number of targets against which compound $i$ achieves $\text{MPO}_{\text{target}} \geq \num{0.50}$. This bonus is capped at \num{+0.15} (\num{4} targets). The \num{0.05} increment per additional target represents a modest computational preference for multi-target profiles that may be relevant to resistance hypotheses; it does not demonstrate resistance circumvention or therapeutic advantage. The $\text{MPO} \geq \num{0.50}$ threshold ensures that only compounds meeting minimum quality criteria across all scoring components qualify for the bonus, thereby distinguishing genuine multi-target candidates from non-selective binders with poor drug-likeness or safety profiles.
 
 \subsection*{Centroid-based screening and MPO stratification}
 
@@ -635,7 +635,7 @@ are most stable ($\pm \qty{10}{\percent}$ perturbations maintain $\rho > \num{0.
 
 \begin{table}[!htbp]
 \centering
-\caption{Sensitivity of generative expansion library size, scaffold diversity, and mean QED to CHEESE Tanimoto similarity threshold and STONED-SELFIES variant count per seed molecule. Baseline parameters (Tanimoto 0.7, 100 variants) are shown in \textbf{bold}. Values marked with $\dagger$ are estimates based on linear scaling from the baseline; exact values require re-running the full workflow. \textit{Generative expansion parameters are optimized to balance library size with structural diversity and drug-likeness.}}
+\caption{Sensitivity of generative expansion library size, scaffold diversity, and mean QED to CHEESE Tanimoto similarity threshold and STONED-SELFIES variant count per seed molecule. Baseline parameters (Tanimoto \num{0.7}, \num{100} variants) are shown in \textbf{bold}. Values marked with $\dagger$ are estimates based on linear scaling from the baseline; exact values require re-running the full workflow. \textit{Generative expansion parameters are optimized to balance library size with structural diversity and drug-likeness.}}
 \label{tab:sm_s18_expansion_sensitivity}
 \small
 \begin{tabular}{@{}c c c c@{}}
@@ -909,7 +909,7 @@ Comparison of 32-dimensional versus 64-dimensional latent spaces revealed trade-
 \begin{figure}[!htbp]
   \centering
   \includegraphics[width=0.95\linewidth]{clustering_quality_comparison.pdf}
-  \caption{Clustering quality metrics comparison between 32D and 64D latent spaces. Left: Silhouette score (higher is better, $>$0.5 = good, $>$0.25 = lower bound acceptable). Middle: Calinski-Harabasz index (higher is better). Right: Davies-Bouldin index (lower is better). The 64D space was selected for centroid selection based on the clustering metrics shown. \textit{The 64-dimensional latent space was selected as the representation for chemical clustering and centroid selection based on these comparative metrics.}}
+  \caption{Clustering quality metrics comparison between 32D and 64D latent spaces. Left: Silhouette score (higher is better, $>$\num{0.5} = good, $>$\num{0.25} = lower bound acceptable). Middle: Calinski-Harabasz index (higher is better). Right: Davies-Bouldin index (lower is better). The 64D space was selected for centroid selection based on the clustering metrics shown. \textit{The 64-dimensional latent space was selected as the representation for chemical clustering and centroid selection based on these comparative metrics.}}
   \label{fig:clustering_quality}
 \end{figure}
 
@@ -1125,7 +1125,7 @@ PfDHFR-TS & 7F3Y & \num{484} & \num{1.8} & \num{35.9} & \num{37.7} & \num{-9.67}
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{si_figure_s14_umap_latent_space.png}
-\caption{UMAP projection of the 64-dimensional VAE latent space, colored by compound source. Natural products (NP, green, $n = \num{396}$), synthetic drugs (SD, red, $n = \num{454}$), and computationally generated analogues (Generated, blue, $n = \num{65856}$) occupy overlapping but distinguishable regions of chemical space. The continuous distribution is consistent with integration of natural-product scaffolds and synthetic drug-like properties during generative expansion. NP compounds cluster toward negative UMAP 1 values (centroid: $-\num{0.177}$, $\num{0.191}$), while SD and generated compounds occupy more positive regions (SD centroid: $\num{0.082}$, $\num{0.363}$; Generated centroid: $\num{0.206}$, $\num{0.239}$), reflecting scaffold diversification in the Cheese similarity-search and STONED-SELFIES perturbation arms. UMAP parameters: \texttt{n\_neighbors} = 15, \texttt{min\_dist} = 0.1. \textit{The projection is descriptive and does not by itself establish successful biological integration or activity.}}
+\caption{UMAP projection of the 64-dimensional VAE latent space, colored by compound source. Natural products (NP, green, $n = \num{396}$), synthetic drugs (SD, red, $n = \num{454}$), and computationally generated analogues (Generated, blue, $n = \num{65856}$) occupy overlapping but distinguishable regions of chemical space. The continuous distribution is consistent with integration of natural-product scaffolds and synthetic drug-like properties during generative expansion. NP compounds cluster toward negative UMAP 1 values (centroid: $-\num{0.177}$, $\num{0.191}$), while SD and generated compounds occupy more positive regions (SD centroid: $\num{0.082}$, $\num{0.363}$; Generated centroid: $\num{0.206}$, $\num{0.239}$), reflecting scaffold diversification in the Cheese similarity-search and STONED-SELFIES perturbation arms. UMAP parameters: \texttt{n\_neighbors} = \num{15}, \texttt{min\_dist} = \num{0.1}. \textit{The projection is descriptive and does not by itself establish successful biological integration or activity.}}
 \label{fig:si_umap_latent}
 \end{figure}
 
@@ -1232,7 +1232,7 @@ The \qty{95}{\percent} confidence interval was determined as the \num{2.5}th and
 \subsubsection*{Enrichment metric definitions}
 
 \textbf{ROC-AUC (Receiver Operating Characteristic - Area Under Curve):}
-Measures the probability that a randomly chosen active compound ranks higher than a randomly chosen decoy. Range: [0, 1], where 1.0 indicates perfect separation and 0.5 indicates random ranking. ROC-AUC is threshold-independent and provides an overall assessment of ranking quality.
+Measures the probability that a randomly chosen active compound ranks higher than a randomly chosen decoy. Range: [\num{0}, \num{1}], where \num{1.0} indicates perfect separation and \num{0.5} indicates random ranking. ROC-AUC is threshold-independent and provides an overall assessment of ranking quality.
 
 \textbf{Enrichment Factor at \qty{5}{\percent} (EF\qty{5}{\percent}):}
 Quantifies how many times more actives are found in the top \qty{5}{\percent} of the ranked list compared to random selection. EF\qty{5}{\percent} = \num{20} indicates perfect early enrichment (all actives in top \qty{5}{\percent}). This metric is critical for experimental validation where only top-ranked compounds are typically tested.

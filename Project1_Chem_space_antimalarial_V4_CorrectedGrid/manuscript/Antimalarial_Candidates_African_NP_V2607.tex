@@ -558,12 +558,12 @@ subset of structurally diverse compounds should be selected for experimental tes
 
 Several additional limitations should be noted. First, while docking grid boxes were uniformly set to 
 \qty{25}{\angstrom}$\times$\qty{25}{\angstrom}$\times$\qty{25}{\angstrom} for all targets, larger boxes (e.g., \qty{30}{\angstrom} cube) may be warranted to 
-capture peripheral binding interactions for membrane transporters such as PfCRT and PfATP4. Second, protein protonation states were assigned at pH 7.4 without 
+capture peripheral binding interactions for membrane transporters such as PfCRT and PfATP4. Second, protein protonation states were assigned at pH~\num{7.4} without 
 explicit pKa calculations for active-site residues, which may affect hydrogen-bond predictions; PfCRT functions in the acidic digestive vacuole (pH~5.0--5.4), 
-and its protonation state is a specific concern. To quantify this impact, we re-protonated the PfCRT structure at pH 5.2 using pKa predictions from 
+and its protonation state is a specific concern. To quantify this impact, we re-protonated the PfCRT structure at pH~\num{5.2} using pKa predictions from 
 PROPKA3~\cite{Olsson2011} followed by PDBFixer~\cite{Eastman2017} and re-docked the top~100 PfCRT-targeted candidates. Eight active-site residues exhibited 
-shifted protonation states at vacuolar pH (ASP271, pKa~6.27; ASP274, pKa~7.05; GLU49, pKa~7.35; GLU143, pKa~6.53; GLU177, pKa~6.10; HIS68, pKa~6.18; HIS125, 
-pKa~5.78; HIS218, pKa~6.74). The ranking correlation between pH~7.4 and pH~5.2 docking scores was moderate (Spearman $\rho = \num{0.270}$, $p = \num{0.007}$), 
+shifted protonation states at vacuolar pH (ASP271, pKa~\num{6.27}; ASP274, pKa~\num{7.05}; GLU49, pKa~\num{7.35}; GLU143, pKa~\num{6.53}; GLU177, pKa~\num{6.10}; HIS68, pKa~\num{6.18}; HIS125, 
+pKa~\num{5.78}; HIS218, pKa~\num{6.74}). The ranking correlation between pH~\num{7.4} and pH~\num{5.2} docking scores was moderate (Spearman $\rho = \num{0.270}$, $p = \num{0.007}$), 
 with a systematic shift of \qty{+2.2}{\kilo\calorie\per\mole} in mean affinity, consistent with fewer charge-assisted interactions under acidic conditions. This 
 indicates that pH correction measurably alters PfCRT rankings and is recommended for future PfCRT-targeted campaigns. Other targets operate at neutral pH and are 
 unaffected. Third, all docking was performed against single static crystal structures without accounting for protein conformational ensembles or resistance 
