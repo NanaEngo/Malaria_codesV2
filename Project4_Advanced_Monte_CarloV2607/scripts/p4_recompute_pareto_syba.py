@@ -40,14 +40,23 @@ def main() -> None:
     if not CSV_PATH.exists():
         raise FileNotFoundError(CSV_PATH)
 
-    # Read the existing merged front
+    # Read the existing merged front. This utility is intentionally scoped to
+    # the deposited pre-activity Pareto front; never silently drop a v12
+    # activity column if someone points it at a different artifact.
     rows = []
     with open(CSV_PATH) as fh:
         reader = csv.DictReader(fh)
+        fields = set(reader.fieldnames or [])
+        if "activity" in fields:
+            raise ValueError(
+                "Refusing to rewrite a v12 activity-bearing CSV: "
+                "p4_recompute_pareto_syba.py only handles the pre-activity "
+                "canonical Pareto front."
+            )
         for row in reader:
             rows.append(row)
 
-    print(f"Read {len(rows)} rows from {CSV_PATH}")
+    print(f"Read {len(rows)} pre-activity rows from {CSV_PATH}")
 
     # Recompute SYBA for each molecule
     updated = []
@@ -61,21 +70,15 @@ def main() -> None:
         updated.append((smi, row))
         print(f"  {smi[:40]:40s}  raw={raw:8.2f}  norm={norm:.4f}")
 
-    # Recompute Pareto front / hypervolume on active objectives
-    # Objectives: mpo (+), syba (+), sa (-), rrs (+), pns (+)
-    # v12: 6 objectives — the public-activity oracle is a Pareto objective.
-    objectives = ["mpo", "syba", "sa", "rrs", "pns", "activity"]
-    maximize = [True, True, False, True, True, True]
+    # Recompute the deposited canonical Pareto front. The public-activity
+    # term belongs to the v12 scalar benchmark; it was not part of the
+    # historical Pareto-MCTS run and must not be added retroactively here.
+    objectives = ["mpo", "syba", "sa", "rrs", "pns"]
+    maximize = [True, True, False, True, True]
     front = ParetoFront(objectives=objectives, maximize=maximize)
 
     for smi, row in updated:
-        scores = {
-            "mpo": float(row["mpo"]),
-            "syba": float(row["syba"]),
-            "sa": float(row["sa"]),
-            "rrs": float(row["rrs"]),
-            "pns": float(row["pns"]),
-        }
+        scores = {k: float(row[k]) for k in objectives}
         front.update(smi, scores)
 
     sols = front.solutions

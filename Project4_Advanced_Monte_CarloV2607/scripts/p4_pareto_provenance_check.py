@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """P4 — Pareto provenance lock (P0-1, submission blocking).
 
-Verifies that every SMILES + score in the 4-point canonical merged Pareto front
-(results/pareto/merged_pareto_front.csv) is traceable to the deposited per-seed
-Pareto CSVs (results/pareto/p4_pareto_seed_*.csv) and that the post-hoc SYBA
-recomputation is reproducible with the lich/conda classifier.
+Verifies that every SMILES + score in the 4-point canonical **pre-activity**
+merged Pareto front (results/pareto/merged_pareto_front.csv) is traceable to
+the deposited per-seed Pareto CSVs (results/pareto/p4_pareto_seed_*.csv) and
+that the post-hoc SYBA recomputation is reproducible with the lich/conda
+classifier. The v12 public-activity term belongs to the separate scalar
+benchmark and is intentionally absent from this historical front.
 
 Checks:
   1. Each front SMILES exists in its per-seed CSV with identical
@@ -42,11 +44,12 @@ PARETO_DIR = PROJECT_DIR / "results" / "pareto"
 MERGED_CSV = PARETO_DIR / "merged_pareto_front.csv"
 RECOMPUTE_LOG = PARETO_DIR / "merged_pareto_front_recompute.log"
 
-# v12: 6 objectives — the public-activity oracle is a Pareto objective.
-# Historical v11 artifacts lack the activity column; scores.get(obj, 0.0)
-# yields a constant 0 there, which _detect_active_objectives auto-excludes.
-OBJECTIVES = ["mpo", "syba", "sa", "rrs", "pns", "activity"]
-MAXIMIZE = [True, True, False, True, True, True]
+# The deposited canonical Pareto front predates the public-activity reward.
+# v12 activity was added to the four-method scalar benchmark, but was not
+# retroactively added to the published Pareto-MCTS run. Keep this provenance
+# lock on the five columns actually present in merged_pareto_front.csv.
+OBJECTIVES = ["mpo", "syba", "sa", "rrs", "pns"]
+MAXIMIZE = [True, True, False, True, True]
 
 # Manuscript Table 2 (tab:pareto) as rendered in P4_Pareto_MCTS_JoC_refined.tex
 MANUSCRIPT_TABLE = {
@@ -87,7 +90,16 @@ def main() -> int:
 
     # ── 0. Load merged front ──────────────────────────────────────────────
     with open(MERGED_CSV, newline="") as fh:
-        merged = list(csv.DictReader(fh))
+        reader = csv.DictReader(fh)
+        merged = list(reader)
+        merged_fields = set(reader.fieldnames or [])
+    expected_fields = {"smiles", "mpo", "syba", "sa", "rrs", "pns", "syba_raw", "hypervolume", "seed"}
+    check("activity" not in merged_fields,
+          "canonical Pareto CSV is explicitly pre-activity",
+          f"activity column present={('activity' in merged_fields)}")
+    check(expected_fields.issubset(merged_fields),
+          "canonical Pareto CSV contains the locked provenance schema",
+          f"missing={sorted(expected_fields - merged_fields)}")
     print(f"\n[0] Merged front: {len(merged)} rows from {MERGED_CSV.name}")
     check(len(merged) == 4, "merged front has exactly 4 points", f"got {len(merged)}")
 
@@ -115,7 +127,7 @@ def main() -> int:
               f"per-seed={match['syba']} -> merged={row['syba']}")
 
     # ── 2. Non-dominance + hypervolume ────────────────────────────────────
-    print("\n[2] Non-dominance + hypervolume (ParetoFront on MPO/SYBA/SA/RRS/PNS):")
+    print("\n[2] Non-dominance + hypervolume (canonical pre-activity MPO/SYBA/SA/RRS/PNS front):")
     sys.path.insert(0, str(SCRIPT_DIR))
     from p4_mcts_pareto import ParetoFront  # type: ignore
 
@@ -162,10 +174,10 @@ def main() -> int:
     # ── 4. Manuscript display values ──────────────────────────────────────
     print("\n[4] Manuscript Table 2 display values vs merged CSV:")
     sa_inv_expected = (10.0 - 3.0) / 9.0
-    # explicit mapping by MPO to keep this readable
-    mpo_to_label = {"0.9103": "P1", "0.9447": "P2", "0.9463": "P3", "0.7285": "P4"}
+    # Stable mapping from deposited seed provenance, not rounded score values.
+    seed_to_label = {13: "P1", 18: "P2", 5: "P3", 6: "P4"}
     for row in merged:
-        label = mpo_to_label.get(f"{float(row['mpo']):.4f}", "?")
+        label = seed_to_label.get(int(row["seed"]), "?")
         man = MANUSCRIPT_TABLE.get(label)
         if man is None:
             continue

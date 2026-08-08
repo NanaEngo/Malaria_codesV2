@@ -40,8 +40,9 @@ trade-offs missed by scalar antimalarial generation}
 \section*{S1\hspace{0.6em}Pareto-front data provenance}
 % ============================================================================
 
-The canonical merged Pareto front (main text, Table~1) comprises four mutually
-non-dominated candidates. Every candidate is traceable to the deposited
+The canonical \textbf{pre-activity} merged Pareto front (main text, Table~1) comprises four mutually
+non-dominated candidates. The public-activity term belongs to the separate v12 scalar
+benchmark and was not used to construct this historical front. Every candidate is traceable to the deposited
 per-seed Pareto CSV \path{p4_pareto_seed_N.csv} from which it originated,
 and all MPO, SA, RRS and PNS values are identical between the per-seed record
 and the merged front (\path{results/pareto/merged_pareto_front.csv}). The only
@@ -63,7 +64,7 @@ matches a deposited record.
 
 \begin{table}[htbp]
   \centering
-  \caption{Canonical merged Pareto front with per-seed provenance. All four
+  \caption{Canonical \textbf{pre-activity} merged Pareto front with per-seed provenance. All four
   points are mutually non-dominated on the active objectives (MPO, SYBA, RRS,
   PNS; SA is constant at \num{3.0} and therefore excluded from the
   hypervolume). SYBA was recomputed post-hoc (main text, Methods); MPO, SA,
@@ -86,7 +87,7 @@ matches a deposited record.
 \section*{S2\hspace{0.6em}Molecular diversity of the four generation methods}
 % ============================================================================
 
-The main text reports scalar-reward statistics only, because the primary
+The main text reports v12 scalar-reward statistics separately, because the primary
 contributions are the honest benchmark ranking and the multi-objective Pareto
 front. Molecular diversity is analysed here in the Supplementary Material
 using real, deposited molecule sets.
@@ -95,7 +96,7 @@ using real, deposited molecule sets.
 random search, greedy search, genetic algorithm) the best-scoring molecule of
 each of the \num{20} independent benchmark seeds was recorded, giving a
 deposited set of \num{20} molecules per method under
-\path{results/benchmark_molecules_opt/}. These are the same runs whose scalar
+\path{results/benchmark_molecules_opt_v12/}. These are the v12-activity runs whose scalar
 rewards are reported in the main-text benchmark table and in
 \Cref{tab:sm_benchmark}. The canonical benchmark uses the screened-optimal
 MCTS configuration ($c_{\text{PUCT}}=\num{5.0}$, $\nu=\num{0.01}$,
