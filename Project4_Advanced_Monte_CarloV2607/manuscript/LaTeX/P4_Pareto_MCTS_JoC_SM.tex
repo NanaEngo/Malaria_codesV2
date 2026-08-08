@@ -44,7 +44,7 @@ The canonical \textbf{pre-activity} merged Pareto front (main-text Table~2) comp
 non-dominated candidates. The public-activity term belongs to the separate v12 scalar
 benchmark and was not used to construct this historical front. Every candidate is traceable to the deposited
 per-seed Pareto CSV \path{p4_pareto_seed_N.csv} from which it originated,
-and all MPO, SA, RRS and PNS values are identical between the per-seed record
+and all MPO, SA, RRS-informed proxy and PNS-informed proxy values are identical between the per-seed record
 and the merged front (\path{results/pareto/merged_pareto_front.csv}). The only
 score that differs is SYBA, by design: the original Pareto-MCTS run returned a
 constant zero fallback for every molecule (SYBA was inactive during search, as
@@ -60,13 +60,13 @@ hypervolume (\num{1.2366}). The verification script
 exits with status 0 only when every SMILES and score in the merged front
 matches a deposited record.
 
-\cref{tab:sm_pareto} lists the four canonical candidates with their provenance.
+\cref{tab:sm_pareto} lists the four canonical candidates with their provenance. Because the RRS-informed and PNS-informed proxies are P2-informed domain objectives, we also report a compact domain-objective profile for the re-scored benchmark molecules in \Cref{fig:sm_rrs_pns}; this makes the resistance and multi-target dimensions inspectable rather than leaving them implicit in the main-text colour and marker encodings.
 
 \begin{table}[htbp]
   \centering
-  \caption{Canonical \textbf{pre-activity} merged Pareto front with per-seed provenance. All four
-  points are mutually non-dominated on the active objectives (MPO, SYBA, RRS,
-  PNS; SA is constant at \num{3.0} and therefore excluded from the
+  \caption{Canonical \textbf{pre-activity} merged Pareto front with per-seed provenance.All four
+points are mutually non-dominated on the active objectives (MPO, SYBA, the RRS-informed
+chemotype proxy and the PNS-informed Tartarus proxy; SA is constant at \num{3.0} and therefore excluded from the
   hypervolume). SYBA was recomputed post-hoc (main-text Methods); MPO, SA,
   RRS and PNS are unchanged from the per-seed records.}
   \label{tab:sm_pareto}
@@ -120,6 +120,13 @@ matrix) are deposited for visualisation
 (\path{results/diversity/p4_diversity_mds.csv}).
 
 \cref{tab:sm_diversity} reports the real diversity statistics, and \Cref{fig:sm_mds} shows the metric-MDS projection of the four molecule sets.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.86\textwidth]{Graphics/rrs_pns_profile.pdf}
+  \caption{RRS-informed chemotype-similarity and PNS-informed Tartarus multi-target proxy profile from the common pre-activity oracle applied to deposited best-in-seed molecules. RRS is shown as individual observations plus box summaries; PNS is shown as the fraction of valid rows with PNS = 1. The figure is descriptive: the RRS-informed proxy is narrow and the PNS-informed proxy is predominantly discrete in the current constrained fragment space; neither is a direct mutant-binding or four-target validation.}
+  \label{fig:sm_rrs_pns}
+\end{figure}
 
 \begin{figure}[htbp]
   \centering

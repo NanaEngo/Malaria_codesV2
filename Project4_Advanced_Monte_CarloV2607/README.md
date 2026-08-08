@@ -6,8 +6,8 @@
 
 P4 implements a **de novo molecular generation framework** targeting **African Natural Product (ANP)-inspired antimalarial chemistry**, combining:
 - **MCTS + ScafVAE**: Tree search guided by a chemistry-informed fragment policy (PUCT) built on privileged natural product-like antimalarial fragments (chromone, quinoline, indole, terpene derivatives) with medicinal chemistry safety filters (`medchem`: PAINS, Brenk, Veber, Lipinski).
-- **Pareto MCTS**: Multi-objective optimization via exact non-dominated front and hypervolume calculation (`pymoo` $WFG$ algorithm, HV ≥ 0.58).
-- **Real P1/P2 Oracles**: MPO (≥0.75), docking (Tartarus V2 *P. falciparum* targets), SYBA (>0), SA (<3.5), RRS (selectivity), PNS (polypharmacology), plus GPU-accelerated CuPy batch Tanimoto lookup.
+- **Pareto MCTS**: Multi-objective optimization via an exact non-dominated front over MPO, SYBA, RRS and PNS (SA is constant in the reported front), with hypervolume calculation (`pymoo` WFG algorithm; canonical HV = 1.2366).
+- **Real P1/P2-informed Oracles**: MPO (≥0.75), docking (Tartarus V2 targets), SYBA (>0), SA (<3.5), an **RRS-informed Morgan/Tanimoto proxy** to P2 reference chemotypes, and a **PNS-informed normalized Tartarus multi-target proxy** (`score_1syh`, `score_6y2f`, `score_4lde`), plus GPU-accelerated CuPy batch Tanimoto lookup.
 - **4-Method Benchmark**: MCTS+ScafVAE vs. Random vs. GA vs. Greedy across 20 independent seeds with paired t-testing and real best-in-seed molecule sets. The **v12-activity benchmark** (`results/benchmark_molecules_opt_v12/p4_benchmark_merged.csv`, job 12865) is canonical for scalar reward: Random 0.6724 > MCTS 0.6649 > GA 0.6453 > Greedy 0.4278. MCTS--Random Δ=−0.0075, paired $t_{19}=−4.97$, $p=0.000085$; the pre-activity Pareto front remains a separate locked artifact (HV 1.2366, 4 non-dominated solutions). The v11 optimal-config benchmark is retained as historical sensitivity context.
 - **QMC status**: Tier 1 SCF diagnostics are complete; candidate-level Tier 2 VMC/DMC remains diagnostic and is not publication-grade. QMC claims are excluded from the manuscript.
 
@@ -17,13 +17,13 @@ P4 implements a **de novo molecular generation framework** targeting **African N
 
 | # | Novelty Claim |
 |---|---------------|
-| **N1** | **First Pareto-guided MCTS to fold resistance-resilience (RRS) and polypharmacology-network (PNS) scores into the generation objective** — not appended post hoc (honest caveat: in the current front RRS varies narrowly, 0.141–0.223). |
+| **N1** | **Pareto-guided MCTS with P2-informed resistance-resilience and polypharmacology proxies inside the generation objective** — not appended post hoc (honest caveat: the current front's RRS-informed proxy varies narrowly, 0.141–0.223, and PNS is predominantly discrete). |
 | **N2** | **Front-level multi-objective comparison against scalar baselines** (re-scored per-seed best molecules on the full oracle; HV 18.99, C-metric 0.82) — closes the "no front comparison" gap without re-running the benchmark. |
 | **N3** | **Scaffold-aware fragment policy** (ChEMBL27 frequencies + Tanimoto) as the largest observed main effect in the ablation configuration (Δ=+0.148), replacing uniform rollout priors. |
 | **N4** | **Rollout-degradation diagnosis & fix** (global best-molecule tracking): without it MCTS reward collapsed to ~0.24; with it, ×2.6 recovery — a documented, reproducible failure mode. |
-| **N5** | **Resistance-aware lead selection:** the Pareto front is the vehicle for resistance-aware, multi-target lead choice — the P2 RRS/PNS oracles enter the search objective, not the post-hoc ranking. |
+| **N5** | **Resistance-aware lead selection:** the Pareto front is the vehicle for resistance-aware, multi-target proxy-guided lead choice — P2-informed RRS/PNS proxies enter candidate retention, not only post-hoc ranking. |
 
-**Resistance integration:** RRS is an active Pareto objective ($w_{\text{RRS}}=0.15$ in the full aggregator) and the front is built on MPO, SYBA, RRS, PNS. This makes P4 the generation-side carrier of the programme's antimalarial-resistance thread (P2 RRS → P4 objective → Pareto candidates), explicitly contrasted with prior malaria-motivated generators (CombiMOTS) whose objectives remain binding/drug-likeness estimates rather than resistance phenotypes.
+**Resistance/polypharmacology integration:** the RRS-informed chemotype-similarity proxy and PNS-informed Tartarus docking proxy are active Pareto objectives (the latter averages detected columns `score_1syh`, `score_6y2f`, `score_4lde`). They are P2-informed, not direct P2 WT/mutant or four-target validation. The front is built on MPO, SYBA, these RRS/PNS-informed proxies, making P4 the generation-side carrier of the programme's domain thread: P2-informed resistance/multi-target signals → P4 candidate retention → auditable Pareto candidates. In the canonical front, three of four candidates have PNS=1 and the RRS-informed proxy spans 0.141–0.223; the narrow range and discrete PNS values are reported as limitations, not hidden.
 
 ---
 

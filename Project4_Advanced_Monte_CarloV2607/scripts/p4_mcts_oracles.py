@@ -4,16 +4,15 @@
 Provides pharmacological scores (MPO, docking, SYBA, SA) and two advanced
 oracles that bring P2 polypharmacology awareness into P4:
 
-**RRS (Resistance Resilience Score):** Measures how similar a generated
-molecule is to known hits that maintain binding against clinically relevant
-resistance mutations (PfDHFR N51I, C59R, S108N, I164L; PfCRT K76T, K76A).
-Uses Tanimoto fingerprint similarity as a proxy when experimental mutant
-binding data is unavailable.
+**RRS-informed proxy:** Measures Morgan/Tanimoto similarity to P2 reference
+chemotypes selected as resistance-resilience exemplars. The current P4
+implementation does not propagate P2 per-target WT/mutant ratios; it is a
+chemotype-similarity proxy, not a validated mutant-binding prediction.
 
-**PNS (Polypharmacology Network Score):** Multi-target binding score across
-four P. falciparum targets (PfDHFR, PfCRT, PfATP4, PfClpP). Derived from
-Tartarus multi-target docking results, providing a polypharmacology-aware
-reward that favours molecules with broad target engagement.
+**PNS-informed proxy:** A normalized multi-target docking score derived from
+the Tartarus columns `score_1syh`, `score_6y2f` and `score_4lde`. It is a
+polypharmacology-aware proxy for broad docking engagement in that three-target
+Tartarus panel, not a direct four-target PfDHFR/PfCRT/PfATP4/PfClpP score.
 
 References
 ----------
@@ -981,25 +980,20 @@ class OracleAggregator:
 
     # ── RRS (Resistance Resilience Score) oracle ────────────────────
     def _rrs_score(self, smiles: str) -> float:
-        """Resistance Resilience Score: max Tanimoto similarity to known
-        resistance-resilient hits.
+        """RRS-informed chemotype-similarity proxy based on Morgan/Tanimoto
+        similarity to P2 reference chemotypes.
 
-        **Multi-fidelity improvement**: For novel molecules with low Tanimoto
-        similarity to any single reference, uses the mean RRS of the K nearest
-        neighbours (K=3) instead of returning 0.0. This provides a smooth
-        gradient even for molecules in novel chemical space.
-
-        RRS quantifies how similar a generated molecule is to known
-        chemotypes that maintain binding against clinically prevalent
-        resistance mutations (PfDHFR N51I, C59R, S108N, I164L;
-        PfCRT K76T, K76A).
+        This implementation does not propagate per-target WT/mutant ratios;
+        it is not a validated mutant-binding prediction. For novel molecules
+        with low similarity, the continuous score provides a smooth proxy
+        gradient rather than a biological resilience measurement.
 
         Uses a continuous scaling function:
         - Tanimoto ≤ 0.20 → RRS = 0.0 (novel chemotype, nearest-neighbour avg)
         - Tanimoto 0.20-1.0 → RRS = 0.0-1.0 (linear, continuous at 0.20)
 
         Returns a score in [0, 1], where higher values indicate greater
-        predicted resistance resilience.
+        similarity to the reference chemotype set.
 
         Note: RRS does NOT apply drug-likeness filtering (
         `_medchem_filter`) because resistance-resilient chemotypes may
@@ -1042,20 +1036,15 @@ class OracleAggregator:
 
     # ── PNS (Polypharmacology Network Score) oracle ─────────────────
     def _pns_score(self, smiles: str) -> float:
-        """Polypharmacology Network Score: mean docking score across
-        all available P. falciparum targets.
+        """PNS-informed normalized Tartarus multi-target docking proxy.
 
-        **Multi-fidelity improvement**: Uses a Tanimoto-weighted average
-        of the K nearest neighbours' PNS scores when the query molecule
-        is not found in the Tartarus library. This provides a smooth
-        gradient even for novel molecules without direct docking data.
+        The current Tartarus library exposes three detected score columns
+        (`score_1syh`, `score_6y2f`, `score_4lde`), which are averaged for
+        exact matches. A Tanimoto-weighted nearest-neighbour fallback is used
+        for novel molecules. This is not a direct four-target Pf panel.
 
-        Uses per-target docking scores from the Tartarus library
-        (columns detected dynamically at load time). Falls back to
-        nearest-neighbour proxy when Tartarus data is unavailable.
-
-        Returns a score normalised to [0, 1], where higher values
-        indicate better multi-target binding.
+        Returns a score normalised to [0, 1], where higher values indicate
+        stronger aggregate docking in the detected Tartarus columns.
         """
         cached = self._cache_get(smiles, "pns")
         if cached is not None:

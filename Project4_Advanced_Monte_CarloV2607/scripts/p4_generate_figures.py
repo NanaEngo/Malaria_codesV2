@@ -591,12 +591,100 @@ def plot_overview(data):
     print(f"  ✅ {pdf_path.name}")
 
 
+# ── Figure 6: Resistance resilience and polypharmacology profile ─────
+def plot_resilience_polypharm():
+    """Plot the two domain-specific P2 objective profiles.
+
+    The input contains the deposited best-in-seed molecules re-scored with the
+    common pre-activity multi-objective oracle. RRS is shown descriptively as
+    a distribution; PNS is shown as the fraction of rows with PNS=1 because
+    the current oracle is predominantly discrete. No inferential comparison
+    is performed, and the unequal valid-row counts are displayed explicitly.
+    """
+    path = PROJECT_DIR / "results" / "pareto" / "p4_multiobj_benchmark.csv"
+    if not path.exists():
+        raise FileNotFoundError(f"RRS/PNS input not found: {path}")
+    df = pd.read_csv(path)
+    required = {"method", "rrs", "pns"}
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(f"{path} is missing columns: {missing}")
+
+    methods = ["mcts", "random", "ga", "greedy"]
+    labels = [METHOD_LABELS[m] for m in methods]
+    present = [m for m in methods if m in set(df["method"])]
+    positions = np.arange(len(present))
+
+    fig, axes = plt.subplots(1, 2, figsize=(8.3, 3.45),
+                             gridspec_kw={"width_ratios": [1.25, 1.0]})
+    fig.subplots_adjust(left=0.10, right=0.98, bottom=0.24, top=0.84, wspace=0.34)
+
+    # RRS distribution: box + jittered observations, with n shown on x labels.
+    ax = axes[0]
+    rrs_values = [df.loc[df["method"] == m, "rrs"].dropna().to_numpy()
+                  for m in present]
+    bp = ax.boxplot(rrs_values, positions=positions, widths=0.46,
+                    patch_artist=True, showfliers=False,
+                    medianprops={"color": "black", "linewidth": 1.2},
+                    whiskerprops={"color": "0.35", "linewidth": 0.8},
+                    capprops={"color": "0.35", "linewidth": 0.8})
+    for patch, m in zip(bp["boxes"], present):
+        patch.set_facecolor(COLOURS[m])
+        patch.set_alpha(0.35)
+        patch.set_edgecolor("black")
+    rng = np.random.default_rng(20260808)
+    for x, m, vals in zip(positions, present, rrs_values):
+        jitter = rng.uniform(-0.11, 0.11, size=len(vals))
+        ax.scatter(x + jitter, vals, s=22, color=COLOURS[m],
+                   edgecolors="black", linewidths=0.3, alpha=0.72, zorder=3)
+        ax.text(x, 0.228, f"n={len(vals)}", ha="center", va="bottom", fontsize=7)
+    ax.set_xticks(positions, [METHOD_LABELS[m] for m in present], rotation=22, ha="right")
+    ax.set_ylabel("RRS (higher = predicted resilience)")
+    ax.set_title("A  Resistance resilience", loc="left", fontweight="bold")
+    ax.set_ylim(0.05, 0.245)
+    ax.yaxis.set_major_locator(mticker.MultipleLocator(0.05))
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    # PNS profile: PNS=1 fraction is the interpretable engagement endpoint.
+    ax = axes[1]
+    fractions = []
+    counts = []
+    for m in present:
+        vals = df.loc[df["method"] == m, "pns"].dropna()
+        counts.append(len(vals))
+        fractions.append(float((vals >= 0.999).mean()))
+    bars = ax.bar(positions, fractions,
+                  color=[COLOURS[m] for m in present], edgecolor="black",
+                  linewidth=0.55, width=0.55)
+    for bar, frac, n in zip(bars, fractions, counts):
+        ax.text(bar.get_x() + bar.get_width() / 2, frac + 0.035,
+                f"{100 * frac:.1f}%\n(n={n})", ha="center", va="bottom", fontsize=7)
+    ax.set_xticks(positions, [METHOD_LABELS[m] for m in present], rotation=22, ha="right")
+    ax.set_ylabel("Rows with PNS = 1")
+    ax.set_title("B  Polypharmacology engagement", loc="left", fontweight="bold")
+    ax.set_ylim(0, 1.28)
+    ax.yaxis.set_major_formatter(mticker.PercentFormatter(1.0))
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.text(0.02, 0.02, "PNS=1 denotes the\nmaximum multi-target score;\nintermediate values are retained.",
+            transform=ax.transAxes, fontsize=7.2, va="bottom", color="0.25")
+
+    out_png = GRAPHICS_DIR / "rrs_pns_profile.png"
+    out_pdf = GRAPHICS_DIR / "rrs_pns_profile.pdf"
+    fig.savefig(out_png, dpi=400)
+    fig.savefig(out_pdf)
+    plt.close(fig)
+    print(f"  ✅ {out_png.name}")
+    print(f"  ✅ {out_pdf.name}")
+
+
 # ── Main ─────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(description="Generate P4 manuscript figures")
     parser.add_argument("--figures", nargs="+",
-                        choices=["overview", "reward_bar", "efficiency", "pareto", "diversity"],
-                        default=["overview", "reward_bar", "efficiency", "pareto", "diversity"],
+                        choices=["overview", "reward_bar", "efficiency", "pareto", "diversity", "rrs_pns"],
+                        default=["overview", "reward_bar", "efficiency", "pareto", "diversity", "rrs_pns"],
                         help="Figures to generate")
     args = parser.parse_args()
 
@@ -636,8 +724,12 @@ def main():
             plot_pareto_front(data)
 
     if "diversity" in args.figures:
-        print("  [4/5] Scaffold diversity MDS...")
+        print("  [4/6] Scaffold diversity MDS...")
         plot_diversity(data)
+
+    if "rrs_pns" in args.figures:
+        print("  [5/6] RRS/PNS domain-objective profile...")
+        plot_resilience_polypharm()
 
     print("\n" + "=" * 55)
     print("  All figures generated successfully!")
