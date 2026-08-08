@@ -12,4 +12,6 @@ set -euo pipefail
 source /home/nanaengo/miniforge3/etc/profile.d/conda.sh
 conda activate diffdock
 cd /home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V5_CorrectedGrid
-python scripts/p1_v5_run_diffdock_clpp_2f6i.py
+# ODE mode: deterministic score-guided refinement keeps rank-1 in the declared
+# catalytic grid (stochastic Langevin sampling drifted poses 10-17 A out).
+python scripts/p1_v5_run_diffdock_clpp_2f6i.py --output-dir results/diffdock_2F6I_PfClpP_17_ode

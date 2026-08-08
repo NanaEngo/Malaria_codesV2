@@ -6,6 +6,11 @@ the genuine PfClpP catalytic domain (EC 3.4.21.92, UniProt O97252). All 17
 PfClpP rows are re-docked against 2F6I with a fixed pocket center derived from
 the catalytic-residue centroid in the 2F6I frame. Creates a V5-local patched copy
 of pinned DiffDock inference.py (fixed-center control; no post-hoc translation).
+
+The reverse-diffusion sampler runs in ODE mode (no stochastic translation term)
+so that a ligand initialized at the declared catalytic center is refined in place
+rather than being displaced by Langevin noise; empirical smoke runs showed that
+stochastic (non-ODE) sampling drifts rank-1 poses 10-17 A out of the 25 A box.
 Never launches Vina, GROMACS, consensus, RRS, or PNS.
 """
 from __future__ import annotations
@@ -196,7 +201,10 @@ def write_failure_provenance(output: Path, base: dict, reason: str, **details) -
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUT)
+    parser.add_argument("--no-ode", action="store_true", help="disable ODE (deterministic) refinement mode")
+    parser.add_argument("--limit-pairs", type=int, default=None, help="restrict run to the first N PfClpP rows (smoke mode)")
     args = parser.parse_args()
+    ode_mode = not args.no_ode
     output = args.output_dir if args.output_dir.is_absolute() else ROOT / args.output_dir
     if output.exists() and any(output.iterdir()):
         raise SystemExit(f"FAIL-CLOSED output directory exists and is non-empty: {output}")
@@ -214,8 +222,13 @@ def main() -> int:
     with MANIFEST.open(encoding="utf-8", newline="") as f:
         rows = list(csv.DictReader(f))
     clpp_rows = [r for r in rows if r["target"] == "PfClpP"]
+    expected_pairs = args.limit_pairs if args.limit_pairs is not None else 17
     if len(clpp_rows) != 17:
         raise SystemExit(f"FAIL-CLOSED expected 17 PfClpP rows, found {len(clpp_rows)}")
+    if args.limit_pairs is not None:
+        if not (1 <= args.limit_pairs <= 17):
+            raise SystemExit(f"FAIL-CLOSED --limit-pairs must be in [1,17], got {args.limit_pairs}")
+        clpp_rows = clpp_rows[:args.limit_pairs]
     for r in clpp_rows:
         if r["pdb_id"] != "2F6I":
             raise SystemExit(f"FAIL-CLOSED PfClpP row does not reference 2F6I: {r['complex_name']}")
@@ -238,6 +251,7 @@ def main() -> int:
         "no_random_pocket": True,
         "pocket_cutoff": POCKET_CUTOFF_A,
         "pocket_tr_max": POCKET_TR_MAX_A,
+        "ode": ode_mode,
     })
     run_config = output / "clpp_pocket_config.yaml"
     run_config.write_text(yaml.safe_dump(config, sort_keys=True), encoding="utf-8")
@@ -308,7 +322,7 @@ def main() -> int:
         "pdb_pdbqt_frame_equivalence": frame_equivalence,
         "log_sha256": sha256(log),
         "returncode": process.returncode,
-        "pocket_parameters": {"mode": "predeclared_fixed_receptor_grid_center", "pocket_knowledge": False, "no_random_pocket": True, "fixed_center_pdb_coordinates": list(CURRENT_CENTER), "box_A": list(BOX)},
+        "pocket_parameters": {"mode": "predeclared_fixed_receptor_grid_center", "pocket_knowledge": False, "no_random_pocket": True, "ode": ode_mode, "fixed_center_pdb_coordinates": list(CURRENT_CENTER), "box_A": list(BOX)},
     }
     if process.returncode != 0:
         write_failure_provenance(output, failure_base, "DIFFDOCK_NONZERO_EXIT")
@@ -373,6 +387,7 @@ def main() -> int:
         "pdb_pdbqt_frame_equivalence": frame_equivalence,
         "log_sha256": sha256(log),
         "returncode": process.returncode,
+        "ode": ode_mode,
         "samples_per_complex": expected_samples,
         "records": records,
         "all_rank1_in_grid": True,
@@ -384,7 +399,7 @@ def main() -> int:
         "next_gate": "independent review of 2F6I pocket geometry before Vina scoring and consensus/RRS/PNS",
     }
     (output / "execution_provenance.json").write_text(json.dumps(provenance, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(json.dumps({"status": provenance["status"], "pairs": len(clpp_rows), "output": str(output), "returncode": process.returncode}, indent=2))
+    print(json.dumps({"status": provenance["status"], "pairs": len(clpp_rows), "output": str(output), "ode": ode_mode, "returncode": process.returncode}, indent=2))
     return 0
 
 
