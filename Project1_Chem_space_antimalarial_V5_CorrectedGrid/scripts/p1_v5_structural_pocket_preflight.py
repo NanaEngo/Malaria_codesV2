@@ -39,9 +39,9 @@ TARGETS = {
     "PfClpP": {
         "pdb_id": "2F6I",
         "pdb": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/2F6I.pdb",
-        "center": [-0.116, 40.446, 12.213],
+        "center": [-24.276, 17.28, -2.901],
         "evidence_class": "CATALYTIC_TRIAD_REVIEW_REQUIRED",
-        "anchor_policy": "RCSB 2F6I is the genuine PfClpP catalytic domain (EC 3.4.21.92, UniProt O97252, El Bakkouri et al. 2010); 4GM2 is PfClpR (inactive, UniProt Q8IL98) and must not be used. Pocket center = centroid of catalytic Ser/His/Asp residues across the heptamer; independent review still required.",
+        "anchor_policy": "RCSB 2F6I is the genuine PfClpP catalytic domain (EC 3.4.21.92, UniProt O97252, El Bakkouri et al. 2010); 4GM2 is PfClpR (inactive, UniProt Q8IL98) and must not be used. CORRECTED 08/08/2026: pocket center = chain A catalytic triad Ser252/His223/Asp219 (geometrically complete in all 7 chains; UniProt active-site Ser289 corresponds to 2F6I Ser252, offset 37). The previous centroid of all Ser/His/Asp residues collapsed to the barrel channel and is NOT a catalytic site; independent review still required.",
     },
     "PfATP4": {
         "pdb_id": "9N10",

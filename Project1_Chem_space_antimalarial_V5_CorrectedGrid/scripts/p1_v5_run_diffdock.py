@@ -49,7 +49,10 @@ PINNED_DIFFDOCK_PYTHON = Path("/home/nanaengo/miniforge3/envs/diffdock/bin/pytho
 VINA_GRID = {
     "PfDHFR": {"pdb_id": "7F3Y", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/7F3Y.pdbqt", "center": [1.33, -1.733, -23.842], "box": [25.0, 25.0, 25.0]},
     "PfCRT": {"pdb_id": "6UKJ", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/6UKJ.pdbqt", "center": [152.99, 151.042, 159.379], "box": [25.0, 25.0, 25.0]},
-    "PfClpP": {"pdb_id": "2F6I", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/2F6I.pdbqt", "center": [-0.116, 40.446, 12.213], "box": [25.0, 25.0, 25.0]},
+    # CORRECTED 08/08/2026: old center was the barrel-channel centroid of all Ser/His/Asp;
+    # genuine 2F6I catalytic triad (mature numbering; UniProt O97252 active-site Ser289 = 2F6I
+    # Ser252, offset 37) is Ser252/His223/Asp219, canonical pocket = chain A triad centroid.
+    "PfClpP": {"pdb_id": "2F6I", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/2F6I.pdbqt", "center": [-24.276, 17.28, -2.901], "box": [25.0, 25.0, 25.0]},
     "PfATP4": {"pdb_id": "9N10", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/9N10.pdbqt", "center": [134.84, 133.10, 97.63], "box": [25.0, 25.0, 25.0]},
 }
 

@@ -21,8 +21,8 @@
       "old_identity": "Plasmodium falciparum ClpR (inactive paralog/subunit), not PfClpP (UniProt Q8IL98; El Bakkouri et al. 2013 'Structural Insights into the Inactive Subunit of the Apicoplast-localized Caseinolytic Protease Complex')",
       "new_identity": "Genuine PfClpP catalytic domain (EC 3.4.21.92, UniProt O97252, El Bakkouri et al. 2010 'The Clp chaperones and proteases of the human malaria parasite Plasmodium falciparum'; 2.45 A resolution, heptamer chains A-G)",
       "decision": "RECEPTOR_CORRECTED_CATALYTIC_TRIAD_REVIEW_REQUIRED",
-      "pocket_center_angstrom": [-0.116, 40.446, 12.213],
-      "pocket_center_basis": "Centroid of catalytic Ser/His/Asp residues across the heptamer (2F6I coordinate frame); the old 4GM2 center (26.19, 35.09, 24.72) is NOT transferable to the 2F6I frame and must not be reused",
+      "pocket_center_angstrom": [-24.276, 17.28, -2.901],
+      "pocket_center_basis": "CORRECTED 2026-08-08: chain A catalytic triad Ser252/His223/Asp219 centroid (2F6I mature numbering; geometrically complete in all 7 chains; UniProt O97252 active-site Ser289 corresponds to 2F6I Ser252, offset 37). The previous center [-0.116, 40.446, 12.213] was the centroid of ALL Ser/His/Asp residues across the heptamer, which collapses to the barrel-channel axis and is NOT a catalytic site (verified: Vina poses landed ~22 A from the nearest triad). The old 4GM2 center (26.19, 35.09, 24.72) is NOT transferable to the 2F6I frame and must not be reused",
       "authoritative_url": "https://www.rcsb.org/structure/2F6I"
     },
     "PfATP4": {
@@ -34,11 +34,11 @@
   "consequence": {
     "inherited_manifest_68_pairs": "SUPERSEDED_NOT_ACCEPTED",
     "inherited_raw_diffdock_audit": "SUPERSEDED_NOT_ACCEPTED",
-    "vina_score_only": "BLOCKED_UNTIL_2F6I_DIFFDOCK_RERUN",
+    "vina_score_only": "SUPERSEDED_FOR_PFCLPP: grid-restrained Vina docking on the corrected chain A triad center is the accepted evidence path (DiffDock blind diffusion cannot be constrained to the catalytic pocket; verified 2026-08-08)",
     "consensus_scores_written": false,
     "rrs_pns_updated": false,
     "diffdock_launched_after_correction": false,
     "gromacs_launched_after_correction": false
   },
-  "required_repair": "The 17 PfClpP DiffDock poses were generated on 4GM2 (wrong receptor, different coordinate frame) and are unusable: re-run DiffDock on 2F6I for the 17 PfClpP pairs, then re-verify rank-1 IN_GRID containment in the 2F6I pocket box, then independently review all four receptor identities before any new scoring/consensus/RRS/PNS run."
+  "required_repair": "The 17 PfClpP DiffDock poses were generated on 4GM2 (wrong receptor, different coordinate frame) and are unusable. On 2F6I, DiffDock blind reverse diffusion cannot be constrained to the catalytic triad even with fixed-center + ODE sampling (rank-1 drifts 10-22 A; jobs 12849/12850). The accepted PfClpP evidence path is grid-restrained AutoDock Vina docking (search space = 25 A box centered on the chain A triad Ser252/His223/Asp219), submitted as job 12851; independent review of all four receptor identities still required before any scoring/consensus/RRS/PNS run."
 }

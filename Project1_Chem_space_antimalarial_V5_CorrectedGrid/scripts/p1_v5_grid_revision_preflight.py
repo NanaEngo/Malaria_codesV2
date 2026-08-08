@@ -46,9 +46,9 @@ TARGETS = {
     "PfClpP": {
         "pdb_id": "2F6I",
         "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/2F6I.pdbqt",
-        "current_center": (-0.116, 40.446, 12.213),
-        "proposed_v2_center": (-0.116, 40.446, 12.213),
-        "historical_config": "P1V5_2F6I_PfClpP_verified_20260808",
+        "current_center": (-24.276, 17.28, -2.901),
+        "proposed_v2_center": (-24.276, 17.28, -2.901),
+        "historical_config": "P1V5_2F6I_PfClpP_chainA_triad_20260808",
     },
     "PfATP4": {
         "pdb_id": "9N10",
