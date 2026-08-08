@@ -85,16 +85,18 @@ def run_config(cfg: dict, seed: int, n_iterations: int, max_steps: int) -> float
 
         oracle_agg = OracleAggregator(
             weights={
-                "mpo": 0.30,
-                "docking": 0.25,
-                "syba": 0.15,
-                "sa": 0.05,
-                "rrs": 0.15,
-                "pns": 0.10,
+                "mpo": 0.27,
+                "docking": 0.225,
+                "syba": 0.135,
+                "sa": 0.045,
+                "rrs": 0.135,
+                "pns": 0.09,
+                "activity": 0.10,
                 "drug_like": 0.0,
             },
             use_precomputed=True,
             use_rrs=True,
+            use_activity=True,
         )
 
         def _vec_reward(smiles: str) -> dict[str, float]:
@@ -105,8 +107,8 @@ def run_config(cfg: dict, seed: int, n_iterations: int, max_steps: int) -> float
         agent = ParetoMCTSAgent(
             env=env,
             oracle_fn=_vec_reward,
-            objectives=["mpo", "syba", "sa", "rrs", "pns"],
-            maximize=[True, True, False, True, True],
+            objectives=["mpo", "syba", "sa", "rrs", "pns", "activity"],
+            maximize=[True, True, False, True, True, True],
             n_iterations=n_iterations,
             c_puct=cfg["c_PUCT"],
             policy_fn=policy_fn,

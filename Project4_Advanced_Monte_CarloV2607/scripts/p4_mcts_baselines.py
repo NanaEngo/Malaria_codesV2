@@ -60,6 +60,12 @@ def compute_mpo_reward(smiles: str) -> float:
     It wraps `OracleAggregator` with precomputed P1/P2 libraries enabled,
     but disables the RRS/PNS oracles that require external P2 mutant/network
     data so the benchmark can run from the core P1/P2 score libraries alone.
+
+    v12 (2026-08-08): the public-activity oracle (max Morgan-2 Tanimoto to
+    ChEMBL antimalarial actives) is added as a reward term so the benchmark
+    measures the SAME reward the Pareto MCTS now optimises. Weights rebalanced
+    to keep sum = 1.0: mpo 0.36, docking 0.315, syba 0.135, sa 0.09,
+    activity 0.10 (previous weights scaled by 0.90).
     """
     from p4_mcts_oracles import OracleAggregator
 
@@ -67,14 +73,16 @@ def compute_mpo_reward(smiles: str) -> float:
     if _ORACLE_AGGREGATOR is None:
         _ORACLE_AGGREGATOR = OracleAggregator(
             weights={
-                "mpo": 0.40,
-                "docking": 0.35,
-                "syba": 0.15,
-                "sa": 0.10,
+                "mpo": 0.36,
+                "docking": 0.315,
+                "syba": 0.135,
+                "sa": 0.09,
+                "activity": 0.10,
             },
             use_precomputed=True,
             use_rrs=False,
             use_pns=False,
+            use_activity=True,
         )
     return _ORACLE_AGGREGATOR.reward(smiles)
 

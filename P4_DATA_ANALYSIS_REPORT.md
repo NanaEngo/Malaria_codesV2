@@ -330,6 +330,14 @@ Following the final adversarial audit recommendation, the pending QMC/DMC valida
 
 ## 6. Pipeline Fixes & Relaunches (July 2026)
 
+### 6.12 Benchmark v12 — public-activity oracle reward term (2026-08-08, documenté AVANT exécution)
+
+> 🟢 **Demande utilisateur explicite : ajouter l'oracle d'activité public (proximité Tanimoto aux actifs ChEMBL) comme terme de récompense du Pareto MCTS.** Documenté avant exécution (règle workflow).
+>
+> **Changement de récompense (v11 → v12) :** l'oracle `activity` = **max Tanimoto Morgan-2** d'une molécule aux **19,321 actifs antipaludiques du dataset public indépendant ChEMBL IC50/EC50** (`Project5_GNN_Transformer_DrugDiscovery/results/p5_public_chembl_malaria.csv` — le même que les validations externes P3/P5), avec échelle continue identique à RRS (Tanimoto ≤ 0.20 → gradient doux ; 0.20-1.0 → linéaire). Implémentation : `OracleAggregator` (param `use_activity=True` par défaut ; matrice dense 19,321×2048 float32 construite une fois à l'init — vérifié : init 67 s, score CCO 0.0625 / molécule aromatique 0.375). **Poids rebalancés somme=1.0** : mpo 0.27, docking 0.225, syba 0.135, sa 0.045, rrs 0.135, pns 0.09, **activity 0.10** (défauts) ; benchmark scalaire `compute_mpo_reward` : mpo 0.36, docking 0.315, syba 0.135, sa 0.09, **activity 0.10**.
+>
+> **Périmètre modifié :** `p4_mcts_oracles.py` (oracle + weights), `p4_mcts_pareto_run.py` (6ᵉ objectif `activity`, maximize, colonne CSV), `p4_mcts_baselines.py` (`compute_mpo_reward`), `p4_mcts_factorial_run.py` (objectifs + poids), nouveau `p4_benchmark_molecules_opt_v12_array.sbatch` (sortie dédiée `results/benchmark_molecules_opt_v12/`, v11 préservée). **Conséquence : v11 (20 seeds, MCTS 0.7276 / greedy 0.7211) n'est plus canonique pour la nouvelle récompense → re-benchmark v12 requis (même protocole 4 méthodes × 20 seeds, config MCTS optimale c_PUCT=5.0/ν=0.01/T=0.8/ScafVAE).** Les scripts post-traitement (`p4_recompute_pareto_syba.py`, `p4_pareto_provenance_check.py`) seront mis à jour avec les artefacts v12.
+
 ### 6.1 P4 benchmark relaunch (2026-07-29 09:06 UTC)
 
 Following the audit and fix of the P4 benchmark scripts (RDKit valence/kekulization filter, real OracleAggregator reward, and `--fragment-set medium`), the production benchmark array job was relaunched for the full 20-seed protocol.

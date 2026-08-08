@@ -5,8 +5,9 @@ Runs a single Pareto MCTS search from a given scaffold and writes the full
 Pareto front (all non-dominated solutions) to a CSV file. Designed to be
 called from the SLURM array script `p4_pareto_array.sbatch`.
 
-Uses ParetoMCTSAgent which maintains a global Pareto front across 5 objectives:
-MPO (maximise), SYBA (maximise), SA (minimise), RRS (maximise), PNS (maximise).
+Uses ParetoMCTSAgent which maintains a global Pareto front across 6 objectives:
+MPO (maximise), SYBA (maximise), SA (minimise), RRS (maximise), PNS (maximise),
+ACTIVITY (maximise — proximity to public ChEMBL antimalarial actives, v12).
 
 Output CSV contains one row per non-dominated solution with full score vector.
 """
@@ -111,9 +112,9 @@ def main() -> None:
     policy_fn = policy.get_action_priors
 
     # ── Pareto MCTS Agent ────────────────────────────────────────────
-    objectives = ["mpo", "syba", "sa", "rrs", "pns"]
-    # Maximise MPO, SYBA, RRS, PNS; minimise SA
-    maximize = [True, True, False, True, True]
+    objectives = ["mpo", "syba", "sa", "rrs", "pns", "activity"]
+    # Maximise MPO, SYBA, RRS, PNS, ACTIVITY; minimise SA
+    maximize = [True, True, False, True, True, True]
 
     agent = ParetoMCTSAgent(
         env,
@@ -152,7 +153,7 @@ def main() -> None:
         writer = csv.writer(fh)
         writer.writerow([
             "seed", "hypervolume", "front_size",
-            "smiles", "mpo", "syba", "sa", "rrs", "pns",
+            "smiles", "mpo", "syba", "sa", "rrs", "pns", "activity",
         ])
         for smi, vec, meta in solutions:
             writer.writerow([
@@ -165,13 +166,15 @@ def main() -> None:
                 f"{vec[2]:.4f}",  # SA
                 f"{vec[3]:.4f}",  # RRS
                 f"{vec[4]:.4f}",  # PNS
+                f"{vec[5]:.4f}",  # ACTIVITY
             ])
 
     print(f"  Output CSV:      {args.output_csv}")
     print(f"  Front molecules:")
     for smi, vec, _ in solutions[:10]:
         print(f"    {smi:40s} MPO={vec[0]:.3f} SYBA={vec[1]:.3f} "
-              f"SA={vec[2]:.3f} RRS={vec[3]:.3f} PNS={vec[4]:.3f}")
+              f"SA={vec[2]:.3f} RRS={vec[3]:.3f} PNS={vec[4]:.3f} "
+              f"ACT={vec[5]:.3f}")
     if len(solutions) > 10:
         print(f"    ... and {len(solutions) - 10} more non-dominated solutions")
     print(f"\n═══ Task {args.seed} complete ═══")

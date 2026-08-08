@@ -120,6 +120,17 @@ TARTARUS_CSV = (
     / "tartarus_output.csv"
 )
 
+# Public ChEMBL malaria IC50/EC50 actives (independent dataset, shared with the
+# P5 GNN external validation and the P3 descriptor external validation). The
+# activity oracle rewards Tanimoto proximity to these experimentally active
+# antimalarials.
+ACTIVITY_CSV = (
+    _repo_root()
+    / "Project5_GNN_Transformer_DrugDiscovery"
+    / "results"
+    / "p5_public_chembl_malaria.csv"
+)
+
 
 class OracleAggregator:
     """Aggregate multiple oracle scores into a scalar reward.
@@ -167,20 +178,26 @@ class OracleAggregator:
         docking_fallback: str = "similarity",
         use_rrs: bool = True,
         use_pns: bool = True,
+        use_activity: bool = True,
         cache_maxsize: int = 10000,
         rrs_fallback_k: int = 3,
     ) -> None:
+        # v12 (2026-08-08): public-activity oracle added as a reward term
+        # (max Morgan-2 Tanimoto to ChEMBL actives). Weights rebalanced to keep
+        # sum = 1.0 (previous components scaled by 0.90, activity = 0.10).
         self.weights = weights or {
-            "mpo": 0.30,
-            "docking": 0.25,
-            "syba": 0.15,
-            "sa": 0.05,
-            "rrs": 0.15,
-            "pns": 0.10,
+            "mpo": 0.27,
+            "docking": 0.225,
+            "syba": 0.135,
+            "sa": 0.045,
+            "rrs": 0.135,
+            "pns": 0.09,
+            "activity": 0.10,
         }
         self.docking_fallback = docking_fallback
         self.use_rrs = use_rrs
         self.use_pns = use_pns
+        self.use_activity = use_activity
         # LRU cache with bounded size (prevents OOM)
         self._runtime_cache: Dict[str, Dict[str, float]] = OrderedDict()
         self._cache_maxsize = cache_maxsize
@@ -203,6 +220,13 @@ class OracleAggregator:
         self._rrs_ref_fps: list = []
         if self.use_rrs:
             self._load_rrs_references()
+
+        # Public-activity library (dense fingerprint matrix, built once)
+        self._activity_dense = None
+        self._activity_norms = None
+        self._activity_n = 0
+        if self.use_activity:
+            self._load_activity_library()
 
         if use_precomputed:
             self._load_precomputed_libraries()
@@ -272,6 +296,8 @@ class OracleAggregator:
             result["rrs"] = self._rrs_score(smiles)
         if self.use_pns:
             result["pns"] = self._pns_score(smiles)
+        if self.use_activity:
+            result["activity"] = self._activity_score(smiles)
         # Drug-likeness filter (medchem or RDKit fallback)
         drug_info = self._medchem_filter(smiles)
         result["drug_like"] = 1.0 if drug_info["drug_like"] else 0.0
@@ -346,12 +372,57 @@ class OracleAggregator:
         if self.use_pns and "pns" in scores and "pns" in self.weights:
             pns_norm = max(0.0, min(1.0, scores["pns"]))
             reward_val += self.weights["pns"] * pns_norm
+        if self.use_activity and "activity" in scores and "activity" in self.weights:
+            act_norm = max(0.0, min(1.0, scores["activity"]))
+            reward_val += self.weights["activity"] * act_norm
         # Small drug-likeness bonus: +0.02 for drug-like molecules (gentle nudge)
         if scores.get("drug_like", 0.0) > 0.5:
             reward_val += 0.02
         return reward_val
 
     # ── Library loading ────────────────────────────────────────────────
+    def _load_activity_library(self) -> None:
+        """Load public ChEMBL actives and build the dense fingerprint matrix.
+
+        Same dense-matrix pattern as the Tartarus library: one matrix built at
+        init, reused by every call (value-identical to per-call Tanimoto scan).
+        Uses float32 dense 2048-bit Morgan fingerprints.
+        """
+        if not ACTIVITY_CSV.exists():
+            warnings.warn(
+                f"Public activity dataset not found: {ACTIVITY_CSV} — "
+                "activity oracle will return 0.0"
+            )
+            return
+        try:
+            df = pd.read_csv(ACTIVITY_CSV)
+            df = df.dropna(subset=["smiles", "activity"]).drop_duplicates("smiles")
+            act = df.loc[df["activity"] >= 0.5, "smiles"].astype(str).tolist()
+            if not act:
+                return
+            fps = self._compute_fingerprints(act)
+            valid = [(smi, fp) for smi, fp in zip(act, fps) if fp is not None]
+            n = len(valid)
+            if n == 0:
+                return
+            lib = (
+                cp.zeros((n, 2048), dtype=cp.float32)
+                if _USE_GPU else np.zeros((n, 2048), dtype=np.float32)
+            )
+            for i, (_, fp) in enumerate(valid):
+                onbits = list(fp.GetOnBits())
+                if onbits:
+                    lib[i, onbits] = 1.0
+            self._activity_dense = lib
+            self._activity_norms = lib.sum(axis=1)
+            self._activity_n = n
+            print(f"[p4_mcts_oracles] Activity oracle: {n} ChEMBL actives loaded "
+                  f"({'GPU' if _USE_GPU else 'numpy'} backend)", flush=True)
+        except Exception as exc:  # pragma: no cover
+            warnings.warn(f"Failed to load activity library: {exc}")
+            self._activity_dense = None
+            self._activity_n = 0
+
     def _load_precomputed_libraries(self) -> None:
         """Load P1/P2 score CSVs into memory as lookup tables.
 
@@ -843,6 +914,71 @@ class OracleAggregator:
         ])
         return result
 
+    # ── Activity (public ChEMBL proximity) oracle ────────────────────
+    def _activity_max_tanimoto(self, query_fp) -> float:
+        """Best Morgan-2 Tanimoto of the query to the ChEMBL active library.
+
+        Dense matvec on the precomputed matrix (value-identical to a per-call
+        scan). Returns -1.0 when no library is loaded.
+        """
+        if self._activity_dense is None:
+            return -1.0
+        onbits = list(query_fp.GetOnBits())
+        qn = float(len(onbits))
+        if _USE_GPU and isinstance(self._activity_dense, cp.ndarray):
+            q = cp.zeros(2048, dtype=cp.float32)
+            if onbits:
+                q[onbits] = 1.0
+            inter = self._activity_dense @ q
+            denom = qn + self._activity_norms - inter
+            cp.maximum(denom, 1e-8, out=denom)
+            return float(cp.max(inter / denom))
+        q = np.zeros(2048, dtype=np.float32)
+        if onbits:
+            q[onbits] = 1.0
+        inter = self._activity_dense @ q
+        denom = qn + self._activity_norms - inter
+        denom = np.maximum(denom, 1e-8)
+        return float(np.max(inter / denom))
+
+    def _activity_score(self, smiles: str) -> float:
+        """Public-activity proximity oracle (v12).
+
+        max Morgan-2 Tanimoto to known antimalarial actives from the
+        independent public ChEMBL malaria IC50/EC50 dataset (19,321 actives).
+        Continuous scaling identical to the RRS oracle:
+          - Tanimoto <= 0.20 → gentle gradient (score = Tanimoto)
+          - Tanimoto 0.20-1.0 → linear to 1.0
+        Returns a score in [0, 1] (higher = closer to known actives).
+        """
+        cached = self._cache_get(smiles, "activity")
+        if cached is not None:
+            return cached
+
+        if self._activity_dense is None or self._activity_n == 0:
+            return 0.0
+
+        mol = Chem.MolFromSmiles(smiles)
+        if mol is None:
+            return 0.0
+
+        gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
+        try:
+            query_fp = gen.GetFingerprint(mol)
+        except Exception:
+            return 0.0
+
+        best_sim = self._activity_max_tanimoto(query_fp)
+        if best_sim < 0:
+            return 0.0
+        if best_sim < 0.20:
+            score = best_sim  # gentle gradient in [0.0, 0.20)
+        else:
+            score = max(0.0, min(1.0, (best_sim - 0.20) / 0.80))
+
+        self._cache_set(smiles, "activity", score)
+        return score
+
     # ── RRS (Resistance Resilience Score) oracle ────────────────────
     def _rrs_score(self, smiles: str) -> float:
         """Resistance Resilience Score: max Tanimoto similarity to known
@@ -981,6 +1117,7 @@ def make_oracle(
     docking_fallback: str = "similarity",
     use_rrs: bool = True,
     use_pns: bool = True,
+    use_activity: bool = True,
     cache_maxsize: int = 10000,
     rrs_fallback_k: int = 3,
 ) -> Callable[[str], float]:
@@ -991,6 +1128,7 @@ def make_oracle(
         docking_fallback=docking_fallback,
         use_rrs=use_rrs,
         use_pns=use_pns,
+        use_activity=use_activity,
         cache_maxsize=cache_maxsize,
         rrs_fallback_k=rrs_fallback_k,
     )
