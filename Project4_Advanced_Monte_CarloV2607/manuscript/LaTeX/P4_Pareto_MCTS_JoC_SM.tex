@@ -41,8 +41,9 @@ trade-offs in antimalarial generation}
 % ============================================================================
 
 The canonical \textbf{pre-activity} merged Pareto front (main-text Table~2) comprises four mutually
-non-dominated candidates. The public-activity term belongs to the separate v12 scalar
-benchmark and was not used to construct this historical front. Every candidate is traceable to the deposited
+non-dominated candidates. It is intentionally analysed separately from the v12 scalar
+benchmark: the public-activity term belongs to the scalar benchmark and was not used to
+construct this front. Every candidate is traceable to the deposited
 per-seed Pareto CSV \path{p4_pareto_seed_N.csv} from which it originated,
 and all MPO, SA, RRS-informed proxy and PNS-informed proxy values are identical between the per-seed record
 and the merged front (\path{results/pareto/merged_pareto_front.csv}). The only
@@ -66,7 +67,7 @@ matches a deposited record.
   \centering
   \caption{Canonical \textbf{pre-activity} merged Pareto front with per-seed provenance.All four
 points are mutually non-dominated on the active objectives (MPO, SYBA, the RRS-informed
-chemotype proxy and the PNS-informed Tartarus proxy; SA is constant at \num{3.0} and therefore excluded from the
+chemotype-similarity proxy and the PNS-informed Tartarus docking proxy; SA is constant at \num{3.0} and therefore excluded from the
   hypervolume). SYBA was recomputed post-hoc (main-text Methods); MPO, SA,
   RRS and PNS are unchanged from the per-seed records.}
   \label{tab:sm_pareto}
@@ -87,10 +88,10 @@ chemotype proxy and the PNS-informed Tartarus proxy; SA is constant at \num{3.0}
 \section*{S2\hspace{0.6em}Molecular diversity of the four generation methods}
 % ============================================================================
 
-The main text reports v12 scalar-reward statistics separately, because the primary
-contributions are the honest benchmark ranking and the multi-objective Pareto
-front. Molecular diversity is analysed here in the Supplementary Material
-using real, deposited molecule sets.
+The main text reports two complementary results: the v12 scalar benchmark and the
+pre-activity Pareto front. Molecular diversity is analysed here in the Supplementary
+Material using real, deposited molecule sets, while S1 documents the objective and
+score provenance needed to interpret the front.
 
 \textbf{Molecule sets.} For each of the four generation methods (MCTS+ScafVAE,
 random search, greedy search, genetic algorithm) the best-scoring molecule of
@@ -203,8 +204,8 @@ reported descriptively rather than as evidence of uniformly broad exploration.
 \section*{S3\hspace{0.6em}Reproducibility}
 % ============================================================================
 
-All deposited CSVs, the benchmark, Pareto and diversity analysis scripts, and
-the provenance-check script will be listed in the Zenodo manifest. The canonical
+All deposited CSVs, the benchmark, Pareto, diversity and RRS/PNS-proxy analysis
+scripts, and the provenance-check script will be listed in the Zenodo manifest. The canonical
 benchmark is produced by \texttt{p4\_mcts\_benchmark.py} with best-SMILES
 recording (no change to reward semantics) and a value-preserving vectorisation
 of the docking Tanimoto scan (verified identical on held-out molecules). The
