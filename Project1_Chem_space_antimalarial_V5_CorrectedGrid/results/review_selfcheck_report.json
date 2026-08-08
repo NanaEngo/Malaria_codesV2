@@ -1,0 +1,67 @@
+{
+  "checks": {
+    "four_target_table": {
+      "affinity_ranges_kcal_mol": {
+        "aff_PfATP4": [
+          -7.57,
+          -4.63
+        ],
+        "aff_PfCRT": [
+          -7.91,
+          -5.12
+        ],
+        "aff_PfClpP": [
+          -7.03,
+          -5.05
+        ],
+        "aff_PfDHFR": [
+          -6.35,
+          -4.86
+        ]
+      },
+      "complete_rows": 17,
+      "pass": true,
+      "rows": 17,
+      "sha256": "e0d6891bbe422b84a3f36f3787553bf2bf2303bc12e1ef967b41febb763c088d"
+    },
+    "receptor_frames": {
+      "bad": [],
+      "n_receptors": 8,
+      "pass": true,
+      "rmsd_ok_all": true,
+      "sha256": "89603d2021b2f57dc98dda9ec07784935318d1323b821ba67bbcf17140e8ae36"
+    },
+    "register_pending": {
+      "accepted_for_full_run": false,
+      "pass": true,
+      "status": "PENDING_INDEPENDENT_REVIEW"
+    },
+    "review_table": {
+      "completeness": {
+        "PfATP4": "COMPLETE_17",
+        "PfCRT": "COMPLETE_17",
+        "PfClpP": "COMPLETE_17",
+        "PfDHFR": "COMPLETE_17"
+      },
+      "pass": true,
+      "sha256": "fe2c73a3e0101e3edc0f1802fe79b5bc78a808327c493c41b150beb335a58eb4"
+    },
+    "target_identity_audit": {
+      "pass": true,
+      "sha256": "082d7727b7a57a50d95763f1a4ce6cc6c46c89890820513021a646e0e9434a25"
+    },
+    "vina_run_dirs": {
+      "missing": [],
+      "pass": true,
+      "with_provenance": [
+        "PfClpP",
+        "PfCRT",
+        "PfDHFR",
+        "PfATP4"
+      ]
+    }
+  },
+  "generated_utc": "2026-08-08T15:41:42.802776+00:00",
+  "ok": true,
+  "schema": "p1-v5-review-selfcheck/v1"
+}

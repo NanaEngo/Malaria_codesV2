@@ -37,6 +37,14 @@ Vérifier, pour **chacune des 4 cibles**, que :
 - `results/target_identity_audit.json` v2 — 4GM2→2F6I, MTX A702, Y01 proxy, 9N10 D451/DPPR
 - Par paire : `results/vina_dock_<PDB>_<TARGET>_17/<complex>/execution_provenance.json` + `vina_dock.log`
 
+**Rapport d'auto-vérification machine (pour accélérer la revue) :**
+`python scripts/p1_v5_review_selfcheck.py` → `results/review_selfcheck_report.json`
+(6/6 checks : table 17×4, frames rmsd=0 sur 8 récepteurs, dirs de run + provenance,
+audit d'identité, register PENDING). ⚠️ Ce rapport **ne remplace pas** la revue
+indépendante : il régénère les quantités depuis les artefacts bruts pour que le
+relecteur puisse les recroiser en minutes (hachages inclus) — il doit vérifier
+lui-même le sens biologique (ancres, isoformes, caveats).
+
 ---
 
 ## 3. ⚠️ Découverte scientifique nouvelle (08/08/2026) — isoforme PfCRT 7G8
@@ -68,14 +76,16 @@ identique aux runs WT. Panel de 8 récepteurs, frames vérifiées rmsd = 0.0 :
 
 - Scripts : `scripts/p1_v5_rrs_prepare_receptors.py`, `scripts/p1_v5_vina_dock_mutants.py`,
   `scripts/p1_v5_rrs_pilot.py` (RRS par-cible, protocole P2 : |ΔG_mut,t|/|ΔG_WT,t|×100,
-  baseline WT |ΔG_WT,t| ≥ 5.0, sans mélange de cibles).
-- Jobs : **12892** (PfDHFR, 5×17) et **12893** (PfCRT, 3×17).
+  baseline WT |ΔG_WT,t| ≥ 5.0, sans mélange de cibles) et
+  `scripts/p1_v5_rrs_merge_scores.py` (fusion des CSVs par cible).
+- Jobs : **12894** (PfDHFR, 5×17) et **12895** (PfCRT, 3×17) — soumis après le fix
+  anti-clobber (CSV par cible `v5_mutant_vina_scores_<TARGET>.csv`, fusionné ensuite).
 - Smoke validés : PfDHFR_N51I × PP-01 = −7.90 kcal/mol (ancre 0.40 Å) ;
   PfCRT_K76A × PP-01 = −8.26 (0.36 Å) — les poses reproduisent les positions
   des ligands co-cristallisés.
-- Sorties : `results/rrs_pilot/receptors/`, `results/rrs_pilot/vina_scores/`,
-  `results/rrs_pilot/c_rrs_classification_v5.csv` (PILOT, non accepté tant que
-  le register n'est pas signé).
+- Sorties : `results/rrs_pilot/receptors/`, `results/rrs_pilot/vina_scores/`
+  (+ `c_rrs_pilot_per_target_v5.csv` via `p1_v5_rrs_pilot.py` — PILOT, non
+  accepté tant que le register n'est pas signé).
 
 ---
 
@@ -110,3 +120,47 @@ Après signature : mettre à jour `results/structural_pocket_independent_review.
 (`status = STRUCTURAL_POCKET_REVIEWED_AND_ACCEPTED`, `accepted_for_full_run = true`,
 `reviewer_identity`, `review_date`, `signed_review_artifact`, `signed_review_sha256`,
 décisions PASS par cible) — **par la procédure de signature, jamais par édition directe**.
+
+---
+
+## 7. Procédure de signature (commandes exactes, openssl/gpg)
+
+Le relecteur indépendant génère sa propre paire de clés (ou utilise sa clé
+institutionnelle/privée de confiance) et signe le register JSON :
+
+```bash
+cd Project1_Chem_space_antimalarial_V5_CorrectedGrid/results
+
+# 1) (si pas de clé existante) générer une clé privée ed25519 + certificat auto-signé
+openssl genpkey -algorithm ed25519 -out reviewer_ed25519_private.pem
+openssl pkey -in reviewer_ed25519_private.pem -pubout -out reviewer_ed25519_public.pem
+
+# 2) hasher le register (état AVANT signature)
+sha256sum structural_pocket_independent_review.json
+
+# 3) signer le register JSON (signature détachée)
+openssl pkeyutl -sign -inkey reviewer_ed25519_private.pem \
+    -rawin -in structural_pocket_independent_review.json \
+    -out structural_pocket_independent_review.json.sig
+sha256sum structural_pocket_independent_review.json.sig
+
+# 4) vérifier (indépendant du signataire) avec la clé publique
+openssl pkeyutl -verify -pubin -inkey reviewer_ed25519_public.pem \
+    -rawin -in structural_pocket_independent_review.json \
+    -sigfile structural_pocket_independent_review.json.sig
+
+# 5) clé publique livrée par un canal de provenance séparé (pas le même commit)
+sha256sum reviewer_ed25519_public.pem
+```
+
+Alternative gpg (si préférée) : `gpg --detach-sign structural_pocket_independent_review.json`
+produit `.sig` ; la clé publique est exportée via `gpg --export --armor` et livrée
+par un canal de confiance séparé. **Une signature ne peut pas être simulée** : le
+register ne doit jamais être modifié pour simuler une revue (protocole §3).
+
+Ensuite, mettre à jour le register **par la procédure** (script dédié ou mise à
+jour humaine tracée) avec les champs signés : `reviewer_identity`,
+`review_date`, `signed_review_artifact` (= chemin du `.sig`),
+`signed_review_sha256`, `detached_signature_sha256`,
+`trusted_public_key_artifact`, `trusted_public_key_sha256`, décisions PASS ×4,
+`accepted_for_full_run = true`. Le gate consensus/RRS/PNS s'ouvrira alors.
