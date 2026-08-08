@@ -42,11 +42,12 @@ VINA = shutil.which("vina") or "/usr/local/bin/vina"
 
 # Anchor atoms per target (2F6I: chain A triad; 7F3Y: MTX atoms; 6UKJ: Y01 atoms)
 ANCHOR_ATOMS = {
-    "PfDHFR": {"pdb_id": "7F3Y", "anchor_label": "MTX co-crystallized inhibitor",
+    "PfDHFR": {"pdb_id": "7F3Y", "anchor_label": "MTX co-crystallized inhibitor (catalytic-site copy A702)",
                "receptor_pdb": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/7F3Y.pdb",
                "receptor_pdbqt": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/7F3Y.pdbqt",
-               "center": None, "anchor_resname": "MTX", "box": (18.0, 18.0, 18.0),
-               "box_note": "18 A box centered on the MTX heavy-atom centroid confines the search to the DHFR active site; a 28 A box let Vina settle a rank-1 pose 20 A from MTX (gate rejected)."},
+               "center": None, "anchor_resname": "MTX", "anchor_chain": "A", "anchor_resi": "702",
+               "box": (18.0, 18.0, 18.0),
+               "box_note": "18 A box centered on the MTX catalytic-site copy (A702) confines the search to the DHFR active site; the global MTX centroid mixes 3 partial copies (A702/A704/B702) and the old V5 center was the receptor centroid (verified 08/08/2026: A702 contacts Phe58/Phe116/Ile14/Ile164/Cys15/Asp54 — the canonical DHFR pocket)."},
     "PfClpP": {"pdb_id": "2F6I", "anchor_label": "chain A catalytic triad Ser252/His223/Asp219",
                "receptor_pdb": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/2F6I.pdb",
                "receptor_pdbqt": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/2F6I.pdbqt",
@@ -85,16 +86,29 @@ def require_file(path: Path, label: str) -> None:
         raise SystemExit(f"FAIL-CLOSED missing/empty {label}: {path}")
 
 
-def anchor_centroid_and_atoms(pdb: Path, resname: str):
+def anchor_centroid_and_atoms(pdb: Path, resname: str, chain: str | None = None,
+                              resi: str | None = None):
+    """Anchor centroid/atoms for a ligand, optionally restricted to one instance.
+
+    7F3Y contains 3 partial MTX copies (A702 catalytic-site, A704, B702 mirror);
+    taking the global MTX centroid mixes sites (same error class as the PfClpP
+    barrel channel). The catalytic-site copy must be selected explicitly.
+    """
     pts = []
     for line in pdb.read_text(errors="replace").splitlines():
-        if line.startswith("HETATM") and line[17:20].strip() == resname:
-            try:
-                pts.append([float(line[30:38]), float(line[38:46]), float(line[46:54])])
-            except ValueError:
-                continue
+        if not (line.startswith("HETATM") and line[17:20].strip() == resname):
+            continue
+        if chain is not None and line[21:22].strip() != chain:
+            continue
+        if resi is not None and line[22:26].strip() != resi:
+            continue
+        try:
+            pts.append([float(line[30:38]), float(line[38:46]), float(line[46:54])])
+        except ValueError:
+            continue
     if not pts:
-        raise SystemExit(f"FAIL-CLOSED no {resname} anchor atoms found in {pdb.name}")
+        raise SystemExit(f"FAIL-CLOSED no {resname} anchor atoms found in {pdb.name} "
+                         f"(chain={chain}, resi={resi})")
     return np.mean(np.asarray(pts, dtype=float), axis=0), np.asarray(pts, dtype=float)
 
 
@@ -210,7 +224,10 @@ def main() -> int:
     version = subprocess.run([VINA, "--version"], text=True, capture_output=True).stdout.strip()
     frame = ca_frame_equivalence(spec["receptor_pdb"], spec["receptor_pdbqt"])
     if spec.get("anchor_resname"):
-        center, anchor_atoms = anchor_centroid_and_atoms(spec["receptor_pdb"], spec["anchor_resname"])
+        center, anchor_atoms = anchor_centroid_and_atoms(
+            spec["receptor_pdb"], spec["anchor_resname"],
+            chain=spec.get("anchor_chain"), resi=spec.get("anchor_resi"),
+        )
     else:
         center, anchor_atoms = spec["center"], spec["anchor_atoms"]
     output = args.output_dir or (V5 / f"results/vina_dock_{spec['pdb_id']}_{args.target}_17")

@@ -7,7 +7,7 @@
 #SBATCH --time=08:00:00
 #SBATCH --output=logs/p3_external_validation_%j.log
 #SBATCH --error=logs/p3_external_validation_%j.err
-set -euo pipefail
+set -eo pipefail
 source /home/nanaengo/miniforge3/etc/profile.d/conda.sh
 conda activate malaria_md
 cd /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607
