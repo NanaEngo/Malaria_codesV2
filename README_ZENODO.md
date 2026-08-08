@@ -16,6 +16,13 @@ The root file `zenodo_manifest.txt` is a **historical/preparatory manifest** gen
 
 `Project1_Chem_space_antimalarial_V4_CorrectedGrid/manuscript/P1_V4_SUBMISSION_MANIFEST_20260807.txt`
 
+## Project-level manifests (current)
+
+| Project | Manifest | Status |
+|---------|----------|--------|
+| P1 V4 | `Project1_Chem_space_antimalarial_V4_CorrectedGrid/manuscript/P1_V4_SUBMISSION_MANIFEST_20260807.txt` | Current submission package |
+| P5 | `Project5_GNN_Transformer_DrugDiscovery/P5_ZENODO_DEPOSIT_MANIFEST.txt` (67 files, 289.6 MB, generated 08/08/2026) | Reserved DOI; upload pending |
+
 ## Canonical P1 V4 submission package
 
 The current P1 manuscript package is located under:
