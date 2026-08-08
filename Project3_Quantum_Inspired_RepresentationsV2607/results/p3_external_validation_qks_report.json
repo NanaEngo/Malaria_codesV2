@@ -1,0 +1,92 @@
+{
+  "dataset": "/home/nanaengo/Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery/results/p5_public_chembl_malaria.csv",
+  "n_panel": 150,
+  "n_active": 130,
+  "n_inactive": 20,
+  "n_qubits": 6,
+  "n_repeats": 1,
+  "protocol": "5-fold StratifiedKFold(42), IQPEmbedding state-vector kernel, C3 train-only StandardScaler, SVM(precomputed) vs RBF/linear",
+  "kernel_mean_auc": {
+    "quantum": 0.8384615384615384,
+    "rbf": 0.8423076923076923,
+    "linear": 0.651923076923077
+  },
+  "kernel_std_auc": {
+    "quantum": 0.10505000218267435,
+    "rbf": 0.09892170115085913,
+    "linear": 0.18737915237710445
+  },
+  "paired_comparisons": [
+    {
+      "model_a": "quantum",
+      "model_b": "rbf",
+      "mean_auc_a": 0.8384615384615384,
+      "mean_auc_b": 0.8423076923076923,
+      "paired_t_pvalue": 0.3739009663000573,
+      "per_fold_a": [
+        0.75,
+        0.93269,
+        0.72115,
+        0.79808,
+        0.99038
+      ],
+      "per_fold_b": [
+        0.75962,
+        0.92308,
+        0.73077,
+        0.80769,
+        0.99038
+      ],
+      "bh_fdr_qvalue": 0.37390096630005737,
+      "significant_at_0.05": false
+    },
+    {
+      "model_a": "quantum",
+      "model_b": "linear",
+      "mean_auc_a": 0.8384615384615384,
+      "mean_auc_b": 0.651923076923077,
+      "paired_t_pvalue": 0.02767544729236779,
+      "per_fold_a": [
+        0.75,
+        0.93269,
+        0.72115,
+        0.79808,
+        0.99038
+      ],
+      "per_fold_b": [
+        0.50962,
+        0.82692,
+        0.35577,
+        0.75,
+        0.81731
+      ],
+      "bh_fdr_qvalue": 0.04267504436891925,
+      "significant_at_0.05": true
+    },
+    {
+      "model_a": "rbf",
+      "model_b": "linear",
+      "mean_auc_a": 0.8423076923076923,
+      "mean_auc_b": 0.651923076923077,
+      "paired_t_pvalue": 0.0284500295792795,
+      "per_fold_a": [
+        0.75962,
+        0.92308,
+        0.73077,
+        0.80769,
+        0.99038
+      ],
+      "per_fold_b": [
+        0.50962,
+        0.82692,
+        0.35577,
+        0.75,
+        0.81731
+      ],
+      "bh_fdr_qvalue": 0.04267504436891925,
+      "significant_at_0.05": true
+    }
+  ],
+  "ecfp4_rf_external_auc_reference": 0.943452380952381,
+  "note": "ECFP4-RF reference comes from the descriptor external validation (RF classifier); QKS arms use SVM \u2014 classifier differ noted, as in the canonical P3 reporting."
+}

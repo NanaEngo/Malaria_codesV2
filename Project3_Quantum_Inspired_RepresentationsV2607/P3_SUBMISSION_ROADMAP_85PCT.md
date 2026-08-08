@@ -1,7 +1,7 @@
 # P3 Submission Roadmap: From 45–55% to ≥85% Acceptance Probability
 
 **Target:** *Journal of Cheminformatics* (IF ≈ 6.5)
-**Current estimate:** ⚠️ **HEADER SUPERSEDED — voir audit v3.1 + BMAD v50 (02/08/2026)** : ~79–82% acceptance probability après trim 26→18 p. + ChEMBL honnête négatif ; Zenodo ⚠️ PENDING +3% (ce document est un plan de travail historique — les chiffres d'état à jour sont dans `P3_ADVERSARIAL_AUDIT_MITIGATION.md` §Acceptance Probability Breakdown et `BMAD_Q1_DATA_ANALYSIS_REPORT.md` §3.14)
+**Current estimate:** ⚠️ **UPDATED 2026-08-07** — historical roadmap; canonical H₁–RRS evidence is now n=494 (ρ=0.2399 unadjusted; ρ_partial=0.0329, p=0.4668 after covariate control). Acceptance estimates remain heuristic; see `P3_ADVERSARIAL_AUDIT_MITIGATION.md` and `BMAD_Q1_DATA_ANALYSIS_REPORT.md`. Zenodo remains reserved/pending.
 **Target:** ≥85% acceptance probability
 **Generated:** July 24, 2026
 
@@ -20,8 +20,8 @@ The P3 manuscript "Quantum-inspired molecular representations for AI-generated A
 | QKS vs RBF (gamma-tuned) | 0.751 vs 0.701 (p=0.088, n.s.) | ✅ No quantum advantage |
 | TFP resolves scaffold paradox | 92.6% Tanimoto distinction vs 69.3% scaffold recovery | ✅ **Key positive finding** |
 | TNE compression | **5.9×** real-atom (15.6× padded) | ✅ Demonstrated |
-| H₁-RRS pilot (n=14) | ρ=0.947, p<0.0001 | ⚠️ Preliminary only |
-| H₁-RRS expanded (n=77) | **ρ=0.312, p=0.0057 (H₁ count)** | ✅ Replicated (attenuated) |
+| Legacy H₁-RRS pilot | Historical exploratory analysis | ⚠️ Not used as canonical evidence |
+| H₁-RRS expanded (n=494) | **ρ=0.2399, p=6.76×10⁻⁸ unadjusted; ρ_partial=0.0329, p=0.4668** | ✅ Final; size-confounded, independent predictor claim rejected |
 | GA discriminator | Tanimoto AUC=1.0, QK AUC≈0.43–0.51 | ✅ Honest negative |
 | Computational cost | TDA 6.4 min, TNE 20 min for 19,849 mol | ✅ Scalable |
 

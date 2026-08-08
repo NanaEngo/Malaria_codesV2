@@ -1,6 +1,6 @@
 # AGENTS.md — Projet Malaria_codesV2
 
-**Dernière mise à jour :** 03 août 2026 — Reporting P4 séparé de BMAD : `P4_DATA_ANALYSIS_REPORT.md` est la boussole P4 (benchmark, Pareto, ablations, QMC) ; BMAD couvre P1–P3 uniquement. P3 : **benchmarks canoniques COMPLETS** (jobs 12698/12699/12700/12702) — classique n=19,836 (ECFP4 0.9475 ± 0.0045), **hybride canonique Hybrid RF AUC 0.8876 ± 0.0065** (p<0.0001 vs ECFP4), **ablation : QK = principal contributeur (Δ=−0.040)**, **QKS 6q C3-fix : quantum ≈ RBF à toutes les échelles** (n=5,000 p=0.419 ; n=19,849 p=0.060). **Manuscrit trimé 26→18 p.** (main 18 p. / 7 230 mots, SM 18 p., cover letter 1 p. ; fusion tables benchmark/hybrid, `tab:qkernel`→SM S13, titre harmonisé — BMAD §3.14, audit v3.1). **ChEMBL validation exécutée** : 10 leads queryés, analogues tous Inactive (Tanimoto 0.229–0.379) — résultat honnête négatif. ⚠️ **Fichiers canoniques P3 : `Paper3_Quantum_InspiredV2608.tex` (main) et `Paper3_Quantum_Inspired_SM_V2608.tex` (SM) — les anciennes versions (V2607, `_refined`) sont archivées dans `manuscript/LaTeX/archive/`; toute édition se fait sur les fichiers V2608 canoniques.
+**Dernière mise à jour :** 03 août 2026 — Reporting P4 séparé de BMAD : `P4_DATA_ANALYSIS_REPORT.md` est la boussole P4 (benchmark, Pareto, ablations, QMC) ; BMAD couvre P1–P3 uniquement. P3 : **benchmarks canoniques COMPLETS** (jobs 12698/12699/12700/12702) — classique n=19,836 (ECFP4 0.9475 ± 0.0045), **hybride canonique Hybrid RF AUC 0.8876 ± 0.0065** (p<0.0001 vs ECFP4), **ablation : QK = principal contributeur (Δ=−0.040)**, **QKS 6q C3-fix : quantum ≈ RBF à toutes les échelles** (n=5,000 p=0.419 ; n=19,849 p=0.060). **Manuscrit trimé puis réconcilié** (main 20 p. après intégration H₁–RRS n=494, SM 18 p., cover letter 1 p. ; fusion tables benchmark/hybrid, `tab:qkernel`→SM S13, titre harmonisé — BMAD §3.14, audit v3.1). **ChEMBL validation exécutée** : 10 leads queryés, analogues tous Inactive (Tanimoto 0.229–0.379) — résultat honnête négatif. ⚠️ **Fichiers canoniques P3 : `Paper3_Quantum_InspiredV2608.tex` (main) et `Paper3_Quantum_Inspired_SM_V2608.tex` (SM) — les anciennes versions (V2607, `_refined`) sont archivées dans `manuscript/LaTeX/archive/`; toute édition se fait sur les fichiers V2608 canoniques.
 
 **GitHub :** https://github.com/NanaEngo/Malaria_codesV2
 
@@ -47,28 +47,34 @@
 
 ### P1 — Chemical Space & Docking ✅ (Soumission prête)
 
+> ⚠️ **Manuscrit P1 canonique = V4** : `Project1_Chem_space_antimalarial_V4_CorrectedGrid/manuscript/Antimalarial_Candidates_African_NP_V2607.tex` + `_SM.tex` (V2 = legacy). Fixes audit 07/08 appliqués : SM S21 (rank 18 single-target, flag CYP3A4 0.876), `tab:selectivity` 993.8/283.5, S17 pass rates honnêtes (both-criteria 5%), main L461-464/L520-521 (19/20 CYP3A4), L285-289 ADMET (ρ ≤ 0.62). Compile propre (40 p. main, 48 p. SM).
+> ⚠️ **V5 (actif) : `Project1_Chem_space_antimalarial_V5_CorrectedGrid/`** (manuscrit `Antimalarial_Candidates_African_NP_V2608.tex`, 35 p. + SM 47 p.) — **4 cibles dockées Vina 17/17 avec gate biologique** : PfClpP/2F6I triade (job 12854), PfCRT/6UKJ Y01 (12855), PfDHFR/7F3Y MTX A702 (12859), **PfATP4/9N10 débloqué 08/08 avec ancre biologique P-ATPase (CSDKTGT→D451 + DPPR 751-754, job 12864 en vol)** ; table 17×4 consolidée `results/v5_four_target_vina_affinities.csv` ; register de revue indépendante PfATP4 = `EVIDENCE_IN_FLIGHT` (3 autres = `EVIDENCE_COMPLETE_AWAITING_REVIEW`) ; **gate fail-closed `p1_v5_consensus_rrs_gate.py` — aucun consensus/RRS/PNS avant signature de la revue**.
+
 | Composant | Statut | Résultat clé |
 |-----------|:------:|:-------------|
 | Librairie hybride (65,856 molécules) | ✅ Complété | 92.6% ECFP4-unreachable, 69.3% scaffold recovery |
-| Top-20 candidats | ✅ Complété | MPO 0.515–0.550, tous sélectifs (SI > 10) |
+| Top-20 candidats (Set A, MPO) | ✅ Complété | MPO 0.515–0.550, tous sélectifs (SI > 10) — ensemble disjoint des ensembles B/C P2 |
 | Grilles V2 (4 cibles) | ✅ Déployé | pfDHFR, pfCRT, pfATP4, pfClpP |
 | DEKOIS V2 (pfDHFR) | ✅ Terminé | AUC = 0.45 [0.37, 0.53] — Meeko uniforme |
 | Redocking | ✅ Validé | RMSD < 2.0 Å toutes cibles |
 | Validation Tartarus | ✅ Complété | ρ = 0.013 (p = 0.091), MPO orthogonal au docking |
-| **Manuscrit** | ✅ **Prêt soumission** | Dernier audit adverse effectué et mitigé |
+| **Manuscrit (V4)** | ✅ **Prêt soumission** | Dernier audit adverse effectué et mitigé (07/08) |
 | **Cover Letter** | ✅ **Conforme** | 1 page, sans référence aux manuscrits compagnons |
 
 ### P2 — Polypharmacology & MD Validation ✅ (Prêt soumission JCIM)
 
+> ⚠️ **TROIS ENSEMBLES TOP-20 DISJOINTS (audit 07/08) :** A = top-20 MPO du manuscrit P1 (pipérazines, MPO 0.515–0.550) ; B = top-20 MD P2 (`md_top20_candidates.csv`, dérivés ANP) ; C = top-20 polypharm P2 (`md_top20_candidates_polypharm.csv`, 17 composés, tous n_targets=2). Pairwise disjoints (A∩B=A∩C=B∩C=∅). **P2 est orienté RRS + polypharmacologie : la cohorte d'analyse = ensemble C (17 candidats polypharm).** Manuscrit P2 canonique : `Project2_Polypharmacology_MD_ValidationV2607/manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` (compile propre 07/08).
+
 | Composant | Statut | Résultat clé |
 |-----------|:------:|:-------------|
-| RRS — 14 composés | ✅ Complété | Classes A*–D, validation H1 (ρ = 0.947) |
-| PP-11 C59R anomaly | ✅ Investigé | Clash stérique Arg59/flavonoïde C-ring |
-| PNS | ✅ Complété | PfCRT imputé (network mean) |
-| ACSI | ✅ Complété | 23.5% top candidats ACSI > 0.70 |
-| MD (4 complexes) | ✅ Complété | PfCRT (214) et PfATP4 (438) ligands liés ; PfClpP/DHFR non-liés |
-| MM-GBSA (PfATP4) | ✅ Complété | Parser regex fixé |
-| **Manuscrit** | ✅ **Prêt soumission JCIM** | Sections Methods complètes, figures TOC |
+| RRS — 17 composés | ✅ Complété (corrigé 07/08) | **RRS par-cible** (|ΔG_WT,t| ≥ 5.0, moyenné sur cibles liées uniquement) : classes A*:6, B:5, C:5, D:1 ; étendue 68.2–111.7 ; le "knockout C59R PP-11" = artefact de mélange de cibles (WT PfDHFR −0.70 = non-liant), PP-11 = A* sur PfCRT ; la cohorte P2 set-C reste distincte de l’analyse P3 H₁–RRS n=494. |
+| Cross-metric PNS/ACSI/RRS/dG_WT | ✅ Corrigé (07/08) | n=17, Bonferroni α=0.017 : PNS–RRS −0.559 (p=0.020, H1 ns) ; ACSI–RRS −0.132 (p=0.613, H2 non confirmée) ; RRS–dG_WT −0.433 ; PNS–dG_WT +0.389 (mécanique) ; figure7 régénérée |
+| PP-11 C59R anomaly | ✅ Investigé | Artefact de mélange de cibles (retiré comme "design rule") — pas un clash stérique |
+| PNS | ✅ Complété | PfCRT imputé (moyenne réseau 0.151, pas 1.0) ; table PNS régénérée (6.00–1.04) |
+| ACSI | ✅ Complété | 23.5% top candidats ACSI > 0.70 ; moyenne 0.589 (17 parseables) |
+| MD (4 complexes) | ✅ Complété | 10 ns chacun (40 ns total), **310.15 K** (température physiologique), ligands ACPYPE/GAFF2 (AM1-BCC) ; PfCRT (214) et PfATP4 (438) liés ; PfClpP/PfDHFR non-liés |
+| MM-GBSA (gmx_MMPBSA) | ✅ Complété | 214-PfCRT = −18.25 ± 0.40 kcal/mol (seul valide) ; 164/201 dissociés (67.4/78.2 Å) ; 438 exclu (artefact conversion CHARMM36→AMBER, +473 kcal/mol) |
+| **Manuscrit** | ✅ **Prêt soumission JCIM** | 17 candidats, 136 systèmes de docking, 40 ns MD ; RRS table 17 scaffolds ; compile propre (25 p., 0 erreur) |
 
 ### P3 — Quantum-Inspired Representations ✅ (Benchmarks canoniques complets)
 
@@ -85,16 +91,17 @@
 | **Figure benchmark (bar)** | ✅ **Régénérée 01/08** | `results/figures/p3_auc_benchmark_bar.png` — inclut la ligne **Hybrid 0.8876 ± 0.0065** (canonique) et les valeurs QKS 6q C3-fix (jobs 12700/12702) |
 | **TNE embeddings (bond_dim=8)** | ✅ **Généré** | 19,836/19,849 valides (13 échecs), 192 dims, 6.1× compression réelle (mean 39.0 atomes) |
 | **TDA fingerprints (19,849 mol.)** | ✅ **Généré** | 19,849/19,849 valides, 0 échecs, 78 features |
-| **H₁-RRS expanded (n=77)** | ✅ **Complété** | ρ=0.312, p=0.0057 — cohorte étendue vs pilot n=14 |
+| **H₁-RRS expanded (n=494)** | ✅ **Complété** | H₁ count ρ=0.2399 (p=6.76×10⁻⁸) unadjusted; ρ_partial=0.0329 (p=0.4668) after MW/ring/Fsp³/H₀ control — size-confounded, no independent predictor claim |
 | **RRS expansion SLURM** | ✅ **Fonctionnel** | p3_rrs_expansion.sbatch, 4 tasks, 200 molécules |
 | **Benchmark classique n=5,000 (hybrid pre-phase)** | ✅ **Complété** | ECFP4=0.940, TFP=0.765 (−0.112 vs n=19,849), TNE=0.660 (−0.062) |
-| **Manuscrit** | ✅ **Réconcilié BMAD v50 + trim 26→18 p.** | Main + SM + cover letter alignés sur les benchmarks canoniques (hybrid 0.888, ablation QK Δ=−0.040, QKS 6q ≈ RBF) ; **trim 26→18 p.** (02/08) : main 18 p./7 230 mots, SM 18 p., cover letter 1 p. ; fusion tables benchmark/hybrid, `tab:qkernel`→SM S13 ; titre canonique : **« Topological and tensor-network representations resolve chemical paradoxes in African antimalarial natural products »** (`Paper3_Quantum_InspiredV2608.tex`) ; compile propre (0 erreur, 0 réf. non définie) |
+| **Manuscrit** | ✅ **Réconcilié BMAD v50 + trim 26→18 p.** | Main + SM + cover letter alignés sur les benchmarks canoniques et H₁–RRS n=494 (hybrid 0.888, ablation QK Δ=−0.040, QKS 6q ≈ RBF) ; **trim puis réconciliation finale** : main 18 p./7 230 mots, SM 18 p., cover letter 1 p. ; fusion tables benchmark/hybrid, `tab:qkernel`→SM S13 ; titre canonique : **« Topological and tensor-network representations resolve chemical paradoxes in African antimalarial natural products »** (`Paper3_Quantum_InspiredV2608.tex`) ; compile propre (0 erreur, 0 réf. non définie) |
 | **Acceptance assessment** | ✅ **Vers ~82% (cible ≥85%)** | Roadmap documentée; validation physique TNE/TDA complète; benchmark hybride canonique + QKS 6q terminés; trim + déduplication fait (audit v3.1 : ~79–82%, ChEMBL honnête négatif 02/08 −5%, Zenodo ⚠️ PENDING +3% → ~82% ; cible ≥85% via Zenodo + actions restantes) |
 | 🔴 Action 1: ChEMBL IC₅₀ validation | ✅ **Exécutée 02/08** | 10 leads top queryés — analogues ChEMBL tous **Inactive** (Tanimoto 0.229–0.379) ; résultat honnête négatif = nouveauté chimique, pas de validation positive (+0% acceptance, narration adaptée) |
-| 🔴 Action 2: Reframe H₁-RRS narrative | ✅ **Fait** | ρ=0.312 (n=77) présenté avec caveat confounding MW ; effet size-médié (ρ_partial ≈ 0) — intégré manuscrit + BMAD |
-| 🟡 Action 3: Benchmark SOTA topological | 🔄 **En cours (job 12745)** | +8% acceptance — `p3_sota_benchmark.sbatch` soumis 03/08 (prod, 16 CPU, 6h, RF full 19849 + SVM n=5000, 5 stratégies PH) |
-| 🟡 Action 4: Expand RRS to n≥80 | 🔄 **En cours (job 12746)** | +5% acceptance — `p3_rrs_expansion.sbatch` soumis 03/08 (array 0-9, 10×50=500 composés, Tartarus 3 cibles, RRS Spearman H₁) |
+| 🔴 Action 2: Reframe H₁-RRS narrative | ✅ **Fait** | n=494 canonical: ρ=0.2399 unadjusted; ρ_partial=0.0329 (p=0.4668) after covariate control; independent predictor claim removed — integrated manuscript + BMAD |
+| 🟡 Action 3: Benchmark SOTA topological | ✅ **Complété** | `p3_sota_benchmark` exécuté et intégré dans le manuscrit/SM; interprétation conservatrice face aux baselines canoniques |
+| 🟡 Action 4: Expand RRS to n≥80 | ✅ **Complété** | correction du préfiltre polypharmaceutique; cohorte finale n=494, avec partial-correlation audit et retrait de la claim de biomarqueur indépendant |
 | 🟡 Action 5: Zenodo deposit | ⏳ **À faire** | +5% acceptance (DOI réservé 10.5281/zenodo.19608875, upload manquant) |
+| 🔴 **Validation externe ChEMBL (08/08)** | 🔄 **En cours (jobs 12860/12863)** | **Benchmark des descripteurs P3 (ECFP4/FCFP4/MACCS/AP/PHCO/BPF/TFP/TNE/Hybrid, RF 5-CV + paired-t + BH-FDR) + QKS 6q IQPEmbedding (SVM vs RBF/linear) sur le dataset public ChEMBL malaria IC50/EC50 (22 447 mol, 19 321 actives — même panel que la validation P5)**. Smoke PASS (n=50 descripteurs : ECFP4 0.9435, TFP 0.8899, TNE 0.6057 ; n=150 QKS : quantum 0.8385 ≈ RBF 0.8423, quantum > linear). Job 12860 descripteurs (TNE en cours), 12863 QKS (kernel 17 957×17 957 complet, phase fit SVM). Intégration BMAD/manuscrit après complétion. |
 
 #### Fichiers de données P3 — État actuel
 
@@ -124,11 +131,13 @@
 
 | Composant | Statut | Résultat clé |
 |-----------|:------:|:-------------|
-| **Objectif** | 🔄 **Planifié** | GNN (GCN, GAT, GIN) + Transformers (ChemBERTa, Graphormer) pour prédiction d'activité et génération moléculaires |
+| **Objectif** | ✅ **Atteint (benchmark complet)** | GNN (GIN + fusions TFP/TNE) + ChemBERTa — verdict honnête-négatif : **ECFP4-RF gagne les 2 splits** (random 0.9433, scaffold 0.8300) ; tous les bras significativement pires (paired-t df=4, BH-FDR) |
 | **Data analysis report** | ✅ **Créé 01/08** | `P5_DATA_ANALYSIS_REPORT.md` — boussole P5 (panel canonique P3 n=19,836, splits random+scaffold, fusion TDA/TNE, SOTA 2025-26, risque acceptation Q1) |
 | **Plan stratégique PA90** | ✅ **Créé 01/08** | `P5_STRATEGIC_PA90.md` — plan d'implémentation stratégique (phase 1 MVP, ressources, milestones, risque acceptation) |
 | **v1-prep (panel, splits, sanity)** | ✅ **Complété 01/08** | `p5_canonical_panel.csv` (19,836×272), splits figés (random+scaffold, 5 seeds), sanity ECFP4-RF = 0.9428±0.0031 (réf P3 0.9475) ✓ |
 | **Dépendances P5** | ✅ **Verrouillé 01/08** | torch 2.13.0+cu130 + PyG 2.8.0 (torchdrug INCOMPATIBLE py3.11 → PyG), transformers 5.14.1, datasets 5.0.1, deepchem 2.8.0 — `requirements.txt` |
+| **Benchmark complet (4 bras × 2 splits)** | ✅ **100% (jobs 12841/12842)** | GIN–TFP random 0.9084±0.0060, GIN–TNE random 0.8918±0.0060 ; scaffold : GIN–TFP 0.8138, GIN–TNE 0.8090, GIN 0.8047, ChemBERTa 0.7867 vs ECFP4 0.8300 — **tous significativement pires (BH-FDR < 0.05)** |
+| **Validation indépendante (08/08)** | ✅ **100% complète** | (1) redérivation stats `p5_replicate_stats.py` = valeurs manuscrit exactes ; (2a) ECFP4-RF re-run Δ=0.0000 ; (2b) GIN re-run **PASS** (Δmean −0.0001/−0.0032, ρ=0.70) ; (3) **benchmark public ChEMBL 22 267 mol disjointes** : ECFP4-RF gagne (random 0.9547 vs 0.9237 p=0.0001 ; scaffold 0.9190 vs 0.8843 p<0.0001) → verdict PAS un artefact des labels eOS80CH. DAR v3-j + Limitations manuscrit à jour |
 | **Lien P3** | ✅ **Défini** | Intégration features TDA/TNE (P3) comme input multi-modal |
 | **Lien P2** | ✅ **Défini** | Validation sur RRS/PNS (P2) comme oracles biologiques |
 | **Dataset** | ✅ **Préparé** | n=19,849 (P3 benchmark) — même split que P3 pour comparaison directe |

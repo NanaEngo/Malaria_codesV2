@@ -157,6 +157,28 @@ def main() -> int:
 
     X, y, _ = load_public_qks(csv_path, limit=args.limit)
 
+    # ── Checkpoint freshness guard ────────────────────────────────────────
+    # run_benchmark resumes completed folds from the checkpoint. A smoke run
+    # (--limit 150) leaves a checkpoint whose folds were computed on a
+    # different panel — resuming from it would silently corrupt the full run.
+    # We tag the panel size in a sidecar meta file and discard the checkpoint
+    # on mismatch (n differs), so resume is only possible on the SAME panel.
+    ckpt = Path(args.checkpoint)
+    meta = ckpt.with_suffix(ckpt.suffix + ".meta")
+    if ckpt.exists():
+        stored_n = None
+        try:
+            stored_n = json.loads(meta.read_text()).get("n_panel")
+        except Exception:
+            stored_n = None
+        if stored_n != len(y):
+            print(f"  Stale checkpoint (panel n={stored_n} != {len(y)}) — discarding")
+            ckpt.unlink(missing_ok=True)
+            meta.unlink(missing_ok=True)
+    if not meta.exists():
+        meta.write_text(json.dumps({"n_panel": int(len(y)), "folds": N_FOLDS}))
+        print(f"  Checkpoint guard armed (panel n={len(y)})")
+
     results = run_benchmark(
         X, y,
         n_repeats=N_REPEATS,

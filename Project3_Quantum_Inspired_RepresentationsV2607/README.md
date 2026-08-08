@@ -13,10 +13,10 @@
 | **Focus** | African Natural Product (ANP) Antimalarial Chemical Space |
 | **Status** | ✅ Submission-ready — canonical benchmarks complete (jobs 12698/12699/12700/12702) |
 | **Target Journal** | *Journal of Cheminformatics* |
-| **Manuscript** | Main `Paper3_Quantum_InspiredV2608.tex` (18 p. / 7 230 mots) + SM `Paper3_Quantum_Inspired_SM_V2608.tex` (18 p.) + cover letter (1 p.) — trim 26→18 p. (02/08/2026), fusion des tables benchmark/hybrid, `tab:qkernel`→SM S13, titre harmonisé. ⚠️ V2607 et `_refined` archivés dans `manuscript/LaTeX/archive/` |
+| **Manuscript** | Main `Paper3_Quantum_InspiredV2608.tex` (20 p. after final H1–RRS reconciliation) + SM `Paper3_Quantum_Inspired_SM_V2608.tex` (18 p.) + cover letter (1 p.) — trim 26→18 p. (02/08/2026), fusion des tables benchmark/hybrid, `tab:qkernel`→SM S13, titre harmonisé. ⚠️ V2607 et `_refined` archivés dans `manuscript/LaTeX/archive/` |
 | **Key Results (canonical)** | ECFP4 **0.9475 ± 0.0045** (n=19,836) ; Hybrid RF **0.8876 ± 0.0065** (p<0.0001 vs ECFP4) ; ablation QK Δ=−0.040 (principal contributeur) ; QKS 6q ≈ RBF (p=0.060/0.419, ns) ; TFP 0.8759 ; TNE 0.7219 (6.1× compression réelle) ; 92.6% ECFP4-unreachable / 69.3% scaffold recovery |
 | **ChEMBL validation** | ✅ Exécutée (02/08/2026) — 10 leads top queryés : analogues ChEMBL tous **Inactive**, Tanimoto 0.229–0.379 (résultat honnête négatif = nouveauté chimique, pas de validation expérimentale positive) |
-| **Resistance integration** | Résistance-résilience au cœur : **H₁-RRS** (ρ=0.240, p<0.0001, n=494; pilot n=14: ρ=0.947) — la topologie prédit la résilience de liaison aux mutants (PfDHFR/PfCRT) ; reframing size-médié (ρ_partial ≈ 0) assumé avec caveat MW |
+| **Resistance integration** | Analyse canonique **H₁–RRS** sur n=494 : H₁ count ρ=0.2399 (p=6.76×10⁻⁸) avant ajustement, mais ρ_partial=0.0329 (p=0.4668) après contrôle MW, cycles, fraction sp³ et H₀ ; résultat size-confounded, hypothesis-generating, sans preuve d’un prédicteur topologique indépendant |
 | **Strategic Docs** | [`P3_ADVERSARIAL_AUDIT_MITIGATION.md`](P3_ADVERSARIAL_AUDIT_MITIGATION.md) (v3.1) · [`P3_SUBMISSION_ROADMAP_85PCT.md`](P3_SUBMISSION_ROADMAP_85PCT.md) · boussole : `BMAD_Q1_DATA_ANALYSIS_REPORT.md` |
 | **Methodology Skills** | `pennylane`, `datamol`, `scikit-learn`, `pymoo`, `experimental-design`, `BMAD-METHOD` |
 

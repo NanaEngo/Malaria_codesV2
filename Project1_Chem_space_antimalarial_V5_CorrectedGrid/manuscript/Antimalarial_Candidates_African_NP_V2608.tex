@@ -290,7 +290,7 @@ A continuous multi-parameter optimization (MPO) framework was applied, integrati
 Sensitivity analysis across \num{25} weight perturbations ($\pm \qtyrange{10}{20}{\percent}$ per component) yielded a Spearman $\rho$ range of 
 \numrange{0.26}{0.97} for the top-1,000 compounds (mean $\rho = \num{0.792}$) and a mean Jaccard similarity of \num{0.548} for the top-20 hit list 
 (Supplementary \cref{SM-tab:sm_s17_mpo_sensitivity}). ADMET weight perturbations exhibited the greatest impact ($\rho \leq \num{0.62}$ at $\pm\qty{10}{\percent}$, with a minimum of $\num{0.26}$ at $\qty{-20}{\percent}$), while Vina and DiffDock perturbations were comparatively benign ($\rho \geq \num{0.79}$ for all $\pm\qtyrange{10}{20}{\percent}$ perturbations). We note that S$_{\text{vina}}$ and S$_{\text{diff}}$ 
-are back-calculated from a shared residual of the weighted MPO score (see Supplementary Section~\ref*{SM-sec:mpo_sensitivity_methods}); independent 
+are back-calculated from a shared residual of the weighted MPO score (see Supplementary \Cref{SM-sec:mpo_sensitivity_methods}); independent 
 perturbation of these two components is approximated via proportional residual splitting rather than measured independently.
 
 Through centroid-based property inference (\cref{sec:centroid_inference}), the framework screened \num{484} diverse centroids, with consensus scoring 
@@ -541,7 +541,7 @@ derived from machine learning models, and their prospective accuracy for African
 External calibration against the Tartarus docking benchmark \citep{nigam2023tartarus} (QuickVina/Smina on three standardized targets) indicates that the weighted 
 MPO score is orthogonal to raw docking affinity (Spearman $\rho = \num{0.013}$), rather than redundant with it; this is distinct from independence among the 
 five MPO components, two of which (S$_{\text{vina}}$, S$_{\text{diff}}$) share a back-calculated residual (Supplementary 
-Section~\ref*{SM-sec:mpo_sensitivity_methods}). An initial 50-molecule sample yielded no correlation between the Tartarus composite binding affinity and the 
+\Cref{SM-sec:mpo_sensitivity_methods}). An initial 50-molecule sample yielded no correlation between the Tartarus composite binding affinity and the 
 weighted MPO score (Spearman $\rho = \num{-0.037}$, $p = \num{0.777}$). A subsequent full-scale validation on \num{19913} molecules (\num{17211} with valid 
 composite scores after Lipinski/substructure filtering) replicated this result with \num{280}$\times$ greater statistical power: Tartarus composite vs.\ 
 weighted MPO, Spearman $\rho = \num{0.013}$, $p = \num{0.091}$ (non-significant). Neither the full-run composite nor any per-target Tartarus score ($|\rho| < 
@@ -628,15 +628,7 @@ antimalarial leads provide a foundation for collaborative drug development effor
 % ACS-style back matter sections
 
 \section*{Supporting information}
-Supporting information available at the publisher's website. Supplementary Tables~\ref{SM-tab:scaffolds}, \ref{SM-tab:selectivity}, \ref{SM-tab:cyp450}, 
-\ref{SM-tab:stage_activity}, \ref{SM-tab:pca}, \ref{SM-tab:scaffold_recovery}, \ref{SM-tab:fsp3}, \ref{SM-tab:druglikeness}, \ref{SM-tab:consensus_hits}, 
-\ref{SM-tab:source_breakdown}, \ref{SM-tab:pca_variance}, \ref{SM-tab:tanimoto_novelty}, \ref{SM-tab:diffdock_vina_correlation}, 
-\ref{SM-tab:diversity_comparison}, \ref{SM-tab:virtual_screening}, \ref{SM-tab:sm_s16_admet_crossval}, \ref{SM-tab:sm_s17_mpo_sensitivity}, 
-\ref{SM-tab:sm_s18_expansion_sensitivity}, \ref{SM-tab:sm_s18b_chembl_enrichment}, \ref{SM-tab:sm_s21_polypharm}, \ref{SM-tab:sm_s20_retrosynthesis}, 
-\ref{SM-tab:mmv_validation}, \ref{SM-tab:redocking_validation}, \ref{SM-tab:consensus}, \ref{SM-tab:computational_comparison}, 
-\ref{SM-tab:clustering_comparison}, and \ref{SM-tab:vae_comparison} and Supplementary Figures~\ref{SM-fig:vae_training}, \ref{SM-fig:clustering_quality}, 
-\ref{SM-fig:enrichment_curves}, \ref{SM-fig:interaction_leads}, \ref{SM-fig:redocking_rmsd}, \ref{SM-fig:consensus_comparison}, 
-\ref{SM-fig:consensus_correlation}, \ref{SM-fig:sm_s15_top10_structures}, \ref{SM-fig:si_umap_latent}, and \ref{SM-fig:si_phys_chem_clus}. MPO equations 
+Supporting information available at the publisher's website. Supplementary \Cref{SM-tab:scaffolds,SM-tab:selectivity,SM-tab:cyp450,SM-tab:stage_activity,SM-tab:pca,SM-tab:scaffold_recovery,SM-tab:fsp3,SM-tab:druglikeness,SM-tab:consensus_hits,SM-tab:source_breakdown,SM-tab:pca_variance,SM-tab:tanimoto_novelty,SM-tab:diffdock_vina_correlation,SM-tab:diversity_comparison,SM-tab:virtual_screening,SM-tab:sm_s16_admet_crossval,SM-tab:sm_s17_mpo_sensitivity,SM-tab:sm_s18_expansion_sensitivity,SM-tab:sm_s18b_chembl_enrichment,SM-tab:sm_s21_polypharm,SM-tab:sm_s20_retrosynthesis,SM-tab:mmv_validation,SM-tab:redocking_validation,SM-tab:consensus,SM-tab:computational_comparison,SM-tab:clustering_comparison,SM-tab:vae_comparison} and Supplementary \Cref{SM-fig:vae_training,SM-fig:clustering_quality,SM-fig:enrichment_curves,SM-fig:interaction_leads,SM-fig:redocking_rmsd,SM-fig:consensus_comparison,SM-fig:consensus_correlation,SM-fig:sm_s15_top10_structures,SM-fig:si_umap_latent,SM-fig:si_phys_chem_clus}. MPO equations 
 archived in repository.
 
 \section*{Author Contributions}

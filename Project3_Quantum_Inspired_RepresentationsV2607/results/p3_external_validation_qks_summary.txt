@@ -1,0 +1,15 @@
+P3 — QKS external validation (public ChEMBL malaria IC50/EC50)
+Circuit: IQPEmbedding (1 repeats) | 6 qubits | state-vector kernel
+Panel: n=150 (active 130, inactive 20)
+
+Kernel          AUC       ±
+quantum      0.8385  0.1051
+rbf          0.8423  0.0989
+linear       0.6519  0.1874
+
+Paired t-test (per-fold, df=4) with BH-FDR:
+  quantum  vs rbf      Δ=-0.0038 p=0.37390 q=0.37390 ns
+  quantum  vs linear   Δ=+0.1865 p=0.02768 q=0.04268 SIG
+  rbf      vs linear   Δ=+0.1904 p=0.02845 q=0.04268 SIG
+
+Reference (descriptor extval, RF): ECFP4 AUC = 0.9435 (classifier differs: SVM here)

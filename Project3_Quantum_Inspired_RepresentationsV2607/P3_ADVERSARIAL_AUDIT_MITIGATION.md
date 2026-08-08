@@ -1,6 +1,6 @@
 # P3 Adversarial Audit & Mitigation Report
 
-**Date:** July 25, 2026 (evening) — v1; **updated Aug 2, 2026 — v3 adversarial re-audit** (full manuscript re-verification against deposited data, after canonical benchmarks) ; **Aug 2, 2026 — v3.1 manuscript trim documented** (26→18 p., fusion des tables, `tab:qkernel`→SM S13, élimination des doublons main↔SM — voir §« Actions to Reach ≥85% » action 5 et BMAD §3.14) ; **Aug 2, 2026 — v3.2 qubit-consistency + final proofreading documented** (corrections 8q/6q : caveat NISQ + Limitations reformulés « 6--8 qubits » / « canonical 6-qubit Phase-2 configuration », alignés sur la vérité terrain `N_QUBITS=6` canonique vs 8q discriminator/NISQ ; fix Overfull 199 pt table S13 ; phrase de positionnement vs 2 revues quantum — voir BMAD §3.14a)
+**Date:** July 25, 2026 (evening) — v1; **updated Aug 7, 2026 — final expanded H₁–RRS cohort (n=494) supersedes the legacy n=77 analysis**; **updated Aug 2, 2026 — v3 adversarial re-audit** (full manuscript re-verification against deposited data, after canonical benchmarks) ; **Aug 2, 2026 — v3.1 manuscript trim documented** (26→18 p., fusion des tables, `tab:qkernel`→SM S13, élimination des doublons main↔SM — voir §« Actions to Reach ≥85% » action 5 et BMAD §3.14) ; **Aug 2, 2026 — v3.2 qubit-consistency + final proofreading documented** (corrections 8q/6q : caveat NISQ + Limitations reformulés « 6--8 qubits » / « canonical 6-qubit Phase-2 configuration », alignés sur la vérité terrain `N_QUBITS=6` canonique vs 8q discriminator/NISQ ; fix Overfull 199 pt table S13 ; phrase de positionnement vs 2 revues quantum — voir BMAD §3.14a)
 **Scope:** Critical self-assessment of P3 manuscript from a Q1 journal reviewer perspective
 **Methodology:** Identify weaknesses a reviewer would flag, assess severity, propose mitigations
 **Current Acceptance Probability:** 75–82% → Target ≥85% (v3.1: ~79–82%, ChEMBL honnête négatif 02/08 −5% ; Zenodo ⚠️ PENDING +3% → ~82%)
@@ -53,10 +53,10 @@
 ### Verifications passed (no action needed)
 - Hybrid 0.8876 vs ECFP4 0.9475, p<0.0001 (job 12699) ✓; ablation QKS Δ=−0.040 / TFP Δ=−0.014 / TNE Δ=+0.011 ✓
 - QKS 6q C3-fix: n=19,849 0.8230 vs RBF 0.8292 (p=0.060); n=5,000 0.8199 vs 0.8260 (p=0.419) ✓
-- H1-RRS n=77 ρ=0.312, p=0.0057; MW–H1_count ρ=0.718 (recomputed) ✓
+- H₁–RRS final n=494: H₁ count ρ=0.2399, p=6.76×10⁻⁸; partial ρ=0.0329, p=0.4668 after MW/ring count/Fsp³/H₀ control ✓
 - ChEMBL 231 pairs, 7 analogues (3.0%), 3 active PfATP4 ✓; effect sizes Cohen's d ✓
 
-### Compilation (Aug 2, 2026, post-trim v3.2)
+### Compilation (Aug 2, 2026, post-trim v3.2; H₁–RRS reconciliation Aug 7)
 - Main: **18 pp.** (7 365 mots), **0 errors, 0 unresolved references, 0 Rerun** ✓ (compilation complète ×2 + bibtex + ×2)
 - SM: **18 pp.**, **0 errors, 0 unresolved references** ✓ — **0 Overfull structurel** (fix `\resizebox` table S13, 199 pt → 0)
 - Cover letter: **1 p.** ✓
@@ -82,21 +82,19 @@
 
 ---
 
-## Weakness #2: H₁-RRS Correlation Attenuated (ρ = 0.947 → 0.312)
+## Weakness #2: H₁-RRS Association Is Size-Confounded (final n = 494)
 
 **Severity:** 🟡 **MEDIUM** — statistically significant but small effect
 
 **What a reviewer will say:** "The cross-paper H₁-RRS correlation dropped from ρ = 0.947 (n=14) to ρ = 0.312 (n=77). The authors frame ρ = 0.312 as 'significant' (p = 0.006), but this is a weak-to-moderate correlation. Is H₁ persistence truly a resistance biomarker, or is this a statistical artefact of multiple testing?"
 
 **Mitigation status:** ✅ **IMPLEMENTED**
-- Pilot ρ = 0.947 moved from abstract to parenthetical supporting context
-- Abstract canonized ρ = 0.312 (p = 0.006, n = 77)
-- Conclusion reframed: attenuation as methodological discovery, not failure
-- Balanced sampling requirement documented
+- Final expanded cohort canonized: H₁ count ρ = 0.2399 (p = 6.76×10⁻⁸, n = 494)
+- Partial Spearman result reported: ρ_partial = 0.0329 (p = 0.4668) after MW, ring count, Fsp³ and H₀ control
+- Main/SM/cover reframe the result as size-confounded and hypothesis-generating
+- Legacy n=77/pilot values are no longer used as canonical evidence
 
-**Remaining risk:** 🟡 **MEDIUM** — ρ = 0.312 is weak. Power analysis in SM shows n ≥ 80 needed for 80% power at α = 0.05. The expanded RRS computation (500+ compounds) submitted to HPC will provide definitive n ≥ 80 results.
-
-**Action plan:** Submit expanded RRS to HPC → update manuscript with definitive n ≥ 80 result → +5% acceptance
+**Remaining risk:** 🟡 **MEDIUM** — the unadjusted association is weak and disappears after covariate control; the RRS and activity labels are computational, so no independent biological biomarker claim is supported. The appropriate mitigation is transparent reporting and size-matched experimental follow-up, not further unplanned expansion.
 
 ---
 
@@ -231,7 +229,7 @@
 | Weakness | Severity | Mitigation | Status |
 |----------|----------|------------|--------|
 | Computational labels | 🔴 CRITICAL | ChEMBL validation, docking enrichment | ✅ |
-| H₁-RRS attenuated | 🟡 MEDIUM | Canonized ρ=0.312, pilot moved to SM | ✅ |
+| H₁-RRS size confounding | 🟡 MEDIUM | Canonical n=494 unadjusted/partial results; independent predictor claim removed | ✅ |
 | SOTA parity only | 🟡 MEDIUM | Cohen's d=+0.85, full n=19,849 benchmark | ✅ |
 | QK simulated | 🟡 MEDIUM | NISQ caveat (6--8 qubits v3.2), no advantage claimed | ✅ |
 | D-GRIL not benchmarked | 🟡 MEDIUM | Build documented (SM §9E), TopologyNet analog (SM §9D) | ✅ |

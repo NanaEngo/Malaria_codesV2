@@ -41,13 +41,23 @@ export NUMEXPR_NUM_THREADS=1
 
 cd "${PROJECT_ROOT}"
 
-if [ $# -ge 1 ]; then
-    echo "=== P3 QKS EXTERNAL VALIDATION (smoke: --limit $1) ==="
+# Parse optional trailing args passed by sbatch (e.g. `sbatch x.sbatch --limit 150`
+# arrives as positional "--limit" "150").
+LIMIT=""
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --limit) LIMIT="$2"; shift 2 ;;
+        *) shift ;;
+    esac
+done
+
+if [ -n "$LIMIT" ]; then
+    echo "=== P3 QKS EXTERNAL VALIDATION (smoke: --limit $LIMIT) ==="
     $PYTHON scripts/p3_qks_external_validation.py \
         --n-jobs 32 \
         --block-size 200 \
         --checkpoint "${RESULTS_DIR}/p3_external_validation_qks_ckpt.json" \
-        --limit "$1"
+        --limit "$LIMIT"
 else
     echo "=== P3 QKS EXTERNAL VALIDATION (full 22,447 panel) ==="
     $PYTHON scripts/p3_qks_external_validation.py \

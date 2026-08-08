@@ -96,12 +96,12 @@
 
 \section{Cross-paper validation: topological persistence and resistance resilience}
 
-This supplementary figure presents the joint analysis linking the topological fingerprints (TFP) introduced in the main manuscript with the resistance resilience scores (RRS) reported in the companion polypharmacology study (Paper~2). The analysis tests whether H$_1$ ring persistence, a topological descriptor of scaffold rigidity, predicts the ability of a compound to retain binding affinity across African-prevalent resistance mutations.
+This supplementary figure presents the joint analysis linking the topological fingerprints (TFP) introduced in the main manuscript with computational resistance-resilience scores (RRS). The canonical analysis uses an expanded cohort of $n=\num{494}$ compounds with complete H$_1$ and RRS profiles; it tests whether apparent associations between ring topology and resistance resilience remain after controlling for molecular size and related structural covariates.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{h1_rrs_class_violin.png}
-\caption{Joint topological analysis linking Paper~3 TFP features with Paper~2 resistance classification. Violin plots (pilot cohort, $n = \num{14}$) show H$_1$ persistence distributions for Class~A (resistance-resilient, blue) versus Class~D (resistance-vulnerable, red) compounds, with Class~B (green) and Class~C (orange) shown for context. Quantitative analysis of the expanded cohort ($n = \num{77}$) shows a weak-to-moderate association between H$_1$ count and continuous RRS (Spearman $\rho = \num{0.312}$, $p = \num{0.0057}$); the pilot $n = \num{14}$ correlation ($\rho = \num{0.864}$, $p < \num{0.0001}$, on H$_1$ total persistence) is shown for context but should be interpreted cautiously because the pilot cohort is small and class-imbalanced. Caution is required: this association does not survive control for molecular size (controlling for molecular weight alone collapses the correlation to $\rho_{\text{partial}} = -\num{0.018}$, $p = \num{0.69}$), indicating a size-mediated effect rather than an independent topological signal.}
+\caption{Exploratory and canonical H$_1$--RRS analyses. The violin plot illustrates the earlier pilot subset and is not used as evidence for an independent class effect. In the canonical expanded cohort ($n = \num{494}$), H$_1$ count showed a weak unadjusted association with continuous RRS (Spearman $\rho = \num{0.2399}$, $p = \num{6.76e-8}$), but the partial association was null after controlling for molecular weight, ring count, fraction sp$^3$, and H$_0$ count ($\rho_{\text{partial}} = \num{0.0329}$, $p = \num{0.4668}$). The result is size-mediated and hypothesis-generating, not evidence of an independent topological predictor.}
 \label{fig:h1_rrs}
 \end{figure}
 
@@ -434,11 +434,11 @@ PfCRT & 6UKJ & 12 & 19 & 1.46$\times$ & -- \\
 \section{ChEMBL experimental validation}
 \label{sec:chembl_validation}
 
-The top-10 candidates (\cref{tab:chembl_validation_top10}) were queried against three \textit{Plasmodium falciparum} targets (PfDHFR, PfCRT, PfATP4) via the ChEMBL REST API (release 37); PfClpP was excluded because no \textit{P.~falciparum} ClpP target exists in ChEMBL. The search was subsequently expanded to the full RRS-TFP cohort of 494 compounds across all three targets (1482 candidate--target pairs), identifying ChEMBL structural analogues by ECFP4 Tanimoto similarity (threshold $\geq 0.25$).
+The top-10 candidates (\cref{tab:chembl_validation_top10}) were queried against three \textit{Plasmodium falciparum} targets (PfDHFR, PfCRT, PfATP4) via the ChEMBL REST API (release 37); PfClpP was excluded because no \textit{P.~falciparum} ClpP target exists in ChEMBL. This canonical query is a novelty screen rather than a positive experimental validation: ten candidate-level analogue records were retrieved (with some records sharing the same ChEMBL analogue), and every reported analogue record was classified as inactive. The expanded RRS--TFP cohort of 494 compounds is reported separately for the computational H$_1$--RRS analysis and is not presented here as ChEMBL validation.
 
 \begin{table}[htbp]
 \centering
-\caption{ChEMBL experimental validation of the top-10 candidates: closest structural analogue with experimental IC$_{50}$ data per candidate (Tanimoto threshold $\geq 0.20$). All ten analogues are experimentally \textbf{inactive} (IC$_{50}$ 12.5--55~$\mu$M), and their low Tanimoto similarity to the generated candidates (0.229--0.379) supports the chemical novelty of the proposed leads.}
+\caption{ChEMBL novelty screen for the top-10 candidates: closest structural analogue with experimental IC$_{50}$ data per candidate (Tanimoto threshold $\geq 0.20$). Ten candidate-level records are reported; some share the same ChEMBL analogue. Every reported analogue record is experimentally \textbf{inactive} (IC$_{50}$ 12.5--55~$\mu$M), and the low Tanimoto similarities (0.229--0.379) support the chemical novelty of the proposed leads without providing positive experimental validation.}
 \label{tab:chembl_validation_top10}
 \small
 \begin{tabularx}{\textwidth}{c l l l l l}
@@ -458,30 +458,10 @@ Rank & Target & ChEMBL ID & Activity & {IC$_{50}$ ($\mu$M)} & Tanimoto \\
 \bottomrule
 \end{tabularx}
 \vspace{1mm}
-\footnotesize All closest analogues are ChEMBL-confirmed inactive; the low Tanimoto similarities (0.229--0.379) mean no analogue is a close structural congener. This is an honest negative result: it confirms structural novelty of the generated candidates but provides no positive experimental validation. Deposited as \texttt{results/p3\_chembl\_validation/p3\_chembl\_validation.csv}.
+\footnotesize All reported analogue records are ChEMBL-confirmed inactive; the low Tanimoto similarities (0.229--0.379) mean no retrieved analogue is a close structural congener. This is an honest negative novelty-screen result: it supports structural novelty of the generated candidates but provides no positive experimental validation. Deposited as \texttt{results/p3\_chembl\_validation/p3\_chembl\_validation.csv}.
 \end{table}
 
-\begin{table}[htbp]
-\centering
-\caption{ChEMBL experimental validation: expanded search across 77 RRS-TFP compounds against 3 \textit{Plasmodium} targets (231 candidate--target pairs, Tanimoto $\geq 0.25$). Seven structural analogues were identified (\qty{3.0}{\percent} match rate); three showed experimental activity below 1~$\mu$M (PfATP4), while the remaining four were inactive. The low match rate supports the structural novelty of the generated chemical space.}
-\label{tab:chembl_validation}
-\small
-\begin{tabularx}{\textwidth}{c l l l l l}
-\toprule
-Cpd & Target & ChEMBL ID & Activity & {IC$_{50}$ ($\mu$M)} & Tanimoto \\
-\midrule
-12 & PfCRT & CHEMBL6966 & Inactive & 30.0 & 0.258 \\
-29 & PfCRT & CHEMBL1830987 & Inactive & 69.0 & 0.322 \\
-47 & PfATP4 & CHEMBL6150594 & Active & 0.40 & 0.261 \\
-65 & PfCRT & CHEMBL4745810 & Inactive & 12.5 & 0.284 \\
-75 & PfATP4 & CHEMBL6162944 & Active & 0.40 & 0.273 \\
-76 & PfCRT & CHEMBL1830987 & Inactive & 69.0 & 0.270 \\
-76 & PfATP4 & CHEMBL6175630 & Active & 0.79 & 0.329 \\
-\bottomrule
-\end{tabularx}
-\vspace{1mm}
-\footnotesize The expanded search queried all 77 RRS-TFP compounds against PfDHFR, PfCRT, and PfATP4 (231 pairs; PfClpP excluded). Seven structural analogues (\qty{3.0}{\percent} match rate) exceeded the Tanimoto $\geq 0.25$ threshold. Three PfATP4 matches are experimentally active (IC$_{50}$ 0.4--0.79~$\mu$M), indicating that generated candidates with structural homology to known PfATP4 actives retain binding potential. The remaining four PfCRT matches are inactive. No structural analogue of any generated compound was found for PfDHFR at this threshold. The low overall match rate (\qty{3.0}{\percent}) provides preliminary evidence of structural novelty, though direct IC$_{50}$ measurements remain necessary for activity confirmation. Target identifiers were verified against the ChEMBL REST API (PfDHFR-TS = CHEMBL4296323, PfCRT = CHEMBL1795182, PfATP4 = CHEMBL6066156); all seven entries were independently re-queried and confirmed, and activity classification conservatively honours ChEMBL relational values ($<$, $>$, $\sim$) where present.
-\end{table}
+\paragraph{Superseded exploratory expansion.} An earlier exploratory search of a legacy 77-compound RRS--TFP subset returned seven structurally matched pairs, including three PfATP4 actives. That analysis used a superseded cohort definition and is retained only in the deposited audit artefacts; it is not used for the canonical manuscript claims. The canonical external result is the top-10 novelty screen above, in which all retrieved analogues were inactive and no positive experimental validation was obtained.
 
 
 % ============================================================================
@@ -634,9 +614,7 @@ First, TNE reconstruction error is lower for molecules with common ring systems 
 \subsection{Integration with resistance-resilient MD validation}
 
 
-The 17 polypharmacological leads identified in a related MD validation study \citep{temgoua2027md} include both Class~A (resistance-resilient, active against drug-sensitive and resistant \textit{P.~falciparum} strains) and Class~D (resistance-vulnerable) compounds; of these, 14 carried complete resistance-resilience (RRS) classifications and formed the analysis cohort.
-
-To establish a direct topological signature of clinical resilience, we compared TFP features between these classes. An initial pilot of 14 polypharmacological leads suggested a strong relationship (Spearman $\rho = \num{0.864}$, $p < \num{0.0001}$, computed on H$_1$ total persistence); expanding the cohort to $n = \num{77}$ compounds yielded $\rho = \num{0.312}$ ($p < \num{0.0001}$, H$_1$ count), confirming that H$_1$ count is nominally associated with resistance resilience while showing the expected attenuation as sample size increases. In line with this H$_1$ count association, Class~A compounds in the pilot cohort also exhibited higher H$_1$ topological features than Class~D across all four metrics (count, total persistence, mean lifetime; max lifetime marginal; \cref{fig:h1_rrs}), although the Class~D subset in the pilot contains only a single compound ($n = 1$), so the pilot comparison should be interpreted cautiously. Crucially, a partial-correlation analysis shows that this association does not survive control for molecular size: controlling for molecular weight alone collapses the H$_1$--RRS correlation to $\rho_{\text{partial}} = -\num{0.018}$ ($p = \num{0.69}$), and controlling for all four size descriptors (MW, ring count, $F_{\mathrm{sp}^3}$, H$_0$ count) yields $\rho_{\text{partial}} = \num{0.033}$ ($p = \num{0.467}$). Because H$_1$ count correlates strongly with molecular weight (Spearman $\rho = \num{0.504}$), the apparent association is best interpreted as a size-mediated effect rather than an independent topological contribution to resistance resilience. The attenuated but nominally significant unadjusted correlation therefore requires cautious interpretation.
+The 17 polypharmacological leads in the companion RRS analysis \citep{temgoua2027md} are distinct from both the historical four-lead parent-study MD run and the canonical expanded RRS cohort. The latter contains $n = \num{494}$ compounds with complete RRS and H$_1$ profiles. H$_1$ count showed a weak unadjusted association with RRS (Spearman $\rho = \num{0.2399}$, $p = \num{6.76e-8}$), whereas the partial Spearman association controlling for molecular weight, ring count, fraction sp$^3$, and H$_0$ count was null ($\rho_{\text{partial}} = \num{0.0329}$, $p = \num{0.4668}$). The canonical result is therefore size-mediated and hypothesis-generating, not evidence for an independent topological contribution to resistance resilience. The pilot class illustration is retained only as exploratory context; it is not used to support a confirmatory class comparison.
 
 The cross-paper relationship is visualised in \cref{fig:h1_rrs} of the Supplementary Material, which shows H$_1$ persistence distributions across RRS classes.
 
