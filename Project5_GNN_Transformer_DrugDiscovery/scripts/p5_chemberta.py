@@ -22,7 +22,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, average_precision_score, f1_score, balanced_accuracy_score
 
 P5_ROOT = Path(__file__).resolve().parent.parent
 PANEL = P5_ROOT / "results" / "p5_canonical_panel.csv"
@@ -92,11 +92,12 @@ def load_splits(split_type: str = "random") -> list:
 
 class ChemBERTaTrainer:
     def __init__(self, split_type: str = "random", dry_run: bool = False, device: str = "auto",
-                 curves_only: bool = False):
+                 curves_only: bool = False, tag: str = ""):
         self.split_type = split_type
         self.dry_run = dry_run
         self.device = get_device(device)
         self.curves_only = curves_only
+        self.tag = tag
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
         self.model = AutoModelForSequenceClassification.from_pretrained(
             MODEL_NAME,
@@ -110,7 +111,7 @@ class ChemBERTaTrainer:
         self.y = self.panel["activity"].values.astype(np.int64)
         self.folds = load_splits(split_type)
         self.completed: set[tuple] = set()
-        self.ckpt_path = P5_ROOT / "results" / f"p5_chemberta_{split_type}_ckpt.json"
+        self.ckpt_path = P5_ROOT / "results" / f"p5_chemberta_{split_type}_ckpt{tag}.json"
         if self.ckpt_path.exists():
             with open(self.ckpt_path) as f:
                 ckpt = json.load(f)
@@ -182,7 +183,11 @@ class ChemBERTaTrainer:
                 te_preds.append(torch.softmax(logits, dim=1)[:, 1].cpu().numpy())
                 te_true.append(batch["labels"].cpu().numpy())
         te_auc = roc_auc_score(np.concatenate(te_true), np.concatenate(te_preds))
-        return float(te_auc), curve
+        te_ap = average_precision_score(np.concatenate(te_true), np.concatenate(te_preds))
+        te_bin = (np.concatenate(te_preds) >= 0.5).astype(int)
+        te_f1 = f1_score(np.concatenate(te_true), te_bin)
+        te_bacc = balanced_accuracy_score(np.concatenate(te_true), te_bin)
+        return float(te_auc), float(te_ap), float(te_f1), float(te_bacc), curve
 
     def run(self) -> list[dict]:
         results = []
@@ -194,13 +199,13 @@ class ChemBERTaTrainer:
                     continue
                 print(f"Training ChemBERTa fold {f_idx} seed {seed} on {self.device}...")
                 if self.dry_run:
-                    te_auc = 0.5
-                    curve = []
+                    te_auc, te_ap, te_f1, te_bacc, curve = 0.5, 0.5, 0.5, 0.5, []
                 else:
-                    te_auc, curve = self.train_fold(f_idx, seed)
+                    te_auc, te_ap, te_f1, te_bacc, curve = self.train_fold(f_idx, seed)
                 results.append({
                     "model": "ChemBERTa", "fold": f_idx, "seed": seed,
-                    "test_auc": te_auc, "split": self.split_type,
+                    "test_auc": te_auc, "test_ap": te_ap, "test_f1": te_f1,
+                    "test_bacc": te_bacc, "split": self.split_type,
                     "curve": curve,
                 })
                 self.completed.add(key)
@@ -227,13 +232,14 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
     ap.add_argument("--curves-only", action="store_true")
+    ap.add_argument("--tag", default="")
     args = ap.parse_args()
     trainer = ChemBERTaTrainer(split_type=args.split, dry_run=args.dry_run, device=args.device,
-                               curves_only=args.curves_only)
+                               curves_only=args.curves_only, tag=args.tag)
     results = trainer.run()
 
     if not args.dry_run and not args.curves_only:
-        out_csv = P5_ROOT / "results" / f"p5_chemberta_{args.split}_results.csv"
+        out_csv = P5_ROOT / "results" / f"p5_chemberta_{args.split}_results{args.tag}.csv"
         pd.DataFrame(results).to_csv(out_csv, index=False)
         print(f"Results written to {out_csv}")
 

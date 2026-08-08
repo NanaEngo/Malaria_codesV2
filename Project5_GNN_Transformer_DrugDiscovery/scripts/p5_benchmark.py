@@ -28,7 +28,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.loader import DataLoader
-from sklearn.metrics import roc_auc_score, average_precision_score
+from sklearn.metrics import roc_auc_score, average_precision_score, f1_score, balanced_accuracy_score
 from scipy import stats
 
 # Local imports
@@ -225,10 +225,8 @@ class P5Benchmark:
             dl.append(d)
         return dl
 
-    def train_fold(self, fold_idx: int, seed: int) -> tuple[float, dict | None]:
-        """Returns (test_auc, desc_salience) where desc_salience is None for
-        non-fusion models. desc_salience = mean |W| over head input rows for the
-        descriptor columns (H3 attribution, no gradients needed)."""
+    def train_fold(self, fold_idx: int, seed: int) -> tuple[float, float, float, float, dict | None, list]:
+        """Returns (test_auc, test_ap, test_f1, test_bacc, desc_salience, curve)."""
         set_seed(seed)
         fold = self.folds[fold_idx][SEEDS.index(seed)]
         tr_idx, val_idx, te_idx = fold["train"], fold["val"], fold["test"]
@@ -306,12 +304,16 @@ class P5Benchmark:
                 te_preds.append(torch.sigmoid(logits).cpu().numpy())
                 te_true.append(batch.y.cpu().numpy())
         te_auc = roc_auc_score(np.concatenate(te_true), np.concatenate(te_preds))
+        te_ap = average_precision_score(np.concatenate(te_true), np.concatenate(te_preds))
+        te_bin = (np.concatenate(te_preds) >= 0.5).astype(int)
+        te_f1 = f1_score(np.concatenate(te_true), te_bin)
+        te_bacc = balanced_accuracy_score(np.concatenate(te_true), te_bin)
 
         salience = None
         if self.desc is not None:
             w = best_state["head.0.weight"]  # [hidden, hidden+n_desc]
             salience = w[:, HIDDEN:].abs().mean(dim=0).numpy()  # [n_desc]
-        return float(te_auc), salience, curve
+        return float(te_auc), float(te_ap), float(te_f1), float(te_bacc), salience, curve
 
     def run(self) -> list[dict]:
         results = []
@@ -323,14 +325,14 @@ class P5Benchmark:
                     continue
                 print(f"Training {self.model_name} fold {f_idx} seed {seed} on {self.device}...")
                 if self.dry_run:
-                    te_auc = 0.5  # dummy
+                    te_auc, te_ap, te_f1, te_bacc, curve = 0.5, 0.5, 0.5, 0.5, []
                     salience = None
-                    curve = []
                 else:
-                    te_auc, salience, curve = self.train_fold(f_idx, seed)
+                    te_auc, te_ap, te_f1, te_bacc, salience, curve = self.train_fold(f_idx, seed)
                 results.append({
                     "model": self.model_name, "fold": f_idx, "seed": seed,
-                    "test_auc": te_auc, "split": self.split_type,
+                    "test_auc": te_auc, "test_ap": te_ap, "test_f1": te_f1,
+                    "test_bacc": te_bacc, "split": self.split_type,
                     "curve": curve,
                 })
                 if salience is not None and not self.curves_only:
