@@ -1,14 +1,14 @@
 # Project 4 — Advanced Monte Carlo Strategies (P4)
 
 **Target Journal:** *Journal of Cheminformatics* (JoC) — canonical manuscript: `P4_Pareto_MCTS_JoC_refined.tex`
-**Status:** v12 20-seed benchmark complete (optimal MCTS config; greedy correction applied); manuscript ready for submission (Target PA ≥ 85%)
+**Status:** v12-activity 20-seed benchmark complete (optimal MCTS config; greedy correction applied); canonical manuscript aligned to the verified v12 CSV; final editorial compilation/package pending
 **Date:** August 2026
 
 P4 implements a **de novo molecular generation framework** targeting **African Natural Product (ANP)-inspired antimalarial chemistry**, combining:
 - **MCTS + ScafVAE**: Tree search guided by a chemistry-informed fragment policy (PUCT) built on privileged natural product-like antimalarial fragments (chromone, quinoline, indole, terpene derivatives) with medicinal chemistry safety filters (`medchem`: PAINS, Brenk, Veber, Lipinski).
 - **Pareto MCTS**: Multi-objective optimization via exact non-dominated front and hypervolume calculation (`pymoo` $WFG$ algorithm, HV ≥ 0.58).
 - **Real P1/P2 Oracles**: MPO (≥0.75), docking (Tartarus V2 *P. falciparum* targets), SYBA (>0), SA (<3.5), RRS (selectivity), PNS (polypharmacology), plus GPU-accelerated CuPy batch Tanimoto lookup.
-- **4-Method Benchmark**: MCTS+ScafVAE vs. Random vs. Greedy vs. GA across 20 independent seeds with paired t-testing and real best-in-seed molecule sets. The **v11 benchmark** (20 seeds, screened-optimal MCTS config `c_PUCT=5.0, ν=0.01, T=0.8`, job 12725) is the canonical P4 benchmark; the v10 default-config run is retained as sensitivity comparison. Headline: Random 0.7335 > MCTS 0.7276 > Greedy 0.7211 > GA 0.7027 (MCTS–random Δ=0.006, p=0.026) — honest negative on scalar reward, value in the Pareto front (HV 1.2366, 4 non-dominated solutions).
+- **4-Method Benchmark**: MCTS+ScafVAE vs. Random vs. GA vs. Greedy across 20 independent seeds with paired t-testing and real best-in-seed molecule sets. The **v12-activity benchmark** (`results/benchmark_molecules_opt_v12/p4_benchmark_merged.csv`, job 12865) is canonical for scalar reward: Random 0.6724 > MCTS 0.6649 > GA 0.6453 > Greedy 0.4278. MCTS--Random Δ=−0.0075, paired $t_{19}=−4.97$, $p=0.000085$; the pre-activity Pareto front remains a separate locked artifact (HV 1.2366, 4 non-dominated solutions). The v11 optimal-config benchmark is retained as historical sensitivity context.
 - **QMC status**: Tier 1 SCF diagnostics are complete; candidate-level Tier 2 VMC/DMC remains diagnostic and is not publication-grade. QMC claims are excluded from the manuscript.
 
 ## Gaps & Novelty
@@ -19,7 +19,7 @@ P4 implements a **de novo molecular generation framework** targeting **African N
 |---|---------------|
 | **N1** | **First Pareto-guided MCTS to fold resistance-resilience (RRS) and polypharmacology-network (PNS) scores into the generation objective** — not appended post hoc (honest caveat: in the current front RRS varies narrowly, 0.141–0.223). |
 | **N2** | **Front-level multi-objective comparison against scalar baselines** (re-scored per-seed best molecules on the full oracle; HV 18.99, C-metric 0.82) — closes the "no front comparison" gap without re-running the benchmark. |
-| **N3** | **Scaffold-aware fragment policy** (ChEMBL27 frequencies + Tanimoto) as the dominant driver (ablation Δ=+0.148), replacing uniform rollout priors. |
+| **N3** | **Scaffold-aware fragment policy** (ChEMBL27 frequencies + Tanimoto) as the largest observed main effect in the ablation configuration (Δ=+0.148), replacing uniform rollout priors. |
 | **N4** | **Rollout-degradation diagnosis & fix** (global best-molecule tracking): without it MCTS reward collapsed to ~0.24; with it, ×2.6 recovery — a documented, reproducible failure mode. |
 | **N5** | **Resistance-aware lead selection:** the Pareto front is the vehicle for resistance-aware, multi-target lead choice — the P2 RRS/PNS oracles enter the search objective, not the post-hoc ranking. |
 
@@ -118,6 +118,6 @@ The `OracleAggregator` links MCTS rewards to real P1/P2 antimalarial data:
 ## 5. Submission Checklist & FAIR Compliance
 
 - **Target Journal**: *Journal of Cheminformatics* (JoC)
-- **Title**: *"Pareto-guided Monte Carlo tree search explores multi-objective trade-offs missed by scalar antimalarial generation"*
+- **Title**: *"Pareto-guided Monte Carlo tree search reveals multi-objective trade-offs in antimalarial generation"*
 - **Data Availability**: Current artefacts are available in the public GitHub repository (`https://github.com/NanaEngo/Malaria_codesV2`). Zenodo DOI `10.5281/zenodo.19608875` is reserved; upload pending.
-- **Canonical v11 Benchmark**: `results/benchmark_molecules_opt/p4_benchmark_merged.csv` (20 seeds × 4 methods, optimal MCTS config). See `P4_DATA_ANALYSIS_REPORT.md` for the consolidated results.
+- **Canonical v12 scalar benchmark**: `results/benchmark_molecules_opt_v12/p4_benchmark_merged.csv` (20 seeds × 4 methods, optimal MCTS config plus public-activity proximity). The v11 pre-activity benchmark in `results/benchmark_molecules_opt/` is retained as historical sensitivity context. See `P4_DATA_ANALYSIS_REPORT.md` for consolidated results.

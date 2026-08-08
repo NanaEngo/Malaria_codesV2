@@ -31,7 +31,7 @@ import numpy as np
 
 # ── Paths ────────────────────────────────────────────────────────────
 PROJECT_DIR = Path(__file__).resolve().parent.parent
-RESULTS_DIR = PROJECT_DIR / "results" / "benchmark_molecules_opt"
+RESULTS_DIR = PROJECT_DIR / "results" / "benchmark_molecules_opt_v12"
 GRAPHICS_DIR = PROJECT_DIR / "manuscript" / "LaTeX" / "Graphics"
 GRAPHICS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -159,14 +159,13 @@ def plot_reward_bar(data):
 
     # Significance brackets (paired t-test on 20 seeds; v12 canonical data)
     y_max = max(means) + max(stds) + 0.06
-    # MCTS vs Random: p = 0.026 (weak nominal significance; random>MCTS)
+    # v12 paired tests: MCTS vs Random and MCTS vs GA.
     ax.plot([0, 1], [y_max, y_max], "k-", linewidth=0.6)
-    ax.text(0.5, y_max + 0.004, "p = 0.026", ha="center", fontsize=7,
+    ax.text(0.5, y_max + 0.004, "p = 0.000085", ha="center", fontsize=7,
             fontstyle="italic")
-    # MCTS vs Greedy: p = 0.005 (MCTS > Greedy)
     y2 = max(means) + max(stds) + 0.11
-    ax.plot([1, 2], [y2, y2], "k-", linewidth=0.6)
-    ax.text(1.5, y2 + 0.004, "p = 0.005", ha="center", fontsize=7,
+    ax.plot([1, 3], [y2, y2], "k-", linewidth=0.6)
+    ax.text(2.0, y2 + 0.004, "p < 0.0001", ha="center", fontsize=7,
             fontstyle="italic")
     ax.set_ylim(0, y2 + 0.06)
 

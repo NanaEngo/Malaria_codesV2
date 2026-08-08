@@ -27,8 +27,8 @@
 }
 
 \title{\textbf{Supplementary Material}\\[0.4em]
-\large Pareto-guided Monte Carlo tree search explores multi-objective
-trade-offs missed by scalar antimalarial generation}
+\large Pareto-guided Monte Carlo tree search reveals multi-objective
+trade-offs in antimalarial generation}
 
 \author{}
 \date{}
@@ -105,7 +105,7 @@ vectorisation of the docking Tanimoto scan; all \num{20} per-seed runs
 reproduce deterministically from the deposited code and data. An earlier
 deposit could not be reproduced from the committed code because the docking
 oracle library state differed at run time; the present molecule sets supersede
-that deposit. The method ranking (Random $>$ MCTS $>$ Greedy $>$ GA) is
+that deposit. The method ranking (Random $>$ MCTS $>$ GA $>$ Greedy) is
 unchanged.
 
 \textbf{Descriptors.} ECFP4 fingerprints (Morgan radius 2, \num{2048} bits)
@@ -170,10 +170,10 @@ matrix) are deposited for visualisation
     \toprule
     Method & Mean reward & Std & Min & Max & Mean time (s) \\
     \midrule
-    Random & \num{0.6724} & \num{0.0055} & \num{0.6616} & \num{0.6856} & \num{50.4} \\
-    MCTS+ScafVAE & \num{0.6649} & \num{0.0066} & \num{0.6554} & \num{0.6779} & \num{92.1} \\
+    Random & \num{0.6724} & \num{0.0056} & \num{0.6616} & \num{0.6856} & \num{50.4} \\
+    MCTS+ScafVAE & \num{0.6649} & \num{0.0068} & \num{0.6554} & \num{0.6779} & \num{92.1} \\
     Greedy & \num{0.4278} & \num{0.0000} & \num{0.4278} & \num{0.4278} & \num{1.9} \\
-    GA & \num{0.6453} & \num{0.0121} & \num{0.6178} & \num{0.6715} & \num{2.0} \\
+    GA & \num{0.6453} & \num{0.0124} & \num{0.6178} & \num{0.6715} & \num{2.0} \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -230,9 +230,10 @@ selection using a hypervolume indicator with a projected-distance penalty
 carried through the selection and back-propagation of the search tree.
 
 \paragraph{This work.} The scalar four-method benchmark uses
-\texttt{compute\_mpo\_reward} with fixed weights ($w_{\text{MPO}}=\num{0.40}$,
-$w_{\text{docking}}=\num{0.35}$, $w_{\text{SYBA}}=\num{0.15}$,
-$w_{\text{SA}}=\num{0.10}$); it is a scalar-reward comparison and is reported
+\texttt{compute\_mpo\_reward} with the v12 fixed weights ($w_{\text{MPO}}=\num{0.36}$,
+$w_{\text{docking}}=\num{0.315}$, $w_{\text{SYBA}}=\num{0.135}$,
+$w_{\text{SA}}=\num{0.09}$, $w_{\text{activity}}=\num{0.10}$); it is a
+public-activity-augmented scalar-reward comparison and is reported
 as such. In the Pareto-MCTS search, the objective \emph{vector} is stored for
 the front, while the tree selection uses a \emph{scalar proxy}
 $Q(s,a)$ obtained by summing the min--max normalised objective components

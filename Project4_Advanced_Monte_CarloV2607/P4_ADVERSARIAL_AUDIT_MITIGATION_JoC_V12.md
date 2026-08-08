@@ -1,58 +1,54 @@
 # P4 — Adversarial Audit & Mitigation (JoC, canonical v12)
 
-**Date:** 2026-08-03
+**Date:** 2026-08-08
 **Scope:** `manuscript/LaTeX/P4_Pareto_MCTS_JoC_refined.tex` (main), `P4_Pareto_MCTS_JoC_SM.tex`, `Cover_Letter_P4_JoC.tex` — targeted at **Journal of Cheminformatics (BMC, JoC)**.
-**Method:** fresh adversarial review against the canonical v12 deposit (`results/benchmark_molecules_opt/`, `results/pareto/`, `results/diversity/`), independent of the superseded JCIM-targeted audits (`P4_ADVERSARIAL_AUDIT_MITIGATION.md`, `P1_P4_CONSOLIDATED_ADVERSARIAL_AUDIT.md`).
-**Outcome of mitigation:** **acceptance probability ≈ 95%** (quantified below).
+**Method:** fresh adversarial review against the current v12-activity scalar deposit (`results/benchmark_molecules_opt_v12/`) and the separately locked pre-activity Pareto deposit (`results/pareto/`), independent of the superseded JCIM-targeted audits (`P4_ADVERSARIAL_AUDIT_MITIGATION.md`, `P1_P4_CONSOLIDATED_ADVERSARIAL_AUDIT.md`).
+**Outcome of mitigation:** manuscript-level risks reduced; acceptance estimates remain heuristic and conditional on editorial screening, reviewer access and final submission compliance.
 
 ---
 
 ## 0. Verified good (no change required)
 
-All checked against the deposited v12 data:
+All checked against the canonical v12-activity CSV `results/benchmark_molecules_opt_v12/p4_benchmark_merged.csv`:
 
 | Claim | Value | Verified |
 |---|---|---|
-| Random mean ± std | 0.7335 ± 0.0063 | ✅ matches CSV |
-| MCTS+ScafVAE | 0.7276 ± 0.0090 | ✅ matches CSV |
-| Greedy (deterministic) | 0.7211 ± 0.0000 | ✅ unique greedy = 1 |
-| GA | 0.7027 ± 0.0152 | ✅ matches CSV |
-| MCTS–Random paired t19 / p | −2.41 / 0.026 | ✅ recomputed |
-| MCTS–Greedy t19 / p | 3.22 / 0.005 | ✅ recomputed |
-| MCTS–GA t19 / p | 5.55 / <0.0001 | ✅ recomputed |
-| Cohen's d = t/√n | −0.54 | ✅ (2.41/4.47) |
-| MCTS wins | 5 of 20 seeds | ✅ recomputed |
+| Random mean ± std | 0.6724 ± 0.0056 | ✅ matches CSV |
+| MCTS+ScafVAE | 0.6649 ± 0.0068 | ✅ matches CSV |
+| Greedy (deterministic) | 0.4278 ± 0.0000 | ✅ unique greedy = 1 |
+| GA | 0.6453 ± 0.0124 | ✅ matches CSV |
+| MCTS–Random paired t19 / p | −4.97 / 0.000085 | ✅ recomputed |
+| MCTS–Greedy t19 / p | 157.06 / <0.0001 | ✅ recomputed |
+| MCTS–GA t19 / p | 6.95 / <0.0001 | ✅ recomputed |
+| Cohen's d (MCTS–Random) | −1.11 | ✅ recomputed |
+| MCTS wins/ties vs Random | 1 / 1 of 20 seeds | ✅ recomputed |
 | Pareto front | 4 mutually non-dominated | ✅ (pymoo, 4-obj active) |
 | Hypervolume | 1.2366 | ✅ exact reproduction (negated-minmax, r=1.1) |
-| Best seeds (0.7442, 0.7481) | correct | ✅ |
+| Best v12 seeds (MCTS 0.6779, Random 0.6856) | correct | ✅ |
 | Citations | 7 cited, all in .bib | ✅ bibliographies resolve |
 
-**Statistical logic is sound and honestly framed** (honest order Random > MCTS(Greedy) > GA; primary comparisons MCTS–Random & MCTS–GA; MCTS above Greedy stated as a secondary result). Methods-§ correctly documents the reduced-reward benchmark weight set and the six-objective aggregator, and the SA=3.0 exclusion.
+**Statistical logic is sound and honestly framed** (honest order Random > MCTS > GA > Greedy; primary comparisons MCTS–Random & MCTS–GA; MCTS above Greedy stated as a secondary result). Methods correctly documents the v12 reduced-reward weight set, the full aggregator, and the SA=3.0 exclusion from Pareto dominance and hypervolume.
 
 ---
 
 ## 2. Findings and mitigations
 
-### F1 — INTERNAL INCONSISTENCY: Pareto objectives listed as “MPO, SYBA and SA”
-**Location:** main text C1 (line 70) and §Pareto-front (line 122).
-**Problem:** both say `maintains a non-dominated front across MPO, SYBA and SA`. But the abstract, tacit methods, SM and the table caption list the true active objectives as **MPO, SYBA, RRS, PNS**, with **SA constant (3.0) excluded** from dominance/HV. A reviewer reading C1 then Methods better sees a contradiction.
-**Mitigation:** reword C1 to *MPO, SYBA, RRS and PNS*, and line 122 to match the table caption.
-**Remaining risk:** 🟢 LOW/none.
+### F1 — RESOLVED: Pareto objective list
+**Historical location:** main-text contribution list and Pareto-front description.
+**Issue found:** an earlier draft listed `MPO, SYBA and SA`, despite the active front using **MPO, SYBA, RRS and PNS** and excluding constant SA from dominance/HV.
+**Mitigation verified 2026-08-08:** the canonical main text, SM and provenance checker now consistently state MPO, SYBA, RRS and PNS, with SA = 3.0 reported only for completeness.
+**Remaining risk:** 🟢 none identified.
 
-### F2 — INTERNAL INCONSISTENCY: “averaging the three normalised objective components”
-**Location:** Methods, after the HV sentence (line 205).
-**Problem:** the aggregation has **four** active objectives (MPO, SYBA, RRS, PNS), not “three”. The PUCT scalar proxy in the code (`_puct_best_child`) *sums* the min–max normalised per-objective means (not “averages three”). Wording is stale/count-wrong.
-**Fix:** reword to “*obtained by summing the min–max normalised objective components across the active objectives; the full vector is retained for front updates and post-hoc analysis*”.
-**Severity:** polyg LOW.
+### F2 — RESOLVED: PUCT scalar-proxy description
+**Historical location:** Methods description of the objective aggregation.
+**Issue found:** an earlier draft described three averaged components, while the implementation sums the min–max-normalised components of four active objectives.
+**Mitigation verified 2026-08-08:** the canonical Methods text now states that the scalar proxy sums the four active components and retains the full vector for front updates and post-hoc analysis.
+**Severity:** 🟢 none identified.
 
-### F3 — FIGURES: not referenced in the manuscript (all 3 files), and 2× figures were stale/simulated
-**Location:** manuscript, SM, cover letter — `\includegraphics` count = 0 in all three.
-**Problem:** manuscript is table-only; a methods paper at JoC strongly benefits from at least the Pareto front and benchmark reward plots. Additionally, the earlier `benchmark_reward_bar.png`, `benchmark_efficiency.png` and `scaffold_diversity.png` were generated from the **old v9** deposit (`results/benchmark/`, greedy 0.5398) and the diversity MDS was a *placeholder* — while real v12 data and a real MDS projection exist (`results/diversity/p4_diversity_mds.csv`, 80 points). `pareto_front.png` is current and correct (v12).
-**Fix:**
-1. Point `p_4_generate_figures.py` at the **v12** deposits (canonical `benchmark_molecules_opt/` + real MDS CSV).
-2. Re-generate all four figures from v12 data.
-3. Add `\includegraphics` + captions for the Pareto front (main) and benchmark reward (main or SM).
-**Severity:** orange (presentation/completeness; would otherwise read as thin).
+### F3 — RESOLVED: figures and provenance
+**Historical issue:** earlier figures were generated from superseded benchmark directories and the manuscript did not consistently expose the principal displays.
+**Mitigation verified 2026-08-08:** `p4_generate_figures.py` now reads the v12-activity directory; the canonical main text references the benchmark, efficiency and Pareto figures; the SM references the real diversity MDS. The remaining requirement is a final human visual inspection of the compiled PDFs.
+**Severity:** 🟢 low, pending visual inspection only.
 
 ### F4 — DATA AVAILABILITY wording invites the review-stick “data not provided at review time”
 **Location:** main text Data availability (end) + Methods (end).
@@ -87,17 +83,17 @@ Method used: decompose acceptance into the review dimensions weighted for a BMC 
 | Compliance (Funding, ethics) | 0.05 | 7 | 1 |
 | Weak inevitably accepted a modest effect size | 0.05 | 3 | 3 |
 
-Pre-fix weighted risk = 0.30·2 + 0.25·1 + 0.15·3 + 0.10·6 + 0.20·2 + 0.05·7 + 0.05·3 = 0.6 + 0.25 + 0.45 + 0.6 + 0.4 + 0.35 + 0.15 = 2.80.
-Post-fix weighted risk = 0.30 + 0.25 + 0.15 + 0.10 + 0.40 + 0.05 + 0.05 = 1.30.
+Pre-fix weighted risk = 0.30·2 + 0.15·5 + 0.15·5 + 0.10·6 + 0.20·2 + 0.05·7 + 0.05·3 = 0.60 + 0.75 + 0.75 + 0.60 + 0.40 + 0.35 + 0.15 = 3.60.
+Post-fix weighted risk = 0.30·1 + 0.15·1 + 0.15·1 + 0.10·1 + 0.20·2 + 0.05·1 + 0.05·3 = 0.30 + 0.15 + 0.15 + 0.10 + 0.40 + 0.05 + 0.15 = 1.30.
 
-Baseline acceptance (lower bound for a sound BMC desk+review process): complement on a saturating curve. Prior audit landed the old JCIM draft at parts−; the current v12 are already honest + deposits they did→ 45–75%. With the residual weighted-risk dropping from 2.80 → 1.30, the corresponding acceptance estimate rises from **≈ 0.55–0.6 → ≈ 0.85–0.92**, with the pending Zenodo upload still a residual risk. The last hurdle is these low-key residuals being resolved as per this doc.
+Baseline acceptance (lower bound for a sound BMC desk+review process): complement on a saturating curve. Prior audit landed the old JCIM draft at parts−; the current v12 are already honest + deposits they did→ 45–75%. With the residual weighted-risk dropping from 3.60 → 1.30, the corresponding heuristic acceptance range improves, but it must not be interpreted as a measured probability. The pending Zenodo upload and final editorial checks remain residual risks.
 
 ### 3.2 Claimed estimate
 
-**Baseline (v12, unmitigated): ≈ 72 %**
-**Post-mitigation (this audit applied): ≈ 95 % (target ≥ 95%).**
+**Baseline before this final consistency pass: ≈ 72 %**
+**Post-mitigation estimate: ≈ 85–90 % conditional on a clean editorial check and reviewer access to the public repository.** This is a heuristic estimate, not a measured probability and not an editorial prediction.
 
-Remaining contributors to the residual ~5% (not fully eliminable): a reviewer requesting an additional diversity/figure explanation, an editorial preference for a shorter abstract, or a stray typographic issue. None is blocking.
+Remaining contributors to uncertainty include reviewer interpretation of the modest scalar effect, the pending archival deposit, and any journal-specific administrative requirement. These are not claims of acceptance or rejection.
 
 ---
 
@@ -108,5 +104,9 @@ Remaining contributors to the residual ~5% (not fully eliminable): a reviewer re
 - [x] F3 regenerate all figures from v12 + real MDS; add figures to main & SM
 - [x] F4 data-availability: public GitHub URL + reserved Zenodo DOI, explicitly marked pending
 - [x] F5 add Funding + Ethics/Consent declarations
-- [ ] Recompile main-SM-cover (0 errors, 0 undefined)
-- [ ] git commit + push `data-results`, update TODO/report
+- [x] Final v12 statistics re-derived from `benchmark_molecules_opt_v12/p4_benchmark_merged.csv`
+- [x] Correct SM ranking and v12 scalar weights
+- [x] Correct abstract length and affiliation overfull box
+- [x] Recompile main-SM-cover (0 errors, 0 undefined; bibtex exit 2 is expected for files without bibliographies)
+- [ ] Human visual PDF inspection and package assembly
+- [ ] git commit + push final P4 editorial corrections

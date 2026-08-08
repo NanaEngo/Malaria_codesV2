@@ -1,10 +1,10 @@
-# P4 — Second Adversarial Scientific Audit & Mitigation (JoC v12, skills-based)
+# P4 — Second Adversarial Scientific Audit & Mitigation (JoC; historical v11 sensitivity, reconciled with v12)
 
 **Fichier canonique audité :** `Project4_Advanced_Monte_CarloV2607/manuscript/LaTeX/P4_Pareto_MCTS_JoC_refined.tex`
-**Date :** 03 août 2026
+**Date :** 03 août 2026; reconciliation pass 08 août 2026
 **Héritage :** complète `P4_ADVERSARIAL_AUDIT_MITIGATION_JoC_V12.md` (1er audit : 72 % → ≥95 % via mitigations F1–F5 déjà committées sur `data-results`).
 
-> Ce second audit remplace la grille générique du premier par une procédure scientifique outillée : CLIs locaux déterministes du skill `peer-review` (v2.0) + cadre de puissance statistique du skill `statistical-power` (v1.0, K-Dense-AI) + checklist de reproductibilité statistique (`references/statistical_reproducibility.md`) + pattern adversaire BMAD (panel multi-rôles). Toutes les valeurs rapportées ici sont **recalculées depuis les données canoniques** (`results/benchmark_molecules_opt/p4_benchmark_merged.csv` et `results/pareto/merged_pareto_front.csv`), pas recopiées du manuscrit.
+> Ce second audit remplace la grille générique du premier par une procédure scientifique outillée : CLIs locaux déterministes du skill `peer-review` (v2.0) + cadre de puissance statistique du skill `statistical-power` (v1.0, K-Dense-AI) + checklist de reproductibilité statistique (`references/statistical_reproducibility.md`) + pattern adversaire BMAD (panel multi-rôles). Toutes les valeurs historiques rapportées ici sont **recalculées depuis les données v11** (`results/benchmark_molecules_opt/p4_benchmark_merged.csv` et `results/pareto/merged_pareto_front.csv`) et sont conservées comme sensibilité/provenance. Les valeurs courantes du manuscrit proviennent du CSV v12-activity `results/benchmark_molecules_opt_v12/p4_benchmark_merged.csv`.
 
 ---
 
@@ -32,7 +32,7 @@
 | MCTS − GA | 5.55 | **<0.0001** | d_z = 1.24 | — | 0.524 | **0.0001** |
 
 - **Hypothèse de normalité** : Shapiro-Wilk sur les différences appariées non rejeté pour les 3 comparaisons (p=0.58 / 0.07 / 0.52). Le t apparié est donc licite ; les **Wilcoxon sign-rank confirment les 3 signaux** (p=0.024 / 0.006 / 0.0001) → robustesse non-paramétrique.
-- **Sens de l'effet** : Δ négatif = MCTS **légèrement inférieur** à random (0.7276 vs 0.7335). C'est le résultat "honnête" voulu, PAS un p-hacking favorable : aucun test ne prétend MCTS supérieur sur reward scalaire.
+- **Sens de l'effet historique** : Δ négatif = MCTS **légèrement inférieur** à random (0.7276 vs 0.7335). Pour le benchmark courant v12, la même direction est confirmée (0.6649 vs 0.6724); aucun test ne prétend MCTS supérieur sur reward scalaire.
 - **Multiplicité (mes primary)** : 2 comparaisons préspécifiées. Bonferroni → seuil α=0.025. p(MCTS-random)=0.026 > 0.025 ⇒ **ne survit pas à 1** (mais reste nominal 0.05 ; MCTS-greedy est secondaire, MCTS-GA primaire **p<0.0001 survit trivialement**). → **F1** modifie Methods.
 - **Puissance intrinsèque (limite du design, pas une erreur)** : n=20 apparié donne 80 % de puissance pour d_z≥0.66. Le MCTS-GA (d_z=1.24) est massivement puissé (>99 %), MCTS-greedy (0.72) ~86 %. Le MCTS-random (0.54) est sous la capacité de détection nominale → c'est précisément ce qui autorise la lecture "compétitif/close" et interdit de surinterpréter.
 
@@ -54,8 +54,8 @@ La valeur HV 1.2366 (sous réf. 1.1, k=4) est sensible au point-référence : re
 
 | Claim | Niveau | Finding |
 |-------|--------|---------|
-| C1 Random top reward 0.7335 | supported | Recalculé exact |
-| C2 Δ=0.0059, t₁₉=2.41, p=0.026 | supported | Recalculé exact ; CI [0.0008,0.0110] ajouté → **F1** ; p=0.026 ne survit pas Bonferroni → **F3** |
+| C1 Historical v11 Random top reward 0.7335 | supported | Recalculé exact; not a current v12 claim |
+| C2 Historical v11 Δ=0.0059, t₁₉=2.41, p=0.026 | supported | Recalculated as historical sensitivity; current v12 CI [−0.0107,−0.0043] is in the manuscript |
 | C3 front 4 non-dominés | supported | Jaccard : 4/4 conv hull extremes ✅ |
 | C4 HV 1.2366 | partly (uncertainty) | Dépend de réf ; convention documentée. → phrase explicite ajoutée **F1** |
 | C5 "front spans concave regions" | partly (scope) | Erreur la plus substantielle : **P3 n'est PAS sur une région "concave" inatteignable** — les 4 points sont des extrêmes de l'enveloppe convexe ; P3 est l'argmax scalaire seulement à w_MPO≥~0.993 (poids dégénéré, invraisemblable pour un aggregator réel). La forme correcte = "extrême high-MPO/low-SYBA **que l'agrégation scalaire à poids fixes écarte**". → **F2** (abstract + §pareto) |

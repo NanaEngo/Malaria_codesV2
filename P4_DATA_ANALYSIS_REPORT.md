@@ -32,12 +32,12 @@ A consolidated view of the final P4 production runs, cross-verified against the 
 
 | Study | Source file(s) | Key finding |
 |:------|:-------------|:------------|
-| **v12-activity 20-seed benchmark (CANONICAL scalar benchmark)** | `results/benchmark_molecules_opt_v12/p4_benchmark_merged.csv` | Random (0.6724 ± 0.0055) > MCTS+ScafVAE (0.6649 ± 0.0066) > GA (0.6453 ± 0.0121) > Greedy (0.4278 ± 0.0000); MCTS vs Random t₁₉ = −4.97, p = 0.0001, Δ=−0.0075; MCTS vs GA t₁₉ = 6.95, p < 0.0001 |
+| **v12-activity 20-seed benchmark (CANONICAL scalar benchmark)** | `results/benchmark_molecules_opt_v12/p4_benchmark_merged.csv` | Random (0.6724 ± 0.0056) > MCTS+ScafVAE (0.6649 ± 0.0068) > GA (0.6453 ± 0.0124) > Greedy (0.4278 ± 0.0000); MCTS vs Random t₁₉ = −4.97, p = 0.000085, Δ=−0.0075 (95% CI −0.0107 to −0.0043); MCTS vs GA t₁₉ = 6.95, p < 0.0001 |
 | **Component ablation** | `results/ablation/p4_component_ablation_summary.csv` | ScafVAE (+0.148), Pareto front (+0.108), and Large vocabulary (+0.079) are the largest positive main effects |
 | **Fragment vocabulary ablation** | `results/ablation/p4_ablation_summary.csv` | ANOVA F = 350.10, p = 1.12 × 10⁻²⁶; `aromatic_only` set is significantly worse than `all`, `medium`, and `minimal` |
 | **Pareto front** | `results/pareto/merged_pareto_front.csv` | 4 non-dominated solutions across 20 seeds (MPO 0.729–0.946, SA = 3.0, SYBA recomputed 0.021–1.000, hypervolume 1.2366) |
 
-**Primary conclusion:** On the curated medium fragment set, the canonical v12-activity scalar benchmark gives Random (0.6724 ± 0.0055) > MCTS (0.6649 ± 0.0066) > GA (0.6453 ± 0.0121) > Greedy (0.4278 ± 0.0000); MCTS is below Random (paired t-test: t₁₉ = −4.97, p = 0.0001) and above GA (t₁₉ = 6.95, p < 0.0001). Separately, the deposited pre-activity Pareto-MCTS front contains four non-dominated solutions with hypervolume 1.2366. The real value of MCTS lies in transparent multi-objective coverage, not in a higher scalar reward. The v11 re-benchmark (§1.8) remains a historical pre-activity sensitivity baseline.
+**Primary conclusion:** On the curated medium fragment set, the canonical v12-activity scalar benchmark gives Random (0.6724 ± 0.0056) > MCTS (0.6649 ± 0.0068) > GA (0.6453 ± 0.0124) > Greedy (0.4278 ± 0.0000); MCTS is below Random (paired t-test: t₁₉ = −4.97, p = 0.000085, 95% CI −0.0107 to −0.0043) and above GA (t₁₉ = 6.95, p < 0.0001). Separately, the deposited pre-activity Pareto-MCTS front contains four non-dominated solutions with hypervolume 1.2366. The real value of MCTS lies in transparent multi-objective coverage, not in a higher scalar reward. The v11 re-benchmark (§1.8) remains a historical pre-activity sensitivity baseline.
 
 ### 1.8 Historical pre-activity re-benchmarks v10/v11 (20 seeds × 4 methods, 2026-08-02) — **v11 historical baseline (superseded for scalar claims by v12-activity)**
 
@@ -47,7 +47,7 @@ A consolidated view of the final P4 production runs, cross-verified against the 
 
 **Run:** v10 — SLURM array job 12705 (`p4_benchmark_molecules_array.sbatch`), outputs in `results/benchmark_molecules/`. v11 (optimal MCTS config) — SLURM array job 12725 (`p4_benchmark_molecules_opt_array.sbatch`), outputs in `results/benchmark_molecules_opt/` as the historical pre-activity baseline. Determinism check: seed 13 regenerated twice → identical rewards. **v12-activity (2026-08-08)** — public ChEMBL activity proximity added to the scalar reward and the 20-seed × 4-method array completed as job 12865; outputs are in `results/benchmark_molecules_opt_v12/`. **The v12-activity directory holds the canonical scalar benchmark.** The deposited Pareto front remains a separately locked pre-activity artifact.
 
-**v12 canonical table (optimal MCTS config, greedy corrected):**
+**Historical v11 table (optimal MCTS config, greedy corrected; superseded for current scalar claims by v12-activity):**
 
 | Method | Mean reward | Std | Min | Max | n | Mean time (s) | Std time (s) |
 |:------|:----------:|:---:|:---:|:---:|:---:|:-------:|:-------:|
@@ -56,7 +56,7 @@ A consolidated view of the final P4 production runs, cross-verified against the 
 | Greedy | 0.7211 | 0.0000 | 0.7211 | 0.7211 | 20 | 0.1 | 0.0 |
 | GA | 0.7027 | 0.0152 | 0.6749 | 0.7311 | 20 | 1.9 | 0.2 |
 
-**Key findings (v12, optimal MCTS config — CANONICAL):**
+**Key findings (historical v11, optimal MCTS config; retained for sensitivity/provenance):**
 - **MCTS config fix:** benchmark MCTS previously ran with defaults (c_puct=1.414, uniform priors, no ScafVAE). v11 wires the screened-optimal config (c_PUCT=5.0, virtual_loss=0.01, T=0.8, ScafVAE policy) into `run_mcts`.
 - **Greedy fix (v12):** `p4_mcts_benchmark.py` greedy baseline accidentally called `env.reset()` inside its roll-out lookahead, degrading it to a single-fragment sample (0.6147). Corrected → Greedy 0.7211 (deterministic, uniq=1 seed 20/20).
 - **Ranking:** Random > MCTS > Greedy > GA.
@@ -70,17 +70,17 @@ A consolidated view of the final P4 production runs, cross-verified against the 
 - Ranking Random > MCTS > GA > Greedy; MCTS–Random Δ = 0.0186, t₁₉ = 6.59, p < 0.0001; MCTS mean 0.7149 ± 0.0105 (time 59.6 ± 8.8 s).
 - Retained for comparison: `results/benchmark_molecules/` (per-seed rewards + best-SMILES).
 
-**Manuscript impact:** Table 1 (tab:benchmark), abstract, Results, Discussion, Limitations, Methods, cover letters, and the new Supplementary Material (SM S2 diversity table + SM S3 reproducibility) all updated to v12 (greedy 0.7211). Ablation results (different oracle-weight config) and the Pareto front (independent of the scalar benchmark) are **unchanged**.
+**Manuscript impact:** The current main text, abstract, cover letter and SM use the verified v12-activity values from `benchmark_molecules_opt_v12`; the historical v11 table and its sensitivity interpretation remain here for provenance only. The pre-activity Pareto front remains separately locked. Ablation results (different oracle-weight config) and the Pareto front (independent of the scalar benchmark) are **unchanged**.
 
 ### 1.9 Real molecular diversity of the four methods (2026-08-02)
 
-Computed by `scripts/p4_compute_diversity.py` from the deposited best-in-seed molecule sets (20 molecules/method; ECFP4 radius 2, 2048 bits; Bemis–Murcko scaffolds) — v12 optimal-config sets. Reported in SM S2 only (main text keeps diversity out, per the P0-2 decision).
+Computed by `scripts/p4_compute_diversity.py` from the deposited best-in-seed molecule sets (20 molecules/method; ECFP4 radius 2, 2048 bits; Bemis–Murcko scaffolds). The currently tracked metrics file is the v12-activity analysis used in the Supplementary Material. Reported in SM S2 only (main text keeps diversity out, per the P0-2 decision).
 
 | Method | n | Mean pairwise Tanimoto dissimilarity | Unique BM scaffolds | Unique scaffold fraction |
 |:------|:--:|:---:|:---:|:---:|
-| MCTS+ScafVAE | 20 | 0.8023 | 19 | 0.950 |
-| Random | 20 | 0.7806 | 20 | 1.000 |
-| GA | 20 | 0.8332 | 17 | 0.850 |
+| MCTS+ScafVAE | 20 | 0.7732 | 19 | 0.950 |
+| Random | 20 | 0.8046 | 20 | 1.000 |
+| GA | 20 | 0.7761 | 12 | 0.600 |
 | Greedy | 20 | 0.0000 | 1 | 0.050 |
 
 Key findings: all three stochastic methods are structurally diverse (mean pairwise dissimilarity 0.78–0.83; ≥17/20 unique scaffolds); Random achieves full scaffold coverage (20/20); MCTS with the optimal config achieves 19/20 unique scaffolds; Greedy deterministically collapses to a single molecule (dissimilarity 0, 1 scaffold) — confirming the "deceptive flat landscape" narrative with real deposited data. Outputs: `results/diversity/p4_diversity_metrics.csv`, `p4_diversity_mds.csv`.
