@@ -38,13 +38,13 @@ biologique* — l'articulation n'apparaît dans aucun des 82 articles revus.
 |:-------------------|:---------------:|:-----------:|:-------------:|
 | ECFP4 (RF) | 0.9475 ± 0.0045 | **0.9433 ± 0.0002** | 0.8300 ± 0.0023 |
 | GIN | — | 0.9098 ± 0.0067 | 0.8047 ± 0.0395 |
-| GIN-TFP (fusion) | — | — | 0.8138 ± 0.0352 |
-| GIN-TNE (fusion) | — | — | 0.8090 ± 0.0378 |
+| GIN-TFP (fusion) | — | 0.9084 ± 0.0060 | 0.8138 ± 0.0352 |
+| GIN-TNE (fusion) | — | 0.8918 ± 0.0060 | 0.8090 ± 0.0378 |
 | ChemBERTa | — | **0.9121 ± 0.0047** | 0.7867 ± 0.0338 |
 
 **Verdict (honest-negative + attribution) :**
 1. **Reproduction ✓** — sanity ECFP4 P5 (0.9433) reproduit P3 (0.9475) à 0.004 près → baselines fiables, comparaison directe valide.
-2. **Fingerprints = étalon** — ECFP4 (0.9433 / scaffold 0.8300) > GIN > ChemBERTa (0.7867) : les modèles « plus grands » n'apportent pas de free lunch (G2).
+2. **Fingerprints = étalon** — ECFP4 (0.9433 / scaffold 0.8300) > ChemBERTa (0.9121) > GIN (0.9098) > GIN-TFP (0.9084) > GIN-TNE (0.8918) sous random ; ECFP4 0.8300 > GIN-TFP 0.8138 > GIN-TNE 0.8090 > GIN 0.8047 > ChemBERTa 0.7867 sous scaffold. Toutes les arms GNN/transformer sont significativement sous ECFP4 sur les deux splits (paired t, df=4, BH-FDR p<0.05) : les modèles « plus grands » n'apportent pas de free lunch (G2).
 3. **H1/H2 = contrôle honnête de P3** — cohérent avec QKS ≈ RBF (p≥0.06) et « Do Larger Models Really Win? ».
 4. **H3 (salience)** — les dims persistent-image de TFP dominent l'attribution → ce sont les mêmes features topologiques dont P3 a montré la contribution (QK/TDA/TNE) → thèse unifiée « topologie utile en attribution, pas en ranking ».
 

@@ -36,9 +36,9 @@ A defensible Q1 contribution needs at least **three** of:
 1. A **positive, reproducible result** (e.g., multi-modal GNN > ECFP4 on scaffold split by a paired-significant margin).
 2. An **honest negative or null result** where the field's SOTA over-claims (this is highly valued in 2025–2026, cf. "Do Larger Models Really Win?", MolGraphBench, Heidenreich 62,820-model study).
 3. A **methodological/interpretability contribution** (which topological feature carries signal; attention attribution).
-4. A **dataset/benchmark contribution** (a clean antimalarial NP activity benchmark with P3 topologies, released on Zenodo — mirrors P1/P3 practice).
+4. A **dataset/benchmark contribution** (a clean antimalarial NP activity benchmark with P3 topologies, released in the public repository; Zenodo upload pending).
 
-The submission thesis: *"On a curated natural-product antimalarial panel, compact GNNs with topological descriptor fusion close the gap with — and under scaffold split exceed — classical fingerprints, while transformers offer no free lunch at this scale."*
+The submission thesis: *"On a curated natural-product antimalarial panel, compact GNNs with topological descriptor fusion can provide interpretable signal but do not exceed classical fingerprints under scaffold split, while transformers offer no free lunch at this scale."*
 
 ---
 
@@ -114,7 +114,7 @@ The submission thesis: *"On a curated natural-product antimalarial panel, compac
 1. **First GNN/Transformer benchmark on the canonical P3 antimalarial NP panel**, with the same split/protocol as the published-framework quantum/classical comparison → cross-project comparability.
 2. **Topological-descriptor fusion**: TFP (persistent homology) + TNE (tensor network) as auxiliary GNN channels — a concrete, mechanistic multi-modal contribution (not blind concatenation).
 3. **Honest scaling conclusion** (transformers ≠ free lunch at n ≈ 2×10⁴), consistent with the 2025–2026 scaling-benchmark literature.
-4. **Reusable public benchmark** + Zenodo deposit (mirrors P1/P3 practice, strengthens acceptance odds).
+4. **Reusable public benchmark** in GitHub; Zenodo DOI reserved but upload pending.
 
 ---
 
@@ -185,8 +185,8 @@ l'apport de P5) :
 | TNE seul | 0.7219 ± 0.0068 | — | — |
 | Hybrid P3 (QK+TFP+TNE, RF) | 0.8876 ± 0.0065 | — | — |
 | GIN | — | 0.9098 ± 0.0067 | 0.8047 ± 0.0395 |
-| GIN-TFP (fusion) | — | — | 0.8138 ± 0.0352 |
-| GIN-TNE (fusion) | — | — | 0.8090 ± 0.0378 |
+| GIN-TFP (fusion) | — | **0.9084 ± 0.0060** | 0.8138 ± 0.0352 |
+| GIN-TNE (fusion) | — | **0.8918 ± 0.0060** | 0.8090 ± 0.0378 |
 | ChemBERTa | — | **0.9121 ± 0.0047** | 0.7867 ± 0.0338 |
 
 **Lectures :**
@@ -241,7 +241,7 @@ structural des conclusions** :
 | **F1** | Bar chart bipanel **random/scaffold** P5 (ECFP4-RF vs GIN/GIN-TFP/GIN-TNE/ChemBERTa, mean ± CI, ligne baseline ECFP4 pointillée) | Figure principale manuscrit (Results) | P5 | `results/figures/p5_auc_benchmark.png` | ✅ **Générée 04/08** |
 | **F2** | Bar chart canonique **P3 random** (ECFP4/FCFP4/MACCS/AP/PHCO/BPF/TFP/TNE/Hybrid-QK, RF) | Réf. P3 (compare la plateforme commune) | P3 | `Project3/.../figures/p3_auc_benchmark_bar.png` | ✅ Existe (01/08) |
 | **F3** | **Salience dims TFP/TNE** (bar par modèle ; blocs H/pers_img/betti colorés TFP) — top dims 42/43/52/53/54 (TFP), 68/43/92/66/165 (TNE) | Figure H3 (interprétabilité, L4) | P5 | `scripts/p5_salience_figure.py` → `results/figures/p5_salience.png` | ✅ **Générée 05/08** |
-| **F4** | **Courbes d'apprentissage** (val AUC/époch, GNN vs ChemBERTa, par split) | Figure Methods/Results (v3-c) | P5 | `scripts/p5_learning_curves.py` → `results/figures/p5_learning_curves.png` | 🔄 **Jobs 12836–12840 (curves-only, 05/08)** — GIN random/scaffold, GIN-TFP/TNE scaffold, ChemBERTa scaffold ; ChemBERTa random déjà capturé |
+| **F4** | **Courbes d'apprentissage** (val AUC/époch, GNN vs ChemBERTa, par split) | Figure Methods/Results (v3-c) | P5 | `scripts/p5_learning_curves.py` → `results/figures/p5_learning_curves.png` | ✅ **Régénérée 08/08** — random + scaffold complets (GIN-TFP/GIN-TNE random capturés jobs 12841/12842) |
 | **T1** | Tableau comparatif **P5 vs P3** (§9bis ci-dessus) : mêmes panel + fingerprints, split random seul comparable ; sanity ECFP4 0.9433 ≈ 0.9475 | Manuscrit Discussion/Table S | P5/P3 | `P5_DATA_ANALYSIS_REPORT.md` §9bis | ✅ Rédigé 04/08 |
 | **T2** | Tableau **P5 vs P4** (parallèle structural honest-negative : modèles vs baselines, verdict, valeur réelle) | Manuscrit Discussion | P5/P4 | `P5_DATA_ANALYSIS_REPORT.md` §9bis | ✅ Rédigé 04/08 |
 | **T3** | Tableau **hiérarchie scaffold finale** (ECFP4-RF 0.8300 > GIN-TFP 0.8138 > GIN-TNE 0.8090 > GIN 0.8047 > ChemBERTa 0.7867) + statistiques paired | Manuscrit Results (table principale) | P5 | à rédiger dans manuscrit | ⏳ Manuscrit |
@@ -257,7 +257,7 @@ T2 + T4 = cadrage Discussion (parallèle P4 et littérature SOTA 2025-26).
 ## 10. Version History
 | Version | Date | Models | Split | Result summary | Files |
 |:-------:|:-----|:-------|:------|:---------------|:------|
-| v1 | Aug 1, 2026 | (planned) | random 5-fold | pending | — |
+| v1 | Aug 1, 2026 | panel/protocol | random 5-fold | superseded by completed v3-g benchmark | `results/p5_canonical_panel.csv` + frozen split files |
 | v2 | Aug 4, 2026 | design restart (gaps/novelty) | — | Design relancé sur gaps revue GenAI 2026 (`P5_DESIGN_GAPS_NOVELTY.md`) + fix instrument de mesure | fix `self.folds` (`p5_benchmark.py:114`), dry-run ne pollue plus ckpt/CSV, résultats GIN dummy AUC=0.5 supprimés |
 | v3-a | Aug 4, 2026 | chemberta leak fix | scaffold | **ChemBERTa cross-fold leak trouvé+fixé** (model non reset entre folds → folds 1+ héritaient du fine-tune). Ckpts contaminés supprimés, relance. | `p5_chemberta.py` (per-fold reset) ; fold-0/1 scaffold post-fix 0.8247/0.7857 ✓ |
 | v3-b | Aug 4, 2026 | **H3 salience (interprétabilité)** | scaffold | Salience capturée (mean \|W\| desc-projection, 25 folds). **TFP : dims persistent-image (33:58) dominantes** (sal 0.079 vs H 0.0485, betti 0.0547 ; top dims 42/43/52/53/54). **TNE : top dims 68/43/92/66/165**, top-10% dims = 17.3% salience. Fusion re-runs : GIN-TFP 0.8138±0.0352, GIN-TNE 0.8090±0.0378. | `p5_{GIN-TFP,GIN-TNE}_scaffold_salience.json` |
@@ -267,6 +267,7 @@ T2 + T4 = cadrage Discussion (parallèle P4 et littérature SOTA 2025-26).
 | v3-f | Aug 4, 2026 | **Journal cible + gaps/novelty (web)** | — | **Cible : Journal of Cheminformatics** (Springer, axe éditorial "publishing benchmark studies for ML", collection "Evaluating AI/ML in cheminformatics", précédent direct Boldini 2024 fingerprints NPs). Recherche web SOTA : **Guo & Ding 2026 "Do Larger Models Really Win" (arXiv:2604.26498)** — 156 comparaisons, classiques ML gagnent 47.4%, séquence 28.8%, GNN 21.8%, LLM-SAR 1.9% ; **Benchmarking Pretrained Embeddings (arXiv:2508.06199)** — 25 modèles ≈ ECFP, seul CLAMP gagne ; Boldini 2024 (fingerprints NPs). → **P5 = extension directe de ces 3 références sur panel NPs africaines + contribution interprétabilité (H3)**. Figures/tables de perspective listées (§9bis). | §9bis + web 04/08 |
 | v3 | Aug 4, 2026 | **GIN prod (M1.3)** | random + scaffold 5-fold × 5 seeds | **GIN random = 0.9098 ± 0.0067**, **GIN scaffold = 0.8047 ± 0.0395**, **GIN-TFP scaffold = 0.8137 ± 0.0300**, **GIN-TNE scaffold = 0.8068 ± 0.0366** (25 fold×seed chacun). Fix sbatch (chemin, `--dry-run`, mem, conda inline) + fix fusion numpy→tensor + fix collate flat desc. | `results/p5_{GIN,GIN-TFP,GIN-TNE}_scaffold_ckpt.json` + CSVs |
 | v3-g | Aug 5, 2026 | **H2 ChemBERTa random (leak-fixed, complet)** | random | **ChemBERTa random = 0.9121 ± 0.0047 (25 fold×seed)** — au-dessus du GIN random (0.9098), sous ECFP4-RF (0.9433, Δ=−0.031). Transformer < fingerprints sous random (attendu, cf. "Do Larger Models Really Win"), mais **meilleur que GIN** à variance moindre (std 0.0047 vs 0.0067). Hiérarchie P5 complète : ECFP4 0.9433 > ChemBERTa 0.9121 > GIN 0.9098 (random) ; ECFP4 0.8300 > GIN-TFP 0.8138 > GIN-TNE 0.8090 > GIN 0.8047 > ChemBERTa 0.7867 (scaffold). | `p5_chemberta_random_ckpt.json` + CSV (25/25, job 12815) |
+| v3-h | Aug 8, 2026 | **Fusion topologique random COMPLÈTE (GIN-TFP / GIN-TNE)** | random | **GIN-TFP random = 0.9084 ± 0.0060, GIN-TNE random = 0.8918 ± 0.0060 (25 fold×seed, jobs 12841/12842)** — complète les barres random manquantes de la figure benchmark. Tous les bras random sont significativement sous ECFP4-RF 0.9433 (paired t sur 5 per-seed means, df=4, BH-FDR) : GIN-TFP Δ=−0.035 (t(4)=−60.7, p<0.0001), GIN-TNE Δ=−0.052 (t(4)=−60.3, p<0.0001), GIN Δ=−0.033 (t(4)=−27.9, p<0.0001), ChemBERTa Δ=−0.031 (t(4)=−65.9, p<0.0001) — tous passent BH-FDR (adj p < 0.0001). **Hiérarchie random finale : ECFP4-RF 0.9433 > ChemBERTa 0.9121 > GIN 0.9098 > GIN-TFP 0.9084 > GIN-TNE 0.8918.** Honest-negative verrouillé sur les 2 splits : chaque arm GNN/transformer est significativement pire que les fingerprints. Learning curves random GIN-TFP/GIN-TNE capturées (clé `curve` aux ckpts) → figure F4 régénérée avec les 2 splits complets. | `p5_{GIN-TFP,GIN-TNE}_random_results.csv` + ckpts (25/25, jobs 12841/12842) |
 
 ### v3 (Aug 4, 2026) — GIN production run (M1.3) ✅ LOGGED-BEFORE-RUN
 - **Instrument fix déjà appliqué** (v2) : `self.folds` l.114, dry-run ne sauvegarde plus ckpt/CSV.
@@ -299,8 +300,8 @@ T2 + T4 = cadrage Discussion (parallèle P4 et littérature SOTA 2025-26).
 | ECFP4-RF (P5 sanity) | **0.9433 ± 0.0002** | **0.8300 ± 0.0023** |
 | ChemBERTa | 0.9121 ± 0.0047 | 0.7867 ± 0.0338 |
 | GIN | 0.9098 ± 0.0067 | 0.8047 ± 0.0395 |
-| GIN-TFP | — | 0.8138 ± 0.0352 |
-| GIN-TNE | — | 0.8090 ± 0.0378 |
+| GIN-TFP | 0.9084 ± 0.0060 | 0.8138 ± 0.0352 |
+| GIN-TNE | 0.8918 ± 0.0060 | 0.8090 ± 0.0378 |
 
 - **Verdict global P5 verrouillé :** fingerprints (ECFP4-RF) = étalon sur les 2 splits ; GNN compact ≈ transformer à variance moindre ; fusion topologique (GIN-TFP) = gain modeste sous scaffold. **Honest-negative contrôlé + H3 salience (pers_img) = les contributions de P5.** Benchmarks P5 (v1-prep → v3-g) **terminés** — toutes les barres des figures finales sont remplies (ECFP4, GIN, GIN-TFP, GIN-TNE, ChemBERTa × random/scaffold).
 - **Logs :** `Project5_GNN_Transformer_DrugDiscovery/logs/p5_ChemBERTa/stdout_random.log` (job 12815)
