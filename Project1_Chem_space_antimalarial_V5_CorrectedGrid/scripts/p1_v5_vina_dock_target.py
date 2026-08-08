@@ -138,9 +138,17 @@ def ca_frame_equivalence(pdb: Path, pdbqt: Path) -> dict:
 
 
 def parse_vina_affinity(text: str) -> float:
+    """Return the rank-1 affinity from the Vina mode table.
+
+    Vina 1.2.7 does not guarantee --num_modes distinct poses: modes within
+    RMSD of each other are deduplicated, so the printed table may contain
+    fewer rows than requested (observed 8 modes for a 28-atom ligand in a
+    constrained grid). The rank-1 row is always present and is the accepted
+    affinity; requiring the full NUM_MODES row count is over-strict.
+    """
     matches = re.findall(r"^\s*\d+\s+([-+]?\d+(?:\.\d+)?)\s+\d+(?:\.\d+)?\s+\d+(?:\.\d+)?\s*$", text, flags=re.MULTILINE)
-    if len(matches) < NUM_MODES:
-        raise ValueError(f"expected at least {NUM_MODES} mode rows in Vina table, found {len(matches)}")
+    if len(matches) < 1:
+        raise ValueError(f"no Vina mode rows found in table (expected >= 1, got {len(matches)})")
     return float(matches[0])
 
 
