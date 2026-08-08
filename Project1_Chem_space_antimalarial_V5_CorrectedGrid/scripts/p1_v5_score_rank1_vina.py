@@ -39,7 +39,7 @@ VINA = shutil.which("vina") or "/usr/local/bin/vina"
 MEEKO = shutil.which("mk_prepare_ligand.py") or "/home/nanaengo/miniforge3/envs/diffdock/bin/mk_prepare_ligand.py"
 
 TARGETS = {
-    "PfDHFR": {"pdb_id": "7F3Y", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/7F3Y.pdbqt", "center": (1.33, -1.733, -23.842)},
+    "PfDHFR": {"pdb_id": "7F3Y", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/7F3Y.pdbqt", "center": (-3.596, -5.249, -58.677), "center_note": "CORRECTED 08/08/2026: MTX A702 catalytic-site copy centroid; the old (1.33, -1.733, -23.842) was the receptor centroid (35.5 A from the active site)."},
     "PfCRT": {"pdb_id": "6UKJ", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/6UKJ.pdbqt", "center": (152.99, 151.042, 159.379)},
     # CORRECTED 08/08/2026: old center was the barrel-channel centroid of all Ser/His/Asp;
     # genuine 2F6I catalytic triad (mature numbering, UniProt offset 37) is Ser252/His223/Asp219,

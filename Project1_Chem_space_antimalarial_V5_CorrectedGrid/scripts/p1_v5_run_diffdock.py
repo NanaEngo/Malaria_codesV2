@@ -47,7 +47,7 @@ REFERENCE_LIGAND_PREFLIGHT = ROOT / "Project1_Chem_space_antimalarial_V5_Correct
 INDEPENDENT_REVIEW = ROOT / "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/structural_pocket_independent_review.json"
 PINNED_DIFFDOCK_PYTHON = Path("/home/nanaengo/miniforge3/envs/diffdock/bin/python")
 VINA_GRID = {
-    "PfDHFR": {"pdb_id": "7F3Y", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/7F3Y.pdbqt", "center": [1.33, -1.733, -23.842], "box": [25.0, 25.0, 25.0]},
+    "PfDHFR": {"pdb_id": "7F3Y", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/7F3Y.pdbqt", "center": [-3.596, -5.249, -58.677], "box": [25.0, 25.0, 25.0], "center_note": "CORRECTED 08/08/2026: MTX A702 catalytic-site copy centroid (old center was the receptor centroid)."},
     "PfCRT": {"pdb_id": "6UKJ", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/6UKJ.pdbqt", "center": [152.99, 151.042, 159.379], "box": [25.0, 25.0, 25.0]},
     # CORRECTED 08/08/2026: old center was the barrel-channel centroid of all Ser/His/Asp;
     # genuine 2F6I catalytic triad (mature numbering; UniProt O97252 active-site Ser289 = 2F6I
