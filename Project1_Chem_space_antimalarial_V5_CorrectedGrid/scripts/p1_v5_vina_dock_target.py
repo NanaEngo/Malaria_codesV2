@@ -10,8 +10,13 @@ declared grid center is bound to an authentic structural anchor:
     PROXY, not an antimalarial inhibitor; docked with an explicit caveat and
     excluded from any primary claim without independent mutational/transport
     evidence (per structural dossier PROXY_NOT_ACCEPTED).
-  - PfATP4 / 9N10 : NO co-crystallized small-molecule anchor -> runner refuses
-    (CAVITY_EVIDENCE_REQUIRED); PfATP4 cannot be docked defensibly.
+  - PfATP4 / 9N10 : no co-crystallized small-molecule anchor (PfABP partner
+    only; Haile et al., Nat Commun 2025, cryo-EM 3.7 A). Biological anchor =
+    conserved P-type ATPase catalytic residues 449-458 (CSDKTGT, phospho-D451)
+    + 751-754 (A-domain hinge DPPR), verified 08/08/2026
+    (p1_v5_pocket_centers_verify.py; 46-residue contact shell). Same evidence
+    class as the PfClpP catalytic triad (2F6I also has no ligand). Docking is
+    exploratory (ATP-pocket mechanism class) and requires independent review.
 
 Verification gate (composite, biological, per pair):
   (1) rank-1 centroid inside the declared box (search-space control, Vina-guaranteed);
@@ -59,11 +64,14 @@ ANCHOR_ATOMS = {
               "receptor_pdbqt": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/6UKJ.pdbqt",
               "center": None, "anchor_resname": "Y01", "box": (28.0, 28.0, 28.0),
               "caveat": "Y01 is a membrane-mimetic stabilizing proxy, not a co-crystallized antimalarial inhibitor (structural dossier PROXY_NOT_ACCEPTED); results are exploratory only."},
-    "PfATP4": {"pdb_id": "9N10", "anchor_label": "NONE - no co-crystallized small-molecule anchor",
+    "PfATP4": {"pdb_id": "9N10",
+               "anchor_label": "conserved P-type ATPase catalytic residues 449-458 (CSDKTGT, phospho-D451) + 751-754 (DPPR A-domain hinge)",
                "receptor_pdb": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/9N10.pdb",
                "receptor_pdbqt": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/9N10.pdbqt",
-               "center": None, "anchor_resname": None, "box": (28.0, 28.0, 28.0),
-               "blocked_reason": "CAVITY_EVIDENCE_REQUIRED: no co-crystallized small-molecule inhibitor (9N10 has PfABP protein partner only); arbitrary coordinates are not accepted."},
+               "center": None, "anchor_resname": None,
+               "anchor_residues": list(range(449, 459)) + list(range(751, 755)),
+               "box": (25.0, 25.0, 25.0),
+               "caveat": "No co-crystallized ligand in 9N10 (PfABP partner only); anchor = conserved P-type ATPase phosphorylation/nucleotide-binding machinery (D451 CSDKTGT + DPPR 751), same evidence class as the PfClpP catalytic triad (2F6I also had no ligand). ATP-pocket binding is one mechanism class for P-type ATPases — exploratory docking, requires independent review before any claim."},
 }
 VERIFY_PADDING = 0.5
 ANCHOR_CONTACT_A = 10.0
@@ -84,6 +92,37 @@ def sha256(path: Path) -> str:
 def require_file(path: Path, label: str) -> None:
     if not path.is_file() or path.stat().st_size == 0:
         raise SystemExit(f"FAIL-CLOSED missing/empty {label}: {path}")
+
+
+def anchor_residue_centroid_and_atoms(pdb: Path, resids: list[int],
+                                      chain: str = "A") -> tuple[np.ndarray, np.ndarray]:
+    """Anchor centroid/atoms from a set of conserved residue numbers (heavy atoms).
+
+    Used when no co-crystallized ligand exists (PfATP4 / 9N10): the biological
+    anchor is the conserved P-type ATPase catalytic residues. Coordinates are
+    ALWAYS derived from the PDB — never hardcoded (fail-closed).
+    """
+    res_set = set(int(r) for r in resids)
+    pts = []
+    for line in pdb.read_text(errors="replace").splitlines():
+        if not line.startswith("ATOM  ") or line[21:22].strip() != chain:
+            continue
+        if line[12:16].strip().startswith("H"):
+            continue
+        try:
+            ri = int(line[22:26])
+        except ValueError:
+            continue
+        if ri not in res_set:
+            continue
+        try:
+            pts.append([float(line[30:38]), float(line[38:46]), float(line[46:54])])
+        except ValueError:
+            continue
+    if not pts:
+        raise SystemExit(f"FAIL-CLOSED no anchor residue atoms found in {pdb.name} "
+                         f"for resids {sorted(res_set)}")
+    return np.mean(np.asarray(pts, dtype=float), axis=0), np.asarray(pts, dtype=float)
 
 
 def anchor_centroid_and_atoms(pdb: Path, resname: str, chain: str | None = None,
@@ -223,8 +262,6 @@ def main() -> int:
     ap.add_argument("--num-modes", type=int, default=NUM_MODES)
     args = ap.parse_args()
     spec = ANCHOR_ATOMS[args.target]
-    if spec.get("blocked_reason"):
-        raise SystemExit(f"FAIL-CLOSED {args.target} blocked: {spec['blocked_reason']}")
     require_file(Path(VINA), "AutoDock Vina")
     require_file(spec["receptor_pdb"], f"{args.target} receptor PDB")
     require_file(spec["receptor_pdbqt"], f"{args.target} receptor PDBQT")
@@ -236,8 +273,14 @@ def main() -> int:
             spec["receptor_pdb"], spec["anchor_resname"],
             chain=spec.get("anchor_chain"), resi=spec.get("anchor_resi"),
         )
+    elif spec.get("anchor_residues"):
+        center, anchor_atoms = anchor_residue_centroid_and_atoms(
+            spec["receptor_pdb"], spec["anchor_residues"],
+            chain=spec.get("anchor_chain", "A"),
+        )
     else:
-        center, anchor_atoms = spec["center"], spec["anchor_atoms"]
+        raise SystemExit(f"FAIL-CLOSED {args.target}: no anchor defined "
+                         f"(neither co-crystallized ligand nor conserved-residue set)")
     output = args.output_dir or (V5 / f"results/vina_dock_{spec['pdb_id']}_{args.target}_17")
     if not output.is_absolute():
         output = ROOT / output
