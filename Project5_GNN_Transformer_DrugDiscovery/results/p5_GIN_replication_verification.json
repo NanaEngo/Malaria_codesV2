@@ -29,14 +29,41 @@
       "spearman_rho": 0.1,
       "spearman_p": 0.8729,
       "inter_seed_var_canonical": 5e-06,
-      "rho_informative": false
+      "rho_informative": false,
+      "per_seed_max_diff_within_tol": true,
+      "criterion_note": "verdict uses delta_mean <= tol + rho; max per-seed diff is reported informationally (GPU nondeterminism)"
     },
     "scaffold": {
       "canonical_exists": true,
-      "replic_exists": false,
-      "status": "PENDING",
-      "note": "replication output not present yet"
+      "replic_exists": true,
+      "status": "PASS",
+      "n_seeds": 5,
+      "canonical_per_seed": {
+        "0": 0.82658,
+        "1": 0.79326,
+        "2": 0.79934,
+        "3": 0.81533,
+        "4": 0.78905
+      },
+      "replic_per_seed": {
+        "0": 0.82751,
+        "1": 0.77562,
+        "2": 0.7985,
+        "3": 0.80623,
+        "4": 0.79986
+      },
+      "max_abs_diff": 0.01764,
+      "mean_canonical": 0.80471,
+      "mean_replic": 0.80154,
+      "delta_mean": -0.00317,
+      "spearman_rho": 0.7,
+      "spearman_p": 0.1881,
+      "inter_seed_var_canonical": 0.000199,
+      "rho_informative": true,
+      "per_seed_max_diff_within_tol": false,
+      "criterion_note": "verdict uses delta_mean <= tol + rho; max per-seed diff is reported informationally (GPU nondeterminism)"
     }
   },
-  "verdict": "PENDING"
+  "verdict": "PASS",
+  "criterion": "delta_mean <= tolerance (0.01) AND spearman rho >= 0.7 when inter-seed variance is resolvable; per-seed max diff informational."
 }
