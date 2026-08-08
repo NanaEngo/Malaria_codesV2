@@ -46,21 +46,29 @@ if [[ "$MD_GUARD_EXECUTE" != "1" ]]; then
     exit 0
 fi
 md_guard_require_authorization || exit $?
+md_guard_require_parent_preflight || {
+    echo "ERROR: parent MD preflight failed closed; no GROMACS command will run." >&2
+    exit 2
+}
 
 # This guarded runner is intentionally strict: a partial multi-system run is
 # not a valid four-system comparison and must stop at the first failure.
+RESOLVED_COMPLEXES=()
 for complex_name in "${COMPLEXES[@]}"; do
     md_guard_check_parent_system "$complex_name"
-    system_dir="${MD_DIR}/${complex_name}"
+    system_dir="$(md_guard_resolve_parent_system_dir "$MD_DIR" "$complex_name")"
     [[ -d "$system_dir" ]] || { echo "ERROR: missing system directory: $system_dir" >&2; exit 1; }
     [[ -s "$system_dir/npt.gro" ]] || { echo "ERROR: missing npt.gro: $system_dir" >&2; exit 1; }
     [[ -s "$system_dir/npt.cpt" ]] || { echo "ERROR: missing npt.cpt: $system_dir" >&2; exit 1; }
     [[ -s "$system_dir/topol.top" ]] || { echo "ERROR: missing topol.top: $system_dir" >&2; exit 1; }
     md_guard_validate_forcefield_manifest "$system_dir"
+    RESOLVED_COMPLEXES+=("$(basename "$system_dir")")
 done
 
 export P2_RUN_MANIFEST_DIR="$MD_DIR"
-export P2_RUN_COMPLEXES="${COMPLEXES[*]}"
+# The manifest and its embedded Python writer use canonical on-disk names,
+# not historical policy aliases such as 201_DHFR.
+export P2_RUN_COMPLEXES="${RESOLVED_COMPLEXES[*]}"
 export P2_RUN_TARGET_NS="$TARGET_NS"
 export P2_RUN_REPLICATES="$REPLICATES"
 export P2_RUN_TEMPERATURE_K="$TEMPERATURE_K"
@@ -116,7 +124,8 @@ PY
 NSTEPS=$(awk -v ns="$TARGET_NS" 'BEGIN { printf "%.0f", ns*1000000/0.002 }')
 for complex_name in "${COMPLEXES[@]}"; do
     md_guard_check_parent_system "$complex_name"
-    system_dir="${MD_DIR}/${complex_name}"
+    system_dir="$(md_guard_resolve_parent_system_dir "$MD_DIR" "$complex_name")"
+    canonical_complex_name="$(basename "$system_dir")"
     (
         cd "$system_dir"
         cat > production.mdp <<EOF
@@ -159,7 +168,7 @@ EOF
             echo "gen_seed                 = $((rep * 12345))" >> "$rep_dir/production.mdp"
             printf '%s\n' "replicate=$rep seed=$((rep * 12345)) command=$GMX_BIN grompp/mdrun" >> "$MD_DIR/parent_md_run_commands.log"
             export P2_REP_MDP="$rep_dir/production.mdp"
-            export P2_REP_COMPLEX="$complex_name"
+            export P2_REP_COMPLEX="$canonical_complex_name"
             export P2_REP_NUMBER="$rep"
             export P2_REP_SEED="$((rep * 12345))"
             python3 <<'PY'

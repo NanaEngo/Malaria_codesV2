@@ -20,10 +20,14 @@ if [[ "$MD_GUARD_EXECUTE" != "1" ]]; then
     exit 0
 fi
 md_guard_require_authorization || exit $?
+md_guard_require_parent_preflight || {
+    echo "ERROR: parent MD preflight failed closed; no GROMACS command will run." >&2
+    exit 2
+}
 
 for complex_name in "${COMPLEXES[@]}"; do
     md_guard_check_parent_system "$complex_name"
-    system_dir="${MD_DIR}/${complex_name}"
+    system_dir="$(md_guard_resolve_parent_system_dir "$MD_DIR" "$complex_name")"
     [[ -d "$system_dir" ]] || { echo "ERROR: missing system directory: $system_dir" >&2; exit 1; }
     [[ -s "$system_dir/em.gro" && -s "$system_dir/topol.top" ]] || { echo "ERROR: missing NVT inputs in $system_dir" >&2; exit 1; }
     md_guard_validate_forcefield_manifest "$system_dir"

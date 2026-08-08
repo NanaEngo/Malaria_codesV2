@@ -44,12 +44,47 @@ md_guard_parse() {
     fi
 }
 
-md_guard_check_parent_system() {
+md_guard_parent_system_canonical_name() {
     local system_name="$1"
     case "$system_name" in
-        201_DHFR|438_ATP4|164_ClpP|214_CRT) return 0 ;;
-        *) echo "ERROR: system is not an allowlisted parent-study MD system: $system_name" >&2; return 2 ;;
+        201_DHFR|201_PfDHFR) printf '%s\n' '201_PfDHFR' ;;
+        438_ATP4|438_PfATP4) printf '%s\n' '438_PfATP4' ;;
+        164_ClpP|164_PfClpP) printf '%s\n' '164_PfClpP' ;;
+        214_CRT|214_PfCRT) printf '%s\n' '214_PfCRT' ;;
+        *)
+            echo "ERROR: system is not an allowlisted parent-study MD system: $system_name" >&2
+            return 2
+            ;;
     esac
+}
+
+md_guard_check_parent_system() {
+    md_guard_parent_system_canonical_name "$1" >/dev/null
+}
+
+# Resolve historical policy aliases to the actual canonical on-disk directories.
+# This prevents a naming mismatch from masking the subsequent fail-closed input
+# and force-field-manifest checks. It never creates aliases or copies inputs.
+md_guard_resolve_parent_system_dir() {
+    local md_dir="$1"
+    local system_name="$2"
+    local canonical_name
+    canonical_name="$(md_guard_parent_system_canonical_name "$system_name")" || return $?
+    local system_dir="${md_dir}/${canonical_name}"
+    [[ -d "$system_dir" ]] || {
+        echo "ERROR: missing canonical parent-study system directory: $system_dir" >&2
+        return 1
+    }
+    printf '%s\n' "$system_dir"
+}
+
+md_guard_require_parent_preflight() {
+    local preflight="${SCRIPT_DIR}/p2_parent_md_preflight.py"
+    [[ -f "$preflight" ]] || {
+        echo "ERROR: missing exhaustive parent MD preflight: $preflight" >&2
+        return 2
+    }
+    python3 "$preflight" >/dev/null
 }
 
 md_guard_require_authorization() {

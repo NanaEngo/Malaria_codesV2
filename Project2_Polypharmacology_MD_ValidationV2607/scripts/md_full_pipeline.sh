@@ -46,6 +46,13 @@ fi
 md_guard_parse --execute || exit $?
 md_guard_require_authorization || exit $?
 
+# Exhaustive read-only gate: report every parent-system blocker before any
+# stage can invoke GROMACS. It creates no inputs and never bypasses manifests.
+python3 "${SCRIPT_DIR}/p2_parent_md_preflight.py" || {
+    echo "ERROR: parent-study MD preflight failed closed; no GROMACS stage will run." >&2
+    exit 2
+}
+
 # No candidate selection or mutant generation is performed here: those steps
 # belong to the set-C docking workflow and mixing them into parent-lead MD is
 # prohibited.

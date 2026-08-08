@@ -31,6 +31,10 @@ if [[ "$MD_GUARD_EXECUTE" != "1" ]]; then
     exit 0
 fi
 md_guard_require_authorization || exit $?
+md_guard_require_parent_preflight || {
+    echo "ERROR: parent MD preflight failed closed; no GROMACS command will run." >&2
+    exit 2
+}
 md_guard_check_parent_system "438_ATP4"
 
 # A fresh 438 rerun is permitted only after a validated, internally consistent
