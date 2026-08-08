@@ -1,0 +1,49 @@
+{
+  "accepted_for_full_run": false,
+  "all_rank1_pass_gate": true,
+  "anchor": "Y01 cholesterol hemisuccinate (PROXY, not an inhibitor)",
+  "box_A": [
+    28.0,
+    28.0,
+    28.0
+  ],
+  "caveat": "Y01 is a membrane-mimetic stabilizing proxy, not a co-crystallized antimalarial inhibitor (structural dossier PROXY_NOT_ACCEPTED); results are exploratory only.",
+  "center": [
+    147.07,
+    170.267,
+    142.364
+  ],
+  "consensus_scores_written": false,
+  "ended_utc": "2026-08-08T10:42:18.868517+00:00",
+  "exhaustiveness": 8,
+  "gate": {
+    "anchor_contact_A": 10.0,
+    "centroid_in_box": true,
+    "min_fraction": 0.9
+  },
+  "manifest_sha256": "497f6c748cb8ee5bd752e251f6483ded27f4b38821d60490e656741b545eb968",
+  "next_gate": "independent review of receptor identities and anchors before consensus/RRS/PNS",
+  "num_modes": 9,
+  "output_csv_sha256": "cc785877fc107b31ab84e5495fea997f582479e701d83000d6627dcc1148f36c",
+  "pairs": 1,
+  "pdb_id": "6UKJ",
+  "pdb_pdbqt_frame_equivalence": {
+    "common_ca": 582,
+    "method": "CA subset, identical coordinates",
+    "pdb_ca": 582,
+    "pdbqt_ca": 582,
+    "rmsd_A": 0.0,
+    "status": "CA_SUBSET_FRAME_EQUIVALENT"
+  },
+  "receptor_pdb_sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562",
+  "receptor_pdbqt_sha256": "1bc38247a85986f3d167891f4a2f9db18afabfa51edd5671760a2c649a8ae50b",
+  "rrs_pns_updated": false,
+  "schema": "p1-v5-vina-grid-dock-target/v1",
+  "seed": 0,
+  "started_utc": "2026-08-08T10:42:13.123650+00:00",
+  "status": "VINA_GRID_DOCK_RANK1_VERIFIED_IN_GRID",
+  "target": "PfCRT",
+  "verify_padding_A": 0.5,
+  "vina_executable": "/usr/local/bin/vina",
+  "vina_version": "AutoDock Vina v1.2.7"
+}

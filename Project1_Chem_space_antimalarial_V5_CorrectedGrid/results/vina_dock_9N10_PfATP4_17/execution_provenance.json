@@ -1,0 +1,49 @@
+{
+  "accepted_for_full_run": false,
+  "all_rank1_pass_gate": true,
+  "anchor": "conserved P-type ATPase catalytic residues 449-458 (CSDKTGT, phospho-D451) + 751-754 (DPPR A-domain hinge)",
+  "box_A": [
+    25.0,
+    25.0,
+    25.0
+  ],
+  "caveat": "No co-crystallized ligand in 9N10 (PfABP partner only); anchor = conserved P-type ATPase phosphorylation/nucleotide-binding machinery (D451 CSDKTGT + DPPR 751), same evidence class as the PfClpP catalytic triad (2F6I also had no ligand). ATP-pocket binding is one mechanism class for P-type ATPases \u2014 exploratory docking, requires independent review before any claim.",
+  "center": [
+    122.712,
+    125.545,
+    91.411
+  ],
+  "consensus_scores_written": false,
+  "ended_utc": "2026-08-08T13:18:19.667568+00:00",
+  "exhaustiveness": 16,
+  "gate": {
+    "anchor_contact_A": 10.0,
+    "centroid_in_box": true,
+    "min_fraction": 0.9
+  },
+  "manifest_sha256": "497f6c748cb8ee5bd752e251f6483ded27f4b38821d60490e656741b545eb968",
+  "next_gate": "independent review of receptor identities and anchors before consensus/RRS/PNS",
+  "num_modes": 9,
+  "output_csv_sha256": "0ade26647e5785acc74ab494f3302ab2a7ea748978fd8edd3f5257ab4f750954",
+  "pairs": 17,
+  "pdb_id": "9N10",
+  "pdb_pdbqt_frame_equivalence": {
+    "common_ca": 1064,
+    "method": "CA subset, identical coordinates",
+    "pdb_ca": 1064,
+    "pdbqt_ca": 1064,
+    "rmsd_A": 0.0,
+    "status": "CA_SUBSET_FRAME_EQUIVALENT"
+  },
+  "receptor_pdb_sha256": "102e55cefea0f918cb003adbdacc2f27651021788c1aebb0a40c020069f75359",
+  "receptor_pdbqt_sha256": "bb5cc0940daba17239ef3d101613a3e80316a170ff0c3fbe53910c6b0a7cfbda",
+  "rrs_pns_updated": false,
+  "schema": "p1-v5-vina-grid-dock-target/v1",
+  "seed": 0,
+  "started_utc": "2026-08-08T13:16:24.031029+00:00",
+  "status": "VINA_GRID_DOCK_RANK1_VERIFIED_IN_GRID",
+  "target": "PfATP4",
+  "verify_padding_A": 0.5,
+  "vina_executable": "/usr/local/bin/vina",
+  "vina_version": "AutoDock Vina v1.2.7"
+}
