@@ -35,7 +35,7 @@ La PA se construit par **leviers indépendants**. Chaque levier rempli → point
 |:-:|:-------|:------------:|:-----------------------|:------:|
 | L1 | Panel/protocole reproductible & figé | +20 pts | Panel 19,836 ✓, splits figés ✓, sanity 0.9428 ✓ | ✅ **Fait (v1-prep)** |
 | L2 | Résultat positif significatif | +25 pts | ~~≥1 fusion topologique > ECFP4 sous scaffold (DeLong p<0.05)~~ **`H1 FAIL (04/08)`** | ❌ **Échoué (remplacé)** |
-| L3 | Honest negative / null | +30 pts | **H1 confirmé sous les 2 splits** : aucune GNN/fusion > ECFP4-RF (scaffold 0.8300 ; random 0.9433). Scaffold : GIN −0.025 (p=0.018), GIN-TFP −0.016 (p=0.025), GIN-TNE −0.021 (p=0.038), ChemBERTa −0.043 (p<0.0001), tous BH-FDR. **Random (08/08, jobs 12841/12842)** : GIN-TFP 0.9084 (Δ −0.035, p<0.0001), GIN-TNE 0.8918 (Δ −0.052, p<0.0001), GIN (Δ −0.033), ChemBERTa (Δ −0.031) — **les 4 bras significativement pires sur les 2 splits** (BH-FDR p<0.0001). **H2 nul**: ChemBERTa scaffold 0.7867 vs 0.8300 (Δ −0.043, p<0.0001) → transformer ≤ GNN ≤ fingerprints | ✅ **Fait (06/08, complété 08/08)** |
+| L3 | Honest negative / null | +30 pts | **H1 confirmé sous les 2 splits** : aucune GNN/fusion > ECFP4-RF (scaffold 0.8300 ; random 0.9433). Scaffold : GIN −0.025 (p=0.018), GIN-TFP −0.016 (p=0.025), GIN-TNE −0.021 (p=0.038), ChemBERTa −0.043 (p<0.0001), tous BH-FDR. **Random (08/08, jobs 12841/12842)** : GIN-TFP 0.9084 (Δ −0.035, p<0.0001), GIN-TNE 0.8918 (Δ −0.052, p<0.0001), GIN (Δ −0.034), ChemBERTa (Δ −0.031) — **les 4 bras significativement pires sur les 2 splits** (BH-FDR p<0.0001). **H2 nul**: ChemBERTa scaffold 0.7867 vs 0.8300 (Δ −0.043, p<0.0001) → transformer ≤ GNN ≤ fingerprints | ✅ **Fait (06/08, complété 08/08)** |
 | L4 | Contribution méthodologique/interprétabilité | +20 pts | Attribution/salience des dims TFP/TNE (H3, bridge P3 H1-RRS) — **DONNÉES ACQUISES (04/08)** : TFP pers_img dominant (sal 0.079), TNE top dims 68/43/92/66/165 | ✅ **Données faites (04/08)** — écriture L4 en cours |
 | L5 | Benchmark/dataset libéré | +10 pts | Public GitHub release; Zenodo DOI reserved, upload pending | ⏳ Phase 3 |
 | L6 | Narration/figures publication-grade | +15 pts | Figures bar + courbes d'apprentissage, manuscrit LaTeX complet | ⏳ Phase 2-3 |
@@ -75,7 +75,7 @@ p=0.018, GIN-TFP p=0.025, GIN-TNE p=0.038). → **Pivot L3+L4 confirmé.**
 
 **Complétion random fusion (08/08, jobs 12841/12842) :** GIN-TFP random = **0.9084 ± 0.0060**,
 GIN-TNE random = **0.8918 ± 0.0060** (25 fold×seed). Paired t sur 5 per-seed means vs ECFP4-RF 0.9433 :
-GIN-TFP Δ −0.035 (t(4) −60.7), GIN-TNE Δ −0.052 (t(4) −60.3), GIN Δ −0.033 (t(4) −27.9),
+GIN-TFP Δ −0.035 (t(4) −60.7), GIN-TNE Δ −0.052 (t(4) −60.3), GIN Δ −0.034 (t(4) −27.9),
 ChemBERTa Δ −0.031 (t(4) −65.9) — tous p<0.0001, tous BH-FDR significatifs. **Benchmark P5 complet :
 les 8 cellules (4 bras × 2 splits) sont remplies.** Hiérarchie random : ECFP4-RF 0.9433 > ChemBERTa
 0.9121 > GIN 0.9098 > GIN-TFP 0.9084 > GIN-TNE 0.8918.
