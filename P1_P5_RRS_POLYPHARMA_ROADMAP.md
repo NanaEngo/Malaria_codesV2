@@ -100,12 +100,15 @@ Use the same vocabulary in all projects:
 
 ### P1.4 P1 manuscript acceptance package
 
-- Main + SM + cover letter use identical cohort and availability language.
-- Add a concise “What is and is not validated” box or paragraph.
-- Replace claims of generalizability with a prospective-test plan.
-- Make the 64D choice “selected” if the underlying numeric metrics remain unavailable; never present N/A as evidence of superiority.
-- Retain the honest negative DEKOIS result prominently; it improves credibility.
-- Add a reproducibility table: input file, rows, script, seed, output hash, status.
+**Status (08/08/2026) — COMPLETED on V4 baseline :**
+- ✅ Main + SM + cover letter use identical cohort and availability language (vérifié).
+- ✅ **Encadré « What is and is not validated » ajouté** (main V4, section Data availability) — validé : nouveauté générative + workflow consensus (retrodictif) + DEKOIS honnête négatif ; non-validé : eos7kpb, SI\_pred, MPO, ADMET, SYBA, 19,913 leads ; limites de portée : stratification par score (pas panneau inactif indépendant), isoformes 3D7/9N10 apo, aucun test expérimental ; plan de test prospectif inclus.
+- ✅ **Table de reproductibilité S37 ajoutée** (SM V4) : 12 sorties, lignes, scripts générateurs (archive P1), seeds, SHA-256[12], statut — ref `SM-tab:reproducibility` résolue (compile main 41 p. / SM 49 p., 0 erreur).
+- ✅ Generalizability → plan prospectif (dans l'encadré).
+- ✅ 64D : « selected » (main L223, sans claim de metric-optimalité — déjà conforme).
+- ✅ DEKOIS 0.450 honnête négatif conservé (abstract + L72 + Conclusion).
+
+Checklist d'origine (à titre de référence) : Main + SM + cover letter langage cohorte/availability identique ; encadré « What is and is not validated » ; plan de test prospectif ; 64D « selected » ; DEKOIS négatif conservé ; table de reproductibilité.
 
 ## 4. P2 — true MD + RRS + polypharmacology
 
