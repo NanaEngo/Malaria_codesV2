@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-**P4 (Pareto-Guided MCTS for Antimalarial Design)** implements a **Monte-Carlo-tree-search generative agent that assembles antimalarial candidates fragment-by-fragment, scored by a multi-objective oracle (MPO + docking proxy + SA + SYBA + RRS + PNS). On the curated `medium` fragment set (6 categories), the **v12-activity 20-seed scalar benchmark** (job 12865) shows **Random (0.6724 ± 0.0055) > MCTS+ScafVAE (0.6649 ± 0.0066) > GA (0.6453 ± 0.0121) > Greedy (0.4278 ± 0.0000)**. MCTS is significantly below Random (paired t-test: t₁₉ = −4.97, p = 0.0001, mean Δ = −0.0075) and above GA (t₁₉ = 6.95, p < 0.0001). Separately, the deposited **pre-activity Pareto-MCTS front** contains 4 non-dominated solutions with hypervolume 1.2366. The real value of MCTS is transparent multi-objective coverage, not a higher scalar reward.
+**P4 (Pareto-Guided MCTS for Antimalarial Design)** implements a **Monte-Carlo-tree-search generative agent that assembles antimalarial candidates fragment-by-fragment, scored by a multi-objective oracle (MPO + docking proxy + SA + SYBA + RRS + PNS). On the curated `medium` fragment set (6 categories), the **v12-activity 20-seed scalar benchmark** (job 12865) shows **Random (0.6724 ± 0.0056) > MCTS+ScafVAE (0.6649 ± 0.0068) > GA (0.6453 ± 0.0124) > Greedy (0.4278 ± 0.0000)**. MCTS is significantly below Random (paired t-test: t₁₉ = −4.97, p = 0.000085, mean Δ = −0.0075) and above GA (t₁₉ = 6.95, p < 0.0001). Separately, the deposited **pre-activity Pareto-MCTS front** contains 4 non-dominated solutions with hypervolume 1.2366. The real value of MCTS is transparent multi-objective coverage, not a higher scalar reward.
 
 > ⚠️ **Historical v9 → v10 → v11 pre-activity re-benchmark (2026-08-02):** (1) the v9 deposited rewards (Random 0.6645, MCTS 0.6594, GA 0.6402, Greedy 0.5398) could **not** be reproduced from the committed code + data (the docking oracle's Tartarus library state differed at run time) → v10 re-run with a **value-preserving vectorisation of the docking Tanimoto scan** (~4700× faster, verified identical on held-out molecules); (2) a P0 audit then found the v10 benchmark MCTS ran with **default hyperparameters** (c_puct=1.414, uniform priors, NO ScafVAE policy) while the manuscript claimed the screened-optimal config (c_PUCT=5.0, ν=0.01, T=0.8 + ScafVAE) was retained for all experiments → **v11 re-run (job 12725) with the optimal config wired into the historical baseline** (`results/benchmark_molecules_opt/`; retained for sensitivity/provenance, not the v12 scalar claim). MCTS rose 0.7149 → 0.7276 and now wins 5/20 seeds; ranking Random > MCTS > GA > Greedy is preserved in all three runs. The v10 default-config CSVs remain in `results/benchmark_molecules/` as a sensitivity comparison (§1.8).
 
@@ -83,7 +83,7 @@ Computed by `scripts/p4_compute_diversity.py` from the deposited best-in-seed mo
 | GA | 20 | 0.7761 | 12 | 0.600 |
 | Greedy | 20 | 0.0000 | 1 | 0.050 |
 
-Key findings: all three stochastic methods are structurally diverse (mean pairwise dissimilarity 0.78–0.83; ≥17/20 unique scaffolds); Random achieves full scaffold coverage (20/20); MCTS with the optimal config achieves 19/20 unique scaffolds; Greedy deterministically collapses to a single molecule (dissimilarity 0, 1 scaffold) — confirming the "deceptive flat landscape" narrative with real deposited data. Outputs: `results/diversity/p4_diversity_metrics.csv`, `p4_diversity_mds.csv`.
+Key findings: the three stochastic methods are structurally diverse but differ in scaffold coverage (mean pairwise dissimilarity 0.7761–0.8046; GA 12/20, MCTS 19/20, Random 20/20 unique scaffolds); Greedy deterministically collapses to a single molecule (dissimilarity 0, 1 scaffold). These deposited results support diversity differences without requiring a universal claim of broad exploration. Outputs: `results/diversity/p4_diversity_metrics.csv`, `p4_diversity_mds.csv`.
 
 ### 1.2 Pipeline Optimizations (21 July 2026)
 
@@ -344,12 +344,12 @@ Following the final adversarial audit recommendation, the pending QMC/DMC valida
 >
 > | Method | Mean reward | Std | Min | Max | Mean time (s) |
 > |:-------|:----------:|:---:|:---:|:---:|:---:|
-> | **Random** | **0.6724** | 0.0055 | 0.6616 | 0.6856 | 50.4 |
-> | MCTS+ScafVAE | 0.6649 | 0.0066 | 0.6554 | 0.6779 | 92.1 |
-> | GA | 0.6453 | 0.0121 | 0.6178 | 0.6715 | 2.0 |
+> | **Random** | **0.6724** | 0.0056 | 0.6616 | 0.6856 | 50.4 |
+> | MCTS+ScafVAE | 0.6649 | 0.0068 | 0.6554 | 0.6779 | 92.1 |
+> | GA | 0.6453 | 0.0124 | 0.6178 | 0.6715 | 2.0 |
 > | Greedy | 0.4278 | 0.0000 | 0.4278 | 0.4278 | 1.9 |
 >
-> **Stats (paired t, df=19) :** MCTS vs Random t=−4.972, **p=0.0001**, Δ=−0.00751, Cohen's d=−1.112 ; GA vs Random t=−9.268, p<0.0001, d=−2.072 ; GA vs MCTS t=−6.948, p<0.0001, d=−1.554. **Greedy s'effondre (0.4278) :** l'ajout du terme d'activité (w=0.10) change le paysage de récompense et le greedy déterministe converge vers un optimum local sous-optimal pour la proximité aux actifs. **Ranking : Random > MCTS > GA > Greedy.** Le message éditorial reste identique à v11 (MCTS n'est pas un optimiseur scalaire supérieur ; sa valeur = front Pareto multi-objectif), mais le gap MCTS–Random est désormais fortement significatif avec l'oracle d'activité. **Manuscrit : à décider (voir la demande éditoriale) — soit basculer le benchmark canonique sur v12-activity, soit le documenter comme analyse de sensibilité (SM).**
+> **Stats (paired t, df=19) :** MCTS vs Random t=−4.972, **p=0.000085**, Δ=−0.00751, Cohen's d=−1.112 ; GA vs Random t=−9.268, p<0.0001, d=−2.072 ; GA vs MCTS t=−6.948, p<0.0001, d=−1.554. **Greedy s'effondre (0.4278) :** l'ajout du terme d'activité (w=0.10) change le paysage de récompense et le greedy déterministe converge vers un optimum local sous-optimal pour la proximité aux actifs. **Ranking : Random > MCTS > GA > Greedy.** Le message éditorial reste identique à v11 (MCTS n'est pas un optimiseur scalaire supérieur ; sa valeur = front Pareto multi-objectif), mais le gap MCTS–Random est désormais fortement significatif avec l'oracle d'activité. **Manuscript status:** v12-activity is canonical for scalar benchmark claims; the pre-activity Pareto front remains a separately locked canonical artifact and is labelled as such in the main text and SM.
 
 ### 6.1 P4 benchmark relaunch (2026-07-29 09:06 UTC)
 

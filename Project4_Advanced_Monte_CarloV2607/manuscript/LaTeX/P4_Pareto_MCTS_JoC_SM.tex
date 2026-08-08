@@ -106,7 +106,8 @@ reproduce deterministically from the deposited code and data. An earlier
 deposit could not be reproduced from the committed code because the docking
 oracle library state differed at run time; the present molecule sets supersede
 that deposit. The method ranking (Random $>$ MCTS $>$ GA $>$ Greedy) is
-unchanged.
+unchanged. This ranking describes the v12 scalar reward only; it is not a
+claim that scalar reward and Pareto-front coverage measure the same property.
 
 \textbf{Descriptors.} ECFP4 fingerprints (Morgan radius 2, \num{2048} bits)
 were computed with RDKit. Pairwise Tanimoto dissimilarity is
@@ -184,11 +185,12 @@ outputs coincide, yielding zero pairwise diversity and a single unique
 Bemis--Murcko scaffold by construction (\cref{tab:sm_diversity}). The
 three stochastic methods generate structurally distinct outputs per seed:
 random search achieves full scaffold coverage (\num{20} unique scaffolds from
-\num{20} molecules), while MCTS and GA return \num{19} and \num{17} unique
+\num{20} molecules), while MCTS and GA return \num{19} and \num{12} unique
 scaffolds respectively. Mean pairwise Tanimoto dissimilarity is high
-(\num{0.78}--\num{0.83}) for all three stochastic methods, indicating that
-seeded exploration remains structurally diverse despite the curated fragment
-vocabulary.
+(\num{0.7761}--\num{0.8046}) for the three stochastic methods. Scaffold
+coverage nevertheless differs across methods (GA \num{12}/\num{20}, MCTS
+\num{19}/\num{20}, Random \num{20}/\num{20}), so the diversity result is
+reported descriptively rather than as evidence of uniformly broad exploration.
 
 % ============================================================================
 \section*{S3\hspace{0.6em}Reproducibility}

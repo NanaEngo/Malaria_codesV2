@@ -2,11 +2,12 @@
 """
 P4 — Generate publication-quality figures for the manuscript.
 
-Generates 4 PNG figures from benchmark CSV results:
-  1. benchmark_reward_bar.png   — Bar chart: mean best reward ± std per method
-  2. benchmark_efficiency.png   — Scatter: time vs reward with method colours
-  3. pareto_front.png           — Scatter: MPO vs SYBA, coloured by SA (inverse)
-  4. scaffold_diversity.png     — 2D MDS projection with method-coloured points
+Generates publication figures from deposited benchmark CSV results:
+  1. p4_evidence_overview.png/.pdf — paired benchmark, Pareto front and ablation effects
+  2. benchmark_reward_bar.png       — mean best reward ± std per method
+  3. benchmark_efficiency.png      — time vs reward with method colours
+  4. pareto_front.png              — canonical MPO vs SYBA front with RRS/PNS encoding
+  5. scaffold_diversity.png        — 2D MDS projection with method-coloured points
 
 Usage:
   python scripts/p4_generate_figures.py
@@ -28,6 +29,10 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import numpy as np
+import pandas as pd
+from scipy.stats import ttest_rel
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
 
 # ── Paths ────────────────────────────────────────────────────────────
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -157,15 +162,28 @@ def plot_reward_bar(data):
     n_seeds_actual = max(len(data[m]) for m in methods if m in data)
     ax.set_title(f"Benchmark comparison ({n_seeds_actual} seeds)", fontsize=11, fontweight="bold")
 
-    # Significance brackets (paired t-test on 20 seeds; v12 canonical data)
+    # Significance brackets (paired tests on the same seed IDs).
+    by_seed = {
+        m: {int(d["seed"]): d["reward"] for d in data[m]}
+        for m in methods
+    }
+    common_mr = sorted(set(by_seed["mcts"]) & set(by_seed["random"]))
+    common_mg = sorted(set(by_seed["mcts"]) & set(by_seed["ga"]))
+    p_mr = ttest_rel([by_seed["mcts"][s] for s in common_mr],
+                     [by_seed["random"][s] for s in common_mr]).pvalue
+    p_mg = ttest_rel([by_seed["mcts"][s] for s in common_mg],
+                     [by_seed["ga"][s] for s in common_mg]).pvalue
+
+    def p_label(p):
+        return f"p = {p:.6f}" if p >= 1e-4 else "p < 0.0001"
+
     y_max = max(means) + max(stds) + 0.06
-    # v12 paired tests: MCTS vs Random and MCTS vs GA.
     ax.plot([0, 1], [y_max, y_max], "k-", linewidth=0.6)
-    ax.text(0.5, y_max + 0.004, "p = 0.000085", ha="center", fontsize=7,
+    ax.text(0.5, y_max + 0.004, p_label(p_mr), ha="center", fontsize=7,
             fontstyle="italic")
     y2 = max(means) + max(stds) + 0.11
     ax.plot([1, 3], [y2, y2], "k-", linewidth=0.6)
-    ax.text(2.0, y2 + 0.004, "p < 0.0001", ha="center", fontsize=7,
+    ax.text(2.0, y2 + 0.004, p_label(p_mg), ha="center", fontsize=7,
             fontstyle="italic")
     ax.set_ylim(0, y2 + 0.06)
 
@@ -214,14 +232,19 @@ def plot_efficiency(data):
     ax.legend(frameon=True, fancybox=False, edgecolor="grey", fontsize=8,
               loc="upper left")
 
-    # Annotations for method regions
-    ax.annotate("Cheap", xy=(30, 0.706), fontsize=7, fontstyle="italic",
-                color="grey", ha="center")
-    ax.annotate("Costly", xy=(68, 0.706), fontsize=7, fontstyle="italic",
-                color="grey", ha="center")
-
-    ax.set_xlim(0, 100)
-    ax.set_ylim(0.69, 0.76)
+    # Dynamic limits retain every method, including the low-reward greedy arm.
+    all_times = np.concatenate([
+        np.array([d["time_s"] for d in data[m]]) for m in methods
+    ])
+    all_rewards = np.concatenate([
+        np.array([d["reward"] for d in data[m]]) for m in methods
+    ])
+    t_min, t_max = float(all_times.min()), float(all_times.max())
+    r_min, r_max = float(all_rewards.min()), float(all_rewards.max())
+    t_pad = 0.15 * (t_max - t_min) if t_max > t_min else 5.0
+    r_pad = 0.15 * (r_max - r_min) if r_max > r_min else 0.01
+    ax.set_xlim(max(0.0, t_min - t_pad), t_max + t_pad)
+    ax.set_ylim(max(0.0, r_min - r_pad), min(1.0, r_max + r_pad))
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.yaxis.set_major_locator(mticker.MultipleLocator(0.02))
@@ -435,12 +458,145 @@ def plot_diversity(data):
     print(f"  ✅ {out_path.name}")
 
 
+# ── Figure 5: Integrated evidence overview ───────────────────────────
+def plot_overview(data):
+    """Generate a compact, evidence-linked overview for the manuscript.
+
+    Panel A shows the paired per-seed MCTS-minus-Random differences from the
+    canonical v12 scalar benchmark. Panel B shows the four locked pre-activity
+    Pareto solutions with RRS colour and PNS marker shape. Panel C shows the
+    observed high-minus-low main effects from the factorial ablation summary.
+    No values are simulated or re-estimated here; every point is read directly
+    from deposited CSV files.
+    """
+    benchmark_path = RESULTS_DIR / "p4_benchmark_merged.csv"
+    pareto_path = PROJECT_DIR / "results" / "pareto" / "merged_pareto_front.csv"
+    ablation_path = PROJECT_DIR / "results" / "ablation" / "p4_component_ablation_summary.csv"
+    for path in (benchmark_path, pareto_path, ablation_path):
+        if not path.exists():
+            raise FileNotFoundError(f"Overview input not found: {path}")
+
+    bench = pd.read_csv(benchmark_path)
+    pivot = bench.pivot(index="seed", columns="method", values="reward").sort_index()
+    delta = pivot["mcts"] - pivot["random"]
+    mean_delta = float(delta.mean())
+    sem_delta = float(delta.std(ddof=1) / np.sqrt(len(delta)))
+    ci = 2.093024 * sem_delta  # t_(0.975, 19), fixed by n=20 protocol
+
+    pareto = pd.read_csv(pareto_path)
+    abl = pd.read_csv(ablation_path)
+    pairs = [
+        ("ScafVAE", "False", "True"),
+        ("Pareto", "False", "True"),
+        ("c_PUCT", "2.0", "1.0"),
+        ("Temperature", "1.5", "0.5"),
+        ("Vocab", "Small", "Large"),
+    ]
+    effects = []
+    for factor, low, high in pairs:
+        sub = abl[abl["factor"].astype(str) == factor].copy()
+        sub["level_str"] = sub["level"].astype(str)
+        sub = sub.set_index("level_str")
+        if low not in sub.index or high not in sub.index:
+            raise ValueError(f"Missing ablation levels for {factor}: {low}/{high}")
+        effects.append((factor, float(sub.loc[high, "mean_reward"] - sub.loc[low, "mean_reward"])))
+    effects = sorted(effects, key=lambda x: x[1])
+
+    fig, axes = plt.subplots(1, 3, figsize=(11.2, 3.6),
+                             gridspec_kw={"width_ratios": [1.15, 1.0, 1.15]})
+    fig.subplots_adjust(wspace=0.42, left=0.06, right=0.98, bottom=0.19, top=0.82)
+
+    # Panel A: paired per-seed difference, with CI and exact zero line.
+    ax = axes[0]
+    x = np.arange(len(delta))
+    colours = np.where(delta >= 0, "#0072B2", "#D55E00")
+    ax.axhline(0, color="0.25", linewidth=0.8, zorder=1)
+    ax.vlines(x, 0, delta.values, color=colours, linewidth=1.0, alpha=0.65, zorder=2)
+    ax.scatter(x, delta.values, c=colours, edgecolors="black", linewidths=0.35,
+               s=30, zorder=3)
+    ax.axhline(mean_delta, color="#111111", linewidth=1.3, zorder=4)
+    ax.axhspan(mean_delta - ci, mean_delta + ci, color="0.2", alpha=0.12, zorder=0)
+    ax.set_title("A  Paired scalar comparison", loc="left", fontweight="bold")
+    ax.set_xlabel("Seed")
+    ax.set_ylabel("MCTS − Random reward")
+    ax.set_xticks([0, 5, 10, 15, 19])
+    ax.yaxis.set_major_locator(mticker.MultipleLocator(0.01))
+    ax.text(0.03, 0.96, f"mean = {mean_delta:.4f}\n95% CI = [{mean_delta-ci:.4f}, {mean_delta+ci:.4f}]",
+            transform=ax.transAxes, va="top", fontsize=7.5,
+            bbox=dict(boxstyle="round,pad=0.25", facecolor="white", edgecolor="0.75"))
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    # Panel B: locked pre-activity Pareto front.
+    ax = axes[1]
+    norm = plt.Normalize(pareto["rrs"].min(), pareto["rrs"].max())
+    cmap = plt.get_cmap("viridis")
+    for pns, marker in [(0, "v"), (1, "o")]:
+        sub = pareto[pareto["pns"] == pns]
+        if not sub.empty:
+            ax.scatter(sub["mpo"], sub["syba"], c=sub["rrs"], cmap=cmap, norm=norm,
+                       marker=marker, s=115, edgecolors="black", linewidths=0.6,
+                       zorder=3)
+    for i, row in pareto.reset_index(drop=True).iterrows():
+        ax.annotate(f"P{i+1}", (row["mpo"], row["syba"]), xytext=(0, 0),
+                    textcoords="offset points", ha="center", va="center",
+                    color="white", fontsize=8, fontweight="bold", zorder=4)
+    ordered = pareto.sort_values("mpo")
+    ax.plot(ordered["mpo"], ordered["syba"], "k--", linewidth=0.8, alpha=0.55)
+    ax.set_title("B  Pre-activity Pareto front", loc="left", fontweight="bold")
+    ax.set_xlabel("MPO (maximise)")
+    ax.set_ylabel("SYBA (maximise)")
+    ax.set_xlim(0.70, 0.97)
+    ax.set_ylim(-0.05, 1.08)
+    ax.text(0.03, 0.96, "HV = 1.2366\nSA = 3.0 (constant)", transform=ax.transAxes,
+            va="top", fontsize=7.5,
+            bbox=dict(boxstyle="round,pad=0.25", facecolor="white", edgecolor="0.75"))
+    cbar = fig.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), ax=ax,
+                        fraction=0.046, pad=0.04)
+    cbar.set_label("RRS", fontsize=8)
+    cbar.ax.tick_params(labelsize=7)
+    ax.legend(handles=[Line2D([0], [0], marker="o", color="w", markerfacecolor="0.55",
+                              markeredgecolor="black", label="PNS = 1", markersize=7),
+                       Line2D([0], [0], marker="v", color="w", markerfacecolor="0.55",
+                              markeredgecolor="black", label="PNS = 0", markersize=7)],
+              fontsize=7, frameon=True, loc="lower left")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    # Panel C: effect-size ranking from the factorial ablation summary.
+    ax = axes[2]
+    labels = [x[0] for x in effects]
+    vals = np.array([x[1] for x in effects])
+    y = np.arange(len(vals))
+    bars = ax.barh(y, vals, color="#009E73", edgecolor="black", linewidth=0.45)
+    ax.axvline(0, color="0.25", linewidth=0.8)
+    ax.set_yticks(y, labels)
+    ax.set_xlabel("Observed high − low mean reward")
+    ax.set_title("C  Factor effects", loc="left", fontweight="bold")
+    ax.xaxis.set_major_locator(mticker.MultipleLocator(0.05))
+    for bar, value in zip(bars, vals):
+        ax.text(value + 0.003, bar.get_y() + bar.get_height()/2,
+                f"{value:+.3f}", va="center", fontsize=8)
+    ax.text(0.03, 0.03, "Different ablation oracle;\nrelative effects only",
+            transform=ax.transAxes, fontsize=7.5, va="bottom", color="0.25")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    out_path = GRAPHICS_DIR / "p4_evidence_overview.png"
+    pdf_path = GRAPHICS_DIR / "p4_evidence_overview.pdf"
+    fig.savefig(out_path, dpi=400)
+    fig.savefig(pdf_path)
+    plt.close(fig)
+    print(f"  ✅ {out_path.name}")
+    print(f"  ✅ {pdf_path.name}")
+
+
 # ── Main ─────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(description="Generate P4 manuscript figures")
     parser.add_argument("--figures", nargs="+",
-                        choices=["reward_bar", "efficiency", "pareto", "diversity"],
-                        default=["reward_bar", "efficiency", "pareto", "diversity"],
+                        choices=["overview", "reward_bar", "efficiency", "pareto", "diversity"],
+                        default=["overview", "reward_bar", "efficiency", "pareto", "diversity"],
                         help="Figures to generate")
     args = parser.parse_args()
 
@@ -458,16 +614,20 @@ def main():
     print(f"\n  Output: {GRAPHICS_DIR}/")
     print()
 
+    if "overview" in args.figures:
+        print("  [0/5] Integrated evidence overview...")
+        plot_overview(data)
+
     if "reward_bar" in args.figures:
-        print("  [1/4] Reward bar chart...")
+        print("  [1/5] Reward bar chart...")
         plot_reward_bar(data)
 
     if "efficiency" in args.figures:
-        print("  [2/4] Efficiency scatter...")
+        print("  [2/5] Efficiency scatter...")
         plot_efficiency(data)
 
     if "pareto" in args.figures:
-        print("  [3/4] Pareto front (delegating to p4_plot_merged_pareto.py)...")
+        print("  [3/5] Pareto front (delegating to p4_plot_merged_pareto.py)...")
         script_path = Path(__file__).with_name("p4_plot_merged_pareto.py")
         if script_path.exists():
             subprocess.run([sys.executable, str(script_path)], check=True)
@@ -476,7 +636,7 @@ def main():
             plot_pareto_front(data)
 
     if "diversity" in args.figures:
-        print("  [4/4] Scaffold diversity MDS...")
+        print("  [4/5] Scaffold diversity MDS...")
         plot_diversity(data)
 
     print("\n" + "=" * 55)
