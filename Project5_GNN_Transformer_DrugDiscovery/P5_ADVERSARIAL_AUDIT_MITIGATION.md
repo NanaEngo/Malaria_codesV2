@@ -142,7 +142,7 @@ Le changement le plus notable est **qualitatif** : l'audit a transformé une fai
 
 BH-FDR scaffold (raw p essentiels [0.018, 0.025, 0.038, <0.0001]) → adj. 0.0330 / 0.0330 / 0.0378 / 0.0002 : **recalculé conforme** au manuscrit.
 
-**Note statistique (N/A) :** les σ des modèles (0.0395 etc.) sont calculeés en population std (ddof=0) sur les 25 fold×seed, alors que la baseline le fait sur les 5 per-seed (0.0023) ; **cohérent avec la caption Fig.1 et la méthode §155** (les t appariés utilisent bien les 5 per-seed). Mélange des aggrégations dans la même colonne — documenté, pas bénin.
+**Note statistique (N/A) :** les σ des modèles (0.0395 etc.) sont calculés en population std (ddof=0) sur les 25 fold×seed, alors que la baseline le fait sur les 5 per-seed (0.0023) ; **cohérent avec la caption Fig.1 et la méthode §155** (les t appariés utilisent bien les 5 per-seed). Mélange des aggrégations dans la même colonne — documenté, pas bénin.
 
 ### 10.2 H3 salience — **REPRODUITE EXACTE** (25 repl.)
 
@@ -177,7 +177,7 @@ Re-génération (RDKit MurckoScaffold sur `p5_canonical_panel.csv`, 19,836 mol.)
 | `P5_DATA_ANALYSIS_REPORT.md` | n=22,072 | **n=22,267** |
 | `AGENTS.md` | n=22,072 ; 0.9192 | **n=22,267 ; 0.9190** |
 
-(les nombres du manuscrit V2608 étaient corrects ; seuls les récapituls racine introduits 08/08 portaient les typos.)
+(les nombres du manuscrit V2608 étaient corrects ; seuls les récapitulés racine introduits 08/08 portaient les typos.)
 
 ### 10.6 Verdict global v2
 
