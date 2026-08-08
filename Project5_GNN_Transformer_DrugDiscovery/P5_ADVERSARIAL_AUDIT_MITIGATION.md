@@ -124,4 +124,82 @@ Le changement le plus notable est **qualitatif** : l'audit a transformé une fai
 
 ---
 
-*Toutes les valeurs numériques de §§2–4 ont été régénérées par scripts Python (SciPy) pendant cette session ; les CLI en §1 tournent sans réseau, sorties en `/tmp/opencode/p5_claims_report.json` et `/tmp/opencode/p5_stat_report.json`.*
+## 10. Audit v2 (08 août 2026) — vérification indépendante post-V2608
+
+> Recalcul indépendant depuis les **données déposées** (`results/`) pendant la session 08/08, après compilation du manuscrit V2608 et push HPC→GitHub. Contrôle chaque valeur du manuscrit V2608 (abstract, table 1, §H2, §H3, §Limitations) et ajoute trois vérifications nouvelles : intégrité du split scaffold, réplication externe, et reproductibilité des nombres dans les docs racine.
+
+### 10.1 Table `tab:h1` et statistiques — **TOUTES REPRODUITES**
+
+| Comparison (scaffold, paired per-seed) | Manuscrit V2608 | Recalcul indépendant | Verdict |
+|---|---|---|---|
+| ECFP4-RF random | 0.9433 ± 0.0002 | seed_means [0.9428..0.9437] mean 0.9433, std 0.0003 | ✓ |
+| ECFP4-RF scaffold | 0.8300 ± 0.0023 | seed_means [0.8334,0.8274,0.8278,0.8295,0.8317], mean 0.8300, std 0.0023 | ✓ |
+| GIN scaffold | 0.8047 ± 0.0395 | 0.8047 (all25), t=−3.87, p=0.018 | ✓ |
+| GIN-TFP scaffold | 0.8138 ± 0.0352 | 0.8138, t=−3.51, p=0.025 | ✓ |
+| GIN-TNE scaffold | 0.8090 ± 0.0378 | 0.8090, t=−3.06, p=0.038 | ✓ |
+| ChemBERTa scaffold | 0.7867 ± 0.0338, t(4)=−18.35, p<0.0001 | seed_means [0.7942,0.7793,0.7904,0.7870,0.7823], t=18.35 | ✓ (signe arbitraire, t abs) |
+| GIN / TFP / TNE / CB random | 0.9098 / 0.9084 / 0.8918 / 0.9121 | 0.9098 / 0.9084 / 0.8918 / 0.9121 (tous p<0.0001 vs 0.9433) | ✓ |
+
+BH-FDR scaffold (raw p essentiels [0.018, 0.025, 0.038, <0.0001]) → adj. 0.0330 / 0.0330 / 0.0378 / 0.0002 : **recalculé conforme** au manuscrit.
+
+**Note statistique (N/A) :** les σ des modèles (0.0395 etc.) sont calculeés en population std (ddof=0) sur les 25 fold×seed, alors que la baseline le fait sur les 5 per-seed (0.0023) ; **cohérent avec la caption Fig.1 et la méthode §155** (les t appariés utilisent bien les 5 per-seed). Mélange des aggrégations dans la même colonne — documenté, pas bénin.
+
+### 10.2 H3 salience — **REPRODUITE EXACTE** (25 repl.)
+
+| Claim | Manuscrit | Recalcul | Verdict |
+|---|---|---|---|
+| TFP pers_img 0.0790 vs H0 0.0485 vs betti 0.0547 | 0.0790 / 0.0485 / 0.0547 | 0.0790 / 0.0485 / 0.0547 | ✓ |
+| TFP top dims | 42,43,52,53,54 | 43,53,42,52,54 (même ensemble) | ✓ |
+| TNE top dims | 68,43,92,66,165 | 68,43,92,66,165 | ✓ |
+| TNE top-10% | 17.3 % | 17.3 % | ✓ |
+
+### 10.3 Split scaffold — intégrité VÉRIFIÉE (nouveau check)
+
+Re-génération (RDKit MurckoScaffold sur `p5_canonical_panel.csv`, 19,836 mol.) puis lecture des 25 fichiers `.npy` figés :
+- **`test` : disjoint de `train` sur les 25 folds** (overlap = 0) ✓ — conforme à la claim « no fold shares a scaffold » (test).
+- `val` partage des scaffolds avec `train` (119–135 groupes/fold) : **attendu** — le val est échantillonné dans `rest=all-scaffolds-except-test-fold` (le code fait `val= first 20% of rest`), donc val représente la distribution *train*, pas *test*. Vérifié conforme à l'implémentation (`p5_make_splits.py`).
+- 0 fold avec fuite test↔train sur les 5 seeds. **Aucune anomalie.**
+
+### 10.4 Réplication externe MoleculeNet malaria (n=22,267) — **REPRODUIT**
+
+| Split | Manuscrit V2608 | Rapport déposé `p5_public_malaria_report.json` | Verdict |
+|---|---|---|---|
+| scaffold | ECFP4-RF 0.9190 ≥ ± 0.0004 vs GIN 0.8843 ± 0.0021, p<0.0001 | 0.9190 vs 0.8843, Δ=+0.0346, t=36.5, p=3.35e-06 | ✓ |
+| random | 0.9547 ± 0.0033 vs 0.9237 ± 0.0040, p=0.0001 | 0.9547 vs 0.9237, Δ=+0.031, p=6e-5 | ✓ |
+
+`provenance.json` : CHEMBL364 *Plasmodium falciparum*, 64,279 raw → 22,447 canoniques → 22,267 après exclusion de 180 molécules chevauchant le panel P5 (vérifié : disjoint CSV = 22,267 lignes, 0 overlap résiduel). Cohérent avec la claim §Limitations.
+
+### 10.5 Docs racine — 3 typos numériques CORRIGÉS (08/08)
+
+| Fichier | Avant | Après |
+|---|---|---|
+| `P5_STRATEGIC_PA90.md` | n=22,072 ; ECFP4-RF 0.9192 | **n=22,267 ; 0.9190** |
+| `P5_DATA_ANALYSIS_REPORT.md` | n=22,072 | **n=22,267** |
+| `AGENTS.md` | n=22,072 ; 0.9192 | **n=22,267 ; 0.9190** |
+
+(les nombres du manuscrit V2608 étaient corrects ; seuls les récapituls racine introduits 08/08 portaient les typos.)
+
+### 10.6 Verdict global v2
+
+- **Aucun écart significatif** entre le manuscrit V2608 et les données déposées. Toutes les stats du tableau H1, H2, H3 et de la validation externe sont **exactement reproductibles**.
+- Nouveaux checks (scaffold integrity, external dataset) : **PASS**.
+- P-values : re-veridèrent conformément au recalcul du 06/08 (4 arms sig. pires, BH-adj ≤ 0.038).
+- Le seul reste documentaire : la baseline σ des modèles vs per-seed (cohérent avec caption), et les 3 typos racine corrigées.
+
+### 10.7 Re-dérivation tierce (08/08, passe v3) — CONFORME
+
+Recalcul **indépendant** (script dédié, depuis les CSVs bruts `p5_*_results.csv` + `p5_ecfp4rf_*_baseline.json`, sans réutiliser `p5_replication_stats.csv`) :
+
+| Quantité | Recalcul v3 | Fichier déposé `p5_replication_stats.csv` | Manuscrit V2608 |
+|---|---|---|---|
+| t(4) GIN / TFP / TNE / CB (scaffold) | −3.87 / −3.51 / −3.06 / −18.35 | −3.873 / −3.506 / −3.057 / −18.349 | −3.87 / −3.51 / −3.06 / −18.35 |
+| raw p | 0.0180 / 0.0248 / 0.0378 / 5.2e-05 | identique | 0.018 / 0.025 / 0.038 / <0.0001 |
+| BH-adj p | 0.0330 / 0.0330 / 0.0378 / 0.0002 | 0.03302 / 0.03302 / 0.03776 / 0.00021 | 0.0330 / 0.0330 / 0.0378 / 0.0002 |
+| Random means GIN/TFP/TNE/CB | 0.9098 / 0.9084 / 0.8918 / 0.9121 | identique | identique |
+| Salience H0/pers_img/betti | 0.0485 / 0.0790 / 0.0547 | — | identique |
+| Ext. scaffold ECFP4 vs GIN | 0.9190 vs 0.8843, Δ=+0.0346, p=3.35e-06 | — | p<0.0001 |
+| Ext. random | 0.9547 vs 0.9237, Δ=+0.031, p=6.35e-05 | — | p=0.0001 |
+
+**Deux imprécisions internes au §10 corrigées** (sans impact sur les verdicts) : t ChemBERTa 18.27 → **18.35** ; p externe scaffold 1e-6 → **3.35e-06**.
+
+**Conclusion : P5 V2608 audit_v2 = CLEAN.** Ne reste pour la clôture roadmap que **L5 (upload Zenodo + release GitHub)**.
