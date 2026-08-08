@@ -158,6 +158,12 @@ produit `.sig` ; la clé publique est exportée via `gpg --export --armor` et li
 par un canal de confiance séparé. **Une signature ne peut pas être simulée** : le
 register ne doit jamais être modifié pour simuler une revue (protocole §3).
 
+**Validation de la procédure (08/08/2026, sur COPIE /tmp — jamais le registre
+réel) :** clé ed25519 générée, signature détachée vérifiée
+(« Signature Verified Successfully », RC=0), et **contrôle négatif réussi** — un
+registre falsifié (note modifiée) échoue la vérification (RC=1). La procédure
+openssl du dossier est donc opérationnelle telle quelle pour le relecteur.
+
 Ensuite, mettre à jour le register **par la procédure** (script dédié ou mise à
 jour humaine tracée) avec les champs signés : `reviewer_identity`,
 `review_date`, `signed_review_artifact` (= chemin du `.sig`),
