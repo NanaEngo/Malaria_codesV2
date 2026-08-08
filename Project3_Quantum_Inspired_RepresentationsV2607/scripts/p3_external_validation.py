@@ -230,22 +230,39 @@ def compute_tfp(smiles_list: list[str], n_jobs: int) -> tuple[np.ndarray, int]:
     return np.array(rows), n_fail
 
 
+def _tne_one(args_tuple: tuple[str, int]):
+    """Top-level TNE worker (joblib-picklable; no closure capture).
+
+    NOTE: a previous version used a nested closure inside Parallel(), which
+    crashed with loky BrokenProcessPool (numpy 2.x unpickling bug:
+    'numpy.ufunc' object has no attribute '__module__'). Top-level worker +
+    backend="threading" (no result pickling) is the robust fix.
+    """
+    smi, bond_dim = args_tuple
+    T = smiles_to_tensor(smi)
+    if T is None:
+        return None
+    try:
+        return tucker_compress(T, bond_dim, use_gpu=False).astype(np.float32)
+    except Exception:
+        return None
+
+
 def compute_tne(smiles_list: list[str], n_jobs: int,
                 bond_dim: int = BOND_DIM) -> tuple[np.ndarray, int]:
-    """TNE (bond_dim×bond_dim×3) via the canonical TNE pipeline."""
+    """TNE (bond_dim×bond_dim×3) via the canonical TNE pipeline.
+
+    Uses a top-level worker and the threading backend: loky process-based
+    parallelism is incompatible with numpy 2.x result unpickling in this env
+    (BrokenProcessPool, job 12860). Threading shares memory (no pickling) and
+    RDKit ETKDG + tensorly Tucker both release the GIL, so scaling holds.
+    """
     from joblib import Parallel, delayed
 
-    def _one(smi: str):
-        T = smiles_to_tensor(smi)
-        if T is None:
-            return None
-        try:
-            return tucker_compress(T, bond_dim, use_gpu=False).astype(np.float32)
-        except Exception:
-            return None
-
     t0 = time.perf_counter()
-    results = Parallel(n_jobs=n_jobs, verbose=5)(delayed(_one)(smi) for smi in smiles_list)
+    results = Parallel(n_jobs=n_jobs, backend="threading", verbose=5)(
+        delayed(_tne_one)((smi, bond_dim)) for smi in smiles_list
+    )
     rows, n_fail = [], 0
     for smi, emb in zip(smiles_list, results):
         if emb is None:
@@ -256,6 +273,36 @@ def compute_tne(smiles_list: list[str], n_jobs: int,
     print(f"  [TNE] {len(smiles_list) - n_fail}/{len(smiles_list)} valid "
           f"({n_fail} failed) in {time.perf_counter() - t0:.0f}s")
     return np.array(rows), n_fail
+
+
+def _load_cache(name: str, smiles_list: list[str],
+                bond_dim: int) -> tuple[np.ndarray | None, int]:
+    """Load a per-phase descriptor cache if it matches this exact panel."""
+    arr_p = RESULTS_DIR / f"p3_extval_{name}.npy"
+    meta_p = RESULTS_DIR / f"p3_extval_{name}_meta.json"
+    if not (arr_p.exists() and meta_p.exists()):
+        return None, 0
+    try:
+        meta = json.loads(meta_p.read_text())
+    except Exception:
+        return None, 0
+    if meta.get("smiles") != smiles_list or meta.get("bond_dim") != bond_dim:
+        return None, 0
+    try:
+        arr = np.load(arr_p)
+    except Exception:
+        return None, 0
+    if arr.shape[0] != len(smiles_list):
+        return None, 0
+    return arr, int(meta.get("n_fail", 0))
+
+
+def _save_cache(name: str, arr: np.ndarray, smiles_list: list[str],
+                n_fail: int, bond_dim: int) -> None:
+    """Persist a per-phase descriptor cache (resumable runs)."""
+    np.save(RESULTS_DIR / f"p3_extval_{name}.npy", arr)
+    meta = {"smiles": smiles_list, "n_fail": int(n_fail), "bond_dim": int(bond_dim)}
+    (RESULTS_DIR / f"p3_extval_{name}_meta.json").write_text(json.dumps(meta))
 
 
 def main() -> int:
@@ -284,8 +331,25 @@ def main() -> int:
 
     # 1) Topological descriptors first (expensive), then restrict all other
     #    descriptors to the intersection of valid molecules (C2 no-imputation).
-    X_tfp, n_fail_tfp = compute_tfp(smiles_list, args.n_jobs)
-    X_tne, n_fail_tne = compute_tne(smiles_list, args.n_jobs, args.bond_dim)
+    #    Per-phase disk cache makes interrupted runs resumable (TFP took ~2 h
+    #    in job 12860 before the TNE pickling crash lost everything).
+    X_tfp_c, n_fail_tfp_c = _load_cache("tfp", smiles_list, args.bond_dim)
+    if X_tfp_c is not None:
+        X_tfp, n_fail_tfp = X_tfp_c, n_fail_tfp_c
+        print(f"  [cache] TFP loaded from disk (n_fail={n_fail_tfp})")
+    else:
+        X_tfp, n_fail_tfp = compute_tfp(smiles_list, args.n_jobs)
+        _save_cache("tfp", X_tfp, smiles_list, n_fail_tfp, args.bond_dim)
+        print(f"  [cache] TFP saved ({X_tfp.shape})")
+
+    X_tne_c, n_fail_tne_c = _load_cache("tne", smiles_list, args.bond_dim)
+    if X_tne_c is not None:
+        X_tne, n_fail_tne = X_tne_c, n_fail_tne_c
+        print(f"  [cache] TNE loaded from disk (n_fail={n_fail_tne})")
+    else:
+        X_tne, n_fail_tne = compute_tne(smiles_list, args.n_jobs, args.bond_dim)
+        _save_cache("tne", X_tne, smiles_list, n_fail_tne, args.bond_dim)
+        print(f"  [cache] TNE saved ({X_tne.shape})")
 
     ok = np.isfinite(X_tfp).all(axis=1) & np.isfinite(X_tne).all(axis=1)
     valid_idx = np.where(ok)[0]

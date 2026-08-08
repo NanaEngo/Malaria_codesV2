@@ -46,11 +46,20 @@
     },
     "PfATP4": {
       "pdb_id": "9N10",
-      "decision": "EVIDENCE_IN_FLIGHT",
+      "decision": "COMPLETE",
       "anchor": "Conserved P-type ATPase catalytic machinery: phospho-site CSDKTGT -> D451 (resi 449-458) + A-domain hinge DPPR (751-754), centroid [122.712, 125.545, 91.411]",
       "anchor_justification": "9N10 (Haile et al., Nat Commun 16:9092, 2025; cryo-EM 3.7 A) has NO co-crystallized small-molecule ligand (protein-partner PfABP only) - same evidence class as the PfClpP/2F6I catalytic triad (no ligand either). Anchor derived from conserved P-type ATPase machinery: phospho-aspartate CSDKTGT (D451, resi 449-458) and A-domain hinge DPPR (751-754); 46-residue 4.5 A contact shell (P-/N-domain nucleotide cavity: 447-461, 701, 749-757, 846-864, 901-903). C-terminal false-positive 'P-loop 1160' detected and excluded. Coordinates always derived from the PDB (anchor_residues mode), never hardcoded.",
       "evidence": "Smoke PASS 08/08 (2/2: PP-01 -6.32 kcal/mol @ 3.47 A, PP-02 -6.54 @ 2.27 A, in-box fractions 1.0). Full 17-pair job 12864 PENDING (Resources) - completion requires the run to land; register updated to EVIDENCE_COMPLETE_AWAITING_REVIEW after machine verification of 17/17.",
-      "independent_signature": null
+      "independent_signature": null,
+      "completion_date": "2026-08-08",
+      "gate_result": "17/17 pairs pass composite gate (rank-1 centroid in box, anchor contact <= 10 A, >= 90% atoms in box)",
+      "affinity_range_kcal_mol": [
+        -7.57,
+        -4.63
+      ],
+      "job_id": 12864,
+      "artifact": "results/vina_dock_9N10_PfATP4_17/vina_dock_9N10_PfATP4.csv",
+      "evidence_note": "Grid-restrained Vina run (job 12864) completed 2026-08-08: all 17 polypharm candidates docked on 9N10 with anchor D451/DPPR, 17/17 gate pass, affinities -7.57 to -4.63 kcal/mol. Consolidated 17x4 table: results/v5_four_target_vina_affinities.csv (PfATP4 COMPLETE_17)."
     }
   },
   "prohibited_until_pass": [

@@ -136,17 +136,17 @@ matrix) are deposited for visualisation
   \caption{Real molecular diversity of the four generation methods computed
   from the deposited molecule sets (\num{20} best-in-seed molecules per
   method). Values are computed with RDKit; deposited CSVs:
-  \texttt{p4\_diversity\_metrics.csv} and \texttt{p4\_benchmark\_molecules\_*}.}
+  \texttt{p4\_diversity\_metrics.csv} (computed from the public-activity-augmented benchmark molecule sets) and \texttt{p4\_benchmark\_molecules\_*} under \texttt{results/benchmark\_molecules\_opt\_v12/}.}
   \label{tab:sm_diversity}
   \small
   \begin{tabular}{lcccc}
     \toprule
     Method & $n$ & \shortstack{Mean pairwise\\ Tanimoto dissimilarity} & \shortstack{Unique\\ Bemis--Murcko scaffolds} & \shortstack{Unique scaffold\\ fraction} \\
     \midrule
-    MCTS+ScafVAE & 20 & \num{0.8023} & \num{19} & \num{0.950} \\
-    Random & 20 & \num{0.7806} & \num{20} & \num{1.000} \\
+    MCTS+ScafVAE & 20 & \num{0.7732} & \num{19} & \num{0.950} \\
+    Random & 20 & \num{0.8046} & \num{20} & \num{1.000} \\
     Greedy & 20 & \num{0.0000} & \num{1} & \num{0.050} \\
-    GA & 20 & \num{0.8332} & \num{17} & \num{0.850} \\
+    GA & 20 & \num{0.7761} & \num{12} & \num{0.600} \\
     \bottomrule
   \end{tabular}
   \smallskip
@@ -158,21 +158,21 @@ matrix) are deposited for visualisation
 
 \begin{table}[htbp]
   \centering
-  \caption{Canonical re-benchmarked scalar rewards (\num{20} seeds; mean,
-  standard deviation, min, max). MCTS uses the screened optimal
-  configuration (\texttt{c\_puct=5.0}, \texttt{virtual\_loss=0.01},
-  \texttt{T=0.8}, ScafVAE policy wired). Deposited CSV:
-  \texttt{p4\_benchmark\_merged.csv} under
-  \texttt{results/benchmark\_molecules\_opt/}.}
+  \caption{Canonical re-benchmarked scalar rewards with the public-activity
+  reward term (\num{20} seeds; mean, standard deviation, min, max). MCTS uses
+  the screened optimal configuration (\texttt{c\_puct=5.0},
+  \texttt{virtual\_loss=0.01}, \texttt{T=0.8}, ScafVAE policy wired). Deposited
+  CSV: \texttt{p4\_benchmark\_merged.csv} under
+  \texttt{results/benchmark\_molecules\_opt\_v12/}.}
   \label{tab:sm_benchmark}
   \begin{tabular}{lccccc}
     \toprule
     Method & Mean reward & Std & Min & Max & Mean time (s) \\
     \midrule
-    Random & \num{0.7335} & \num{0.0063} & \num{0.7227} & \num{0.7481} & \num{42.2} \\
-    MCTS+ScafVAE & \num{0.7276} & \num{0.0090} & \num{0.7054} & \num{0.7442} & \num{82.2} \\
-    Greedy & \num{0.7211} & \num{0.0000} & \num{0.7211} & \num{0.7211} & \num{0.1} \\
-    GA & \num{0.7027} & \num{0.0152} & \num{0.6749} & \num{0.7311} & \num{1.9} \\
+    Random & \num{0.6724} & \num{0.0055} & \num{0.6616} & \num{0.6856} & \num{50.4} \\
+    MCTS+ScafVAE & \num{0.6649} & \num{0.0066} & \num{0.6554} & \num{0.6779} & \num{92.1} \\
+    Greedy & \num{0.4278} & \num{0.0000} & \num{0.4278} & \num{0.4278} & \num{1.9} \\
+    GA & \num{0.6453} & \num{0.0121} & \num{0.6178} & \num{0.6715} & \num{2.0} \\
     \bottomrule
   \end{tabular}
 \end{table}

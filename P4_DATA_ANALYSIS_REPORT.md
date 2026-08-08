@@ -340,6 +340,17 @@ Following the final adversarial audit recommendation, the pending QMC/DMC valida
 >
 > **Vérifications post-implémentation (08/08/2026) :** (i) smoke benchmark 4 méthodes OK (MCTS/Random/Greedy/GA) ; (ii) **contrôle d'échelle empirique** sur 120 molécules générées v11 — contribution moyenne de l'activité **0.0090** (w=0.10) vs RRS 0.0204 (w=0.135) et PNS 0.0619 (w=0.09) : l'oracle activité **ne domine pas** (les molécules v11 sont en moyenne éloignées des actifs ChEMBL, max-Tanimoto moyen ≈ 0.27 brut → 0.09 échelonné) ; attendu que les scores activité augmentent dans v12 (la récompense pousse vers les actifs) ; (iii) bornes : SMILES invalide → 0.0, bibliothèque absente → 0.0, cache OK ; (iv) **escape hatch de reproductibilité** : tout re-scoring d'artefacts v11 avec le code actuel doit passer `use_activity=False` (l'oracle activité est actif par défaut). **Job array v12 soumis : 12865 (0-19, 8 concurrents, budget 6 h/task, sortie `results/benchmark_molecules_opt_v12/`).**
 
+> ✅ **RÉSULTATS v12-activity (job 12865 TERMINÉ, 20 seeds × 4 méthodes, agrégé 2026-08-08) :** `results/benchmark_molecules_opt_v12/p4_benchmark_merged.csv` (80 lignes).
+>
+> | Method | Mean reward | Std | Min | Max | Mean time (s) |
+> |:-------|:----------:|:---:|:---:|:---:|:---:|
+> | **Random** | **0.6724** | 0.0055 | 0.6616 | 0.6856 | 50.4 |
+> | MCTS+ScafVAE | 0.6649 | 0.0066 | 0.6554 | 0.6779 | 92.1 |
+> | GA | 0.6453 | 0.0121 | 0.6178 | 0.6715 | 2.0 |
+> | Greedy | 0.4278 | 0.0000 | 0.4278 | 0.4278 | 1.9 |
+>
+> **Stats (paired t, df=19) :** MCTS vs Random t=−4.972, **p=0.0001**, Δ=−0.00751, Cohen's d=−1.112 ; GA vs Random t=−9.268, p<0.0001, d=−2.072 ; GA vs MCTS t=−6.948, p<0.0001, d=−1.554. **Greedy s'effondre (0.4278) :** l'ajout du terme d'activité (w=0.10) change le paysage de récompense et le greedy déterministe converge vers un optimum local sous-optimal pour la proximité aux actifs. **Ranking : Random > MCTS > GA > Greedy.** Le message éditorial reste identique à v11 (MCTS n'est pas un optimiseur scalaire supérieur ; sa valeur = front Pareto multi-objectif), mais le gap MCTS–Random est désormais fortement significatif avec l'oracle d'activité. **Manuscrit : à décider (voir la demande éditoriale) — soit basculer le benchmark canonique sur v12-activity, soit le documenter comme analyse de sensibilité (SM).**
+
 ### 6.1 P4 benchmark relaunch (2026-07-29 09:06 UTC)
 
 Following the audit and fix of the P4 benchmark scripts (RDKit valence/kekulization filter, real OracleAggregator reward, and `--fragment-set medium`), the production benchmark array job was relaunched for the full 20-seed protocol.

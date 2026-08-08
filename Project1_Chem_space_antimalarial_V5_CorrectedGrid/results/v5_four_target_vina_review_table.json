@@ -1,7 +1,7 @@
 {
   "schema": "p1-v5-vina-4-target-consolidated/v1",
   "status": "RAW_DATA_ARTIFACT_FOR_INDEPENDENT_REVIEW",
-  "generated_utc": "2026-08-08T12:01:22.890808+00:00",
+  "generated_utc": "2026-08-08T14:45:39.657354+00:00",
   "note": "Raw rank-1 Vina affinities + composite-gate metrics per candidate per target. NO scoring, NO consensus, NO RRS/PNS. Consensus gate remains fail-closed until the independent-review register is signed.",
   "targets": {
     "PfDHFR": {
@@ -70,17 +70,30 @@
     "PfATP4": {
       "pdb": "9N10",
       "anchor": "conserved P-type ATPase residues 449-458 (CSDKTGT, phospho-D451) + 751-754 (DPPR)",
-      "status": "NOT_STARTED",
-      "center": null,
-      "box": null,
-      "provenance_status": null
+      "status": "COMPLETE_17",
+      "center": [
+        122.712,
+        125.545,
+        91.411
+      ],
+      "box": [
+        25.0,
+        25.0,
+        25.0
+      ],
+      "provenance_status": "VINA_GRID_DOCK_RANK1_VERIFIED_IN_GRID",
+      "affinity_range_kcal_mol": [
+        -7.57,
+        -4.63
+      ],
+      "n_pairs": 17
     }
   },
   "completeness": {
     "PfDHFR": "COMPLETE_17",
     "PfCRT": "COMPLETE_17",
     "PfClpP": "COMPLETE_17",
-    "PfATP4": "NOT_STARTED"
+    "PfATP4": "COMPLETE_17"
   },
   "rows": [
     {
@@ -88,221 +101,255 @@
       "aff_PfDHFR": -5.95,
       "aff_PfCRT": -6.48,
       "aff_PfClpP": -5.47,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -6.36,
       "gate_PfDHFR_anchor_min_A": 3.14,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.38,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 3.53,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 3.35,
+      "gate_PfATP4_frac": 1.0
     },
     {
       "candidate_id": "PP-02",
       "aff_PfDHFR": -5.56,
       "aff_PfCRT": -6.12,
       "aff_PfClpP": -5.91,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -6.59,
       "gate_PfDHFR_anchor_min_A": 3.47,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.38,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 3.29,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 2.97,
+      "gate_PfATP4_frac": 1.0
     },
     {
       "candidate_id": "PP-03",
       "aff_PfDHFR": -6.09,
       "aff_PfCRT": -6.63,
       "aff_PfClpP": -6.36,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -7.31,
       "gate_PfDHFR_anchor_min_A": 2.86,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.49,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 8.88,
-      "gate_PfClpP_frac": 0.967
+      "gate_PfClpP_frac": 0.967,
+      "gate_PfATP4_anchor_min_A": 2.0,
+      "gate_PfATP4_frac": 0.967
     },
     {
       "candidate_id": "PP-04",
       "aff_PfDHFR": -5.49,
       "aff_PfCRT": -5.33,
       "aff_PfClpP": -5.39,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -6.09,
       "gate_PfDHFR_anchor_min_A": 3.27,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.65,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 8.75,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 3.51,
+      "gate_PfATP4_frac": 1.0
     },
     {
       "candidate_id": "PP-05",
       "aff_PfDHFR": -6.29,
       "aff_PfCRT": -6.41,
       "aff_PfClpP": -6.47,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -6.38,
       "gate_PfDHFR_anchor_min_A": 2.17,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.23,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 8.74,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 2.65,
+      "gate_PfATP4_frac": 1.0
     },
     {
       "candidate_id": "PP-06",
       "aff_PfDHFR": -6.27,
       "aff_PfCRT": -7.91,
       "aff_PfClpP": -7.03,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -7.29,
       "gate_PfDHFR_anchor_min_A": 3.3,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.03,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 7.69,
-      "gate_PfClpP_frac": 0.964
+      "gate_PfClpP_frac": 0.964,
+      "gate_PfATP4_anchor_min_A": 1.98,
+      "gate_PfATP4_frac": 1.0
     },
     {
       "candidate_id": "PP-07",
       "aff_PfDHFR": -6.23,
       "aff_PfCRT": -6.63,
       "aff_PfClpP": -6.23,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -5.78,
       "gate_PfDHFR_anchor_min_A": 3.19,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.68,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 8.88,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 3.4,
+      "gate_PfATP4_frac": 1.0
     },
     {
       "candidate_id": "PP-08",
       "aff_PfDHFR": -4.93,
       "aff_PfCRT": -5.21,
       "aff_PfClpP": -5.05,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -5.49,
       "gate_PfDHFR_anchor_min_A": 3.4,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.27,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 8.78,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 2.88,
+      "gate_PfATP4_frac": 1.0
     },
     {
       "candidate_id": "PP-09",
       "aff_PfDHFR": -5.69,
       "aff_PfCRT": -6.87,
       "aff_PfClpP": -5.61,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -6.08,
       "gate_PfDHFR_anchor_min_A": 3.11,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.35,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 5.18,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 3.48,
+      "gate_PfATP4_frac": 1.0
     },
     {
       "candidate_id": "PP-10",
       "aff_PfDHFR": -6.35,
       "aff_PfCRT": -6.39,
       "aff_PfClpP": -6.02,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -6.67,
       "gate_PfDHFR_anchor_min_A": 3.19,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.52,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 5.26,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 3.51,
+      "gate_PfATP4_frac": 0.947
     },
     {
       "candidate_id": "PP-11",
       "aff_PfDHFR": -6.18,
       "aff_PfCRT": -6.38,
       "aff_PfClpP": -6.58,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -6.72,
       "gate_PfDHFR_anchor_min_A": 3.37,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.55,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 7.45,
-      "gate_PfClpP_frac": 0.963
+      "gate_PfClpP_frac": 0.963,
+      "gate_PfATP4_anchor_min_A": 2.1,
+      "gate_PfATP4_frac": 1.0
     },
     {
       "candidate_id": "PP-12",
       "aff_PfDHFR": -5.25,
       "aff_PfCRT": -6.36,
       "aff_PfClpP": -5.39,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -4.63,
       "gate_PfDHFR_anchor_min_A": 3.33,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.31,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 8.54,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 3.27,
+      "gate_PfATP4_frac": 1.0
     },
     {
       "candidate_id": "PP-13",
       "aff_PfDHFR": -5.92,
       "aff_PfCRT": -5.68,
       "aff_PfClpP": -6.45,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -7.57,
       "gate_PfDHFR_anchor_min_A": 3.2,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 4.08,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 7.37,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 2.7,
+      "gate_PfATP4_frac": 1.0
     },
     {
       "candidate_id": "PP-14",
       "aff_PfDHFR": -4.86,
       "aff_PfCRT": -5.33,
       "aff_PfClpP": -5.05,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -5.46,
       "gate_PfDHFR_anchor_min_A": 3.39,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.23,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 4.44,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 3.6,
+      "gate_PfATP4_frac": 1.0
     },
     {
       "candidate_id": "PP-15",
       "aff_PfDHFR": -6.04,
       "aff_PfCRT": -6.08,
       "aff_PfClpP": -6.37,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -7.02,
       "gate_PfDHFR_anchor_min_A": 2.7,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 4.02,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 5.15,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 3.43,
+      "gate_PfATP4_frac": 0.962
     },
     {
       "candidate_id": "PP-16",
       "aff_PfDHFR": -5.47,
       "aff_PfCRT": -6.2,
       "aff_PfClpP": -6.2,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -6.45,
       "gate_PfDHFR_anchor_min_A": 3.2,
       "gate_PfDHFR_frac": 0.944,
       "gate_PfCRT_anchor_min_A": 3.72,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 5.0,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 2.43,
+      "gate_PfATP4_frac": 1.0
     },
     {
       "candidate_id": "PP-17",
       "aff_PfDHFR": -5.27,
       "aff_PfCRT": -5.12,
       "aff_PfClpP": -5.34,
-      "aff_PfATP4": null,
+      "aff_PfATP4": -5.36,
       "gate_PfDHFR_anchor_min_A": 2.59,
       "gate_PfDHFR_frac": 1.0,
       "gate_PfCRT_anchor_min_A": 3.59,
       "gate_PfCRT_frac": 1.0,
       "gate_PfClpP_anchor_min_A": 5.55,
-      "gate_PfClpP_frac": 1.0
+      "gate_PfClpP_frac": 1.0,
+      "gate_PfATP4_anchor_min_A": 3.79,
+      "gate_PfATP4_frac": 1.0
     }
   ]
 }

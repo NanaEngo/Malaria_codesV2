@@ -1,6 +1,6 @@
 # AGENTS.md — Projet Malaria_codesV2
 
-**Dernière mise à jour :** 03 août 2026 — Reporting P4 séparé de BMAD : `P4_DATA_ANALYSIS_REPORT.md` est la boussole P4 (benchmark, Pareto, ablations, QMC) ; BMAD couvre P1–P3 uniquement. P3 : **benchmarks canoniques COMPLETS** (jobs 12698/12699/12700/12702) — classique n=19,836 (ECFP4 0.9475 ± 0.0045), **hybride canonique Hybrid RF AUC 0.8876 ± 0.0065** (p<0.0001 vs ECFP4), **ablation : QK = principal contributeur (Δ=−0.040)**, **QKS 6q C3-fix : quantum ≈ RBF à toutes les échelles** (n=5,000 p=0.419 ; n=19,849 p=0.060). **Manuscrit trimé 26→18 p.** (main 18 p. / 7 230 mots, SM 18 p., cover letter 1 p. ; fusion tables benchmark/hybrid, `tab:qkernel`→SM S13, titre harmonisé — BMAD §3.14, audit v3.1). **ChEMBL validation exécutée** : 10 leads queryés, analogues tous Inactive (Tanimoto 0.229–0.379) — résultat honnête négatif. ⚠️ **Fichiers canoniques P3 : `Paper3_Quantum_InspiredV2608.tex` (main) et `Paper3_Quantum_Inspired_SM_V2608.tex` (SM) — les anciennes versions (V2607, `_refined`) sont archivées dans `manuscript/LaTeX/archive/`; toute édition se fait sur les fichiers V2608 canoniques.
+**Dernière mise à jour :** 08 août 2026 — **P4 : benchmark v12-activity (oracle d'activité public ChEMBL, w=0.10) TERMINÉ (job 12865)** — Random 0.6724 > MCTS 0.6649 > GA 0.6453 > Greedy 0.4278 (MCTS vs Random p=0.0001, d=−1.11) ; manuscrit P4 basculé sur v12-activity (abstract, table, figure, SM, cover letter, recompilé RC=0). **P1 V5 : PfATP4/9N10 DÉBLOQUÉ (job 12864)** — 17/17 paires passent le gate composite (ancre D451/DPPR, aff −4.63 à −7.57) → table 17×4 COMPLETE, manuscrit V5 mis à jour (4 cibles). **P3 : extval descripteurs job 12860 FAILED** (BrokenProcessPool numpy 2.x↔loky) → fixé (worker top-level + threading + cache disque) → relancé job 12891 ; QKS extval 12863 encore en cours. Reporting P4 séparé de BMAD : `P4_DATA_ANALYSIS_REPORT.md` est la boussole P4 (benchmark, Pareto, ablations, QMC) ; BMAD couvre P1–P3 uniquement. P3 : **benchmarks canoniques COMPLETS** (jobs 12698/12699/12700/12702) — classique n=19,836 (ECFP4 0.9475 ± 0.0045), **hybride canonique Hybrid RF AUC 0.8876 ± 0.0065** (p<0.0001 vs ECFP4), **ablation : QK = principal contributeur (Δ=−0.040)**, **QKS 6q C3-fix : quantum ≈ RBF à toutes les échelles** (n=5,000 p=0.419 ; n=19,849 p=0.060). **Manuscrit trimé 26→18 p.** (main 18 p. / 7 230 mots, SM 18 p., cover letter 1 p. ; fusion tables benchmark/hybrid, `tab:qkernel`→SM S13, titre harmonisé — BMAD §3.14, audit v3.1). **ChEMBL validation exécutée** : 10 leads queryés, analogues tous Inactive (Tanimoto 0.229–0.379) — résultat honnête négatif. ⚠️ **Fichiers canoniques P3 : `Paper3_Quantum_InspiredV2608.tex` (main) et `Paper3_Quantum_Inspired_SM_V2608.tex` (SM) — les anciennes versions (V2607, `_refined`) sont archivées dans `manuscript/LaTeX/archive/`; toute édition se fait sur les fichiers V2608 canoniques.
 
 **GitHub :** https://github.com/NanaEngo/Malaria_codesV2
 
@@ -45,9 +45,10 @@
 
 ## 📊 État des Projets (aligné sur BMAD_Q1_DATA_ANALYSIS_REPORT.md pour P1–P3 et P4_DATA_ANALYSIS_REPORT.md pour P4)
 
-### P1 — Chemical Space & Docking ✅ (Soumission prête)
+### P1 — Chemical Space & Docking ✅ (V4 soumission prête ; V5 en cours)
 
 > ⚠️ **Manuscrit P1 canonique = V4** : `Project1_Chem_space_antimalarial_V4_CorrectedGrid/manuscript/Antimalarial_Candidates_African_NP_V2607.tex` + `_SM.tex` (V2 = legacy). Fixes audit 07/08 appliqués : SM S21 (rank 18 single-target, flag CYP3A4 0.876), `tab:selectivity` 993.8/283.5, S17 pass rates honnêtes (both-criteria 5%), main L461-464/L520-521 (19/20 CYP3A4), L285-289 ADMET (ρ ≤ 0.62). Compile propre (40 p. main, 48 p. SM).
+> 🔶 **P1 V5 (08/08/2026) : gate structural OUVERT sur 4 cibles** — PfDHFR/7F3Y (MTX A702), PfCRT/6UKJ (Y01), PfClpP/2F6I (triade Ser252/His223/Asp219 — 4GM2 = PfClpR corrigé), **PfATP4/9N10 DÉBLOQUÉ (job 12864)** : ancre biologique phospho-site D451 (CSDKTGT 449-458) + DPPR 751-754, centre `[122.712, 125.545, 91.411]` ; **17/17 paires passent le gate composite sur les 4 cibles** (aff PfATP4 −4.63 à −7.57) → **table 17×4 COMPLETE** (`results/v5_four_target_vina_affinities.csv`, review table 4× COMPLETE_17). Manuscrit V5 (`Antimalarial_Candidates_African_NP_V2608.tex`, 35 p.) mis à jour : gate 4 cibles, PfATP4 inclus ; compile RC=0. Register `structural_pocket_independent_review.json` : 4 ancres complètes, signature humaine `PENDING` — pas de consensus/RRS/PNS avant signature.
 
 | Composant | Statut | Résultat clé |
 |-----------|:------:|:-------------|
@@ -136,12 +137,12 @@
 | **Dépendances P5** | ✅ **Verrouillé 01/08** | torch 2.13.0+cu130 + PyG 2.8.0, transformers 5.14.1, datasets 5.0.1, deepchem 2.8.0 — `requirements.txt` |
 | **Lien P3** | ✅ **Défini** | Intégration features TDA/TNE (P3) comme input multi-modal |
 | **Lien P2** | ✅ **Défini** | H3 salience = bridge vers oracles RRS/PNS (P2/P4) |
-| **Dataset** | ✅ **Préparé** | n=19,836 (canonical) + validation externe MoleculeNet malaria n=22,072 |
+| **Dataset** | ✅ **Préparé** | n=19,836 (canonical) + validation externe MoleculeNet malaria n=22,267 |
 | **Baselines** | ✅ **ECFP4-RF figé** | random 0.9433 / scaffold 0.8300 ; réplication indépendante **PASS** (jobs 12844/12845) |
 | **Modèles** | ✅ **GIN + fusion + BERTa** | Hiérarchie scaffold : **ECFP4-RF 0.8300 > GIN-TFP 0.8138 > GIN-TNE 0.8090 > GIN 0.8047 > ChemBERTa 0.7867** (tous significativement pires, p<0.05 BH-FDR) |
 | **H2 ChemBERTa leak-fix** | ✅ **Complet** | **scaffold 0.7867 ± 0.0338** (Δ −0.043, p<0.0001) ; random 0.9121 ± 0.0047 — fuite inter-folds détectée/corrigée (v3-a) |
 | **H3 Interprétabilité** | ✅ **Données faites** | TFP : dims pers_img (33:58) dominantes (sal 0.079) ; TNE : top dims 68/43/92/66/165, top-10%=17.3% |
-| **Validation externe** | ✅ **Complée 08/08** | MoleculeNet malaria n=22,072 : ECFP4-RF 0.9192 > GIN 0.8843 (Δ=−0.035, p<0.0001) — verdict reproduit |
+| **Validation externe** | ✅ **Complète 08/08** | MoleculeNet malaria n=22,267 : ECFP4-RF 0.9190 > GIN 0.8843 (Δ=−0.035, p<0.0001) — verdict reproduit |
 | **Manuscript** | ✅ **`V2608` compilé (08/08)** | `P5_manuscript_V2608.pdf`, 0 erreur/TODO/undefined, cover letter JoC ✓ |
 | **L5 (Zenodo + GitHub)** | ⏳ **En attente** | DOI réservé, upload + release resté à faire — seul le lien ouvert |
 
@@ -159,6 +160,7 @@
 | Baselines (Random, Greedy, GA) | ✅ Implémentés | Benchmark protocol défini |
 | Benchmark protocol | ✅ Défini | 7 metrics, 20 seeds, 1000 oracle calls |
 | **Manuscrit — Section Results/Benchmark** | ✅ **Actualisé** | Benchmark v9 20 seeds intégré; QMC retiré du manuscrit (cleanup 29/07 ; diagnostic Tier 2 non publication-grade) |
+| **Benchmark v12-activity (oracle d'activité public)** | ✅ **Terminé (job 12865, 08/08)** | Récompense + proximité Tanimoto aux 19,321 actifs ChEMBL (w=0.10) : **Random 0.6724 ± 0.0055 > MCTS 0.6649 ± 0.0066 > GA 0.6453 ± 0.0121 > Greedy 0.4278** (MCTS vs Random t=−4.97 p=0.0001 d=−1.11 ; MCTS vs GA t=6.95 p<0.0001 ; MCTS vs Greedy t=157) — Greedy s'effondre (0.4278). **Manuscrit P4 basculé sur v12-activity** (abstract, tab:benchmark, fig, Methods weights, SM S2 diversité : MCTS 0.7732/19, Random 0.8046/20, GA 0.7761/12, Greedy 0/1 ; cover letter) — recompilé RC=0 (11 p. main, 4 p. SM). Data : `results/benchmark_molecules_opt_v12/` |
 | **.bib** | ✅ **Complété** | 30+ entrées, toutes citations résolues |
 | QMC validation | ⚠️ **Tier 1 GPU OK ; Tier 2 non publication-grade (diagnostic VMC/DMC terminé — verdict CORRIGÉ 01/08)** | pyscf 2.14.0 + xtb + gpu4pyscf 1.8.0 : SCF+molden OK (4/4, GPU ~56 s/cand). **PyQMC 0.8.1 installé** — Slater-only VMC H₂O = −75.09 correct. ⚠️ **Correction 01/08 (P4_DATA_ANALYSIS_REPORT.md §5.2, verdict v46) : le diagnostic v45 « chemin JastrowSpin défectueux » est RÉTRACTÉ** — `generate_jastrow(ion_cusp=False)` pose le cusp e-e `bcoeff=[-0.25,-0.50,-0.25]` **inconditionnellement**, donc un Jastrow « zéro-paramètre » n'est PAS exp(0)=1 ; le test A0 (acoeff+bcoeff explicitement nuls) donne `max|log J| = 0.000e+00` ⇒ **chemin `recompute()` numba CORRECT**. Backend **JAX cassé dans 0.8.1** (2 bugs `dot_general` (24,) vs (5,) / (24,) vs (25,) — mismatch cartésien/sphérique 24 vs 25 AOs) → **chemin numba = chemin de production**. DMC collapse 144-e confirmé par scale test (Slater-only −897/−900 vs SCF −864 ; Jastrow −867 ; garde runtime dans `p4_qmc_pipeline.py`). Production exigerait OPTIMIZE + nconfig ≥ 1000 + extrapolation τ→0. Doc : `docs/P4_QMC_FIX_STRATEGY.md` §7–8 |
 
@@ -330,6 +332,12 @@ git add -A && git commit -m "message" && git push origin master
 | 12699 | `p3_hybrid_canonical` | ✅ **Terminé** | **Hybrid RF AUC 0.8876 ± 0.0065** (p<0.0001) + ablation (QK Δ=−0.040 principal, TFP Δ=−0.014, TNE Δ=+0.011) |
 | 12700 | `p3_qks_n19849` | ✅ **Terminé** | QKS 6q C3-fix n=19,849 : Quantum 0.8230 vs RBF 0.8292 (p=0.060, ns) |
 | 12702 | `p3_qks_n5000` | ✅ **Terminé** | QKS 6q C3-fix n=5,000 : Quantum 0.8199 vs RBF 0.8260 (p=0.419, ns) |
+| 12860 | `p3_extval` (descripteurs) | ❌ **FAILED 08/08** | BrokenProcessPool numpy 2.x↔loky (phase TNE) ; TFP 22,447/22,447 OK en 129 min → fixé (worker top-level + threading + cache disque) |
+| 12891 | `p3_extval` (relancé) | 🔄 **En cours** | Extval descripteurs corrigée — cache TFP/TNE par phase, backend threading TNE |
+| 12863 | `p3_qks_extval` | 🔄 **En cours** | QKS 6q extval — kernel 8,100 blocs complet, phase fit SVM (3h+) |
+| 12864 | `p1_v5_vina_pfatp4` | ✅ **Terminé** | PfATP4/9N10 17 paires — 17/17 gate pass, aff −4.63 à −7.57 → table 17×4 COMPLETE |
+| 12865 | `p4_bench_v12` (array 0-19) | ✅ **Terminé** | Benchmark v12-activity 20 seeds : Random 0.6724 > MCTS 0.6649 > GA 0.6453 > Greedy 0.4278 |
+| 12885/12889/12890 | P5 kNN/metrics | 🔄 **En cours** | kNN ECFP4 (représentation vs modèle), cb_metrics, gnn_metrics |
 
 ## ❌ Leçons apprises (Navigation à vue interdite)
 
