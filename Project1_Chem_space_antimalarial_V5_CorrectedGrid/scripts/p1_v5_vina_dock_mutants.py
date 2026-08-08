@@ -15,8 +15,12 @@ converted to a binding constant; no consensus/RRS/PNS is computed here
 
 Outputs:
   results/rrs_pilot/vina_scores/<RECEPTOR>/<complex>/...
-  results/rrs_pilot/vina_scores/v5_mutant_vina_scores.csv
-  results/rrs_pilot/vina_scores/execution_provenance.json
+  results/rrs_pilot/vina_scores/v5_mutant_vina_scores_<TARGET>.csv   (per-target)
+  results/rrs_pilot/vina_scores/execution_provenance_<TARGET>.json
+
+The per-target CSV avoids clobbering when the PfDHFR and PfCRT panels run as
+two parallel SLURM jobs (12892/12893); p1_v5_rrs_merge_scores.py merges them
+into v5_mutant_vina_scores.csv for p1_v5_rrs_pilot.py.
 """
 from __future__ import annotations
 
@@ -157,8 +161,14 @@ def main() -> int:
                     help="single receptor label (smoke test); default = all")
     ap.add_argument("--limit-pairs", type=int, default=None)
     ap.add_argument("--output-root", type=Path, default=V5 / "results/rrs_pilot/vina_scores")
+    ap.add_argument("--out-csv", type=Path, default=None,
+                    help="per-target output CSV (default: v5_mutant_vina_scores_<TARGET>.csv "
+                         "in --output-root; avoids clobbering across parallel jobs)")
     ap.add_argument("--exhaustiveness", type=int, default=EXHAUSTIVENESS)
     args = ap.parse_args()
+
+    if args.out_csv is None:
+        args.out_csv = args.output_root / f"v5_mutant_vina_scores_{args.target}.csv"
 
     spec = TARGETS[args.target]
     require_file(Path(VINA), "AutoDock Vina")
@@ -221,7 +231,8 @@ def main() -> int:
             })
             print(f"{rlabel:16s} {r['complex_name']:10s} aff={aff:7.3f} amin={amin:5.2f} frac={frac:.3f}")
 
-    csv_path = out_root / "v5_mutant_vina_scores.csv"
+    csv_path = args.out_csv
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
     with csv_path.open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(records[0]))
         w.writeheader()
@@ -244,7 +255,7 @@ def main() -> int:
         "next_gate": "independent review of receptor identities and anchors; "
                      "then p1_v5_rrs_pilot.py may compute the per-target RRS",
     }
-    (out_root / "execution_provenance.json").write_text(
+    (out_root / f"execution_provenance_{args.target}.json").write_text(
         json.dumps(prov, indent=2, sort_keys=True) + "\n")
     print(json.dumps({"status": prov["status"], "target": args.target,
                       "records": len(records), "out": str(csv_path)}))

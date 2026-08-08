@@ -17,3 +17,7 @@ cd /home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V5_CorrectedG
 
 python scripts/p1_v5_vina_dock_mutants.py --target "$TARGET" \
     --output-root results/rrs_pilot/vina_scores
+
+# When both panels have finished, merge the per-target CSVs:
+#   python scripts/p1_v5_rrs_merge_scores.py
+# (run manually or via a follow-up job after 12892 + 12893 COMPLETE)
