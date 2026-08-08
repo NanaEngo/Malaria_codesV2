@@ -44,11 +44,11 @@ TARGETS = {
         "historical_config": "Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_6UKJ/config.txt",
     },
     "PfClpP": {
-        "pdb_id": "4GM2",
-        "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/4GM2.pdbqt",
-        "current_center": (26.19, 35.09, 24.72),
-        "proposed_v2_center": (26.19, 35.09, 24.72),
-        "historical_config": "Project1_Chem_space_antimalarial_V2_CorrectedGrid/Docking/Docking_4GM2/config.txt",
+        "pdb_id": "2F6I",
+        "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/2F6I.pdbqt",
+        "current_center": (-0.116, 40.446, 12.213),
+        "proposed_v2_center": (-0.116, 40.446, 12.213),
+        "historical_config": "P1V5_2F6I_PfClpP_verified_20260808",
     },
     "PfATP4": {
         "pdb_id": "9N10",
@@ -111,6 +111,8 @@ def main() -> int:
         raise SystemExit("FAIL-CLOSED expected 68 manifest and audit rows")
     if any(r["target"] == "PfClpP" and r["pdb_id"] == "4GM2" for r in manifest_rows):
         raise SystemExit("FAIL-CLOSED target identity mismatch: 4GM2 is PfClpR, not PfClpP")
+    if any(r["target"] == "PfClpP" and r["pdb_id"] != "2F6I" for r in manifest_rows):
+        raise SystemExit("FAIL-CLOSED PfClpP rows must reference the verified 2F6I receptor (EC 3.4.21.92)")
     audit_by_name = {r["complex_name"]: r for r in audit_rows}
     records = []
     receptor_hashes = {}

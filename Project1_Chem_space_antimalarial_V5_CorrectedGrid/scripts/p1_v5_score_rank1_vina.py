@@ -41,7 +41,7 @@ MEEKO = shutil.which("mk_prepare_ligand.py") or "/home/nanaengo/miniforge3/envs/
 TARGETS = {
     "PfDHFR": {"pdb_id": "7F3Y", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/7F3Y.pdbqt", "center": (1.33, -1.733, -23.842)},
     "PfCRT": {"pdb_id": "6UKJ", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/6UKJ.pdbqt", "center": (152.99, 151.042, 159.379)},
-    "PfClpP": {"pdb_id": "4GM2", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/4GM2.pdbqt", "center": (26.19, 35.09, 24.72)},
+    "PfClpP": {"pdb_id": "2F6I", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/2F6I.pdbqt", "center": (-0.116, 40.446, 12.213)},
     "PfATP4": {"pdb_id": "9N10", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/9N10.pdbqt", "center": (134.84, 133.10, 97.63)},
 }
 BOX = (25.0, 25.0, 25.0)
@@ -100,6 +100,8 @@ def read_manifest() -> list[dict[str, str]]:
             raise SystemExit(f"FAIL-CLOSED unexpected target: {r['target']}")
         if r["target"] == "PfClpP" and r["pdb_id"] == "4GM2":
             raise SystemExit("FAIL-CLOSED target identity mismatch: 4GM2 is PfClpR, not PfClpP")
+        if r["target"] == "PfClpP" and r["pdb_id"] != "2F6I":
+            raise SystemExit("FAIL-CLOSED PfClpP rows must reference the verified 2F6I receptor (EC 3.4.21.92)")
         if not r["candidate_id"] or not r["ligand_description"]:
             raise SystemExit(f"FAIL-CLOSED incomplete manifest row: {r['complex_name']}")
     return rows

@@ -37,11 +37,11 @@ TARGETS = {
         "anchor_policy": "Y01 identity and relevance to the inhibitor cavity require independent review",
     },
     "PfClpP": {
-        "pdb_id": "4GM2",
-        "pdb": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/4GM2.pdb",
-        "center": [26.19, 35.09, 24.72],
-        "evidence_class": "TARGET_IDENTITY_MISMATCH_BLOCKED",
-        "anchor_policy": "RCSB 4GM2 is PfClpR (inactive paralog/subunit), not PfClpP; do not use this receptor for a PfClpP claim until a PfClpP structure is supplied and independently verified.",
+        "pdb_id": "2F6I",
+        "pdb": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/2F6I.pdb",
+        "center": [-0.116, 40.446, 12.213],
+        "evidence_class": "CATALYTIC_TRIAD_REVIEW_REQUIRED",
+        "anchor_policy": "RCSB 2F6I is the genuine PfClpP catalytic domain (EC 3.4.21.92, UniProt O97252, El Bakkouri et al. 2010); 4GM2 is PfClpR (inactive, UniProt Q8IL98) and must not be used. Pocket center = centroid of catalytic Ser/His/Asp residues across the heptamer; independent review still required.",
     },
     "PfATP4": {
         "pdb_id": "9N10",

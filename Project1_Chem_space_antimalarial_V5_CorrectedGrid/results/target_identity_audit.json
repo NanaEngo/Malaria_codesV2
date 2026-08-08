@@ -1,8 +1,9 @@
 {
-  "schema": "p1-v5-target-identity-audit/v1",
-  "status": "IDENTITY_MISMATCH_BLOCKS_INHERITED_V5_PANEL",
+  "schema": "p1-v5-target-identity-audit/v2",
+  "status": "PFP_CLPP_RECEPTOR_CORRECTED_PENDING_INDEPENDENT_REVIEW",
   "generated_utc": "2026-08-07",
-  "source": "RCSB PDB entry metadata and local PDB headers",
+  "corrected_utc": "2026-08-08",
+  "source": "RCSB PDB entry metadata, local PDB headers, and UniProt mapping (verified 2026-08-08 via data.rcsb.org and rest.uniprot.org)",
   "targets": {
     "PfDHFR": {
       "declared_pdb": "7F3Y",
@@ -15,10 +16,14 @@
       "decision": "IDENTITY_CONFIRMED_PROXY_POCKET_NOT_ACCEPTED"
     },
     "PfClpP": {
-      "declared_pdb": "4GM2",
-      "identity": "Plasmodium falciparum ClpR (inactive paralog/subunit), not PfClpP",
-      "decision": "TARGET_IDENTITY_MISMATCH_BLOCKED",
-      "authoritative_url": "https://www.rcsb.org/structure/4GM2"
+      "declared_pdb_old": "4GM2",
+      "declared_pdb_corrected": "2F6I",
+      "old_identity": "Plasmodium falciparum ClpR (inactive paralog/subunit), not PfClpP (UniProt Q8IL98; El Bakkouri et al. 2013 'Structural Insights into the Inactive Subunit of the Apicoplast-localized Caseinolytic Protease Complex')",
+      "new_identity": "Genuine PfClpP catalytic domain (EC 3.4.21.92, UniProt O97252, El Bakkouri et al. 2010 'The Clp chaperones and proteases of the human malaria parasite Plasmodium falciparum'; 2.45 A resolution, heptamer chains A-G)",
+      "decision": "RECEPTOR_CORRECTED_CATALYTIC_TRIAD_REVIEW_REQUIRED",
+      "pocket_center_angstrom": [-0.116, 40.446, 12.213],
+      "pocket_center_basis": "Centroid of catalytic Ser/His/Asp residues across the heptamer (2F6I coordinate frame); the old 4GM2 center (26.19, 35.09, 24.72) is NOT transferable to the 2F6I frame and must not be reused",
+      "authoritative_url": "https://www.rcsb.org/structure/2F6I"
     },
     "PfATP4": {
       "declared_pdb": "9N10",
@@ -29,11 +34,11 @@
   "consequence": {
     "inherited_manifest_68_pairs": "SUPERSEDED_NOT_ACCEPTED",
     "inherited_raw_diffdock_audit": "SUPERSEDED_NOT_ACCEPTED",
-    "vina_score_only": "BLOCKED",
+    "vina_score_only": "BLOCKED_UNTIL_2F6I_DIFFDOCK_RERUN",
     "consensus_scores_written": false,
     "rrs_pns_updated": false,
     "diffdock_launched_after_correction": false,
     "gromacs_launched_after_correction": false
   },
-  "required_repair": "Supply a verified PfClpP structure, regenerate the manifest, and independently review all four receptor identities before any new run."
+  "required_repair": "The 17 PfClpP DiffDock poses were generated on 4GM2 (wrong receptor, different coordinate frame) and are unusable: re-run DiffDock on 2F6I for the 17 PfClpP pairs, then re-verify rank-1 IN_GRID containment in the 2F6I pocket box, then independently review all four receptor identities before any new scoring/consensus/RRS/PNS run."
 }

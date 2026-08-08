@@ -4,7 +4,7 @@
   "consensus_scores_written": false,
   "diffdock_launched": false,
   "full_run_authorized": false,
-  "generated_utc": "2026-08-07T22:04:45.904330+00:00",
+  "generated_utc": "2026-08-08T09:18:29.433640+00:00",
   "gromacs_launched": false,
   "independent_review_status": "PENDING",
   "read_only": true,
@@ -61,22 +61,22 @@
       "pdb_sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562"
     },
     "PfClpP": {
-      "anchor_policy": "RCSB 4GM2 is PfClpR (inactive paralog/subunit), not PfClpP; do not use this receptor for a PfClpP claim until a PfClpP structure is supplied and independently verified.",
+      "anchor_policy": "RCSB 2F6I is the genuine PfClpP catalytic domain (EC 3.4.21.92, UniProt O97252, El Bakkouri et al. 2010); 4GM2 is PfClpR (inactive, UniProt Q8IL98) and must not be used. Pocket center = centroid of catalytic Ser/His/Asp residues across the heptamer; independent review still required.",
       "box_A": [
         25.0,
         25.0,
         25.0
       ],
-      "evidence_class": "TARGET_IDENTITY_MISMATCH_BLOCKED",
+      "evidence_class": "CATALYTIC_TRIAD_REVIEW_REQUIRED",
       "historical_v2_center_A": [
-        26.19,
-        35.09,
-        24.72
+        -0.116,
+        40.446,
+        12.213
       ],
       "non_water_hetatm_anchors": [],
-      "pdb": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/4GM2.pdb",
-      "pdb_id": "4GM2",
-      "pdb_sha256": "2130e9fdde2a56b5c31eef94a620624679af009f06bbd5e145e6053a82117fcc"
+      "pdb": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/2F6I.pdb",
+      "pdb_id": "2F6I",
+      "pdb_sha256": "12d02a92e72ab52267fcfb2f7fad2520271b7b311d7f538c16f6395d9f9f62d6"
     },
     "PfDHFR": {
       "anchor_policy": "MTX-like HETATM identity is inventoried but not independently validated here; site definition must be explicit and is not replaced by raw centroid",

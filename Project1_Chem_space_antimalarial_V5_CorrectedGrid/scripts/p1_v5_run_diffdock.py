@@ -49,7 +49,7 @@ PINNED_DIFFDOCK_PYTHON = Path("/home/nanaengo/miniforge3/envs/diffdock/bin/pytho
 VINA_GRID = {
     "PfDHFR": {"pdb_id": "7F3Y", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/7F3Y.pdbqt", "center": [1.33, -1.733, -23.842], "box": [25.0, 25.0, 25.0]},
     "PfCRT": {"pdb_id": "6UKJ", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/6UKJ.pdbqt", "center": [152.99, 151.042, 159.379], "box": [25.0, 25.0, 25.0]},
-    "PfClpP": {"pdb_id": "4GM2", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/4GM2.pdbqt", "center": [26.19, 35.09, 24.72], "box": [25.0, 25.0, 25.0]},
+    "PfClpP": {"pdb_id": "2F6I", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/2F6I.pdbqt", "center": [-0.116, 40.446, 12.213], "box": [25.0, 25.0, 25.0]},
     "PfATP4": {"pdb_id": "9N10", "receptor": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/9N10.pdbqt", "center": [134.84, 133.10, 97.63], "box": [25.0, 25.0, 25.0]},
 }
 
@@ -117,7 +117,7 @@ def require_full_authorization() -> None:
     expected_pdbs = {
         "PfDHFR": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/7F3Y.pdb",
         "PfCRT": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/6UKJ.pdb",
-        "PfClpP": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/4GM2.pdb",
+        "PfClpP": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/2F6I.pdb",
         "PfATP4": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/9N10.pdb",
     }
     if set(structural.get("targets", {})) != set(expected_pdbs):
