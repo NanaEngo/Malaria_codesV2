@@ -90,6 +90,8 @@ Use the same vocabulary in all projects:
 
 ### P1.3 Resistance/RRS extension
 
+**Status (08/08/2026 soir) — PILOT EN COURS :** panel mutant uniforme préparé (8 récepteurs protéine-seule, frames rmsd=0.0) via `scripts/p1_v5_rrs_prepare_receptors.py` ; dockings Vina soumis (jobs **12892** PfDHFR / **12893** PfCRT) ; RRS par-cible via `scripts/p1_v5_rrs_pilot.py` (protocole P2, baseline |ΔG_WT|≥5.0) ; **découverte : 6UKJ = isoforme 7G8 (fond K76T) → baseline WT PfCRT = révertant T76K** ; dossier de revue prêt-à-signer `results/INDEPENDENT_REVIEW_DOSSIER_v2.md`. Verdict = `DOCKING_RRS_PILOT_PENDING_REVIEW` (aucune revendication manuscrit avant signature du register).
+
 - Define a **P1 named-lead resistance panel** using PfDHFR N51I/C59R/S108N/I164L and PfCRT K76T/K76A, with target-specific WT baselines.
 - If only docking is available, report “docking-RRS pilot,” not MD-RRS.
 - For MD, use candidate-specific CHARMM36m+CGenFF or a fully documented alternative consistently across protein and ligand; at least 3 independent replicas per candidate/target pair, 50–100 ns production per replica, bound-fraction/contact/H-bond QC, and blind analysis rules.
