@@ -1,0 +1,42 @@
+{
+  "protocol": "GIN frozen-split replication (tag _replic)",
+  "tolerance_auc": 0.01,
+  "rho_min": 0.7,
+  "splits": {
+    "random": {
+      "canonical_exists": true,
+      "replic_exists": true,
+      "status": "PASS",
+      "n_seeds": 5,
+      "canonical_per_seed": {
+        "0": 0.91115,
+        "1": 0.91266,
+        "2": 0.90722,
+        "3": 0.91065,
+        "4": 0.90734
+      },
+      "replic_per_seed": {
+        "0": 0.91036,
+        "1": 0.91005,
+        "2": 0.90708,
+        "3": 0.91019,
+        "4": 0.91064
+      },
+      "max_abs_diff": 0.0033,
+      "mean_canonical": 0.9098,
+      "mean_replic": 0.90966,
+      "delta_mean": -0.00014,
+      "spearman_rho": 0.1,
+      "spearman_p": 0.8729,
+      "inter_seed_var_canonical": 5e-06,
+      "rho_informative": false
+    },
+    "scaffold": {
+      "canonical_exists": true,
+      "replic_exists": false,
+      "status": "PENDING",
+      "note": "replication output not present yet"
+    }
+  },
+  "verdict": "PENDING"
+}

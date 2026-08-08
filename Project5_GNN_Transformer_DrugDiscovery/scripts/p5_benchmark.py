@@ -130,12 +130,15 @@ class P5Benchmark:
     def __init__(self, model_name: str, split_type: str = "random",
                  device: str = "auto", dry_run: bool = False,
                  ckpt_path: Path | None = None, curves_only: bool = False,
-                 epochs: int = EPOCHS):
+                 epochs: int = EPOCHS, tag: str = ""):
         self.model_name = model_name
         self.split_type = split_type
         self.device = get_device(device)
         self.dry_run = dry_run
-        self.ckpt_path = ckpt_path or (P5_ROOT / "results" / f"p5_{model_name}_{split_type}_ckpt.json")
+        # ``tag`` (e.g. "_replic") suffixes every output file so replication
+        # runs never overwrite canonical results.
+        self.tag = tag
+        self.ckpt_path = ckpt_path or (P5_ROOT / "results" / f"p5_{model_name}_{split_type}_ckpt{tag}.json")
         self.curves_only = curves_only
         if epochs < 1:
             raise ValueError("epochs must be >= 1")
@@ -340,14 +343,14 @@ class P5Benchmark:
         return results
 
     def _save_curves(self, results: list):
-        p = P5_ROOT / "results" / f"p5_{self.model_name}_{self.split_type}_curves.json"
+        p = P5_ROOT / "results" / f"p5_{self.model_name}_{self.split_type}_curves{self.tag}.json"
         curves = [{"fold": r["fold"], "seed": r["seed"], "curve": r["curve"]} for r in results]
         json.dump({"model": self.model_name, "split": self.split_type, "curves": curves}, open(p, "w"), indent=2)
         print(f"Curves written to {p} (canonical ckpt/CSV untouched)")
 
     def _accumulate_salience(self, sal: np.ndarray):
         """Mean |W| desc-projection per dim, accumulated across folds/seeds."""
-        p = P5_ROOT / "results" / f"p5_{self.model_name}_{self.split_type}_salience.json"
+        p = P5_ROOT / "results" / f"p5_{self.model_name}_{self.split_type}_salience{self.tag}.json"
         data = {"dim": list(range(len(sal))), "salience_mean": None, "n_seen": 0}
         if p.exists():
             data = json.load(open(p))
@@ -371,6 +374,8 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--epochs", type=int, default=EPOCHS)
     ap.add_argument("--curves-only", action="store_true")
+    ap.add_argument("--tag", default="",
+                    help="Output suffix (e.g. '_replic'); canonical files untouched when empty")
     args = ap.parse_args()
 
     bench = P5Benchmark(
@@ -380,12 +385,13 @@ def main():
         args.dry_run,
         curves_only=args.curves_only,
         epochs=args.epochs,
+        tag=args.tag,
     )
     results = bench.run()
 
     # save CSV (never in dry-run or curves-only)
     if not args.dry_run and not args.curves_only:
-        out_csv = P5_ROOT / "results" / f"p5_{args.model}_{args.split}_results.csv"
+        out_csv = P5_ROOT / "results" / f"p5_{args.model}_{args.split}_results{args.tag}.csv"
         pd.DataFrame(results).to_csv(out_csv, index=False)
         print(f"Results written to {out_csv}")
 
