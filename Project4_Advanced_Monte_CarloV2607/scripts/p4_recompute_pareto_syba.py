@@ -63,8 +63,9 @@ def main() -> None:
 
     # Recompute Pareto front / hypervolume on active objectives
     # Objectives: mpo (+), syba (+), sa (-), rrs (+), pns (+)
-    objectives = ["mpo", "syba", "sa", "rrs", "pns"]
-    maximize = [True, True, False, True, True]
+    # v12: 6 objectives — the public-activity oracle is a Pareto objective.
+    objectives = ["mpo", "syba", "sa", "rrs", "pns", "activity"]
+    maximize = [True, True, False, True, True, True]
     front = ParetoFront(objectives=objectives, maximize=maximize)
 
     for smi, row in updated:

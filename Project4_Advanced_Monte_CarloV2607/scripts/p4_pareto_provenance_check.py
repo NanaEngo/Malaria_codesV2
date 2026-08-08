@@ -42,8 +42,11 @@ PARETO_DIR = PROJECT_DIR / "results" / "pareto"
 MERGED_CSV = PARETO_DIR / "merged_pareto_front.csv"
 RECOMPUTE_LOG = PARETO_DIR / "merged_pareto_front_recompute.log"
 
-OBJECTIVES = ["mpo", "syba", "sa", "rrs", "pns"]
-MAXIMIZE = [True, True, False, True, True]
+# v12: 6 objectives — the public-activity oracle is a Pareto objective.
+# Historical v11 artifacts lack the activity column; scores.get(obj, 0.0)
+# yields a constant 0 there, which _detect_active_objectives auto-excludes.
+OBJECTIVES = ["mpo", "syba", "sa", "rrs", "pns", "activity"]
+MAXIMIZE = [True, True, False, True, True, True]
 
 # Manuscript Table 2 (tab:pareto) as rendered in P4_Pareto_MCTS_JoC_refined.tex
 MANUSCRIPT_TABLE = {
