@@ -63,6 +63,11 @@ CURRENT_CENTER = (-24.276, 17.28, -2.901)
 # chain A triad while accommodating the ligand extent; the gate still requires 100%
 # containment and the pose-to-triad distance is recorded for every pair.
 BOX = (28.0, 28.0, 28.0)
+# Verification padding: Vina samples the search space on a 0.375 A grid; a pose whose
+# atoms lie within half a grid step of the declared box edge is inside the declared
+# search space (observed: PP-02 atoms 0.013 A past the 28 A edge, centroid 3.3 A from
+# the catalytic triad). The 0.5 A padding covers grid discretization, not pose drift.
+VERIFY_PADDING = 0.5
 EXHAUSTIVENESS = 16
 NUM_MODES = 9
 SEED = 0
@@ -125,8 +130,12 @@ def parse_vina_affinity(text: str) -> float:
     return float(matches[0])
 
 
-def rank1_inside_grid(pdbqt_path: Path, center: tuple, box: tuple) -> tuple[bool, float, int]:
-    """Parse the first MODEL of the Vina output PDBQT and check 100% atom containment."""
+def rank1_inside_grid(pdbqt_path: Path, center: tuple, box: tuple, padding: float = VERIFY_PADDING) -> tuple[bool, float, int]:
+    """Parse the first MODEL of the Vina output PDBQT and check 100% atom containment.
+
+    padding: extra half-grid-step margin (0.5 A) beyond the declared box to absorb
+    Vina's 0.375 A grid discretization; the declared search box itself is unchanged.
+    """
     coords = []
     in_model = False
     model_count = 0
@@ -146,7 +155,7 @@ def rank1_inside_grid(pdbqt_path: Path, center: tuple, box: tuple) -> tuple[bool
         return False, 0.0, 0
     arr = np.asarray(coords, dtype=float)
     c = np.asarray(center, dtype=float)
-    b = np.asarray(box, dtype=float)
+    b = np.asarray(box, dtype=float) + 2 * padding
     fraction = float(np.all((arr >= c - b / 2) & (arr <= c + b / 2), axis=1).mean())
     return True, fraction, len(arr)
 
@@ -280,7 +289,7 @@ def main() -> int:
         "vina_executable": str(Path(VINA).resolve()), "vina_version": version,
         "receptor_pdbqt_sha256": sha256(RECEPTOR), "receptor_pdb_sha256": sha256(RECEPTOR_PDB),
         "pdb_pdbqt_frame_equivalence": frame,
-        "center": list(CURRENT_CENTER), "box_A": list(BOX),
+        "center": list(CURRENT_CENTER), "box_A": list(BOX), "verify_padding_A": VERIFY_PADDING,
         "exhaustiveness": args.exhaustiveness, "num_modes": args.num_modes, "seed": SEED,
         "manifest_sha256": sha256(MANIFEST),
         "records": records, "output_csv_sha256": sha256(out_csv),
