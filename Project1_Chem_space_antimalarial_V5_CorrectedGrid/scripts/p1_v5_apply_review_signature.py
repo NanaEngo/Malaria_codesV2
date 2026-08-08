@@ -130,6 +130,7 @@ def main() -> int:
     for t, d in zip(TARGETS, decisions):
         if t in reg.get("targets", {}):
             reg["targets"][t]["independent_signature"] = d
+            reg["targets"][t]["decision"] = "ACCEPTED" if d == "PASS" else "REJECTED"
             reg["targets"][t]["review_date"] = args.date
     reg["updated_utc"] = __import__("datetime").datetime.now(
         __import__("datetime").timezone.utc).isoformat()
@@ -137,7 +138,8 @@ def main() -> int:
     print("✅ Register updated to STRUCTURAL_POCKET_REVIEWED_AND_ACCEPTED")
     print(f"   reviewer: {args.reviewer} | date: {args.date}")
     print(f"   decisions: {dict(zip(TARGETS, decisions))}")
-    print("   consensus/RRS/PNS gates are now OPEN (fail-closed scripts will pass).")
+    print("   all PASS targets now have decision=ACCEPTED — the submission-mode")
+    print("   gate (--require-signature) will pass for those targets.")
     return 0
 
 

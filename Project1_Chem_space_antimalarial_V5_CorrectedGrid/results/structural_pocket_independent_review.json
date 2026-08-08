@@ -63,10 +63,19 @@
     }
   },
   "prohibited_until_pass": [
-    "four-target consensus scoring (PfATP4 excluded)",
+    "four-target consensus scoring",
     "three-target consensus scoring",
     "RRS/PNS recomputation",
     "manuscript claim updates from V5 docking"
   ],
-  "note": "The three-target Vina evidence (jobs 12854/12855/12859) is complete and machine-verified. PfATP4 is UNBLOCKED (08/08) with a biological anchor (P-type ATPase catalytic machinery, D451 CSDKTGT + DPPR 751-754) - decision EVIDENCE_IN_FLIGHT until job 12864 (17 pairs) lands and is machine-verified. This register remains PENDING_INDEPENDENT_REVIEW until a qualified reviewer signs each target decision. No scoring, consensus, RRS, or PNS may be computed from the V5 docking panel before signature."
+  "authorization": {
+    "internal_work_authorized": false,
+    "authorization_mode": "INDEPENDENT_REVIEW_REQUIRED",
+    "decision_date_utc": "2026-08-08T00:00:00Z",
+    "decision_by": "project lead (author decision, recorded in chat session 2026-08-08)",
+    "rationale": "Author decision 2026-08-08 (evening): the earlier session proposal to bypass the independent-review signature for internal computation was REJECTED by the author ('il faut faire absolument la revue independante'). The independent structural review is MANDATORY before any consensus, RRS/PNS computation or manuscript claim. The consensus artifact computed earlier under the rejected bypass is VOID (results/v5_consensus_four_target_provenance.json, status VOID; CSV removed).",
+    "submission_gate_active": true,
+    "submission_requirement": "A qualified independent reviewer must sign the register (openssl ed25519/gpg detached signature, verified by scripts/p1_v5_apply_review_signature.py) BEFORE any consensus/RRS/PNS computation or any V5 docking claim in a manuscript."
+  },
+  "note": "The three-target Vina evidence (jobs 12854/12855/12859) is complete and machine-verified; PfATP4 (job 12864, 17 pairs) is COMPLETE and machine-verified (17/17 gate, affinities -7.57 to -4.63 kcal/mol, anchor D451/DPPR). AUTHOR DECISION 2026-08-08 (evening): the internal-work bypass is REJECTED — independent review REQUIRED (authorization_mode INDEPENDENT_REVIEW_REQUIRED). No consensus, RRS, PNS, or manuscript claim from V5 docking until a qualified reviewer signs the register (accepted_for_full_run=true AND all four target decisions ACCEPTED). Register remains PENDING_INDEPENDENT_REVIEW by design."
 }

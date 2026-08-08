@@ -2,7 +2,7 @@
 """P1 V5 — docking-RRS pilot: per-target Resistance Resilience Score.
 
 Input:  results/rrs_pilot/vina_scores/v5_mutant_vina_scores.csv
-        (uniform protein-only receptor panel; jobs 12892/12893)
+        (uniform protein-only receptor panel; jobs 12894 PfDHFR / 12895 PfCRT)
 WT baselines: PfDHFR_WT (7F3Y frame), PfCRT_WT_K76 (T76K revertant, 6UKJ frame).
 
 Protocol (mirrors P2 md_calculate_rrs_acsi_pns.py, per-target definition):
@@ -16,7 +16,9 @@ every), B (>=70% every but not all >=80%), C (>=80% for a subset), D (<60%
 for any mutant).
 
 Status: PILOT — this artifact is NOT accepted for manuscript claims until the
-independent structural review register is signed (accepted_for_full_run=true).
+independent structural review register is signed (accepted_for_full_run=true
+AND all targets ACCEPTED; author decision 2026-08-08: independent review
+MANDATORY, no internal-work bypass).
 """
 from __future__ import annotations
 
@@ -66,7 +68,7 @@ def classify(rrs: dict, dg_wt: float) -> str:
 
 def main() -> int:
     if not SCORES.exists():
-        print(f"FAIL-CLOSED missing scores: {SCORES} (jobs 12892/12893 not finished?)")
+        print(f"FAIL-CLOSED missing scores: {SCORES} (jobs 12894/12895 not finished?)")
         return 1
     df = pd.read_csv(SCORES)
     reg = json.loads(REGISTER.read_text()) if REGISTER.exists() else {}
@@ -101,8 +103,8 @@ def main() -> int:
     out.to_csv(OUT_CSV, index=False)
     prov = {
         "schema": "p1-v5-rrs-pilot/v1",
-        "status": "DOCKING_RRS_PILOT_COMPUTED_PENDING_REVIEW" if not accepted
-                  else "DOCKING_RRS_ACCEPTED",
+        "status": "DOCKING_RRS_ACCEPTED" if accepted
+                  else "DOCKING_RRS_PILOT_COMPUTED_PENDING_REVIEW",
         "accepted_for_full_run": accepted,
         "protocol": "per-target RRS = |dG_mut,t|/|dG_WT,t|*100, WT binding baseline "
                     "|dG_WT,t| >= 5.0 kcal/mol, no target mixing (P2 definition)",
@@ -112,7 +114,8 @@ def main() -> int:
         "n_binders_dhfr": int((out["target"] == "PfDHFR").sum()),
         "n_binders_crt": int((out["target"] == "PfCRT").sum()),
         "note": "PILOT artifact; manuscript claims BLOCKED until the independent "
-                "structural review register is signed.",
+                "structural review register is signed (accepted_for_full_run=true "
+                "AND all targets ACCEPTED).",
     }
     OUT_PROV.write_text(json.dumps(prov, indent=2, sort_keys=True) + "\n")
     print(json.dumps(prov, indent=2, sort_keys=True))
