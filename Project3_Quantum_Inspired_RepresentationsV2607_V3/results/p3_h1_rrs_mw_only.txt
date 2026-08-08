@@ -1,0 +1,22 @@
+==============================================================================
+P3 H1-RRS PARTIAL CORRELATION -- MW-ONLY MODEL
+==============================================================================
+Date: 2026-08-08 03:56
+Final n (listwise): 494
+
+Partial Spearman = Spearman on ranks, then partial Pearson on ranks,
+controlling for MW only. Companion to the four-confounder model in
+p3_h1_rrs_partial_corr.py (MW, n_rings, Fsp3, H0_count).
+
+predictor                rho_total   p_total  rho_part_MW  p_part_MW    n
+------------------------------------------------------------------------------
+H1_count                    0.2399    0.0000      -0.0180     0.6903  494
+H1_entropy                  0.2338    0.0000      -0.0707     0.1170  494
+H1_total_pers_prod          0.1638    0.0003      -0.0084     0.8521  494
+H1_total_pers_sum           0.2361    0.0000      -0.0312     0.4891  494
+H1_max_pers                -0.0173    0.7009       0.0005     0.9906  494
+------------------------------------------------------------------------------
+
+Ancillary: Spearman H1_count vs molecular weight
+  rho = 0.5042  p = 3.232e-33  n = 494
+

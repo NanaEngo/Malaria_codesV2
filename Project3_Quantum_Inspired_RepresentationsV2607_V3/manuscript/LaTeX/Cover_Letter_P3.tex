@@ -1,0 +1,56 @@
+% ============================================================================
+% Cover Letter — Paper 3
+% Target: Journal of Cheminformatics
+% ============================================================================
+\documentclass[11pt,a4paper]{letter}
+
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+\signature{Myke Vital Sao Temgoua \\ \small Corresponding Author}
+\address{%
+  University of Yaound\'{e} I \\
+  Department of Physics, Faculty of Science \\
+  P.O. Box 812, Yaound\'{e}, Cameroon \\
+  \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm}
+}
+
+\begin{document}
+
+\begin{letter}{%
+  The Editors-in-Chief \\
+  \textit{Journal of Cheminformatics} \\
+  BioMed Central \\
+  London, UK
+}
+
+\enlargethispage{2\baselineskip}
+
+\opening{Dear Editors,}
+
+We are pleased to submit our manuscript, \textbf{``Topological and tensor-network representations resolve chemical paradoxes in African antimalarial natural products''}, for consideration as an Original Research Article in the \textit{Journal of Cheminformatics}.
+
+This work introduces three molecular representations---Topological Fingerprint (TFP), Tensor Network Embedding (TNE), and Quantum Kernel Score (QKS)---and benchmarks them against classical fingerprints on a library of 19{,}836 African natural-product-derived antimalarial candidates. Persistent homology resolves a scaffold paradox (92.6\% Tanimoto novelty with 69.3\% scaffold recovery) by separating H$_0$ (connectivity) from H$_1$ (ring topology). TNE achieves a 6.1$\times$ real-atom mean compression while retaining binding-relevant information. Quantum kernels, evaluated under a rigorously controlled protocol, are statistically indistinguishable from a properly tuned classical RBF baseline at all sample sizes (6-qubit QKS AUC 0.823 versus RBF 0.829 at $n=19{,}849$, $p=0.060$).
+
+We report honest negative results: on the corrected canonical benchmark, classical ECFP4 remains the strongest single descriptor for primary screening (AUC 0.948). The hybrid descriptor (TFP+TNE+QK) achieves AUC 0.888, significantly below ECFP4 ($p<0.0001$) yet above every standalone quantum-inspired descriptor, with QKS as the principal positive contributor (ablation $\Delta=-0.040$). Cross-paper analysis with a companion molecular-dynamics study shows that H$_1$ count correlates with resistance-resilience scores, although the association is mediated by molecular size.
+
+Recent systematic reviews of quantum computing in bioinformatics and drug discovery have called for rigorous empirical evaluation of near-term quantum methods on real pharmaceutical datasets. Our openly deposited benchmark answers this call with a fully reproducible protocol, deposited data, and transparent reporting of both positive and negative findings. We believe the work aligns closely with the scope of the \textit{Journal of Cheminformatics}: reusable open-source molecular descriptors, a carefully controlled benchmark, and an honest assessment of when quantum-inspired methods do not outperform classical baselines.
+
+All data and code will be deposited on Zenodo (reserved DOI: \url{https://doi.org/10.5281/zenodo.19608875}) upon publication and are available to reviewers on request via the public repository (\url{https://github.com/NanaEngo/Malaria_codesV2}) under the MIT licence. This work is original, is not under consideration elsewhere, and all authors have approved the submission.
+
+\closing{We thank you for your consideration.}
+
+\ps{%
+\textbf{Suggested reviewers:}\\
+\begin{itemize}[leftmargin=*, itemsep=1pt]
+  \item Prof.\ Bing Wang (topological methods in drug discovery)
+  \item Dr.\ Guillaume Godin (RDKit, natural product cheminformatics)
+  \item Prof.\ Gisbert Schneider (generative molecular design)
+\end{itemize}
+}
+
+\end{letter}
+\end{document}
