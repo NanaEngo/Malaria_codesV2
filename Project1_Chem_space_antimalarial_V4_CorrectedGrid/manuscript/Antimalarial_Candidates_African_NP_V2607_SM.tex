@@ -1331,6 +1331,32 @@ The enrichment validation demonstrated excellent discriminative performance acro
 
 These results document the evaluated computational workflow for antimalarial candidate prioritization and support testing dual-consensus scoring as a screening filter; independent inactive panels are required to quantify false-positive reduction.
 
+\section*{Reproducibility table}
+
+\begin{table}[!htbp]
+\centering
+\caption{Machine-readable reproducibility record for the primary computational outputs of this study. For each output file (all versioned in the project repository \url{https://github.com/NanaEngo/Malaria_codesV2}), the row count, generating script (as archived in \texttt{scripts/}), fixed random seed where applicable, SHA-256 prefix of the versioned file, and status are listed. \textit{SHA-256 prefixes allow reviewers to verify that the archived file matches the manuscript-reported values; scripts and raw inputs are versioned alongside.}}
+\label{tab:reproducibility}
+\begin{tabular}{@{}l r l l l l@{}}
+\toprule
+\textbf{Output file} & \textbf{Rows} & \textbf{Generating script} & \textbf{Seed} & \textbf{SHA-256[12]} & \textbf{Status} \\
+\midrule
+\texttt{eos7kpb\_malaria\_final\_screening.csv} & \num{65856} & curated input & --- & \texttt{aa1d5762f6fe} & versioned \\
+\texttt{c6\_primary\_leads\_synthesisable.csv} & \num{19913} & lead-identification pipeline & --- & \texttt{19e84743e802} & versioned \\
+\texttt{p1\_scaffold\_leap.csv} & \num{5000} & \texttt{p1\_scaffold\_tanimoto.py} & --- & \texttt{526afab1c38e} & versioned \\
+\texttt{p1\_stoned\_leap\_results.csv} & \num{65856} & \texttt{p1\_stoned\_scaffold\_leap.py} & fixed & \texttt{8c7104f1a7e9} & versioned \\
+\texttt{p1\_enrichment\_chembl\_benchmark.csv} & \num{3} & \texttt{p1\_enrichment\_validation.py} & \num{42} & \texttt{f82e49ef86ab} & versioned \\
+\texttt{p1\_mcmc\_trajectory.csv} & \num{5001} & \texttt{p1\_mcmc\_latent.py} & fixed & \texttt{c6caac532391} & versioned \\
+\texttt{p1\_mcmc\_generated.csv} & \num{8} & \texttt{p1\_mcmc\_latent.py} & fixed & \texttt{83e98466586a} & versioned \\
+\texttt{p1\_mpo\_sensitivity.csv} & \num{25} & \texttt{p1\_mpo\_sensitivity.py} & fixed & \texttt{e05994460ee6} & versioned \\
+\texttt{p1\_admet\_crossval.csv} & \num{20} & \texttt{p1\_admet\_crossval.py} & fixed & \texttt{bba5f0719a11} & versioned \\
+\texttt{p1\_scaffold\_tanimoto.csv} & \num{5000} & \texttt{p1\_scaffold\_tanimoto.py} & --- & \texttt{3573b33debda} & versioned \\
+\texttt{c3\_selectivity\_index.csv} & \num{810} & \texttt{p1\_admet\_crossval.py} & fixed & \texttt{20424d658673} & versioned \\
+\texttt{v2\_centroid\_scores.csv} & \num{484} & clustering pipeline & fixed & \texttt{ebb86e6dfa74} & versioned \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 % References formerly listed in a mid-document "References" section (8 entries).
 % Six are not cited inline in the SM body, so \nocite surfaces them in the
 % bibliography without altering the body text. Corso2023 and Swanson2024 are
