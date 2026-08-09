@@ -18,8 +18,10 @@ inactives — built for P5 external validation, `p5_public_chembl_malaria.csv`):
 
 Protocol (identical to p3_classical_benchmark_19849.py):
     - 5-fold StratifiedKFold (shuffle, random_state=42), RF 200 trees
-    - paired comparisons on the EXACT same molecule set (valid TFP ∩ valid TNE
-      ∩ parseable by RDKit) — no silent imputation (C2 principle)
+    - intention-to-evaluate comparisons on the EXACT same molecule set; failed
+      TFP/TNE embeddings are explicit zero-vector failure penalties. A separate
+      complete-case sensitivity analysis is implemented in
+      p3_external_validation_sensitivity.py.
     - per-fold paired t-tests vs ECFP4 (df=4) + Benjamini-Hochberg FDR
 
 Outputs:
@@ -211,7 +213,7 @@ def load_public(csv_path: Path, limit: int | None = None):
     return smiles_list, y
 
 
-def compute_tfp(smiles_list: list[str], n_jobs: int) -> tuple[np.ndarray, int]:
+def compute_tfp(smiles_list: list[str], n_jobs: int) -> tuple[np.ndarray, int, list[int]]:
     """TFP (78-d) via the canonical TDA pipeline (3D ETKDG + ripser)."""
     from joblib import Parallel, delayed
     t0 = time.perf_counter()
@@ -225,9 +227,10 @@ def compute_tfp(smiles_list: list[str], n_jobs: int) -> tuple[np.ndarray, int]:
             rows.append(np.zeros(TFP_DIM, dtype=np.float32))
         else:
             rows.append(tfp.astype(np.float32))
+    failed_indices = [i for i, tfp in enumerate(results) if tfp is None]
     print(f"  [TFP] {len(smiles_list) - n_fail}/{len(smiles_list)} valid "
           f"({n_fail} failed) in {time.perf_counter() - t0:.0f}s")
-    return np.array(rows), n_fail
+    return np.array(rows), n_fail, failed_indices
 
 
 def _tne_one(args_tuple: tuple[str, int]):
@@ -249,7 +252,7 @@ def _tne_one(args_tuple: tuple[str, int]):
 
 
 def compute_tne(smiles_list: list[str], n_jobs: int,
-                bond_dim: int = BOND_DIM) -> tuple[np.ndarray, int]:
+                bond_dim: int = BOND_DIM) -> tuple[np.ndarray, int, list[int]]:
     """TNE (bond_dim×bond_dim×3) via the canonical TNE pipeline.
 
     Uses a top-level worker and the threading backend: loky process-based
@@ -270,38 +273,58 @@ def compute_tne(smiles_list: list[str], n_jobs: int,
             rows.append(np.zeros(TNE_DIM, dtype=np.float32))
         else:
             rows.append(emb)
+    failed_indices = [i for i, emb in enumerate(results) if emb is None]
     print(f"  [TNE] {len(smiles_list) - n_fail}/{len(smiles_list)} valid "
           f"({n_fail} failed) in {time.perf_counter() - t0:.0f}s")
-    return np.array(rows), n_fail
+    return np.array(rows), n_fail, failed_indices
 
 
 def _load_cache(name: str, smiles_list: list[str],
-                bond_dim: int) -> tuple[np.ndarray | None, int]:
+                bond_dim: int) -> tuple[np.ndarray | None, int, list[int]]:
     """Load a per-phase descriptor cache if it matches this exact panel."""
     arr_p = RESULTS_DIR / f"p3_extval_{name}.npy"
     meta_p = RESULTS_DIR / f"p3_extval_{name}_meta.json"
     if not (arr_p.exists() and meta_p.exists()):
-        return None, 0
+        return None, 0, []
     try:
         meta = json.loads(meta_p.read_text())
     except Exception:
-        return None, 0
+        return None, 0, []
     if meta.get("smiles") != smiles_list or meta.get("bond_dim") != bond_dim:
-        return None, 0
+        return None, 0, []
     try:
         arr = np.load(arr_p)
     except Exception:
-        return None, 0
+        return None, 0, []
     if arr.shape[0] != len(smiles_list):
-        return None, 0
-    return arr, int(meta.get("n_fail", 0))
+        return None, 0, []
+    failed = meta.get("failed_indices")
+    if failed is None:
+        # Backward-compatible migration for the pre-mask cache. The legacy
+        # cache contract encoded failures as all-zero vectors; persist that
+        # provenance immediately so future sensitivity runs do not infer it
+        # silently again.
+        failed = np.flatnonzero(np.isclose(arr, 0.0).all(axis=1)).astype(int).tolist()
+        meta["failed_indices"] = [int(i) for i in failed]
+        meta["failure_mask_source"] = "legacy_zero_vector_migration"
+        meta["failure_mask_migration_note"] = (
+            "Inferred from the pre-mask cache's documented zero-vector failure encoding."
+        )
+        meta_p.write_text(json.dumps(meta, indent=2) + "\n")
+    failed = [int(i) for i in failed]
+    if len(set(failed)) != len(failed) or any(i < 0 or i >= len(smiles_list) for i in failed):
+        return None, 0, []
+    if int(meta.get("n_fail", len(failed))) != len(failed):
+        return None, 0, []
+    return arr, int(meta.get("n_fail", len(failed))), failed
 
 
 def _save_cache(name: str, arr: np.ndarray, smiles_list: list[str],
-                n_fail: int, bond_dim: int) -> None:
+                n_fail: int, bond_dim: int, failed_indices: list[int]) -> None:
     """Persist a per-phase descriptor cache (resumable runs)."""
     np.save(RESULTS_DIR / f"p3_extval_{name}.npy", arr)
-    meta = {"smiles": smiles_list, "n_fail": int(n_fail), "bond_dim": int(bond_dim)}
+    meta = {"smiles": smiles_list, "n_fail": int(n_fail), "bond_dim": int(bond_dim),
+            "failed_indices": [int(i) for i in failed_indices]}
     (RESULTS_DIR / f"p3_extval_{name}_meta.json").write_text(json.dumps(meta))
 
 
@@ -329,32 +352,39 @@ def main() -> int:
     print(f"Dataset: {csv_path.name}, n={n}, "
           f"active={int(y_raw.sum())}, inactive={int(n - y_raw.sum())}")
 
-    # 1) Topological descriptors first (expensive), then restrict all other
-    #    descriptors to the intersection of valid molecules (C2 no-imputation).
+    # 1) Topological descriptors first (expensive). The historical external
+    #    result uses the full intention-to-evaluate panel: failed embeddings are
+    #    represented by explicit zero vectors, which penalises representation
+    #    failures rather than silently dropping molecules. Complete-case
+    #    sensitivity is handled by p3_external_validation_sensitivity.py.
     #    Per-phase disk cache makes interrupted runs resumable (TFP took ~2 h
     #    in job 12860 before the TNE pickling crash lost everything).
-    X_tfp_c, n_fail_tfp_c = _load_cache("tfp", smiles_list, args.bond_dim)
+    X_tfp_c, n_fail_tfp_c, failed_tfp_c = _load_cache("tfp", smiles_list, args.bond_dim)
     if X_tfp_c is not None:
-        X_tfp, n_fail_tfp = X_tfp_c, n_fail_tfp_c
+        X_tfp, n_fail_tfp, failed_tfp = X_tfp_c, n_fail_tfp_c, failed_tfp_c
         print(f"  [cache] TFP loaded from disk (n_fail={n_fail_tfp})")
     else:
-        X_tfp, n_fail_tfp = compute_tfp(smiles_list, args.n_jobs)
-        _save_cache("tfp", X_tfp, smiles_list, n_fail_tfp, args.bond_dim)
+        X_tfp, n_fail_tfp, failed_tfp = compute_tfp(smiles_list, args.n_jobs)
+        _save_cache("tfp", X_tfp, smiles_list, n_fail_tfp, args.bond_dim, failed_tfp)
         print(f"  [cache] TFP saved ({X_tfp.shape})")
 
-    X_tne_c, n_fail_tne_c = _load_cache("tne", smiles_list, args.bond_dim)
+    X_tne_c, n_fail_tne_c, failed_tne_c = _load_cache("tne", smiles_list, args.bond_dim)
     if X_tne_c is not None:
-        X_tne, n_fail_tne = X_tne_c, n_fail_tne_c
+        X_tne, n_fail_tne, failed_tne = X_tne_c, n_fail_tne_c, failed_tne_c
         print(f"  [cache] TNE loaded from disk (n_fail={n_fail_tne})")
     else:
-        X_tne, n_fail_tne = compute_tne(smiles_list, args.n_jobs, args.bond_dim)
-        _save_cache("tne", X_tne, smiles_list, n_fail_tne, args.bond_dim)
+        X_tne, n_fail_tne, failed_tne = compute_tne(smiles_list, args.n_jobs, args.bond_dim)
+        _save_cache("tne", X_tne, smiles_list, n_fail_tne, args.bond_dim, failed_tne)
         print(f"  [cache] TNE saved ({X_tne.shape})")
 
     ok = np.isfinite(X_tfp).all(axis=1) & np.isfinite(X_tne).all(axis=1)
     valid_idx = np.where(ok)[0]
     n_valid = len(valid_idx)
-    print(f"\nValid panel (TFP ∩ TNE): {n_valid}/{n} "
+    complete_case_idx = np.setdiff1d(
+        np.arange(n, dtype=int), np.unique(np.r_[failed_tfp, failed_tne])
+    )
+    n_complete_case = len(complete_case_idx)
+    print(f"\nITT panel: {n}/{n}; complete-case panel: {n_complete_case}/{n} "
           f"(TFP fails {n_fail_tfp}, TNE fails {n_fail_tne})")
     if n_valid < 2:
         print("ERROR: valid panel too small — aborting")
@@ -392,6 +422,7 @@ def main() -> int:
     print(f"\nSaved: {out_csv}")
 
     # 4) Per-fold AUC per descriptor → paired t-test vs ECFP4 + BH-FDR.
+    # The report explicitly records the ITT zero-failure-penalty mode.
     auc_by_desc = {
         d: results_df.loc[(results_df.descriptor == d) & (results_df.classifier == "rf"), "auc"]
         .dropna().values
@@ -432,6 +463,12 @@ def main() -> int:
         "dataset": str(csv_path),
         "n_raw": int(n),
         "n_valid_panel": int(n_valid),
+        "n_itt_panel": int(n),
+        "n_complete_case_panel": int(n_complete_case),
+        "n_tfp_failures": int(n_fail_tfp),
+        "n_tne_failures": int(n_fail_tne),
+        "evaluation_mode": "intention_to_evaluate_zero_vector_failure_penalty",
+        "failure_indices": {"TFP": failed_tfp, "TNE": failed_tne},
         "n_active": int(y.sum()),
         "n_inactive": int(n_valid - y.sum()),
         "bond_dim": args.bond_dim,

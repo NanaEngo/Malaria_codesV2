@@ -1,0 +1,37 @@
+{
+  "system_name": "201_PfDHFR",
+  "cohort_id": "P2_PARENT_STUDY_MD_4",
+  "temperature_k": 310.15,
+  "protein_force_field": "CHARMM36-jul2022",
+  "ligand_force_field": "GAFF2 (AM1-BCC via ACPYPE)",
+  "water_model": "TIP3P",
+  "topology_sha256": "df65c801b18ecd370fbb0ea8e1dec08391c943ca8ed0d8f87a9358ecdc1103d0",
+  "coordinates_sha256": "73a28198c754e1a435a7217a87026c9f970dc2d3dd6482697c544ff303873541",
+  "checkpoint_sha256": "e0f4a3d2cfcd2f51a4fde3c6316c753cbbd58054fb0b064beb2399673420b7f4",
+  "ions_sha256": "fa43467afd32b336f18bdd0a81f097dbe7fd82619c449f819473096ed396f7d9",
+  "parameter_source": "ACPYPE-generated GAFF2 parameters, AM1-BCC charges (parent-study protocol, documented in BMAD corrected 2026-08-07)",
+  "parameter_version": "acpype 2022.0 / GAFF2 (amber.ff, parmchk2)",
+  "cgenff_provenance": {
+    "stream_file": "not applicable (GAFF2/AM1-BCC via ACPYPE; no CGenFF stream)",
+    "converter": "acpype",
+    "penalty_max": 0
+  },
+  "parameter_files": [
+    {
+      "path": "ligand_201.itp",
+      "sha256": "fe404c1ee677d6f5f04cced64c17c9cc380519b35e0d4268fdb4963354809d20"
+    },
+    {
+      "path": "posre.itp",
+      "sha256": "09a01bf33a4116915a989ec4c4f503209b886f76673c8285bfa79f5cbf6855c3"
+    },
+    {
+      "path": "posre_bsite.itp",
+      "sha256": "4ba203e33f14cd411de45ae1d5a50d45bf31976d43d1a2c9644ebba086b46822"
+    }
+  ],
+  "source_manifest_path": "",
+  "source_manifest_sha256": "",
+  "ligand_formal_charge": 0,
+  "ligand_stereochemistry": "as-built (parent-study coordinate set)"
+}

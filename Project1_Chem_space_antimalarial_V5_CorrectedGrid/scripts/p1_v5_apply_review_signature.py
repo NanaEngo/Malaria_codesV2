@@ -1,145 +1,173 @@
 #!/usr/bin/env python3
-"""P1 V5 — apply an independently signed review to the structural-pocket register.
+"""Apply a verified external V5 review payload to the structural register.
 
-Gate-opener script: verifies the detached signature produced by the independent
-reviewer (openssl ed25519 or gpg detached signature), then updates
-results/structural_pocket_independent_review.json to
-STRUCTURAL_POCKET_REVIEWED_AND_ACCEPTED with accepted_for_full_run=true.
-
-The signature MUST be verified against the reviewer's public key before any
-register field is modified. If verification fails, the script exits with code
-1 and does NOT touch the register. This script never simulates a review: it
-only applies a signature that was produced externally.
-
-Usage (openssl ed25519, per the signature protocol):
-  python scripts/p1_v5_apply_review_signature.py \
-      --reviewer "Dr Jane Doe, University of X" \
-      --date 2026-08-09 \
-      --sig results/structural_pocket_independent_review.json.sig \
-      --pubkey results/reviewer_ed25519_public.pem
+The reviewer signs an immutable JSON payload, not the mutable register. This
+script verifies the Ed25519 signature and payload invariants before writing the
+register. It never creates a signature and has no force/bypass option.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
+import re
 import subprocess
-import tempfile
-from datetime import date
+from datetime import datetime, timezone
 from pathlib import Path
 
 V5 = Path(__file__).resolve().parents[1]
+REPO = V5.parents[1]
+SCRIPT_DIR = Path(__file__).resolve().parent
+import sys
+sys.path.insert(0, str(SCRIPT_DIR))
+from p1_development_policy import is_pre_submission, is_submission_reactivation_active  # noqa: E402
 REGISTER = V5 / "results/structural_pocket_independent_review.json"
-TARGETS = ["PfDHFR", "PfClpP", "PfCRT", "PfATP4"]
+REQUIRED = ["PfDHFR", "PfCRT", "PfClpP", "PfATP4"]
 
 
-def sha256(p: Path) -> str:
-    import hashlib
+def sha256(path: Path) -> str:
     h = hashlib.sha256()
-    with p.open("rb") as f:
-        for b in iter(lambda: f.read(1 << 20), b""):
-            h.update(b)
+    with path.open("rb") as fh:
+        for block in iter(lambda: fh.read(1 << 20), b""):
+            h.update(block)
     return h.hexdigest()
 
 
-def verify_openssl(reg: Path, sig: Path, pubkey: Path) -> bool:
-    cmd = ["openssl", "pkeyutl", "-verify", "-pubin", "-inkey", str(pubkey),
-           "-rawin", "-in", str(reg), "-sigfile", str(sig)]
-    r = subprocess.run(cmd, capture_output=True, text=True)
-    return r.returncode == 0 and "Signature Verified" in r.stdout + r.stderr
-
-
-def verify_gpg(reg: Path, sig: Path) -> bool:
-    # detached signature verified against the default keyring
-    with tempfile.TemporaryDirectory() as d:
-        work = Path(d)
-        (work / "reg.json").write_bytes(reg.read_bytes())
-        (work / "reg.json.sig").write_bytes(sig.read_bytes())
-        r = subprocess.run(["gpg", "--batch", "--verify",
-                            str(work / "reg.json.sig"), str(work / "reg.json")],
-                           capture_output=True, text=True)
-        return r.returncode == 0
+def safe_path(value: object) -> Path | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    raw = Path(value)
+    path = raw if raw.is_absolute() else REPO / raw
+    try:
+        path.resolve().relative_to(REPO.resolve())
+    except ValueError:
+        return None
+    return path
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--register", type=Path, default=REGISTER,
-                    help="register file to verify+update (default: canonical; "
-                         "use a copy in tests)")
-    ap.add_argument("--reviewer", required=True, help="reviewer identity string")
-    ap.add_argument("--date", default=date.today().isoformat(), help="review date")
-    ap.add_argument("--sig", required=True, type=Path, help="detached signature file")
-    ap.add_argument("--pubkey", type=Path, default=None,
-                    help="public key for openssl verification (required for openssl sigs)")
-    ap.add_argument("--decisions", default="PASS,PASS,PASS,PASS",
-                    help="comma-separated PASS/FAIL for PfDHFR,PfClpP,PfCRT,PfATP4")
-    ap.add_argument("--force", action="store_true",
-                    help="apply without signature verification (DANGEROUS, test only)")
+    ap.add_argument("--payload", type=Path, required=True,
+                    help="immutable JSON review payload that was signed externally")
+    ap.add_argument("--sig", type=Path, required=True,
+                    help="detached Ed25519 signature over --payload")
+    ap.add_argument("--pubkey", type=Path, required=True,
+                    help="trusted public key for --sig")
+    ap.add_argument("--register", type=Path, default=REGISTER)
     args = ap.parse_args()
 
-    if not args.register.exists():
-        print(f"FAIL-CLOSED missing register: {args.register}")
+    for label, path in (("payload", args.payload), ("signature", args.sig),
+                        ("public key", args.pubkey), ("register", args.register)):
+        if not path.is_file():
+            print(f"FAIL-CLOSED: missing {label}: {path}")
+            return 1
+    try:
+        payload = json.loads(args.payload.read_text(encoding="utf-8"))
+        reg = json.loads(args.register.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"FAIL-CLOSED: invalid JSON input: {exc}")
         return 1
-    if not args.sig.is_file():
-        print(f"FAIL-CLOSED missing signature file: {args.sig}")
+    if not isinstance(payload, dict):
+        print("FAIL-CLOSED: payload is not a JSON object")
+        return 1
+    if not is_submission_reactivation_active():
+        print("PROMOTION DORMANT: explicit author reactivation is not active in P1_DEVELOPMENT_PHASE.json")
+        print("The V5 register was not modified.")
+        return 1
+    proc = subprocess.run([
+        "openssl", "pkeyutl", "-verify", "-pubin", "-inkey", str(args.pubkey),
+        "-rawin", "-in", str(args.payload), "-sigfile", str(args.sig),
+    ], capture_output=True, text=True, check=False)
+    if proc.returncode != 0 or "Signature Verified" not in proc.stdout + proc.stderr:
+        print("FAIL-CLOSED: detached Ed25519 signature verification failed")
+        print("The V5 register was not modified.")
+        return 1
+    trusted_fp = os.environ.get("P1_TRUSTED_REVIEWER_PUBKEY_SHA256", "").lower()
+    trusted_identity = os.environ.get("P1_TRUSTED_REVIEWER_IDENTITY", "")
+    actual_fp = sha256(args.pubkey)
+    if not re.fullmatch(r"[0-9a-f]{64}", trusted_fp) or trusted_fp != actual_fp:
+        print("FAIL-CLOSED: public key is not bound to the external trust anchor")
+        return 1
+    if not trusted_identity.strip() or payload.get("reviewer_identity") != trusted_identity:
+        print("FAIL-CLOSED: reviewer identity is not bound to the external trust anchor")
+        return 1
+    if payload.get("status") != "STRUCTURAL_POCKET_REVIEWED_AND_ACCEPTED":
+        print("FAIL-CLOSED: payload status is not STRUCTURAL_POCKET_REVIEWED_AND_ACCEPTED")
+        return 1
+    if payload.get("accepted_for_full_run") is not True:
+        print("FAIL-CLOSED: payload does not accept the full run")
+        return 1
+    if not isinstance(payload.get("reviewer_identity"), str) or not payload["reviewer_identity"].strip():
+        print("FAIL-CLOSED: reviewer identity missing")
+        return 1
+    if payload.get("reviewer_independence_attestation") is not True or not isinstance(payload.get("conflict_of_interest_declaration"), str) or not payload["conflict_of_interest_declaration"].strip():
+        print("FAIL-CLOSED: reviewer attestations are missing or incorrectly typed")
+        return 1
+    if payload.get("experimental_claims_certified") is not False:
+        print("FAIL-CLOSED: payload must explicitly exclude experimental certification")
+        return 1
+    authorization = reg.get("authorization", {})
+    if authorization.get("authorization_mode") != "INDEPENDENT_REVIEW_REQUIRED" or authorization.get("internal_work_authorized") is not False or authorization.get("submission_gate_active") is not False:
+        print("FAIL-CLOSED: pending register authorization invariants are invalid")
+        return 1
+    if payload.get("authorization_mode") != "INDEPENDENT_REVIEW_REQUIRED" or payload.get("internal_work_authorized") is not False or payload.get("submission_gate_active") is not True:
+        print("FAIL-CLOSED: signed payload authorization invariants are invalid")
+        return 1
+    required_criteria = ["target_identity_verified", "pocket_residues_or_reference_ligand_justified", "receptor_grid_frame_equivalence_verified", "exact_config_smoke_rank1_100pct_in_grid", "all_four_targets_individually_accepted"]
+    criteria = payload.get("criteria")
+    if not isinstance(criteria, dict) or any(criteria.get(key) is not True for key in required_criteria):
+        print("FAIL-CLOSED: payload criteria are incomplete")
+        return 1
+    decisions = payload.get("target_decisions")
+    if set(decisions or {}) != set(REQUIRED) or any(decisions[t] != "ACCEPTED" for t in REQUIRED):
+        print("FAIL-CLOSED: payload must ACCEPT all four targets")
+        return 1
+    if payload.get("criteria", {}).get("all_four_targets_individually_accepted") is not True:
+        print("FAIL-CLOSED: payload criteria do not accept all four targets")
         return 1
 
-    # --- 1. verify the signature BEFORE touching the register ---
-    verified = False
-    if not args.force:
-        if args.pubkey is not None and args.pubkey.is_file():
-            verified = verify_openssl(args.register, args.sig, args.pubkey)
-            if not verified:
-                print("FAIL-CLOSED openssl signature verification FAILED.")
-                print("The register was NOT modified. Check sig/pubkey or use gpg "
-                      "detached signature with --pubkey omitted.")
-                return 1
-        else:
-            verified = verify_gpg(args.register, args.sig)
-            if not verified:
-                print("FAIL-CLOSED gpg signature verification FAILED.")
-                print("The register was NOT modified.")
-                return 1
-    else:
-        print("⚠️  --force: applying WITHOUT cryptographic verification "
-              "(test only; never use for the real gate).")
+    # Bind the accepted payload to the current evidence before mutating the
+    # register. The reviewer may include these hashes in the signed payload.
+    for field, path in (("four_target_table_sha256", V5 / "results/v5_four_target_vina_affinities.csv"),
+                        ("review_table_sha256", V5 / "results/v5_four_target_vina_review_table.json"),
+                        ("target_identity_audit_sha256", V5 / "results/target_identity_audit.json")):
+        if not path.is_file() or payload.get(field) != sha256(path):
+            print(f"FAIL-CLOSED: payload evidence hash mismatch: {field}")
+            return 1
 
-    decisions = [d.strip().upper() for d in args.decisions.split(",")]
-    if len(decisions) != 4 or any(d not in ("PASS", "FAIL") for d in decisions):
-        print(f"FAIL-CLOSED decisions must be 4x PASS/FAIL, got {decisions}")
-        return 1
-
-    # --- 2. apply the review ---
-    reg = json.loads(args.register.read_text())
-    reg["status"] = "STRUCTURAL_POCKET_REVIEWED_AND_ACCEPTED"
-    reg["accepted_for_full_run"] = True
-    reg["reviewer_identity"] = args.reviewer
-    reg["review_date"] = args.date
-    reg["signed_review_artifact"] = str(args.sig)
-    reg["signed_review_sha256"] = sha256(args.sig)
-    if args.pubkey is not None and args.pubkey.is_file():
-        reg["trusted_public_key_artifact"] = str(args.pubkey)
-        reg["trusted_public_key_sha256"] = sha256(args.pubkey)
-    reg["criteria"] = {
-        "target_identity_verified": True,
-        "pocket_residues_or_reference_ligand_justified": True,
-        "receptor_grid_frame_equivalence_verified": True,
-        "exact_config_smoke_rank1_100pct_in_grid": True,
-        "all_four_targets_individually_accepted": all(d == "PASS" for d in decisions),
-        "three_target_evidence_complete_awaiting_review": True,
-    }
-    for t, d in zip(TARGETS, decisions):
-        if t in reg.get("targets", {}):
-            reg["targets"][t]["independent_signature"] = d
-            reg["targets"][t]["decision"] = "ACCEPTED" if d == "PASS" else "REJECTED"
-            reg["targets"][t]["review_date"] = args.date
-    reg["updated_utc"] = __import__("datetime").datetime.now(
-        __import__("datetime").timezone.utc).isoformat()
-    args.register.write_text(json.dumps(reg, indent=1, sort_keys=True) + "\n")
-    print("✅ Register updated to STRUCTURAL_POCKET_REVIEWED_AND_ACCEPTED")
-    print(f"   reviewer: {args.reviewer} | date: {args.date}")
-    print(f"   decisions: {dict(zip(TARGETS, decisions))}")
-    print("   all PASS targets now have decision=ACCEPTED — the submission-mode")
-    print("   gate (--require-signature) will pass for those targets.")
+    reg.update({
+        "status": payload["status"],
+        "reviewer_identity": payload["reviewer_identity"],
+        "review_date": payload.get("review_date"),
+        "reviewer_independence_attestation": payload["reviewer_independence_attestation"],
+        "conflict_of_interest_declaration": payload["conflict_of_interest_declaration"],
+        "accepted_for_full_run": True,
+        "signed_review_artifact": str(args.payload),
+        "signed_review_sha256": sha256(args.payload),
+        "detached_signature_artifact": str(args.sig),
+        "detached_signature_sha256": sha256(args.sig),
+        "trusted_public_key_artifact": str(args.pubkey),
+        "trusted_public_key_sha256": sha256(args.pubkey),
+        "experimental_claims_certified": False,
+        "criteria": criteria,
+        "authorization": {
+            "authorization_mode": payload["authorization_mode"],
+            "internal_work_authorized": payload["internal_work_authorized"],
+            "submission_gate_active": payload["submission_gate_active"],
+        },
+        "four_target_table_sha256": payload["four_target_table_sha256"],
+        "review_table_sha256": payload["review_table_sha256"],
+        "target_identity_audit_sha256": payload["target_identity_audit_sha256"],
+        "updated_utc": datetime.now(timezone.utc).isoformat(),
+    })
+    for target in REQUIRED:
+        reg.setdefault("targets", {}).setdefault(target, {})["decision"] = "ACCEPTED"
+        reg["targets"][target]["independent_signature"] = "ACCEPTED"
+        reg["targets"][target]["review_date"] = payload.get("review_date")
+    args.register.write_text(json.dumps(reg, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    print(f"V5 review applied: {args.register}")
+    print("status=STRUCTURAL_POCKET_REVIEWED_AND_ACCEPTED accepted_for_full_run=true")
     return 0
 
 

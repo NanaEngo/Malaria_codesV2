@@ -1,0 +1,71 @@
+{
+  "schema": "p1-v6-integrated-data-figures/v2",
+  "generated_utc": "2026-08-09T16:55:12.741146+00:00",
+  "status": "EXPLORATORY_UNVERIFIED_VOID_FOR_SUBMISSION",
+  "join_rule": "V6 candidate manifest canonical_smiles -> P2 source tables smiles; never row-order join",
+  "scientific_boundary": [
+    "Vina scores retained target-wise; mean_completed_targets excluded",
+    "RRS/ACSI/PNS are descriptive source-panel metrics already present in P2 artifacts",
+    "no new consensus, biological validation, or acceptance claim was generated",
+    "RRS missing cells remain missing where non-binding wild-type targets were excluded"
+  ],
+  "n_candidates": 17,
+  "sources": {
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/v6_candidate_manifest.csv": "37b203faf21b165b8a8448b166e75eab24aeb8f5b3ac6a4046d3f33668227765",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/v5_four_target_vina_affinities.csv": "e0d6891bbe422b84a3f36f3787553bf2bf2303bc12e1ef967b41febb763c088d",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/v5_four_target_vina_review_table.json": "fe2c73a3e0101e3edc0f1802fe79b5bc78a808327c493c41b150beb335a58eb4",
+    "Project2_Polypharmacology_MD_ValidationV2607/results/c_rrs_classification.csv": "75686430fd7773ff0765105aa716590feeaaf756435fabc6e536ab5912460d1f",
+    "Project2_Polypharmacology_MD_ValidationV2607/results/c_acsi_scores.csv": "c1b554729fc680e0e5180934af9fb3bb5cfd3efa8c5acca95a02f87c1e0f078e",
+    "Project2_Polypharmacology_MD_ValidationV2607/results/c_pns_ranking.csv": "70fe7da581c16e05ce3ac47c95f77936ee5e4d499fdf5a6c1af6e0f241d6a18d",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/v6_review_register.json": "7e2f5842486f8fe8a2dd0f6db7620f4b316e08c5c8a5315c1b41adb1b1191972",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/structural_pocket_independent_review.json": "fb570cc3319bd94cf5da03914566da394c83feef607c2faea58a1c4f4b10563f"
+  },
+  "generator": {
+    "version": "1.0.0",
+    "script": "Project1_Chem_space_antimalarial_V6_CorrectedGrid/scripts/v6_generate_integrated_data_figures.py",
+    "configuration": {
+      "targets": [
+        "PfDHFR",
+        "PfCRT",
+        "PfClpP",
+        "PfATP4"
+      ],
+      "figure_dpi": 300,
+      "join": "exact_manifest_smiles"
+    },
+    "script_sha256": "2fa60cff1c80242e268be1cb1099538071a7bbedca2a0fecd17fc1c101e3b1af",
+    "python": "3.11.15 | packaged by conda-forge | (main, Jun 11 2026, 03:34:02) [GCC 14.3.0]",
+    "packages": {
+      "numpy": "2.4.6",
+      "pandas": "2.3.3",
+      "matplotlib": "3.10.9"
+    }
+  },
+  "outputs": [
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/derived/v6_integrated_candidate_metrics.csv",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/figures/p1_v6_rrs_mutation_profiles.pdf",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/figures/p1_v6_rrs_mutation_profiles.png",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/figures/p1_v6_exploratory_metric_relationships.pdf",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/figures/p1_v6_exploratory_metric_relationships.png",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/figures/p1_v6_targetwise_profile_summary.pdf",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/figures/p1_v6_targetwise_profile_summary.png"
+  ],
+  "output_sha256": {
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/derived/v6_integrated_candidate_metrics.csv": "b9f598c4caeaf7776651eb77c2bcf7cab73f422db02e4e79dc38b900c7a2b9de",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/figures/p1_v6_rrs_mutation_profiles.pdf": "66813d0aacc03b46e3b4b73ac8de51d173426f85694eb6e7e2eb8688fe1a28cb",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/figures/p1_v6_rrs_mutation_profiles.png": "349b3134d4f3236a33620da7870ffbe5b7c06e081901dd1d9d44d03635b7be06",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/figures/p1_v6_exploratory_metric_relationships.pdf": "1b701ac65d57d3fee439db29758ca5b5fa873e0b4a250cc1fa8bffaa3d9863d7",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/figures/p1_v6_exploratory_metric_relationships.png": "92d203f3a8fabd45839dc0d6c6867a9f3ab5b1d1acbcc83f8b6c9d3ae67b12ab",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/figures/p1_v6_targetwise_profile_summary.pdf": "7909890be1dba64e9450b486b5f2644256de7b07a435a43d40882141550d4ddd",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/exploratory/figures/p1_v6_targetwise_profile_summary.png": "d2e6ba84d6ca321ed902e2a81424e07e7128608bd1ed1f4a38398edde0c62408"
+  },
+  "review_gates": {
+    "v5_status": "PENDING_INDEPENDENT_REVIEW",
+    "v6_status": "PENDING_INDEPENDENT_REVIEW",
+    "internal_development": true,
+    "submission_eligible": false,
+    "v5_accepted_for_full_run": false,
+    "v6_accepted_for_full_run": false,
+    "phase": "PRE_SUBMISSION_DEVELOPMENT"
+  }
+}

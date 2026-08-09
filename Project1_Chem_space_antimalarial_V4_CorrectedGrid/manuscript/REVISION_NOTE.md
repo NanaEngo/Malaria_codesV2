@@ -50,7 +50,7 @@ The manuscript was previously submitted to JCIM and rejected. This is a resubmis
 | Version | Date | Status |
 |---------|------|--------|
 | Original submission | [Prior to July 2026] | Rejected |
-| **Revision (current)** | **9 August 2026** | **Working draft; submission blocked pending complete 2F6I revalidation and independent review** |
+| **Revision (current)** | **9 August 2026** | **Working scientific draft; pre-submission editorial restrictions inactive; 2F6I revalidation and review remain QC work in progress** |
 
 ---
 
@@ -78,4 +78,4 @@ The manuscript was previously submitted to JCIM and rejected. This is a resubmis
 
 ---
 
-**Status:** ⚠️ **Corrected working draft; not submission-ready until the complete 484-centroid PfClpP/2F6I revalidation and independent review are complete**
+**Status:** 🔄 **Corrected working draft under active scientific development; no editorial restriction is active before explicit author reactivation. The 484-centroid PfClpP/2F6I revalidation and review remain evidence/QC work in progress.**

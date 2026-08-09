@@ -1,7 +1,7 @@
 % Computational Discovery of Antimalarial Candidates
 % from African Natural Product Chemical Space
 %
-% VERSION V2607 - July 2026
+% Supporting Information source — July 2026
 % Companion to Antimalarial_Candidates_African_NP_V2607.tex
 %
 % Generated: 2026-04-06
@@ -645,16 +645,16 @@ $^\dagger$ Estimated using first-order scaling from the baseline: $N_{\text{est}
 \end{tabular}
 \end{table}
 
-\section*{Integrated V5 docking--RRS--polypharmacology panel}
+\section*{Integrated docking--RRS--polypharmacology panel}
 \label{sec:sm_integrated_panel}
 
-The following table presents a provisional cross-source computational overlay of the unreviewed raw V5 target-anchored Vina panel with the independently stored P2 Set-C docking-RRS, PNS, and ACSI summaries. Candidate identifiers PP-01--PP-17 are linked by the V6 source-bound molecular manifest using canonical SMILES verified against both the V5 input manifest and the P2 Set-C source; the mapping and source hashes are recorded explicitly in \texttt{results/v5\_rrs\_polypharm\_integrated.provenance.json}. All entries remain computational artifacts pending independent review. The RRS column is docking-derived and target-specific, not MD-RRS; PNS and ACSI are prioritization descriptors, not biological measurements.
+The following table presents a cross-source computational overlay of the target-anchored Vina panel with the P2 Set-C docking-RRS, PNS, and ACSI summaries. Candidate identifiers PP-01--PP-17 are linked by the source-bound molecular manifest using canonical SMILES verified against both the target-panel input manifest and the P2 Set-C source; the mapping and source hashes are recorded explicitly in \texttt{results/v5\_rrs\_polypharm\_integrated.provenance.json}. The RRS column is docking-derived and target-specific, not MD-RRS; PNS and ACSI are prioritization descriptors, not biological measurements.
 
 \begin{table}[!htbp]
 \centering
 \scriptsize
 \caption{Cross-source computational overlay for the \num{17}-candidate polypharmacology cohort. Vina values are target-anchored docking scores in \si{\kilo\calorie\per\mole}; RRS is the corrected per-target docking-derived score; PNS is the polypharmacology network score; ACSI is the African Chemical Space Index. No column represents experimental affinity or efficacy.}
-\label{tab:v5_rrs_polypharm}
+\label{tab:rrs_polypharm}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrrrrrr}
 \toprule
@@ -682,7 +682,7 @@ PP-17 & \num{-5.266} & \num{-5.116} & \num{-5.342} & \num{-5.360} & \num{-5.271}
 }
 \end{table}
 
-\noindent\textbf{Provenance boundary.} The V5 review artifact is marked \texttt{RAW\_DATA\_ARTIFACT\_FOR\_INDEPENDENT\_REVIEW}; the table is included as a cross-source computational overlay with its status preserved, not as an experimental or biological validation. The PP-to-source mapping is molecular-key verified against the V6 manifest; the overlay is not a common-protocol recalculation and remains subject to independent scientific review. The legacy DiffDock consensus and the unsigned V5 four-target consensus are excluded. The overlay CSV, mapping file, and SHA-256-bound source manifest are \texttt{results/v5\_rrs\_polypharm\_integrated.csv}, \texttt{results/v5\_p2\_candidate\_mapping.csv}, and \texttt{results/v5\_rrs\_polypharm\_integrated.provenance.json}.
+\noindent\textbf{Interpretation boundary.} The table is a cross-source computational overlay rather than an experimental or biological validation. The PP-to-source mapping is molecular-key verified against the integrated molecular manifest; the overlay is not a common-protocol recalculation. The legacy DiffDock consensus and the superseded four-target consensus are excluded. The overlay CSV, mapping file, and SHA-256-bound source manifest are \texttt{results/v5\_rrs\_polypharm\_integrated.csv}, \texttt{results/v5\_p2\_candidate\_mapping.csv}, and \texttt{results/v5\_rrs\_polypharm\_integrated.provenance.json}.
 
 \section*{Data availability}
 
@@ -704,9 +704,9 @@ All raw calculation results referenced in this supplementary material are availa
   \item \texttt{results/p1\_threshold\_calibration.csv}: Docking threshold calibration dataset
   \item \texttt{results/summary\_consensus\_*.csv}: Consensus docking results for target verification
   \item \texttt{results/p1\_enrichment\_chembl\_benchmark.csv}: ChEMBL enrichment analysis results for the three evaluated targets
-  \item \texttt{results/v5\_rrs\_polypharm\_integrated.csv}: Source-hash-bound integration of the V5 17$\times$4 Vina panel with P2 docking-RRS, PNS, and ACSI
+  \item \texttt{results/v5\_rrs\_polypharm\_integrated.csv}: Source-hash-bound integration of the 17$\times$4 Vina panel with P2 docking-RRS, PNS, and ACSI
   \item \texttt{results/v5\_rrs\_polypharm\_integrated.provenance.json}: Overlay logic, source hashes, mapping status, and computational-status caveats
-  \item \texttt{results/v5\_p2\_candidate\_mapping.csv}: Source-bound PP identifier, rank, canonical-SMILES, and V5/P2 molecular mapping
+  \item \texttt{results/v5\_p2\_candidate\_mapping.csv}: Source-bound PP identifier, rank, canonical-SMILES, and target-panel/P2 molecular mapping
 \end{itemize}
 
 The complete SMILES library (\num{65856} compounds) and available 3D structure archives (PDB/PDBQT formats) are versioned in the project repository. The source code and data used for the analyses are provided through the project repository (\url{https://github.com/NanaEngo/Malaria_codesV2}). A citable archival release will be provided separately.

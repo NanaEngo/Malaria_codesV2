@@ -27,6 +27,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import yaml
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from p1_development_policy import is_pre_submission, phase_name
 try:
     from rdkit import Chem
 except ImportError:  # pragma: no cover - the diffdock environment must provide RDKit
@@ -44,6 +46,7 @@ FULL_AUTHORIZATION = ROOT / "Project1_Chem_space_antimalarial_V5_CorrectedGrid/r
 SMOKE_GATE = ROOT / "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/diffdock_pocket_smoke_PP01_PfDHFR_rerun6/failure_provenance.json"
 STRUCTURAL_PREFLIGHT = ROOT / "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/structural_pocket_preflight.json"
 REFERENCE_LIGAND_PREFLIGHT = ROOT / "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/reference_ligand_preflight_rerun6.json"
+PREFLIGHT_DIGESTS = ROOT / "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/diffdock_preflight_digests.json"
 INDEPENDENT_REVIEW = ROOT / "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/structural_pocket_independent_review.json"
 PINNED_DIFFDOCK_PYTHON = Path("/home/nanaengo/miniforge3/envs/diffdock/bin/python")
 VINA_GRID = {
@@ -70,8 +73,143 @@ def require_file(path: Path, label: str) -> None:
         raise SystemExit(f"FAIL-CLOSED missing/empty {label}: {path}")
 
 
+def require_pre_submission_inputs() -> None:
+    """Allow development execution without review, while retaining input QC.
+
+    This deliberately omits only the independent-review decision. It still
+    validates the immutable panel, target identities, receptor hashes, pocket
+    preflight integrity, and reference-ligand preflight provenance.
+    """
+    require_file(PINNED_DIFFDOCK_PYTHON, "pinned DiffDock environment interpreter")
+    require_file(CONFIG, "pinned DiffDock config")
+    require_file(ENTRYPOINT, "DiffDock entrypoint")
+    require_file(MANIFEST, "input manifest")
+    require_file(TARGET_IDENTITY_AUDIT, "target-identity audit")
+    require_file(STRUCTURAL_PREFLIGHT, "structural-pocket preflight")
+    require_file(REFERENCE_LIGAND_PREFLIGHT, "reference-ligand preflight")
+    require_file(PREFLIGHT_DIGESTS, "DiffDock preflight digest manifest")
+
+    # The review decision is the only omitted condition. Model, source, config,
+    # receptor, and manifest integrity remain mandatory during development.
+    config = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
+    score_dir = Path(config["model_dir"])
+    confidence_dir = Path(config["confidence_model_dir"])
+    if not score_dir.is_absolute():
+        score_dir = DIFFDOCK_HOME / score_dir
+    if not confidence_dir.is_absolute():
+        confidence_dir = DIFFDOCK_HOME / confidence_dir
+    for label, path in (
+        ("DiffDock score checkpoint", score_dir / config["ckpt"]),
+        ("DiffDock score parameters", score_dir / "model_parameters.yml"),
+        ("DiffDock confidence checkpoint", confidence_dir / config["confidence_ckpt"]),
+        ("DiffDock confidence parameters", confidence_dir / "model_parameters.yml"),
+    ):
+        require_file(path, label)
+    source_status = subprocess.run(
+        ["git", "-C", str(DIFFDOCK_HOME), "status", "--porcelain", "--untracked-files=all"],
+        check=True, capture_output=True, text=True,
+    ).stdout.strip()
+    if source_status:
+        raise SystemExit("FAIL-CLOSED DiffDock source tree has uncommitted changes")
+    digest_manifest = json.loads(PREFLIGHT_DIGESTS.read_text(encoding="utf-8"))
+    if digest_manifest.get("schema") != "p1-v5-diffdock-preflight-digests/v1":
+        raise SystemExit("FAIL-CLOSED DiffDock preflight digest schema mismatch")
+    digest_artifacts = digest_manifest.get("artifacts", {})
+    if digest_manifest.get("repository_identity") != "Malaria_codesV2":
+        raise SystemExit("FAIL-CLOSED DiffDock digest manifest repository identity mismatch")
+    current_head = subprocess.run(
+        ["git", "-C", str(DIFFDOCK_HOME), "rev-parse", "HEAD"],
+        check=True, capture_output=True, text=True,
+    ).stdout.strip()
+    if current_head != digest_manifest.get("diffdock_git_head"):
+        raise SystemExit("FAIL-CLOSED DiffDock git HEAD does not match the pinned preflight digest")
+    for key in ("config", "entrypoint", "score_checkpoint", "score_parameters", "confidence_checkpoint", "confidence_parameters"):
+        item = digest_artifacts.get(key, {})
+        path = Path(item.get("path", ""))
+        if not path.is_absolute():
+            path = (DIFFDOCK_HOME / path) if key in {"entrypoint", "score_checkpoint", "score_parameters", "confidence_checkpoint", "confidence_parameters"} else ROOT / path
+        require_file(path, f"pinned DiffDock {key}")
+        if sha256(path) != item.get("sha256"):
+            raise SystemExit(f"FAIL-CLOSED pinned DiffDock digest mismatch: {key}")
+    for target, spec in VINA_GRID.items():
+        require_file(spec["receptor"], f"PDBQT receptor for {target}")
+        expected_pdb = ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins" / f"{spec['pdb_id']}.pdb"
+        require_file(expected_pdb, f"PDB receptor for {target}")
+        receptor_digest = digest_artifacts.get("receptors", {}).get(target, {})
+        if sha256(spec["receptor"]) != receptor_digest.get("sha256"):
+            raise SystemExit(f"FAIL-CLOSED pinned PDBQT digest mismatch: {target}")
+
+    identity = json.loads(TARGET_IDENTITY_AUDIT.read_text(encoding="utf-8"))
+    if identity.get("status") == "IDENTITY_MISMATCH_BLOCKS_INHERITED_V5_PANEL":
+        raise SystemExit("FAIL-CLOSED target identity audit blocks the development run")
+    if set(identity.get("targets", {})) != set(VINA_GRID):
+        raise SystemExit("FAIL-CLOSED target identity audit does not cover the canonical four targets")
+
+    structural = json.loads(STRUCTURAL_PREFLIGHT.read_text(encoding="utf-8"))
+    if structural.get("schema") != "p1-v5-structural-pocket-preflight/v1":
+        raise SystemExit("FAIL-CLOSED structural-pocket preflight schema mismatch")
+    if set(structural.get("targets", {})) != set(VINA_GRID):
+        raise SystemExit("FAIL-CLOSED structural-pocket preflight does not cover the canonical four targets")
+    if any(structural.get(key) is not False for key in ("diffdock_launched", "vina_launched", "gromacs_launched")):
+        raise SystemExit("FAIL-CLOSED preflight records a prior computational launch")
+    expected_pdbs = {
+        "PfDHFR": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/7F3Y.pdb",
+        "PfCRT": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/6UKJ.pdb",
+        "PfClpP": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/2F6I.pdb",
+        "PfATP4": ROOT / "Project2_Polypharmacology_MD_ValidationV2607/data/proteins/9N10.pdb",
+    }
+    for target, pdb in expected_pdbs.items():
+        if not pdb.is_file() or structural["targets"][target].get("pdb_sha256") != sha256(pdb):
+            raise SystemExit(f"FAIL-CLOSED structural-pocket receptor hash mismatch: {target}")
+        if structural["targets"][target].get("pdb_id") != VINA_GRID[target]["pdb_id"]:
+            raise SystemExit(f"FAIL-CLOSED structural-pocket PDB identity mismatch: {target}")
+
+    reference = json.loads(REFERENCE_LIGAND_PREFLIGHT.read_text(encoding="utf-8"))
+    if reference.get("schema") != "p1-v5-reference-ligand-preflight/v3":
+        raise SystemExit("FAIL-CLOSED reference-ligand preflight schema mismatch")
+    if reference.get("completion_status") != "COMPLETE_INVENTORY":
+        raise SystemExit("FAIL-CLOSED reference-ligand preflight is incomplete")
+    if any(reference.get(key) is not False for key in ("diffdock_launched", "vina_launched", "gromacs_launched")):
+        raise SystemExit("FAIL-CLOSED reference-ligand preflight records a prior computational launch")
+    sentinel = Path(reference.get("output_dir", "")) / "PREFLIGHT_COMPLETE.json"
+    require_file(sentinel, "reference-ligand preflight completion sentinel")
+    sentinel_data = json.loads(sentinel.read_text(encoding="utf-8"))
+    if sentinel_data.get("result_json_sha256") != sha256(REFERENCE_LIGAND_PREFLIGHT):
+        raise SystemExit("FAIL-CLOSED reference-ligand preflight sentinel hash mismatch")
+
+    with MANIFEST.open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    if len(rows) not in {1, 68}:
+        raise SystemExit(f"FAIL-CLOSED development manifest must contain 1 or 68 rows, found {len(rows)}")
+    expected_target_pdb = {target: spec["pdb_id"] for target, spec in VINA_GRID.items()}
+    if any(row.get("pdb_id") != expected_target_pdb.get(row.get("target")) for row in rows):
+        raise SystemExit("FAIL-CLOSED manifest target/PDB identity mismatch")
+    if any(row.get("target") == "PfClpP" and row.get("pdb_id") == "4GM2" for row in rows):
+        raise SystemExit("FAIL-CLOSED current input manifest still pairs PfClpP with 4GM2")
+    if any(not row.get("ligand_description") or not row.get("candidate_file_sha256") or not row.get("ligand_smiles_sha256") for row in rows):
+        raise SystemExit("FAIL-CLOSED manifest ligand description/hash is incomplete")
+    for row in rows:
+        expected_ligand_hash = hashlib.sha256(row["ligand_description"].encode("utf-8")).hexdigest()
+        if row.get("ligand_smiles_sha256") != expected_ligand_hash:
+            raise SystemExit(f"FAIL-CLOSED ligand SMILES hash mismatch: {row.get('complex_name')}")
+    by_candidate = {}
+    for row in rows:
+        key = row["candidate_id"]
+        fingerprint = (row["ligand_description"], row["candidate_file_sha256"])
+        if key in by_candidate and by_candidate[key] != fingerprint:
+            raise SystemExit(f"FAIL-CLOSED ligand identity changes across target rows: {key}")
+        by_candidate[key] = fingerprint
+    for target, spec in VINA_GRID.items():
+        require_file(spec["receptor"], f"PDBQT receptor for {target}")
+        if sha256(spec["receptor"]) == sha256(expected_pdbs[target]):
+            raise SystemExit(f"FAIL-CLOSED PDBQT receptor is byte-identical to PDB: {target}")
+
+
 def require_full_authorization() -> None:
-    """Refuse the 68-pair run until an explicit reviewed authorization exists."""
+    """Require review only after submission; retain technical checks before it."""
+    if is_pre_submission():
+        require_pre_submission_inputs()
+        return
     require_file(FULL_AUTHORIZATION, "explicit full-run authorization artifact")
     require_file(PINNED_DIFFDOCK_PYTHON, "pinned DiffDock environment interpreter")
     try:
@@ -86,7 +224,22 @@ def require_full_authorization() -> None:
     if authorization.get("smoke_provenance_sha256") != sha256(SMOKE_GATE):
         raise SystemExit("FAIL-CLOSED full-run authorization smoke provenance hash mismatch")
     require_file(MIGRATION_MANIFEST, "V5 migration manifest")
+    require_file(PREFLIGHT_DIGESTS, "DiffDock preflight digest manifest")
+    try:
+        digest_manifest = json.loads(PREFLIGHT_DIGESTS.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"FAIL-CLOSED invalid DiffDock preflight digest manifest: {exc}") from exc
+    if digest_manifest.get("schema") != "p1-v5-diffdock-preflight-digests/v1":
+        raise SystemExit("FAIL-CLOSED DiffDock preflight digest schema mismatch")
+    if authorization.get("preflight_digests") != str(PREFLIGHT_DIGESTS.resolve()):
+        raise SystemExit("FAIL-CLOSED authorization is not bound to DiffDock preflight digests")
+    if authorization.get("preflight_digests_sha256") != sha256(PREFLIGHT_DIGESTS):
+        raise SystemExit("FAIL-CLOSED DiffDock preflight digest manifest hash mismatch")
     require_file(TARGET_IDENTITY_AUDIT, "target-identity audit")
+    if authorization.get("preflight_digests_identity") != "Malaria_codesV2":
+        raise SystemExit("FAIL-CLOSED authorization repository identity mismatch")
+    if authorization.get("diffdock_git_head") != digest_manifest.get("diffdock_git_head"):
+        raise SystemExit("FAIL-CLOSED authorization DiffDock git HEAD mismatch")
     if authorization.get("v5_migration_manifest") != str(MIGRATION_MANIFEST.resolve()):
         raise SystemExit("FAIL-CLOSED full-run authorization is not bound to the current V5 migration manifest")
     if authorization.get("v5_migration_manifest_sha256") != sha256(MIGRATION_MANIFEST):
@@ -373,6 +526,10 @@ def main() -> int:
         # This gate runs before creating an output directory or launching any
         # subprocess. No reviewed authorization currently exists.
         require_full_authorization()
+    elif is_pre_submission():
+        # Smoke runs also inherit the complete technical preflight. The only
+        # waived condition in PRE_SUBMISSION_DEVELOPMENT is independent review.
+        require_pre_submission_inputs()
     output = args.output_dir if args.output_dir.is_absolute() else ROOT / args.output_dir
     if output.exists() and any(output.iterdir()):
         raise SystemExit(f"FAIL-CLOSED output directory exists and is non-empty: {output}")
@@ -444,7 +601,9 @@ def main() -> int:
         raise
     provenance = {
         "schema": "p1-v5-diffdock-execution/v1",
-        "status": "RAW_OUTPUTS_VERIFIED",
+        "status": "PRE_SUBMISSION_DEVELOPMENT_NOT_SUBMISSION_READY" if args.mode == "full" and is_pre_submission() else "RAW_OUTPUTS_VERIFIED",
+        "phase": phase_name(),
+        "submission_eligible": bool(not is_pre_submission() and args.mode == "full"),
         "mode": args.mode,
         "started_utc": started,
         "ended_utc": ended,

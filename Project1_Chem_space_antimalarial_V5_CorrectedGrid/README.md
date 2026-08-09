@@ -26,3 +26,9 @@ PfCRT is evaluated relative to a Y01-associated membrane/cavity proxy, and PfATP
 The machine-readable outputs are `results/v5_four_target_vina_affinities.csv` and `results/v5_four_target_vina_review_table.json`. Receptor and ligand files, configurations, raw poses, scripts, and provenance records are retained in the project tree. The independent structural-review register and automated integrity audit remain archival controls; they are not biological validation and are not used as manuscript results.
 
 The historical V4 484-centroid PfClpP arm and the four parent MD systems are separate evidence streams. Neither is presented as validation of the V5 17-member cohort.
+
+## Author-controlled pre-submission development
+
+The project is under active scientific and manuscript development. The root phase switch `P1_DEVELOPMENT_PHASE.json` is `PRE_SUBMISSION_DEVELOPMENT`, with editorial submission restrictions inactive. Consensus, docking-RRS, PNS/ACSI exploratory analyses, sensitivity analyses, figures, and manuscript refinement may proceed without waiting for an independent-review signature. Outputs retain truthful provenance labels such as `PRE_SUBMISSION_DEVELOPMENT_NOT_SUBMISSION_READY`; the registers remain `PENDING_INDEPENDENT_REVIEW` and `accepted_for_full_run=false`.
+
+This does not disable scientific QC: target identity, hashes, geometric gates, row counts, finite scores, receptor/frame integrity, and runtime/provenance checks remain active. A scientific failure must be investigated; it is not an editorial restriction. Submission does not switch the workflow automatically. Only the author’s explicit instruction that submission has occurred **and** that restrictions should be reactivated may activate the signed-review policy. See `P1_INTERNAL_DEVELOPMENT_POLICY.md`.

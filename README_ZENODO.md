@@ -12,13 +12,13 @@
 
 The DOI above is reserved, but the archive has not yet been uploaded and published. Until publication, the GitHub repository is the current reviewer-accessible source. Do not cite the DOI as an already available dataset record, and do not describe the deposit as complete.
 
-The root file `zenodo_manifest.txt` is a **historical/preparatory manifest** generated on 2 August 2026. It contains legacy V2/archive paths and is not a current proof of publication. No current P1 V4 submission manifest is maintained at this stage: the former manifest was removed because the V4 package is not submission-ready while the 2F6I revalidation and independent review remain outstanding. Use `Project1_Chem_space_antimalarial_V4_CorrectedGrid/project-tracking.md` and the dated critical-review records for current status.
+The root file `zenodo_manifest.txt` is a **historical/preparatory manifest** generated on 2 August 2026. It contains legacy V2/archive paths and is not a current proof of publication. The P1 package remains under active scientific development while 2F6I revalidation/QC findings are reconciled. Use `Project1_Chem_space_antimalarial_V4_CorrectedGrid/project-tracking.md` and the dated critical-review records for current status; no editorial restriction is active before explicit author reactivation.
 
 ## Project-level manifests (current)
 
 | Project | Manifest | Status |
 |---------|----------|--------|
-| P1 V4 | `Project1_Chem_space_antimalarial_V4_CorrectedGrid/project-tracking.md` + dated critical reviews | Submission blocked pending 2F6I revalidation and independent review |
+| P1 V4 | `Project1_Chem_space_antimalarial_V4_CorrectedGrid/project-tracking.md` + dated critical reviews | Active scientific development; 2F6I revalidation/QC remains in progress; no editorial restriction before explicit author reactivation |
 | P5 | `Project5_GNN_Transformer_DrugDiscovery/P5_ZENODO_DEPOSIT_MANIFEST.txt` (67 files, 289.6 MB, generated 08/08/2026) | Reserved DOI; upload pending |
 
 ## Canonical P1 V4 submission package

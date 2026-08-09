@@ -10,9 +10,9 @@ The genuine PfClpP structure selected for controlled replacement is PDB `2F6I`. 
 
 - 4GM2 is described as PfClpR-specific.
 - Historical parent-MD label `164` is not treated as PfClpP structural validation.
-- V5 consensus/RRS/PNS outputs remain excluded because the V5 independent-review register is still pending and the bypass-derived consensus is VOID.
+- V5 consensus/RRS/PNS outputs may be developed exploratorily under the author-controlled pre-submission policy; the pending register and VOID artifact must remain accurately labeled and cannot be presented as independently accepted.
 - V4 numerical scores are preserved unchanged until a complete replacement exists.
-- V4 status documents now state `BLOCKED` pending full 2F6I replacement and independent review.
+- V4 status documents now record the 2F6I replacement/QC work as scientifically unresolved; no editorial restriction is active before explicit author reactivation.
 
 ## Controlled replacement
 
@@ -34,4 +34,4 @@ The genuine PfClpP structure selected for controlled replacement is PDB `2F6I`. 
 
 ## Promotion rule
 
-Even if all raw records pass QC, the result remains `RAW_ARRAY_COMPLETE_PENDING_INDEPENDENT_REVIEW`. No consensus, MPO, RRS, PNS, manuscript table, acceptance claim, or submission status may be updated until the receptor/pocket evidence and complete raw panel have been independently reviewed and explicitly authorized.
+Even if all raw records pass QC, the result remains `RAW_ARRAY_COMPLETE_PENDING_INDEPENDENT_REVIEW` as provenance until a real review occurs. During pre-submission development, consensus, MPO, RRS, PNS, and manuscript refinement may continue with explicit exploratory labels; no result may be misrepresented as independently accepted. Submission restrictions are dormant until explicit author reactivation.

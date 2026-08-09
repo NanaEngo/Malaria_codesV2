@@ -13,8 +13,8 @@ V6 is a computational, hypothesis-generating study. Its primary claim is the ide
 ## Locked evidence boundaries
 
 1. **V4 chemical-space evidence:** library construction, novelty/scaffold analysis, drug-likeness, MPO funnel, and the original 484-centroid reduction. V4 is retained as the upstream chemical-space analysis; its candidate sets are not silently relabelled.
-2. **V5 docking evidence:** the locked 17-candidate polypharmacology cohort is evaluated against four targets: PfDHFR (7F3Y), PfCRT (6UKJ), PfClpP (2F6I), and PfATP4 (9N10). The 17×4 Vina table is complete raw, target-anchored evidence (68/68 composite-gate records), but remains pending independent review. Candidate identity is verified row-wise by the V6 source-bound manifest using canonical SMILES against the V5 68-row manifest and P2 source.
-3. **RRS evidence:** an exploratory score-ratio statistic is evaluated per target on PfDHFR mutants (N51I, C59R, S108N, I164L) and PfCRT mutants (K76T, K76A). It uses docking-score magnitudes, not free-energy differences. No PfClpP/PfATP4 RRS claim is made without a declared mutant panel.
+2. **V5 docking evidence:** the locked 17-candidate polypharmacology cohort is evaluated against four targets: PfDHFR (7F3Y), PfCRT (6UKJ), PfClpP (2F6I), and PfATP4 (9N10). The 17×4 Vina table is complete raw, target-anchored evidence (68/68 records passed the automated geometric gate); the raw poses remain subject to independent structural review and are not treated as experimental validation. Candidate identity is verified row-wise by the V6 source-bound manifest using canonical SMILES against the V5 68-row manifest and P2 source.
+3. **RRS evidence:** an exploratory score-ratio statistic is evaluated per target from the separate `docking_mutants.csv` WT/mutant panel on PfDHFR mutants (N51I, C59R, S108N, I164L) and PfCRT mutants (K76T, K76A). It uses docking-score magnitudes, not free-energy differences, and is not derived from the four-target V5 WT matrix. No PfClpP/PfATP4 RRS claim is made without a declared mutant panel.
 4. **Polypharmacology:** a four-target docking profile reported target by target; no arithmetic cross-target score is used because Vina scores are not calibrated across unlike pockets. RRS is a two-target mutation analysis. These scopes are complementary, not interchangeable.
 5. **Historical MD:** the four parent systems (201, 438, 164, 214) remain a separate parent-study MD cohort. They are not presented as MD validation of the 17-candidate RRS/polypharmacology cohort.
 
@@ -27,7 +27,7 @@ V6 is a computational, hypothesis-generating study. Its primary claim is the ide
 
 ## Publication positioning
 
-The V6 manuscript is written as an IMRAD-style computational research article, not as a project report. Its central scientific distinction is between (i) four-target predicted polypharmacology, (ii) per-target mutation-aware RRS, and (iii) experimental activity, which is not measured here. The article reports the corrected null findings and the evidence classes of the PfDHFR, PfCRT, PfClpP, and PfATP4 anchors.
+The V6 manuscript is written as an IMRAD-style computational research article, not as a project report. Its central scientific distinction is between (i) four-target predicted polypharmacology, (ii) per-target mutation-aware RRS, and (iii) experimental activity, which is not measured here. The article reports the corrected null findings and the evidence classes of the PfDHFR, PfCRT, PfClpP, and PfATP4 anchors. The integrated audit found no file, schema, cohort, or RRS-recomputation errors; independent structural review remains a separate scientific control.
 
 V6 may be submitted as a computational JCIM-style study or to a related computational drug-discovery journal without new wet-lab experiments, provided that the manuscript:
 
@@ -40,16 +40,19 @@ V6 may be submitted as a computational JCIM-style study or to a related computat
 
 ## V4 484-centroid 2F6I replacement boundary
 
-The historical V4 484-centroid PfClpP arm is a separate panel and is not replaced by the V5 17×4 candidate table. Its uniform 2F6I revalidation is running in the V4 tree under SLURM job `13451`; merge `13452` is `afterok`, and audit `13972` is `afterany`. The uniform array produced all 484 centroid directories, but fail-closed audit `13972` rejected the panel: 449 records independently passed raw Vina checks and 35 records contain explicit worker failures. No aggregate CSV or downstream promotion was produced. The 449 successes are diagnostic only. V6 must not use this panel to replace the V4 evidence until all 35 failures are resolved, the complete panel is independently re-audited, and the structural review is signed.
+The historical V4 484-centroid PfClpP arm is a separate panel and is not replaced by the V5 17×4 candidate table. Its uniform 2F6I revalidation (`13451`), rescue (`13478`), and associated merge/audit jobs (`13452`, `13479`, `13972`) have no active scheduler entry in the current query; final accounting states are not recoverable from that query. The uniform array produced all 484 centroid directories, but fail-closed audit `13972` rejected the panel: 449 records independently passed raw Vina checks and 35 records contain explicit worker failures. No aggregate replacement panel was promoted. The 449 successes are diagnostic only. V6 must not use this panel to replace the V4 evidence until the 35 failures are resolved, the complete panel is independently re-audited, and a V4-specific independent-review artifact is completed. The V6 four-target register covers only the V5 17×4 evidence and is not a substitute.
 
-## Fail-closed review policy
+## Evidence integrity and author-controlled workflow
 
-The V6 pipeline has two independent states:
+The V6 pipeline distinguishes scientific integrity from editorial status:
 
 - `EVIDENCE_INTEGRITY_PASS`: automated checks confirm completeness, hashes, identities, cohort consistency, and schema integrity.
-- `INDEPENDENT_REVIEW_ACCEPTED`: only a qualified human reviewer may set this state by signing the review dossier through the documented signature protocol.
+- `INDEPENDENT_REVIEW_ACCEPTED`: a qualified human reviewer may later create this status through the documented signature protocol.
+- `PENDING_INDEPENDENT_REVIEW`: truthful provenance while work is ongoing; it does not block scientific development.
 
-An automated script may produce the first state but must never create the second. The current candidate mapping satisfies the automated row-wise molecular-key check; this does not constitute independent structural review or biological validation. The exploratory RRS analysis is computed independently from the declared PfDHFR and PfCRT mutant source panel and may be reported with explicit computational and non-acceptance qualifiers. Independent structural review gates acceptance or promotion of the V5 four-target docking panel and any accepted V5--RRS/PNS integration; it does not constitute validation of the RRS mutant panel or experimental validation. Until the register is independently signed, V6 results must therefore remain labeled exploratory/source-panel RRS and raw target-profile evidence, not independently accepted integrated evidence.
+Automated scripts must never fabricate independent acceptance. During the current author-controlled `PRE_SUBMISSION_DEVELOPMENT` phase, exploratory RRS/ACSI/PNS integration, figures, reruns, and manuscript refinement may proceed without a signature. Outputs remain explicitly labeled `NOT_SUBMISSION_READY` or exploratory, so the scientific record is not misrepresented. The candidate mapping, raw target-wise Vina evidence, and RRS source panel retain their existing technical and biological caveats.
+
+Scientific QC remains active at all times: target identity, hashes, frame equivalence, cohort identity, schema integrity, finite scores, and runtime/provenance checks. These are quality controls, not editorial restrictions. Submission does not automatically switch the workflow. Only the author’s explicit confirmation that submission has occurred **and** explicit request to reactivate restrictions may activate the signed-review gate for submission-facing promotion. The detailed policy is recorded in `P1_INTERNAL_DEVELOPMENT_POLICY.md`.
 
 ## Directory map
 

@@ -10,6 +10,7 @@
   "trusted_public_key_artifact": null,
   "trusted_public_key_sha256": null,
   "accepted_for_full_run": false,
+  "development_execution_authorized": true,
   "updated_utc": "2026-08-08T13:30:00Z",
   "criteria": {
     "target_identity_verified": false,
@@ -62,20 +63,28 @@
       "evidence_note": "Grid-restrained Vina run (job 12864) completed 2026-08-08: all 17 polypharm candidates docked on 9N10 with anchor D451/DPPR, 17/17 gate pass, affinities -7.57 to -4.63 kcal/mol. Consolidated 17x4 table: results/v5_four_target_vina_affinities.csv (PfATP4 COMPLETE_17)."
     }
   },
-  "prohibited_until_pass": [
-    "four-target consensus scoring",
-    "three-target consensus scoring",
-    "RRS/PNS recomputation",
-    "manuscript claim updates from V5 docking"
+  "prohibited_until_pass": [],
+  "dormant_submission_restrictions": [
+    "submission-facing consensus/RRS/PNS promotion after explicit author reactivation",
+    "independent-review acceptance status before a real signed review",
+    "editing this register to simulate acceptance"
   ],
+  "development_policy": {
+    "scientific_development_allowed": true,
+    "development_execution_authorized": true,
+    "editorial_submission_restrictions_active": false,
+    "submission_restrictions_reactivation_requested": false,
+    "note": "Before explicit author reactivation, no pending-review state blocks scientific computation or manuscript development. Pending status remains truthful provenance; it does not certify independent acceptance."
+  },
   "authorization": {
+    "development_execution_authorized": true,
     "internal_work_authorized": false,
     "authorization_mode": "INDEPENDENT_REVIEW_REQUIRED",
     "decision_date_utc": "2026-08-08T00:00:00Z",
-    "decision_by": "project lead (author decision, recorded in chat session 2026-08-08)",
-    "rationale": "Author decision 2026-08-08 (evening): the earlier session proposal to bypass the independent-review signature for internal computation was REJECTED by the author ('il faut faire absolument la revue independante'). The independent structural review is MANDATORY before any consensus, RRS/PNS computation or manuscript claim. The consensus artifact computed earlier under the rejected bypass is VOID (results/v5_consensus_four_target_provenance.json, status VOID; CSV removed).",
-    "submission_gate_active": true,
-    "submission_requirement": "A qualified independent reviewer must sign the register (openssl ed25519/gpg detached signature, verified by scripts/p1_v5_apply_review_signature.py) BEFORE any consensus/RRS/PNS computation or any V5 docking claim in a manuscript."
+    "decision_by": "project lead (author-controlled pre-submission workflow decision, 2026-08-09)",
+    "rationale": "development_execution_authorized=true under the author-controlled pre-submission phase: no editorial or independent-review restriction blocks scientific computation, reruns, RRS/PNS exploratory analysis, figures, or manuscript development. internal_work_authorized=false continues to mean that no independent-review acceptance is being asserted. The pending register remains truthful and exploratory outputs must retain their provenance labels. Scientific QC, target identity, hashes, geometry, and runtime checks remain active. Submission-facing promotion and cryptographic review remain dormant until explicit author reactivation.",
+    "submission_gate_active": false,
+    "submission_requirement": "Dormant until explicit author reactivation. When reactivated, a qualified independent reviewer must sign the hash-bound register through scripts/p1_v5_apply_review_signature.py before submission-facing promotion."
   },
-  "note": "The three-target Vina evidence (jobs 12854/12855/12859) is complete and machine-verified; PfATP4 (job 12864, 17 pairs) is complete as raw machine-verified evidence; independent review remains pending (17/17 gate, affinities -7.57 to -4.63 kcal/mol, anchor D451/DPPR). AUTHOR DECISION 2026-08-08 (evening): the internal-work bypass is REJECTED — independent review REQUIRED (authorization_mode INDEPENDENT_REVIEW_REQUIRED). No consensus, RRS, PNS, or manuscript claim from V5 docking until a qualified reviewer signs the register (accepted_for_full_run=true AND all four target decisions ACCEPTED). Register remains PENDING_INDEPENDENT_REVIEW by design."
+  "note": "The four-target Vina evidence remains raw, machine-verified evidence with the documented PfDHFR, PfCRT, PfClpP, and PfATP4 evidence classes. During author-controlled PRE_SUBMISSION_DEVELOPMENT, pending review does not block scientific computation or manuscript development. Consensus/RRS/PNS exploratory outputs may be generated with explicit NOT_SUBMISSION_READY provenance. The register remains PENDING_INDEPENDENT_REVIEW by design; no output may be mislabeled as independently accepted. Submission-facing promotion is dormant until the author explicitly confirms submission and requests reactivation."
 }

@@ -1,6 +1,6 @@
 # Cover Letter — Quick Summary
 
-**Status:** ⚠️ **Internal draft only; submission blocked pending 2F6I revalidation and independent review**
+**Status:** 🔄 **Active scientific draft; pre-submission editorial restrictions inactive. 2F6I revalidation and review remain QC work in progress.**
 
 ---
 
@@ -137,10 +137,10 @@ Problem → Innovation → Validation → Impact (not just technical summary)
 
 ## Next Steps
 
-1. Review the PDF only as an internal inherited-draft artifact.
-2. Complete the V4 2F6I/484 replacement audit and independent structural review.
-3. Reconcile the cover letter with the accepted V5/V6 evidence snapshot.
-4. Obtain author approval before any journal submission.
+1. Continue refining the science, figures, and prose.
+2. Complete the V4 2F6I/484 replacement audit and document its QC findings.
+3. Reconcile the cover letter with the latest technically QC'd V5/V6 evidence snapshot.
+4. Obtain author approval; only then explicitly reactivate submission/review restrictions if desired.
 
 ---
 
@@ -150,4 +150,4 @@ Problem → Innovation → Validation → Impact (not just technical summary)
 
 ---
 
-**Status:** ⚠️ **Not submission-ready; retained as inherited V4 material during V5/V6 integration**
+**Status:** 🔄 **Active working material during V5/V6 integration; no pre-submission editorial restriction is active.**

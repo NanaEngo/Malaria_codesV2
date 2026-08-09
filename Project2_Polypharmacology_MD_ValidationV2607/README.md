@@ -59,7 +59,7 @@ The key innovation is a **resistance-aware validation framework** that quantifie
 1. **Homology Modeling** — Generate six mutant structures (N51I, C59R, S108N, I164L, K76T, K76A)
 2. **Resistance Profiling** — Quantify docking-based binding resilience and chemical/network properties via RRS, ACSI, and PNS
 3. **Targeted parent-lead MD** — Analyze four named wild-type complexes, 10 ns each (40 ns total), separately from set C
-4. **Bounded set-C pilot** — `scripts/p2_setc_md_workflow.py --auto-approved` selects PP-01/PP-02, validates the 136-row docking panel, and preflights candidate-specific MD systems. Any prepared system must include `complex.gro`, `topol.top`, `md.mdp`, `npt.gro`, `npt.cpt`, `system_manifest.json`, and a hash-checked CHARMM36m+CGenFF `forcefield_manifest.json`; otherwise the workflow fails closed without launching GROMACS.
+4. **Bounded set-C pilot** — `scripts/p2_setc_md_workflow.py --auto-approved` selects PP-01/PP-02, validates the 136-row docking panel, and preflights candidate-specific MD systems. Current preflight: **16 systems selected, 0 ready, 16 blocked, 0 GROMACS processes launched**. Any prepared system must include `complex.gro`, `topol.top`, `md.mdp`, `npt.gro`, `npt.cpt`, `system_manifest.json`, and a hash-checked CHARMM36m+CGenFF `forcefield_manifest.json`; otherwise the workflow fails closed without launching GROMACS. The remediation contract is recorded in `results/set_c_md/set_c_preparation_remediation_20260809.md`.
 
 ---
 

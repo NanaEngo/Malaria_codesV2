@@ -88,8 +88,8 @@ therefore evaluated with the validated classifier before the displayed front
 was re-derived; MPO, SA, RRS and PNS were unchanged. This preserves the
 candidate discovery record while allowing accessibility to be displayed as a
 non-constant supplementary dimension. The resulting front should consequently
-be interpreted as a post-hoc audited front, not as evidence that informative
-SYBA values guided the historical search.
+be interpreted as a post-hoc re-derived front, not as evidence that informative
+SYBA values guided the search.
 
 \paragraph{Scalar benchmark.}
 The v12 benchmark used a separate scalar reward with weights
@@ -105,7 +105,7 @@ panel (\num{22447} molecules, including \num{19321} active entries).
 % ============================================================================
 
 The merged pre-activity front contained four non-dominated candidates from
-\num{20} independent seeds. Their scores and seed-level provenance are shown
+\num{20} independent seeds. Their scores and seed-level values are shown
 in \Cref{tab:sm_pareto}. The hypervolume was \num{1.2366} under min--max
 normalisation and reference point $\mathbf{r}=\num{1.1}$. Because this value
 depends on the normalisation convention, it is used for comparison within the
@@ -139,14 +139,14 @@ the largest MPO but the lowest SYBA, whereas the first, second and fourth
 candidates have SYBA values above \num{0.99}. Three candidates have PNS equal
 to \num{1.0}, the maximum value of the normalised three-column docking proxy.
 The RRS-informed proxy ranges from \num{0.141} to \num{0.223}. These values
-are useful for candidate stratification and provenance; they do not establish
+are useful for candidate stratification; they do not establish
 polypharmacological binding or resistance resilience experimentally.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.86\textwidth]{Graphics/rrs_pns_profile.pdf}
   \caption{RRS-informed chemotype-similarity and PNS-informed docking-proxy
-  profiles for deposited best-in-seed molecules. Points show individual
+  profiles for recorded best-in-seed molecules. Points show individual
   observations and box summaries. The PNS panel reports the fraction of valid
   rows with PNS equal to \num{1.0}; intermediate values are retained in the
   underlying data.}
@@ -166,7 +166,7 @@ under the present fragment vocabulary and returns one repeated local optimum.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.62\textwidth]{Graphics/scaffold_diversity.png}
-  \caption{Metric multidimensional-scaling projection of the deposited
+  \caption{Metric multidimensional-scaling projection of the recorded
   best-in-seed molecule sets using ECFP4 Tanimoto dissimilarity. Each method
   contributes \num{20} molecules. Greedy search collapses to one point because
   it returns the same local optimum for every seed.}

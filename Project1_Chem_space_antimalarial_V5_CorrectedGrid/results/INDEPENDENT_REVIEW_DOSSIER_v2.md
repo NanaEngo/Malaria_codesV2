@@ -1,7 +1,9 @@
 # P1 V5 — Dossier de revue indépendante (prêt-à-signer)
 
-**Statut :** à soumettre à un relecteur indépendant (ne pas signer soi-même — le
-register ne doit jamais être édité pour simuler une revue).
+**Statut :** dossier de provenance et de revue conservé pour une éventuelle
+activation ultérieure. Pendant le développement pré-soumission, aucune revue,
+signature ou restriction éditoriale ne bloque le travail scientifique. Le dossier
+ne doit jamais être signé par l’auteur ni utilisé pour simuler une revue.
 **Objet :** décision d'acceptation des **4 ancres structurales** de P1 V5 et du
 **pilote docking-RRS** (panel mutants), conformément à
 `results/structural_pocket_review_signature_protocol.md`.
@@ -98,7 +100,7 @@ identique aux runs WT. Panel de 8 récepteurs, frames vérifiées rmsd = 0.0 :
 - [ ] Équivalence de frame PDB↔PDBQT vérifiée pour les 4 WT + 8 récepteurs RRS (rmsd = 0)
 - [ ] Gate composite 17/17 par cible (WT 17×4) ; gate du panel RRS sur les smokes
 - [ ] Cohérence du protocole RRS avec P2 (per-target, sans mélange)
-- [ ] Aucun score consensus/RRS/PNS utilisé dans le manuscrit avant signature
+- [ ] Si une sortie est utilisée dans le manuscrit, son statut exploratoire et ses limites sont explicitement indiqués pendant le développement ; aucune signature n’est exigée pour poursuivre le travail avant la réactivation explicite des restrictions
 
 ---
 
@@ -116,7 +118,7 @@ RRS pilot (P1.3) : APPROVED / NOT APPROVED    commentaire : ______
 signature (clé privée)  : voir protocole (artifact + SHA-256 + détaché + clé publique)
 ```
 
-Après signature : mettre à jour `results/structural_pocket_independent_review.json`
+Après une éventuelle réactivation explicite des restrictions et une revue réelle : mettre à jour `results/structural_pocket_independent_review.json`
 (`status = STRUCTURAL_POCKET_REVIEWED_AND_ACCEPTED`, `accepted_for_full_run = true`,
 `reviewer_identity`, `review_date`, `signed_review_artifact`, `signed_review_sha256`,
 décisions PASS par cible) — **par la procédure de signature, jamais par édition directe**.
@@ -177,8 +179,7 @@ Le script **vérifie d'abord la signature détachée contre la clé publique** (
 ed25519 ou gpg) et ne modifie le register qu'après vérification réussie
 (`status = STRUCTURAL_POCKET_REVIEWED_AND_ACCEPTED`, `accepted_for_full_run = true`,
 décisions PASS ×4). Testé : clé erronée → FAIL-CLOSED (register non modifié) ;
-clé correcte → gate OUVERT. Après ouverture, les gates consensus/RRS/PNS
-de P1 V5 (fail-closed `p1_v5_consensus_rrs_gate.py`) passent automatiquement.
+clé correcte → gate OUVERT. Avant cette réactivation, le travail scientifique peut continuer et les sorties restent exploratoires. Après réactivation explicite, les gates consensus/RRS/PNS de P1 V5 (`p1_v5_consensus_rrs_gate.py`) s’appliquent aux sorties destinées à la soumission.
 
 Ensuite, mettre à jour le register **par la procédure** (script dédié ou mise à
 jour humaine tracée) avec les champs signés : `reviewer_identity`,

@@ -23,10 +23,10 @@
 \title{Supporting Information: Target-Anchored Computational Prioritization of African-Natural-Product-Inspired Antimalarial Candidates}
 \begin{document}
 
-\noindent This Supporting Information documents the data, pocket definitions, docking settings, quality-control rules, and complete score matrix underlying the main article. It is organized as reproducibility material rather than as a second narrative report. The four-target panel is computational; its scores are not experimental affinities.
+\noindent This Supporting Information documents the data, pocket definitions, docking settings, quality-control rules, and complete score matrix underlying the main article. It is organized as reproducibility material rather than as a second narrative article. The four-target panel is computational; its scores are not experimental affinities.
 
 \section*{S1. Study design and cohort definition}
-The upstream hybrid library contained \num{65856} unique molecules derived from \num{396} African natural products and \num{454} synthetic antimalarial compounds. The present target-anchored analysis used the locked 17-member Set-C polypharmacology-oriented cohort. Set A (V4 MPO top-20) and Set B (parent-study MD top-20) were not substituted for Set C. Canonical SMILES, candidate identifiers, source hashes, and inclusion labels are provided in \texttt{results/v6\_candidate\_manifest.csv}.
+The upstream hybrid library contained \num{65856} unique molecules derived from \num{396} African natural products and \num{454} synthetic antimalarial compounds. The present target-anchored analysis used the locked 17-member Set-C polypharmacology-oriented cohort. Set A (MPO top-20) and Set B (parent-study MD top-20) were not substituted for Set C. Canonical SMILES, candidate identifiers, source hashes, and inclusion labels are provided in \texttt{results/integrated\_candidate\_manifest.csv}.
 
 \section*{S2. Target and anchor evidence}
 \begin{table}[h]
@@ -60,23 +60,23 @@ SMILES were standardized, embedded in three dimensions, and converted to PDBQT w
 \toprule
 Candidate & PfDHFR & PfCRT & PfClpP & PfATP4 \\
 \midrule
-PP-01 & -5.947 & -6.483 & -5.467 & -6.361 \\
-PP-02 & -5.562 & -6.124 & -5.907 & -6.591 \\
-PP-03 & -6.089 & -6.633 & -6.358 & -7.311 \\
-PP-04 & -5.493 & -5.329 & -5.386 & -6.086 \\
-PP-05 & -6.285 & -6.412 & -6.466 & -6.378 \\
-PP-06 & -6.267 & -7.907 & -7.031 & -7.285 \\
-PP-07 & -6.226 & -6.633 & -6.226 & -5.775 \\
-PP-08 & -4.935 & -5.213 & -5.052 & -5.494 \\
-PP-09 & -5.693 & -6.871 & -5.613 & -6.078 \\
-PP-10 & -6.346 & -6.395 & -6.016 & -6.670 \\
-PP-11 & -6.179 & -6.376 & -6.583 & -6.724 \\
-PP-12 & -5.248 & -6.357 & -5.386 & -4.635 \\
-PP-13 & -5.921 & -5.685 & -6.454 & -7.565 \\
-PP-14 & -4.863 & -5.328 & -5.047 & -5.460 \\
-PP-15 & -6.045 & -6.084 & -6.366 & -7.016 \\
-PP-16 & -5.469 & -6.202 & -6.203 & -6.451 \\
-PP-17 & -5.266 & -5.116 & -5.342 & -5.360 \\
+PP-01 & \num{-5.947} & \num{-6.483} & \num{-5.467} & \num{-6.361} \\
+PP-02 & \num{-5.562} & \num{-6.124} & \num{-5.907} & \num{-6.591} \\
+PP-03 & \num{-6.089} & \num{-6.633} & \num{-6.358} & \num{-7.311} \\
+PP-04 & \num{-5.493} & \num{-5.329} & \num{-5.386} & \num{-6.086} \\
+PP-05 & \num{-6.285} & \num{-6.412} & \num{-6.466} & \num{-6.378} \\
+PP-06 & \num{-6.267} & \num{-7.907} & \num{-7.031} & \num{-7.285} \\
+PP-07 & \num{-6.226} & \num{-6.633} & \num{-6.226} & \num{-5.775} \\
+PP-08 & \num{-4.935} & \num{-5.213} & \num{-5.052} & \num{-5.494} \\
+PP-09 & \num{-5.693} & \num{-6.871} & \num{-5.613} & \num{-6.078} \\
+PP-10 & \num{-6.346} & \num{-6.395} & \num{-6.016} & \num{-6.670} \\
+PP-11 & \num{-6.179} & \num{-6.376} & \num{-6.583} & \num{-6.724} \\
+PP-12 & \num{-5.248} & \num{-6.357} & \num{-5.386} & \num{-4.635} \\
+PP-13 & \num{-5.921} & \num{-5.685} & \num{-6.454} & \num{-7.565} \\
+PP-14 & \num{-4.863} & \num{-5.328} & \num{-5.047} & \num{-5.460} \\
+PP-15 & \num{-6.045} & \num{-6.084} & \num{-6.366} & \num{-7.016} \\
+PP-16 & \num{-5.469} & \num{-6.202} & \num{-6.203} & \num{-6.451} \\
+PP-17 & \num{-5.266} & \num{-5.116} & \num{-5.342} & \num{-5.360} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -84,8 +84,22 @@ PP-17 & -5.266 & -5.116 & -5.342 & -5.360 \\
 \section*{S5. Per-pair geometric quality control}
 All \num{68} pairs passed the computational gate. Anchor-distance ranges were \qtyrange{2.00}{3.79}{\angstrom} for PfDHFR, \qtyrange{3.03}{4.08}{\angstrom} for PfCRT, \qtyrange{3.29}{8.88}{\angstrom} for PfClpP, and \qtyrange{1.98}{3.79}{\angstrom} for PfATP4. These values describe pose placement relative to the declared anchors; they do not measure residence time, binding kinetics, or biological engagement.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{p1_v5_intratarget_rank_heatmap.pdf}
+\caption{Within-target rank map for the 17 candidates. Rank 1 denotes the most negative Vina score within a target; ranks are calculated independently for each receptor and must not be interpreted as a cross-target potency order. These checks assess pose placement and provenance; they are not biological validation.}
+\label{fig:rank}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{p1_v5_geometric_gate_qc.pdf}
+\caption{Geometric quality-control metrics for the 68 candidate--target poses. Dashed lines mark the predeclared anchor-distance and in-box-fraction thresholds. These checks assess pose placement and provenance, not binding or biological activity. These checks assess pose placement and provenance; they are not biological validation.}
+\label{fig:qc}
+\end{figure}
+
 \section*{S6. What is and is not inferred}
-The target-anchored panel supports a reproducible computational ranking layer. It does not support claims of confirmed inhibitors, measured IC\textsubscript{50}/EC\textsubscript{50}, resistance circumvention, or equivalent pocket validity across targets. The separate independent-review register, raw hashes, and automated audit are archival evidence controls and are not substituted for expert structural review.
+The target-anchored panel supports a reproducible computational ranking layer. It does not support claims of confirmed inhibitors, measured IC\textsubscript{50}/EC\textsubscript{50}, resistance circumvention, or equivalent pocket validity across targets. Raw hashes and automated integrity checks document reproducibility; they do not substitute for structural or experimental validation.
 
 \section*{S7. Data and code availability}
 Raw poses, receptor and ligand files, configuration files, candidate manifests, and analysis scripts are available at \url{https://github.com/NanaEngo/Malaria_codesV2}. The four-target machine-readable table is \texttt{results/v5\_four\_target\_vina\_affinities.csv}; the per-pair review table is \texttt{results/v5\_four\_target\_vina\_review\_table.json}.

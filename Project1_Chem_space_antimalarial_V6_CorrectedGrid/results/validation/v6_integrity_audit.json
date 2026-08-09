@@ -19,19 +19,21 @@
     "mismatches": 0,
     "rounding_differences": 140
   },
+  "development_policy": "Scientific development, exploratory integration, figures, and drafting remain allowed before explicit author reactivation; pending status is provenance, not an execution prohibition.",
+  "editorial_submission_restrictions_active": false,
   "errors": [],
   "files": {
     "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/diffdock_polypharm/diffdock_input_manifest.csv": {
-      "bytes": 20487,
+      "bytes": 24928,
       "exists": true,
       "path": "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/diffdock_polypharm/diffdock_input_manifest.csv",
-      "sha256": "497f6c748cb8ee5bd752e251f6483ded27f4b38821d60490e656741b545eb968"
+      "sha256": "d490743b0d61c252f9e9cb9441aa64a647cf8e0dea37a371baa1bbc6a354a19b"
     },
     "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/structural_pocket_independent_review.json": {
-      "bytes": 6701,
+      "bytes": 7447,
       "exists": true,
       "path": "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/structural_pocket_independent_review.json",
-      "sha256": "dc625512de597ff71fc2c8bd349952662a09b2bfeb9344059ee03ae2d8a23b8a"
+      "sha256": "fb570cc3319bd94cf5da03914566da394c83feef607c2faea58a1c4f4b10563f"
     },
     "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/v5_four_target_vina_affinities.csv": {
       "bytes": 837,
@@ -70,11 +72,9 @@
       "sha256": "6e885f71f52aa79efb5c5164a2595f93412bac3774f1fb579aed0328324b35c2"
     }
   },
-  "generated_utc": "2026-08-09T06:42:17.947321+00:00",
-  "independent_review_required": true,
-  "prohibited_actions_until_human_signature": [
-    "final V6 consensus promotion",
-    "integrated RRS/PNS manuscript claims",
+  "generated_utc": "2026-08-09T19:56:32.647477+00:00",
+  "independent_review_required_for_future_submission_promotion": true,
+  "prohibited_actions": [
     "editing the register to simulate acceptance"
   ],
   "raw_rrs": {
@@ -118,6 +118,7 @@
   "schema": "p1-v6-evidence-integrity-audit/v2",
   "self_authorization_forbidden": true,
   "status": "AUDIT_WARN_REVIEW_REQUIRED",
+  "submission_restrictions_reactivation_requested": false,
   "targets": {
     "PfATP4": {
       "anchor": "Conserved P-type ATPase catalytic machinery: phospho-site CSDKTGT -> D451 (resi 449-458) + A-domain hinge DPPR (751-754), centroid [122.712, 125.545, 91.411]",

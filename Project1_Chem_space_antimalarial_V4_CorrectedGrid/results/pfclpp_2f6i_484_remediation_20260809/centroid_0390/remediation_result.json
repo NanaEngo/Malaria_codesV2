@@ -1,0 +1,96 @@
+{
+  "schema": "p1-v4-clpp-2f6i-remediation-worker/v1",
+  "status": "DOCKED_GATE_FAILED",
+  "timestamp_utc": "2026-08-09T19:47:59.931274+00:00",
+  "consensus_written": false,
+  "rrs_pns_updated": false,
+  "vina_affinity_kcal_mol": -5.268,
+  "gate": {
+    "atom_count": 18,
+    "inside_fraction_with_padding": 1.0,
+    "pose_centroid_A": [
+      -26.739722222222223,
+      7.226444444444444,
+      8.559055555555554
+    ],
+    "centroid_in_box": true,
+    "triad_min_distance_A": 11.712934730459313
+  },
+  "vina_out_sha256": "abe6bf120acfbe27e78dacf882f1b3916962e74f51bbc08c6ccd8d3c23710e89",
+  "vina_log_sha256": "3700464e4a4591fd877170dc85aea4470d4a7fa52e774a85aa64f2d0fa4b1b0a",
+  "centroid_id": 390,
+  "smiles": "Cc1[nH]c2ccccc2c(=O)c1C[NH3+]",
+  "smiles_sha256": "9512204c0ae2abeab2436dd10e16f1ae449cda231e0c80b3cff69051ee9edf93",
+  "smiles_file_sha256": "237b28e1dc1e368e13048d0c82eaed7ccaf475535ce436de11c164d003e51eb0",
+  "receptor_pdb_sha256": "12d02a92e72ab52267fcfb2f7fad2520271b7b311d7f538c16f6395d9f9f62d6",
+  "receptor_pdbqt_sha256": "77acfd3e870233f4e40d886c870f1a7369b1e13fe46e94d335c6ab92b59ac988",
+  "vina_sha256": "f31f774f723bba7bbe6e9d1c47577020eea9a8da16424284c043d22593570644",
+  "target": "PfClpP",
+  "pdb_id": "2F6I",
+  "receptor_identity": "genuine PfClpP catalytic domain",
+  "triad": {
+    "atoms": [
+      [
+        "A",
+        219,
+        "OD1"
+      ],
+      [
+        "A",
+        223,
+        "NE2"
+      ],
+      [
+        "A",
+        252,
+        "OG"
+      ]
+    ],
+    "coordinates_A": [
+      [
+        -24.225,
+        17.608,
+        -1.663
+      ],
+      [
+        -26.372,
+        18.249,
+        -4.879
+      ],
+      [
+        -22.232,
+        15.984,
+        -2.161
+      ]
+    ]
+  },
+  "center_A": [
+    -24.276333333333337,
+    17.280333333333335,
+    -2.901
+  ],
+  "box_A": [
+    28.0,
+    28.0,
+    28.0
+  ],
+  "frame_check": {
+    "status": "CA_SUBSET_FRAME_EQUIVALENT",
+    "pdb_ca": 1255,
+    "pdbqt_ca": 1181,
+    "common_ca": 1181,
+    "rmsd_A": 0.0,
+    "max_delta_A": 0.0
+  },
+  "vina_version_cmd": "/usr/local/bin/vina",
+  "preparation_method": "RDKit_fragments_embed_gasteiger_or_zero_Meeko",
+  "n_fragments_after_cleanup": 1,
+  "charge_method": "gasteiger",
+  "embed_method": "random_coords_seed_0",
+  "ligand_pdbqt_sha256": "e5b32d9e6011ecdd87dce86f613b61beca49d139e955345c06924e82e2e15334",
+  "elements": [
+    "C",
+    "N",
+    "O"
+  ]
+}

@@ -1,5 +1,5 @@
 % Target-anchored computational prioritization of African-NP-inspired antimalarial candidates
-% V5 scientific article — August 2026
+% Target-anchored computational article — August 2026
 \documentclass[journal=jcisd8,manuscript=article]{achemso}
 \usepackage{amsmath,amssymb,mathtools}
 \usepackage[T1]{fontenc}
@@ -49,7 +49,7 @@ Our hypothesis was deliberately limited: target-anchored docking would yield a r
 
 \section{Materials and Methods}
 \subsection{Candidate cohort and chemical-space funnel}
-The starting workflow combined \num{396} African natural products with \num{454} synthetic antimalarial compounds. Similarity-based expansion and SELFIES perturbation generated a deduplicated hybrid library of \num{65856} molecules. A variational autoencoder representation, clustering, multi-parameter optimization, and synthetic-accessibility filtering produced a prioritized lead space. The present analysis used the prespecified 17-member polypharmacology-oriented cohort (Set C), whose canonical SMILES and source hash are provided in the candidate manifest. This cohort is distinct from the V4 MPO top-20 set and from the four parent systems used in the historical MD study.
+The starting workflow combined \num{396} African natural products with \num{454} synthetic antimalarial compounds. Similarity-based expansion and SELFIES perturbation generated a deduplicated hybrid library of \num{65856} molecules. A variational autoencoder representation, clustering, multi-parameter optimization, and synthetic-accessibility filtering produced a prioritized lead space. The present analysis used the prespecified 17-member polypharmacology-oriented cohort (Set C), whose canonical SMILES and source hash are provided in the candidate manifest. This cohort is distinct from the MPO top-20 set and from the four parent systems used in the historical MD study.
 
 \subsection{Target structures and biological anchors}
 The receptor files were prepared as protein-only structures, retaining the coordinate frame used for the target-specific pocket definition. The four anchors were:
@@ -65,10 +65,10 @@ The anchor coordinates, receptor hashes, and pocket evidence classes are listed 
 SMILES were standardized and converted to three-dimensional ligand structures with explicit protonation and rotatable-bond records. Ligand PDBQT files were generated with Meeko. AutoDock Vina was run independently for each candidate--target pair using fixed target-specific boxes and target-specific exhaustiveness settings, following established docking practice \cite{Trott2009,Eberhardt2021}. No post hoc translation of poses or expansion of boxes was permitted. The docking score is reported in \si{\kilo\calorie\per\mole} and is interpreted only as a Vina scoring-function estimate.
 
 \subsection{Predeclared geometric gate and provenance}
-A pair was classified as geometrically admissible when (i) the rank-1 pose centroid was inside the declared search box, (ii) at least one ligand atom was within \qty{10}{\angstrom} of the target-specific anchor atoms, and (iii) at least \qty{90}{\percent} of ligand atoms were inside the box with the declared padding. This gate tests computational placement, not binding. For every pair, the supplementary record stores the receptor, ligand, configuration, output pose, conversion log, and hashes. The independent structural-review register remains a separate authorization artifact; this article does not treat automated integrity checks as independent biological validation.
+A pair was classified as geometrically admissible when (i) the rank-1 pose centroid was inside the declared search box, (ii) at least one ligand atom was within \qty{10}{\angstrom} of the target-specific anchor atoms, and (iii) at least \qty{90}{\percent} of ligand atoms were inside the box with the declared padding. This geometric criterion tests computational placement, not binding. For every pair, the supplementary record stores the receptor, ligand, configuration, output pose, conversion log, and hashes. Automated integrity checks are reported as reproducibility controls and are not interpreted as biological validation.
 
 \subsection{Summary statistics}
-For each target we report the range and mean of the 17 Vina scores, the proportion of pairs passing the geometric gate, and the range of anchor distances. We did not compute a four-target consensus score, an RRS value, or a PNS value from this panel because those analyses require the separate cohort-level review and mutation definitions described in the integrated V6 study.
+For each target we report the range and mean of the 17 Vina scores, the proportion of pairs passing the geometric gate, and the range of anchor distances. We did not compute a four-target consensus score, an RRS value, or a PNS value from this panel because those analyses require the separate cohort-level review and mutation definitions described in the integrated study.
 
 \section{Results}
 \subsection{A chemically diverse, fixed polypharmacology-oriented cohort}
@@ -77,7 +77,14 @@ The 17 candidates were retained as a locked cohort rather than selected after in
 \subsection{Target-anchored docking produces a complete pose matrix}
 All \num{68} candidate--target pairs passed the predeclared geometric gate. The target-specific score ranges were \qtyrange{-6.35}{-4.86}{\kilo\calorie\per\mole} for PfDHFR, \qtyrange{-7.91}{-5.12}{\kilo\calorie\per\mole} for PfCRT, \qtyrange{-7.03}{-5.05}{\kilo\calorie\per\mole} for PfClpP, and \qtyrange{-7.57}{-4.63}{\kilo\calorie\per\mole} for PfATP4. The corresponding target-wise means were \num{-5.755}, \num{-6.185}, \num{-5.935}, and \num{-6.308}, respectively. These summaries are kept separate because Vina scores are not calibrated across unlike receptor pockets. Candidate-level values are given in Supplementary \Cref{SM-tab:vina_matrix}.
 
-The most favorable within-target estimates included PP-06 in the PfCRT cavity (\num{-7.91}) and PP-13 in the PfATP4 machinery region (\num{-7.57}). These observations are descriptive within each target and are not a cross-target potency ranking: the pockets have different evidence classes, and Vina scores are not calibrated across targets. The complete candidate-by-target matrix is therefore retained without a composite score.
+The most favorable within-target estimates included PP-06 in the PfCRT cavity (\num{-7.91}) and PP-13 in the PfATP4 machinery region (\num{-7.57}). These observations are descriptive within each target and are not a cross-target potency ranking: the pockets have different evidence classes, and Vina scores are not calibrated across targets. The complete candidate-by-target matrix is therefore retained without a composite score. The target-wise distributions and candidate-level ordering are visualized in \Cref{fig:targetwise}; the corresponding rank and gate-quality displays are provided in Supplementary \Cref{SM-fig:rank,SM-fig:qc}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{p1_v5_targetwise_vina_scores.pdf}
+\caption{Target-wise Vina score estimates for the locked 17-member cohort. Each panel is an independent receptor-specific view, ordered from the most negative to the least negative score within that target. Scores are AutoDock Vina scoring-function outputs and are not calibrated for cross-target comparison; the figure does not represent a four-target potency ranking. The panel is computational evidence and does not constitute biological validation.}
+\label{fig:targetwise}
+\end{figure}
 
 \subsection{Pocket evidence determines the interpretation of the matrix}
 The complete geometric pass rate should not be mistaken for equivalent biological support across targets. PfDHFR and PfClpP use chemically meaningful catalytic-site anchors; PfCRT is relative to a membrane-associated proxy cavity; and PfATP4 is relative to conserved catalytic machinery in a structure without a co-crystallized inhibitor. Accordingly, the matrix is best interpreted as a standardized hypothesis-generation layer. It identifies candidate--pocket configurations that merit orthogonal testing, while preserving the uncertainty associated with the underlying structural evidence.
@@ -90,7 +97,7 @@ The four-target matrix creates a useful interface with resistance-resilience ana
 Several limitations bound the interpretation. Vina scores are approximate scoring-function outputs and are not experimental binding free energies. The Y01-associated PfCRT cavity is a membrane proxy, and the PfATP4 region is mechanism-motivated rather than inhibitor-anchored. Rigid-receptor docking does not capture induced fit, membrane dynamics, protonation uncertainty, or solvent reorganization. The 17-member cohort was not an external prospective benchmark, and no IC\textsubscript{50}/EC\textsubscript{50} measurements were available for this analysis. Finally, the automated integrity record does not replace independent structural review. These limitations motivate biochemical binding measurements, cellular antimalarial assays, mutant-panel testing, and molecular-dynamics or free-energy calculations on a small number of experimentally tractable candidates.
 
 \section{Conclusion}
-A target-anchored Vina workflow generated a complete 17-by-4 computational pose matrix for an African-natural-product-inspired polypharmacology-oriented cohort. The workflow corrected a target-identity error by using PfClpP structure 2F6I rather than PfClpR structure 4GM2, distinguished ligand-anchored, proxy, and machinery-motivated pockets, and preserved raw pose provenance. The resulting candidates are computational hypotheses for multi-target and resistance-resilience studies, not confirmed inhibitors. The associated RRS and polypharmacology interpretation is developed separately in V6 using a per-target mutation-aware definition.
+A target-anchored Vina workflow generated a complete 17-by-4 computational pose matrix for an African-natural-product-inspired polypharmacology-oriented cohort. The workflow corrected a target-identity error by using PfClpP structure 2F6I rather than PfClpR structure 4GM2, distinguished ligand-anchored, proxy, and machinery-motivated pockets, and preserved raw pose provenance. The resulting candidates are computational hypotheses for multi-target and resistance-resilience studies, not confirmed inhibitors. The associated RRS and polypharmacology interpretation is developed separately using a per-target mutation-aware definition.
 
 \section*{Supporting Information}
 The Supporting Information contains target-anchor definitions, the complete 17-by-4 score matrix, per-pair geometric metrics, ligand-preparation details, receptor and configuration hashes, and the data dictionary for the machine-readable review table.
@@ -102,7 +109,7 @@ M.V.S.T. and S.G.N.E. designed the computational study. M.V.S.T. and J.-P.T.N. d
 The authors declare no competing financial interest. All interpretations are computational and hypothesis-generating.
 
 \section*{Data Availability}
-Canonical SMILES, target structures, ligand files, raw Vina outputs, configuration files, hashes, and analysis scripts are available in the project repository: \url{https://github.com/NanaEngo/Malaria_codesV2}. The machine-readable four-target table is \texttt{results/v5\_four\_target\_vina\_review\_table.json}. The independent-review register is intentionally maintained separately from the manuscript and must not be interpreted as a biological acceptance certificate.
+Canonical SMILES, target structures, ligand files, raw Vina outputs, configuration files, hashes, and analysis scripts are available in the project repository: \url{https://github.com/NanaEngo/Malaria_codesV2}. The machine-readable four-target table is \texttt{results/v5\_four\_target\_vina\_review\_table.json}. The dataset and its computational limitations are described alongside the machine-readable results.
 
 \bibliography{../bibliography/Sao_Chim_Space}
 \end{document}

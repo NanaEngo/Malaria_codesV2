@@ -14,13 +14,17 @@
     "job_id": 13478,
     "merge_job_id": 13479,
     "output_root": "results/pfclpp_2f6i_484_rescue_seed20260809_v2",
+    "records_passed": 3,
+    "records_failed": 32,
+    "failure_inventory": "results/pfclpp_2f6i_484_failure_inventory.json",
     "requested_centroid_ids": [13,30,40,43,47,70,73,99,100,125,136,145,167,170,189,194,195,228,237,257,258,339,340,358,361,368,373,390,408,416,423,435,440,452,468],
     "seed": 20260809,
     "exhaustiveness": 32,
     "box_unchanged": true,
     "biological_gate_unchanged": true,
     "submitted_from_tracked_protocol": "scripts/p1_v4_retry_clpp_2f6i_v2.sbatch",
-    "status": "RUNNING_OR_PENDING"
+    "scheduler_status": "UNKNOWN_NO_ACTIVE_ENTRY",
+    "audit_status": "FAILED_CLOSED"
   },
   "uniform_candidate_replacement": {
     "job_id": 13451,
@@ -31,7 +35,8 @@
     "exhaustiveness": 32,
     "box_unchanged": true,
     "biological_gate_unchanged": true,
-    "status": "RUNNING_OR_PENDING"
+    "scheduler_status": "UNKNOWN_NO_ACTIVE_ENTRY",
+    "audit_status": "FAILED_CLOSED"
   },
   "promotion": {
     "canonical_replacement": false,

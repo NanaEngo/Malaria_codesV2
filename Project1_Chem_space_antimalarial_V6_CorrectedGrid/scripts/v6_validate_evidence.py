@@ -472,7 +472,9 @@ def main() -> int:
         "schema": "p1-v6-evidence-integrity-audit/v2",
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "status": status,
-        "independent_review_required": True,
+        "independent_review_required_for_future_submission_promotion": True,
+        "editorial_submission_restrictions_active": False,
+        "submission_restrictions_reactivation_requested": False,
         "accepted_for_full_run": False,
         "self_authorization_forbidden": True,
         "errors": errors,
@@ -485,7 +487,8 @@ def main() -> int:
         "rrs_recomputation": rrs_recomputation,
         "targets": anchors,
         "candidate_counts": {"v5_affinity_csv": len(candidate_v5), "v5_review_table": len(candidate_table), "v5_manifest": len(v5_map), "p2_source": len(p2_source), "p2_rrs": len(candidate_rrs)},
-        "prohibited_actions_until_human_signature": ["final V6 consensus promotion", "integrated RRS/PNS manuscript claims", "editing the register to simulate acceptance"],
+        "development_policy": "Scientific development, exploratory integration, figures, and drafting remain allowed before explicit author reactivation; pending status is provenance, not an execution prohibition.",
+        "prohibited_actions": ["editing the register to simulate acceptance"],
     }
     if errors:
         args.candidate_manifest.unlink(missing_ok=True)
@@ -495,12 +498,12 @@ def main() -> int:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
 
-    dossier = ["# V6 Evidence-Integrity Review Dossier", "", f"- Automated status: `{status}`", "- Independent review: **REQUIRED; not performed by this script**", "- Independent acceptance: `false`", "", "## Scope", "", "This dossier checks file integrity, schema, counts, target metadata, canonical-SMILES cohort identity, and the hashes declared by the raw per-target Vina outputs. It does not certify biological validity, experimental binding, or independent scientific acceptance.", "", "## Target evidence", ""]
+    dossier = ["# V6 Evidence-Integrity Review Dossier", "", f"- Automated status: `{status}`", "- Pre-submission editorial restrictions: **INACTIVE**", "- Independent review status: `PENDING` (truthful provenance; not an execution block)", "- Future submission-facing acceptance: `false`", "", "## Scope", "", "This dossier checks file integrity, schema, counts, target metadata, canonical-SMILES cohort identity, and the hashes declared by the raw per-target Vina outputs. It does not certify biological validity, experimental binding, or independent scientific acceptance. Scientific development may continue; only explicit author reactivation can activate future submission-facing review controls.", "", "## Target evidence", ""]
     dossier += [f"- **{t} ({i.get('pdb_id')})** — decision `{i.get('decision')}`; anchor: {i.get('anchor')}" for t, i in anchors.items()]
     dossier += ["", "## Automated findings", ""]
     dossier += [f"- ERROR: `{e}`" for e in errors] or ["- No automated integrity errors detected."]
     dossier += [f"- WARNING: `{w}`" for w in warnings]
-    dossier += ["", "## Human reviewer action", "", "Inspect the raw structures, poses, configurations, and hashes independently. Then create the signed artifact specified in `docs/INDEPENDENT_REVIEW_PROTOCOL.md`. This script cannot sign the register or authorize downstream analysis.", ""]
+    dossier += ["", "## Human reviewer action", "", "Scientific development may continue from these artifacts. If the author later explicitly reactivates submission/review restrictions, inspect the raw structures, poses, configurations, and hashes independently, then create the signed artifact specified in `docs/INDEPENDENT_REVIEW_PROTOCOL.md`. This script cannot sign the register or simulate acceptance.", ""]
     args.dossier.parent.mkdir(parents=True, exist_ok=True)
     args.dossier.write_text("\n".join(dossier))
 

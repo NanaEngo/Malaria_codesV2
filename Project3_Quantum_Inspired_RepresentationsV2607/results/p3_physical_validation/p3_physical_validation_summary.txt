@@ -1,36 +1,45 @@
 P3 Physical Validation — Consolidated Summary
 ======================================================================
-Generated: 2026-07-29T01:44:58.407219
+Generated: 2026-08-09T13:12:47.109442
 Implements: P3_Strategic_85PA.md Steps 1–4
 
 Step 3 — Quantum Kernel Polypharmacology (per-fold AUCs)
 ----------------------------------------
  fold  model      auc  target_alignment  time_s  gamma
-    1    QKS 0.303030               NaN     5.2    NaN
-    1    RBF 0.424242          0.120150     NaN 0.0005
-    1 Linear 0.484848               NaN     NaN    NaN
-    2    QKS 0.409091               NaN     5.1    NaN
-    2    RBF 0.181818          0.199971     NaN 5.0000
-    2 Linear 0.681818               NaN     NaN    NaN
+    1    QKS 0.513258               NaN  2545.0    NaN
+    1    RBF 0.505682          0.086572     NaN    1.0
+    1 Linear 0.477273               NaN     NaN    NaN
+    2    QKS 0.658144               NaN  7916.2    NaN
+    2    RBF 0.642045          0.099773     NaN    0.5
+    2 Linear 0.594697               NaN     NaN    NaN
+    3    QKS 0.824811               NaN 13137.9    NaN
+    3    RBF 0.803030          0.099481     NaN    0.5
+    3 Linear 0.285038               NaN     NaN    NaN
+    4    QKS 0.688447               NaN  2605.3    NaN
+    4    RBF 0.704545          0.084585     NaN    1.0
+    4 Linear 0.626894               NaN     NaN    NaN
+    5    QKS 0.720644               NaN  7818.8    NaN
+    5    RBF 0.694129          0.060338     NaN    2.0
+    5 Linear 0.253788               NaN     NaN    NaN
 
 
 Statistical analysis:
 P3 Physical Validation — Quantum Kernel Polypharmacology Benchmark
 ======================================================================
-Generated: 2026-07-29T01:44:57.983217
+Generated: 2026-08-09T13:12:46.472498
 Task: classify molecules binding >= 2 targets at ΔG <= -7.0 kcal/mol
-Subsample: n=50 (stratified), prevalence=12.0%
-CV: 2-fold stratified, IQPEmbedding n_repeats=1
+Subsample: n=500 (stratified), prevalence=12.0%
+CV: 5-fold stratified, IQPEmbedding n_repeats=1
 Circuit: 8-qubit IQPEmbedding on lightning.qubit
 
-     QKS:  AUC = 0.3561 ± 0.0750  (95% bootstrap CI [0.3030, 0.4091], n=2 folds)
-     RBF:  AUC = 0.3030 ± 0.1714  (95% bootstrap CI [0.1818, 0.4242], n=2 folds)
-          target alignment = 0.1601 ± 0.0399
-  Linear:  AUC = 0.5833 ± 0.1393  (95% bootstrap CI [0.4848, 0.6818], n=2 folds)
+     QKS:  AUC = 0.6811 ± 0.1129  (95% bootstrap CI [0.5898, 0.7642], n=5 folds)
+     RBF:  AUC = 0.6699 ± 0.1087  (95% bootstrap CI [0.5831, 0.7491], n=5 folds)
+          target alignment = 0.0861 ± 0.0144
+  Linear:  AUC = 0.4475 ± 0.1722  (95% bootstrap CI [0.3110, 0.5841], n=5 folds)
 
 Pairwise Wilcoxon signed-rank tests (Bonferroni-Holm corrected):
-  QKS vs RBF: insufficient paired data (n=2)
-  QKS vs Linear: insufficient paired data (n=2)
-  RBF vs Linear: insufficient paired data (n=2)
+  QKS vs RBF: Wilcoxon W=3.0, p_raw=0.3125, Cliff's δ=+0.120, mean ΔAUC=+0.0112 (n=5)  |  p_Holm=0.3125 (n.s.)
+  QKS vs Linear: Wilcoxon W=0.0, p_raw=0.0625, Cliff's δ=+0.840, mean ΔAUC=+0.2335 (n=5)  |  p_Holm=0.1875 (n.s.)
+  RBF vs Linear: Wilcoxon W=0.0, p_raw=0.0625, Cliff's δ=+0.840, mean ΔAUC=+0.2223 (n=5)  |  p_Holm=0.1875 (n.s.)
 
 Significance: * p<0.05, ** p<0.01, *** p<0.001 (Bonferroni-Holm corrected)

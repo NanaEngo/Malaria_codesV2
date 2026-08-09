@@ -1,0 +1,21 @@
+{
+  "schema": "p1-v5-diffdock-preflight-digests/v1",
+  "generated_utc": "2026-08-09",
+  "repository_identity": "Malaria_codesV2",
+  "diffdock_git_head": "85c49b60d3e0b0182a59ee43a34a6d7036981284",
+  "note": "Technical integrity pin only; this does not authorize scientific acceptance or independent review. Paths under DiffDock are relative to /home/nanaengo/software/DiffDock; project paths are relative to the repository root.",
+  "artifacts": {
+    "config": {"path": "Project1_Chem_space_antimalarial_V5_CorrectedGrid/scripts/p1_v5_diffdock_inference_config.yaml", "sha256": "10101ff3955402a042b663c9b4df37454edcd53279678ed32c66e164340dceea"},
+    "entrypoint": {"path": "inference.py", "sha256": "d9a908b3f45672d3f45216070dfd4c1493f50c16882f03489c48f94262856e67"},
+    "score_checkpoint": {"path": "workdir/score_model/best_ema_inference_epoch_model.pt", "sha256": "64afbdc97f6c700df0309162eb533ee6f2754c71412aca7a3a534a7239667260"},
+    "score_parameters": {"path": "workdir/score_model/model_parameters.yml", "sha256": "58c3d2a5da4194fe4ba968363a3f16ccb3c11f2c0898c9d27e62f4b06893f943"},
+    "confidence_checkpoint": {"path": "workdir/confidence_model/best_model_epoch75.pt", "sha256": "18d0fcc97fc55436786db02305ac61c734ad682aa5f8dee601555369c8461a57"},
+    "confidence_parameters": {"path": "workdir/confidence_model/model_parameters.yml", "sha256": "2fe8d3db566c5758fc2551d9fb3b1605256f72762998574bb893609298d4dd97"},
+    "receptors": {
+      "PfDHFR": {"path": "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/7F3Y.pdbqt", "sha256": "7098823dbd4bc5244a43b6ddd9a964d92ebef4bca952c22f25da5098bafadc3a"},
+      "PfCRT": {"path": "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/6UKJ.pdbqt", "sha256": "1bc38247a85986f3d167891f4a2f9db18afabfa51edd5671760a2c649a8ae50b"},
+      "PfClpP": {"path": "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/2F6I.pdbqt", "sha256": "77acfd3e870233f4e40d886c870f1a7369b1e13fe46e94d335c6ab92b59ac988"},
+      "PfATP4": {"path": "Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/9N10.pdbqt", "sha256": "bb5cc0940daba17239ef3d101613a3e80316a170ff0c3fbe53910c6b0a7cfbda"}
+    }
+  }
+}

@@ -54,22 +54,22 @@ from African Natural Products''}
 \end{figure}
 
 % ============================================================================
-% Table S3: MM-GBSA WT results and mutant exclusion status
+% Table S3: MM-GBSA WT results and mutant interpretation
 % ============================================================================
 \begin{table}[htbp]
 \centering
-\caption{Endpoint-analysis status for the four parent-study consensus complexes used for production MD. These systems are distinct from the 17 set-C polypharmacology candidates. Mean $\pm$ standard deviation is shown only for the single interpretable MM-GBSA result from 101 snapshots; dissociated or conversion-corrupted systems are reported as N/A. Mutant RRS is a docking-based analysis of set C and is not assigned to these MD systems.}
+\caption{Endpoint-analysis interpretation for the four parent-study consensus complexes used for production MD. These systems are distinct from the 17 set-C polypharmacology candidates. Mean $\pm$ standard deviation is shown only for the single interpretable MM-GBSA result from 101 snapshots; dissociated or conversion-corrupted systems are reported as N/A. Mutant RRS is a docking-based analysis of set C and is not assigned to these MD systems.}
 \label{tab:s3_mmgbsa_mutants}
 \begin{tabular}{l l S[table-format=-2.2] S[table-format=1.2] l}
 \toprule
-Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Status \\
+Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Interpretation \\
 \midrule
-164 & Historical PfClpP cohort label$^\ast$-WT & {--} & {--} & N/A; ligand dissociated$^\ddagger$ \\
+164 & PfClpR-labelled cohort$^\ast$-WT & {--} & {--} & N/A; ligand dissociated$^\ddagger$ \\
 201 & PfDHFR-WT & {--} & {--} & N/A; ligand dissociated$^\ddagger$ \\
 214 & PfCRT-WT & -18.25 & 0.40 & Interpretable (gmx\_MMPBSA) \\
 438 & PfATP4-WT & {--} & {--} & N/A; conversion corrupted$^\S$ \\
 \bottomrule
-\multicolumn{5}{l}{$^\ast$The 164--PfClpP label is historical; PDB 4GM2 is PfClpR rather than PfClpP and this system is not PfClpP structural validation.} \\
+\multicolumn{5}{l}{$^\ast$PDB 4GM2 is PfClpR rather than PfClpP; the 164-labelled system is therefore not structural validation of PfClpP.} \\
 \multicolumn{5}{l}{$^\ddagger$Ligand dissociated during production; no binding free energy is inferred.} \\
 \multicolumn{5}{l}{$^\S$Excluded due to two-chain topology incompatibility with CHARMM36-to-AMBER conversion.} \\
 \end{tabular}
@@ -94,5 +94,7 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Status \\
 \caption{Per-compound, docking-derived RRS profiles across all six resistance mutations for the 17 set-C polypharmacological leads. The four parent-study MD systems are not included. Each axis represents one mutation; concentric rings indicate \qty{50}{\percent}, \qty{100}{\percent}, and \qty{150}{\percent} RRS (WT-normalised). Class A* and Class A compounds fill the outer region (RRS $>$ \qty{100}{\percent}).}
 \label{fig:s4_rrs_radar}
 \end{figure}
+
+\noindent\textit{Additional MD assessment.} A diagnostic continuation of the parent PfDHFR and PfCRT systems did not yield a usable new trajectory. It therefore contributed no new MM-GBSA estimate or MD-RRS result. No candidate-specific Set-C production MD was obtained.
 
 \end{document}

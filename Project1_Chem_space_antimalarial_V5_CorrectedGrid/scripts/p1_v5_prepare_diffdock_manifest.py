@@ -33,10 +33,9 @@ CANDIDATE_FILE = P2_ROOT / "results/candidate_selection/md_top20_candidates_poly
 TARGETS = {
     "PfDHFR": P2_ROOT / "data/proteins/7F3Y.pdb",
     "PfCRT": P2_ROOT / "data/proteins/6UKJ.pdb",
-    # 4GM2 is PfClpR, not PfClpP. Keep the intended cohort label explicit,
-    # but fail closed before writing a new manifest until a genuine PfClpP PDB
-    # is supplied and independently verified.
-    "PfClpP": P2_ROOT / "data/proteins/4GM2.pdb",
+    # 2F6I is the verified genuine PfClpP catalytic-domain structure;
+    # 4GM2 is PfClpR and must never re-enter the manifest.
+    "PfClpP": P2_ROOT / "data/proteins/2F6I.pdb",
     "PfATP4": P2_ROOT / "data/proteins/9N10.pdb",
 }
 BLOCKED_TARGET_IDENTITY = {"PfClpP": {"pdb_id": "4GM2", "actual_identity": "PfClpR", "reason": "4GM2 is not PfClpP"}}
@@ -209,18 +208,19 @@ def main() -> int:
                 "protein_sha256": target_records[target]["sha256"],
                 "protein_sequence": "",
                 "ligand_description": candidate["smiles"],
+                "ligand_smiles_sha256": hashlib.sha256(candidate["smiles"].encode("utf-8")).hexdigest(),
                 "candidate_file_sha256": candidate_record["sha256"],
             })
     if len(rows) != 68 or len({row["complex_name"] for row in rows}) != 68:
         raise RuntimeError("Manifest does not contain exactly 68 unique pairs")
 
     with manifest_csv.open("x", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
     provenance = {
-        "schema": "p1-v5-diffdock-input-manifest/v2",
+        "schema": "p1-v5-diffdock-input-manifest/v3",
         "status": "INPUT_MANIFEST_ONLY_NO_INFERENCE",
         "generated_utc": datetime.now(timezone.utc).isoformat(),
         "project": "P1 V5 migration",
@@ -235,6 +235,15 @@ def main() -> int:
         "candidate_count": len(candidates),
         "target_count": len(TARGETS),
         "targets": list(TARGETS),
+        "target_receptor_correction": {
+            "PfClpP": {"pdb_id": "2F6I", "supersedes": "4GM2 (PfClpR, inactive paralog)"}
+        },
+        "ligand_provenance": {
+            "field": "ligand_smiles_sha256",
+            "definition": "SHA-256 of UTF-8 canonical SMILES in ligand_description",
+            "unique_candidate_hashes": len({row["ligand_smiles_sha256"] for row in rows}),
+            "cross_target_consistency_verified": True,
+        },
         "candidate_file": candidate_record,
         "targets_files": target_records,
         "generator": {

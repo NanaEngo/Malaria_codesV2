@@ -1,0 +1,186 @@
+{
+  "schema": "p1-v4-clpp-2f6i-rescue-audit/v2",
+  "status": "RESCUE_SENSITIVITY_INCOMPLETE",
+  "requested_rescue_ids": [
+    13,
+    30,
+    40,
+    43,
+    47,
+    70,
+    73,
+    99,
+    100,
+    125,
+    136,
+    145,
+    167,
+    170,
+    189,
+    194,
+    195,
+    228,
+    237,
+    257,
+    258,
+    339,
+    340,
+    358,
+    361,
+    368,
+    373,
+    390,
+    408,
+    416,
+    423,
+    435,
+    440,
+    452,
+    468
+  ],
+  "requested_records": 35,
+  "rescue_records_audited": 3,
+  "rescue_records_failed_or_missing": [
+    {
+      "centroid_id": 13,
+      "reason": "worker failure: Vina returned 1"
+    },
+    {
+      "centroid_id": 30,
+      "reason": "worker failure: RDKit deterministic 3-D embedding failed"
+    },
+    {
+      "centroid_id": 40,
+      "reason": "worker failure: Vina returned 1"
+    },
+    {
+      "centroid_id": 43,
+      "reason": "worker failure: RDKit deterministic 3-D embedding failed"
+    },
+    {
+      "centroid_id": 47,
+      "reason": "worker failure: Vina returned 1"
+    },
+    {
+      "centroid_id": 70,
+      "reason": "worker failure: RDKit deterministic 3-D embedding failed"
+    },
+    {
+      "centroid_id": 73,
+      "reason": "worker failure: non-finite Gasteiger charge"
+    },
+    {
+      "centroid_id": 99,
+      "reason": "worker failure: non-finite Gasteiger charge"
+    },
+    {
+      "centroid_id": 100,
+      "reason": "worker failure: non-finite Gasteiger charge"
+    },
+    {
+      "centroid_id": 136,
+      "reason": "worker failure: composite biological gate failed: {'atom_count': 17, 'inside_fraction_with_padding': 1.0, 'pose_centroid_A': [-26.534058823529413, 7.643823529411766, 8.640529411764707], 'centroid_in_box': True, 'triad_min_distance_A': 11.02831868418754}"
+    },
+    {
+      "centroid_id": 145,
+      "reason": "worker failure: composite biological gate failed: {'atom_count': 5, 'inside_fraction_with_padding': 1.0, 'pose_centroid_A': [-12.3092, 22.6762, 9.680200000000001], 'centroid_in_box': True, 'triad_min_distance_A': 15.577154842910177}"
+    },
+    {
+      "centroid_id": 167,
+      "reason": "worker failure: RDKit deterministic 3-D embedding failed"
+    },
+    {
+      "centroid_id": 170,
+      "reason": "worker failure: composite biological gate failed: {'atom_count': 20, 'inside_fraction_with_padding': 1.0, 'pose_centroid_A': [-26.3892, 7.47615, 8.385049999999998], 'centroid_in_box': True, 'triad_min_distance_A': 10.224913936068116}"
+    },
+    {
+      "centroid_id": 189,
+      "reason": "worker failure: composite biological gate failed: {'atom_count': 10, 'inside_fraction_with_padding': 1.0, 'pose_centroid_A': [-11.802, 23.203899999999997, 9.606699999999998], 'centroid_in_box': True, 'triad_min_distance_A': 15.34005935451359}"
+    },
+    {
+      "centroid_id": 194,
+      "reason": "worker failure: RDKit deterministic 3-D embedding failed"
+    },
+    {
+      "centroid_id": 195,
+      "reason": "worker failure: RDKit deterministic 3-D embedding failed"
+    },
+    {
+      "centroid_id": 228,
+      "reason": "worker failure: RDKit deterministic 3-D embedding failed"
+    },
+    {
+      "centroid_id": 237,
+      "reason": "worker failure: RDKit molecule has 2 fragments. Must have 1."
+    },
+    {
+      "centroid_id": 257,
+      "reason": "worker failure: non-finite Gasteiger charge"
+    },
+    {
+      "centroid_id": 339,
+      "reason": "worker failure: non-finite Gasteiger charge"
+    },
+    {
+      "centroid_id": 340,
+      "reason": "worker failure: RDKit deterministic 3-D embedding failed"
+    },
+    {
+      "centroid_id": 358,
+      "reason": "worker failure: Vina returned 1"
+    },
+    {
+      "centroid_id": 361,
+      "reason": "worker failure: RDKit deterministic 3-D embedding failed"
+    },
+    {
+      "centroid_id": 368,
+      "reason": "worker failure: non-finite Gasteiger charge"
+    },
+    {
+      "centroid_id": 390,
+      "reason": "worker failure: composite biological gate failed: {'atom_count': 18, 'inside_fraction_with_padding': 1.0, 'pose_centroid_A': [-26.760444444444452, 7.214499999999999, 8.582555555555553], 'centroid_in_box': True, 'triad_min_distance_A': 11.71408011753377}"
+    },
+    {
+      "centroid_id": 408,
+      "reason": "worker failure: Vina returned 1"
+    },
+    {
+      "centroid_id": 416,
+      "reason": "worker failure: composite biological gate failed: {'atom_count': 3, 'inside_fraction_with_padding': 1.0, 'pose_centroid_A': [-13.017000000000001, 22.29733333333333, 9.002333333333334], 'centroid_in_box': True, 'triad_min_distance_A': 15.561937282999182}"
+    },
+    {
+      "centroid_id": 423,
+      "reason": "worker failure: non-finite Gasteiger charge"
+    },
+    {
+      "centroid_id": 435,
+      "reason": "worker failure: Vina returned 1"
+    },
+    {
+      "centroid_id": 440,
+      "reason": "worker failure: Vina returned 1"
+    },
+    {
+      "centroid_id": 452,
+      "reason": "worker failure: non-finite Gasteiger charge"
+    },
+    {
+      "centroid_id": 468,
+      "reason": "worker failure: non-finite Gasteiger charge"
+    }
+  ],
+  "rescue_records_unaccounted": 0,
+  "rescue_protocol": {
+    "seed": 20260809,
+    "exhaustiveness": 32,
+    "fixed_box_unchanged": true,
+    "biological_gate_unchanged": true,
+    "canonical_panel_promotion": false
+  },
+  "csv_sha256": "aac10bfbe9885e5dd5afb93524fecff139cb6190ee21fe90853ba04399ec3750",
+  "created_utc": "2026-08-09T14:44:54.314825+00:00",
+  "consensus_written": false,
+  "rrs_pns_updated": false,
+  "scientific_promotion_note": "This heterogeneous rescue layer is sensitivity evidence only. Scientific reconciliation of the uniform 484-record panel remains in progress; no editorial restriction blocks further development before explicit author reactivation."
+}

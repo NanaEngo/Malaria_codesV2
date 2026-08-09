@@ -15,16 +15,23 @@ Classes (P2): A* (|dG_WT| >= 7.0 AND RRS >= 80% for every mutant), A (>=80%
 every), B (>=70% every but not all >=80%), C (>=80% for a subset), D (<60%
 for any mutant).
 
-Status: PILOT — this artifact is NOT accepted for manuscript claims until the
-independent structural review register is signed (accepted_for_full_run=true
-AND all targets ACCEPTED; author decision 2026-08-08: independent review
-MANDATORY, no internal-work bypass).
+Status: During PRE_SUBMISSION_DEVELOPMENT this is a computational development
+artifact. No editorial or independent-review restriction blocks its execution
+while the author continues scientific work. The output retains its exploratory
+provenance and is not silently relabeled as independently reviewed. A signed
+review gate is dormant until the author explicitly requests reactivation after
+submission.
 """
 from __future__ import annotations
 
 import json
 import sys
 from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(SCRIPT_DIR))
+from p1_development_policy import is_pre_submission, phase_name
+from p1_v5_consensus_rrs_gate import check_gate
 
 import numpy as np
 import pandas as pd
@@ -33,6 +40,7 @@ V5 = Path(__file__).resolve().parents[1]
 SCORES = V5 / "results/rrs_pilot/vina_scores/v5_mutant_vina_scores.csv"
 REGISTER = V5 / "results/structural_pocket_independent_review.json"
 OUT_CSV = V5 / "results/rrs_pilot/c_rrs_pilot_per_target_v5.csv"
+EXPLORATORY_DIR = V5 / "results/exploratory/rrs_pilot"
 # schema note: one row per (candidate, target) with that target's mutant RRS
 # values — NOT the P2 c_rrs_classification.csv schema (one row per compound
 # spanning both targets). P1.3's primary endpoint is target-specific retention.
@@ -73,6 +81,21 @@ def main() -> int:
     df = pd.read_csv(SCORES)
     reg = json.loads(REGISTER.read_text()) if REGISTER.exists() else {}
     accepted = bool(reg.get("accepted_for_full_run", False))
+    pre_submission = is_pre_submission()
+    if not accepted and not pre_submission:
+        print("SUBMISSION REVIEW GATE CLOSED: post-submission RRS promotion requires explicit author reactivation and signed review")
+        return 1
+    if not pre_submission:
+        gate_ok, gate_message = check_gate(REGISTER)
+        if not gate_ok:
+            print(f"FAIL-CLOSED: post-submission RRS gate verification failed: {gate_message}")
+            return 1
+
+    # Pre-submission work is intentionally runnable without a review signature,
+    # but it must never overwrite submission-facing RRS artifacts.
+    out_csv = OUT_CSV if not pre_submission else EXPLORATORY_DIR / "c_rrs_pilot_per_target_v5.csv"
+    out_prov = OUT_PROV if not pre_submission else EXPLORATORY_DIR / "rrs_pilot_provenance.json"
+    out_csv.parent.mkdir(parents=True, exist_ok=True)
 
     rows = []
     for target, wt_label in WT_RECEPTORS.items():
@@ -100,12 +123,14 @@ def main() -> int:
             })
 
     out = pd.DataFrame(rows).sort_values(["target", "RRS_mean"], ascending=[True, False])
-    out.to_csv(OUT_CSV, index=False)
+    out.to_csv(out_csv, index=False)
+    accepted_for_submission = bool(accepted and not pre_submission)
     prov = {
         "schema": "p1-v5-rrs-pilot/v1",
-        "status": "DOCKING_RRS_ACCEPTED" if accepted
-                  else "DOCKING_RRS_PILOT_COMPUTED_PENDING_REVIEW",
-        "accepted_for_full_run": accepted,
+        "status": ("DOCKING_RRS_ACCEPTED" if accepted_for_submission else "PRE_SUBMISSION_DEVELOPMENT_NOT_SUBMISSION_READY"),
+        "phase": phase_name(),
+        "accepted_for_full_run": accepted_for_submission,
+        "submission_eligible": accepted_for_submission,
         "protocol": "per-target RRS = |dG_mut,t|/|dG_WT,t|*100, WT binding baseline "
                     "|dG_WT,t| >= 5.0 kcal/mol, no target mixing (P2 definition)",
         "wt_baselines": WT_RECEPTORS,
@@ -113,11 +138,17 @@ def main() -> int:
         "rows": len(out),
         "n_binders_dhfr": int((out["target"] == "PfDHFR").sum()),
         "n_binders_crt": int((out["target"] == "PfCRT").sum()),
-        "note": "PILOT artifact; manuscript claims BLOCKED until the independent "
-                "structural review register is signed (accepted_for_full_run=true "
-                "AND all targets ACCEPTED).",
+        "note": (
+            "Accepted after independent review."
+            if accepted_for_submission else
+            "Pre-submission development artifact. No editorial review signature "
+            "blocks execution in the current phase; the output retains its "
+            "exploratory provenance and may guide ongoing science and drafting. "
+            "Submission-facing promotion requires later author reactivation and "
+            "a fresh review of the evidence."
+        ),
     }
-    OUT_PROV.write_text(json.dumps(prov, indent=2, sort_keys=True) + "\n")
+    out_prov.write_text(json.dumps(prov, indent=2, sort_keys=True) + "\n")
     print(json.dumps(prov, indent=2, sort_keys=True))
     print("\n=== RRS classification (per target) ===")
     print(out.to_string(index=False))

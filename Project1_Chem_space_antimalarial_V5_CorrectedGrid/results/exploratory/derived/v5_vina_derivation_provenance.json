@@ -1,0 +1,84 @@
+{
+  "schema": "p1-v5-derived-data-figures/v2",
+  "generated_utc": "2026-08-09T12:06:22.428179+00:00",
+  "status": "PRE_SUBMISSION_DEVELOPMENT_NOT_SUBMISSION_READY",
+  "submission_eligible": false,
+  "scientific_boundary": [
+    "mean_completed_targets was excluded from every derived table and figure",
+    "Vina scores are reported target-wise and are not cross-target comparable",
+    "within-target ranks are ordinal and are not a potency consensus",
+    "geometric gates are pose/provenance QC, not biological validation",
+    "no consensus, RRS, PNS, or manuscript claim was computed or promoted"
+  ],
+  "panel": {
+    "n_candidates": 17,
+    "n_targets": 4,
+    "n_pairs": 68
+  },
+  "review_gate": {
+    "status": "PENDING_INDEPENDENT_REVIEW",
+    "accepted_for_full_run": false,
+    "authorization_mode": "INDEPENDENT_REVIEW_REQUIRED",
+    "consensus_artifact_status": "VOID"
+  },
+  "sources": {
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/v5_four_target_vina_affinities.csv": "e0d6891bbe422b84a3f36f3787553bf2bf2303bc12e1ef967b41febb763c088d",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/v5_four_target_vina_review_table.json": "fe2c73a3e0101e3edc0f1802fe79b5bc78a808327c493c41b150beb335a58eb4",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/structural_pocket_independent_review.json": "dc625512de597ff71fc2c8bd349952662a09b2bfeb9344059ee03ae2d8a23b8a"
+  },
+  "generator": {
+    "version": "1.0.0",
+    "script": "Project1_Chem_space_antimalarial_V5_CorrectedGrid/scripts/p1_v5_generate_figures.py",
+    "configuration": {
+      "targets": [
+        "PfDHFR",
+        "PfCRT",
+        "PfClpP",
+        "PfATP4"
+      ],
+      "rank_direction": "ascending_vina_score",
+      "figure_dpi": 300
+    },
+    "script_sha256": "1d7ae7e85b0ce84d73ff97c88a09dab22d0d497f1d489bc3c7b48865bd8a5c99",
+    "python": "3.11.15 | packaged by conda-forge | (main, Jun 11 2026, 03:34:02) [GCC 14.3.0]",
+    "packages": {
+      "numpy": "2.4.6",
+      "pandas": "2.3.3",
+      "matplotlib": "3.10.9"
+    }
+  },
+  "outputs": [
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/derived/v5_vina_long.csv",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/derived/v5_vina_target_summary.csv",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/derived/v5_vina_gate_metrics.csv",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/derived/v5_vina_intratarget_ranks.csv",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/figures/p1_v5_targetwise_vina_scores.pdf",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/figures/p1_v5_targetwise_vina_scores.png",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/figures/p1_v5_intratarget_rank_heatmap.pdf",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/figures/p1_v5_intratarget_rank_heatmap.png",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/figures/p1_v5_geometric_gate_qc.pdf",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/figures/p1_v5_geometric_gate_qc.png"
+  ],
+  "output_sha256": {
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/derived/v5_vina_long.csv": "4e3f28faa6e3b0c628c8011225c5bfb4e6f472c3125e1243c097aba7bb2757a9",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/derived/v5_vina_target_summary.csv": "52c89ca9b09f060872c733b2690f701d0b75be69bf0cc25e2d59c8f9586326d9",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/derived/v5_vina_gate_metrics.csv": "cdac978f6ef35a8aaad169ded0be1f55f077479867ef750aff1b092ac312da32",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/derived/v5_vina_intratarget_ranks.csv": "243666ea3d55e403a2c004d3ccaecea59126c5ded69e9a75b514f6732b9d26f3",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/figures/p1_v5_targetwise_vina_scores.pdf": "b3e947992f9dd3c8cf50fdd0ee5f1d7142a28f01a37606c36689be591e979965",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/figures/p1_v5_targetwise_vina_scores.png": "b03b0c933641aa136edc58c45ab92592669f9538db577153017d8bd84648ef74",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/figures/p1_v5_intratarget_rank_heatmap.pdf": "5d912fdbbdd6bbbb21128a5fdaa88c5a28dabb665c64f1115a284ea126942af3",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/figures/p1_v5_intratarget_rank_heatmap.png": "f387167a19c41a0e38270b885e99be5b5232b42be95e3de831a4d6e700884436",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/figures/p1_v5_geometric_gate_qc.pdf": "f0e41e293b9e39242e125a3de8743e3c5b38601d93ba4b054f621d3df86cf30c",
+    "Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/exploratory/figures/p1_v5_geometric_gate_qc.png": "57f89a5221b0b9cf827b1a4c4c84ae6fa37eb8916164099cfbb672c4a7bfe365"
+  },
+  "source_columns_used": [
+    "candidate_id",
+    "aff_PfDHFR",
+    "aff_PfCRT",
+    "aff_PfClpP",
+    "aff_PfATP4"
+  ],
+  "source_columns_excluded": [
+    "mean_completed_targets"
+  ]
+}

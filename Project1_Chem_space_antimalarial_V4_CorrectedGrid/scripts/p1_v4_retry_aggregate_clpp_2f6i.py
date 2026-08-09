@@ -12,23 +12,45 @@ import csv
 import hashlib
 import importlib.util
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parents[2]
+# Resolve the repository root by a required sibling project rather than by a
+# fixed parent index; this remains portable if the checkout is relocated.
+ROOT_CANDIDATES = [p for p in HERE.parents if (p / "Project2_Polypharmacology_MD_ValidationV2607").is_dir()]
+if not ROOT_CANDIDATES:
+    raise RuntimeError("cannot locate repository root containing Project2_Polypharmacology_MD_ValidationV2607")
+ROOT = ROOT_CANDIDATES[0]
 ORIGINAL_SCRIPT = HERE / "p1_v4_revalidate_clpp_2f6i.py"
-ORIGINAL_RAW = ROOT / "Project1_Chem_space_antimalarial_V4_CorrectedGrid/results/pfclpp_2f6i_484_raw"
-RESCUE = ROOT / "Project1_Chem_space_antimalarial_V4_CorrectedGrid/results/pfclpp_2f6i_484_rescue_seed20260809"
-OUT = ROOT / "Project1_Chem_space_antimalarial_V4_CorrectedGrid/results/pfclpp_2f6i_484_rescue_aggregate"
+ORIGINAL_RAW = ROOT / "Project1_Chem_space_antimalarial_V4_CorrectedGrid" / "results/pfclpp_2f6i_484_raw"
+RESCUE = Path(os.environ.get(
+    "P1_CLPP_RESCUE_DIR",
+    str(ROOT / "Project1_Chem_space_antimalarial_V4_CorrectedGrid" / "results/pfclpp_2f6i_484_rescue_seed20260809_v2"),
+))
+OUT = Path(os.environ.get(
+    "P1_CLPP_RESCUE_AUDIT_OUT",
+    str(ROOT / "Project1_Chem_space_antimalarial_V4_CorrectedGrid" / "results/pfclpp_2f6i_484_rescue_aggregate"),
+))
 P2 = ROOT / "Project2_Polypharmacology_MD_ValidationV2607"
 SMILES = P2 / "data/from_project1/data/cluster_representatives_smiles.csv"
+
+# The imported worker predates this portability fix. Override only its
+# read-only reference paths; no raw result is rewritten and no new docking is
+# launched by this audit script.
+worker_reference_paths = {
+    "RECEPTOR_PDB": P2 / "data/proteins/2F6I.pdb",
+    "RECEPTOR_PDBQT": P2 / "data/from_project1/data/proteins/2F6I.pdbqt",
+}
 
 spec = importlib.util.spec_from_file_location("p1_v4_original_aggregate_helpers", ORIGINAL_SCRIPT)
 if spec is None or spec.loader is None:
     raise RuntimeError("cannot load original worker helpers")
 worker = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(worker)
+for _name, _path in worker_reference_paths.items():
+    setattr(worker, _name, _path)
 
 
 def sha256(path: Path) -> str:
@@ -39,23 +61,55 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def load_failed_ids() -> set[int]:
-    result = set()
-    for p in ORIGINAL_RAW.glob("centroid_*/failure.json"):
+def load_requested_ids() -> set[int]:
+    """Load the complete rescue request, not only original failure files.
+
+    The first implementation used ``ORIGINAL_RAW/centroid_*/failure.json``.
+    That is insufficient when the original audit stores some worker failures
+    in a summary rather than one failure file per centroid. Prefer the tracked
+    rescue request manifest; otherwise use the rescue tree itself and fail
+    closed if the requested 35-record scope cannot be recovered.
+    """
+    manifest_path = ROOT / "Project1_Chem_space_antimalarial_V4_CorrectedGrid" / "results" / "pfclpp_2f6i_484_run_manifests.json"
+    if manifest_path.is_file():
         try:
-            result.add(int(p.parent.name.split("_")[-1]))
+            payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+            requested = payload.get("rescue_v2", {}).get("requested_centroid_ids")
+            if requested:
+                ids = {int(value) for value in requested}
+                if ids:
+                    return ids
+        except (OSError, ValueError, TypeError, json.JSONDecodeError):
+            pass
+    ids = set()
+    for p in RESCUE.glob("centroid_*"):
+        try:
+            ids.add(int(p.name.split("_")[-1]))
         except ValueError:
             pass
-    return result
+    if not ids:
+        for p in ORIGINAL_RAW.glob("centroid_*/failure.json"):
+            try:
+                ids.add(int(p.parent.name.split("_")[-1]))
+            except ValueError:
+                pass
+    return ids
 
 
 def audit_one(cid: int, expected_smiles: str) -> tuple[dict | None, str | None]:
     base = RESCUE / f"centroid_{cid:04d}"
     result = base / "result.json"
+    failure = base / "failure.json"
     pose = base / "vina_out.pdbqt"
     log = base / "vina.log"
     ligand = base / "ligand.pdbqt"
     try:
+        if not result.is_file():
+            if failure.is_file():
+                failure_data = json.loads(failure.read_text(encoding="utf-8"))
+                reason = str(failure_data.get("error") or failure_data.get("message") or failure_data.get("reason") or "failure.json present")
+                raise ValueError(f"worker failure: {reason}")
+            raise FileNotFoundError(result)
         d = json.loads(result.read_text())
         if d.get("status") != "PASS_RAW_VINA":
             raise ValueError("status is not PASS_RAW_VINA")
@@ -92,9 +146,11 @@ def main() -> int:
     if len(rows) != 484 or list(rows[0]) != ["SMILES"]:
         raise SystemExit("FAIL-CLOSED: canonical 484-row SMILES source is invalid")
     expected = [r["SMILES"].strip() for r in rows]
-    failed_ids = load_failed_ids()
+    requested_ids = load_requested_ids()
+    if len(requested_ids) != 35:
+        raise SystemExit(f"FAIL-CLOSED: expected 35 rescue IDs, recovered {len(requested_ids)}")
     results, failures = [], []
-    for cid in sorted(failed_ids):
+    for cid in sorted(requested_ids):
         ok, error = audit_one(cid, expected[cid])
         if ok is not None:
             results.append(ok)
@@ -112,15 +168,17 @@ def main() -> int:
     summary = {
         "schema": "p1-v4-clpp-2f6i-rescue-audit/v2",
         "status": "RESCUE_SENSITIVITY_AUDITED_PENDING_INDEPENDENT_REVIEW" if not failures else "RESCUE_SENSITIVITY_INCOMPLETE",
-        "original_failure_ids": sorted(failed_ids),
+        "requested_rescue_ids": sorted(requested_ids),
+        "requested_records": len(requested_ids),
         "rescue_records_audited": len(results),
         "rescue_records_failed_or_missing": failures,
+        "rescue_records_unaccounted": len(requested_ids) - len(results) - len(failures),
         "rescue_protocol": {"seed": 20260809, "exhaustiveness": 32, "fixed_box_unchanged": True, "biological_gate_unchanged": True, "canonical_panel_promotion": False},
         "csv_sha256": sha256(csv_path),
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "consensus_written": False,
         "rrs_pns_updated": False,
-        "promotion_block": "This heterogeneous rescue layer is sensitivity evidence only; a uniform 484-record rerun and independent review are required for canonical replacement."
+        "scientific_promotion_note": "This heterogeneous rescue layer is sensitivity evidence only. Scientific reconciliation of the uniform 484-record panel remains in progress; no editorial restriction blocks further development before explicit author reactivation."
     }
     (OUT / "rescue_audit_provenance.json").write_text(json.dumps(summary, indent=2) + "\n")
     print(json.dumps(summary, indent=2))

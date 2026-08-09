@@ -15,6 +15,8 @@
     ]
   },
   "blocking_checks": [
+    "python_e3nn",
+    "python_spyrmsd",
     "diffdock_artifacts",
     "dekois_internal_disjointness",
     "independence_P1_PREDICTED_SYBA_LIBRARY",
@@ -34,7 +36,7 @@
       "detail": "Required for the prepared Vina/DiffDock execution environment.",
       "name": "python_meeko",
       "package": "meeko",
-      "path": "/home/nanaengo/miniforge3/envs/diffdock/lib/python3.9/site-packages/meeko/__init__.py",
+      "path": "/home/nanaengo/miniforge3/envs/malaria_md/lib/python3.11/site-packages/meeko/__init__.py",
       "status": "PASS",
       "version": "0.7.1"
     },
@@ -43,36 +45,34 @@
       "detail": "Required for the prepared Vina/DiffDock execution environment.",
       "name": "python_torch",
       "package": "torch",
-      "path": "/home/nanaengo/miniforge3/envs/diffdock/lib/python3.9/site-packages/torch/__init__.py",
+      "path": "/home/nanaengo/miniforge3/envs/malaria_md/lib/python3.11/site-packages/torch/__init__.py",
       "status": "PASS",
-      "version": "1.13.1+cu117"
+      "version": "2.13.0+cu130"
     },
     {
       "available": true,
       "detail": "Required for the prepared Vina/DiffDock execution environment.",
       "name": "python_torch_geometric",
       "package": "torch_geometric",
-      "path": "/home/nanaengo/miniforge3/envs/diffdock/lib/python3.9/site-packages/torch_geometric/__init__.py",
+      "path": "/home/nanaengo/miniforge3/envs/malaria_md/lib/python3.11/site-packages/torch_geometric/__init__.py",
       "status": "PASS",
-      "version": "2.2.0"
+      "version": "2.8.0.post1"
     },
     {
-      "available": true,
+      "available": false,
       "detail": "Required for the prepared Vina/DiffDock execution environment.",
+      "import_error": "module_not_found",
       "name": "python_e3nn",
       "package": "e3nn",
-      "path": "/home/nanaengo/miniforge3/envs/diffdock/lib/python3.9/site-packages/e3nn/__init__.py",
-      "status": "PASS",
-      "version": "0.5.1"
+      "status": "BLOCKED"
     },
     {
-      "available": true,
+      "available": false,
       "detail": "Required for the prepared Vina/DiffDock execution environment.",
+      "import_error": "module_not_found",
       "name": "python_spyrmsd",
       "package": "spyrmsd",
-      "path": "/home/nanaengo/miniforge3/envs/diffdock/lib/python3.9/site-packages/spyrmsd/__init__.py",
-      "status": "PASS",
-      "version": "0.9.0"
+      "status": "BLOCKED"
     },
     {
       "DIFFDOCK_CONFIDENCE_WEIGHTS": null,
@@ -101,7 +101,7 @@
       "command": "obabel",
       "detail": "Available command required by the planned execution wrapper.",
       "name": "command_obabel",
-      "path": "/usr/bin/obabel",
+      "path": "/home/nanaengo/miniforge3/bin/obabel",
       "status": "PASS"
     },
     {
@@ -396,7 +396,7 @@
   "diffdock_launched": false,
   "dockings_launched": false,
   "execution_allowed": false,
-  "generated_utc": "2026-08-07T14:28:36.890819+00:00",
+  "generated_utc": "2026-08-09T17:02:36.785744+00:00",
   "input_manifest": {
     "dekois_actives": {
       "bytes": 2034,

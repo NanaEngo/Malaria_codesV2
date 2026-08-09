@@ -14,11 +14,13 @@
   },
   "n_binders_crt": 17,
   "n_binders_dhfr": 17,
-  "note": "PILOT artifact; manuscript claims BLOCKED until the independent structural review register is signed (accepted_for_full_run=true AND all targets ACCEPTED).",
+  "note": "Pre-submission development artifact. Review signature is not an execution blocker in the current phase, but this output is not submission-ready and must be rechecked before manuscript freeze.",
+  "phase": "PRE_SUBMISSION_DEVELOPMENT",
   "protocol": "per-target RRS = |dG_mut,t|/|dG_WT,t|*100, WT binding baseline |dG_WT,t| >= 5.0 kcal/mol, no target mixing (P2 definition)",
   "rows": 34,
   "schema": "p1-v5-rrs-pilot/v1",
-  "status": "DOCKING_RRS_PILOT_COMPUTED_PENDING_REVIEW",
+  "status": "PRE_SUBMISSION_DEVELOPMENT_NOT_SUBMISSION_READY",
+  "submission_eligible": false,
   "wt_baselines": {
     "PfCRT": "PfCRT_WT_K76",
     "PfDHFR": "PfDHFR_WT"

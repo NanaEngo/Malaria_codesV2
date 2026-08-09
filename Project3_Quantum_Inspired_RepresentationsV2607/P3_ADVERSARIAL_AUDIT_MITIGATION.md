@@ -73,8 +73,8 @@
 **What a reviewer will say:** "The entire activity prediction benchmark uses Ersilia model predictions (eos80ch) as ground truth. These are ML-based predictions, not experimental IC₅₀ values. The authors' own ChEMBL search found only 7/231 structural analogues (3.0%), and only 3 are experimentally active. How can the key finding — that PersStats RF matches ECFP4 — be trusted when the labels themselves are model-derived?"
 
 **Mitigation status:** ✅ **IMPLEMENTED**
-- ChEMBL expanded validation: 77 compounds × 3 targets (231 pairs, Tanimoto ≥ 0.25), 7 matches (3.0%), 3 active PfATP4 matches (IC₅₀ 0.40–0.79 μM)
-- Docking enrichment: PfDHFR 5.43-fold at EXCELLENT tier
+- ChEMBL expanded validation: 77 compounds × 3 targets (231 pairs, Tanimoto ≥ 0.25), 7 matches (3.0%), 3 active PfATP4 matches (IC₅₀ 0.40–0.79 μM). Separate public-panel external descriptor validation is reported as ITT with explicit zero-vector penalties for 351 TNE failures; complete-case sensitivity is tracked separately.
+- Docking enrichment: PfDHFR 5.43-fold at EXCELLENT tier; archived DEKOIS rederivation remains a chance-level negative control and is not conflated with ChEMBL structural matching
 - Honest framing in Limitations "Second" point
 - SM Table with full ChEMBL validation results
 

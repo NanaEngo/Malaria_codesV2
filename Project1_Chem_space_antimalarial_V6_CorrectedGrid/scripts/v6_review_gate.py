@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-"""V6 hash-bound independent-review gate.
+"""V6 hash-bound independent-review promotion gate.
 
-The gate verifies a human-signed review artifact. It never edits the register,
-creates a signature, or treats automated integrity audit as acceptance.
+This module is intentionally promotion-only: it verifies a human-signed review
+artifact and never authorizes pre-submission development. During
+``PRE_SUBMISSION_DEVELOPMENT``, use the phase-aware V6 generation workflow;
+``development_execution_authorized=true`` permits exploratory outputs while
+this gate correctly remains closed. It never edits the register, creates a
+signature, or treats automated integrity audit as acceptance.
 
 Signature format: binary Ed25519 signature created with OpenSSL over the exact
 bytes of the current review dossier, using the trusted public key recorded in
@@ -48,6 +52,10 @@ def check_gate(path: Path = REGISTER) -> tuple[bool, str]:
         return False, "FAIL-CLOSED: authorization mode is not INDEPENDENT_REVIEW_REQUIRED"
     if reg.get("internal_work_authorized") is not False:
         return False, "FAIL-CLOSED: internal_work_authorized must be false"
+    if reg.get("submission_gate_active") is not True:
+        return False, "FAIL-CLOSED: submission_gate_active must be true"
+    if reg.get("submission_restrictions_reactivation_requested") is not True:
+        return False, "FAIL-CLOSED: explicit author reactivation is missing"
     if reg.get("accepted_for_full_run") is not True:
         return False, "FAIL-CLOSED: independent review has not accepted the V6 evidence"
     if reg.get("status") != "INDEPENDENT_REVIEW_ACCEPTED":
@@ -117,9 +125,11 @@ def check_gate(path: Path = REGISTER) -> tuple[bool, str]:
         payload = json.loads(signed_artifact.read_text())
     except (OSError, json.JSONDecodeError) as exc:
         return False, f"FAIL-CLOSED: signed review payload unreadable: {exc}"
+    if payload.get("authorization_mode") != "INDEPENDENT_REVIEW_REQUIRED" or payload.get("internal_work_authorized") is not False or payload.get("submission_gate_active") is not True or payload.get("submission_restrictions_reactivation_requested") is not True:
+        return False, "FAIL-CLOSED: signed payload authorization boundary is invalid"
     if payload.get("target_decisions") != reg.get("target_decisions"):
         return False, "FAIL-CLOSED: signed payload target decisions do not match register"
-    for field in ("reviewer_identity", "reviewer_role", "reviewer_independence_attestation", "conflict_of_interest_declaration", "review_date_utc", "status", "accepted_for_full_run", "experimental_claims_certified", "target_decisions"):
+    for field in ("reviewer_identity", "reviewer_role", "reviewer_independence_attestation", "conflict_of_interest_declaration", "review_date_utc", "status", "accepted_for_full_run", "experimental_claims_certified", "target_decisions", "authorization_mode", "internal_work_authorized", "submission_gate_active", "submission_restrictions_reactivation_requested"):
         if payload.get(field) != reg.get(field) and not (field == "experimental_claims_certified" and payload.get(field) is False):
             return False, f"FAIL-CLOSED: signed payload field does not match register: {field}"
     if payload.get("reviewer_independence_attestation") is not True or payload.get("experimental_claims_certified") is not False:
