@@ -5,9 +5,13 @@
 > Full evidence: `outputs/critical-reviews/v4-audit-matrix.md`.
 
 ## Status
-- Current phase: final submission refinement complete; fresh compilation/audit performed 7 August 2026
-- Current task: PHASE 5 + PHASE 10 COMPLETE, with final 7 August 2026 wording refinement applied. All CRITICAL/HIGH findings fixed by disclosure/reframing (no new calcs): C1 circular MMV ROC -> "retrodictive consistency" + lead with DEKOIS (abstract/methods/validation/table/efficiency/conclusion); C2 DiffDock-rescue softened to "consistent with/inferred"; MCMC +0.0246 mislabel -> mean +0.009 + best +0.025 + surrogate caveat; SI_pred 260 real formula; "mathematically prove"->"empirically demonstrate"; "genuinely new chemotypes"->"novel substituent combinations on preserved scaffolds"; Tartarus "independence"->"orthogonal to raw docking affinity"; PCA SM 292 PC4 fixed (0.0686/6.86%/89.19% per BMAD §1.13); redocking 5/10; median±SD notation; cover letter "validated"->"computationally benchmarked". Recompiled clean (main 39pp, SM 50pp, cover 1pp, 0 errors, 0 undef). Anti-AI 0. S23-1/H1 RESOLVED by reframe (table captions + footnote disclose metrics not retained; "optimal from N/A" claims removed; main 117 softened to defer to the figure). Epic 3 + MEDIUM ALSO DONE: M2 (fixed main 260 contradiction -- 19,913 = SYBA+MPO filter, not Tanimoto; NP-relatedness is separate 13/76 centroid analysis; 0.4 cutoff not varied), M3/H3 (generated-vs-seed activity reframed as diversity/tractability trade-off), M5 ("synthesizable" -> "predicted synthesizable (SYBA>0)" at headlines), SM 202 ("most stable"->"least sensitive... moderate not strong"), SM 269/275 ("therapeutic window" for stage activity -> "preferred predicted stage"), SM 917 figure caption ("validate...optimal"->"selected...based on comparative metrics"). Recompiled clean (main 39pp, SM 51pp, 0 errors). FULLY SUBMISSION-READY -- no pending blockers. See outputs/critical-reviews/{v4-audit-matrix.md, review-*.md, final-audit.md}.
-- Last updated: 2026-08-07
+- Current phase: **submission blocked pending complete PfClpP/2F6I revalidation**; V4 wording audit completed 7 August 2026; structural discrepancy identified during V5 migration on 9 August 2026
+- Current task: preserve all historical V4 numbers while replacing the historical 4GM2/PfClpP interpretation. PDB 4GM2 is PfClpR; the existing 484-centroid arm is not PfClpP validation. V5's 17×4 raw Vina runs cannot replace the 484-centroid panel. A full 2F6I revalidation, independent review, and downstream recomputation are required before submission. All CRITICAL/HIGH findings fixed by disclosure/reframing (no new calcs): C1 circular MMV ROC -> "retrodictive consistency" + lead with DEKOIS (abstract/methods/validation/table/efficiency/conclusion); C2 DiffDock-rescue softened to "consistent with/inferred"; MCMC +0.0246 mislabel -> mean +0.009 + best +0.025 + surrogate caveat; SI_pred 260 real formula; "mathematically prove"->"empirically demonstrate"; "genuinely new chemotypes"->"novel substituent combinations on preserved scaffolds"; Tartarus "independence"->"orthogonal to raw docking affinity"; PCA SM 292 PC4 fixed (0.0686/6.86%/89.19% per BMAD §1.13); redocking 5/10; median±SD notation; cover letter "validated"->"computationally benchmarked". Recompiled clean (main 39pp, SM 50pp, cover 1pp, 0 errors, 0 undef). Anti-AI 0. S23-1/H1 RESOLVED by reframe (table captions + footnote disclose metrics not retained; "optimal from N/A" claims removed; main 117 softened to defer to the figure). Epic 3 + MEDIUM ALSO DONE: M2 (fixed main 260 contradiction -- 19,913 = SYBA+MPO filter, not Tanimoto; NP-relatedness is separate 13/76 centroid analysis; 0.4 cutoff not varied), M3/H3 (generated-vs-seed activity reframed as diversity/tractability trade-off), M5 ("synthesizable" -> "predicted synthesizable (SYBA>0)" at headlines), SM 202 ("most stable"->"least sensitive... moderate not strong"), SM 269/275 ("therapeutic window" for stage activity -> "preferred predicted stage"), SM 917 figure caption ("validate...optimal"->"selected...based on comparative metrics"). Recompiled clean (main 39pp, SM 51pp, 0 errors). HISTORICAL EDITORIAL STATUS ONLY; submission is BLOCKED pending full 2F6I/PfClpP revalidation and independent review. See outputs/critical-reviews/{v4-audit-matrix.md, review-*.md, final-audit.md}.
+- Last updated: 2026-08-09
+- **Mapping resolution (09/08/2026):** V4's V5–P2 overlay now uses the V6 source-bound candidate manifest and row-wise RDKit canonical-SMILES checks against the 68-row V5 manifest and P2 Set-C source. The integration artifact is `MOLECULAR_KEY_VERIFIED_ROW_WISE_CANONICAL_SMILES`; V6 audit and validator hashes are recorded in its provenance sidecar. No order-only mapping remains.
+- **2F6I uniform revalidation (09/08/2026):** array job `13451` produced all 484 centroid directories. The independent `afterany` audit `13972` returned `FAILED_CLOSED`: 449/484 records independently passed the raw Vina checks and 35 records contain worker failures. Merge `13452` remained blocked by `afterok`; no aggregate replacement panel was promoted. The 35 failures require a separate provenance-bound rescue and re-audit before V4 can be considered complete.
+
+
 - Model in use: Opus 4.8 (claude-opus-4-8)
 - skill_checksum: c65634e86b24011d0dbd1c238f6243000fe37b9d14d74c6951807d9493b6f75b
 
@@ -35,14 +39,16 @@
 - [x] C5: discovery language reframed as computational prioritization.
 - [x] DOCK-1: failed docking records disclosed (71/1936; 3.7%; per-target counts retained).
 - [x] Anti-AI, C6, F3, S23-1/H1, and Epic 3 wording mitigated without fabricating metrics.
-- [x] Target identity: 4GM2 corrected from PfClpP to PfClpR in the manuscript package.
+- [x] Target identity: 4GM2 corrected from PfClpP to PfClpR in the manuscript package; complete 2F6I replacement remains pending.
+- [ ] Full 484-centroid PfClpP/2F6I revalidation and independent review.
 - [ ] Human author approval and journal submission.
 - [ ] Zenodo upload.
 
-## Phase 10 / compile (completed 7 August 2026)
+## Phase 10 / compile (editorial compile completed 7 August 2026; structural submission gate still open)
 - [x] Final adversarial/editorial/scientific review findings resolved or explicitly bounded.
 - [x] Full-project temporary-clone compile: main and SM `pdflatex → bibtex → pdflatex → pdflatex` all returned 0; cover LaTeX passes returned 0.
 - [x] Canonical V4 submission audit recorded in `outputs/critical-reviews/final-submission-audit-20260807.md`.
+- [ ] Full 484-centroid PfClpP/2F6I revalidation and independent review.
 - [ ] Human author approval and journal submission.
 
 ## File Map (V4)

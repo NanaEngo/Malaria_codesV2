@@ -6,7 +6,7 @@
 
 | # | Directory | Focus | Status |
 |---|-----------|-------|--------|
-| **1** | `Project1_Chem_space_antimalarial_V2_CorrectedGrid/` | AI discovery of antimalarials from African chemical space | ✅ Submission-ready (JCIM) |
+| **1** | `Project1_Chem_space_antimalarial_V4_CorrectedGrid/` | AI discovery of antimalarials from African chemical space | ⚠️ Submission blocked pending full PfClpP/2F6I revalidation across 484 centroids |
 | **2** | `Project2_Polypharmacology_MD_ValidationV2607/` | MD/MC validation of polypharmacological leads against resistance mutations | ✅ Submission-ready (JCIM) |
 | **3** | `Project3_Quantum_Inspired_RepresentationsV2607/` | Quantum-inspired ML for molecular representation | ✅ Submission-ready — canonical benchmarks complete (ECFP4 0.9475, Hybrid 0.8876, QKS 6q parity); manuscript trimmed 26→18 p. (main 18 p. / SM 18 p. / cover letter 1 p., 0 erreur / 0 réf. indéfinie) |
 | **4** | `Project4_Advanced_Monte_CarloV2607/` | Pareto MCTS for de novo antimalarial design | ✅ Manuscript ready (JoC) — v11 20-seed benchmark complete (optimal MCTS config, re-run 02/08, reproducible); multi-objective front comparison (HV/IGD/C-metric) |

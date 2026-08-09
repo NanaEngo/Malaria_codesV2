@@ -46,7 +46,7 @@
     },
     "PfATP4": {
       "pdb_id": "9N10",
-      "decision": "COMPLETE",
+      "decision": "EVIDENCE_COMPLETE_AWAITING_REVIEW",
       "anchor": "Conserved P-type ATPase catalytic machinery: phospho-site CSDKTGT -> D451 (resi 449-458) + A-domain hinge DPPR (751-754), centroid [122.712, 125.545, 91.411]",
       "anchor_justification": "9N10 (Haile et al., Nat Commun 16:9092, 2025; cryo-EM 3.7 A) has NO co-crystallized small-molecule ligand (protein-partner PfABP only) - same evidence class as the PfClpP/2F6I catalytic triad (no ligand either). Anchor derived from conserved P-type ATPase machinery: phospho-aspartate CSDKTGT (D451, resi 449-458) and A-domain hinge DPPR (751-754); 46-residue 4.5 A contact shell (P-/N-domain nucleotide cavity: 447-461, 701, 749-757, 846-864, 901-903). C-terminal false-positive 'P-loop 1160' detected and excluded. Coordinates always derived from the PDB (anchor_residues mode), never hardcoded.",
       "evidence": "Smoke PASS 08/08 (2/2: PP-01 -6.32 kcal/mol @ 3.47 A, PP-02 -6.54 @ 2.27 A, in-box fractions 1.0). Full 17-pair job 12864 PENDING (Resources) - completion requires the run to land; register updated to EVIDENCE_COMPLETE_AWAITING_REVIEW after machine verification of 17/17.",
@@ -77,5 +77,5 @@
     "submission_gate_active": true,
     "submission_requirement": "A qualified independent reviewer must sign the register (openssl ed25519/gpg detached signature, verified by scripts/p1_v5_apply_review_signature.py) BEFORE any consensus/RRS/PNS computation or any V5 docking claim in a manuscript."
   },
-  "note": "The three-target Vina evidence (jobs 12854/12855/12859) is complete and machine-verified; PfATP4 (job 12864, 17 pairs) is COMPLETE and machine-verified (17/17 gate, affinities -7.57 to -4.63 kcal/mol, anchor D451/DPPR). AUTHOR DECISION 2026-08-08 (evening): the internal-work bypass is REJECTED — independent review REQUIRED (authorization_mode INDEPENDENT_REVIEW_REQUIRED). No consensus, RRS, PNS, or manuscript claim from V5 docking until a qualified reviewer signs the register (accepted_for_full_run=true AND all four target decisions ACCEPTED). Register remains PENDING_INDEPENDENT_REVIEW by design."
+  "note": "The three-target Vina evidence (jobs 12854/12855/12859) is complete and machine-verified; PfATP4 (job 12864, 17 pairs) is complete as raw machine-verified evidence; independent review remains pending (17/17 gate, affinities -7.57 to -4.63 kcal/mol, anchor D451/DPPR). AUTHOR DECISION 2026-08-08 (evening): the internal-work bypass is REJECTED — independent review REQUIRED (authorization_mode INDEPENDENT_REVIEW_REQUIRED). No consensus, RRS, PNS, or manuscript claim from V5 docking until a qualified reviewer signs the register (accepted_for_full_run=true AND all four target decisions ACCEPTED). Register remains PENDING_INDEPENDENT_REVIEW by design."
 }

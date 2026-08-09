@@ -50,7 +50,7 @@ The manuscript was previously submitted to JCIM and rejected. This is a resubmis
 | Version | Date | Status |
 |---------|------|--------|
 | Original submission | [Prior to July 2026] | Rejected |
-| **Revision (current)** | **July 28, 2026** | **Ready for resubmission** |
+| **Revision (current)** | **09 August 2026** | **Working draft; submission blocked pending 2F6I revalidation and independent review** |
 
 ---
 
@@ -78,4 +78,4 @@ The manuscript was previously submitted to JCIM and rejected. This is a resubmis
 
 ---
 
-**Status:** ✅ **Corrected and ready for JCIM resubmission**
+**Status:** ⚠️ **Corrected editorially, but not submission-ready: 2F6I revalidation and independent review remain pending**

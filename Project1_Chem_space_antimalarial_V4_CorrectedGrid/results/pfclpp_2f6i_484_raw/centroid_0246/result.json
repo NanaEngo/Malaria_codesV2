@@ -1,0 +1,112 @@
+{
+  "schema": "p1-v4-clpp-2f6i-worker/v1",
+  "status": "PASS_RAW_VINA",
+  "centroid_id": 246,
+  "smiles": "COc1ccc(-n2ccnc2SCC(=O)Nc2cc(C)c(O)c(C)c2C)cc1",
+  "smiles_sha256": "3a833b25b51b0d133a7b13205b22595f10689c5d8372e030820eddeed8561b38",
+  "smiles_file_sha256": "237b28e1dc1e368e13048d0c82eaed7ccaf475535ce436de11c164d003e51eb0",
+  "receptor_pdb_sha256": "12d02a92e72ab52267fcfb2f7fad2520271b7b311d7f538c16f6395d9f9f62d6",
+  "receptor_pdbqt_sha256": "77acfd3e870233f4e40d886c870f1a7369b1e13fe46e94d335c6ab92b59ac988",
+  "vina_sha256": "f31f774f723bba7bbe6e9d1c47577020eea9a8da16424284c043d22593570644",
+  "target": "PfClpP",
+  "pdb_id": "2F6I",
+  "receptor_identity": "genuine PfClpP catalytic domain",
+  "triad": {
+    "atoms": [
+      [
+        "A",
+        219,
+        "OD1"
+      ],
+      [
+        "A",
+        223,
+        "NE2"
+      ],
+      [
+        "A",
+        252,
+        "OG"
+      ]
+    ],
+    "coordinates_A": [
+      [
+        -24.225,
+        17.608,
+        -1.663
+      ],
+      [
+        -26.372,
+        18.249,
+        -4.879
+      ],
+      [
+        -22.232,
+        15.984,
+        -2.161
+      ]
+    ]
+  },
+  "center_A": [
+    -24.276333333333337,
+    17.280333333333335,
+    -2.901
+  ],
+  "box_A": [
+    28.0,
+    28.0,
+    28.0
+  ],
+  "frame_check": {
+    "status": "CA_SUBSET_FRAME_EQUIVALENT",
+    "pdb_ca": 1255,
+    "pdbqt_ca": 1181,
+    "common_ca": 1181,
+    "rmsd_A": 0.0,
+    "max_delta_A": 0.0
+  },
+  "gate": {
+    "atom_count": 30,
+    "inside_fraction_with_padding": 1.0,
+    "pose_centroid_A": [
+      -28.407433333333334,
+      10.824866666666667,
+      1.5283333333333335
+    ],
+    "centroid_in_box": true,
+    "triad_min_distance_A": 6.3920921457688635
+  },
+  "vina_affinity_kcal_mol": -6.449,
+  "vina_command": [
+    "/usr/local/bin/vina",
+    "--receptor",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/proteins/2F6I.pdbqt",
+    "--ligand",
+    "/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V4_CorrectedGrid/results/pfclpp_2f6i_484_raw/centroid_0246/ligand.pdbqt",
+    "--center_x",
+    "-24.276333",
+    "--center_y",
+    "17.280333",
+    "--center_z",
+    "-2.901000",
+    "--size_x",
+    "28.0",
+    "--size_y",
+    "28.0",
+    "--size_z",
+    "28.0",
+    "--exhaustiveness",
+    "16",
+    "--num_modes",
+    "9",
+    "--seed",
+    "0",
+    "--out",
+    "/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V4_CorrectedGrid/results/pfclpp_2f6i_484_raw/centroid_0246/vina_out.pdbqt"
+  ],
+  "vina_log_sha256": "6a849d6841c0be37cfbaeff00b81e428cac6229a9943a46c65eefa5c08d5e589",
+  "vina_out_sha256": "96022af81af375840b225380d2ce5d6f2df2b22d044efb0996b505adae36702e",
+  "created_utc": "2026-08-09T04:16:00.347479+00:00",
+  "consensus_written": false,
+  "rrs_pns_updated": false
+}

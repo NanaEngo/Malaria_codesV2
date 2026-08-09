@@ -146,7 +146,7 @@ def main() -> int:
     check("sa" in inactive,
           "SA excluded from HV as constant (sa=3.0 for all points)",
           f"inactive objectives={inactive}")
-    print(f"    active objectives: "
+    print(f"    varying objectives in audited front: "
           f"{[o for o, a in zip(OBJECTIVES, active) if a]}")
 
     # ── 3. SYBA recomputation reproducibility ─────────────────────────────

@@ -179,6 +179,8 @@ Per model and split, we report \num{25} fold--seed AUCs (five folds repeated ove
 
 All code, frozen splits (random and scaffold, five seeds each), per-fold results, salience data, figure scripts, and the canonical \num{19836}-molecule panel are available under the MIT licence in the public GitHub repository (\url{https://github.com/NanaEngo/Malaria_codesV2}). The Zenodo DOI \url{https://doi.org/10.5281/zenodo.19608875} is reserved, but the upload remains pending. Trained checkpoints and the frozen feature tables are included in the repository; reproducibility is supported by the frozen split files and pinned environment.
 
+\noindent\textbf{Replication provenance.} As an additional audit, SLURM job \texttt{12889} independently re-executed the leak-fixed ChemBERTa scaffold protocol (five folds $\times$ five seeds) with metric capture. The scaffold output was complete (25/25 fold--seed records; mean ROC AUC $\num{0.7908} \pm \num{0.0298}$) and is retained as a separate replication artifact, not substituted for the canonical scaffold estimate ($\num{0.7867} \pm \num{0.0338}$). The same job was deliberately cancelled after the scaffold step to avoid a redundant random-split rerun; the canonical random result (job \texttt{12815}, $\num{0.9121} \pm \num{0.0047}$) is unchanged. The cancellation affected no reported primary result.
+
 \section{Author contributions}
 
 MVST conceived the study, designed the benchmark protocol, implemented the GNN/transformer pipelines, and wrote the manuscript. All authors contributed to data analysis, reviewed the results, and approved the final version. (CRediT roles and full author affiliations are listed on the title page.)

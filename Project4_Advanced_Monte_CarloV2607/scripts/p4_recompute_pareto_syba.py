@@ -85,7 +85,7 @@ def main() -> None:
     hv = front.hypervolume()
     active = front._detect_active_objectives()
 
-    print(f"Active objectives: {[o for a, o in zip(active, objectives) if a]}")
+    print(f"Varying objectives after SYBA re-derivation: {[o for a, o in zip(active, objectives) if a]}")
     print(f"Front size after SYBA recompute: {len(sols)}")
     print(f"Hypervolume after SYBA recompute: {hv:.4f}")
 

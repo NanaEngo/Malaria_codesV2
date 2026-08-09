@@ -540,7 +540,7 @@ a full inventory of deposited files.
 
 ## 12. Adversarial Reviewer 3 Defense Matrix
 
-To guarantee a $\ge 85\%$ acceptance probability at JCIM, we pre-emptively mitigate the 6 most common severe reviewer objections ("Reviewer 3 simulation"):
+To reduce the principal editorial and reviewer risks at the target venue, we pre-emptively mitigate the six most common severe objections ("Reviewer 3 simulation"):
 
 | Potential Reviewer Objection | Risk Level | Methodological Mitigation | Manuscript Section |
 |------------------------------|:----------:|---------------------------|-------------------|

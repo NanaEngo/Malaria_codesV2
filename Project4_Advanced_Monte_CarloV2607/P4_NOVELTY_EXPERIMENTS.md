@@ -26,8 +26,8 @@ front (HV, IGD, spread).
 `scripts/p4_benchmark_multiobj.py`
 - Chargement : per-seed best molecules des 4 méthodes (`results/benchmark_molecules_opt/p4_benchmark_molecules_seed_*.csv`).
 - Ré-évaluation : `OracleAggregator(use_precomputed=True)`, mêmes scores que la recherche canonique.
-- **SYBA normalisée** par la sigmoïde `1/(1+exp(-raw/5))` — identique à `p4_recompute_pareto_syba.py` (sinon échelle brute hors [0,1]).
-- Front par méthode : `pymoo.NonDominatedSorting` sur les 4 objectifs actifs **MPO/SYBA/RRS/PNS** (aligné C1). Cette analyse N1/N4 est pré-activité ; le terme public ChEMBL a été ajouté au benchmark scalaire v12, pas injecté rétroactivement dans ce front.
+- **SYBA normalisée** par la sigmoïde `1/(1+exp(-raw/5))` — identique à `p4_recompute_pareto_syba.py` (sinon échelle brute hors [0,1]). Important: the historical canonical per-seed Pareto records contain a constant zero SYBA fallback; this N1/N4 re-scoring therefore uses recomputed SYBA and is descriptive rather than evidence that the original search optimised informative SYBA.
+- Front par méthode : `pymoo.NonDominatedSorting` sur le post-hoc re-scored schema **MPO/SYBA/RRS/PNS**; historical per-seed SYBA was constant zero and is not treated as an informative search-time objective. Cette analyse N1/N4 est pré-activité ; le terme public ChEMBL a été ajouté au benchmark scalaire v12, pas injecté rétroactivement dans ce front.
 - **Normalisation commune** pour HV : bornes min–max sur l'union de tous les candidats (baselines + front canonique) — indispensable, sinon per-front norm = front non comparable.
 - N4 ajoute **IGD** (dist. moyenne réf→front) et **spread** (Δ-uniformité) sur une référence = front non-dominé de l'union.
 - Dumps : `results/pareto/p4_multiobj_front_summary.csv`, fronts `results/pareto/p4_multiobj_fronts/front_{method}.csv`.

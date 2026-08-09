@@ -360,6 +360,6 @@ This cover letter can serve as a **template** for other Project manuscripts (P2,
 
 ---
 
-**Status:** ✅ **Ready for submission to JCIM**
+**Status:** ⚠️ **Internal draft; not submission-ready pending 2F6I revalidation and independent review**
 
 The cover letter now provides a compelling, quantified, and validated narrative that positions this work as a significant methodological contribution to computational antimalarial drug discovery—addressing the dual challenges of scientific rigor and practical accessibility for endemic-region researchers.

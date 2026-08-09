@@ -1,0 +1,41 @@
+{
+  "accepted_for_full_run": false,
+  "anchor": "MTX co-crystallized inhibitor (catalytic-site copy A702)",
+  "box_A": [
+    18.0,
+    18.0,
+    18.0
+  ],
+  "center_A": [
+    -3.596,
+    -5.249,
+    -58.677
+  ],
+  "consensus_scores_written": false,
+  "exhaustiveness": 16,
+  "gate": {
+    "anchor_contact_A": 10.0,
+    "centroid_in_box": true,
+    "min_fraction": 0.9,
+    "padding_A": 0.5
+  },
+  "n_records": 85,
+  "next_gate": "independent review of receptor identities and anchors; then p1_v5_rrs_pilot.py may compute the per-target RRS",
+  "num_modes": 9,
+  "output_csv_sha256": "bb42f44db64c31fe35bd9f114203c1558adfcf909b445ea60b5edd2c176351c9",
+  "pairs_per_receptor": 17,
+  "protocol": "uniform protein-only receptors (results/rrs_pilot/receptors), obabel -xr PDBQT, composite biological gate",
+  "receptors": [
+    "PfDHFR_WT",
+    "PfDHFR_N51I",
+    "PfDHFR_C59R",
+    "PfDHFR_S108N",
+    "PfDHFR_I164L"
+  ],
+  "rrs_pns_updated": false,
+  "schema": "p1-v5-rrs-pilot-vina/v1",
+  "seed": 0,
+  "started_utc": "2026-08-08T16:58:39.583604+00:00",
+  "status": "VINA_GRID_DOCK_MUTANT_PANEL_RANK1_VERIFIED",
+  "target": "PfDHFR"
+}

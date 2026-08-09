@@ -5,9 +5,9 @@ Runs a single Pareto MCTS search from a given scaffold and writes the full
 Pareto front (all non-dominated solutions) to a CSV file. Designed to be
 called from the SLURM array script `p4_pareto_array.sbatch`.
 
-Uses ParetoMCTSAgent which maintains a global Pareto front across 6 objectives:
-MPO (maximise), SYBA (maximise), SA (minimise), RRS (maximise), PNS (maximise),
-ACTIVITY (maximise — proximity to public ChEMBL antimalarial actives, v12).
+Uses ParetoMCTSAgent with either the five-objective historical pre-activity
+schema (MPO, SYBA, SA, RRS, PNS) or the six-objective v12 schema, which adds
+ACTIVITY (proximity to public ChEMBL antimalarial actives).
 
 Output CSV contains one row per non-dominated solution with full score vector.
 """
@@ -68,8 +68,12 @@ def main() -> None:
              "pareto = ParetoPUCT ablation (restrict to non-dominated children)"
     )
     parser.add_argument(
+        "--pre-activity", action="store_true",
+        help="Run the pre-activity vector protocol (exclude the public-activity objective)"
+    )
+    parser.add_argument(
         "--output-csv", type=Path, default=None,
-        help="Output CSV path (default: results/pareto/p4_pareto_seed_{seed}.csv)"
+        help="Explicit output CSV path (required; prevents accidental overwrite of locked artefacts)"
     )
     args = parser.parse_args()
 
@@ -80,14 +84,25 @@ def main() -> None:
     random.seed(args.seed)
     np.random.seed(args.seed)
 
-    # Default output path
     if args.output_csv is None:
-        script_dir = Path(__file__).resolve().parent
-        project_dir = script_dir.parent
-        args.output_csv = (
-            project_dir / "results" / "pareto"
-            / f"p4_pareto_seed_{args.seed}.csv"
+        raise SystemExit(
+            "--output-csv is required; refusing an implicit write path. "
+            "Use a separate directory for new runs and preserve locked artefacts."
         )
+    output_path = args.output_csv.expanduser().resolve()
+    locked_pareto_dir = (
+        Path(__file__).resolve().parents[1] / "results" / "pareto"
+    ).resolve()
+    try:
+        output_path.relative_to(locked_pareto_dir)
+    except ValueError:
+        pass
+    else:
+        raise SystemExit(
+            "Refusing to write directly to the locked results/pareto directory; "
+            "use a separate output directory."
+        )
+    args.output_csv = output_path
 
     # ── Environment ──────────────────────────────────────────────────
     env = MolecularEnv(
@@ -98,7 +113,14 @@ def main() -> None:
     )
 
     # ── Oracle (returns dict of scores, for multi-objective Pareto) ──
-    oracle_agg = OracleAggregator(use_precomputed=True)
+    # Publication reruns fail closed if SYBA is unavailable. Legacy artefact
+    # re-scoring is performed by dedicated post-processing scripts, not this
+    # search runner.
+    oracle_agg = OracleAggregator(
+        use_precomputed=True,
+        use_activity=not args.pre_activity,
+        require_syba=True,
+    )
 
     # The Pareto MCTS agent expects oracle_fn(state) -> dict[str, float]
     # OracleAggregator.score() returns exactly this.
@@ -112,9 +134,13 @@ def main() -> None:
     policy_fn = policy.get_action_priors
 
     # ── Pareto MCTS Agent ────────────────────────────────────────────
-    objectives = ["mpo", "syba", "sa", "rrs", "pns", "activity"]
-    # Maximise MPO, SYBA, RRS, PNS, ACTIVITY; minimise SA
-    maximize = [True, True, False, True, True, True]
+    if args.pre_activity:
+        objectives = ["mpo", "syba", "sa", "rrs", "pns"]
+        maximize = [True, True, False, True, True]
+    else:
+        objectives = ["mpo", "syba", "sa", "rrs", "pns", "activity"]
+        maximize = [True, True, False, True, True, True]
+    # Maximise MPO, SYBA, RRS, PNS (and ACTIVITY in v12); minimise SA.
 
     agent = ParetoMCTSAgent(
         env,
@@ -143,6 +169,14 @@ def main() -> None:
     solutions = front.solutions
     hv = front.hypervolume()
 
+    diagnostics = oracle_agg.syba_diagnostics()
+    if diagnostics["n_evaluated"] < 2 or diagnostics["n_unique"] < 2:
+        raise RuntimeError(
+            "SYBA remained constant or unavailable during the Pareto run; "
+            "refusing to write a non-informative publication artifact: "
+            f"{diagnostics}"
+        )
+
     print(f"\n═══ Pareto Front Results ═══")
     print(f"  Front size:      {len(solutions)}")
     print(f"  Hypervolume:     {hv:.4f}")
@@ -153,7 +187,7 @@ def main() -> None:
         writer = csv.writer(fh)
         writer.writerow([
             "seed", "hypervolume", "front_size",
-            "smiles", "mpo", "syba", "sa", "rrs", "pns", "activity",
+            "smiles", *objectives,
         ])
         for smi, vec, meta in solutions:
             writer.writerow([
@@ -161,20 +195,16 @@ def main() -> None:
                 f"{hv:.4f}",
                 len(solutions),
                 smi,
-                f"{vec[0]:.4f}",  # MPO
-                f"{vec[1]:.4f}",  # SYBA
-                f"{vec[2]:.4f}",  # SA
-                f"{vec[3]:.4f}",  # RRS
-                f"{vec[4]:.4f}",  # PNS
-                f"{vec[5]:.4f}",  # ACTIVITY
+                *(f"{value:.4f}" for value in vec),
             ])
 
     print(f"  Output CSV:      {args.output_csv}")
     print(f"  Front molecules:")
     for smi, vec, _ in solutions[:10]:
-        print(f"    {smi:40s} MPO={vec[0]:.3f} SYBA={vec[1]:.3f} "
-              f"SA={vec[2]:.3f} RRS={vec[3]:.3f} PNS={vec[4]:.3f} "
-              f"ACT={vec[5]:.3f}")
+        values = " ".join(
+            f"{name.upper()}={value:.3f}" for name, value in zip(objectives, vec)
+        )
+        print(f"    {smi:40s} {values}")
     if len(solutions) > 10:
         print(f"    ... and {len(solutions) - 10} more non-dominated solutions")
     print(f"\n═══ Task {args.seed} complete ═══")

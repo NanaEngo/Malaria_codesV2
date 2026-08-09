@@ -1,23 +1,23 @@
-P3 external validation (public ChEMBL malaria IC50/EC50, n=50)
-raw n=50  TFP fails=0  TNE fails=0
+P3 external validation (public ChEMBL malaria IC50/EC50, n=22447)
+raw n=22447  TFP fails=0  TNE fails=351
 
 Descriptor      AUC       ±
-ECFP4        0.9435  0.0502
-FCFP4        0.9310  0.0697
-MACCS        0.9089  0.0643
-AP           0.9167  0.0509
-PHCO         0.9435  0.0502
-BPF          0.9310  0.0574
-TFP          0.8899  0.0283
-TNE          0.6057  0.0886
-Hybrid       0.8994  0.0459
+ECFP4        0.9601  0.0035
+FCFP4        0.9593  0.0040
+MACCS        0.9555  0.0028
+AP           0.9555  0.0032
+PHCO         0.9529  0.0044
+BPF          0.9532  0.0041
+TFP          0.8645  0.0064
+TNE          0.6448  0.0102
+Hybrid       0.8000  0.0063
 
 Paired t-test (per-fold, df=4) vs ECFP4 with BH-FDR:
-  FCFP4      Δ=+0.0125 p=0.37390 q=0.42732 ns
-  MACCS      Δ=+0.0345 p=0.23043 q=0.42732 ns
-  AP         Δ=+0.0268 p=0.09985 q=0.26626 ns
-  PHCO       Δ=+0.0000 p=1.00000 q=1.00000 ns
-  BPF        Δ=+0.0125 p=0.37390 q=0.42732 ns
-  TFP        Δ=+0.0536 p=0.09985 q=0.26626 ns
-  TNE        Δ=+0.3378 p=0.00052 q=0.00417 SIG
-  Hybrid     Δ=+0.0440 p=0.37183 q=0.42732 ns
+  FCFP4      Δ=+0.0007 p=0.55442 q=0.55442 ns
+  MACCS      Δ=+0.0046 p=0.00902 q=0.01504 SIG
+  AP         Δ=+0.0045 p=0.05341 q=0.06104 ns
+  PHCO       Δ=+0.0071 p=0.00940 q=0.01504 SIG
+  BPF        Δ=+0.0069 p=0.03285 q=0.04380 SIG
+  TFP        Δ=+0.0956 p=0.00002 q=0.00006 SIG
+  TNE        Δ=+0.3153 p=0.00000 q=0.00001 SIG
+  Hybrid     Δ=+0.1600 p=0.00000 q=0.00001 SIG

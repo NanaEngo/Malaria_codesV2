@@ -1,0 +1,46 @@
+{
+  "schema": "p1-v6-independent-review-register/v2",
+  "status": "PENDING_INDEPENDENT_REVIEW",
+  "reviewer_identity": null,
+  "reviewer_role": null,
+  "reviewer_independence_attestation": null,
+  "conflict_of_interest_declaration": null,
+  "review_date_utc": null,
+  "review_dossier": "results/validation/v6_review_dossier.md",
+  "review_dossier_sha256": null,
+  "integrity_audit": "results/validation/v6_integrity_audit.json",
+  "integrity_audit_sha256": null,
+  "candidate_manifest": "results/v6_candidate_manifest.csv",
+  "candidate_manifest_sha256": null,
+  "signed_review_artifact": null,
+  "signed_review_sha256": null,
+  "detached_signature_artifact": null,
+  "detached_signature_sha256": null,
+  "trusted_public_key_artifact": null,
+  "trusted_public_key_sha256": null,
+  "accepted_for_full_run": false,
+  "authorization_mode": "INDEPENDENT_REVIEW_REQUIRED",
+  "internal_work_authorized": false,
+  "target_decisions": {
+    "PfDHFR": "PENDING",
+    "PfCRT": "PENDING",
+    "PfClpP": "PENDING",
+    "PfATP4": "PENDING"
+  },
+  "automated_audit_can_set": [
+    "AUDIT_PASS_REVIEW_REQUIRED",
+    "AUDIT_WARN_REVIEW_REQUIRED",
+    "AUDIT_FAIL_REVIEW_BLOCKED"
+  ],
+  "automated_audit_cannot_set": [
+    "accepted_for_full_run",
+    "target_decisions.ACCEPTED",
+    "status.INDEPENDENT_REVIEW_ACCEPTED"
+  ],
+  "prohibited_until_signed": [
+    "final V6 consensus promotion",
+    "integrated RRS/PNS manuscript claims",
+    "editing this register to simulate independent acceptance"
+  ],
+  "note": "This register is intentionally pending. Only a qualified independent human reviewer may complete the signed fields under docs/INDEPENDENT_REVIEW_PROTOCOL.md. The gate must verify the detached Ed25519/GPG signature and all hash bindings; non-empty fields alone are insufficient."
+}

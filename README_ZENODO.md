@@ -12,15 +12,13 @@
 
 The DOI above is reserved, but the archive has not yet been uploaded and published. Until publication, the GitHub repository is the current reviewer-accessible source. Do not cite the DOI as an already available dataset record, and do not describe the deposit as complete.
 
-The root file `zenodo_manifest.txt` is a **historical/preparatory manifest** generated on 2 August 2026. It contains legacy V2/archive paths and is not a current proof of publication. The acceptance-oriented P1 V4 package has its own verified manifest at:
-
-`Project1_Chem_space_antimalarial_V4_CorrectedGrid/manuscript/P1_V4_SUBMISSION_MANIFEST_20260807.txt`
+The root file `zenodo_manifest.txt` is a **historical/preparatory manifest** generated on 2 August 2026. It contains legacy V2/archive paths and is not a current proof of publication. No current P1 V4 submission manifest is maintained at this stage: the former manifest was removed because the V4 package is not submission-ready while the 2F6I revalidation and independent review remain outstanding. Use `Project1_Chem_space_antimalarial_V4_CorrectedGrid/project-tracking.md` and the dated critical-review records for current status.
 
 ## Project-level manifests (current)
 
 | Project | Manifest | Status |
 |---------|----------|--------|
-| P1 V4 | `Project1_Chem_space_antimalarial_V4_CorrectedGrid/manuscript/P1_V4_SUBMISSION_MANIFEST_20260807.txt` | Current submission package |
+| P1 V4 | `Project1_Chem_space_antimalarial_V4_CorrectedGrid/project-tracking.md` + dated critical reviews | Submission blocked pending 2F6I revalidation and independent review |
 | P5 | `Project5_GNN_Transformer_DrugDiscovery/P5_ZENODO_DEPOSIT_MANIFEST.txt` (67 files, 289.6 MB, generated 08/08/2026) | Reserved DOI; upload pending |
 
 ## Canonical P1 V4 submission package
@@ -38,9 +36,11 @@ Canonical files are:
 - `Cover_Letter.tex` — cover-letter source
 - `Cover_Letter.pdf` — compiled cover letter
 - `../bibliography/Sao_Chim_Space.bib` — bibliography database used by the manuscript sources
-- `../README.md` — project-level provenance and status notes
+- `../project-tracking.md` — current provenance and submission status
 
-The package was rebuilt on 7 August 2026. The final local compilation produced 41 pages for the main manuscript, 48 pages for the Supplementary Material, and 3 pages for the cover letter, with no fatal LaTeX errors or unresolved citations/references in the final passes.
+This is a working computational manuscript package, not an approved submission package. The V5-derived overlay remains provisional and pending independent review; the historical 484-centroid PfClpP arm requires complete 2F6I revalidation before submission.
+
+The package is under active revision. Compilation checks must be rerun after each manuscript change; page counts and review status in dated audit records are not submission authorization.
 
 Historical auxiliary prose files such as `FINAL_STATUS.txt`, `COVER_LETTER_SUMMARY.md`, and `COVER_LETTER_COMPARISON.txt` are not submission files and must not be used as current evidence for deposit status or validation claims.
 

@@ -3,7 +3,7 @@
   "cohort_id": "P2_PARENT_STUDY_MD_4",
   "execution_authorized": false,
   "execution_performed": false,
-  "generated_utc": "2026-08-08T07:03:34.607939+00:00",
+  "generated_utc": "2026-08-09T03:31:16.604216+00:00",
   "gromacs_launched": false,
   "hash_scope": [
     "ions.gro",
@@ -30,13 +30,18 @@
   "systems": [
     {
       "blockers": [
-        "missing forcefield_manifest.json"
+        "strict force-field validation: protein_force_field must be CHARMM36m",
+        "strict force-field validation: ligand_force_field must be CGenFF for a publication-grade future rerun",
+        "strict force-field validation: source_manifest_path must record non-empty provenance",
+        "strict force-field validation: source_manifest_sha256 must be a 64-character SHA-256 hex string",
+        "manifest protein_force_field='CHARMM36-jul2022', expected 'CHARMM36m'",
+        "manifest ligand_force_field='GAFF2 (AM1-BCC via ACPYPE)', expected 'CGenFF'"
       ],
       "canonical_directory": "201_PfDHFR",
       "forcefield_manifest": {
         "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/201_PfDHFR/forcefield_manifest.json",
-        "present": false,
-        "sha256": null
+        "present": true,
+        "sha256": "16f32643ca5fcb5446cdf28c3431b8bba3e103dba1f2cef84a827d64e03c6da9"
       },
       "optional_stage_outputs": {
         "em.gro": {
@@ -92,13 +97,22 @@
       "blockers": [
         "missing/empty npt.gro",
         "missing/empty npt.cpt",
-        "missing forcefield_manifest.json"
+        "strict force-field validation: protein_force_field must be CHARMM36m",
+        "strict force-field validation: ligand_force_field must be CGenFF for a publication-grade future rerun",
+        "strict force-field validation: source_manifest_path must record non-empty provenance",
+        "strict force-field validation: coordinates_sha256 must be a 64-character SHA-256 hex string",
+        "strict force-field validation: checkpoint_sha256 must be a 64-character SHA-256 hex string",
+        "strict force-field validation: source_manifest_sha256 must be a 64-character SHA-256 hex string",
+        "strict force-field validation: missing file for hash verification: /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/npt.gro",
+        "strict force-field validation: missing file for hash verification: /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/npt.cpt",
+        "manifest protein_force_field='CHARMM36-jul2022', expected 'CHARMM36m'",
+        "manifest ligand_force_field='GAFF2 (AM1-BCC via ACPYPE)', expected 'CGenFF'"
       ],
       "canonical_directory": "438_PfATP4",
       "forcefield_manifest": {
         "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/forcefield_manifest.json",
-        "present": false,
-        "sha256": null
+        "present": true,
+        "sha256": "b755d0e4952757967c6e27dd9bcc776af6cd46965a5486a806df2d8b0554b8dd"
       },
       "optional_stage_outputs": {
         "em.gro": {
@@ -152,13 +166,18 @@
     },
     {
       "blockers": [
-        "missing forcefield_manifest.json"
+        "strict force-field validation: protein_force_field must be CHARMM36m",
+        "strict force-field validation: ligand_force_field must be CGenFF for a publication-grade future rerun",
+        "strict force-field validation: source_manifest_path must record non-empty provenance",
+        "strict force-field validation: source_manifest_sha256 must be a 64-character SHA-256 hex string",
+        "manifest protein_force_field='CHARMM36-jul2022', expected 'CHARMM36m'",
+        "manifest ligand_force_field='GAFF2 (AM1-BCC via ACPYPE)', expected 'CGenFF'"
       ],
       "canonical_directory": "164_PfClpP",
       "forcefield_manifest": {
         "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/164_PfClpP/forcefield_manifest.json",
-        "present": false,
-        "sha256": null
+        "present": true,
+        "sha256": "0c643d21d128b6a4d68dc06e8a3ba24ffc01605dcd6343869475591b46b92635"
       },
       "optional_stage_outputs": {
         "em.gro": {
@@ -212,13 +231,18 @@
     },
     {
       "blockers": [
-        "missing forcefield_manifest.json"
+        "strict force-field validation: protein_force_field must be CHARMM36m",
+        "strict force-field validation: ligand_force_field must be CGenFF for a publication-grade future rerun",
+        "strict force-field validation: source_manifest_path must record non-empty provenance",
+        "strict force-field validation: source_manifest_sha256 must be a 64-character SHA-256 hex string",
+        "manifest protein_force_field='CHARMM36-jul2022', expected 'CHARMM36m'",
+        "manifest ligand_force_field='GAFF2 (AM1-BCC via ACPYPE)', expected 'CGenFF'"
       ],
       "canonical_directory": "214_PfCRT",
       "forcefield_manifest": {
         "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT/forcefield_manifest.json",
-        "present": false,
-        "sha256": null
+        "present": true,
+        "sha256": "13decc70270d0e09a5c4233e1c67bdd676ffb805d5a17499d8f905b1f34b798f"
       },
       "optional_stage_outputs": {
         "em.gro": {

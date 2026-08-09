@@ -1,0 +1,117 @@
+% Integrated chemical-space, polypharmacology, and resistance-resilience study
+\documentclass[journal=jcisd8,manuscript=article]{achemso}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[detect-all=true,group-minimum-digits=4]{siunitx}
+\DeclareSIUnit\angstrom{\text{\AA}}
+\DeclareSIUnit\dalton{Da}
+\DeclareSIUnit\calorie{cal}
+\usepackage{graphicx}
+\usepackage{booktabs,tabularx,array,multirow}
+\usepackage{xr}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[noabbrev,capitalize]{cleveref}
+\externaldocument[SM-]{P1_V6_Integrated_Polypharmacology_RRS_SM}
+\graphicspath{{Graphics/}}
+
+\author{Myke Vital Sao Temgoua}
+\email{myke-vital.sao@facsciences-uy1.cm}
+\affiliation{Department of Physics, Faculty of Science, University of Yaoundé I, P.O. Box 812, Yaoundé, Cameroon}
+\author{Jean-Pierre Tchapet Njafa}
+\affiliation{Department of Physics, Faculty of Science, University of Yaoundé I, P.O. Box 812, Yaoundé, Cameroon}
+\author{Penabei Samafou}
+\affiliation{Department of Medical Imaging and Radiation Sciences, Faculty of Medicine and Health Sciences, Université de Sherbrooke, Sherbrooke, QC J1H 5N4, Canada}
+\author{Wilfred Fon Mbacham}
+\affiliation{Department of Biochemistry, Faculty of Science, University of Yaoundé I, P.O. Box 812, Yaoundé, Cameroon}
+\author{Serge Guy Nana Engo}
+\affiliation{Department of Physics, Faculty of Science, University of Yaoundé I, P.O. Box 812, Yaoundé, Cameroon}
+\title{From African-Natural-Product Chemical Space to Resistance-Resilience Hypotheses: An Integrated Computational Study of Antimalarial Polypharmacology}
+\SectionNumbersOn
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Polypharmacology could make antimalarial discovery less vulnerable to single-target resistance, but computational prioritization often conflates multi-target docking, mutation tolerance, and biological activity. Docking is sensitive to receptor and scoring-function choices, so cross-target profiles should be treated as structured hypotheses rather than calibrated measurements \cite{kitchen2004,Simoben2023}. We developed an integrated, evidence-bounded workflow that connects an African-natural-product-inspired chemical-space funnel to target-anchored docking and a mutation-aware resistance-resilience score (RRS). A hybrid library of \num{65856} molecules, generated from \num{396} African natural products and \num{454} synthetic antimalarial compounds, yielded \num{19913} computationally prioritized synthesizable leads after variational-autoencoder clustering, multi-parameter optimization, and scaffold expansion. A locked 17-member polypharmacology-oriented cohort was then evaluated by AutoDock Vina against PfDHFR, PfCRT, PfClpP, and PfATP4 using target-specific anchors. All \num{68} candidate--target pairs passed a predeclared geometric gate, with scores ranging from \qtyrange{-7.91}{-4.63}{\kilo\calorie\per\mole}. Separately, corrected per-target RRS was derived from declared wild-type and mutant docking panels for PfDHFR (N51I, C59R, S108N, I164L) and PfCRT (K76T, K76A), excluding non-binding wild-type targets from the denominator. The 17-member cohort comprised six A*, five B, five C, and one D RRS profiles, with RRS values spanning \numrange{68.2}{111.7}. Cross-metric associations were exploratory: PNS--RRS $\rho=-\num{0.559}$, ACSI--RRS $\rho=-\num{0.132}$, and RRS--wild-type score $\rho=-\num{0.433}$; none survived the prespecified Bonferroni threshold. The study yields computational hypotheses about multi-target and mutation-resilient chemotypes, not measured potency, confirmed target engagement, or demonstrated resistance circumvention.
+\end{abstract}
+
+\noindent\textbf{Keywords:} African natural products; antimalarial discovery; polypharmacology; resistance resilience; molecular docking; chemical space; PfDHFR; PfCRT
+
+\section{Introduction}
+Antimalarial resistance is a systems problem. A compound that depends on one protein--ligand interaction may lose activity after a single parasite mutation, whereas a chemotype that engages several resistance-relevant processes could provide a broader mechanistic starting point. This rationale does not imply that every computationally predicted multi-target profile is biologically useful: target breadth, mutation tolerance, physicochemical tractability, and experimental activity are distinct properties that must be measured separately.
+
+African natural products provide a chemically rich but incompletely explored starting point for such studies. Their ring systems and stereochemical complexity can complement synthetic antimalarial chemistry, while computational expansion can generate tractable analogues around privileged scaffolds. The challenge is to connect this chemical-space exploration to a target-level analysis without allowing the prioritization score to become a surrogate for activity.
+
+We therefore assembled an integrated workflow with three deliberately separated layers. First, a chemical-space funnel combines African natural products and synthetic antimalarials, expands the library, and prioritizes synthesizable candidates. Second, target-anchored docking evaluates a locked polypharmacology-oriented cohort against four proteins with unequal structural evidence. Third, a mutation-aware RRS summarizes changes in docking estimates for declared computational PfDHFR and PfCRT mutant panels. Polypharmacology is read from the four-target docking profile; RRS is read from target-specific mutant comparisons. The two layers are joined by canonical molecular identity for exploratory interpretation, not by assuming that multi-target docking proves mutation resilience.
+
+The central question was: can this separation produce a coherent computational map from chemical-space novelty to multi-target and mutation-resilience hypotheses? We predeclared three safeguards: candidate sets would remain distinct, non-binding wild-type targets would not inflate RRS denominators, and all activity-like language would be restricted to computational predictions.
+
+\section{Materials and Methods}
+\subsection{Chemical-space funnel}
+The upstream library combined \num{396} African natural products with \num{454} synthetic antimalarial compounds. Similarity-based expansion and SELFIES perturbation \cite{Nigam2021} were followed by structure validation, deduplication, and PAINS filtering, producing \num{65856} unique molecules. A SMILES variational autoencoder was used to obtain latent representations. K-means clustering of the selected 64-dimensional representation yielded \num{484} centroids. Multi-parameter optimization combined docking-derived scores, DiffDock confidence, QED, an ADMET composite, and a Lipinski penalty. The \num{76} centroids above the optimization threshold mapped to \num{53} clusters and expanded to \num{40481} molecules; \num{19913} molecules remained after synthetic-accessibility and MPO filtering.
+
+Novelty was evaluated with Morgan fingerprints (radius \num{2}, \num{2048} bits). In a \num{5000}-molecule sample, \qty{92.6}{\percent} had maximum whole-molecule Tanimoto similarity below \num{0.4} to the African-NP seed set, while scaffold recovery was \qty{69.3}{\percent} (\num{70}/\num{101} annotated seed scaffolds). The candidate sets were locked before the V5 target-anchored docking analysis.
+
+\subsection{Candidate-set identity}
+Set A comprised the V4 MPO top-20 candidates, Set B comprised the parent-study MD top-20 candidates, and Set C comprised the 17-member P2 polypharmacology-oriented cohort. V6 used Set C. Canonical SMILES, candidate identifiers, source hashes, and cohort labels were checked row-wise across V5, P2, and V6 manifests. The four parent MD systems (201--PfDHFR, 438--PfATP4, 164--historical PfClpR, and 214--PfCRT) were not treated as MD validation of Set C.
+
+\subsection{Target-anchored docking}
+The V5 target panel comprised PfDHFR (7F3Y; methotrexate copy A702), PfCRT (6UKJ; Y01 A501 cavity), PfClpP (2F6I; chain-A Ser252/His223/Asp219 catalytic triad), and PfATP4 (9N10; D451 phosphorylation-loop region and DPPR hinge). The PfClpP identity correction is material: 4GM2 is PfClpR and was excluded from PfClpP claims. Y01 is treated as a membrane/cavity proxy, and the PfATP4 region is mechanism-motivated because no small-molecule inhibitor is co-crystallized.
+
+Ligands were standardized and converted to PDBQT with Meeko. AutoDock Vina was run with fixed target-specific boxes following established docking protocols \cite{Trott2009,Eberhardt2021}. The geometric gate required a rank-1 centroid inside the box, at least one atom within \qty{10}{\angstrom} of the target anchor, and at least \qty{90}{\percent} of ligand atoms inside the padded box. The gate is a pose-quality and provenance criterion, not evidence of binding. Vina values are reported in \si{\kilo\calorie\per\mole} and were not converted to experimental free energies.
+
+\subsection{Resistance-resilience score}
+RRS was computed separately for each target and candidate. For mutation $m$ and target $t$,
+\begin{equation}
+\mathrm{RRS}_{i,m,t}=100\times\frac{|S_{\mathrm{Vina},i,m,t}|}{|S_{\mathrm{Vina},i,WT,t}|}.
+\end{equation}
+Here $S_{\mathrm{Vina}}$ denotes the AutoDock Vina scoring-function output; it is not an experimental free energy. Only targets satisfying the declared genuine-binding wild-type criterion ($|S_{\mathrm{Vina},i,WT,t}|\geq\qty{5}{\kilo\calorie\per\mole}$) contributed to a candidate's mean. Non-binding targets were excluded rather than assigned a zero score or used as a denominator. PfDHFR mutations were N51I, C59R, S108N, and I164L; PfCRT mutations were K76T and K76A. RRS classes were assigned using the prespecified P2 rules: A* required $|S_{\mathrm{Vina},WT}|\geq\qty{7}{\kilo\calorie\per\mole}$ and all available RRS values $\geq\qty{80}{\percent}$; A required all available values $\geq\qty{80}{\percent}$ without the A* wild-type criterion; B required all values $\geq\qty{70}{\percent}$ but not all $\geq\qty{80}{\percent}$; C required at least one value $\geq\qty{80}{\percent}$ without meeting A/A* or B; and D was assigned when no available mutant RRS reached \qty{80}{\percent}. These classes summarize ratios of docking-score magnitudes, not ratios of binding free energies.
+
+\subsection{Polypharmacology, PNS, and ACSI}
+Polypharmacology was treated as a target-profile hypothesis derived from the four-target Vina matrix, not as confirmed simultaneous engagement and not from RRS. No cross-target arithmetic composite was used because Vina scores are not calibrated across different pocket architectures. PNS was retained as a network-based descriptor and ACSI as a chemical-space descriptor. Their associations with RRS and wild-type Vina score were evaluated with Spearman correlation on the 17-member cohort. Three exploratory correlations were corrected with Bonferroni $\alpha=\num{0.017}$. No association was interpreted as causal, and no non-significant association was interpreted as equivalence.
+
+\subsection{Evidence boundary and reproducibility}
+All raw poses, receptor and ligand files, configurations, candidate manifests, and analysis scripts are archived in the project repository. Automated checks verify file integrity, schema, candidate identity, and row counts. A separate structural-review register records independent review of the target anchors; automated integrity checking is not treated as independent scientific acceptance. The present manuscript reports the computational evidence and its limitations transparently while retaining that review boundary.
+
+\section{Results}
+\subsection{Chemical-space expansion preserved scaffolds while diversifying molecules}
+The hybrid library contained \num{65856} unique structures. Whole-molecule novelty and scaffold recovery were simultaneously high: \qty{92.6}{\percent} of the evaluated sample was below the whole-molecule Tanimoto threshold of \num{0.4}, whereas \num{70} of \num{101} annotated seed scaffolds were recovered. Scaffold-only similarity exceeded whole-molecule similarity (mean \num{0.379} versus \num{0.206}), consistent with preservation of ring systems and diversification of peripheral substituents. The funnel produced \num{19913} computationally prioritized molecules predicted to be synthesizable; this is a prioritization output, not a synthesis result.
+
+\subsection{The locked cohort spans four computational target profiles}
+Set C contained 17 candidates selected for a polypharmacology-oriented analysis. Target-anchored docking generated \num{68}/\num{68} geometrically admissible pairs. Score ranges were \qtyrange{-6.35}{-4.86}{\kilo\calorie\per\mole} for PfDHFR, \qtyrange{-7.91}{-5.12}{\kilo\calorie\per\mole} for PfCRT, \qtyrange{-7.03}{-5.05}{\kilo\calorie\per\mole} for PfClpP, and \qtyrange{-7.57}{-4.63}{\kilo\calorie\per\mole} for PfATP4. This 68-pair result is raw computational evidence pending independent structural review, not an accepted biological validation. The most favorable within-target estimates included PP-06 in the PfCRT cavity (\num{-7.91}) and PP-13 in the PfATP4 machinery region (\num{-7.57}). These are target-specific, within-panel observations rather than calibrated potency rankings; no cross-target arithmetic composite was used.
+
+\subsection{Per-target RRS separates mutation tolerance from target breadth}
+Corrected RRS analysis classified the 17-member cohort as six A*, five B, five C, and one D profiles. RRS values ranged from \num{68.2} to \num{111.7}. Five candidates were classified on PfCRT alone because PfDHFR wild-type Vina score estimates did not meet the genuine-binding threshold. This target-specific missingness is scientifically informative: it prevents a near-zero wild-type denominator from producing an artificial resistance-resilience score.
+
+The previously described PP-11 PfDHFR C59R knockout pattern was not retained as a design rule. PP-11's PfDHFR wild-type estimate was non-binding under the declared threshold, whereas its PfCRT mutant profile was evaluated on the PfCRT denominator. The corrected analysis therefore supports a target-specific rather than a mixed-target interpretation of resilience.
+
+\subsection{Cross-metric associations were exploratory and mostly null}
+On the 17-member cohort, PNS and RRS showed a negative trend ($\rho=-\num{0.559}$), but the nominal result did not survive Bonferroni correction. ACSI and RRS were weakly associated ($\rho=-\num{0.132}$), and RRS versus wild-type Vina score showed $\rho=-\num{0.433}$; neither was significant under the prespecified threshold. PNS versus wild-type Vina score was positive ($\rho=\num{0.389}$), illustrating that network and docking descriptors need not be interchangeable. These results do not establish a general relationship between natural-product character, target breadth, and mutation tolerance.
+
+\section{Discussion}
+The principal contribution of this study is an evidence architecture rather than a claim of confirmed multi-target activity. In particular, the workflow makes target-specific evidence classes explicit and prevents an uncalibrated cross-target score average from disguising differences in pocket quality. The chemical-space funnel provides structurally diverse, computationally tractable hypotheses; target-anchored docking provides a standardized pose layer; and per-target RRS provides a mutation-aware comparison that avoids target mixing. Keeping these layers separate makes the resulting hypotheses more falsifiable.
+
+The four-target profile and the RRS profile answer different questions. A candidate can have favorable docking estimates across several targets without being resilient to a specific mutation. Conversely, a candidate can show high RRS on one target while lacking evidence for a second target. Because raw Vina scores are not calibrated across unlike receptors, target breadth is represented by the pattern of target-specific evidence, not by averaging scores across targets. The use of a 17-member locked cohort and canonical-SMILES joins prevents these distinctions from being hidden by row order or by a single composite score.
+
+The null and corrected findings are important. The absence of a Bonferroni-significant cross-metric association means that chemical-space relatedness and network position cannot be used as substitutes for target-specific mutation analysis. The retraction of the PP-11 C59R interpretation further demonstrates why non-binding wild-type baselines must be excluded before calculating ratios. In this setting, a narrower and more conditional RRS claim is stronger than an apparently larger pooled-target effect.
+
+The study has substantial limitations. Docking scores are approximate scoring-function outputs and do not establish affinity, kinetics, or cellular activity. PfCRT is represented by a proxy cavity, and PfATP4 by conserved catalytic machinery without a co-crystallized inhibitor. RRS covers PfDHFR and PfCRT but not PfClpP or PfATP4, and the cohort is small and purposefully enriched for predicted polypharmacology. The parent MD systems are separate from Set C and cannot validate the Set C RRS profile. No new IC\textsubscript{50}/EC\textsubscript{50} measurements were available. Finally, independent structural review remains a required control for downstream promotion of the raw target panel. The next experiments should combine biochemical or cellular potency measurements, resistance-mutant assays, orthogonal binding methods, and candidate-specific molecular dynamics.
+
+\section{Conclusion}
+An African-natural-product-inspired chemical-space funnel was connected to a four-target, target-anchored docking panel and a corrected per-target RRS analysis. The workflow identified a 17-member cohort with reproducible computational pose profiles and heterogeneous mutation-resilience classes, while retaining null findings and target-specific missingness. Its value is hypothesis generation: it proposes which chemotypes and target--mutation combinations should be tested next, without claiming that docking, RRS, or polypharmacology estimates are experimental evidence.
+
+\section*{Supporting Information}
+The Supporting Information contains the candidate manifest, target-anchor evidence, complete 17-by-4 docking matrix, RRS definitions and table, PNS/ACSI values, cross-metric statistics, provenance fields, and reproducibility instructions.
+
+\section*{Author Contributions}
+M.V.S.T. and S.G.N.E. designed the integrated study. M.V.S.T. and J.-P.T.N. developed the chemical-space and docking analyses. P.S. and W.F.M. contributed to target biology and resistance interpretation. All authors reviewed and approved the manuscript scope.
+
+\section*{Notes}
+The authors declare no competing financial interest. This is a computational, hypothesis-generating study; no experimental potency is claimed.
+
+\section*{Data Availability}
+Data and code are available at \url{https://github.com/NanaEngo/Malaria_codesV2}. V6 manifests and validation files are in \texttt{Project1\_Chem\_space\_antimalarial\_V6\_CorrectedGrid/}; source RRS data are in \texttt{Project2\_Polypharmacology\_MD\_ValidationV2607/results/}; raw Vina data are in \texttt{Project1\_Chem\_space\_antimalarial\_V5\_CorrectedGrid/results/}. The archival review register is intentionally separate from the scientific claims.
+
+\bibliography{Sao_Chim_Space}
+\end{document}

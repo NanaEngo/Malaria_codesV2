@@ -6,6 +6,7 @@
 \usepackage{hyperref}
 \usepackage{setspace}
 \usepackage{siunitx}
+\DeclareSIUnit\calorie{cal}
 \sisetup{detect-all=true, separate-uncertainty=true, range-phrase=--}
 \setstretch{1.03}
 \setlength{\parindent}{0pt}
@@ -17,7 +18,7 @@
 Department of Physics, Faculty of Science\\
 University of Yaound\'{e} I, P.O. Box 812, Yaound\'{e}, Cameroon\\
 \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm}
-\hfill August 7, 2026
+\hfill August 9, 2026
 
 \vspace{0.35em}
 \textbf{Prof. Kenneth M. Merz, Jr., Editor-in-Chief}\\
@@ -27,13 +28,17 @@ American Chemical Society
 \vspace{0.35em}
 Dear Prof. Merz,
 
-We submit our revised manuscript, \textbf{``Computational Discovery of Antimalarial Candidates from African Natural Product Chemical Space''}, for consideration as an Article in \textit{JCIM} (Manuscript ID: ci-2026-012015). The work presents a resource-efficient, reproducible computational workflow for exploring African natural-product-inspired antimalarial chemical space, combining VAE-guided centroid selection, dual-filter docking, and multi-parameter optimization.
+We submit our manuscript, \textbf{``Computational Discovery of Antimalarial Candidates from African Natural Product Chemical Space''}, for consideration as an Article in \textit{JCIM}. The manuscript presents a modelling-only workflow for resource-efficient antimalarial discovery that combines VAE-guided chemical-space exploration, centroid-based docking, target-anchored multi-target modelling, and resistance-aware computational prioritization.
 
-The principal contribution is a controlled reduction in screening cost: 484 chemically diverse centroids replace an estimated 65,856-molecule exhaustive screen, corresponding to a \qty{99.3}{\percent} reduction in docking runs. The framework was evaluated using complementary, explicitly separated benchmarks. Prospective DEKOIS testing of single-method AutoDock Vina on PfDHFR (40 actives and 1,200 property-matched decoys) gave near-random discrimination (ROC-AUC 0.450; 95\% CI 0.367--0.531). In contrast, the MMV Malaria Box analysis provides a positive-control, retrodictive consistency assessment for the Vina--DiffDock consensus (ROC-AUC 0.924--1.000 across the evaluated target panels); score-stratified target results are clearly distinguished from external decoy validation in the manuscript. These results motivate, but do not replace, prospective experimental testing.
+The first contribution is methodological efficiency. A \num{65856}-molecule hybrid library derived from \num{396} African natural products and \num{454} synthetic antimalarials was represented by \num{484} chemically diverse centroids, reducing the nominal number of docking representatives by \qty{99.3}{\percent}. The resulting analysis quantifies whole-molecule novelty (\qty{92.6}{\percent} of the evaluated sample below a maximum seed Tanimoto similarity of \num{0.4}) together with \qty{69.3}{\percent} recovery of seed scaffolds. These results are presented as computational chemical-space measurements, not as evidence of biological activity.
 
-Application to the hybrid library of 396 African natural products and 454 synthetic antimalarials identified 19,913 computationally prioritized leads predicted to be synthesizable. Structural analysis showed substantial molecular novelty (92.6\% of the evaluated sample below a maximum seed Tanimoto similarity of 0.4) alongside 69.3\% recovery of seed scaffolds, supporting a scaffold-preserving, substituent-diversifying search strategy. All activity, selectivity, ADMET, and binding results remain explicitly labelled as computational estimates. The manuscript also corrects the receptor identity associated with PDB 4GM2: it is reported as PfClpR-specific and is not presented as PfClpP validation.
+The second contribution is an explicit target-anchored polypharmacology layer. A predefined cohort of \num{17} polypharmacology candidates was evaluated against PfDHFR, PfCRT, PfClpP, and PfATP4 using corrected target-specific anchors and fixed Vina boxes. The \num{68} candidate--target computations passed the declared pose-and-anchor gate, yielding preliminary mean docking scores of \qty{-5.76}{\kilo\calorie\per\mole} (PfDHFR), \qty{-6.19}{\kilo\calorie\per\mole} (PfCRT), \qty{-5.94}{\kilo\calorie\per\mole} (PfClpP), and \qty{-6.31}{\kilo\calorie\per\mole} (PfATP4) in a raw, unreviewed computational artifact rather than experimental binding free energies.
 
-We believe the manuscript fits \textit{JCIM} because it addresses chemical-space exploration, molecular representation, virtual-screening benchmarking, multi-objective prioritization, and reproducible computational practice. Source code and currently available data are versioned in the public repository (\url{https://github.com/NanaEngo/Malaria_codesV2}); the reserved Zenodo DOI (10.5281/zenodo.19608875) remains pending upload and is not represented as a published dataset record.
+The third contribution is resistance-aware computational prioritization. Using a corrected per-target docking-derived RRS definition that excludes non-binding WT baselines, the \num{17}-candidate cohort spans four RRS classes (A*: \num{6}, B: \num{5}, C: \num{5}, D: \num{1}). The same cohort was characterized by PNS and ACSI descriptors, with PNS ranging from \num{1.04} to \num{6.00} and ACSI from \num{0.173} to \num{0.823}. We interpret these quantities as hypothesis-generating computational descriptors: they do not establish mutation resilience, simultaneous target engagement, therapeutic benefit, or experimental efficacy.
+
+The manuscript is deliberately transparent about model boundaries. The corrected PfClpP structure is PDB 2F6I rather than the historically misassigned 4GM2/PfClpR entry; PfCRT uses a Y01 membrane-proxy cavity, and PfATP4 uses a motif-defined catalytic-region anchor because PDB 9N10 lacks a co-crystallized small-molecule inhibitor. Legacy DiffDock consensus artifacts and the unsigned V5 consensus are excluded. All source files, hashes, scripts, raw Vina outputs, the integrated Vina--RRS--PNS--ACSI table, and its provenance sidecar are available in the repository. No experimental activity, affinity, MD-RRS, or biological validation claim is made.
+
+We believe the work is appropriate for \textit{JCIM} because it contributes a reproducible, resource-aware modelling framework that links generative chemical-space exploration to target-anchored multi-target and resistance-aware prioritization. The manuscript is not intended to substitute computational scores for experiment; rather, it defines a transparent hypothesis space and auditable candidate-selection workflow for subsequent medicinal-chemistry and biological studies.
 
 This manuscript represents original work, is not under consideration elsewhere, and has been reviewed and approved by all authors. The authors declare no competing interests.
 

@@ -178,6 +178,7 @@ class OracleAggregator:
         use_rrs: bool = True,
         use_pns: bool = True,
         use_activity: bool = True,
+        require_syba: bool = False,
         cache_maxsize: int = 10000,
         rrs_fallback_k: int = 3,
     ) -> None:
@@ -202,6 +203,7 @@ class OracleAggregator:
         self._cache_maxsize = cache_maxsize
         self._canonical_cache: Dict[str, str] = {}
         self._rrs_fallback_k = rrs_fallback_k
+        self._syba_observations: list[float] = []
 
         # Precomputed P1/P2 libraries
         self._c6: Dict[str, Dict[str, float]] = {}
@@ -239,6 +241,28 @@ class OracleAggregator:
             except Exception as exc:  # pragma: no cover
                 warnings.warn(f"SYBA initialisation failed: {exc}")
                 self._syba = None
+
+        # Fail closed for publication-grade Pareto searches. A missing SYBA
+        # classifier otherwise degrades every novel molecule to syba=0.0 and
+        # can silently turn SYBA into a non-objective while the CSV still
+        # labels it as part of the Pareto vector. Legacy artefact re-scoring
+        # may leave this disabled explicitly.
+        if require_syba and self._syba is None:
+            raise RuntimeError(
+                "SYBA is unavailable: refusing a Pareto run with a constant "
+                "zero fallback. Install/verify the syba package, or use the "
+                "explicit legacy re-scoring mode instead."
+            )
+
+    def syba_diagnostics(self) -> dict[str, float | int]:
+        """Return runtime SYBA coverage diagnostics for fail-closed reruns."""
+        values = self._syba_observations
+        return {
+            "n_evaluated": len(values),
+            "n_unique": len({round(v, 12) for v in values}),
+            "min": min(values) if values else 0.0,
+            "max": max(values) if values else 0.0,
+        }
 
     # ── RRS reference preparation ────────────────────────────────────
     def _load_rrs_references(self) -> None:
@@ -765,6 +789,7 @@ class OracleAggregator:
             score = 0.0
 
         self._cache_set(smiles, "syba", score)
+        self._syba_observations.append(float(score))
         return score
 
     def _sa_score(self, smiles: str) -> float:
@@ -1107,6 +1132,7 @@ def make_oracle(
     use_rrs: bool = True,
     use_pns: bool = True,
     use_activity: bool = True,
+    require_syba: bool = False,
     cache_maxsize: int = 10000,
     rrs_fallback_k: int = 3,
 ) -> Callable[[str], float]:
@@ -1118,6 +1144,7 @@ def make_oracle(
         use_rrs=use_rrs,
         use_pns=use_pns,
         use_activity=use_activity,
+        require_syba=require_syba,
         cache_maxsize=cache_maxsize,
         rrs_fallback_k=rrs_fallback_k,
     )

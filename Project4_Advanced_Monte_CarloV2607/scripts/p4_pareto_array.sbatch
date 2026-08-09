@@ -46,7 +46,12 @@ export NUMEXPR_NUM_THREADS=1
 # ── Environment ─────────────────────────────────────────────────────
 PYTHON="/home/nanaengo/miniforge3/envs/malaria_md/bin/python"
 PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project4_Advanced_Monte_CarloV2607"
-RESULTS_DIR="${PROJECT_DIR}/results/pareto"
+if [[ -z "${RESULTS_DIR:-}" ]]; then
+  echo "ERROR: RESULTS_DIR must be explicit; refusing an implicit write path." >&2
+  exit 2
+fi
+RESULTS_DIR="$(realpath -m -- "${RESULTS_DIR}")"
+LOCKED_RESULTS_DIR="$(realpath -m -- "${PROJECT_DIR}/results/pareto")"
 
 mkdir -p "${RESULTS_DIR}" "${PROJECT_DIR}/logs/slurm"
 
@@ -63,6 +68,15 @@ FRAGMENT_SET="${FRAGMENT_SET:-medium}"
 # Unique seed per array task
 SEED="${SLURM_ARRAY_TASK_ID:?ERROR: not running as array job?}"
 OUT_CSV="${RESULTS_DIR}/p4_pareto_seed_${SEED}.csv"
+if [[ "${PRE_ACTIVITY:-0}" != "1" ]]; then
+  echo "ERROR: PRE_ACTIVITY=1 is required for this historical Pareto rerun." >&2
+  exit 2
+fi
+if [[ "${RESULTS_DIR}" == "${LOCKED_RESULTS_DIR}" || "${RESULTS_DIR}" == "${LOCKED_RESULTS_DIR}"/* ]]; then
+  echo "ERROR: refusing to overwrite locked historical results/pareto; use a separate RESULTS_DIR." >&2
+  exit 2
+fi
+PRE_ACTIVITY_FLAG="--pre-activity"
 
 echo "═══ P4 Pareto MCTS — Task ${SEED} ═══"
 echo "  Initial SMILES:  ${INITIAL_SMILES}"
@@ -70,6 +84,8 @@ echo "  Max steps:       ${MAX_STEPS}"
 echo "  Iterations:      ${N_ITERATIONS}"
 echo "  Seed:            ${SEED}"
 echo "  Fragment set:    ${FRAGMENT_SET}"
+echo "  Pre-activity:    ${PRE_ACTIVITY:-0}"
+echo "  Require SYBA:    yes"
 echo "  Host:            $(hostname)"
 echo "  Start:           $(date -u -Iseconds)"
 
@@ -82,6 +98,7 @@ echo "  Start:           $(date -u -Iseconds)"
   --fragment-set "${FRAGMENT_SET}" \
   --c-puct 5.0 \
   --policy-temperature 0.8 \
+  ${PRE_ACTIVITY_FLAG} \
   --output-csv "${OUT_CSV}"
 
 echo "═══ Task ${SEED} complete: $(date -u -Iseconds) ═══"

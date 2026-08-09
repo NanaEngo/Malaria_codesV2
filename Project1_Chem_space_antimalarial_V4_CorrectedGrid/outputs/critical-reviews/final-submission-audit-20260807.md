@@ -26,6 +26,6 @@ No scientific recalculation was performed. The final changes were wording-only: 
 | Data availability | Repository URL and pending Zenodo upload stated accurately |
 | 4GM2 target identity | V4 text labels 4GM2 as PfClpR; historical 164--PfClpP parent-MD label is explicitly caveated |
 
-## Decision
+## Decision — superseded 9 August 2026
 
-V4 is **submission-ready pending human author approval and the journal submission action**. This status is conditional on using the freshly compiled canonical sources after the 4GM2 identity correction. V5 remains a separate, non-submission-ready experimental branch.
+The wording/compilation audit below remains valid as a historical editorial audit, but its submission decision is superseded. V4 is **BLOCKED from submission** because the existing 484-centroid numerical panel still contains the historical 4GM2 arm, while V5 established that 4GM2 is PfClpR rather than genuine PfClpP. The 17×4 V5 raw Vina runs cannot replace that panel. A complete, provenance-bound 2F6I/PfClpP revalidation across the V4 centroids, independent structural review, and downstream recomputation are required before author approval or submission. No historical score is changed by this status correction.

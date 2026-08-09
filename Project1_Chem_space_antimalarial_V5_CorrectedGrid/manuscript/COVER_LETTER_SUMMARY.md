@@ -1,6 +1,6 @@
 # Cover Letter — Quick Summary
 
-**Status:** ✅ **Complete and ready for JCIM submission**
+**Status:** ⚠️ **Internal draft only; submission blocked pending 2F6I revalidation and independent review**
 
 ---
 
@@ -137,10 +137,10 @@ Problem → Innovation → Validation → Impact (not just technical summary)
 
 ## Next Steps
 
-1. ✅ Review the PDF (`Cover_Letter.pdf`)
-2. ✅ Verify all hyperlinks work (Zenodo DOI, GitHub URL)
-3. ✅ Upload to JCIM submission system with manuscript
-4. ✅ Reference this narrative framework if revisions requested
+1. Review the PDF only as an internal inherited-draft artifact.
+2. Complete the V4 2F6I/484 replacement audit and independent structural review.
+3. Reconcile the cover letter with the accepted V5/V6 evidence snapshot.
+4. Obtain author approval before any journal submission.
 
 ---
 
@@ -150,4 +150,4 @@ Problem → Innovation → Validation → Impact (not just technical summary)
 
 ---
 
-**Status:** ✅ **Ready for submission to JCIM**
+**Status:** ⚠️ **Not submission-ready; retained as inherited V4 material during V5/V6 integration**

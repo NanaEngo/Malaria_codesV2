@@ -2,7 +2,7 @@
 
 **Fichier canonique audité :** `Project4_Advanced_Monte_CarloV2607/manuscript/LaTeX/P4_Pareto_MCTS_JoC_refined.tex`
 **Date :** 03 août 2026; reconciliation pass 08 août 2026
-**Héritage :** complète `P4_ADVERSARIAL_AUDIT_MITIGATION_JoC_V12.md` (1er audit : 72 % → ≥95 % via mitigations F1–F5 déjà committées sur `data-results`).
+**Héritage :** complète `P4_ADVERSARIAL_AUDIT_MITIGATION_JoC_V12.md`; les décisions sont qualitatives et ne prétendent pas estimer une probabilité d'acceptation.
 
 > Ce second audit remplace la grille générique du premier par une procédure scientifique outillée : CLIs locaux déterministes du skill `peer-review` (v2.0) + cadre de puissance statistique du skill `statistical-power` (v1.0, K-Dense-AI) + checklist de reproductibilité statistique (`references/statistical_reproducibility.md`) + pattern adversaire BMAD (panel multi-rôles). Toutes les valeurs historiques rapportées ici sont **recalculées depuis les données v11** (`results/benchmark_molecules_opt/p4_benchmark_merged.csv` et `results/pareto/merged_pareto_front.csv`) et sont conservées comme sensibilité/provenance. Les valeurs courantes du manuscrit proviennent du CSV v12-activity `results/benchmark_molecules_opt_v12/p4_benchmark_merged.csv`.
 
@@ -89,20 +89,19 @@ La valeur HV 1.2366 (sous réf. 1.1, k=4) est sensible au point-référence : re
 
 **Non modifié (à dessein) :** power post-hoc **pas rapportée** (contre-indication skill). Le manuscrit n'utilise déjà ni "statistical significance relative à type I non corrigé" trompeuse. Lectures explicités §2.
 
-## 7. Probabilité d'acceptation réévaluate
+## 7. Évaluation qualitative du risque éditorial
 
-Sur la même matrice pondérée que le 1er audit (critères × poids × risque résiduel pré/post) :
+Cette revue n'attribue pas de probabilité numérique d'acceptation. Les valeurs utilisées dans des versions de travail étaient des heuristiques internes, non des estimations calibrées, et sont supprimées pour éviter une fausse précision. L'éditeur décidera notamment selon l'adéquation au journal, la nouveauté relative à la littérature soumise, l'évaluation des reviewers, la conformité aux politiques et l'accessibilité des preuves.
 
-| Segment | Avant 1er audit | Après 1er audit (F1–F5 + figures) | Après 2nd audit (F1–F3 ajouts) |
-|---------|:---:|:---:|:---:|
-| Vraisemblance statistique / power / multiplicité | 0.72 | ~0.88 | **~0.92** (CI ajouté, multiplicité disclosée, effet directionnel honnête) |
-| Vraisemblance authorability/repro (repo; Zenodo pending) | élevé | 0.95 | 0.95 |
-| Vraisemblance claim Pareto/HV | 0.70 | 0.85 | **0.90** (concave rewording aligné sur données) |
-| Vraisemblance figures/representation | 0.78 | 0.97 | 0.97 |
-| Risque résiduel global (pondéré) | 2.80 | 1.30 | **~1.15** |
-| Probabilité d'acceptation (fct saturante) | ≈72 % | ≥95 % | **≈98 % (plateau ≥95 % tenu)** |
+| Domaine | État après audit | Risque résiduel / action |
+|---------|------------------|--------------------------|
+| Statistiques, puissance et multiplicité | CI et correction de multiplicité explicites; limites de n=20 conservées | Risque modéré : ne pas présenter le résultat scalaire comme une supériorité de MCTS |
+| Reproductibilité et provenance | GitHub public, provenance du front vérifiée; dépôt Zenodo encore en attente | Risque modéré : effectuer le dépôt et figer les artefacts finaux |
+| Claim Pareto/HV | Formulation « post-hoc re-derived » et dépendance au point de référence explicites | Risque modéré : maintenir la distinction entre front historique et rerun validé |
+| Figures et représentation | Données réelles et limites des proxies visibles | Risque faible à modéré : contrôler les légendes et les unités au dernier compile |
+| Disposition éditoriale | Non quantifiée | Dépend de l'éditeur, des reviewers et de la conformité finale |
 
-Le changement le plus notable est **qualitatif** : le second audit élimine la seule faille sémantico-scientifique présentée (C5 "concave") et transforme le point faible statistique (power) en **positif par la lecture d'équivalence explicite** plutôt qu'en le cachant.
+Le changement le plus notable est **qualitatif** : le second audit élimine la faille sémantico-scientifique C5 (« concave ») et transforme le point faible statistique en une limitation explicitement quantifiée, sans la masquer par une probabilité d'acceptation non validée.
 
 ## 8. Différences avec le 1er audit
 

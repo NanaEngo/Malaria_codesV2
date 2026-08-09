@@ -1,8 +1,7 @@
 % ============================================================================
-% P4 — Supplementary Material
-% Pareto-guided Monte Carlo tree search explores multi-objective trade-offs
-% missed by scalar antimalarial generation
-% Target: Journal of Cheminformatics (BMC)
+% P4 — Supplementary Information
+% Pareto-guided Monte Carlo tree search for antimalarial design
+% Target: Journal of Cheminformatics
 % ============================================================================
 \documentclass[10pt,a4paper]{article}
 
@@ -13,11 +12,19 @@
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\graphicspath{{Graphics/}}
 \usepackage{siunitx}
 \usepackage{seqsplit}
 \usepackage{xcolor}
-\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{microtype}
+\usepackage{hyperref}
 \usepackage[nameinlink,noabbrev]{cleveref}
+
+% Journal-style supplementary numbering: Figure S1, Table S1, ...
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\setcounter{figure}{0}
+\setcounter{table}{0}
 
 \sisetup{
   detect-all           = true,
@@ -26,248 +33,284 @@
   range-units          = single,
 }
 
-\title{\textbf{Supplementary Material}\\[0.4em]
+\title{\textbf{Supplementary Information}\\[0.4em]
 \large Pareto-guided Monte Carlo tree search reveals multi-objective
 trade-offs in antimalarial generation}
-
 \author{}
 \date{}
 
 \begin{document}
 \maketitle
 
+This Supplementary Information provides the extended scoring definitions,
+additional candidate-level results, molecular-diversity analysis, scalar
+benchmark details and algorithmic ablations that complement the main article.
+The two analyses described in the manuscript are kept separate throughout:
+the scalar benchmark uses the v12 public-activity reward, whereas the
+candidate-level Pareto analysis uses the historical pre-activity vector of
+MPO, SYBA, RRS-informed chemotype similarity and PNS-informed docking proxy.
+
 % ============================================================================
-\section*{S1\hspace{0.6em}Pareto-front data provenance}
+\section*{S1\hspace{0.6em}Extended methods and scoring definitions}
 % ============================================================================
 
-The canonical \textbf{pre-activity} merged Pareto front (main-text Table~2) comprises four mutually
-non-dominated candidates. It is intentionally analysed separately from the v12 scalar
-benchmark: the public-activity term belongs to the scalar benchmark and was not used to
-construct this front. Every candidate is traceable to the deposited
-per-seed Pareto CSV \path{p4_pareto_seed_N.csv} from which it originated,
-and all MPO, SA, RRS-informed proxy and PNS-informed proxy values are identical between the per-seed record
-and the merged front (\path{results/pareto/merged_pareto_front.csv}). The only
-score that differs is SYBA, by design: the original Pareto-MCTS run returned a
-constant zero fallback for every molecule (SYBA was inactive during search, as
-recorded in the per-seed CSVs), so SYBA was recomputed post-hoc with the
-lich/conda classifier and the recomputed values were used to re-derive the
-non-dominated front and its hypervolume. This procedure is documented in the
-main-text Methods section and is fully reproducible: the script
-\path{scripts/p4_recompute_pareto_syba.py} regenerates the merged CSV and the
-log \path{merged_pareto_front_recompute.log} records the raw and normalised
-SYBA scores (\num{78.67}, \num{58.13}, \num{-19.25}, \num{25.88}) and the
-hypervolume (\num{1.2366}). The verification script
-\path{scripts/p4_pareto_provenance_check.py} re-runs all of these checks and
-exits with status 0 only when every SMILES and score in the merged front
-matches a deposited record.
+\paragraph{Molecular generation.}
+Molecules were constructed from a curated fragment vocabulary using a
+scaffold-aware policy and a valence filter. The medium vocabulary was used for
+the main four-method benchmark. Each episode began from benzene and allowed at
+most \num{10} fragment additions. The retained MCTS configuration used
+$c_{\mathrm{PUCT}}=\num{5.0}$, virtual loss $\nu=\num{0.01}$, progressive
+widening $k=\num{1.0}$ and $\alpha=\num{0.5}$, and policy temperature
+$T=\num{0.8}$. The policy combined fragment frequencies, scaffold similarity
+and reactivity compatibility.
 
-\cref{tab:sm_pareto} lists the four canonical candidates with their provenance. Because the RRS-informed and PNS-informed proxies are P2-informed domain objectives, we also report a compact domain-objective profile for the re-scored benchmark molecules in \Cref{fig:sm_rrs_pns}; this makes the resistance and multi-target dimensions inspectable rather than leaving them implicit in the main-text colour and marker encodings.
+\paragraph{Pre-activity objective vector.}
+For the historical Pareto analysis, each candidate was represented by
+\[
+  \mathbf{f}(s)=\bigl(f_{\mathrm{MPO}}(s),f_{\mathrm{SYBA}}(s),
+  f_{\mathrm{RRS}}(s),f_{\mathrm{PNS}}(s)\bigr).
+\]
+MPO, SYBA, the RRS-informed chemotype proxy and the PNS-informed docking
+proxy were maximised; SA was constant at \num{3.0} and was therefore not
+used as an independent dominance dimension. The tree-selection value was a
+scalar sum of the varying min--max-normalised components, while the complete
+vector was retained for front maintenance and analysis.
+
+The RRS-informed proxy was calculated from Morgan/Tanimoto similarity to the
+P2 resistance-resilience reference chemotypes. The PNS-informed proxy was the
+normalised aggregate of the three available Tartarus docking columns
+(\texttt{score\_1syh}, \texttt{score\_6y2f} and \texttt{score\_4lde}). These
+quantities are computational proxy dimensions: they are not direct WT/mutant
+binding measurements and do not constitute a four-target biological assay.
+
+The original Pareto records contained a constant SYBA fallback. SYBA was
+therefore evaluated with the validated classifier before the displayed front
+was re-derived; MPO, SA, RRS and PNS were unchanged. This preserves the
+candidate discovery record while allowing accessibility to be displayed as a
+non-constant supplementary dimension. The resulting front should consequently
+be interpreted as a post-hoc audited front, not as evidence that informative
+SYBA values guided the historical search.
+
+\paragraph{Scalar benchmark.}
+The v12 benchmark used a separate scalar reward with weights
+$w_{\mathrm{MPO}}=\num{0.36}$, $w_{\mathrm{docking}}=\num{0.315}$,
+$w_{\mathrm{SYBA}}=\num{0.135}$, $w_{\mathrm{SA}}=\num{0.09}$ and
+$w_{\mathrm{activity}}=\num{0.10}$. RRS and PNS were not included in this
+benchmark. Public-activity proximity was the maximum Morgan-2 Tanimoto to
+experimentally active compounds in the independent ChEMBL IC$_{50}$/EC$_{50}$
+panel (\num{22447} molecules, including \num{19321} active entries).
+
+% ============================================================================
+\section*{S2\hspace{0.6em}Pareto-front candidates and domain-proxy profiles}
+% ============================================================================
+
+The merged pre-activity front contained four non-dominated candidates from
+\num{20} independent seeds. Their scores and seed-level provenance are shown
+in \Cref{tab:sm_pareto}. The hypervolume was \num{1.2366} under min--max
+normalisation and reference point $\mathbf{r}=\num{1.1}$. Because this value
+depends on the normalisation convention, it is used for comparison within the
+specified protocol rather than as an absolute measure of chemical quality.
 
 \begin{table}[htbp]
   \centering
-  \caption{Canonical \textbf{pre-activity} merged Pareto front with per-seed provenance.All four
-points are mutually non-dominated on the active objectives (MPO, SYBA, the RRS-informed
-chemotype-similarity proxy and the PNS-informed Tartarus docking proxy; SA is constant at \num{3.0} and therefore excluded from the
-  hypervolume). SYBA was recomputed post-hoc (main-text Methods); MPO, SA,
-  RRS and PNS are unchanged from the per-seed records.}
+  \caption{Pre-activity Pareto-front candidates and their objective values.
+  SYBA was recomputed before the front was re-derived; the other displayed
+  values are unchanged from the candidate records.}
   \label{tab:sm_pareto}
   \small
-  \begin{tabular}{p{0.34\textwidth}ccccccl}
+  \begin{tabular}{p{0.34\textwidth}cccccc}
     \toprule
-    Candidate (SMILES) & MPO & SYBA & SA & RRS & PNS & seed & origin CSV \\
+    Candidate (SMILES) & MPO & SYBA & SA & RRS & PNS & Seed \\
     \midrule
-    \seqsplit{CNC(=O)c1ccc(OC(C)C(C)(C)C)c(OC)c1} & \num{0.910} & \num{1.000} & \num{3.0} & \num{0.211} & \num{1.0} & \num{13} & \path{p4_pareto_seed_13.csv} \\
-    \seqsplit{COc1c(C)cc(-c2ccc(S(N)(=O)=O)cc2)cc1C} & \num{0.945} & \num{1.000} & \num{3.0} & \num{0.196} & \num{1.0} & \num{18} & \path{p4_pareto_seed_18.csv} \\
-    \seqsplit{CC1CCC(n2cccn2)NC1(c1ccccc1)C1OCCO1} & \num{0.946} & \num{0.021} & \num{3.0} & \num{0.141} & \num{0.0} & \num{5} & \path{p4_pareto_seed_5.csv} \\
-    \seqsplit{COc1cc(CO)c(O)c(C)c1C} & \num{0.729} & \num{0.994} & \num{3.0} & \num{0.223} & \num{1.0} & \num{6} & \path{p4_pareto_seed_6.csv} \\
+    \seqsplit{CNC(=O)c1ccc(OC(C)C(C)(C)C)c(OC)c1}
+      & \num{0.910} & \num{1.000} & \num{3.0} & \num{0.211} & \num{1.0} & \num{13} \\
+    \seqsplit{COc1c(C)cc(-c2ccc(S(N)(=O)=O)cc2)cc1C}
+      & \num{0.945} & \num{1.000} & \num{3.0} & \num{0.196} & \num{1.0} & \num{18} \\
+    \seqsplit{CC1CCC(n2cccn2)NC1(c1ccccc1)C1OCCO1}
+      & \num{0.946} & \num{0.021} & \num{3.0} & \num{0.141} & \num{0.0} & \num{5} \\
+    \seqsplit{COc1cc(CO)c(O)c(C)c1C}
+      & \num{0.729} & \num{0.994} & \num{3.0} & \num{0.223} & \num{1.0} & \num{6} \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-% ============================================================================
-\section*{S2\hspace{0.6em}Molecular diversity of the four generation methods}
-% ============================================================================
-
-The main text reports two complementary results: the v12 scalar benchmark and the
-pre-activity Pareto front. Molecular diversity is analysed here in the Supplementary
-Material using real, deposited molecule sets, while S1 documents the objective and
-score provenance needed to interpret the front.
-
-\textbf{Molecule sets.} For each of the four generation methods (MCTS+ScafVAE,
-random search, greedy search, genetic algorithm) the best-scoring molecule of
-each of the \num{20} independent benchmark seeds was recorded, giving a
-deposited set of \num{20} molecules per method under
-\path{results/benchmark_molecules_opt_v12/}. These are the v12-activity runs whose scalar
-rewards are reported in the main-text benchmark table and in
-\Cref{tab:sm_benchmark}. The canonical benchmark uses the screened-optimal
-MCTS configuration ($c_{\text{PUCT}}=\num{5.0}$, $\nu=\num{0.01}$,
-$T=\num{0.8}$, ScafVAE policy wired into PUCT priors) and a value-preserving
-vectorisation of the docking Tanimoto scan; all \num{20} per-seed runs
-reproduce deterministically from the deposited code and data. An earlier
-deposit could not be reproduced from the committed code because the docking
-oracle library state differed at run time; the present molecule sets supersede
-that deposit. The method ranking (Random $>$ MCTS $>$ GA $>$ Greedy) is
-unchanged. This ranking describes the v12 scalar reward only; it is not a
-claim that scalar reward and Pareto-front coverage measure the same property.
-
-\textbf{Descriptors.} ECFP4 fingerprints (Morgan radius 2, \num{2048} bits)
-were computed with RDKit. Pairwise Tanimoto dissimilarity is
-$1 - \text{Tanimoto}$; the reported value is the mean over all unique pairs
-(\num{190} pairs per method). Bemis--Murcko scaffolds were extracted with
-RDKit's \texttt{MurckoScaffoldSmiles}; the unique-scaffold fraction is the
-number of distinct scaffolds divided by the number of valid molecules.
-Two-dimensional MDS coordinates (metric MDS on the Tanimoto dissimilarity
-matrix) are deposited for visualisation
-(\path{results/diversity/p4_diversity_mds.csv}).
-
-\cref{tab:sm_diversity} reports the real diversity statistics, and \Cref{fig:sm_mds} shows the metric-MDS projection of the four molecule sets.
+The front spans a potency--accessibility trade-off. The third candidate has
+the largest MPO but the lowest SYBA, whereas the first, second and fourth
+candidates have SYBA values above \num{0.99}. Three candidates have PNS equal
+to \num{1.0}, the maximum value of the normalised three-column docking proxy.
+The RRS-informed proxy ranges from \num{0.141} to \num{0.223}. These values
+are useful for candidate stratification and provenance; they do not establish
+polypharmacological binding or resistance resilience experimentally.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.86\textwidth]{Graphics/rrs_pns_profile.pdf}
-  \caption{RRS-informed chemotype-similarity and PNS-informed Tartarus multi-target proxy profile from the common pre-activity oracle applied to deposited best-in-seed molecules. RRS is shown as individual observations plus box summaries; PNS is shown as the fraction of valid rows with PNS = 1. The figure is descriptive: the RRS-informed proxy is narrow and the PNS-informed proxy is predominantly discrete in the current constrained fragment space; neither is a direct mutant-binding or four-target validation.}
+  \caption{RRS-informed chemotype-similarity and PNS-informed docking-proxy
+  profiles for deposited best-in-seed molecules. Points show individual
+  observations and box summaries. The PNS panel reports the fraction of valid
+  rows with PNS equal to \num{1.0}; intermediate values are retained in the
+  underlying data.}
   \label{fig:sm_rrs_pns}
 \end{figure}
+
+% ============================================================================
+\section*{S3\hspace{0.6em}Molecular diversity}
+% ============================================================================
+
+For each generation method, the best molecule from each of the \num{20}
+benchmark seeds was retained. ECFP4 Tanimoto dissimilarity and Bemis--Murcko
+scaffold statistics were calculated with RDKit. The three stochastic methods
+occupy distinct regions of chemical space, while greedy search is deterministic
+under the present fragment vocabulary and returns one repeated local optimum.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.62\textwidth]{Graphics/scaffold_diversity.png}
-  \caption{Metric multidimensional-scaling (MDS) projection of the deposited
-  best-in-seed molecule sets (\num{20} molecules per method) on ECFP4 Tanimoto
-  dissimilarity. Greedy search collapses to a single point (deterministic local
-  optimum); the three stochastic methods occupy distinct, broad regions of
-  chemical space. Deposited coordinates:
-  \texttt{results/diversity/p4\_diversity\_mds.csv}.}
+  \caption{Metric multidimensional-scaling projection of the deposited
+  best-in-seed molecule sets using ECFP4 Tanimoto dissimilarity. Each method
+  contributes \num{20} molecules. Greedy search collapses to one point because
+  it returns the same local optimum for every seed.}
   \label{fig:sm_mds}
 \end{figure}
 
 \begin{table}[htbp]
   \centering
-  \caption{Real molecular diversity of the four generation methods computed
-  from the deposited molecule sets (\num{20} best-in-seed molecules per
-  method). Values are computed with RDKit; deposited CSVs:
-  \texttt{p4\_diversity\_metrics.csv} (computed from the public-activity-augmented benchmark molecule sets) and \texttt{p4\_benchmark\_molecules\_seed\_N.csv} under \texttt{results/benchmark\_molecules\_opt\_v12/}.}
+  \caption{Molecular diversity of the four generation methods. Pairwise
+  dissimilarity is the mean of $1-\mathrm{Tanimoto}$ over the \num{190} unique
+  pairs per method; scaffolds are unique Bemis--Murcko skeletons.}
   \label{tab:sm_diversity}
   \small
   \begin{tabular}{lcccc}
     \toprule
-    Method & $n$ & \shortstack{Mean pairwise\\ Tanimoto dissimilarity} & \shortstack{Unique\\ Bemis--Murcko scaffolds} & \shortstack{Unique scaffold\\ fraction} \\
+    Method & $n$ & Mean pairwise dissimilarity & Unique scaffolds & Scaffold fraction \\
     \midrule
     MCTS+ScafVAE & \num{20} & \num{0.7732} & \num{19} & \num{0.950} \\
-    Random & \num{20} & \num{0.8046} & \num{20} & \num{1.000} \\
-    Greedy & \num{20} & \num{0.0000} & \num{1} & \num{0.050} \\
-    GA & \num{20} & \num{0.7761} & \num{12} & \num{0.600} \\
+    Random       & \num{20} & \num{0.8046} & \num{20} & \num{1.000} \\
+    Greedy       & \num{20} & \num{0.0000} & \num{1}  & \num{0.050} \\
+    GA           & \num{20} & \num{0.7761} & \num{12} & \num{0.600} \\
     \bottomrule
   \end{tabular}
-  \smallskip
-  \raggedright\footnotesize Mean pairwise dissimilarity is the mean
-  $1-\text{Tanimoto}$ over all unique pairs (\num{190} pairs per method);
-  scaffolds are unique Bemis--Murcko skeletons (RDKit); the fraction is
-  unique scaffolds divided by valid molecules.
 \end{table}
+
+Random search has full scaffold coverage, whereas MCTS and the genetic
+algorithm yield \num{19} and \num{12} unique scaffolds, respectively. These
+statistics describe the sampled molecule sets and are not intended as a
+claim that one method explores all of chemical space more effectively.
+
+% ============================================================================
+\section*{S4\hspace{0.6em}Extended scalar benchmark}
+% ============================================================================
+
+The scalar benchmark comprised \num{20} independent seeds per method and a
+fixed budget of \num{1000} search iterations. The values in
+\Cref{tab:sm_benchmark} are the mean, standard deviation, observed range and
+mean wall-clock time of the best scalar reward per seed.
 
 \begin{table}[htbp]
   \centering
-  \caption{Canonical re-benchmarked scalar rewards with the public-activity
-  reward term (\num{20} seeds; mean, standard deviation, min, max). MCTS uses
-  the screened optimal configuration (\texttt{c\_puct=5.0},
-  \texttt{virtual\_loss=0.01}, \texttt{T=0.8}, ScafVAE policy wired). Deposited
-  CSV: \texttt{p4\_benchmark\_merged.csv} under
-  \texttt{results/benchmark\_molecules\_opt\_v12/}.}
+  \caption{Public-activity-augmented scalar benchmark across \num{20} seeds.
+  Reward values are reported with the screened MCTS configuration; wall-clock
+time is the mean per seed.}
   \label{tab:sm_benchmark}
   \begin{tabular}{lccccc}
     \toprule
-    Method & Mean reward & Std & Min & Max & Mean time (s) \\
+    Method & Mean reward & SD & Minimum & Maximum & Mean time (s) \\
     \midrule
-    Random & \num{0.6724} & \num{0.0056} & \num{0.6616} & \num{0.6856} & \num{50.4} \\
-    MCTS+ScafVAE & \num{0.6649} & \num{0.0068} & \num{0.6554} & \num{0.6779} & \num{92.1} \\
-    Greedy & \num{0.4278} & \num{0.0000} & \num{0.4278} & \num{0.4278} & \num{1.9} \\
-    GA & \num{0.6453} & \num{0.0124} & \num{0.6178} & \num{0.6715} & \num{2.0} \\
+    Random        & \num{0.6724} & \num{0.0056} & \num{0.6616} & \num{0.6856} & \num{50.4} \\
+    MCTS+ScafVAE  & \num{0.6649} & \num{0.0068} & \num{0.6554} & \num{0.6779} & \num{92.1} \\
+    Greedy        & \num{0.4278} & \num{0.0000} & \num{0.4278} & \num{0.4278} & \num{1.9} \\
+    Genetic algorithm & \num{0.6453} & \num{0.0124} & \num{0.6178} & \num{0.6715} & \num{2.0} \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Because greedy search is deterministic and returns the same local optimum across all \num{20} seeds
-(std identically zero in the canonical benchmark), its \num{20} per-seed
-outputs coincide, yielding zero pairwise diversity and a single unique
-Bemis--Murcko scaffold by construction (\cref{tab:sm_diversity}). The
-three stochastic methods generate structurally distinct outputs per seed:
-random search achieves full scaffold coverage (\num{20} unique scaffolds from
-\num{20} molecules), while MCTS and GA return \num{19} and \num{12} unique
-scaffolds respectively. Mean pairwise Tanimoto dissimilarity is high
-(\num{0.7761}--\num{0.8046}) for the three stochastic methods. Scaffold
-coverage nevertheless differs across methods (GA \num{12}/\num{20}, MCTS
-\num{19}/\num{20}, Random \num{20}/\num{20}), so the diversity result is
-reported descriptively rather than as evidence of uniformly broad exploration.
+Random search has the highest mean scalar reward, followed by MCTS, the
+genetic algorithm and greedy search. MCTS is therefore interpreted as an
+objective-space explorer rather than as a universally superior scalar
+optimiser. The difference between the scalar benchmark and the Pareto analysis
+is intentional: the former tests single-reward performance, while the latter
+retains candidate-level trade-offs.
 
 % ============================================================================
-\section*{S3\hspace{0.6em}Reproducibility}
+\section*{S5\hspace{0.6em}Algorithmic ablations}
 % ============================================================================
 
-All deposited CSVs, the benchmark, Pareto, diversity and RRS/PNS-proxy analysis
-scripts, and the provenance-check script will be listed in the Zenodo manifest. The canonical
-benchmark is produced by \texttt{p4\_mcts\_benchmark.py} with best-SMILES
-recording (no change to reward semantics) and a value-preserving vectorisation
-of the docking Tanimoto scan (verified identical on held-out molecules). The
-\num{20} per-seed rewards in
-\path{results/benchmark_molecules_opt_v12/p4_benchmark_merged.csv} reproduce
-deterministically from the deposited code and data. Diversity statistics are
-computed by \path{scripts/p4_compute_diversity.py} from the deposited molecule
-sets. Pareto-front provenance is verified by
-\path{scripts/p4_pareto_provenance_check.py}, which exits with status 0 only
-when every SMILES and score in the merged front matches a deposited per-seed
-record.
+A factorial ablation evaluated the chemistry-informed policy, Pareto-front
+maintenance, PUCT exploration, rollout temperature and fragment vocabulary.
+The experiment used five replicates per factorial cell and a pre-activity oracle
+configuration distinct from the v12 scalar benchmark; only within-ablation
+effects are therefore compared. The marginal factor means are summarised in
+\Cref{tab:sm_component_ablation}. The largest observed effects were associated
+with the ScafVAE policy ($\Delta=+\num{0.148}$), Pareto-front maintenance
+($\Delta=+\num{0.108}$) and the larger fragment vocabulary
+($\Delta=+\num{0.079}$). Changing $c_{\mathrm{PUCT}}$ from \num{2.0} to
+\num{1.0} improved the reward by $\Delta=+\num{0.055}$, whereas temperature
+had a smaller effect.
 
-\section*{S4\hspace{0.6em}Selection mechanism in Pareto-guided MCTS: relation to ParetoDrug and Mothra}
+\begin{table}[htbp]
+  \centering
+  \caption{Marginal effects in the factorial ablation. Each factor level
+  aggregates \num{80} observations from the \num{32}-cell design with five
+  replicates per cell. The difference is calculated as the mean for level B
+  minus the mean for level A; it is an within-ablation effect and is not
+  comparable with the v12 scalar benchmark.}
+  \label{tab:sm_component_ablation}
+  \small
+  \begin{tabular}{lcccS[table-format=1.3]}
+    \toprule
+    Factor & Level A & Level B & $n$ per level & $\Delta$ \\
+    \midrule
+    ScafVAE & False: \num{0.630} & True: \num{0.778} & \num{80} & \num{0.148} \\
+    Pareto front & False: \num{0.650} & True: \num{0.758} & \num{80} & \num{0.108} \\
+    $c_{\mathrm{PUCT}}$ & \num{2.0}: \num{0.677} & \num{1.0}: \num{0.731} & \num{80} & \num{0.055} \\
+    Temperature & \num{1.5}: \num{0.698} & \num{0.5}: \num{0.710} & \num{80} & \num{0.012} \\
+    Vocabulary & Small: \num{0.665} & Large: \num{0.743} & \num{80} & \num{0.079} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+A separate vocabulary comparison across \num{10} seeds per condition is
+shown in \Cref{tab:sm_vocabulary_ablation}. It found a strong overall effect
+(one-way ANOVA $F=\num{350.1}$, $p=\num{1.12e-26}$). The aromatic-only
+vocabulary performed below the full, medium and minimal vocabularies; the
+medium and minimal conditions differed modestly in the post-hoc comparison
+($p_{\mathrm{adj}}=\num{0.0052}$), whereas the full and medium conditions did
+not differ significantly.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Fragment-vocabulary ablation. Values are mean reward $\pm$ SD over
+  \num{10} seeds per condition. Tukey HSD was used for pairwise comparisons.}
+  \label{tab:sm_vocabulary_ablation}
+  \small
+  \begin{tabular}{lccc}
+    \toprule
+    Vocabulary & $n$ & Mean reward & SD \\
+    \midrule
+    All & \num{10} & \num{0.6240} & \num{0.0056} \\
+    Aromatic-only & \num{10} & \num{0.5497} & \num{0.0030} \\
+    Medium & \num{10} & \num{0.6283} & \num{0.0048} \\
+    Minimal & \num{10} & \num{0.6183} & \num{0.0097} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The selection mechanism was also compared with a ParetoPUCT-style variant that
+restricted each node to non-dominated children before applying the PUCT score.
+At equal budget (\num{700} iterations and \num{5} seeds), the merged
+hypervolumes were \num{15.56} for scalar-proxy selection and \num{15.49} for
+Pareto-restricted selection. This comparison supports the interpretation that
+front maintenance and policy-guided exploration, rather than a particular
+vectorial selection rule, dominate the observed behaviour in this protocol.
+
+% ============================================================================
+\section*{S6\hspace{0.6em}Data and code availability}
 % ============================================================================
 
-To position the selection scheme used here against the closest Pareto-MCTS
-generators, we state the differences explicitly.
-
-\paragraph{ParetoDrug (Yang et al., Commun.\ Biol.\ 7, 1074, 2024;
-doi:10.1038/s42003-024-06746-w).} ParetoDrug selects the next
-atom symbol with \emph{ParetoPUCT}: it computes a \emph{vector} selection score
-per child, retains the children that are non-dominated in that score space, and
-draws the next action uniformly at random from that Pareto front of children.
-The multi-objective character therefore enters \emph{inside} the tree-selection
-criterion.
-
-\paragraph{Mothra (Suzuki et al., J.~Chem.\ Inf.\ Model.\ 64, 7291--7302,
-2024; doi:10.1021/acs.jcim.4c00759).} Mothra back-propagates a
-\emph{multidimensional reward vector} and ranks Pareto-front nodes during
-selection using a hypervolume indicator with a projected-distance penalty
-(UCB-style bound over the vectorial reward). Again, the Pareto treatment is
-carried through the selection and back-propagation of the search tree.
-
-\paragraph{This work.} The scalar four-method benchmark uses
-\texttt{compute\_mpo\_reward} with the v12 fixed weights ($w_{\text{MPO}}=\num{0.36}$,
-$w_{\text{docking}}=\num{0.315}$, $w_{\text{SYBA}}=\num{0.135}$,
-$w_{\text{SA}}=\num{0.09}$, $w_{\text{activity}}=\num{0.10}$); it is a
-public-activity-augmented scalar-reward comparison and is reported
-as such. In the Pareto-MCTS search, the objective \emph{vector} is stored for
-the front, while the tree selection uses a \emph{scalar proxy}
-$Q(s,a)$ obtained by summing the min--max normalised objective components
-across the four active objectives (PUCT). That is, in contrast to ParetoDrug
-and Mothra, the multi-objective character enters through the \emph{front
-maintenance} (non-dominated pool per rollout, merged across seeds), not through
-a vectorial or Pareto-ranked selection step. This separation is intentional: it
-lets us attribute the returned front to the front-keeping mechanism rather than
-to a particular vectorial selection heuristic, and it keeps the scalar benchmark
-and the Pareto search on a common PUCT backbone. The consequence is that the
-headline result---a Pareto front spanning the potency--accessibility
-trade-off---is obtained even though tree selection itself is scalar, which is a
-conservative test of the front-keeping contribution.
-
-\paragraph{Empirical check.} We directly tested whether this separation costs
-anything by adding a ParetoPUCT-style selection variant that, at every node,
-restricts the candidates to the non-dominated children (on the mean
-multi-objective vectors) before applying the PUCT score
-(\texttt{selection\_mode="pareto"} in \texttt{p4\_mcts\_pareto.py}). At equal
-budget (\num{700} iterations, \num{5} seeds) the merged fronts are
-indistinguishable under a common normalisation (hypervolume \num{15.56} for the
-scalar-proxy rule vs \num{15.49} for the Pareto-only rule, $\Delta \approx
-\num{0.5}\%$). This confirms that the scalar proxy is not a bottleneck: the
-returned front is attributable to the global non-dominated pool and the
-policy-guided exploration, both shared by the two variants.
+The molecule sets, per-seed benchmark records, Pareto-front scores, diversity
+statistics and ablation summaries are available in the project repository.
+The accompanying analysis scripts regenerate the Pareto front, diversity
+statistics and benchmark summaries from these records. The repository README
+provides the file-level paths, software environment and execution instructions.
 
 \end{document}

@@ -50,12 +50,12 @@ Checklist per article-writing skill Phase 10; evidence from V4 files + Phase 5 r
 | Epic 3 (M2 Tanimoto sensitivity curve; M3/H3 generated-vs-seed activity reframe; M5 ASKCOS synthesizability softening) | LOW | Optional for JCIM revision; not started. |
 | Phase 5 MEDIUM residuals (MPO "stable" wording at SM 202; "therapeutic window" for stage activity at SM 269/275) | LOW | Optional softening; not blocking. |
 
-## Historical verdict
-Submission-ready pending the S23-1/H1 "N/A" tables (co-author data needed) and the
-optional Epic 3 / MEDIUM residuals. All CRITICAL and HIGH findings from the Phase 5
-adversarial + scientific-critical-thinking + editorial-prose reviews have been addressed
-by disclosure/reframing (no new calculations, per user constraint). Compiles clean;
-anti-AI clean; headline numbers verified against source CSVs + BMAD report.
+## Historical verdict — superseded 9 August 2026
+The editorial audit was clean for the historical V4 text, but it does not authorize
+submission. The V4 484-centroid numerical panel still contains the historical 4GM2 arm,
+which is PfClpR rather than genuine PfClpP. Submission is blocked pending complete
+2F6I/PfClpP revalidation, independent review, and downstream recomputation. This
+historical audit must not be used as a submission authorization.
 
 The historical recommendation was to obtain VAE training metrics + 64D KMeans clustering
 metrics from the co-author or reframe those tables before submission. See the August 7 audit
