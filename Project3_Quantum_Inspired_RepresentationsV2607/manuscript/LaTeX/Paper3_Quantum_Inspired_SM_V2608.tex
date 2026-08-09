@@ -550,7 +550,7 @@ To validate whether the TNE compression preserves binding-relevant geometry, we 
 
 For PfDHFR (1SYH), TNE achieved an R\textsuperscript{2} of \num{0.473} (Spearman $\rho = \num{0.695}$), slightly outperforming ECFP4 (R\textsuperscript{2} = \num{0.461}, $\rho = \num{0.689}$). For the remaining targets, ECFP4 maintained an advantage: 6Y2F (TNE R\textsuperscript{2} = \num{0.464} vs.\ ECFP4 \num{0.578}) and 4LDE (TNE R\textsuperscript{2} = \num{0.334} vs.\ ECFP4 \num{0.517}). These results confirm that the \num{15.6}$\times$ padded (\num{6.1}$\times$ real-atom mean) TNE compression retains substantial binding-relevant information, competitive with classical \num{2048}-bit fingerprints for specific targets.
 
-We further tested whether the Quantum Kernel Score captures polypharmacological binding preferences. Compounds were labelled as polypharmacological if they bound $\geq 2$ targets at $\Delta G \leq -\SI{7.0}{\kcalmol}$ (\qty{12.0}{\percent} prevalence in the merged $N=\num{17011}$ set). The $n=\num{1000}$, 10-fold benchmark was terminated because a single $900\times900$ kernel matrix exceeded practical wall time. A partial 5-fold run at $n=500$ (state-vector kernel, IQPEmbedding, \texttt{lightning.qubit}) completed three folds before termination, yielding per-fold QKS AUC \num{0.513}/\num{0.658}/\num{0.825} vs.\ gamma-tuned RBF AUC \num{0.506}/\num{0.642}/\num{0.803}; a 2-fold pilot at $n=50$ gave QKS AUC \num{0.356} vs.\ RBF AUC \num{0.303} (per-fold values in the deposited \texttt{p3\_polypharm\_qks.csv} outputs). These partial results place QKS within noise of the tuned RBF baseline and do not demonstrate a task-specific quantum advantage for polypharmacology classification; a definitive comparison requires a state-vector benchmark at larger $n$ within the $O(N^2)$ kernel budget.
+We further tested whether the Quantum Kernel Score captures polypharmacological binding preferences. Compounds were labelled as polypharmacological if they bound $\geq 2$ targets at $\Delta G \leq -\SI{7.0}{\kcalmol}$ (\qty{12.0}{\percent} prevalence in the merged $N=\num{17011}$ set). The $n=\num{1000}$, 10-fold benchmark was terminated because a single $900\times900$ kernel matrix exceeded practical wall time. A partial 5-fold run at $n=500$ (state-vector kernel, IQPEmbedding, \texttt{lightning.qubit}) completed three folds before termination, yielding per-fold QKS AUC \num{0.513}/\num{0.658}/\num{0.825} vs.\ gamma-tuned RBF AUC \num{0.506}/\num{0.642}/\num{0.803}; a 2-fold pilot at $n=50$ gave QKS AUC \num{0.356} vs.\ RBF AUC \num{0.303} (per-fold values in the deposited \texttt{p3\_polypharm\_qks.csv} outputs). \textbf{These results are incomplete} (3/5 folds at $n=500$, 2/5 at $n=50$) and should be interpreted as preliminary; they place QKS within noise of the tuned RBF baseline but do not constitute a definitive comparison.
 
 Finally, topological features from persistent homology showed highly significant correlations with multi-target binding promiscuity across $N=\num{17011}$ molecules (Figure~\cref{fig:sm_tda_promiscuity}). H$_0$ count ($\rho = -\num{0.248}$, $p < 10^{-137}$), H$_0$ entropy ($\rho = -\num{0.243}$, $p < 10^{-137}$), and H$_1$ entropy ($\rho = -\num{0.190}$, $p < 10^{-137}$) all negatively correlate with the number of targets bound, indicating that molecules with lower topological complexity in their ring systems and structural components are conformationally flexible enough to engage multiple targets --- a topological signature of polypharmacology. These correlations are computed on the \num{17011}-molecule merged Tartarus$\times$TNE$\times$TDA dataset with complete docking scores (label: $\geq 2$ targets bound at $\Delta G \leq -\SI{7.0}{\kcalmol}$) by \texttt{p3\_physical\_validation.py}; the full per-feature table is deposited as \texttt{p3\_physical\_validation/p3\_tda\_promiscuity.csv}. An earlier exploratory Tartarus-only run (\texttt{p3\_tartarus\_tda\_spearman.csv}, $N=\num{19900}$, un-thresholded target count) is superseded and not used in the manuscript.
 
@@ -562,12 +562,10 @@ Finally, topological features from persistent homology showed highly significant
 \end{figure}
 
 % ============================================================================
-% 4. DISCUSSION
+% EXTENDED ANALYSIS
 % ============================================================================
 
-\section{Discussion}
-
-
+\section{Extended analysis}
 
 \subsection{Mechanistic explanation for classical fingerprint superiority}
 
@@ -624,12 +622,10 @@ This finding suggests that ring topology (H$_1$) could serve as a computationall
 % D-GRIL BUILD ATTEMPT (Reproducibility Case Study)
 % ============================================================================
 
-\subsection{D-GRIL build attempt (reproducibility case study)}
+\subsection{D-GRIL build attempt}
 \label{sec:dgril_build}
 
-D-GRIL~\citep{dgril_2026} introduces differentiable 2-parameter persistent homology trained end-to-end via PyTorch Geometric, a qualitatively different paradigm from our static PersStats feature vectors where the bi-filtration function is learned and gradients are back-propagated through the C++ extension (\texttt{mpml.so}). A build was attempted on 25 July 2026 under Python 3.10, PyTorch 2.0.1, CUDA 11.7, and GCC 11.4. The C++ extension compiled successfully after resolving four dependency issues: (i)~setuptools downgrade to 59.5.0 to restore the deprecated \texttt{pkg\_resources} module required by the legacy build script; (ii)~Boost C++ headers installed via conda-forge (no \texttt{sudo apt-get install} available on the HPC development node); (iii)~PyTorch 2.0.1 with CUDA 11.7 wheels to match the prebuilt binaries; and (iv)~\texttt{CPLUS\_INCLUDE\_PATH} and \texttt{LIBRARY\_PATH} set to the conda environment to resolve \texttt{hash.hpp} and \texttt{torch/extension.h} paths. However, the compiled \texttt{mpml.so} module failed to load at runtime with a \texttt{libc10.so} linker error, indicating an Application Binary Interface (ABI) mismatch between the C++ extension (compiled with GCC 11.4) and the prebuilt PyTorch 2.0.1 binary (compiled with an older GCC toolchain). This is a known issue when mixing system and conda compiler toolchains for PyTorch C++ extensions.\footnote{PyTorch C++ extension ABI compatibility: \url{https://pytorch.org/docs/stable/cpp_extension.html}.}
-
-We document this build barrier transparently for two reasons: (1)~it demonstrates that D-GRIL's architecture is feasible and compiles on modern toolchains with moderate effort, and (2)~it highlights a systemic reproducibility challenge in differentiable topological deep learning---C++ extensions compiled for specific PyTorch/compiler versions are fragile and non-portable across clusters. The MLP-on-PersStats analog in~\cref{sec:topologynet_analog} provides a comparable feature-based baseline for the static TDA paradigm; D-GRIL's differentiable 2-parameter PH represents a distinct end-to-end approach that learns the bi-filtration function during training rather than pre-computing it.
+D-GRIL~\citep{dgril_2026} introduces differentiable 2-parameter persistent homology trained end-to-end via PyTorch Geometric. A build was attempted (Python 3.10, PyTorch 2.0.1, CUDA 11.7, GCC 11.4) but the compiled C++ extension (\texttt{mpml.so}) failed to load at runtime with a \texttt{libc10.so} ABI mismatch error---a known issue when mixing system and conda compiler toolchains for PyTorch C++ extensions. The MLP-on-PersStats analog in~\cref{sec:topologynet_analog} provides a comparable feature-based baseline for the static TDA paradigm.
 
 % ============================================================================
 % NISQ VERIFICATION
