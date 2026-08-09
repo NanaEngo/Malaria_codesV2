@@ -77,7 +77,7 @@
 % AUTHOR INFORMATION
 % ============================================================================
 
-\title{\textbf{Persistent homology and tensor network descriptors for antimalarial virtual screening: resolving the scaffold paradox in African natural product chemical space}}
+\title{\textbf{Persistent homology and tensor network descriptors for African antimalarial virtual screening}}
 
 \author[1]{Myke Vital Sao Temgoua\thanks{Corresponding author: myke-vital.sao@facsciences-uy1.cm}}
 \author[1]{Jean-Pierre Tchapet Njafa}
@@ -205,7 +205,7 @@ Ripser.py \citep{ripser_2019}, TensorLy~0.9.0 \citep{tensorly_2019}, PennyLane~0
 
 \subsection{Scaffold paradox decomposition by persistent homology}
 
-Structural expansion of \num{396} African natural-product seeds produced \num{65856} candidates that are \qty{92.6}{\percent} Tanimoto-distinct from the seeds yet retain \qty{69.3}{\percent} of their Bemis--Murcko scaffolds---a scaffold paradox that classical fingerprints cannot explain. TDA decomposes this paradox into two topological components (\cref{fig:paradox}). H$_1$ features (ring topology) are conserved between seed and expanded sets (mean H$_1$ count \num{3.61}), reflecting the STONED-SELFIES expansion's preservation of cyclic macro-structures. H$_0$ features (connectivity) diverge substantially, reflecting the expansion's permutation of side-chains and functional groups. This H$_1$/H$_0$ decomposition is independently confirmed by scaffold-only Tanimoto (\num{0.379}) being \num{1.84}$\times$ higher than whole-molecule Tanimoto (\num{0.206}).
+Structural expansion of \num{396} African natural-product seeds produced \num{65856} candidates that are \qty{92.6}{\percent} Tanimoto-distinct from the seeds yet retain \qty{69.3}{\percent} of their Bemis--Murcko scaffolds. This apparent contradiction---high whole-molecule diversity with high scaffold conservation---arises because STONED-SELFIES mutations primarily permute side-chains while preserving cyclic cores. TDA provides a principled decomposition of this phenomenon (\cref{fig:paradox}). H$_1$ features (ring topology) are conserved between seed and expanded sets (mean H$_1$ count \num{3.61}), reflecting the STONED-SELFIES expansion's preservation of cyclic macro-structures. H$_0$ features (connectivity) diverge substantially, reflecting the expansion's permutation of side-chains and functional groups. This H$_1$/H$_0$ decomposition is independently confirmed by scaffold-only Tanimoto (\num{0.379}) being \num{1.84}$\times$ higher than whole-molecule Tanimoto (\num{0.206}).
 
 \begin{figure}[htbp]
 \centering
@@ -220,7 +220,7 @@ Tucker decomposition at bond dimension $d = 8$ achieved \num{6.1}$\times$ real-a
 
 \subsection{Activity prediction benchmark}
 
-\cref{tab:benchmark} presents the activity-prediction performance on the canonical \num{19836}-molecule set. ECFP4 achieves the highest AUC (\num{0.948}), followed by AP (\num{0.940}), BPF (\num{0.939}), FCFP4 (\num{0.918}), MACCS (\num{0.905}), PHCO (\num{0.896}), TFP (\num{0.876}), and TNE (\num{0.722}). The ranking reflects the dominance of local atom environments at radius~2 for this binary classification task. TFP and TNE capture meaningful but lower signal, encoding global topological and compressed structural features rather than the local pharmacophoric substructures that dominate activity determination. The corrected PHCO descriptor (previously affected by a bit-vector extraction bug) attains AUC \num{0.896}, confirming that 2D pharmacophore features carry discriminative information.
+\cref{tab:benchmark} presents the activity-prediction performance on the canonical \num{19836}-molecule set. ECFP4 achieves the highest AUC (\num{0.948}), followed by AP (\num{0.940}), BPF (\num{0.939}), FCFP4 (\num{0.918}), MACCS (\num{0.905}), PHCO (\num{0.896}), TFP (\num{0.876}), and TNE (\num{0.722}). The ranking reflects the dominance of local atom environments at radius~2 for this binary classification task. TFP and TNE capture meaningful but lower signal, encoding global topological and compressed structural features rather than the local pharmacophoric substructures that dominate activity determination.
 
 \begin{table}[htbp]
 \centering
@@ -251,9 +251,9 @@ Hybrid $-$ QKS & 0.847 & 0.820 & 0.887 & -0.040 \\
 
 \subsection{Hybrid descriptor and quantum kernel comparison}
 
-The hybrid descriptor (TFP+TNE+QK) achieves AUC \num{0.888} $\pm$ \num{0.007}, significantly below ECFP4 ($p < \num{0.0001}$) but above every standalone quantum-inspired descriptor. Ablation identifies QKS as the principal positive contributor ($\Delta = -\num{0.040}$); TFP contributes $\Delta = -\num{0.014}$, while removing TNE slightly improves AUC ($\Delta = +\num{0.011}$).
+The hybrid descriptor (TFP+TNE+QK) achieves AUC \num{0.888} $\pm$ \num{0.007}, significantly below ECFP4 ($p < \num{0.0001}$) but above every standalone quantum-inspired descriptor. Ablation reveals an asymmetric contribution structure: QKS is the principal positive contributor ($\Delta = -\num{0.040}$), TFP contributes marginally ($\Delta = -\num{0.014}$), while removing TNE slightly improves AUC ($\Delta = +\num{0.011}$). The negative TNE contribution is consistent with its low standalone AUC (\num{0.722}) and suggests that, for this dataset, Tucker-compressed features add noise rather than signal when combined with topological and kernel descriptors. The hybrid's value lies primarily in the QKS kernel-PCA components, not in the tensor network embedding.
 
-The quantum kernel benchmark at two sample sizes (\cref{X-SM-tab:qkernel}) shows no statistically significant difference between the quantum kernel and a gamma-tuned RBF baseline ($n = \num{5000}$: $p = \num{0.419}$; $n = \num{19849}$: $p = \num{0.060}$), while the quantum kernel significantly outperforms the linear kernel ($p \leq \num{0.0006}$). External validation on \num{22447} ChEMBL compounds (\cref{X-SM-tab:extval_qks}) partially confirms this: the quantum kernel (AUC \num{0.817}) is significantly below the RBF kernel (AUC \num{0.847}, $p = \num{0.005}$), indicating a small transfer gap not detected internally ($p = \num{0.060}$).
+The quantum kernel benchmark at two sample sizes (\cref{X-SM-tab:qkernel}) shows no statistically significant difference between the quantum kernel and a gamma-tuned RBF baseline ($n = \num{5000}$: $p = \num{0.419}$; $n = \num{19849}$: $p = \num{0.060}$), while the quantum kernel significantly outperforms the linear kernel ($p \leq \num{0.0006}$). External validation on \num{22447} ChEMBL compounds (\cref{X-SM-tab:extval_qks}) reveals a transfer gap: the quantum kernel (AUC \num{0.817}) is significantly below the RBF kernel (AUC \num{0.847}, $p = \num{0.005}$), indicating that the internal non-significance was underpowered.
 
 \subsection{Transferability to external ChEMBL panel}
 
@@ -268,7 +268,7 @@ All descriptor methods were benchmarked on the external ChEMBL panel (\num{22447
 
 \subsection{Topological features correlate with binding promiscuity}
 
-Across $N = \num{17011}$ molecules with multi-target docking data, H$_0$ count ($\rho = -\num{0.248}$, $p < 10^{-137}$), H$_0$ entropy ($\rho = -\num{0.243}$), and H$_1$ entropy ($\rho = -\num{0.190}$) negatively correlate with the number of targets bound ($\geq 2$ targets at $\Delta G \leq -\SI{7.0}{\kcalmol}$). Lower topological complexity thus associates with broader polypharmacological activity, consistent with reduced steric clash across multiple binding sites.
+Across $N = \num{17011}$ molecules with multi-target docking data, H$_0$ count ($\rho = -\num{0.248}$, $p < 10^{-137}$), H$_0$ entropy ($\rho = -\num{0.243}$), and H$_1$ entropy ($\rho = -\num{0.190}$) negatively correlate with the number of targets bound ($\geq 2$ targets at $\Delta G \leq -\SI{7.0}{\kcalmol}$). Lower topological complexity thus associates with broader polypharmacological activity, consistent with reduced steric clash across multiple binding sites. The association between H$_1$ count and resistance-resilience scores is examined in the Supplementary Material (\cref{X-sec:tda_rrs}); after controlling for molecular size and structural covariates, the association is size-mediated and does not support an independent topological predictor.
 
 % ============================================================================
 % 4. DISCUSSION
@@ -278,7 +278,7 @@ Across $N = \num{17011}$ molecules with multi-target docking data, H$_0$ count (
 
 \subsection{Persistent homology as a diagnostic for generative-model evaluation}
 
-The scaffold paradox---\qty{92.6}{\percent} Tanimoto distinction with \qty{69.3}{\percent} scaffold recovery---arises because STONED-SELFIES mutations permute side-chains and functional groups (diverging H$_0$ connectivity) while preserving cyclic macro-structures (conserving H$_1$ ring topology). This decomposition has practical implications for generative-model evaluation: scaffold-only Tanimoto (\num{0.379}) is \num{1.84}$\times$ higher than whole-molecule Tanimoto (\num{0.206}), confirming that H$_1$ persistence diagrams capture scaffold identity independently of atom-level similarity. TFP provides an interpretable diagnostic for assessing whether molecular generation protocols preserve the ring systems essential for bioactivity---a capability absent from standard fingerprint-based diversity metrics.
+The apparent contradiction between \qty{92.6}{\percent} Tanimoto distinction and \qty{69.3}{\percent} scaffold recovery arises because STONED-SELFIES mutations permute side-chains and functional groups (diverging H$_0$ connectivity) while preserving cyclic macro-structures (conserving H$_1$ ring topology). This decomposition has practical implications for generative-model evaluation: scaffold-only Tanimoto (\num{0.379}) is \num{1.84}$\times$ higher than whole-molecule Tanimoto (\num{0.206}), confirming that H$_1$ persistence diagrams capture scaffold identity independently of atom-level similarity. TFP provides an interpretable diagnostic for assessing whether molecular generation protocols preserve the ring systems essential for bioactivity---a capability absent from standard fingerprint-based diversity metrics.
 
 \subsection{Tensor network compression: when low-rank structure helps}
 
@@ -296,11 +296,11 @@ The \num{0.077} AUC degradation of TNE from internal (\num{0.722}) to external (
 
 \subsection{Limitations}
 
-Four limitations constrain interpretation. First, TFP does not outperform ECFP4 in activity prediction; it adds value primarily at the high-complexity tail (molecules with $\geq 3$ fused rings or $\geq 2$ stereocentres). Second, activity labels are computational predictions from Ersilia ML models, so all claims regarding activity and polypharmacology are predictions pending experimental validation. Third, the H$_1$--RRS association ($\rho = \num{0.2399}$, $p = \num{6.76e-8}$) disappears after controlling for molecular weight, ring count, fraction sp$^3$, and H$_0$ count ($\rho_{\text{partial}} = \num{0.0329}$, $p = \num{0.4668}$), indicating size-mediated confounding. Fourth, the quantum kernel was evaluated on a classical simulator; NISQ hardware would degrade fidelity \citep{preskill2018nisq}.
+Five limitations constrain interpretation. First, TFP does not outperform ECFP4 in activity prediction; it adds value primarily at the high-complexity tail (molecules with $\geq 3$ fused rings or $\geq 2$ stereocentres). Second, activity labels are computational predictions from Ersilia ML models, so all claims regarding activity and polypharmacology are predictions pending experimental validation. Third, the quantum kernel was evaluated on a classical simulator; NISQ hardware would degrade fidelity \citep{preskill2018nisq}. Fourth, we benchmarked against classical fingerprints but not against graph neural networks; our companion study \citep{temgoua2027gnn} evaluated GIN, GIN-TFP, GIN-TNE, and ChemBERTa on the same canonical panel and found that ECFP4-RF (scaffold AUC \num{0.8300}) outperformed all GNN architectures (best: GIN-TFP \num{0.8138}), confirming that for this dataset the classical fingerprint baseline is difficult to surpass regardless of model architecture. Fifth, the TNE component degrades on external data (\num{0.077} AUC loss), limiting its utility for cross-dataset transfer.
 
 \subsection{Practical recommendations}
 
-Based on these results, we recommend: (i)~ECFP4 for virtual screening of African natural product libraries (AUC \num{0.948}, robust to distribution shift); (ii)~TFP for assessing scaffold preservation in generative campaigns (interpretable H$_1$/H$_0$ decomposition); (iii)~TNE for fixed-length embeddings when computational budget constrains dimensionality (validate on external panels); and (iv)~QKS for retrospective mechanistic analysis on small lead-optimisation sets ($\leq \num{10000}$ compounds), where its $O(N^2)$ scaling is acceptable. Future work should integrate TDA features with graph neural networks \citep{topologynet_2018,rollins2024molprop}, validate tensor-network descriptors experimentally, and deploy quantum kernels on NISQ devices with error mitigation.
+Based on these results and the companion GNN benchmark \citep{temgoua2027gnn}, we recommend: (i)~ECFP4-RF for virtual screening of African natural product libraries (AUC \num{0.948}, robust to distribution shift, outperforming GIN architectures on the same panel); (ii)~TFP for assessing scaffold preservation in generative campaigns (interpretable H$_1$/H$_0$ decomposition); (iii)~TNE only when fixed-length embeddings are required and external validation confirms reliability; and (iv)~QKS for retrospective mechanistic analysis on small lead-optimisation sets ($\leq \num{10000}$ compounds). Future work should integrate TDA features as node attributes in GNN architectures \citep{topologynet_2018}, validate descriptors experimentally, and explore whether topological features improve generalisation across therapeutic targets.
 
 % ============================================================================
 % 5. CONCLUSION
