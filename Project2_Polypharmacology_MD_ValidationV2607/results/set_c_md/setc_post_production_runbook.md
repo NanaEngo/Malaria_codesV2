@@ -273,3 +273,22 @@ Expected final npt.gro: 14-15/16 (PP-01 N51I failed; PP-02 N51I index 10 at risk
 Full completion ≈ **Aug 12 evening UTC** — achievable and now robust at the dependency level; the only residual uncertainty is the wave-1 PfCRT timeouts (rescusable or QC-tolerated).
 
 **Other chain checks (all good):** partition MaxTime 7 d > 48 h production limit; production NTOMP=8 export (4×8=32 threads < 48 cores, no contention); QC TimeLimit 02:00:00 ample; production `%4` throttle sane.
+## Status checkpoint — 2026-08-10 ~11:05 UTC — AUTOMATED WAVE-1 RESCUE (job 15130)
+
+**Decision (auteur):** créer le mécanisme de rescue automatique au lieu de le laisser manuel.
+
+**Job 15130 `p2_setc_rescue`** soumis (rc=0), PENDING `Reason=BeginTime` → démarrage planifié **18:15 UTC**
+(après le kill déterministe 8 h des tâches wave-1, ~18:02-18:05).
+
+**Script** : `scripts/p2_setc_rescue_wave1.sbatch` (commité).
+- Boucle sur les 8 systèmes wave-1 (15118 indices 0,2-8), conditions par système :
+  - `npt.gro` présent → skip (terminé avant la limite)
+  - `npt.cpt` absent → skip (NPT non atteint ; si `nvt.cpt` présent → log `MANUAL-NEEDED` avec
+    les commandes de reprise NVT→grompp→NPT pour suivi)
+  - sinon → **reprise checkpoint** : `gmx_mpi mdrun -deffnm npt -cpi npt.cpt -ntomp 2 -nb cpu -pme cpu -bonded cpu -update cpu` (mêmes flags CPU-only que le workflow, GMX = `/home/nanaengo/miniforge3/envs/malaria_md/bin/gmx_mpi` GROMACS 2025.4)
+- `sleep 120` initial (marge pour l'enregistrement du timeout + libération des handles de fichiers)
+- Résumé final `rescued / completed_ok / no_npt / manual_nvt_needed` ; temps d'exécution ~30-40 min → fin ~18:50
+- Aucun conflit : wave-2 (systèmes différents) et 15119 production (démarre ~02:30 le 11/08, bien après)
+
+**Attendu :** ~3 systèmes PfCRT (PP-02 K76A/K76T/WT) ressuscités → npt.gro recréés → la production
+15119 trouvera 14-15/16 systèmes (N51I PP-01 exclu, PP-02 N51I index 9 à risque).
