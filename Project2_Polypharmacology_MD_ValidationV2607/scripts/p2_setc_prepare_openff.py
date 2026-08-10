@@ -443,9 +443,23 @@ def add_ligand_to_topol(system_dir: Path, lig_resname: str) -> None:
     if "[ molecules ]" in text:
         marker = "[ molecules ]"
         idx = text.index(marker)
-        # insert the ligand as the first molecule entry
+        # insert the ligand as the LAST molecule entry (after the protein
+        # chains): merge_gro writes the merged gro as protein-first + ligand-
+        # last, and grompp maps gro atoms to topology molecules strictly by
+        # order.  Inserting the ligand FIRST (previous behaviour) made grompp
+        # assign the first 40 gro atoms (protein) to the ligand topology and
+        # scramble every subsequent block — genion then wrote ions.gro with
+        # collapsed aromatic rings and exploded side chains (verified 2026-08-10:
+        # complex_unsolv.gro clean -> ions.gro 114 collapsed ring contacts).
         head, tail = text[:idx + len(marker)], text[idx + len(marker):]
-        text = head + f"\n{lig_resname}     1" + tail
+        # keep the existing entries (protein chains) in place, then append the
+        # ligand after the last chain line
+        entries = tail.splitlines()
+        first_sol = next((i for i, e in enumerate(entries)
+                          if e.strip().startswith(('SOL', 'NA', 'CL', ';'))), len(entries))
+        insert_at = first_sol if first_sol > 0 else len(entries)
+        entries.insert(insert_at, f"{lig_resname}     1")
+        text = head + "\n" + "\n".join(entries)
     else:
         text += f"\n[ molecules ]\n{lig_resname}     1\n"
     # gmx solvate/genion append SOL/ion entries to [ molecules ]; without a
