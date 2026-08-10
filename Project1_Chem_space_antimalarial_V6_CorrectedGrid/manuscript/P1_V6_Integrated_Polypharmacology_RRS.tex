@@ -65,6 +65,9 @@ The target panel comprised PfDHFR (7F3Y; methotrexate copy A702), PfCRT (6UKJ; Y
 
 Ligands were standardized with Open Babel \cite{OBoyle2011} and converted to PDBQT with Meeko \cite{Eberhardt2021}. AutoDock Vina was run with fixed target-specific boxes following established docking protocols \cite{Trott2009}; scores were interpreted with the usual caveats attached to empirical scoring functions \cite{Quiroga2016}. The geometric gate required a rank-1 centroid inside the box, at least one atom within \qty{10}{\angstrom} of the target anchor, and at least \qty{90}{\percent} of ligand atoms inside the padded box. The gate is a pose-quality and provenance criterion, not evidence of binding. Vina values are reported in \si{\kilo\calorie\per\mole} and were not converted to experimental free energies.
 
+\subsubsection{Docking protocol validation}
+The docking protocol was validated on the same target set by three complementary checks. First, re-docking of the co-crystallised reference ligands on the corrected grids reproduced the crystal poses for the five alignable ligands with heavy-atom RMSD $< \SI{2.0}{\angstrom}$ (\qty{100}{\percent} success); the PfDHFR reference ligand methotrexate could not be re-docked (RMSD $\approx \SI{30}{\angstrom}$) because the PfDHFR grid is centered on the NADPH-adjacent site rather than the catalytic methotrexate pocket, and is therefore excluded from the re-docking statistic. Second, enrichment against the MMV Malaria Box using the parent-study dual-filter consensus (AutoDock Vina + DiffDock) gave ROC-AUC values of \numrange{0.924}{1.000} across the four targets (\num{0.924} PfDHFR, \num{0.971} PfCRT, \num{1.000} PfATP4). Third, an external DEKOIS~2.0 panel for PfDHFR (Vina only, \num{40} actives / \num{1200} property-matched decoys) gave a ROC-AUC of \num{0.45} (95\% CI \numrange{0.37}{0.53}), a near-chance result that is reported honestly: it constrains the interpretation of absolute Vina scores for this target and motivates the consensus rescoring and per-target anchors used here, but it does not invalidate the relative within-target rankings or the RRS ratios, which are computed from mutant-to-wild-type score ratios on the same target.
+
 \subsection{Resistance-resilience score}
 RRS was computed separately for each target and candidate. For mutation $m$ and target $t$,
 \begin{equation}
@@ -200,6 +203,9 @@ The authors declare no competing financial interest. This is a computational, hy
 
 \section*{Data Availability}
 Data and code are available at \url{https://github.com/NanaEngo/Malaria_codesV2}. Integrated manifests and derived figures are in \texttt{Project1\_Chem\_space\_antimalarial\_V6\_CorrectedGrid/}; source RRS data are in \texttt{Project2\_Polypharmacology\_MD\_ValidationV2607/results/}; raw Vina data are in \texttt{Project1\_Chem\_space\_antimalarial\_V5\_CorrectedGrid/results/}.
+
+\section*{Use of Artificial Intelligence}
+During the preparation of this work the authors used AI assistants to support code development and data analysis scripting. The authors reviewed and edited all AI-assisted output and take full responsibility for the content of this article. No generative AI tool is listed as an author. All computational results, statistical analyses, and quantitative claims were generated and verified by the authors.
 
 \bibliography{Sao_Chim_Space}
 \end{document}
