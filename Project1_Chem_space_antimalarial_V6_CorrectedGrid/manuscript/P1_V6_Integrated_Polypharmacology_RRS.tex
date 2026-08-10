@@ -74,7 +74,7 @@ RRS was computed separately for each target and candidate. For mutation $m$ and 
 Here $S_{\mathrm{Vina}}$ denotes the AutoDock Vina scoring-function output; it is not an experimental free energy. RRS eligibility was evaluated from the separate WT/mutant panel in \texttt{docking\_mutants.csv}, not from the four-target V5 wild-type matrix. Only targets satisfying the declared genuine-binding wild-type criterion ($|S_{\mathrm{Vina},i,WT,t}|\geq\qty{5}{\kilo\calorie\per\mole}$) contributed to a candidate's mean. Non-binding targets were excluded rather than assigned a zero score or used as a denominator. PfDHFR mutations were N51I, C59R, S108N, and I164L; PfCRT mutations were K76T and K76A. RRS classes were assigned using the prespecified P2 rules: A* required the maximum absolute eligible WT score in the mutant panel to be at least \qty{7}{\kilo\calorie\per\mole} and all available RRS values to be at least \qty{80}{\percent}; A required all available values to be at least \qty{80}{\percent} without the A* WT-anchor criterion; B required all values to be at least \qty{70}{\percent} but not all to be at least \qty{80}{\percent}; C required at least one value to be at least \qty{80}{\percent} without meeting A/A* or B; and D was assigned when no available mutant RRS reached \qty{80}{\percent}. These classes summarize ratios of docking-score magnitudes, not ratios of binding free energies.
 
 \subsection{Polypharmacology, PNS, and ACSI}
-Polypharmacology was treated as a target-profile hypothesis derived from the four-target Vina matrix, not as confirmed simultaneous engagement and not from RRS. No cross-target arithmetic composite was used because Vina scores are not calibrated across different pocket architectures. PNS was retained as a network-based descriptor and ACSI as a chemical-space descriptor. Their associations with RRS and wild-type Vina score were evaluated with Spearman correlation on the 17-member cohort. Three exploratory correlations were corrected with Bonferroni $\alpha=\num{0.017}$. No association was interpreted as causal, and no non-significant association was interpreted as equivalence.
+Polypharmacology was treated as a target-profile hypothesis derived from the four-target Vina matrix, not as confirmed simultaneous engagement and not from RRS. No cross-target arithmetic composite was used because Vina scores are not calibrated across different pocket architectures. For the joint prioritization readout in \Cref{tab:dual_priority}, a target was counted as favorable when its within-target Vina estimate satisfied the operational threshold $S_{\mathrm{Vina}}\leq\qty{-6.0}{\kilo\calorie\per\mole}$, chosen a priori as the mid-range of the observed per-target distributions; this is a prioritization device, not an affinity cutoff. PNS was retained as a network-based descriptor and ACSI as a chemical-space descriptor. Their associations with RRS and wild-type Vina score were evaluated with Spearman correlation on the 17-member cohort. Three exploratory correlations were corrected with Bonferroni $\alpha=\num{0.017}$. No association was interpreted as causal, and no non-significant association was interpreted as equivalence.
 
 \subsection{Evidence boundary and reproducibility}
 All raw poses, receptor and ligand files, configurations, candidate manifests, and analysis scripts are archived in the project repository. Automated checks verify file integrity, schema, candidate identity, and row counts. These reproducibility controls do not substitute for structural or experimental validation; the manuscript therefore reports the computational evidence together with its uncertainty and scope.
@@ -149,9 +149,9 @@ PP-01 & A* & \num{87.8} & 2 & PfCRT + PfATP4 \\
 PP-09 & B & \num{74.2} & 2 & PfCRT + PfATP4 \\
 PP-04 & C & \num{81.1} & 1 & PfATP4 \\
 PP-12 & C & \num{72.4} & 1 & PfCRT \\
-PP-08 & C & \num{70.8} & 0 & \textendash{} \\
-PP-14 & D & \num{69.5} & 0 & \textendash{} \\
-PP-17 & C & \num{68.2} & 0 & \textendash{} \\
+PP-08 & C & \num{70.8} & 0 & \textemdash{} \\
+PP-14 & D & \num{69.5} & 0 & \textemdash{} \\
+PP-17 & C & \num{68.2} & 0 & \textemdash{} \\
 \bottomrule
 \end{tabular}
 \end{table}
