@@ -123,8 +123,15 @@
     "accounting_csv": "results/pfclpp_2f6i_484_final_accounting.csv",
     "accounting_json": "results/pfclpp_2f6i_484_final_accounting.json",
     "promotion_condition": "PASS status promotes to manuscript; PENDING_INDEPENDENT_REVIEW (171) excluded from promotion until reviewed",
-    "dossier_version": "v2.0",
+    "dossier_version": "v2.1",
     "dossier_path": "results/PFCLPP_2F6I_484_INDEPENDENT_REVIEW_DOSSIER.md",
-    "dossier_regenerated_utc": "2026-08-10T00:00:00+00:00"
+    "dossier_regenerated_utc": "2026-08-10T00:00:00+00:00",
+    "apply_script": "scripts/p1_v4_apply_review_signature.py",
+    "apply_script_bound_to": "final accounting (484 rows, IDs 1-484, final_counts sum 484) \u2014 supersedes obsolete uniform-run aggregate",
+    "signature_path_validated_20260810": {
+      "positive_control": "PASS (INDEPENDENT_REVIEW_ACCEPTED / accepted_for_promotion=true)",
+      "tamper_control": "PASS (FAIL-CLOSED, register untouched)",
+      "wrong_key_control": "PASS (FAIL-CLOSED, register untouched)"
+    }
   }
 }

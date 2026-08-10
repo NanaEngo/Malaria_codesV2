@@ -1,6 +1,6 @@
 # P1 V4 — Independent review dossier for the 484-centroid 2F6I panel
 
-**Version:** 2.0 (2026-08-10) — supersedes v1 (2026-08-09, pre-remediation)
+**Version:** 2.1 (2026-08-10) — supersedes v1 (pre-remediation) and v2.0 (final accounting) ; v2.1 adds §8 signature procedure (openssl/gpg + payload) and §9 validation record (positive + tamper + wrong-key controls all PASS)
 **Status:** `PENDING_INDEPENDENT_REVIEW` — accounting **COMPLETE**, panel ready for review, promotion gated on independent acceptance
 **Register:** `results/pfclpp_2f6i_484_independent_review.json`
 
@@ -146,4 +146,135 @@ signature artifact      : __________________________________________
 public-key artifact     : __________________________________________
 ```
 
-The register `results/pfclpp_2f6i_484_independent_review.json` must be updated only through a verified review procedure. Non-empty fields or an automated audit do not constitute independent acceptance.
+---
+
+## 8. Signature application procedure (openssl/gpg + apply script)
+
+The reviewer signs an **immutable JSON payload**; the register is updated only by
+the verified gate-opener `scripts/p1_v4_apply_review_signature.py` (fail-closed,
+no bypass). The script binds the review to the **final accounting**
+(`results/pfclpp_2f6i_484_final_accounting.json` + `.csv` : 484 rows, IDs 1–484,
+`final_counts` summing to 484, canonical SMILES hash) — **not** to the obsolete
+uniform-run aggregate (467 records), which cannot serve as review target.
+
+### 8.1 Reviewer key generation (one time)
+
+```bash
+cd Project1_Chem_space_antimalarial_V4_CorrectedGrid/results
+# Ed25519 key pair (openssl)
+openssl genpkey -algorithm ed25519 -out reviewer_ed25519_private.pem
+openssl pkey -in reviewer_ed25519_private.pem -pubout -out reviewer_ed25519_public.pem
+# OR gpg alternative
+# gpg --generate-key  &&  gpg --export --armor > reviewer_public.asc
+# Fingerprint of the public key (trust anchor):
+sha256sum reviewer_ed25519_public.pem
+```
+
+The public-key SHA-256 and the reviewer identity must be delivered to the author
+by a **separate trusted channel** (not the same commit as the register) and set
+as environment anchors before running the apply script:
+
+```bash
+export P1_TRUSTED_REVIEWER_PUBKEY_SHA256=<sha256-of-public-key>
+export P1_TRUSTED_REVIEWER_IDENTITY="<reviewer identity exactly as in payload>"
+```
+
+### 8.2 Reviewer payload (immutable JSON, signed)
+
+```bash
+cat > v4_484_review_payload.json <<'JSON'
+{
+  "schema": "p1-v4-pfclpp-2f6i-484-review/v2",
+  "target": "PfClpP",
+  "pdb_id": "2F6I",
+  "panel_size": 484,
+  "reviewer_identity": "<IDENTITÉ_DU_RELECTEUR>",
+  "review_date_utc": "2026-XX-XXT00:00:00+00:00",
+  "review_decision": "PASS",
+  "accepted_for_promotion": true,
+  "reviewer_independence_attestation": true,
+  "conflict_of_interest_declaration": "<explicit declaration>",
+  "authorization_mode": "INDEPENDENT_REVIEW_REQUIRED",
+  "internal_work_authorized": false,
+  "current_accounting_artifact": "<abs-path>/results/pfclpp_2f6i_484_final_accounting.json",
+  "current_accounting_sha256": "<sha256>",
+  "current_accounting_csv_artifact": "<abs-path>/results/pfclpp_2f6i_484_final_accounting.csv",
+  "current_accounting_csv_sha256": "<sha256>",
+  "current_accounting_records": 484,
+  "evidence": {"canonical_smiles_sha256": "<sha256-of-cluster_representatives_smiles.csv>"},
+  "review_criteria": {
+    "genuine_pfclpp_identity_2f6i": true,
+    "all_484_centroid_inputs_bound_to_canonical_smiles": true,
+    "pdb_pdbqt_frame_equivalence_verified": true,
+    "target_specific_triad_box_reviewed": true,
+    "final_accounting_reconciled_484": true,
+    "protocol_exclusions_verified": true,
+    "gate_and_embed_failures_verified": true,
+    "final_accounting_reproducible_from_artifacts": true,
+    "independent_reviewer_acceptance": true
+  }
+}
+JSON
+```
+
+Hash placeholders can be filled with:
+
+```bash
+sha256sum results/pfclpp_2f6i_484_final_accounting.json
+sha256sum results/pfclpp_2f6i_484_final_accounting.csv
+sha256sum Project2_Polypharmacology_MD_ValidationV2607/data/from_project1/data/cluster_representatives_smiles.csv
+```
+
+### 8.3 Sign (detached) and verify
+
+```bash
+cd Project1_Chem_space_antimalarial_V4_CorrectedGrid/results
+# hash the pre-signature payload
+sha256sum v4_484_review_payload.json
+# sign (detached, Ed25519)
+openssl pkeyutl -sign -inkey reviewer_ed25519_private.pem -rawin \
+    -in v4_484_review_payload.json -out v4_484_review_payload.json.sig
+# independent verification with the public key
+openssl pkeyutl -verify -pubin -inkey reviewer_ed25519_public.pem -rawin \
+    -in v4_484_review_payload.json -sigfile v4_484_review_payload.json.sig
+# gpg alternative: gpg --detach-sign v4_484_review_payload.json
+```
+
+### 8.4 Apply (register update only after full verification)
+
+```bash
+cd Project1_Chem_space_antimalarial_V4_CorrectedGrid
+python scripts/p1_v4_apply_review_signature.py \
+    --payload results/v4_484_review_payload.json \
+    --sig results/v4_484_review_payload.json.sig \
+    --pubkey results/reviewer_ed25519_public.pem
+# expected: "V4 review applied" / status=INDEPENDENT_REVIEW_ACCEPTED accepted_for_promotion=true
+```
+
+The script fails closed (register untouched) on: bad signature, unbound public key
+or identity, missing fields, non-PASS decision, missing criteria, accounting hash
+mismatch, or any residual reference to the obsolete uniform audit. Tested on a
+copy with a negative tamper control (see §9).
+
+> **Portability note:** the payload binds absolute repository paths
+> (`current_accounting_artifact` / `current_accounting_csv_artifact`). A reviewer
+> working on a different checkout path will fail closed — the payload paths must
+> match the HPC absolute paths. This is an intentional fail-closed trade-off.
+> The script additionally verifies internal consistency between the final
+> accounting CSV status distribution and the JSON `final_counts` (v2.1.1).
+
+---
+
+## 9. Procedure validation record (2026-08-10, on copies only)
+
+Executed on `/tmp` copies (never the real register) to prove the signing path
+works end-to-end with the final-accounting binding:
+
+| Check | Procedure | Expected | Observed |
+|---|---|---|---|
+| Positive control | valid payload + Ed25519 signature + bound key + trust anchors | `INDEPENDENT_REVIEW_ACCEPTED`, `accepted_for_promotion=true`, register updated | ✅ RC=0, register → `INDEPENDENT_REVIEW_ACCEPTED` / `true` |
+| Negative control (tamper) | valid signature on a **modified** payload (`current_accounting_records` 484→483) | FAIL-CLOSED, register untouched | ✅ RC=1, `FAIL-CLOSED: signed payload final-accounting record count is not 484`; register remains `PENDING_INDEPENDENT_REVIEW` / `false` |
+| Negative control (bad key) | public key not bound to trust-anchor fingerprint | FAIL-CLOSED | ✅ RC=1, `FAIL-CLOSED: detached V4 signature verification failed`; register untouched |
+
+This procedure validation is machine evidence for the reviewer; it does not
+substitute for the independent review itself.
