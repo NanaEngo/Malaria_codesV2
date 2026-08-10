@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-09T22:35:38.107128+00:00",
+  "cohort_id": "P2_SET_C_POLYPHARM_17",
+  "set_c_id": "PP-01",
+  "target": "PfDHFR",
+  "mutation": "WT",
+  "smiles": "COc1ccc(-c2cc(=O)c3c(O)c(OC)c(OC)cc3o2)cc1",
+  "system_name": "PP-01_PfDHFR_WT",
+  "receptor_pdb": "PfDHFR_WT.pdb",
+  "receptor_sha256": "3163014c0422f41257eb2e918f862330954be826ef27980cb2e04adda8c773db",
+  "ligand_pose_source": "vina_scores/PfDHFR_WT/PP-01_PfDHFR/vina_out.pdbqt",
+  "ligand_pose_frame_rmsd_nm": 0.0,
+  "coordinate_frame": "receptor frame (V5 RRS pilot); ligand placed at rank-1 Vina pose",
+  "topology_sha256_at_prep": "ef63c77e5167871d5276875c81cd62616ca5a86486eede336e5cf02ada1d9eb3",
+  "coordinates_sha256_at_prep": "07f73a1730cb7d2155befdeb59071be4bbfe6de33cd9966711e854572d36034e",
+  "preparation_script": "p2_setc_prepare_openff.py",
+  "preparation_gmx": "/home/nanaengo/miniforge3/envs/malaria_md/bin/gmx_mpi"
+}

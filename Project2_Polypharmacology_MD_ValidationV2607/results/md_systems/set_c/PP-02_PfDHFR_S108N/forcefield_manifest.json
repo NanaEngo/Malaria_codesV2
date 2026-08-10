@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-09T23:00:40.958072+00:00",
+  "cohort_id": "P2_SET_C_POLYPHARM_17",
+  "system_name": "PP-02_PfDHFR_S108N",
+  "protein_force_field": "CHARMM36m",
+  "ligand_force_field": "OpenFF 2.2.0 (AM1-BCC)",
+  "water_model": "TIP3P",
+  "charge_method": "am1bcc",
+  "policy_deviation": {
+    "declared": true,
+    "field": "ligand_force_field",
+    "canonical_requirement": "CGenFF",
+    "actual": "OpenFF 2.2.0 (AM1-BCC)",
+    "reason": "cgenff/cgenff_charmm2gmx is a licensed ParamChem binary not installable via pip/conda (verified 2026-08-09). OpenFF 2.2.0 (AM1-BCC via AmberTools) is used instead, with the deviation declared in every forcefield manifest. See results/set_c_md/set_c_preparation_remediation_20260809.md.",
+    "approved": true,
+    "approval_context": "auto-approved documented workaround requested by PI 2026-08-09"
+  },
+  "topology_sha256": "8f4bdf9db7a031e814a29398777ea6425b9f9fae4efb191aeee968ea014a864a",
+  "coordinates_sha256": "b5ad0f15d8a578a15df8844062b4325e98da5c9605abf599989f8ce01892c4fe",
+  "finalized_by_equilibration": false
+}

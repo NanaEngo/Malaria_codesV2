@@ -112,5 +112,19 @@
     "submission_restrictions_reactivation_requested": false,
     "note": "Before explicit author reactivation, this pending register does not block scientific reruns, QC, analysis, or manuscript development. The panel must still be described honestly as incomplete/failed QC until its scientific discrepancies are resolved."
   },
-  "note": "This register is distinct from the V5/V6 four-target 17-candidate review register. It preserves provenance and prevents identity ambiguity. During author-controlled pre-submission development, automated scientific work may continue; only a qualified independent reviewer may later complete signed fields and set accepted_for_promotion=true if the author explicitly reactivates submission restrictions. The current panel remains FAILED_CLOSED as a scientific QC result because 35 of 484 records contain worker failures."
+  "note": "Dossier v2.0 (2026-08-10) with complete final accounting. Register distinct from the V5/V6 four-target 17-candidate review register. Accounting: 484 = 458 PASS + 1 PENDING (171) + 15 boron protocol exclusions + 5 DOCKED_GATE_FAILED + 5 EMBED_FAILURE. Reclassifications: 373 rescue-pass downgraded to DOCKED_GATE_FAILED (triad 11.34 A); 136/170 promoted to PASS_RAW_VINA. PENDING_INDEPENDENT_REVIEW does not block scientific development (development_policy); only promotion of unreviewed records into final manuscript claims is blocked.",
+  "final_accounting_20260809": {
+    "final_pass": 458,
+    "final_pending_review": 1,
+    "protocol_exclusions_boron": 15,
+    "gate_failed": 5,
+    "embed_failures": 5,
+    "equation": "448 historical PASS (non-remediated) + 10 remediation PASS - 0 net reclassification + 171 pending",
+    "accounting_csv": "results/pfclpp_2f6i_484_final_accounting.csv",
+    "accounting_json": "results/pfclpp_2f6i_484_final_accounting.json",
+    "promotion_condition": "PASS status promotes to manuscript; PENDING_INDEPENDENT_REVIEW (171) excluded from promotion until reviewed",
+    "dossier_version": "v2.0",
+    "dossier_path": "results/PFCLPP_2F6I_484_INDEPENDENT_REVIEW_DOSSIER.md",
+    "dossier_regenerated_utc": "2026-08-10T00:00:00+00:00"
+  }
 }

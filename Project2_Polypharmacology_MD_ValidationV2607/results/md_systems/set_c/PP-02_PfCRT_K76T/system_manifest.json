@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-09T23:17:03.549339+00:00",
+  "cohort_id": "P2_SET_C_POLYPHARM_17",
+  "set_c_id": "PP-02",
+  "target": "PfCRT",
+  "mutation": "K76T",
+  "smiles": "COc1ccc(C[C@@H]2CO[C@H](O)[C@H]2Cc2ccc(OC)c(OC)c2)cc1OC",
+  "system_name": "PP-02_PfCRT_K76T",
+  "receptor_pdb": "PfCRT_K76T.pdb",
+  "receptor_sha256": "e44a0f7ebd71ae1644db46fb90de25c400c4c97ac0f02858629366dffc42119d",
+  "ligand_pose_source": "vina_scores/PfCRT_K76T/PP-02_PfCRT/vina_out.pdbqt",
+  "ligand_pose_frame_rmsd_nm": 0.0,
+  "coordinate_frame": "receptor frame (V5 RRS pilot); ligand placed at rank-1 Vina pose",
+  "topology_sha256_at_prep": "5983bbe87f741a1c9fb531a7689e929b7ca12f626116f08c093cde6140dd5a98",
+  "coordinates_sha256_at_prep": "7f75fc45d713dc950366f688580670086cfdc605c09e0f1ab26ecdd158ba6c89",
+  "preparation_script": "p2_setc_prepare_openff.py",
+  "preparation_gmx": "/home/nanaengo/miniforge3/envs/malaria_md/bin/gmx_mpi"
+}

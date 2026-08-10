@@ -4,7 +4,7 @@
 This is the execution entry point for the canonical 17-candidate set-C cohort.
 It deliberately does not invent structures or force-field parameters from SMILES
 or docking scores. A candidate-target-state may run only when its directory has
-been prepared independently with CHARMM36m+CGenFF and carries matching manifests.
+been prepared independently with CHARMM36m protein FF and either the canonical CGenFF ligand FF or the documented, PI-approved OpenFF 2.2.0 (AM1-BCC) deviation (declared in each forcefield_manifest.json policy_deviation block), and carries matching manifests.
 
 Default mode is a read-only preflight.  Execution requires both ``--execute``
 and ``P2_MD_EXECUTE_CONFIRM=I_UNDERSTAND``.  The authorization is intentionally
@@ -217,8 +217,25 @@ def validate_forcefield(system_dir: Path, expected_name: str) -> list[str]:
         errors.append(f"forcefield system_name={payload.get('system_name')!r}, expected {expected_name!r}")
     if payload.get("protein_force_field") != "CHARMM36m":
         errors.append("protein force field must be CHARMM36m")
-    if payload.get("ligand_force_field") != "CGenFF":
-        errors.append("ligand force field must be CGenFF")
+    ligand_ff = payload.get("ligand_force_field")
+    deviation = payload.get("policy_deviation") or {}
+    if ligand_ff != "CGenFF":
+        # Documented, PI-approved deviation (2026-08-09): OpenFF 2.2.0 (AM1-BCC)
+        # substitutes for the licensed ParamChem CGenFF binary (not pip/conda
+        # installable).  Accepted ONLY when the manifest declares the deviation
+        # explicitly and approval is recorded; anything else fails closed.
+        deviation_ok = (
+            ligand_ff == "OpenFF 2.2.0 (AM1-BCC)"
+            and deviation.get("declared") is True
+            and deviation.get("field") == "ligand_force_field"
+            and deviation.get("canonical_requirement") == "CGenFF"
+            and deviation.get("approved") is True
+        )
+        if not deviation_ok:
+            errors.append(
+                "ligand force field must be CGenFF, or an approved documented "
+                "policy_deviation for OpenFF 2.2.0 (AM1-BCC)"
+            )
     if payload.get("water_model") != "TIP3P":
         errors.append("water model must be TIP3P")
     for filename, field in (("topol.top", "topology_sha256"), ("npt.gro", "coordinates_sha256"), ("npt.cpt", "checkpoint_sha256"), ("system_manifest.json", "system_manifest_sha256")):
