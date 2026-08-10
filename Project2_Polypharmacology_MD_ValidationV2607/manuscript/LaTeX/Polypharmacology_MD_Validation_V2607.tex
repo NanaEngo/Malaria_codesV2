@@ -195,9 +195,9 @@ To benchmark our MPO scoring against an independent docking tool, we performed Q
 
 The multi-parameter optimisation (MPO) weights used in the parent study (Vina \qty{35}{\percent}, DiffDock \qty{25}{\percent}, QED \qty{20}{\percent}, ADMET \qty{15}{\percent}, Ro5 \qty{5}{\percent}) were validated retrospectively by sensitivity analysis. Each weight was varied $\pm\qty{20}{\percent}$ while keeping the remaining weights proportional, yielding \num{25} weight combinations. For each combination, MPO scores were recomputed for the \num{65856}-molecule library and the Jaccard similarity of the resulting top-20 hit list to the original top-20 was measured. A Jaccard index $\geq$ \num{0.70} (at least \num{14} of \num{20} compounds stable) was set as the acceptance criterion. Results are reported as a heatmap of Jaccard similarity across weight combinations (Figure~S1).
 
-\subsection{ADMET cross-validation}
+\subsection{Predicted ADMET profile}
 
-We specified a three-tool ADMET comparison for the 17 selected candidates using ADMET-AI \citep{admetai_2023}, ADMETlab 3.0 \citep{admetlab3_2024}, and SwissADME \citep{swissadme_2017}. The comparison and experimental reference validation were not completed; Table~S5 therefore lists the proposed fields without numerical entries. All ADMET-derived statements use ``predicted'' qualifiers, and no inter-tool concordance is inferred.
+Predicted ADMET profiles for the \num{17} set-C candidates were taken from the parent-library screening (ADMET-AI \citep{admetai_2023}; \texttt{eos7kpb\_malaria\_final\_screening.csv}, \num{65856} molecules), in which all \num{17} candidates were scored. Four endpoints with complete coverage are reported in \cref{SM-tab:s5_admet}: aqueous solubility (LogS), CYP3A4 inhibition probability, Caco-2 permeability probability, and predicted human hepatic clearance (Clint$_h$). All values are machine-learning predictions; a three-tool cross-validation (ADMET-AI, ADMETlab 3.0, SwissADME) and experimental ADMET profiling were outside the scope of this study, and no inter-tool concordance is inferred.
 
 \subsection{Docking and resistance resilience score}\label{sec:rrs_formula}
 
@@ -275,9 +275,9 @@ As validated in the parent study \citep{temgoua2026antimalarial}, re-docking of 
 
 The MPO sensitivity analysis confirmed that the top-20 hit list is robust to weight perturbations. Varying each weight component by $\pm\qty{20}{\percent}$ produced Jaccard similarity indices $\geq$ \num{0.70} in \num{24} of \num{25} combinations, with the single exception being a $-\qty{20}{\percent}$ perturbation of the Vina weight (Figure~S1). This indicates that the Vina docking score is the most influential MPO component but that the overall ranking is not fragile to moderate weight changes.
 
-\subsection{ADMET cross-validation}
+\subsection{Predicted ADMET profile}
 
-Three-tool ADMET cross-validation was not available for this study. Accordingly, no concordance, inter-tool disagreement rate, or agreement with reference pharmacokinetic profiles is claimed.
+Predicted ADMET profiles for the \num{17} set-C candidates are reported in \cref{SM-tab:s5_admet}. Across the cohort, predicted LogS ranges from \num{0.34} to \num{0.73} (log molar), \num{7} of \num{17} candidates (\qty{41}{\percent}) have predicted CYP3A4 inhibition probability $\geq$ \num{0.5}, \num{15} of \num{17} (\qty{88}{\percent}) have predicted Caco-2 permeability probability $\geq$ \num{0.5}, and predicted human hepatic clearance ranges from \num{0.48} to \num{0.63}. These are single-source ADMET-AI predictions; no concordance with experimental pharmacokinetic profiles is claimed.
 
 
 
@@ -306,7 +306,7 @@ PfCRT-K76A & 6UKJ & -1.52 & 0.78 & 96.0 & 0.17 \\
 
 \subsection{Candidate characterisation}
 
-The \num{17} candidates were selected from the \num{19913} primary leads (MPO $\geq$ \num{0.70}, SYBA $>$ \num{0}) in the parent study \citep{temgoua2026antimalarial} using three sequential filters: MPO score $\geq$ \num{0.70}, synthetic accessibility (SYBA $>$ \num{0}), and selectivity index (SI $>$ \num{10}). Top candidates exhibit composite scores ranging from \num{0.550} (Rank~1) to \num{0.521} (Rank~10), with selectivity indices from \num{88} to \num{100} and QED values from \num{0.81} to \num{0.92}. All \num{17} candidates are single-target optimized --- the MPO scoring framework favours strong binding to individual targets rather than genuine multi-target profiles --- with \qty{100}{\percent} satisfying SI $>$ \num{10}, hERG probability $<$ \num{0.5} (mean \num{0.117}), and CYP3A4 inhibition $<$ \num{0.5} (mean \num{0.061}). The five control drugs (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) provide reference activity profiles.
+The \num{17} candidates were selected from the \num{19913} primary leads (MPO $\geq$ \num{0.70}, SYBA $>$ \num{0}) in the parent study \citep{temgoua2026antimalarial} using three sequential filters: MPO score $\geq$ \num{0.70}, synthetic accessibility (SYBA $>$ \num{0}), and selectivity index (SI $>$ \num{10}). Top candidates exhibit composite scores ranging from \num{0.550} (Rank~1) to \num{0.521} (Rank~10), with selectivity indices from \num{88} to \num{100} and QED values from \num{0.81} to \num{0.92}. All \num{17} candidates are single-target optimized --- the MPO scoring framework favours strong binding to individual targets rather than genuine multi-target profiles --- with \qty{100}{\percent} satisfying SI $>$ \num{10}. Predicted ADMET profiles (ADMET-AI, \cref{SM-tab:s5_admet}) indicate CYP3A4 inhibition probability $\geq$ \num{0.5} for \num{7} of \num{17} candidates and Caco-2 permeability probability $\geq$ \num{0.5} for \num{15} of \num{17}; no experimental ADMET data were available. The five control drugs (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) provide reference activity profiles.
 
 \subsection{Resistance resilience classification}
 
