@@ -1,7 +1,7 @@
 # Checklist Paragon Plus — P1 V6 pour JCIM
 
-**Version** 1.0 — 10 août 2026  
-**Document cible** : `P1_V6_Integrated_Polypharmacology_RRS` (19 p. main, 5 p. SM)  
+**Version** 1.0 — 10 août 2026
+**Document cible** : `P1_V6_Integrated_Polypharmacology_RRS` (19 p. main, 7 p. SM)
 **URL** : https://acs.manuscriptcentral.com/ (sélectionner JCIM)
 
 ---
@@ -13,7 +13,7 @@
 | 0.1 | Avoir un compte ORCID pour chaque auteur | ⏳ | Créer/compléter sur https://orcid.org — **obligatoire ACS** |
 | 0.2 | Avoir un compte ACS Paragon Plus | ⏳ | https://acs.manuscriptcentral.com/ — les auteurs peuvent avoir un compte |
 | 0.3 | Vérifier que les PDF compilent proprement | ✅ | Main 19 p., SM 5 p., **0 erreur, 0 référence indéfinie** |
-| 0.4 | Vérifier que le package de soumission est complet | ✅ | `submission_ACS_P1V6/` — 20 fichiers (vérifié) |
+| 0.4 | Vérifier que le package de soumission est complet | ✅ | `submission_ACS_P1V6/` — 31 fichiers, avec `Graphics/` et manifeste SHA-256 (vérifié) |
 
 ---
 
@@ -34,7 +34,7 @@
 | # | Action | Valeur |
 |---|--------|--------|
 | 2.1 | **Type** | Research Article |
-| 2.2 | **Titre** | From African-Natural-Product Chemical Space to Resistance-Resilience Hypotheses: An Integrated Computational Study of Antimalarial Polypharmacology |
+| 2.2 | **Titre** | African Natural-Product-Inspired Antimalarial Polypharmacology: Computational Resistance Hypotheses |
 | 2.3 | **Résumé** _(copier-coller du .tex, max ~250 mots)_ | Le résumé commence par « Polypharmacology could make antimalarial discovery less vulnerable to single-target resistance… » — disponible dans `P1_V6_Integrated_Polypharmacology_RRS.tex` lignes 27–52. Inclure le paragraphe complet. |
 | 2.4 | **Abstract/TOC Graphic** — sélectionner le fichier | Uploader `p1_v6_toc_graphic_ACS.tiff` (3.25×1.75 in, 300 dpi, RGB, LZW) |
 | 2.5 | Vérifier que le TOC graphic apparaît correctement dans l'aperçu | L'aperçu montre l'image redimensionnée au format ACS standard |
@@ -52,7 +52,7 @@
 | 3.3 | **Supporting Information** | `Supporting_Information.pdf` | Nommé exactement **Supporting_Information.pdf** (convention ACS) |
 | 3.4 | **Cover Letter** | `Cover_Letter_P1_V6.pdf` | 1 page, datée 10 août 2026 |
 | 3.5 | **Table of Contents Graphic** | `p1_v6_toc_graphic_ACS.tiff` | **Format requis ACS :** TIFF RGB 300 dpi, 3.25×1.75 in (975×525 px) |
-| 3.6 | **Figure files** _(séparément si demandé)_ | `Figure_2_rrs_mutation_profiles.pdf`<br>`Figure_3_exploratory_metric_relationships.pdf`<br>`Figure_S_targetwise_profile_summary.pdf` | ACS peut demander les figures en fichiers séparés au format EPS/PDF/TIFF |
+| 3.6 | **Figure files** _(séparément si demandé)_ | `Figure_2_rrs_mutation_profiles.pdf`<br>`Figure_3_exploratory_metric_relationships.pdf`<br>`Figure_S_targetwise_profile_summary.pdf`<br>`Figure_S_chemical_space_coverage.pdf` | ACS peut demander les figures en fichiers séparés au format EPS/PDF/TIFF |
 
 ### Règles de nommage ACS Paragon Plus :
 - Le fichier main doit s'appeler `manuscript.pdf` ou `P1_V6_main.pdf` (accepté)
@@ -103,7 +103,7 @@ ACS exige la saisie manuelle de chaque auteur dans Paragon Plus (même si le .te
 | 6.4 | **Has this manuscript been submitted before?** | Non |
 | 6.5 | **Are there any ethical concerns?** | Non |
 | 6.6 | **SI for review only** | Décocher si le SI doit accompagner la publication ; cocher si review-only |
-| 6.7 | **Déclarations complémentaires** (si demandé par le formulaire) | • No competing financial interest<br>• Use of AI declared in manuscript (§Notes)<br>• Data available at GitHub |
+| 6.7 | **Déclarations complémentaires** (si demandé par le formulaire) | • No competing financial interest<br>• AI-assisted code/data-analysis use disclosed in Acknowledgments<br>• Data available at GitHub with checksum manifest |
 
 ---
 
@@ -120,7 +120,7 @@ ACS demande les fichiers source LaTeX uniquement **après acceptation**. Pour la
 | `P1_V6_SM.bbl` | `submission_ACS_P1V6/P1_V6_SM.bbl` |
 | `P1_V6_SM.aux` | `submission_ACS_P1V6/P1_V6_SM.aux` |
 | `Sao_Chim_Space.bib` | `submission_ACS_P1V6/Sao_Chim_Space.bib` |
-| `Sao_Chim_Space_SM.bib` | `submission_ACS_P1V6/Sao_Chim_Space_SM.bib` |
+| `Sao_Chim_Space.bib` | `submission_ACS_P1V6/Sao_Chim_Space.bib` (bibliographie commune main/SM) |
 | `Cover_Letter_P1_V6.tex` | `submission_ACS_P1V6/Cover_Letter_P1_V6.tex` |
 | Figures ×3 | `submission_ACS_P1V6/Figure_*.pdf` |
 | TOC graphic PDF | `submission_ACS_P1V6/p1_v6_toc_graphic.pdf` |
@@ -136,7 +136,7 @@ ACS demande les fichiers source LaTeX uniquement **après acceptation**. Pour la
 |---|--------|--------|
 | 8.1 | Lire l'**aperçu PDF** généré par Paragon Plus | Vérifier que tous les caractères (grec, SI, formules) s'affichent correctement. **Attention :** le convertisseur ACS peut avoir des problèmes avec certains caractères Unicode — vérifier les lettres accentuées et le texte en indice/exposant. |
 | 8.2 | Vérifier les **métadonnées extraites** par le système | Titre, résumé, auteurs, mots-clés — s'assurer que tout a été correctement parsé depuis le PDF |
-| 8.3 | Vérifier le **Supporting Information** | S'assurer que le PDF du SI s'ouvre correctement (5 p.) |
+| 8.3 | Vérifier le **Supporting Information** | S'assurer que le PDF du SI s'ouvre correctement (7 p.) |
 | 8.4 | Vérifier le **TOC Graphic** | L'image apparaît-elle dans l'aperçu aux bonnes dimensions ? |
 | 8.5 | Vérifier la **Cover Letter** | Datée, signée, fichier attaché |
 | 8.6 | **Cliquer « Approve Submission »** | Confirmation finale |
@@ -148,7 +148,7 @@ ACS demande les fichiers source LaTeX uniquement **après acceptation**. Pour la
 | Fichier | Taille | Rôle |
 |---------|--------|------|
 | `P1_V6_main.pdf` | ~464 KB | Main manuscript (19 p.) |
-| `Supporting_Information.pdf` | ~255 KB | Supplementary Information (5 p.) |
+| `Supporting_Information.pdf` | ~369 KB | Supplementary Information (7 p.) |
 | `Cover_Letter_P1_V6.pdf` | ~130 KB | Cover letter (1 p.) |
 | `p1_v6_toc_graphic_ACS.tiff` | ~Variable | TOC graphic (3.25×1.75 in, 300 dpi, RGB) |
 | `Figure_2_rrs_mutation_profiles.pdf` | ~Variable | Figure séparée |

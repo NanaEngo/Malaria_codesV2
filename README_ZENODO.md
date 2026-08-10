@@ -42,7 +42,7 @@ This is a working computational manuscript package, not an approved submission p
 
 The package is under active revision. Compilation checks must be rerun after each manuscript change; page counts and review status in dated audit records are not submission authorization.
 
-Historical auxiliary prose files such as `FINAL_STATUS.txt`, `COVER_LETTER_SUMMARY.md`, and `COVER_LETTER_COMPARISON.txt` are not submission files and must not be used as current evidence for deposit status or validation claims.
+Historical auxiliary prose files such as `FINAL_STATUS.txt` and `COVER_LETTER_COMPARISON.txt` are not submission files and must not be used as current evidence for deposit status or validation claims.
 
 ## Broader archive scope (planned, not yet deposited)
 

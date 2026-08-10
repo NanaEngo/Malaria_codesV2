@@ -110,8 +110,7 @@ Project2_Polypharmacology_MD_ValidationV2607/
 │   │   └── consensus_scoring_vina.sh         Vina consensus scoring
 │   │
 │   └── utils/                             → Utility scripts
-│       ├── sort_mol2_bonds.pl
-│       └── test_pymol.py
+│       └── sort_mol2_bonds.pl
 │
 ├── Tuto_MD_MC/                            → MD tutorial and reference files
 │   ├── MD_SETUP_REFINED.md                → Refined MD protocol (tutorial)
@@ -168,7 +167,7 @@ Project2_Polypharmacology_MD_ValidationV2607/
 ├── environments/
 │   └── environment_md.yml                 → Conda environment for MD pipeline
 │
-└── PROJECT_COMPLETION_SUMMARY.md         → Phase completion tracking
+└── README.md                              → Current project overview and status
 ```
 
 ---
@@ -210,7 +209,7 @@ Contains 38 scripts moved from `Tuto_MD_MC/`:
 - **Validation:** `validate_initial_structures.py`, `validate_ligand_pdbs.py`, `validate_mol2_files.py`
 - **Pipeline:** `fix_topologies.sh`, `prepare_targets.sh`, `verify_all_systems.sh`
 - **Analysis:** `analyze_test_system.py`, `comprehensive_md_analysis.py`
-- **PDBFixer tests:** `test_pdbfixer.py`, `test_preparation.py`, `test_step2_protein_prep.py`
+- **Validation:** `validate_initial_structures.py`, `validate_ligand_pdbs.py`, and `validate_mol2_files.py`
 - **Documentation:** `MD_SETUP_REFINED.md`, `TROUBLESHOOTING.md`, `QUICK_START_MD.md`
 
 ### Docking Scripts (`scripts/docking/`)
@@ -222,7 +221,7 @@ Contains 38 scripts moved from `Tuto_MD_MC/`:
 | Script | Purpose |
 |--------|---------|
 | `sort_mol2_bonds.pl` | Bond sorting for mol2 files |
-| `test_pymol.py` | PyMOL connectivity test |
+| `validate_initial_structures.py` | Initial-structure validation |
 
 ---
 

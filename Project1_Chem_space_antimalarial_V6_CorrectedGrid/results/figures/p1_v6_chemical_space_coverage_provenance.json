@@ -1,0 +1,35 @@
+{
+  "schema": "p1-v6-chemical-space-coverage/v1",
+  "generated_utc": "2026-08-10T14:38:53.117299+00:00",
+  "source": "Project1_Chem_space_antimalarial_V4_CorrectedGrid/p1_scaffold_tanimoto.csv",
+  "source_sha256": "3573b33debdac3ffa61221f460e42b708692d056aa0f4e49ba4bbfbefddb0ca9",
+  "n_molecules": 5000,
+  "metrics": {
+    "whole_molecule_tanimoto_mean": 0.20624880000000004,
+    "whole_molecule_tanimoto_sd": 0.12522746900883558,
+    "scaffold_tanimoto_mean": 0.37877079999999996,
+    "scaffold_tanimoto_sd": 0.30832682671764833,
+    "whole_molecule_below_0_4": 4630,
+    "whole_molecule_below_0_4_fraction": 0.926,
+    "scaffold_at_or_above_0_4": 1345,
+    "scaffold_at_or_above_0_4_fraction": 0.269,
+    "both_whole_below_0_4_and_scaffold_at_or_above_0_4": 975
+  },
+  "interpretation_boundary": [
+    "Maximum Morgan-fingerprint similarities are descriptive structural metrics.",
+    "The figure does not establish biological activity, target preference, or synthetic success.",
+    "The 5,000-molecule sample is the declared novelty-analysis sample, not the full 65,856-molecule library."
+  ],
+  "outputs": [
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/figures/p1_v6_chemical_space_coverage.pdf",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/manuscript/Graphics/p1_v6_chemical_space_coverage.pdf",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/figures/p1_v6_chemical_space_coverage.png",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/manuscript/Graphics/p1_v6_chemical_space_coverage.png"
+  ],
+  "output_sha256": {
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/figures/p1_v6_chemical_space_coverage.pdf": "1c30a900c4402c33a3e3d320505e1e85d55ff6158f03a0c11342d648f34ef6fc",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/manuscript/Graphics/p1_v6_chemical_space_coverage.pdf": "1c30a900c4402c33a3e3d320505e1e85d55ff6158f03a0c11342d648f34ef6fc",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/results/figures/p1_v6_chemical_space_coverage.png": "5cfd56f96d0c9e924ca7f5a0731e09cffa70feb2ef47222e0cff38f9bab0de83",
+    "Project1_Chem_space_antimalarial_V6_CorrectedGrid/manuscript/Graphics/p1_v6_chemical_space_coverage.png": "5cfd56f96d0c9e924ca7f5a0731e09cffa70feb2ef47222e0cff38f9bab0de83"
+  }
+}

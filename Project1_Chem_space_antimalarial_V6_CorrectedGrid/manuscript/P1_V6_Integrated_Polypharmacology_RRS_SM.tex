@@ -11,6 +11,7 @@
 \usepackage{xr}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage[noabbrev,capitalize]{cleveref}
+\setlength{\emergencystretch}{3em}
 \externaldocument[M-]{P1_V6_Integrated_Polypharmacology_RRS}
 \graphicspath{{Graphics/}}
 \author{Myke Vital Sao Temgoua}
@@ -18,18 +19,26 @@
 \author{Penabei Samafou}
 \author{Wilfred Fon Mbacham}
 \author{Serge Guy Nana Engo}
-\title{Supporting Information: From African-Natural-Product Chemical Space to Resistance-Resilience Hypotheses}
+\title{Supporting Information: Resistance-Resilient Polypharmacology in African Natural-Product-Inspired Antimalarial Space}
 \begin{document}
 
 \noindent This supplement contains the numerical material needed to reproduce the integrated computational analysis. It is organized by evidence layer: chemical space, target-anchored docking, RRS, and exploratory cross-metric analysis. The four-target matrix is reported target by target; no cross-target mean is used because the Vina score is not calibrated across unlike receptor pockets.
 
 \section*{S1. Cohort and evidence boundaries}
-The integrated analysis uses the 17-member P2 Set-C polypharmacology-oriented cohort. The docking calculations follow AutoDock Vina conventions \cite{Trott2009,Eberhardt2021}. The MPO top-20 and the P2 MD top-20 are distinct sets. The P2 MD systems 201, 438, the 164-labelled PfClpR cohort, and 214 are not MD validation of Set C. The target panel contains four wild-type docking profiles, whereas RRS is calculated from the separate `docking\_mutants.csv` WT/mutant panel and is available only for PfDHFR and PfCRT mutant panels.
+The integrated analysis uses the 17-member P2 Set-C polypharmacology-oriented cohort. Set C was carried forward from the previously defined P2 polypharmacology-oriented cohort after its documented weighted-MPO, synthetic-accessibility, QED, and target-profile filtering; all 17 entries had $n_{\mathrm{targets\ bound}}=2$ in the source selection table. V6 introduced no new selection threshold or retrospective re-ranking; this enrichment is intentional and limits prevalence-based interpretation. The upstream $n_{\mathrm{targets\ bound}}=2$ label describes the P2 selection criterion; it does not constrain the separate 17-by-4 wild-type docking profile reported here. The docking calculations follow AutoDock Vina conventions \cite{Trott2009,Eberhardt2021}. The MPO top-20 and the P2 MD top-20 are distinct sets. The P2 MD systems 201, 438, the 164-labelled PfClpR cohort, and 214 are not MD validation of Set C. The target panel contains four wild-type docking profiles, whereas RRS is calculated from the separate WT/mutant docking panel and is available only for PfDHFR and PfCRT mutant panels.
 
-\section*{S2. Target-anchored docking matrix}
+\section*{S2. Chemical-space coverage and target-anchored docking}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.98\textwidth]{p1_v6_chemical_space_coverage.pdf}
+\caption{Chemical-space coverage in the locked \num{5000}-molecule novelty-analysis sample. The paired plot compares maximum whole-molecule and scaffold Morgan-fingerprint Tanimoto similarities to the African-natural-product reference set; the dashed lines mark the operational threshold of \num{0.4}. The upper-left region represents molecules that are dissimilar at the whole-molecule level while retaining scaffold-level similarity. Similarity is a structural descriptor and does not indicate biological activity, target preference, or synthetic success.}
+\label{fig:chemical_space_coverage}
+\end{figure}
+
+\section*{S3. Target-anchored docking matrix}
 \begin{table}[h]
 \centering
-\caption{Target-anchored Vina estimates for the locked 17-member cohort. Values are in \si{\kilo\calorie\per\mole}; they are not experimental free energies.}
+\caption{Target-anchored AutoDock Vina score estimates for the locked, intentionally enriched 17-member Set-C cohort. Values are in \si{\kilo\calorie\per\mole}; they are scoring-function outputs, not experimental free energies. Columns are reported target by target because scores from unlike receptor pockets are not calibrated for arithmetic comparison.}
 \label{tab:vina}
 \small
 \begin{tabular}{@{}lrrrr@{}}
@@ -60,22 +69,22 @@ PP-17 & \num{-5.266} & \num{-5.116} & \num{-5.342} & \num{-5.360} \\
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.95\textwidth]{p1_v6_targetwise_profile_summary.pdf}
-\caption{Descriptive target-wise means from the raw docking panel. Means are shown only within target; no cross-target arithmetic mean or consensus score was used. These summaries are computational scoring-function outputs, not experimental affinity measurements.}
+\caption{Descriptive target-wise means from the raw docking panel. Bars show the within-target mean across the 17 candidates. Means are shown only within target; no cross-target arithmetic mean or consensus score was used. These summaries are computational scoring-function outputs, not experimental affinity measurements.}
 \label{fig:targetwise_summary}
 \end{figure}
 
-\section*{S3. RRS definition and class summary}
+\section*{S4. RRS definition and class summary}
 For candidate $i$, mutation $m$, and target $t$:
 \[
 \mathrm{RRS}_{i,m,t}=100|S_{\mathrm{Vina},i,m,t}|/|S_{\mathrm{Vina},i,WT,t}|.
 \]
-Here $S_{\mathrm{Vina}}$ denotes an AutoDock Vina scoring-function output, not an experimental free energy. RRS eligibility is determined from the separate `docking\_mutants.csv` WT/mutant panel, not from the four-target wild-type matrix. Only genuine wild-type binders with $|S_{\mathrm{Vina},i,WT,t}|\geq\qty{5}{\kilo\calorie\per\mole}$ contributed. The 17-candidate class counts were A*: \num{6}, B: \num{5}, C: \num{5}, and D: \num{1}. The observed RRS range was \numrange{68.2}{111.7}. The complete machine-readable values are in \texttt{Project2\_Polypharmacology\_MD\_ValidationV2607/results/c\_rrs\_classification.csv}.
+Here $S_{\mathrm{Vina}}$ denotes an AutoDock Vina scoring-function output, not an experimental free energy. RRS eligibility is determined from the separate WT/mutant docking panel, not from the four-target wild-type matrix. Only genuine wild-type binders with $|S_{\mathrm{Vina},i,WT,t}|\geq\qty{5}{\kilo\calorie\per\mole}$ contributed. The 17-candidate class counts were A*: \num{6}, B: \num{5}, C: \num{5}, and D: \num{1}. The observed RRS range was \numrange{68.2}{111.7}. The complete machine-readable values are provided in the accompanying repository.
 
 \begin{table}[h]
 \centering
 \caption{RRS class definitions used in the integrated analysis.}
 \label{tab:rrs_classes}
-\begin{tabular}{@{}lll@{}}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{0.69\linewidth}r@{}}
 \toprule
 Class & Operational definition & Number \\
 \midrule
@@ -88,7 +97,7 @@ D & No available RRS value $\geq\qty{80}{\percent}$ & 1 \\
 \end{tabular}
 \end{table}
 
-\section*{S4. Exploratory cross-metric analysis}
+\section*{S5. Exploratory cross-metric analysis}
 \begin{table}[h]
 \centering
 \caption{Spearman correlations on the 17-member cohort. Bonferroni-adjusted threshold: $\alpha=\num{0.017}$ for the three hypothesis-oriented comparisons.}
@@ -105,14 +114,24 @@ PNS--wild-type Vina score & \num{0.389} & \num{0.123} & Descriptive/mechanical c
 \end{tabular}
 \end{table}
 
-\section*{S5. Target evidence classes and limitations}
-PfDHFR uses a catalytic-site ligand anchor; PfClpP uses a catalytic triad; PfCRT uses a membrane-associated Y01 cavity proxy; and PfATP4 uses conserved P-type ATPase machinery without a co-crystallized inhibitor. Consequently, all four-target profiles are exploratory and are not equivalent evidence of biological target engagement. No RRS values are reported for PfClpP or PfATP4.
+\section*{S6. Target evidence classes and limitations}
+The panel spans four distinct antimalarial vulnerabilities: PfDHFR represents folate metabolism and antifolate resistance; PfCRT represents a resistance-linked digestive-vacuole transporter; PfClpP represents parasite proteostasis through the caseinolytic protease, a vulnerability supported by recent work on apicoplast chaperonin--Clp proteostasis \cite{Tissawak2025}; and PfATP4 represents P-type ATPase-mediated ion regulation, for which an endogenous structure and modulator-bound state have recently been reported \cite{Haile2025}. PfDHFR uses a catalytic-site ligand anchor; PfClpP uses a catalytic triad; PfCRT uses a membrane-associated Y01 cavity proxy; and PfATP4 uses conserved P-type ATPase machinery without a co-crystallized inhibitor. Consequently, all four-target profiles are exploratory and are not equivalent evidence of biological target engagement. No RRS values are reported for PfClpP or PfATP4.
 
-\section*{S6. Reproducibility and availability}
+\section*{S7. Reproducibility and availability}
 The integrated candidate manifest, raw docking table, P2 RRS table, cross-metric matrix, scripts, receptor files, ligand files, and provenance records are available in the repository at \url{https://github.com/NanaEngo/Malaria_codesV2}. The figures and derived tables in this supplement are reproducible computational outputs; automated integrity checks document their derivation but do not substitute for independent structural or experimental validation.
 
-\section*{S7. Use of Artificial Intelligence}
-During the preparation of this work the authors used AI assistants to support code development and data analysis scripting. The authors reviewed and edited all AI-assisted output and take full responsibility for the content of this article. No generative AI tool is listed as an author. All computational results, statistical analyses, and quantitative claims were generated and verified by the authors.
+\section*{S8. Available machine-readable resources}
+The accompanying repository provides the computational record used in this study. The available resources include:
+\begin{itemize}
+    \item the locked candidate manifest and canonical molecular identifiers;
+    \item the complete target-wise Vina score matrix, ligand poses, and pose-provenance records;
+    \item the declared wild-type/mutant docking panel used for the per-target RRS analysis;
+    \item the derived RRS, PNS, ACSI, and cross-metric tables;
+    \item the chemical-space similarity data and source data for the coverage figure;
+    \item receptor and ligand input files, configuration files, analysis scripts, and figure-generation scripts;
+    \item integrity manifests and reproducibility metadata.
+\end{itemize}
+Exact file names, directory paths, checksums, and version-specific dependencies are listed in the repository README and submission manifest rather than in the scientific narrative of this supplement. These resources are intended to support independent computational reproduction; they do not convert docking scores into experimental affinity measurements.
 
 \bibliography{Sao_Chim_Space}
 \end{document}

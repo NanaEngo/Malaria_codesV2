@@ -77,7 +77,7 @@ L'audit `docs/audit_project_260528.md` identifiait 4 actions prioritaires. **Auc
 
 Le dossier `Tuto_MD_MC/` contient **88 fichiers** dont :
 - ~30 fichiers `.md` de statut/session (SESSION_COMPLETE_SUMMARY.md, WHERE_WE_ARE_NOW.md, CURRENT_SITUATION_SUMMARY.md, etc.)
-- ~20 scripts Python de test/debug (test_*.py, fix_*.py, check_*.py)
+- Les anciens scripts Python de test/debug ont été nettoyés; les validations scientifiques reproductibles sont conservées dans les répertoires canoniques.
 - ~10 guides de correction (CORRECTION_STRATEGY_SUMMARY.md, CHANGELOG_CORRECTIONS.md)
 - Des sous-dossiers de données intermédiaires (ligand_prep/, protein_prep/, complex_assembly/)
 
@@ -127,8 +127,8 @@ Ce chemin est toujours relatif et fragile. De plus, le Paper3 n'est probablement
 ```
 Project2_Polypharmacology_MD_Validation/
 ├── README.md                          ✅ Bien structuré, badges, Quick Start
-├── PROJECT_COMPLETION_SUMMARY.md      ⚠️ Désuet — décrit une arborescence qui n'existe plus
-├── REORGANIZATION_SUMMARY.md          ⚠️ Désuet — décrit des changements non maintenus
+├── PROJECT_COMPLETION_SUMMARY.md      ✅ Supprimé lors du nettoyage documentaire
+├── REORGANIZATION_SUMMARY.md          ✅ Supprimé lors du nettoyage documentaire
 ├── docs/
 │   ├── ROADMAP.md                     ✅ 628 lignes, Mermaid Gantt, mais statuts obsolètes
 │   ├── METHODS.md                     ✅ 747 lignes, code exemples, mais MC pas dans manuscript
@@ -155,8 +155,8 @@ Project2_Polypharmacology_MD_Validation/
 
 | Fichier | Problème | Action |
 |---------|----------|--------|
-| `PROJECT_COMPLETION_SUMMARY.md` | Décrit une arborescence qui n'existe plus | Mettre à jour ou supprimer |
-| `REORGANIZATION_SUMMARY.md` | Décrit des changements non maintenus | Mettre à jour ou supprimer |
+| `PROJECT_COMPLETION_SUMMARY.md` | Document obsolète | Supprimé |
+| `REORGANIZATION_SUMMARY.md` | Document obsolète | Supprimé |
 | `Tuto_MD_MC/` (88 fichiers) | Environnement de debug/temporaire | Déplacer vers branche séparée ou .gitignore |
 | `test_pymol.py` | Script isolé à la racine | Déplacer vers `scripts/` ou `Tuto_MD_MC/` |
 | `Bibliography_Paper2.bib.txt` | Copie redondante | Supprimer si identique au .bib |
@@ -242,7 +242,7 @@ Les scripts du pipeline sont écrits mais **non exécutés** (pas de résultats 
 ### Priorité 3 — Nettoyage (ce mois)
 
 7. **Déplacer Tuto_MD_MC/** — Vers une branche séparée, un repo séparé, ou le .gitignore.
-8. **Nettoyer les fichiers désuets** — PROJECT_COMPLETION_SUMMARY.md, REORGANIZATION_SUMMARY.md, test_pymol.py.
+8. **Nettoyage documentaire** — PROJECT_COMPLETION_SUMMARY.md et REORGANIZATION_SUMMARY.md ont été supprimés; `test_pymol.py` reste hors de ce nettoyage Markdown.
 9. **Créer l'arborescence results/** — Sous-dossiers figures/, tables/, md_systems/, trajectories/, metrics/.
 10. **Séparer les fichiers hors-scope** — Bibliography_Paper3.bib, HOW_TO_CITE_DD4GH.md, USEFUL_RESOURCES_LIKE_DD4GH.md.
 
@@ -806,8 +806,7 @@ Dans `manuscript/LaTeX/Paper2_Draft_v0.6.tex`, remplacer L46 :
 cd /home/taamangtchu/Documents/Github/Malaria_codes/Project2_Polypharmacology_MD_Validation
 
 # 1. Supprimer les fichiers de réorganisation désuets
-git rm PROJECT_COMPLETION_SUMMARY.md
-git rm REORGANIZATION_SUMMARY.md
+# PROJECT_COMPLETION_SUMMARY.md et REORGANIZATION_SUMMARY.md ont été supprimés lors du nettoyage documentaire.
 
 # 2. Déplacer test_pymol.py
 git mv test_pymol.py scripts/test_pymol.py

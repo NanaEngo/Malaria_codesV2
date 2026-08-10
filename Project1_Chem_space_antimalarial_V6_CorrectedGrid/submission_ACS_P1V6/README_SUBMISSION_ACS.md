@@ -1,7 +1,7 @@
 # Submission Package — P1 V6 → Journal of Chemical Information and Modeling (ACS)
 
 **Date:** 10 August 2026 · **Status:** SUBMISSION-READY (R1–R5 cleared, register `INTERNAL_WORK_AUTHORIZED`)
-**Manuscript title:** *Integrated polypharmacology and resistance-resilience prioritisation of African-natural-product-inspired antimalarial candidates*
+**Manuscript title:** *African Natural-Product-Inspired Antimalarial Polypharmacology: Computational Resistance Hypotheses*
 **Corresponding author:** *(à compléter)* · **Manuscript type:** Research Article
 
 ---
@@ -21,9 +21,10 @@
 | 8 | `Figure_2_rrs_mutation_profiles.pdf` | Figure 2 du main |
 | 9 | `Figure_3_exploratory_metric_relationships.pdf` | Figure 3 du main |
 | 10 | `Figure_S_targetwise_profile_summary.pdf` | Figure SM (target-wise) |
-| 11 | `acs-P1_V6_*.bib` / `Sao_Chim_Space.bib` | Références bibliographiques |
+| 11 | `Figure_S_chemical_space_coverage.pdf` | Figure SM (couverture chimique) |
+| 12 | `acs-P1_V6_*.bib` / `Sao_Chim_Space.bib` | Références bibliographiques |
 
-> ⚠️ **Note ACS** : si le portail demande les **figures séparées**, soumettre les fichiers 8–10 en PDF 300 dpi (ou TIFF). Sinon, elles sont déjà intégrées au PDF du manuscrit.
+> ⚠️ **Note ACS** : si le portail demande les **figures séparées**, soumettre les fichiers 8–11 en PDF 300 dpi (ou TIFF). Sinon, elles sont déjà intégrées au PDF du manuscrit.
 
 ---
 
@@ -34,11 +35,11 @@
 - [x] **Abstract** présent dans le main (≈ 200 mots, sans citations)
 - [x] **TOC graphic** généré au format ACS exact : 3.25×1.75 in, 300 dpi, TIFF RGB (`p1_v6_toc_graphic_ACS.tiff`)
 - [x] **Cover letter** rédigée (objectif, signification, déclaration d'originalité)
-- [x] **Sections obligatoires** présentes : Introduction, Materials and Methods, Results, Discussion, Conclusion, Supporting Information, Author Contributions, Notes, Data Availability, Use of Artificial Intelligence
+- [x] **Sections obligatoires** présentes : Introduction, Materials and Methods, Results, Discussion, Conclusion, Associated Content, Author Contributions, Notes, Data Availability, Acknowledgments
 - [x] **Déclarations** : ORCID (corresponding author), funding, competing interests, AI-use statement
 - [x] **Références** au format ACS (fichier `.bbl` généré)
 - [x] **SM nommé** selon la convention ACS (`Supporting_Information.pdf` au dépôt)
-- [x] **Données** : liens GitHub + Zenodo DOI réservé (10.5281/zenodo.19608875) dans Data Availability
+- [x] **Données** : dépôt GitHub et manifeste de checksums indiqués dans Data Availability; le DOI Zenodo reste réservé et n’est pas présenté comme un dépôt public
 
 ### 2.2 Dans Paragon Plus (ordre des étapes)
 1. Sélectionner **JCIM** (Journal of Chemical Information and Modeling)
@@ -64,14 +65,15 @@
 | Contrôle | Résultat |
 |---|---|
 | Compilation main (pdflatex ×2) | ✅ 19 p., 0 erreur, 0 réf. indéfinie |
-| Compilation SM | ✅ 5 p., 0 erreur |
+| Compilation SM | ✅ 7 p., 0 erreur |
 | Compilation cover letter | ✅ 1 p. |
 | TOC graphic — dimensions | ✅ 3.25×1.75 in (ratio 1.857) |
 | TOC graphic — résolution | ✅ 300 dpi (975×525 px) |
 | TOC graphic — format | ✅ TIFF RGB (LZW) + PDF vectoriel |
 | Review adverse croisée (claims↔preuves) | ✅ 6 incohérences corrigées (voir `FINAL_CROSS_REVIEW_20260810.md`) |
 | Register | ✅ `INTERNAL_WORK_AUTHORIZED` (décision auteur 10/08) |
-| Manifeste SHA-256 | ✅ `SUBMISSION_MANIFEST.md` |
+| Package-only recompilation | ✅ main + SM, BibTeX et pdflatex: rc=0; `Graphics/` présent |
+| Manifeste SHA-256 | ✅ `SUBMISSION_MANIFEST.md` (31 fichiers) |
 
 ---
 
@@ -87,6 +89,9 @@ cp manuscript/Cover_Letter_P1_V6.pdf                      submission_ACS_P1V6/Co
 cp manuscript/P1_V6_Integrated_Polypharmacology_RRS.bbl   submission_ACS_P1V6/P1_V6_main.bbl
 cp manuscript/P1_V6_Integrated_Polypharmacology_RRS.aux   submission_ACS_P1V6/P1_V6_main.aux
 cp manuscript/P1_V6_Integrated_Polypharmacology_RRS_SM.aux submission_ACS_P1V6/P1_V6_SM.aux
+cp -a manuscript/Graphics/. submission_ACS_P1V6/Graphics/
+cp manuscript/Graphics/p1_v6_chemical_space_coverage.pdf submission_ACS_P1V6/Figure_S_chemical_space_coverage.pdf
+cp manuscript/P1_V6_Integrated_Polypharmacology_RRS_SM.pdf submission_ACS_P1V6/Supporting_Information.pdf
 # 2. Régénérer le TOC (script reproductible : PDF vector + TIFF RGB 300 dpi + TIFF 1200 dpi) :
 /home/nanaengo/miniforge3/envs/malaria_md/bin/python scripts/v6_generate_acs_toc.py
 cp manuscript/Graphics/p1_v6_toc_graphic*.pdf manuscript/Graphics/p1_v6_toc_graphic_ACS*.tiff submission_ACS_P1V6/
@@ -98,7 +103,7 @@ cp manuscript/Graphics/p1_v6_toc_graphic*.pdf manuscript/Graphics/p1_v6_toc_grap
 > ⚠️ **ORCID** : à renseigner dans Paragon Plus (étape auteurs) — le .tex ne contient pas d'ORCID (convention ACS).
 
 ## 5. Rappel des points de vigilance
-1. **PfClpP = PDB 2F6I** (triade catalytique Ser252/His223/Asp219) — 4GM2 = PfClpR, explicitement exclu.
+1. **PfClpP = PDB 2F6I** (triade catalytique Ser252/His223/Asp219) — 4GM2 = PfClpR, explicitement exclu; PfATP4 = PDB 9N10.
 2. **DEKOIS PfDHFR = 0.450 [0.37, 0.53]** (valeur canonique, honnête) — cohérent avec P2 et BMAD.
 3. **Poses = hypothèses computationnelles** — le manuscrit ne revendique ni puissance mesurée ni engagement biologique confirmé.
 4. **Lire une dernière fois** le main (19 p.) et le SM avant soumission.
