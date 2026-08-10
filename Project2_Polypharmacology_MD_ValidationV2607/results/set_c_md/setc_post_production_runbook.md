@@ -1,0 +1,211 @@
+# Set-C Post-Production Runbook: QC → MD-RRS
+
+**Date:** 10 August 2026  
+**Scripts verified:**  
+- `p2_setc_trajectory_qc.py` — ✅ compile OK (malaria_md, py3.11)  
+- `p2_setc_md_rrs.py` — ✅ compile OK (malaria_md, py3.11)  
+**Dependencies verified:** MDAnalysis 2.10.0, scipy 1.17.1, numpy 2.4.6, pandas 2.3.3 (all in malaria_md)  
+
+---
+
+## ⚠️ Pre-condition: equilibration must complete for all 16 systems
+
+The production array (`15111`, `dependency=afterok:15106`) only runs for systems with `npt.gro`.  
+The MD-RRS script (`p2_setc_md_rrs.py`) is **fail-closed**: it requires **exactly 136 rows** (17 candidates × 8 states) **all with `qc_status=PASS`**, identical `analysis_rule_id`, `duration_ns`, and `n_frames`.  
+
+**Current equilibration state (10 Aug, ~3h30 from start):**  
+- 3/16 npt.gro (PP-01 PfCRT WT/K76A/K76T)  
+- 1/16 FAIL (PP-01_PfDHFR_N51I — libgomp crash)  
+- 12/16 no NPT progress (stalled or queued)  
+
+**→ If the panel remains incomplete, the MD-RRS calculation will FAIL-CLOSED.**  
+The 3 completed systems can still be individually QC'd for manuscript supplementary analysis (bound-fraction reports), but MD-RRS classification requires the full panel.
+
+---
+
+## Step 1: Verify production array completion
+
+Before running QC, confirm:
+
+```bash
+# Check production.xtc count (expect 16 for full panel)
+B=/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c
+find "$B" -name 'production.xtc' -type f | wc -l
+
+# Check individual system production status
+for d in "$B"/PP-*; do
+  n=$(basename "$d")
+  p=$(find "$d/runs" -name 'production.xtc' 2>/dev/null)
+  [ -n "$p" ] && echo "$n: PRODUCTION_DONE ($(du -h "$p" | cut -f1))" || echo "$n: MISSING"
+done
+
+# Check SLURM array completion
+sacct -j 15111 --format=JobID,State,Elapsed 2>/dev/null
+```
+
+---
+
+## Step 2: Run trajectory QC (bound-fraction analysis)
+
+**Estimated runtime:** ~5–15 min per system (wtih MDAnalysis, max_frames=2000).  
+**Total:** ~1.5–4 h for 16 systems on 1 CPU; can be parallelized per system.
+
+```bash
+# Activate environment
+source /home/nanaengo/miniforge3/etc/profile.d/conda.sh
+conda activate malaria_md
+
+# Change to project root
+cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
+
+# RUN — trajectory QC (ALL 16 systems)
+python scripts/p2_setc_trajectory_qc.py \
+  --bound-angstrom 5.0 \
+  --min-frames 500 \
+  --min-bound-fraction 0.10 \
+  --max-frames 2000
+
+# Expected output:
+#   results/set_c_md/set_c_trajectory_qc.csv
+# Contains: set_c_id, target, mutation, bound_fraction, n_frames,
+#           duration_ns, trajectory_sha256, tpr_sha256, qc_status, analysis_rule_id
+```
+
+**Options:**
+- Single system debugging: `--system PP-01_PfCRT_WT`
+- Run as SLURM job (recommended for 16 systems):
+  ```bash
+  sbatch --dependency=afterok:15111 << 'SBATCH'
+  #SBATCH --job-name=p2_setc_qc
+  #SBATCH --partition=production
+  #SBATCH --nodes=1 --ntasks=1 --cpus-per-task=4
+  #SBATCH --time=6:00:00 --mem=16G
+  #SBATCH --output=logs/p2_setc_qc_%j.log
+  source /home/nanaengo/miniforge3/etc/profile.d/conda.sh
+  conda activate malaria_md
+  cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
+  python scripts/p2_setc_trajectory_qc.py --max-frames 2000
+  SBATCH
+  ```
+
+---
+
+## Step 3: Verify QC output integrity
+
+```bash
+QC=results/set_c_md/set_c_trajectory_qc.csv
+python -c "
+import pandas as pd
+df = pd.read_csv('$QC')
+print('Rows:', len(df))
+print('PASS:', (df.qc_status == 'PASS').sum())
+print('Non-PASS:', (df.qc_status != 'PASS').sum())
+print('analysis_rule_id:', df.analysis_rule_id.unique())
+if (df.qc_status == 'PASS').all():
+    print('✅ ALL PASS — can proceed to MD-RRS')
+else:
+    print('❌ Some systems FAIL QC — investigate non-PASS rows:')
+    print(df[df.qc_status != 'PASS'][['set_c_id','target','mutation','qc_status']])
+"
+```
+
+**Expected for full panel:**
+- 136 rows (17 × 8)
+- analysis_rule_id = `setc_p2_minheavy_5A_ge10percent_v1` (unique)
+- duration_ns consistent across all rows
+- n_frames consistent across all rows
+- All trajectory_sha256 valid (64 hex chars)
+
+---
+
+## Step 4: Compute MD-RRS (fail-closed)
+
+**This step will FAIL-CLOSED if any QC PASS condition is violated.**
+
+```bash
+cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
+
+# RUN — MD-RRS computation (requires ALL 136 rows PASS)
+python scripts/p2_setc_md_rrs.py \
+  --qc-file results/set_c_md/set_c_trajectory_qc.csv \
+  --min-wt-bound-fraction 0.10 \
+  --output results/set_c_md/md_rrs_classification.csv
+
+# Expected outputs:
+#   results/set_c_md/md_rrs_classification.csv  (RRS values, classes)
+#   results/set_c_md/md_rrs_provenance.json       (provenance metadata)
+```
+
+**What the script checks (fail-closed gates):**
+- candidate_sha256 matches canonical set-C file
+- ALL rows have qc_status = PASS
+- Exactly 1 unique analysis_rule_id
+- All duration_ns identical
+- All n_frames identical
+- All trajectory_sha256 valid and files exist with matching hashes
+- Exactly 136 rows (= 17 × 8)
+- No duplicate set_c_id/target/mutation combinations
+- SMILES consistency across all rows
+- All targets (PfDHFR, PfCRT) and all mutations per target present
+
+**MD-RRS formula:**  
+`MD_RRS_mutant = 100 × bound_fraction_mutant / bound_fraction_WT`  
+Averaged over targets with WT bound_fraction ≥ 0.10.
+
+**MD-RRS classes:** Same as docking-RRS (A: ≥80% all, B: ≥70% all, C: ≥80% specific, D: <60% any).
+
+---
+
+## Step 5: Compare with docking-RRS
+
+```bash
+cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
+
+python -c "
+import pandas as pd
+md = pd.read_csv('results/set_c_md/md_rrs_classification.csv')
+dock = pd.read_csv('results/c_rrs_classification.csv')
+merged = md.merge(dock, on='set_c_id', suffixes=('_MD', '_dock'))
+merged['MD_vs_dock'] = merged['MD_RRS_class'] == merged['RRS_class']
+print('MD-RRS vs docking-RRS agreement:')
+print(merged[['set_c_id','MD_RRS_class','RRS_class','MD_vs_dock']].to_string())
+print()
+print('Agreement rate:', merged['MD_vs_dock'].mean())
+"
+```
+
+---
+
+## ⚠️ Known issue (10 Aug 2026): equilibration stalled/failed
+
+**Problem:** 13/16 systems show no NPT progress. Task `PP-01_PfDHFR_N51I` crashed with a `libgomp` threading error. The remaining 12 are stalled with tiny log files (99–105 bytes) and no NPT output after 8–11 hours running time.
+
+**Symptoms:**
+- `npt.gro`: only 3/16  
+- `npt.log`: only the 3 completed systems have log rows  
+- Task logs: 99–449 bytes, well below the expected size for a completed equilibration  
+- Old job 15081 showed `libgomp.so.1` crash for `PP-01_PfDHFR_N51I` on `penavoraserver`  
+
+**Likely cause:** OpenMP thread contention on a shared node — multiple GROMACS instances each requesting 8 threads overwhelm the node.
+
+**Recommended fix:**  
+1. Cancel the stuck `15106_[4-7]` tasks:  
+   ```bash
+   scancel 15106_4 15106_5 15106_6 15106_7
+   ```
+2. Resubmit the failing systems individually with `-ntomp 2` (reduced threads):  
+   ```bash
+   cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
+   
+   # For each failing system, edit the sbatch or call the workflow directly:
+   for SYS in PP-01_PfDHFR_N51I PP-01_PfDHFR_S108N PP-01_PfDHFR_WT \
+              PP-01_PfDHFR_I164L PP-01_PfCRT_K76A PP-01_PfCRT_K76T PP-01_PfCRT_WT \
+              PP-01_PfDHFR_C59R PP-02_PfCRT_K76A PP-02_PfCRT_K76T PP-02_PfCRT_WT \
+              PP-02_PfDHFR_C59R PP-02_PfDHFR_I164L PP-02_PfDHFR_N51I PP-02_PfDHFR_S108N PP-02_PfDHFR_WT; do
+     echo "NEEDS_RUN: $SYS"
+   done
+   ```
+
+3. Alternative: create a new sbatch with `--cpus-per-task=4` and environment variable `export P2_SETC_NTOMP=2` in the script.
+
+**Impact on production + QC chain:** Until equilibration completes for all 16 systems, the MD-RRS calculation cannot run (fail-closed on 136 rows). Only the 3 completed systems can be individually QC'd for intermediate analysis.
