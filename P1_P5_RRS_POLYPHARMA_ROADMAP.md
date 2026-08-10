@@ -1,6 +1,6 @@
 # Master Roadmap P1–P5 — Resistance/RRS + Polypharmacology
 
-**Version:** 1.6 — 10 August 2026 (numerical audits P1 V5/V6/P2 complete; P3 SOTA reconciliation; JCIM submission-readiness corrections; P2 Set-C MD pipeline running)
+**Version:** 1.7 — 10 August 2026 (numerical audits P1 V5/V6/P2 complete; P3 SOTA reconciliation; JCIM submission-readiness corrections; P2 Set-C MD pipeline running; **consolidated remaining-steps section added**)
 **Purpose:** submission-oriented roadmap for the canonical versions of Projects 1–5.  
 **Update basis:** current repository state plus Olsson, *Generative molecular dynamics*, *Current Opinion in Structural Biology* 96 (2026) 103213, DOI `10.1016/j.sbi.2025.103213`, PMID `41544599`; P5 benchmark completed in full on 8 August 2026 (jobs 12841/12842) with independent validation 100% complete (stats re-derivation, ECFP4-RF + GIN replication, public ChEMBL benchmark); **P1 V5 PfATP4 COMPLETE (job 12864)** — 17/17 pairs pass the composite gate, 17×4 affinity table COMPLETE, manuscript V5 updated to the 4-target gate; **P1 V4 PfClpP replacement run LAUNCHED (fresh job 14483_[0-483])** — first submission 13999 failed closed on pre-existing output directories; fresh 484-centroid raw revalidation now runs on genuine 2F6I in an isolated directory, with no promotion before fail-closed aggregation; **P4 v12-activity benchmark COMPLETE (job 12865)** — Random 0.6724 > MCTS 0.6649 > GA 0.6453 > Greedy 0.4278, manuscript P4 switched to v12-activity (abstract/table/figure/SM/cover letter, recompiled RC=0); **P3 external validation COMPLETE** — descriptor ITT and complete-case sensitivity are finalized (jobs 12858→12860→12891→13997), QKS external validation is complete (12863), and corrected-resampled statistical audit is complete (13998).
 **Operating rule:** every result must remain traceable to frozen inputs, an executable script, recorded parameters, and QC evidence. **Author-controlled pre-submission decision (09/08/2026):** no editorial, submission, independent-review, or signature restriction blocks scientific work while P1–P5 are under development. Exploratory calculations, RRS/PNS/ACSI analyses, figures, reruns, and manuscript refinement may proceed with truthful provenance labels. Scientific identity, hash, geometry, numerical, and runtime QC remain active. Submission does not switch the workflow automatically; only the author's explicit confirmation of submission plus explicit request to reactivate restrictions activates the signed-review policy. See `P1_INTERNAL_DEVELOPMENT_POLICY.md` and `P1_PRE_SUBMISSION_WORKFLOW_NOTICE.md`.
@@ -258,6 +258,25 @@ A Set-C claim is publishable only if at least two candidates have reproducible b
 | 5 | P2 MD pilot | QC fails in any required replica |
 | 6 | P3/P4/P5 manuscript/data availability pass | Any active stale overclaim remains |
 | 7 | Adversarial review + final compile | Reviewer identifies unsupported headline claim |
+
+### Remaining steps — 10 August 2026 (post-audit)
+
+**Completed this session (all pushed):** numerical audits P1 V5/V6/P2 (0 residual errors, commits `43fde858f`/`4bc4c05f0`), P3 SOTA reconciliation (`ad02c5e46`), JCIM submission-readiness P1 V6 + P2 (Use of AI declarations, docking-protocol validation, cover letters), roadmap v1.6, Set-C MD pipeline launched.
+
+**Remaining, in priority order:**
+
+| # | Project | Action | Gate / dependency | Payoff |
+|---|---------|--------|-------------------|--------|
+| 1 | P2 | **Finish the Set-C MD chain** — equilibration `15106` (~5 h) → production `15111` (16 × 10 ns, ~40 h, `afterok`) → trajectory QC (`p2_setc_trajectory_qc.py`, bound-fraction ≥ 10 % rule `setc_p2_minheavy_5A_ge10percent_v1`) → MD-RRS (`p2_setc_md_rrs.py`, fail-closed) → integrate MD-RRS into the manuscript (replace « future work » in abstract/Discussion) → recompile + re-audit | `15111` afterok `15106`; QC PASS before RRS | **+15–20 % acceptance P2** (50–60 % → ~75–85 %) |
+| 2 | P2 | **Table S5 ADMET (R11)** — complete from source CSVs or remove | author choice | removes reviewer ambiguity |
+| 3 | P1 V6 | **Register R5** — author decision: lift `PENDING_INDEPENDENT_REVIEW` (documented) or run the formal independent review of the 17×4 Vina poses before submission | author instruction | unblocks submission |
+| 4 | P1 V6 | **Submission package** — final adversarial review + clean compile (main 18 p. / SM 5 p. / cover 1 p.), README + manifest updated | R3–R5 resolved | submission-ready |
+| 5 | P3 | **Zenodo upload** (DOI reserved 10.5281/zenodo.19608875; deferred by author) | author decision | data-availability bonus |
+| 6 | P4 | Final coherence pass + submission package (v12-activity results integrated) | none blocking | submission-ready |
+| 7 | P5 | Final coherence pass + submission package (external MoleculeNet validation + audit v2) | none blocking | submission-ready |
+| 8 | All | git push after each validated step; final adversarial review before any submission | Definition of done (§9) | integrity |
+
+> **Jobs en cours (10/08, 2 h):** `15106` wave-0 NPT ~45–49 % (K76A 22 500 / K76T 24 000 / WT 24 500 / C59R 5 500 steps), 0 failure ; ETA équilibration ≈ 5 h total, production ≈ 40 h. Manifest runtime modifié par le job (non committé).
 
 ## 9. Definition of done
 
