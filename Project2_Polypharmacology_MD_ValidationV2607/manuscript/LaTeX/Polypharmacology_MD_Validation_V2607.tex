@@ -185,7 +185,7 @@ Crystal structures of mutant targets were not available in the PDB. Homology mod
 
 \subsection{Docking protocol validation}
 
-The docking protocol and V2-corrected grid parameters used here are identical to those established in the parent study \citep{temgoua2026antimalarial}: AutoDock Vina 1.2.7 with exhaustiveness \num{64} against grids centered on the corrected V2 binding-site coordinates of PfDHFR (7F3Y), PfCRT (6UKJ), PfATP4 (9N10), and the historically labelled PfClpR/4GM2 entry (not PfClpP). A successful redocking was defined as RMSD $<$ \SI{2.0}{\angstrom} relative to the crystal pose. The parent study performed external enrichment against the MMV Malaria Box (consensus-score ROC-AUC \numrange{0.924}{1.000} across the four targets) and DEKOIS 2.0 for PfDHFR (Vina only, ROC-AUC \num{0.509}), and calibrated dual-filter thresholds against ChEMBL actives. P2 uses AutoDock Vina + Gnina CNN-affinity as an independent consensus scorer; the validation benchmarks from the parent study are reproduced in Table~S0.
+The docking protocol and V2-corrected grid parameters used here are identical to those established in the parent study \citep{temgoua2026antimalarial}: AutoDock Vina 1.2.7 with exhaustiveness \num{64} against grids centered on the corrected V2 binding-site coordinates of PfDHFR (7F3Y), PfCRT (6UKJ), PfATP4 (9N10), and the historically labelled PfClpR/4GM2 entry (not PfClpP). A successful redocking was defined as RMSD $<$ \SI{2.0}{\angstrom} relative to the crystal pose. The parent study performed external enrichment against the MMV Malaria Box (consensus-score ROC-AUC \numrange{0.924}{1.000} across the three evaluated targets, PfDHFR, PfCRT, and PfATP4) and DEKOIS 2.0 for PfDHFR (Vina only, ROC-AUC \num{0.450}), and calibrated dual-filter thresholds against ChEMBL actives. P2 uses AutoDock Vina + Gnina CNN-affinity as an independent consensus scorer; the validation benchmarks from the parent study are reproduced in Table~S0.
 
 \subsection{Tartarus external validation}
 
@@ -269,7 +269,7 @@ Pearson and Spearman correlations were computed among the set-C docking-derived 
 
 \subsection{Docking protocol validation}
 
-As validated in the parent study \citep{temgoua2026antimalarial}, re-docking of co-crystallised ligands using grids centered on the corrected V2 binding-site coordinates yielded \qty{100}{\percent} success (RMSD $<$ \SI{2.0}{\angstrom}) for alignable ligands (5/5), whereas MTX failed. Enrichment against the MMV Malaria Box demonstrated that the dual-filter consensus (AutoDock Vina + DiffDock) achieved ROC-AUC values ranging from \num{0.924} to \num{1.000} across the four targets; external DEKOIS 2.0 validation for PfDHFR (Vina only, \num{40} actives / \num{1200} decoys) yielded a ROC-AUC of \num{0.509}. Detailed enrichment metrics are provided in Table~S0.
+As validated in the parent study \citep{temgoua2026antimalarial}, re-docking of co-crystallised ligands using grids centered on the corrected V2 binding-site coordinates yielded \qty{100}{\percent} success (RMSD $<$ \SI{2.0}{\angstrom}) for alignable ligands (5/5), whereas MTX failed. Enrichment against the MMV Malaria Box demonstrated that the dual-filter consensus (AutoDock Vina + DiffDock) achieved ROC-AUC values ranging from \num{0.924} to \num{1.000} across the three evaluated targets (PfDHFR, PfCRT, PfATP4); external DEKOIS 2.0 validation for PfDHFR (Vina only, \num{40} actives / \num{1200} decoys) yielded a ROC-AUC of \num{0.450}. Detailed enrichment metrics are provided in Table~S0.
 
 \subsection{MPO sensitivity analysis}
 

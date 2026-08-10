@@ -3,7 +3,7 @@
 **Journal:** Journal of Cheminformatics (Springer)
 **Pages:** main 12 p. / SM 17 p. / cover 1 p. (verified 10/08/2026)
 **Status:** SUBMISSION-READY — SOTA reconciled, external validation integrated, audit COMPLETE_EXPLORATORY_NOT_CONFIRMATORY
-**Generated:** 2026-08-10 08:57 UTC
+**Generated:** 2026-08-10 09:03 UTC
 
 ## File inventory (SHA-256)
 

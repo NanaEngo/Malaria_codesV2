@@ -1,6 +1,6 @@
 # Submission Packages Index
 
-**Generated:** 2026-08-10 08:57 UTC  
+**Generated:** 2026-08-10 09:03 UTC  
 **Scope:** canonical manuscripts P1 V6, P2, P3, P4, P5 — meticulous submission manifests.
 
 | Package | Journal | Pages | Status | Manifest |

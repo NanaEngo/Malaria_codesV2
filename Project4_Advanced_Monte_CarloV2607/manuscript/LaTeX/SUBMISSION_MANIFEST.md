@@ -3,7 +3,7 @@
 **Journal:** Journal of Cheminformatics (Springer)
 **Pages:** main 13 p. / SM / cover 1 p. (verified 10/08/2026)
 **Status:** SUBMISSION-READY — v12-activity results integrated, DAR coherent
-**Generated:** 2026-08-10 08:57 UTC
+**Generated:** 2026-08-10 09:03 UTC
 
 ## File inventory (SHA-256)
 
