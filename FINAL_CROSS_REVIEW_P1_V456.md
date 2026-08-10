@@ -92,3 +92,33 @@ recompilation complète.
 
 **Verdict :** les trois manuscrits sont cohérents entre eux et avec les données ; les résidus
 de registre interne et l'erreur factuelle OMS ont été éliminés. **V6 est prêt pour Paragon Plus.**
+
+---
+
+## 7. Audit étendu des références .bib P2–P5 (10/08/2026) — TOUT PROPRE, aucune correction
+
+Extension du contrôle `journaltitle`→`journal` (qui avait révélé le bug P1 : 66 entrées corrompues
+par manuscrit) aux projets P2–P5, puis vérification du rendu réel dans les .bbl et PDFs :
+
+| Projet | .bib | Entrées | journaltitle-seul | Conflits | Années manquantes |
+|---|---|---:|---:|---:|---:|
+| P2 | `Bibliography_Polypharmacology_MD_Validation.bib` + 2 légacy | 142 | 0 | 0 | 0 |
+| P3 | `Bibliography_Paper3.bib` | 68 | 0 | 0 | 0 |
+| P4 | `P4_Bibliography.bib` | 35 | 0 | 0 | 0 |
+| P5 | `Bibliography_P5.bib` | 25 | 0 | 0 | 0 |
+| **Total** | 6 fichiers | **270** | **0** | **0** | **0** |
+
+**Vérifications complémentaires :**
+- **Styles natbib confirmés** dans les préambules : P2 `achemso`, P3/P4/P5 `unsrtnat` → `journal` est le
+  champ correct ; `journaltitle` absent de tous les fichiers.
+- **Rendu .bbl vérifié** (mécanisme natbib `\emph{}`) : P2 54 rendus (dont *Malaria Journal*,
+  *Trends in Parasitology*, *J. Nat. Prod.*), P3 23 + 5 SM (*Nature*, *The Lancet*, *JCIM*,
+  *J. Cheminformatics*), P4 13 (*J. Chem. Inf. Model.*, *ACS Cent. Sci.*, *Sci. Rep.*), P5 24
+  (*JCIM*, *J. Cheminformatics*, *ACS Nano*).
+- **PDFs :** 4 mains frais (mtime ≥ .bbl), rendu des journaux confirmé par extraction pypdf
+  (sondes tolérantes à la césure) ; SM P2/P3/P4 frais ; **P5 = pas de SM par conception**.
+- **Aucune correction nécessaire** — verdict inverse de P1 V4/V5/V6.
+
+**Recommandation (hors périmètre audit) :** les .bbl P2–P5 ne sont pas encore suivis dans git
+(contrairement à P1 V4/V5/V6) — à force-tracker avec exceptions .gitignore pour l'auto-contenu
+des packages de soumission si souhaité.
