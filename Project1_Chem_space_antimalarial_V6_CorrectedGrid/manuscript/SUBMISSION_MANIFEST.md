@@ -1,16 +1,16 @@
 # Submission Manifest — P1 V6
 
 **Journal:** Journal of Chemical Information and Modeling (JCIM, ACS)
-**Pages:** main 18 p. / SM 5 p. / cover 1 p. (verified 10/08/2026)
-**Status:** SUBMISSION-READY — R1–R5 cleared, register INTERNAL_WORK_AUTHORIZED
-**Generated:** 2026-08-10 09:03 UTC
+**Pages:** main 19 p. / SM 5 p. / cover 1 p. (verified 10/08/2026)
+**Status:** SUBMISSION-READY — R1–R5 cleared, register INTERNAL_WORK_AUTHORIZED, ACS package assembled
+**Generated:** 2026-08-10 09:25 UTC
 
 ## File inventory (SHA-256)
 
 | File | Size (B) | SHA-256 |
 |---|---|---|
 | P1_V6_Integrated_Polypharmacology_RRS.tex | 30921 | `fd3c3ee67afefcac6cd8a7839dc0de6ba0baa4e265ff0ef58bfb4116fef3c58b` |
-| P1_V6_Integrated_Polypharmacology_RRS.pdf | 469916 | `e48012d043b6050514f19ff6ad252571c449037dee2b2da144eb4e31e005953d` |
+| P1_V6_Integrated_Polypharmacology_RRS.pdf | 464530 | `270b4472a409774638d8540e7652c1c9316ec5cf76c43511f380c2cdd387eb8b` |
 | P1_V6_Integrated_Polypharmacology_RRS_SM.tex | 7588 | `afa5bf7bee0c31b2f477799f8c9c86e085188c3ed0eedb84a129a00dca03c4b0` |
 | P1_V6_Integrated_Polypharmacology_RRS_SM.pdf | 254829 | `453ce938c20c42598ffc8c231b6964975e5b65d90328e829b94c61c75cb007b8` |
 | Cover_Letter_P1_V6.tex | 3223 | `1781492668af990f9edf802860d7d45e3a42d2af2609aa17cac77e3238c1d7b1` |
@@ -20,10 +20,13 @@
 
 | File | SHA-256 |
 |---|---|
-| p1_v6_toc_graphic.pdf | `e331a29a7c03c5b88488aff203297fc872e42f67f10a1fe77a401e6ea0c7544f` |
+| p1_v6_toc_graphic.pdf | `cde342e067073a68cf581301b7554e133674619ecc421e3fd8a6cc32db3973a4` |
+| p1_v6_toc_graphic_ACS.tiff | `cbba2ddb0288ca55cba9deeab7a72cb26208f41819b25b50ad26900b9ba26b9f` |
 
 ## Notes
 
+- TOC graphic ACS-compliant: 3.25x1.75 in, 300 dpi, RGB TIFF + vector PDF.
+- ACS submission package: submission_ACS_P1V6/ with README + Paragon Plus checklist.
 - TOC graphic present (p1_v6_toc_graphic.pdf).
 - Use of AI declaration added (main + SM).
 - Docking protocol validation subsubsection (redocking 5/5, MMV, DEKOIS).
