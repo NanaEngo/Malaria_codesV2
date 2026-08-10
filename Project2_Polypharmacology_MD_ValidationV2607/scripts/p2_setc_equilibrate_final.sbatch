@@ -13,18 +13,22 @@
 # =============================================================================
 # FINAL equilibration array for ALL 16 Set-C systems.
 #
-# ROOT CAUSE v1 (fixed): the equilibration script ran `gmx_mpi mdrun` WITHOUT
-#   an explicit -ntomp, so every array task grabbed ALL 48 cores of the node.
-#   Array 15054 launched 16 tasks x 48 threads = 768 threads -> OpenMP
-#   thread-allocation failure -> segfault.  Retry 15070 (%4) still used
-#   4 x 48 = 192 threads -> re-crash.  Fix: -ntomp 8, %4, --cpus-per-task=8.
+# ROOT CAUSE v3 (FINAL, 10/08 — see set_c_preparation_remediation_20260809.md):
+#   p2_setc_prepare_openff.py::add_ligand_to_topol inserted MOL0 as the FIRST
+#   [ molecules ] entry while merge_gro wrote protein-first/ligand-last
+#   coordinates -> grompp silently mis-assigned atom order -> genion scrambled
+#   coordinates -> collapsed aromatic rings (TYR34 CG-CE1 0.68 A, TYR238
+#   OH-CD2 1.0 A) and exploded side chains (LYS104 HE1-HE2 65 A) in complex.gro
+#   of all 16 systems -> water NaN explosion -> non-deterministic libgomp
+#   segfault in the Verlet pair-search.
+#   Fix: [ molecules ] order aligned with coordinates (protein first, MOL0
+#   second) + ions.gro regenerated from clean solvated.gro; 16/16 verified
+#   clean (0 collapsed rings).  Structures were re-prepared before this array.
 #
-# ROOT CAUSE v2 (fixed in p2_setc_equilibrate.py): the phase-1 EM used
-#   `-DPOSRES` + emstep=0.002, freezing the protein while massive initial
-#   clashes (docked ligand, mis-oriented polar H's) pushed water coordinates
-#   to NaN -> GROMACS Verlet pair-search segfault (deterministic step ~40-160,
-#   reproduced even alone with -ntomp 1).  Fix: unrestrained EM phase 1 with
-#   emstep=0.0005 (validated on K76A/WT/worst-case PP-02_WT, all rc=0).
+# Also retained from earlier fixes:
+#   v1: explicit -ntomp 8 (no whole-node grabbing under arrays);
+#   v2: unrestrained EM phase 1, emstep=0.0001 (POSRES froze the protein and
+#       amplified residual clashes into NaN explosions).
 #
 # 24 h wall time: EM+EM2 (13k steps) + NVT/NPT (2x50k steps) at 8 threads
 # needs ~8-14 h per system; 4 batches of 4 -> ~32-56 h total.
