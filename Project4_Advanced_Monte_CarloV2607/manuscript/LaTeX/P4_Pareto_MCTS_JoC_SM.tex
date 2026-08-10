@@ -34,8 +34,8 @@
 }
 
 \title{\textbf{Supplementary Information}\\[0.4em]
-\large Pareto-guided Monte Carlo tree search reveals multi-objective
-trade-offs in antimalarial generation}
+\large Pareto-guided Monte Carlo tree search for analysing multi-objective
+alternatives in antimalarial molecular design}
 \author{}
 \date{}
 
@@ -47,7 +47,7 @@ additional candidate-level results, molecular-diversity analysis, scalar
 benchmark details and algorithmic ablations that complement the main article.
 The two analyses described in the manuscript are kept separate throughout:
 the scalar benchmark uses the v12 public-activity reward, whereas the
-candidate-level Pareto analysis uses the historical pre-activity vector of
+candidate-level Pareto analysis uses the defined secondary pre-activity vector of
 MPO, SYBA, RRS-informed chemotype similarity and PNS-informed docking proxy.
 
 % ============================================================================
@@ -65,7 +65,7 @@ $T=\num{0.8}$. The policy combined fragment frequencies, scaffold similarity
 and reactivity compatibility.
 
 \paragraph{Pre-activity objective vector.}
-For the historical Pareto analysis, each candidate was represented by
+For the secondary Pareto analysis, each candidate was represented by
 \[
   \mathbf{f}(s)=\bigl(f_{\mathrm{MPO}}(s),f_{\mathrm{SYBA}}(s),
   f_{\mathrm{RRS}}(s),f_{\mathrm{PNS}}(s)\bigr).
@@ -83,13 +83,12 @@ normalised aggregate of the three available Tartarus docking columns
 quantities are computational proxy dimensions: they are not direct WT/mutant
 binding measurements and do not constitute a four-target biological assay.
 
-The original Pareto records contained a constant SYBA fallback. SYBA was
-therefore evaluated with the validated classifier before the displayed front
-was re-derived; MPO, SA, RRS and PNS were unchanged. This preserves the
-candidate discovery record while allowing accessibility to be displayed as a
-non-constant supplementary dimension. The resulting front should consequently
-be interpreted as a post-hoc re-derived front, not as evidence that informative
-SYBA values guided the search.
+The search-time Pareto records contained a constant SYBA field. SYBA was
+evaluated separately with the specified classifier for the displayed front;
+MPO, SA, RRS and PNS were unchanged. This preserves the candidate discovery
+record while allowing accessibility to be displayed as a non-constant secondary
+dimension. The resulting front should consequently be interpreted as a secondary
+objective analysis, not as evidence that informative SYBA values guided the search.
 
 \paragraph{Scalar benchmark.}
 The v12 benchmark used a separate scalar reward with weights
@@ -104,7 +103,7 @@ panel (\num{22447} molecules, including \num{19321} active entries).
 \section*{S2\hspace{0.6em}Pareto-front candidates and domain-proxy profiles}
 % ============================================================================
 
-The merged pre-activity front contained four non-dominated candidates from
+Using the separate secondary pre-activity objective set, the merged front contained four non-dominated candidates from
 \num{20} independent seeds. Their scores and seed-level values are shown
 in \Cref{tab:sm_pareto}. The hypervolume was \num{1.2366} under min--max
 normalisation and reference point $\mathbf{r}=\num{1.1}$. Because this value
@@ -114,7 +113,7 @@ specified protocol rather than as an absolute measure of chemical quality.
 \begin{table}[htbp]
   \centering
   \caption{Pre-activity Pareto-front candidates and their objective values.
-  SYBA was recomputed before the front was re-derived; the other displayed
+  SYBA was evaluated separately before the front was constructed; the other displayed
   values are unchanged from the candidate records.}
   \label{tab:sm_pareto}
   \small
@@ -158,10 +157,7 @@ polypharmacological binding or resistance resilience experimentally.
 % ============================================================================
 
 For each generation method, the best molecule from each of the \num{20}
-benchmark seeds was retained. ECFP4 Tanimoto dissimilarity and Bemis--Murcko
-scaffold statistics were calculated with RDKit. The three stochastic methods
-occupy distinct regions of chemical space, while greedy search is deterministic
-under the present fragment vocabulary and returns one repeated local optimum.
+benchmark seeds was retained.ECFP4 Tanimoto dissimilarity and Bemis--Murcko scaffold statistics were calculated with RDKit. The three stochastic methods show non-zero pairwise dissimilarity under the present fragment vocabulary, whereas greedy search returns one repeated local optimum. These statistics characterise the sampled candidate sets.
 
 \begin{figure}[htbp]
   \centering
@@ -222,24 +218,14 @@ time is the mean per seed.}
     Genetic algorithm & \num{0.6453} & \num{0.0124} & \num{0.6178} & \num{0.6715} & \num{2.0} \\
     \bottomrule
   \end{tabular}
-\end{table}
-
-Random search has the highest mean scalar reward, followed by MCTS, the
-genetic algorithm and greedy search. MCTS is therefore interpreted as an
-objective-space explorer rather than as a universally superior scalar
-optimiser. The difference between the scalar benchmark and the Pareto analysis
-is intentional: the former tests single-reward performance, while the latter
-retains candidate-level trade-offs.
+\end{table}Random search has the highest mean scalar reward, followed by MCTS, the genetic algorithm and greedy search. The scalar benchmark measures search efficiency; the Pareto analysis measures which candidate-level trade-offs remain available. These are complementary outcomes rather than a single ranking.
 
 % ============================================================================
 \section*{S5\hspace{0.6em}Algorithmic ablations}
 % ============================================================================
 
 A factorial ablation evaluated the chemistry-informed policy, Pareto-front
-maintenance, PUCT exploration, rollout temperature and fragment vocabulary.
-The experiment used five replicates per factorial cell and a pre-activity oracle
-configuration distinct from the v12 scalar benchmark; only within-ablation
-effects are therefore compared. The marginal factor means are summarised in
+maintenance, PUCT exploration, rollout temperature and fragment vocabulary.Each factorial cell used five replicates. Because this experiment uses a distinct reward configuration, its factor effects are interpreted within the ablation only. The marginal factor means are summarised in
 \Cref{tab:sm_component_ablation}. The largest observed effects were associated
 with the ScafVAE policy ($\Delta=+\num{0.148}$), Pareto-front maintenance
 ($\Delta=+\num{0.108}$) and the larger fragment vocabulary
@@ -273,7 +259,7 @@ A separate vocabulary comparison across \num{10} seeds per condition is
 shown in \Cref{tab:sm_vocabulary_ablation}. It found a strong overall effect
 (one-way ANOVA $F=\num{350.1}$, $p=\num{1.12e-26}$). The aromatic-only
 vocabulary performed below the full, medium and minimal vocabularies; the
-medium and minimal conditions differed modestly in the post-hoc comparison
+medium and minimal conditions differed modestly in the secondary comparison
 ($p_{\mathrm{adj}}=\num{0.0052}$), whereas the full and medium conditions did
 not differ significantly.
 
@@ -295,22 +281,10 @@ not differ significantly.
   \end{tabular}
 \end{table}
 
-The selection mechanism was also compared with a ParetoPUCT-style variant that
-restricted each node to non-dominated children before applying the PUCT score.
-At equal budget (\num{700} iterations and \num{5} seeds), the merged
-hypervolumes were \num{15.56} for scalar-proxy selection and \num{15.49} for
-Pareto-restricted selection. This comparison supports the interpretation that
-front maintenance and policy-guided exploration, rather than a particular
-vectorial selection rule, dominate the observed behaviour in this protocol.
+The selection mechanism was also compared with a ParetoPUCT-style variant that restricted each node to non-dominated children before applying the PUCT score. At equal budget (\num{700} iterations and \num{5} seeds), the merged hypervolumes were \num{15.56} for scalar-proxy selection and \num{15.49} for Pareto-restricted selection. Within this sensitivity experiment, the two selection rules produced similar merged hypervolumes; neither rule showed a measurable advantage at the tested budget.
 
 % ============================================================================
 \section*{S6\hspace{0.6em}Data and code availability}
-% ============================================================================
-
-The molecule sets, per-seed benchmark records, Pareto-front scores, diversity
-statistics and ablation summaries are available in the project repository.
-The accompanying analysis scripts regenerate the Pareto front, diversity
-statistics and benchmark summaries from these records. The repository README
-provides the file-level paths, software environment and execution instructions.
+% ============================================================================Molecule sets, benchmark records, Pareto scores, diversity statistics and ablation summaries are provided with the article's open computational materials. The accompanying scripts regenerate the reported analyses.
 
 \end{document}
