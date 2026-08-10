@@ -41,6 +41,14 @@ SYSTEM_ROOT = Path(
 GMX = os.environ.get("P2_GMX_BIN", "/home/nanaengo/miniforge3/envs/malaria_md/bin/gmx_mpi")
 TEMP_K = 310.15
 
+# Number of OpenMP threads per mdrun.  MUST be set explicitly: without -ntomp,
+# GROMACS detects all 48 cores of the node and every array task tries to use 48
+# threads -> 16 tasks x 48 = 768 threads -> OpenMP thread-allocation failure and
+# segfault in the Verlet pair-search (observed on array 15054, retry 15070).
+# Default 8 threads keeps 4 concurrent tasks within the 48-core node
+# (4 x 8 = 32 <= 48).  Override with P2_SETC_NTOMP if needed.
+NTOMP = int(os.environ.get("P2_SETC_NTOMP", "8"))
+
 
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -52,8 +60,11 @@ def sha256(path: Path) -> str:
 
 # GPU-less mdrun: the host A4000 crashes GROMACS GPU update/constraint routines
 # (rc=-6, UpdateConstrainGpu); CPU paths are deterministic and match the parent
-# study.  Always appended to mdrun calls.
-MDRUN_CPU = ["-nb", "cpu", "-pme", "cpu", "-bonded", "cpu", "-update", "cpu"]
+# study.  Always appended to mdrun calls.  -ntomp is set explicitly to prevent
+# the whole-node thread oversubscription that caused deterministic segfaults in
+# the Verlet pair-search under SLURM arrays (see NTOMP above).
+MDRUN_CPU = ["-nb", "cpu", "-pme", "cpu", "-bonded", "cpu", "-update", "cpu",
+             "-ntomp", str(NTOMP)]
 
 
 def run(cmd: list[str], cwd: Path, label: str) -> None:
@@ -69,10 +80,9 @@ def write_mdp(system_dir: Path, name: str, body: str) -> None:
     (system_dir / name).write_text(body, encoding="utf-8")
 
 
-def em_mdp(restrained: bool = False, nsteps: int = 5000, emtol: float = 1000.0,
+def em_mdp(nsteps: int = 5000, emtol: float = 1000.0,
            emstep: float = 0.01) -> str:
-    define = "define      = -DPOSRES\n" if restrained else ""
-    return f"""; EM — steepest descent\n{define}integrator  = steep
+    return f"""; EM — steepest descent (unrestrained)\nintegrator  = steep
 nsteps      = {nsteps}
 emtol       = {emtol}
 emstep      = {emstep}
@@ -216,10 +226,18 @@ def equilibrate(system_dir: Path, smoke: bool) -> dict:
     if missing:
         return {"system": system_dir.name, "status": "BLOCKED_MISSING_INPUTS", "missing": missing}
 
-    # EM phase 1: protein heavy atoms restrained (-DPOSRES, small step) so that
-    # the two mis-oriented polar H's (TYR-OH / ASN-NH2, ~0.8 A apart) and the
-    # ligand relax without blowing up; EM phase 2: unrestrained full relaxation.
-    write_mdp(system_dir, "em.mdp", em_mdp(restrained=True, nsteps=3000, emtol=500, emstep=0.002))
+    # EM phase 1: GENTLE unrestrained steepest descent (tiny emstep, no
+    # -DPOSRES).  Root-cause fix 2026-08-10: the original phase-1 used
+    # `-DPOSRES` + emstep=0.002, which froze the protein while the massive
+    # initial clashes (docked ligand + two mis-oriented polar H's, ~0.8 A
+    # apart; step-0 Bond ~1e8 kJ/mol, LJ ~3e8 kJ/mol) pushed water
+    # coordinates to NaN -> GROMACS 2025.4 Verlet pair-search segfault
+    # (arrays 15054/15070/15081, deterministic crash step ~40-160).
+    # Unrestrained EM resolves the clashes smoothly.  emstep=0.0005 converged
+    # for K76A/WT/worst-case PP-02_WT but K76T (hardest clash) still crashed
+    # at step 63; emstep=0.0001 converged ALL tested systems (K76T -> -3.87e6,
+    # 6211 steps, rc=0) — this is the universal, crash-free protocol.
+    write_mdp(system_dir, "em.mdp", em_mdp(nsteps=10000, emtol=1000, emstep=0.0001))
     write_mdp(system_dir, "em2.mdp", em_mdp(nsteps=10000, emtol=200, emstep=0.002))
     write_mdp(system_dir, "nvt.mdp", nvt_mdp(smoke))
     write_mdp(system_dir, "npt.mdp", npt_mdp(smoke))

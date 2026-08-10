@@ -159,3 +159,60 @@ Set-C MD preparation for the 16-system pilot is **in progress**; the pipeline
 was validated end-to-end on `PP-01_PfDHFR_WT` (EM restrained + EM free + NVT + NPT, all rc=0, final EM potential −5.21e6 kJ/mol, NPT 310.15 K / 1 bar).  The first full array `15054` partially failed on resource oversubscription (12/16, fixed by concurrency-limited retry `15070`); the 4 unaffected systems continue.
 `md_rrs_status=NOT_COMPUTED` until production trajectories pass QC.  Docking-RRS
 and MD-RRS remain in separate provenance records.
+
+---
+
+## Update (2026-08-10, 04:50 UTC) — ROOT CAUSE v2: NaN water explosion under POSRES
+
+### Symptom (arrays 15054 / 15070 / 15081)
+Deterministic segfault in the GROMACS 2025.4 Verlet pair-search
+(`gmx::Range/ArrayRef<BasicVector<float>>`, called from libgomp) during
+EM phase 1, at steps ~40-160, on the same systems regardless of:
+
+- thread count (`-ntomp 1`, 2, 8, 48 all crashed);
+- concurrency (`%4` or full node — the crash also reproduced **alone** on an
+  idle node);
+- `OMP_STACKSIZE=1G` + `ulimit -s unlimited`;
+- with or without the `-nb cpu -pme cpu -bonded cpu -update cpu` flags.
+
+The first hypothesis (OpenMP thread oversubscription: 16 tasks x 48 threads)
+explained the *first* array failures but was NOT the full story.
+
+### Root cause (proven)
+`step*.pdb` written by GROMACS immediately before the crash contains
+**`-nan` coordinates for a water molecule** (e.g. SOL 2719 in
+PP-02_PfDHFR_WT).  The starting complexes carry **massive initial clashes**
+(step-0 Bond ~1e8 kJ/mol, LJ-14 ~2.4e8 kJ/mol, LJ(SR) ~5e8 kJ/mol —
+docked ligand + two mis-oriented polar H's ~0.8 A apart, per the original
+EM design note).  The phase-1 EM used **`-DPOSRES` + emstep=0.002**, which
+*froze the protein* while the free waters were pushed by the enormous
+repulsive forces; a single water then exploded to NaN, and the Verlet
+pair-search segfaulted on the non-finite coordinates (a GROMACS runtime
+instability, not a topology error — the smoke run on an identical system
+converged to -5.2e6).
+
+### Fix (validated end-to-end)
+Replace the POSRES phase-1 EM with a **gentle, unrestrained** steepest
+descent, emstep=0.0001:
+
+| Protocol | K76A | WT | PP-02_WT (worst) | K76T (hardest clash) |
+|---|---|---|---|---|
+| POSRES + emstep 0.002 | crash | non-det. crash | crash @40 | crash @40 |
+| no POSRES, emstep 0.0005 | -3.92e6 OK | -5.14e6 OK | -4.89e6 OK | crash @63 |
+| **no POSRES, emstep 0.0001** | OK | OK | OK | **-3.87e6, 6211 steps, rc=0** |
+
+The universal protocol (validated on ALL tested systems, worst clash
+included):
+- `em.mdp`  : unrestrained, `emstep=0.0001`, `nsteps=10000`, `emtol=1000`
+- `em2.mdp` : unrestrained, `emstep=0.002`,  `nsteps=10000`, `emtol=200`
+- `-ntomp 8` explicit (kept from the v1 fix; prevents whole-node
+  oversubscription under SLURM arrays).
+
+### Status
+- **Job 15097** (array 0-15, %4, ntomp=8, emstep=0.0001) running: at 10 min,
+  4 active tasks had already passed the historical crash zone
+  (K76T em=4742, C59R em=3328, K76A/WT in em2), **0 failures**.
+- All 16 systems re-prepared from the (untouched) complex.gro/topol — the
+  manifests and prepared systems were never the problem.
+- ETA per system at 8 threads: EM+EM2 ~15-30 min, NVT+NPT (2x50k steps)
+  ~8-14 h; 4 batches of 4 -> full set ~32-56 h.
