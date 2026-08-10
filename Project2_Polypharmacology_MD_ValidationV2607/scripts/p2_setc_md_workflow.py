@@ -43,6 +43,10 @@ TARGET_MUTATIONS = {
 }
 PARENT_NAMES = {"201_DHFR", "438_ATP4", "164_ClpP", "214_CRT"}
 REQUIRED_INPUTS = ("complex.gro", "topol.top", "md.mdp", "system_manifest.json", "npt.gro", "npt.cpt")
+# GPU-less mdrun: the host A4000 crashes GROMACS GPU update/constraint routines
+# (rc=-6, UpdateConstrainGpu); always append the CPU-only flags (matches the
+# parent study and the equilibration script MDRUN_CPU).
+MDRUN_CPU = ["-nb", "cpu", "-pme", "cpu", "-bonded", "cpu", "-update", "cpu"]
 REQUIRED_FF_FIELDS = {
     "cohort_id", "system_name", "protein_force_field", "ligand_force_field",
     "water_model", "topology_sha256", "coordinates_sha256",
@@ -70,6 +74,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--execute", action="store_true", help="Run GROMACS after all systems pass validation.")
     parser.add_argument("--auto-approved", action="store_true", help="Non-interactive invocation only; never bypasses the execution authorization guard.")
     parser.add_argument("--gpu-id", default="auto")
+    parser.add_argument("--ntomp", type=int, default=8, help="OpenMP threads for mdrun (default 8; explicit to avoid whole-node grabbing under SLURM arrays).")
+    parser.add_argument("--array-index", type=int, default=-1, help="SLURM array task index (0-15): run only this one prepared system. -1 = sequential full run.")
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
     return parser.parse_args()
 
@@ -332,7 +338,6 @@ def prepare_replicate(row: dict, args: argparse.Namespace, run_records: list[dic
         if rep_dir.exists():
             raise RuntimeError(f"Refusing to reuse existing run directory: {rep_dir}")
         rep_dir.mkdir(parents=True)
-        rep_dir.mkdir(exist_ok=True)
         for filename in ("npt.gro", "npt.cpt", "topol.top"):
             shutil.copy2(system_dir / filename, rep_dir / filename)
         shutil.copy2(mdp, rep_dir / mdp.name)
@@ -350,7 +355,8 @@ def prepare_replicate(row: dict, args: argparse.Namespace, run_records: list[dic
         subprocess.run(command, cwd=rep_dir, check=True)
         if not (rep_dir / "production.tpr").is_file() or (rep_dir / "production.tpr").stat().st_size == 0:
             raise RuntimeError(f"grompp produced no production.tpr in {rep_dir}")
-        prepared.append((rep_dir, record, [gmx, "mdrun", "-deffnm", "production", "-seed", str(seed), "-v"]))
+        mdrun = [gmx, "mdrun", "-deffnm", "production", "-seed", str(seed), "-v", "-ntomp", str(args.ntomp), *MDRUN_CPU]
+        prepared.append((rep_dir, record, mdrun))
     return prepared
 
 
@@ -427,14 +433,37 @@ def main() -> int:
                 })
                 rows.append(status)
 
+    # Array mode: keep only the single row owned by this task (identified by
+    # set_c_id/target/mutation from the directory name).
+    array_system = None
+    if args.array_index >= 0:
+        system_dirs = sorted([p.name for p in SYSTEM_ROOT.iterdir() if p.is_dir()])
+        if args.array_index >= len(system_dirs):
+            raise SystemExit(
+                f"--array-index {args.array_index} out of range "
+                f"({len(system_dirs)} prepared system dirs)"
+            )
+        array_system = system_dirs[args.array_index]
+        rows = [r for r in rows if r["system_name"] == array_system]
+        if not rows:
+            raise SystemExit(f"Array task {args.array_index}: no row for system {array_system!r}")
+
     args.output_dir.mkdir(parents=True, exist_ok=True)
     status_path = args.output_dir / "set_c_md_status.csv"
+    manifest_path = args.output_dir / "set_c_md_execution_manifest.json"
+    # In array mode each task writes its own manifest/status; skip the shared
+    # file to avoid array-task write races.
+    if args.array_index >= 0:
+        manifest_path = args.output_dir / f"set_c_md_execution_manifest_array{args.array_index:02d}.json"
+        status_path = args.output_dir / f"set_c_md_status_array{args.array_index:02d}.csv"
     pd.DataFrame(rows).to_csv(status_path, index=False)
     blocked = [row for row in rows if row["md_status"] != "READY"]
     manifest = {
         "schema_version": 1,
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "cohort_id": "P2_SET_C_POLYPHARM_17",
+        "array_index": args.array_index,
+        "array_system": array_system,
         "selected_ids": selected["set_c_id"].tolist(),
         "targets": args.targets,
         "required_system_count": len(rows),
@@ -449,7 +478,6 @@ def main() -> int:
         "status_table": rel(status_path),
         "parent_md_excluded": sorted(PARENT_NAMES),
     }
-    manifest_path = args.output_dir / "set_c_md_execution_manifest.json"
     if blocked:
         manifest["status"] = "FAIL_CLOSED_MISSING_OR_INVALID_SET_C_INPUTS"
         manifest["blocking_examples"] = [row["blocking_reasons"] for row in blocked[:8]]
