@@ -1855,7 +1855,7 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 
 ### E.1 SOTA Topological Benchmark — **COMPLETED (July 25, 2026) — Full n=19,849**
 
-**Status:** ✅ **COMPLETED** — Production benchmark on n=19,849 molecules (subsampled from 19,849; ~3,795 active + ~1,205 inactive stratified), class-weighted RF, 5-fold stratified CV.
+**Status:** ✅ **COMPLETED (canonical, Aug 4, 2026)** — Full-library benchmark on n=19,849 molecules (15,063 active / 4,786 inactive), class-weighted RF, 5-fold stratified CV; SVM on stratified n=5,000 subsample (O(N²) kernel scaling).
 
 **Rationale:** Gap #3 in Appendix J identified the absence of a SOTA topological benchmark as a medium-severity deficiency. We benchmarked five TDA descriptor strategies against the ECFP4 classical baseline, each paired with Random Forest (RF) and Support Vector Machine (SVM) classifiers.
 
@@ -1863,35 +1863,35 @@ Old jobs 9255_1 and 9255_2 (unfixed `--hpc` script) were cancelled and resubmitt
 
 | Strategy | Classifier | AUC | Accuracy | F1 | Features |
 |----------|-----------|-----|----------|-----|----------|
-| **PersStats** | **RF** | **0.8731 ± 0.0089** | **0.7694** | **0.7715** | 22 |
-| TFP-Enriched | RF | 0.8381 ± 0.0091 | 0.7614 | 0.7614 | 32 |
-| PersImage | RF | 0.8370 ± 0.0094 | 0.7644 | 0.7640 | 25 |
-| TFP-12 | RF | 0.8303 ± 0.0097 | 0.7496 | 0.7505 | 12 |
+| **PersStats** | **RF** | **0.8731 ± 0.0067** | **0.8332** | **0.8906** | 22 |
+| TFP-12 | RF | 0.8668 ± 0.0065 | 0.8275 | 0.8858 | 12 |
+| TFP-Enriched | RF | 0.8666 ± 0.0052 | 0.8308 | 0.8887 | 32 |
+| PersImage | RF | 0.8596 ± 0.0053 | 0.8265 | 0.8856 | 25 |
+| BettiCurve | RF | 0.8110 ± 0.0043 | 0.7837 | 0.8557 | 20 |
 | PersStats | SVM | 0.8042 | 0.7398 | 0.7436 | 22 |
 | PersImage | SVM | 0.7912 | 0.7270 | 0.7312 | 25 |
 | TFP-Enriched | SVM | 0.7891 | 0.7208 | 0.7250 | 32 |
 | TFP-12 | SVM | 0.7857 | 0.7198 | 0.7220 | 12 |
-| BettiCurve | RF | 0.7717 | 0.6976 | 0.6946 | 20 |
 | BettiCurve | SVM | 0.7198 | 0.6646 | 0.6620 | 20 |
 
 **Key findings:**
-1. **PersStats + RF achieves AUC = 0.873** (full library n=19,849), approaching the ECFP4 baseline (AUC = **0.949** corrected classical, §3.4; the older 0.868 figure was pre-PHCO-correction) with only 22 topological features vs. 2048-bit ECFP4.
-2. **RF consistently outperforms SVM** across all strategies (mean ΔAUC = +0.024), suggesting non-linear tree-based methods better capture TDA feature interactions.
-3. **TFP-Enriched (32 features) ≈ PersImage (25 features) ≈ TFP-12 (12 features)** — adding persistence images/betti curves to TFP provides marginal improvement (ΔAUC < 0.01).
-4. **BettiCurve underperforms** (AUC 0.772), indicating that Betti number sequences alone lack the discriminative power of persistence statistics.
+1. **PersStats + RF achieves AUC = 0.873** (full library n=19,849), approaching the ECFP4 baseline (AUC = **0.948** corrected classical canonical, §3.4) with only 22 topological features vs. 2048-bit ECFP4.
+2. **RF consistently outperforms SVM** across all strategies (mean ΔAUC = +0.077), suggesting non-linear tree-based methods better capture TDA feature interactions (note: RF n=19,849 vs SVM n=5,000 — comparison confounded by sample size).
+3. **TFP-12 (0.867) ≈ TFP-Enriched (0.867) ≈ PersStats (0.873)** — the three persistence-statistic strategies are statistically competitive; PersImage (0.860) and BettiCurve (0.811) lag.
+4. **BettiCurve underperforms** (AUC 0.811), indicating that Betti number sequences alone lack the discriminative power of persistence statistics.
 5. **Class-weighted classifiers** (75.9%/24.1% imbalance) prevent majority-class bias; production dataset is 250× larger than the previous 77-molecule pilot.
 
-**Comparison with literature:** PersStats + RF AUC = 0.873 (full library) approaches ECFP4 (**0.949** corrected classical baseline, §3.4; older 0.868 figure was pre-PHCO-correction), the closest any topological descriptor reaches classical fingerprints on this library: TopologyNet (Pearson r = 0.82 on protein-ligand binding; Xu et al. 2018) and PACTNet (cellular complex features; 2025). Our result demonstrates that simple persistence statistics (birth, death, persistence, entropy) extracted from 1D molecular graphs achieve competitive discriminative performance without the computational overhead of neural network architectures.
+**Comparison with literature:** PersStats + RF AUC = 0.873 (full library) approaches ECFP4 (**0.948** corrected classical baseline, §3.4), the closest any topological descriptor reaches classical fingerprints on this library: TopologyNet (Pearson r = 0.82 on protein-ligand binding; Xu et al. 2018) and PACTNet (cellular complex features; 2025). Our result demonstrates that simple persistence statistics (birth, death, persistence, entropy) extracted from 1D molecular graphs achieve competitive discriminative performance without the computational overhead of neural network architectures.
 
-**Limitations:** (i) n=19,849 subsample from 19,849 due to SVM kernel matrix O(N²) scaling; (ii) eos80ch binary labels are computational predictions, not experimental IC₅₀; (iii) 75.9%/24.1% class imbalance mitigated by `class_weight='balanced'` in both RF and SVC, but residual bias may remain.
+**Limitations:** (i) SVM restricted to n=5,000 subsample due to kernel matrix O(N²) scaling — RF (n=19,849) is the primary comparison; (ii) eos80ch binary labels are computational predictions, not experimental IC₅₀; (iii) 75.9%/24.1% class imbalance mitigated by `class_weight='balanced'` in both RF and SVC, but residual bias may remain.
 
-**Output:** `results/p3_sota_benchmark.csv`, `results/p3_sota_benchmark_summary.txt`
+**Output (canonical):** `results/p3_sota_benchmark_full_summary.txt` (n=19,849, Aug 4, 2026) — used in manuscript SM (`SM-tab:sota`); `results/p3_sota_benchmark_summary.txt` (n=5,000 subsample, Jul 25) is superseded for headline claims.
 
 ---
 
 
 
-> ⚠️ **Note:** The summary file  reports results on a 5,000-molecule subsample (smoke test). The canonical results are in  (n=19,849, used in the manuscript). The summary.txt AUC values (e.g., PersStats+RF 0.8419, n=5,000 smoke test via Job 12061) differ from the full-library values (0.8731, n=19,849) due to the smaller sample size. The 5,000-molecule smoke test confirmed pipeline integrity and SVM kernel compatibility; canonical results are from the full 19,849-molecule benchmark.
+> ⚠️ **Note (reconciliation Aug 10, 2026):** `p3_sota_benchmark_summary.txt` reports the 5,000-molecule subsample run (Jul 25, 2026); the canonical full-library results are in `p3_sota_benchmark_full_summary.txt` (n=19,849, Aug 4, 2026) and are the values used in the manuscript SM (`SM-tab:sota`) and quoted in E.1 above. The older E.1 table had mixed the two runs (PersStats AUC from the full run with n=5,000 accuracy/F1); the table above now uses the canonical full run exclusively. The 5,000-molecule smoke test confirmed pipeline integrity and SVM kernel compatibility.
 
 ## Appendix F: ChEMBL Experimental Validation — NEW (July 25, 2026)
 

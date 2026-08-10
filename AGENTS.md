@@ -74,7 +74,7 @@ Tant que l’auteur n’a pas explicitement confirmé la soumission **et** deman
 
 | Composant | Statut | Résultat clé |
 |-----------|:------:|:-------------|
-| RRS — 17 composés | ✅ Complété (corrigé 07/08) | **RRS par-cible** (|ΔG_WT,t| ≥ 5.0, moyenné sur cibles liées uniquement) : classes A*:6, B:5, C:5, D:1 ; étendue 68.2–111.7 ; le "knockout C59R PP-11" = artefact de mélange de cibles (WT PfDHFR −0.70 = non-liant), PP-11 = A* sur PfCRT ; validation H1-RRS corrigée (ρ = 0.864, p < 0.0001, n = 14 ; étendu ρ = 0.312, n = 77) |
+| RRS — 17 composés | ✅ Complété (corrigé 07/08) | **RRS par-cible** (|ΔG_WT,t| ≥ 5.0, moyenné sur cibles liées uniquement) : classes A*:6, B:5, C:5, D:1 ; étendue 68.2–111.7 ; le "knockout C59R PP-11" = artefact de mélange de cibles (WT PfDHFR −0.70 = non-liant), PP-11 = A* sur PfCRT ; validation H1-RRS corrigée (ρ = 0.864, p < 0.0001, n = 14 ; étendu canonique ρ = 0.2399, n = 494) |
 | Cross-metric PNS/ACSI/RRS/dG_WT | ✅ Corrigé (07/08) | n=17, Bonferroni α=0.017 : PNS–RRS −0.559 (p=0.020, H1 ns) ; ACSI–RRS −0.132 (p=0.613, H2 non confirmée) ; RRS–dG_WT −0.433 ; PNS–dG_WT +0.389 (mécanique) ; figure7 régénérée |
 | PP-11 C59R anomaly | ✅ Investigé | Artefact de mélange de cibles (retiré comme "design rule") — pas un clash stérique |
 | PNS | ✅ Complété | PfCRT imputé (moyenne réseau 0.151, pas 1.0) ; table PNS régénérée (6.00–1.04) |
@@ -99,15 +99,15 @@ Tant que l’auteur n’a pas explicitement confirmé la soumission **et** deman
 | **Figure benchmark (bar)** | ✅ **Régénérée 01/08** | `results/figures/p3_auc_benchmark_bar.png` — inclut la ligne **Hybrid 0.8876 ± 0.0065** (canonique) et les valeurs QKS 6q C3-fix (jobs 12700/12702) |
 | **TNE embeddings (bond_dim=8)** | ✅ **Généré** | 19,836/19,849 valides (13 échecs), 192 dims, 6.1× compression réelle (mean 39.0 atomes) |
 | **TDA fingerprints (19,849 mol.)** | ✅ **Généré** | 19,849/19,849 valides, 0 échecs, 78 features |
-| **H₁-RRS expanded (n=77)** | ✅ **Complété** | ρ=0.312, p=0.0057 — cohorte étendue vs pilot n=14 |
+| **H₁-RRS expanded (canonical n=494)** | ✅ **Complété** | ρ=0.2399 (p=6.76×10⁻⁸) non ajusté, ρ_partial=0.0329 (p=0.467, ns) après contrôle MW/rings/fsp³/H₀ — effet size-confounded (n=77 ρ=0.312 = historique, superseded) |
 | **RRS expansion SLURM** | ✅ **Fonctionnel** | p3_rrs_expansion.sbatch, 4 tasks, 200 molécules |
 | **Benchmark classique n=5,000 (hybrid pre-phase)** | ✅ **Complété** | ECFP4=0.940, TFP=0.765 (−0.112 vs n=19,849), TNE=0.660 (−0.062) |
 | **Manuscrit** | ✅ **Réconcilié BMAD v50 + trim 26→18 p.** | Main + SM + cover letter alignés sur les benchmarks canoniques (hybrid 0.888, ablation QK Δ=−0.040, QKS 6q ≈ RBF) ; **trim 26→18 p.** (02/08) : main 18 p./7 230 mots, SM 18 p., cover letter 1 p. ; fusion tables benchmark/hybrid, `tab:qkernel`→SM S13 ; titre canonique : **« Topological and tensor-network representations resolve chemical paradoxes in African antimalarial natural products »** (`Paper3_Quantum_InspiredV2608.tex`) ; compile propre (0 erreur, 0 réf. non définie) |
 | **Acceptance assessment** | ✅ **Vers ~82% (cible ≥85%)** | Roadmap documentée; validation physique TNE/TDA complète; benchmark hybride canonique + QKS 6q terminés; trim + déduplication fait (audit v3.1 : ~79–82%, ChEMBL honnête négatif 02/08 −5%, Zenodo ⚠️ PENDING +3% → ~82% ; cible ≥85% via Zenodo + actions restantes) |
 | 🔴 Action 1: ChEMBL IC₅₀ validation | ✅ **Exécutée 02/08** | 10 leads top queryés — analogues ChEMBL tous **Inactive** (Tanimoto 0.229–0.379) ; résultat honnête négatif = nouveauté chimique, pas de validation positive (+0% acceptance, narration adaptée) |
-| 🔴 Action 2: Reframe H₁-RRS narrative | ✅ **Fait** | ρ=0.312 (n=77) présenté avec caveat confounding MW ; effet size-médié (ρ_partial ≈ 0) — intégré manuscrit + BMAD |
-| 🟡 Action 3: Benchmark SOTA topological | 🔄 **En cours (job 12745)** | +8% acceptance — `p3_sota_benchmark.sbatch` soumis 03/08 (prod, 16 CPU, 6h, RF full 19849 + SVM n=5000, 5 stratégies PH) |
-| 🟡 Action 4: Expand RRS to n≥80 | 🔄 **En cours (job 12746)** | +5% acceptance — `p3_rrs_expansion.sbatch` soumis 03/08 (array 0-9, 10×50=500 composés, Tartarus 3 cibles, RRS Spearman H₁) |
+| 🔴 Action 2: Reframe H₁-RRS narrative | ✅ **Fait** | Canonique n=494 : ρ=0.2399 non ajusté, ρ_partial≈0 après contrôle — intégré manuscrit + BMAD §3.9 (n=77 = historique) |
+| 🟢 Action 3: Benchmark SOTA topological | ✅ **Terminé (canonique 04/08)** | PersStats RF 0.8731 ≈ TFP-12 0.8668 (ns), PersImage 0.8596, BettiCurve 0.8110 (n=19,849) ; intégré manuscrit SM (`SM-tab:sota`) + BMAD E.1 réconcilié 10/08 |
+| 🟢 Action 4: Expand RRS to n≥80 | ✅ **Terminé (canonique n=494)** | ρ=0.2399 (p=6.76×10⁻⁸) non ajusté ; ρ_partial=0.0329 ns — size-confounding documenté, intégré BMAD §3.9 + manuscrit SM |
 | 🟡 Action 5: Zenodo deposit | ⏳ **À faire** | +5% acceptance (DOI réservé 10.5281/zenodo.19608875, upload manquant) |
 
 #### Fichiers de données P3 — État actuel
