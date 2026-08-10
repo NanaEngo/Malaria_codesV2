@@ -247,3 +247,29 @@ ETA model (rate at 2 threads not yet measurable — NVT just started):
 - 15120 ≈ +30 min → MD-RRS results for P2 manuscript integration.
 
 Expected final npt.gro: 14-15/16 (PP-01 N51I failed; PP-02 N51I index 10 at risk). QC ignores missing systems (documented).
+## Status checkpoint — 2026-08-10 ~10:56 UTC — CHAIN ROBUSTNESS AUDIT (fixes applied)
+
+**Question posed:** is the SLURM chain well-designed so jobs follow through to completion?
+
+**Audit result: the chain was NOT robust as designed — two critical flaws found and fixed:**
+
+| # | Flaw | Consequence | Fix (applied) |
+|---|------|-------------|---------------|
+| 1 | `--dependency=afterok:15118_*` on 15119 (and `afterok:15119_*` on 15120) | `afterok` on an array with `_*` requires **ALL** elements to exit 0. Task 15118_1 (PP-01_PfDHFR_N51I) is FAILED → dependency never satisfiable → **15119/15120 hang in PENDING forever (silent deadlock)** | `scontrol update JobId=15119 Dependency=afterany:15118_*` (rc=0) + `scontrol update JobId=15120 Dependency=afterany:15119_*` (rc=0) — **verified** in scontrol. Rationale: production tasks are independent (failed element does not block others) and QC tolerates missing systems |
+| 2 | `--time=08:00:00` on 15118 at NTOMP=2 | Measured NVT rate ~220 steps/min (K76T/WT, 1500 steps / 6.8 min) → NVT+NPT 2×50k ≈ 7.6 h + EM ≈ 0.75 h ≈ **8.4 h** for PfCRT systems → **timeout at 8 h** | sbatch updated to `12:00:00` (applies to wave-2 pending tasks 9-11, verified 12:00:00). **Running wave-1 tasks (15121-15129) COULD NOT be extended** — cluster blocks TimeLimit updates on running jobs (`Access/permission denied` ×8) |
+
+**Residual risk (wave-1, running):** ~3 PfCRT systems (PP-02 K76A/K76T/WT) may hit the 8 h limit at ~18:02 UTC, ~20-40 min before NPT completion.
+- **Rescue path (checkpoint)**: `cd <sys> && gmx mdrun -s npt.tpr -cpi npt.cpt -deffnm npt -ntomp 2` (mdrun writes npt.cpt every 15 min) → finishes the tail, no full rerun.
+- If not rescued: those systems are missing; production task fails for them only; **QC (15120) ignores missing systems (documented)**; MD-RRS computed on available systems.
+- Wave-2 (tasks 9-11, 12 h limit) is safe.
+
+**Revised ETA (measured 220 steps/min NVT, 42-45 min EM):**
+```
+15118 wave-1 (8 sys, 8h limit)  ≈ done ~18:02-18:20 UTC (PfCRT at-risk, rescue optional)
+15118 wave-2 (3 sys, 12h limit) ≈ done ~02:30-03:00 UTC Aug 11
+15119 production (%4 × NTOMP=8, ~9-10h/10ns) ≈ ~03:00 Aug 11 + ~38-40 h → Aug 12 ~17:00-19:00
+15120 QC + MD-RRS              ≈ Aug 12 ~17:30-19:30 UTC
+```
+Full completion ≈ **Aug 12 evening UTC** — achievable and now robust at the dependency level; the only residual uncertainty is the wave-1 PfCRT timeouts (rescusable or QC-tolerated).
+
+**Other chain checks (all good):** partition MaxTime 7 d > 48 h production limit; production NTOMP=8 export (4×8=32 threads < 48 cores, no contention); QC TimeLimit 02:00:00 ample; production `%4` throttle sane.

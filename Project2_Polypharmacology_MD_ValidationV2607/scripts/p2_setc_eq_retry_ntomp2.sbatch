@@ -4,7 +4,7 @@
 #SBATCH --array=0-11%8
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
-#SBATCH --time=08:00:00
+#SBATCH --time=12:00:00
 #SBATCH --mem=8G
 #SBATCH --output=logs/p2_setc_eq_2t_%A_%a.log
 #SBATCH --error=logs/p2_setc_eq_2t_%A_%a.err
@@ -21,8 +21,15 @@
 # × 2 threads = 16 threads max — safe on the 48-core node.
 #
 # After this array completes, resubmit:
-#   PROD=$(sbatch --parsable --dependency=afterok:THIS_JOB scripts/p2_setc_production.sbatch)
-#   sbatch --dependency=afterok:$PROD scripts/p2_setc_qc_and_md_rrs.sbatch
+#   PROD=$(sbatch --parsable --dependency=afterany:THIS_JOB scripts/p2_setc_production.sbatch)
+#   sbatch --dependency=afterany:$PROD scripts/p2_setc_qc_and_md_rrs.sbatch
+# NOTE (10/08): afterany REQUIRED (not afterok) - task 1 (PP-01_PfDHFR_N51I) is a
+# documented failure; afterok:JOB_* on an array never satisfies with any FAILED task
+# -> guaranteed deadlock of the production job. QC tolerates missing systems.
+# NOTE: TimeLimit 08:00:00 is tight at NTOMP=2 (measured NVT ~220 steps/min ->
+# ~8.4 h total for PfCRT systems). Running-job TimeLimit updates are BLOCKED by the
+# cluster (Access/permission denied); wave-1 PfCRT tasks may time out at 8 h.
+# Rescue path: gmx mdrun -s npt.tpr -cpi npt.cpt -deffnm npt -ntomp 2 (checkpoint).
 # =============================================================================
 
 source /home/nanaengo/miniforge3/etc/profile.d/conda.sh

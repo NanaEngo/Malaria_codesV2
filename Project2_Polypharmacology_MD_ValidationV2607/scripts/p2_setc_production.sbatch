@@ -20,7 +20,11 @@
 # are written (set_c_md_status_arrayNN.csv / ..._manifest_arrayNN.json).
 #
 # Launch AFTER the equilibration array completes:
-#   sbatch --dependency=afterok:<EQUIL_JOB_ID> scripts/p2_setc_production.sbatch
+#   sbatch --dependency=afterany:<EQUIL_JOB_ID> scripts/p2_setc_production.sbatch
+# NOTE (10/08): afterany REQUIRED (not afterok) - equilibration has documented FAILED
+# tasks (PP-01_PfDHFR_N51I); afterok:JOB_* never satisfies with any FAILED element
+# -> deadlock. Production tasks are independent: a failed element does not block
+# the other 15; QC (next job) tolerates missing systems.
 # The task itself re-checks npt.gro per system and exits cleanly if
 # equilibration is incomplete.
 #
