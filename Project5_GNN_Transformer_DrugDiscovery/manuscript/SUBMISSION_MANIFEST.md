@@ -3,7 +3,7 @@
 **Journal:** Journal of Cheminformatics (Springer)
 **Pages:** main 12 p. / cover 1 p. — no SM (none referenced) (verified 10/08/2026)
 **Status:** SUBMISSION-READY — external MoleculeNet validation + audit v2 + leak-audited benchmarks
-**Generated:** 2026-08-10 09:03 UTC
+**Generated:** 2026-08-10 09:30 UTC
 
 ## File inventory (SHA-256)
 
