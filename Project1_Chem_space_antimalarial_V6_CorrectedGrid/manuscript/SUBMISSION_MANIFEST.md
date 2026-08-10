@@ -3,7 +3,7 @@
 **Journal:** Journal of Chemical Information and Modeling (JCIM, ACS)
 **Pages:** main 19 p. / SM 5 p. / cover 1 p. (verified 10/08/2026)
 **Status:** SUBMISSION-READY — R1–R5 cleared, register INTERNAL_WORK_AUTHORIZED, ACS package assembled
-**Generated:** 2026-08-10 09:29 UTC
+**Generated:** 2026-08-10 09:30 UTC
 
 ## File inventory (SHA-256)
 
