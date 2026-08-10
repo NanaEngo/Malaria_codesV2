@@ -18,8 +18,10 @@ PROJECTS = [
         'files': [
             'P1_V6_Integrated_Polypharmacology_RRS.tex',
             'P1_V6_Integrated_Polypharmacology_RRS.pdf',
+            'P1_V6_Integrated_Polypharmacology_RRS.aux',
             'P1_V6_Integrated_Polypharmacology_RRS_SM.tex',
             'P1_V6_Integrated_Polypharmacology_RRS_SM.pdf',
+            'P1_V6_Integrated_Polypharmacology_RRS_SM.aux',
             'Cover_Letter_P1_V6.tex',
             'Cover_Letter_P1_V6.pdf',
         ],
@@ -43,8 +45,10 @@ PROJECTS = [
         'files': [
             'Polypharmacology_MD_Validation_V2607.tex',
             'Polypharmacology_MD_Validation_V2607.pdf',
+            'Polypharmacology_MD_Validation_V2607.aux',
             'Polypharmacology_MD_Validation_SM_V2607.tex',
             'Polypharmacology_MD_Validation_SM_V2607.pdf',
+            'Polypharmacology_MD_Validation_SM_V2607.aux',
             'Cover_Letter.tex',
             'Cover_Letter.pdf',
             'Table_S0_Docking_Validation.tex',
@@ -70,8 +74,10 @@ PROJECTS = [
         'files': [
             'Paper3_Quantum_InspiredV2608.tex',
             'Paper3_Quantum_InspiredV2608.pdf',
+            'Paper3_Quantum_InspiredV2608.aux',
             'Paper3_Quantum_Inspired_SM_V2608.tex',
             'Paper3_Quantum_Inspired_SM_V2608.pdf',
+            'Paper3_Quantum_Inspired_SM_V2608.aux',
             'Cover_Letter_P3.tex',
             'Cover_Letter_P3.pdf',
             'Bibliography_Paper3.bib',
@@ -95,8 +101,10 @@ PROJECTS = [
         'files': [
             'P4_Pareto_MCTS_JoC_refined.tex',
             'P4_Pareto_MCTS_JoC_refined.pdf',
+            'P4_Pareto_MCTS_JoC_refined.aux',
             'P4_Pareto_MCTS_JoC_SM.tex',
             'P4_Pareto_MCTS_JoC_SM.pdf',
+            'P4_Pareto_MCTS_JoC_SM.aux',
             'Cover_Letter_P4_JoC.tex',
             'Cover_Letter_P4_JoC.pdf',
             'P4_Bibliography.bib',

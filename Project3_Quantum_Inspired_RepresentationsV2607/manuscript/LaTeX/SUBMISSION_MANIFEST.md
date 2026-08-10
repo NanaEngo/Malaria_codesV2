@@ -3,16 +3,18 @@
 **Journal:** Journal of Cheminformatics (Springer)
 **Pages:** main 12 p. / SM 17 p. / cover 1 p. (verified 10/08/2026)
 **Status:** SUBMISSION-READY — SOTA reconciled, external validation integrated, audit COMPLETE_EXPLORATORY_NOT_CONFIRMATORY
-**Generated:** 2026-08-10 09:03 UTC
+**Generated:** 2026-08-10 09:29 UTC
 
 ## File inventory (SHA-256)
 
 | File | Size (B) | SHA-256 |
 |---|---|---|
-| Paper3_Quantum_InspiredV2608.tex | 39306 | `61fec200b8cc0a2ca8001fb028248b258a45d24d70da8d03af6da980ef8807a3` |
-| Paper3_Quantum_InspiredV2608.pdf | 543691 | `0e18ac38e5b8c4acf93768d4a7a4809e94cd20f62bfc3174fe4e90277665b5d8` |
+| Paper3_Quantum_InspiredV2608.tex | 39177 | `08e186a862152bf5d72ae24b8abd4bf29763ea4318f75e2f02140c3369eee78f` |
+| Paper3_Quantum_InspiredV2608.pdf | 543691 | `d46eb5b654cf2d7e47c9a8592a7958933544eb92f6a58ec0e641001b2b63985e` |
+| Paper3_Quantum_InspiredV2608.aux | 9913 | `4ce5510405a70ac58d7e1d88078b96a8b9ea13157f347ab27b6b68d94be7dd22` |
 | Paper3_Quantum_Inspired_SM_V2608.tex | 56542 | `77f0ecb7afee1e168776d7c352e89b284bc19667e8c3c875a16cc57c6f03a657` |
-| Paper3_Quantum_Inspired_SM_V2608.pdf | 2566579 | `d0eb29ccccf85241a05a868c89b10e5a7b0b7d0c1dc970646dbc9038eb6ab54c` |
+| Paper3_Quantum_Inspired_SM_V2608.pdf | 2566579 | `85890f80a95f99ce5e88cf5884f3151a678da2e5f930d77f2824e2e915d0a5b1` |
+| Paper3_Quantum_Inspired_SM_V2608.aux | 35225 | `d25baca797cdc9e3d19d7398631276533c8cba5f275225bcd98d0e813cc97857` |
 | Cover_Letter_P3.tex | 3755 | `eb7375c7e4d3b510f12a51d4d1218c03654b64ddcab4186a23e47728f2f6b686` |
 | Cover_Letter_P3.pdf | 97491 | `3a28266717b1e158d05603a7bd4fdf0321262b065a8b3c43031f96a5f3f04834` |
 | Bibliography_Paper3.bib | 27268 | `af845fa75f8166553159fe1facc1596d1d0970b6ae4f2138c453173731f7bc19` |

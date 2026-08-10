@@ -14,6 +14,7 @@
 | 2 | `P1_V6_main.tex` + `.bbl` + `.bib` | Source LaTeX du main (facultatif mais recommandé par ACS) |
 | 3 | `P1_V6_SM.pdf` | **Supporting Information** (nom ACS : `Supporting_Information.pdf`) |
 | 4 | `P1_V6_SM.tex` + `.bbl` | Source LaTeX du SM |
+| 4b | `P1_V6_main.aux` + `P1_V6_SM.aux` | **⚠️ REQUIS pour la recompilation** — le main et le SM se référencent croisément via `\usepackage{xr}` + `\externaldocument` (`\cref{SM-...}` / `\cref{M-...}`). Sans ces `.aux`, la recompilation produit des références non résolues. |
 | 5 | `Cover_Letter_P1_V6.pdf` (+ .tex) | **Cover letter** — obligatoire (1 p.) |
 | 6 | `p1_v6_toc_graphic_ACS.tiff` | **TOC graphic (obligatoire)** — 3.25×1.75 in, 300 dpi, RGB |
 | 7 | `p1_v6_toc_graphic.pdf` | Version vectorielle du TOC (pour recompilation) |
@@ -78,11 +79,14 @@
 
 ```bash
 cd Project1_Chem_space_antimalarial_V6_CorrectedGrid
-# 1. Recompiler le main + SM (pdflatex x2) puis recopier les PDFs :
+# 1. Recompiler le main + SM (pdflatex x2 : SM d'abord, puis main — ordre requis pour xr)
+#    puis recopier les PDFs ET les .aux (nécessaires aux références croisées xr) :
 cp manuscript/P1_V6_Integrated_Polypharmacology_RRS.pdf   submission_ACS_P1V6/P1_V6_main.pdf
 cp manuscript/P1_V6_Integrated_Polypharmacology_RRS_SM.pdf submission_ACS_P1V6/Supporting_Information.pdf
 cp manuscript/Cover_Letter_P1_V6.pdf                      submission_ACS_P1V6/Cover_Letter_P1_V6.pdf
 cp manuscript/P1_V6_Integrated_Polypharmacology_RRS.bbl   submission_ACS_P1V6/P1_V6_main.bbl
+cp manuscript/P1_V6_Integrated_Polypharmacology_RRS.aux   submission_ACS_P1V6/P1_V6_main.aux
+cp manuscript/P1_V6_Integrated_Polypharmacology_RRS_SM.aux submission_ACS_P1V6/P1_V6_SM.aux
 # 2. Régénérer le TOC (script reproductible : PDF vector + TIFF RGB 300 dpi + TIFF 1200 dpi) :
 /home/nanaengo/miniforge3/envs/malaria_md/bin/python scripts/v6_generate_acs_toc.py
 cp manuscript/Graphics/p1_v6_toc_graphic*.pdf manuscript/Graphics/p1_v6_toc_graphic_ACS*.tiff submission_ACS_P1V6/

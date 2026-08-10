@@ -3,7 +3,7 @@
 **Journal:** Journal of Chemical Information and Modeling (JCIM, ACS)
 **Pages:** main 25 p. / SM 4 p. / cover 1 p. (verified 10/08/2026)
 **Status:** SUBMISSION-READY (main) — MD-RRS optional strengthening in progress
-**Generated:** 2026-08-10 09:03 UTC
+**Generated:** 2026-08-10 09:29 UTC
 
 ## File inventory (SHA-256)
 
@@ -11,8 +11,10 @@
 |---|---|---|
 | Polypharmacology_MD_Validation_V2607.tex | 92460 | `98d9b057a254d22c1c17b2ee641fcd995cee962f4fa85ede58a0ddb47ad51287` |
 | Polypharmacology_MD_Validation_V2607.pdf | 1449149 | `98ba59472ff44f41935c7c3c0aade60c70fb4ef979c5f97b942c9a7ad2c73f86` |
+| Polypharmacology_MD_Validation_V2607.aux | 26753 | `9fbfd7ef673b73a9bad6f23a54b12b7a367ff3b5d58dee6cdabe2c3154b46ca3` |
 | Polypharmacology_MD_Validation_SM_V2607.tex | 5928 | `6c2a9a51a04e351ab66478dbd0d89e388d847ea7597ea25ac9fbcd79e82a5795` |
 | Polypharmacology_MD_Validation_SM_V2607.pdf | 339728 | `e9731aac358250f393d9e90de6085618fb79b7399117fde626189cd2562d14c1` |
+| Polypharmacology_MD_Validation_SM_V2607.aux | 7220 | `c2c5be6a0bf473a551c4eb43f49321532c9fe5714ebe568eb4e2f86280d98a2b` |
 | Cover_Letter.tex | 2850 | `cd4663eb7ed628017d3f509417ef630d8b62a8260c513f1252cb4c7b0ff9b159` |
 | Cover_Letter.pdf | 65622 | `f80ba0f1e64c1b63caa9dcb8d174c441cbfb542a3b73b52d71f85154fd4db806` |
 | Table_S0_Docking_Validation.tex | 2495 | `269777e63e7d0887175abae6971b49d14beb41e26c3de4abb32a623d9f6a8be8` |
