@@ -1,9 +1,11 @@
 # P5 Data Analysis Report — GNN/Transformer Drug Discovery
 
-**Generated:** August 1, 2026 — **Split from BMAD** August 1, 2026
+**Generated:** August 1, 2026 — **Split from BMAD** August 1, 2026 — **Refreshed** August 10, 2026 (cohérence manuscrit + validation externe confirmée)
 **Canonical:** ✅ This report is the **single source of truth for all P5 data analysis**. It follows the same split pattern as `P4_DATA_ANALYSIS_REPORT.md` (v47, August 1, 2026). **All future P5 data-analysis decisions are documented HERE, not in BMAD** (which now covers P1–P3 only).
 **Environment:** HPC `malaria_md` (rdkit 2025.03.6, torch 2.13.0+cu130 + PyG 2.8.0, deepchem 2.8.0, transformers 5.14.1, scikit-learn 1.9.0) — P5 stack **verrouillé au 01/08/2026**, voir §7
 **Coverage:** P5 only — GNN/Transformer benchmark (v1+), multi-modal fusion (TDA/TNE), molecular generation, validation vs P3 baselines
+
+**Manuscript coherence refresh — 10 August 2026:** `P5_manuscript_V2608` re-checked against this report — canonical v4 row (external MoleculeNet malaria n=22,267: scaffold ECFP4-RF 0.9190 > GIN 0.8843, Δ=+0.0346, p<0.0001; random 0.9547 vs 0.9237), the paired-t (df=4) + BH-FDR statistics, and audit v2 (§10 of `P5_ADVERSARIAL_AUDIT_MITIGATION.md`) are all consistent with the manuscript claims. No value changed.
 
 **Operational HPC refresh — 08 August 2026, 20:20 UTC:** job `12889` (`p5_cb_metrics`) was **cancelled deliberately by the author** after the scaffold step completed and before the redundant random replication was finished. Final scheduler state was `CANCELLED`, exit code `0:15` (voluntary cancellation), elapsed `05:59:35`; no other job was affected. The scaffold output is preserved and structurally complete: `results/p5_chemberta_scaffold_results_metrics.csv` (25 fold×seed rows; 5 folds × 5 seeds) and `results/p5_chemberta_scaffold_ckpt_metrics.json`. The independent `_metrics` scaffold replication gives `AUC = 0.7908 ± 0.0298` in the log (`0.790803 ± 0.030455` when recomputed over all 25 rows); it is retained as a separate replication and does not replace the canonical `0.7867 ± 0.0338` result. The random `_metrics` step was intentionally abandoned because the canonical random result is already complete (job 12815: `0.9121 ± 0.0047`). No traceback, missing fold, NaN, duplicate, or CUDA failure was found in the completed scaffold step. Job `12907` (P5 GNN metrics) was pending resources at the preceding snapshot. This event does not alter the frozen manuscript claims.
 
