@@ -208,4 +208,20 @@ print('Agreement rate:', merged['MD_vs_dock'].mean())
 
 3. Alternative: create a new sbatch with `--cpus-per-task=4` and environment variable `export P2_SETC_NTOMP=2` in the script.
 
-**Impact on production + QC chain:** Until equilibration completes for all 16 systems, the MD-RRS calculation cannot run (fail-closed on 136 rows). Only the 3 completed systems can be individually QC'd for intermediate analysis.
+**Impact on production + QC chain:** Until equilibration completes for all 16 systems, the MD-RRS calculation cannot run (fail-closed on 136 rows). Only the 3 completed systems can be individually QC'd for intermediate analysis.---
+
+## Status checkpoint — 2026-08-10 ~10:40 UTC (chain 15118 → 15119 → 15120)
+
+Measured live state (squeue + per-system log mtimes):
+
+| Job | Role | State | Note |
+|---|---|---|---|
+| **15118** eq retry (12 sys, `P2_SETC_NTOMP=2`, array 0-11%8) | Equilibration | 8 RUNNING, 3 PENDING, 1 FAILED | All 8 running tasks in **EM phase** (~27 min elapsed; em.log fresh 10:26-10:37). 4 preserved systems (PP-01 K76A/K76T/WT/C59R) already have npt.gro and are skipped. **15118_1 = PP-01_PfDHFR_N51I FAILED again** (libgromacs crash; the `-ntomp 1` workaround did not survive; N51I stays docking-RRS only, QC skips missing systems). |
+| **15119** prod (16 × 10 ns, array 0-15%4) | Production | PENDING (dep 15118) | sbatch verified: `P2_SETC_NTOMP=8` exported **inside script** (4 tasks × 8 threads = 32 threads < 48 cores → no 15106-style contention); `--time=48:00:00` < partition MaxTime (7 days). Header ETA: ~9-10 h per 10 ns @ 8 threads, %4 → **~40 h** for the array. **No change needed.** |
+| **15120** QC + MD-RRS | Post-prod | PENDING (dep 15119) | ~10-30 min after 15119. |
+
+**ETAs (UTC):** 15118 complete ≈ **12:00-12:30** (first wave 8 tasks finish ~11:30, second wave 3 tasks ~12:30) → 15119 ≈ 12:30 + **~40 h** → 15119 complete ≈ **2026-08-12 ~04:30** → 15120 (QC+MD-RRS) ≈ **2026-08-12 ~05:00** → results feed the P2 manuscript integration plan.
+
+**npt.gro count:** 4/16 (the 4 preserved PP-01 systems); the other 12 regenerate as 15118 waves complete. N51I ×2 (PP-01, PP-02) are expected to fail or be skipped.
+
+**Timing model (measured):** EM 2×10k steps ~35-40 min @ 2 threads; NVT+NPT 2×50k steps ~80-100 min @ 2 threads → ~2 h per system. 2 waves × 8/3 tasks.
