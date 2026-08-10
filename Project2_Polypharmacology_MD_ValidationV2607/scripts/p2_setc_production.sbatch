@@ -81,7 +81,7 @@ python scripts/p2_setc_md_workflow.py \
   --n-candidates 2 \
   --target-ns 10 \
   --replicates 1 \
-  --ntomp 8 \
+  --ntomp "${P2_SETC_NTOMP:-8}" \
   --array-index "$SLURM_ARRAY_TASK_ID" \
   --auto-approved \
   --execute
