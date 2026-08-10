@@ -1,0 +1,136 @@
+\providecommand{\latin}[1]{#1}
+\makeatletter
+\providecommand{\doi}
+  {\begingroup\let\do\@makeother\dospecials
+  \catcode`\{=1 \catcode`\}=2 \doi@aux}
+\providecommand{\doi@aux}[1]{\endgroup\texttt{#1}}
+\makeatother
+\providecommand*\mcitethebibliography{\thebibliography}
+\csname @ifundefined\endcsname{endmcitethebibliography}  {\let\endmcitethebibliography\endthebibliography}{}
+\begin{mcitethebibliography}{19}
+\providecommand*\natexlab[1]{#1}
+\providecommand*\mciteSetBstSublistMode[1]{}
+\providecommand*\mciteSetBstMaxWidthForm[2]{}
+\providecommand*\mciteBstWouldAddEndPuncttrue
+  {\def\EndOfBibitem{\unskip.}}
+\providecommand*\mciteBstWouldAddEndPunctfalse
+  {\let\EndOfBibitem\relax}
+\providecommand*\mciteSetBstMidEndSepPunct[3]{}
+\providecommand*\mciteSetBstSublistLabelBeginEnd[3]{}
+\providecommand*\EndOfBibitem{}
+\mciteSetBstSublistMode{f}
+\mciteSetBstMaxWidthForm{subitem}{(\alph{mcitesubitemcount})}
+\mciteSetBstSublistLabelBeginEnd
+  {\mcitemaxwidthsubitemform\space}
+  {\relax}
+  {\relax}
+
+\bibitem[Hughes \latin{et~al.}(2008)Hughes, Blagg, Price, Bailey, DeCrescenzo, Devraj, Ellsworth, Fobian, Gibbs, Gilles, Greene, Huang, Krieger-Burke, Loesel, Wager, Whiteley, and Zhang]{Hughes2008}
+Hughes,~J.~D.; Blagg,~J.; Price,~D.~A.; Bailey,~S.; DeCrescenzo,~G.~A.; Devraj,~R.~V.; Ellsworth,~E.; Fobian,~Y.~M.; Gibbs,~M.~E.; Gilles,~R.~W.; Greene,~N.; Huang,~E.; Krieger-Burke,~T.; Loesel,~J.; Wager,~T.; Whiteley,~L.; Zhang,~Y. Physiochemical drug properties associated with in vivo toxicological outcomes. \emph{Bioorganic \& Medicinal Chemistry Letters} \textbf{2008}, \emph{18}, 4872--4875\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Gleeson(2008)]{Gleeson2008}
+Gleeson,~M.~P. Generation of a Set of Simple, Interpretable ADMET Rules of Thumb. \emph{Journal of Medicinal Chemistry} \textbf{2008}, \emph{51}, 817--834\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Corso \latin{et~al.}(2023)Corso, Stärk, Jing, Barzilay, and Jaakkola]{Corso2023}
+Corso,~G.; Stärk,~H.; Jing,~B.; Barzilay,~R.; Jaakkola,~T. DiffDock: Diffusion Steps, Twists, and Turns for Molecular Docking. International Conference on Learning Representations (ICLR). 2023\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Lipinski(2004)]{Lipinski2004}
+Lipinski,~C.~A. Lead- and drug-like compounds: the rule-of-five revolution. \emph{Drug Discovery Today: Technologies} \textbf{2004}, \emph{1}, 337--341\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Swanson \latin{et~al.}(2024)Swanson, Walther, Leitz, Mukherjee, Wu, Shivnaraine, and Zou]{Swanson2024}
+Swanson,~K.; Walther,~P.; Leitz,~J.; Mukherjee,~S.; Wu,~J.~C.; Shivnaraine,~R.~V.; Zou,~J. ADMET-AI: A machine learning ADMET platform for evaluation of large-scale chemical libraries. \emph{Bioinformatics} \textbf{2024}, \emph{40}\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Landrum \latin{et~al.}(2025)Landrum, Tosco, Kelley, Rodriguez, Cosgrove, Vianello, sriniker, Gedeck, Jones, Schneider, Kawashima, Nealschneider, Dalke, Swain, Cole, Turk, Savelev, tadhurst cdd, Vaucher, Wójcikowski, Take, Scalfani, Walker, Ujihara, Probst, Lehtivarjo, Faara, godin, Pahl, and Monat]{GregLandrum2025}
+Landrum,~G.; Tosco,~P.; Kelley,~B.; Rodriguez,~R.; Cosgrove,~D.; Vianello,~R.; sriniker; Gedeck,~P.; Jones,~G.; Schneider,~N.; Kawashima,~E.; Nealschneider,~D.; Dalke,~A.; Swain,~M.; Cole,~B.; Turk,~S.; Savelev,~A.; tadhurst cdd; Vaucher,~A.; Wójcikowski,~M.; Take,~I.; Scalfani,~V.~F.; Walker,~R.; Ujihara,~K.; Probst,~D.; Lehtivarjo,~J.; Faara,~H.; godin,~g.; Pahl,~A.; Monat,~J. {RDKit}: Open-source cheminformatics software /rdkit: 2024\_09\_6 (Q3 2024) Release. 2025; \url{http://www.rdkit.org}\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Rogers and Hahn(2010)Rogers, and Hahn]{Rogers2010}
+Rogers,~D.; Hahn,~M. Extended-Connectivity Fingerprints. \emph{Journal of Chemical Information and Modeling} \textbf{2010}, \emph{50}, 742--754, PMID: 20426451\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[DPTech(2026)]{Li2026LigandExplorer}
+DPTech {LigandExplorer} v2.1: {G}raph {N}eural {N}etwork-{B}ased {L}igand {C}lassification and {B}iological {R}elevance {A}ssessment. GitHub repository, 2026; \url{https://github.com/dptech-corp/ligandexplorer}\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Dong \latin{et~al.}(2025)Dong, You, and Chen]{tiejundong2023scafvae}
+Dong,~T.; You,~L.; Chen,~C. Y.-C. Multi-objective drug design with a scaffold-aware variational autoencoder. \emph{Chemical Science} \textbf{2025}, \emph{16}, 13352--13367\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Brown \latin{et~al.}(2019)Brown, Fiscato, Segler, and Vaucher]{Brown2019}
+Brown,~N.; Fiscato,~M.; Segler,~M. H.~S.; Vaucher,~A.~C. {GuacaMol}: benchmarking models for de novo molecular design. \emph{Journal of Chemical Information and Modeling} \textbf{2019}, \emph{59}, 1096--1108\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Akiba \latin{et~al.}(2019)Akiba, Sano, Yanase, Ohta, and Koyama]{Akiba2019}
+Akiba,~T.; Sano,~S.; Yanase,~T.; Ohta,~T.; Koyama,~M. Optuna: A Next-generation Hyperparameter Optimization Framework. Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining. 2019; pp 2623--2631\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Eberhardt \latin{et~al.}(2021)Eberhardt, Santos-Martins, Tillack, and Forli]{Eberhardt2021}
+Eberhardt,~J.; Santos-Martins,~D.; Tillack,~A.~F.; Forli,~S. AutoDock Vina 1.2.0: New Docking Methods, Expanded Force Field, and Python Bindings. \emph{Journal of Chemical Information and Modeling} \textbf{2021}, \emph{61}, 3891--3898\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Bickerton \latin{et~al.}(2012)Bickerton, Paolini, Besnard, Muresan, and Hopkins]{Bickerton2012}
+Bickerton,~G.~R.; Paolini,~G.~V.; Besnard,~J.; Muresan,~S.; Hopkins,~A.~L. Quantifying the chemical beauty of drugs. \emph{Nature Chemistry} \textbf{2012}, \emph{4}, 90--98\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Derringer and Suich(1980)Derringer, and Suich]{Derringer1980}
+Derringer,~G.; Suich,~R. Simultaneous optimization of several response variables. \emph{Journal of Quality Technology} \textbf{1980}, \emph{12}, 214--219\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Harrington(1965)]{Harrington1965}
+Harrington,~E.~C. The desirability function. \emph{Industrial Quality Control} \textbf{1965}, \emph{21}, 494--498\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Lipinski \latin{et~al.}(1997)Lipinski, Lombardo, Dominy, and Feeney]{Lipinski1997}
+Lipinski,~C.~A.; Lombardo,~F.; Dominy,~B.~W.; Feeney,~P.~J. Experimental and computational approaches to estimate solubility and permeability in drug discovery and development settings. \emph{Advanced Drug Delivery Reviews} \textbf{1997}, \emph{23}, 3--25\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Lipinski \latin{et~al.}(2001)Lipinski, Lombardo, Dominy, and Feeney]{Lipinski2001}
+Lipinski,~C.~A.; Lombardo,~F.; Dominy,~B.~W.; Feeney,~P.~J. Experimental and computational approaches to estimate solubility and permeability in drug discovery and development settings. \emph{Advanced Drug Delivery Reviews} \textbf{2001}, \emph{46}, 3--26\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Temgoua \latin{et~al.}(2026)Temgoua, Njafa, Samafou, Mbacham, and Engo]{Temgoua2026}
+Temgoua,~M. V.~S.; Njafa,~J.-P.~T.; Samafou,~P.; Mbacham,~W.~F.; Engo,~S. G.~N. Computational Discovery of Antimalarial Candidates from African Natural Product Chemical Space. \emph{ChemRxiv} \textbf{2026}, \relax
+\mciteBstWouldAddEndPunctfalse
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\end{mcitethebibliography}

@@ -1,0 +1,52 @@
+\providecommand{\latin}[1]{#1}
+\makeatletter
+\providecommand{\doi}
+  {\begingroup\let\do\@makeother\dospecials
+  \catcode`\{=1 \catcode`\}=2 \doi@aux}
+\providecommand{\doi@aux}[1]{\endgroup\texttt{#1}}
+\makeatother
+\providecommand*\mcitethebibliography{\thebibliography}
+\csname @ifundefined\endcsname{endmcitethebibliography}  {\let\endmcitethebibliography\endthebibliography}{}
+\begin{mcitethebibliography}{5}
+\providecommand*\natexlab[1]{#1}
+\providecommand*\mciteSetBstSublistMode[1]{}
+\providecommand*\mciteSetBstMaxWidthForm[2]{}
+\providecommand*\mciteBstWouldAddEndPuncttrue
+  {\def\EndOfBibitem{\unskip.}}
+\providecommand*\mciteBstWouldAddEndPunctfalse
+  {\let\EndOfBibitem\relax}
+\providecommand*\mciteSetBstMidEndSepPunct[3]{}
+\providecommand*\mciteSetBstSublistLabelBeginEnd[3]{}
+\providecommand*\EndOfBibitem{}
+\mciteSetBstSublistMode{f}
+\mciteSetBstMaxWidthForm{subitem}{(\alph{mcitesubitemcount})}
+\mciteSetBstSublistLabelBeginEnd
+  {\mcitemaxwidthsubitemform\space}
+  {\relax}
+  {\relax}
+
+\bibitem[Kitchen \latin{et~al.}(2004)Kitchen, Decornez, Furr, and Bajorath]{kitchen2004}
+Kitchen,~D.~B.; Decornez,~H.; Furr,~J.~R.; Bajorath,~J. Docking and scoring in virtual screening for drug discovery: methods and applications. \emph{Nature Reviews Drug Discovery} \textbf{2004}, \emph{3}, 935--949\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Simoben \latin{et~al.}(2023)Simoben, Babiaka, Moumbock, Namba-Nzanguim, Eni, Medina-Franco, Günther, Ntie-Kang, and Sippl]{Simoben2023}
+Simoben,~C.~V.; Babiaka,~S.~B.; Moumbock,~A. F.~A.; Namba-Nzanguim,~C.~T.; Eni,~D.~B.; Medina-Franco,~J.~L.; Günther,~S.; Ntie-Kang,~F.; Sippl,~W. Challenges in natural product-based drug discovery assisted within silico-based methods. \emph{RSC Advances} \textbf{2023}, \emph{13}, 31578--31594\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Trott and Olson(2009)Trott, and Olson]{Trott2009}
+Trott,~O.; Olson,~A.~J. AutoDock Vina: Improving the speed and accuracy of docking with a new scoring function, efficient optimization, and multithreading. \emph{Journal of Computational Chemistry} \textbf{2009}, \emph{31}, 455--461\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\bibitem[Eberhardt \latin{et~al.}(2021)Eberhardt, Santos-Martins, Tillack, and Forli]{Eberhardt2021}
+Eberhardt,~J.; Santos-Martins,~D.; Tillack,~A.~F.; Forli,~S. AutoDock Vina 1.2.0: New Docking Methods, Expanded Force Field, and Python Bindings. \emph{Journal of Chemical Information and Modeling} \textbf{2021}, \emph{61}, 3891--3898\relax
+\mciteBstWouldAddEndPuncttrue
+\mciteSetBstMidEndSepPunct{\mcitedefaultmidpunct}
+{\mcitedefaultendpunct}{\mcitedefaultseppunct}\relax
+\EndOfBibitem
+\end{mcitethebibliography}
