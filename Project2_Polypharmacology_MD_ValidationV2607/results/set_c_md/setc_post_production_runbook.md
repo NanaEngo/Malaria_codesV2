@@ -225,3 +225,25 @@ Measured live state (squeue + per-system log mtimes):
 **npt.gro count:** 4/16 (the 4 preserved PP-01 systems); the other 12 regenerate as 15118 waves complete. N51I ×2 (PP-01, PP-02) are expected to fail or be skipped.
 
 **Timing model (measured):** EM 2×10k steps ~35-40 min @ 2 threads; NVT+NPT 2×50k steps ~80-100 min @ 2 threads → ~2 h per system. 2 waves × 8/3 tasks.
+## Status checkpoint — 2026-08-10 ~10:47 UTC (chain 15118 → 15119 → 15120) — 2nd measurement
+
+Measured live (squeue + log mtimes vs `date`, 10:47:01 UTC):
+
+| Job | State | Detail |
+|---|---|---|
+| 15118 (eq, 12 sys, array 0-11 %8, NTOMP=2) | 8 RUNNING (0,2-8), 3 PENDING (9-11), 1 FAILED (1 = PP-01_PfDHFR_N51I) | Wave-1 elapsed ~45 min. Fresh logs: PP-01_I164L/S108N/WT + PP-02_K76A still in EM2 (em2.log mtime = now); **PP-02_K76T entered NVT 10:45:17, PP-02_WT 10:46:53** (nvt.log fresh, step 0). Old 10:09 npt/nvt logs = residues of canceled 15106 — do NOT use for rate. |
+| 15119 (prod, 16×10 ns, %4, NTOMP=8) | PENDING (dependency 15118) | Unchanged config (safe, verified earlier). |
+| 15120 (QC + MD-RRS) | PENDING (dependency 15119) | ~30 min after 15119. |
+
+Measured EM duration (wave-1): EM1 ~26 min + EM2 ~16 min ≈ **42 min/system** (2 threads) — matches the 35-40 min model.
+
+npt.gro: **4/16** (the 4 preserved PP-01 PfCRT K76A/K76T/WT + PfDHFR C59R from the earlier successful run); 12 more regenerate via 15118 (minus N51I failures).
+
+ETA model (rate at 2 threads not yet measurable — NVT just started):
+- NVT+NPT 2×50k steps at ~200-600 steps/min (scaling of the 8-thread 610 steps/min measure) → 2.8-8.3 h remaining per wave-1 system.
+- Wave-1 (8 sys) complete ≈ **13:30-19:00 UTC**; wave-2 (3 sys) ≈ +2-3 h → **15118 done ≈ 16:00-21:00 UTC** (previous 12:00-12:30 estimate was optimistic).
+- **Action**: re-measure NVT rate at ~11:05 (≈15-20 min of NVT data) to narrow the ETA; update this note.
+- 15119 ≈ 15118 + ~40 h (4 waves × ~9.5 h) → Wed 12 - Thu 13 Aug.
+- 15120 ≈ +30 min → MD-RRS results for P2 manuscript integration.
+
+Expected final npt.gro: 14-15/16 (PP-01 N51I failed; PP-02 N51I index 10 at risk). QC ignores missing systems (documented).
