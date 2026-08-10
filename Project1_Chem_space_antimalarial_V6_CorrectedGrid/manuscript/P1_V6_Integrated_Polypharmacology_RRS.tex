@@ -123,6 +123,41 @@ PP-17 & C & \num{59.3} & \num{61.2} & \num{59.5} & \num{58.9} & \num{76.8} & \nu
 \end{tabular}
 \end{table}
 
+\subsection{Combining target breadth with mutation tolerance ranks the candidates}
+To make the joint polypharmacology--RRS readout explicit, each candidate was summarized by the number of targets with a favorable within-target Vina estimate (defined operationally as $S_{\mathrm{Vina}}\leq\qty{-6.0}{\kilo\calorie\per\mole}$, the mid-range of the observed per-target distributions) alongside its RRS class and mean. The resulting ordering, in \Cref{tab:dual_priority}, is an evidence-aggregation device, not a calibrated activity ranking.
+
+\begin{table}[htbp]
+\centering
+\caption{Combined polypharmacology--RRS prioritization of the 17-member cohort. $N_{\mathrm{fav}}$ counts targets with a favorable within-target Vina estimate ($S_{\mathrm{Vina}}\leq\qty{-6.0}{\kilo\calorie\per\mole}$); favorable targets are listed explicitly. Candidates are sorted by $N_{\mathrm{fav}}$ and then by RRS$_{\mathrm{mean}}$. The threshold is an operational prioritization device, not an experimental affinity cutoff, and the classes are the operational RRS categories of \Cref{SM-tab:rrs_classes}.}
+\label{tab:dual_priority}
+\small
+\begin{tabular}{@{}lcccl@{}}
+\toprule
+Candidate & RRS class & RRS$_{\mathrm{mean}}$ (\%) & $N_{\mathrm{fav}}$ & Favorable targets \\
+\midrule
+PP-15 & A* & \num{111.7} & 4 & PfDHFR + PfCRT + PfClpP + PfATP4 \\
+PP-06 & A* & \num{92.4} & 4 & PfDHFR + PfCRT + PfClpP + PfATP4 \\
+PP-11 & A* & \num{82.6} & 4 & PfDHFR + PfCRT + PfClpP + PfATP4 \\
+PP-10 & B & \num{80.5} & 4 & PfDHFR + PfCRT + PfClpP + PfATP4 \\
+PP-05 & B & \num{78.2} & 4 & PfDHFR + PfCRT + PfClpP + PfATP4 \\
+PP-03 & C & \num{72.1} & 4 & PfDHFR + PfCRT + PfClpP + PfATP4 \\
+PP-16 & B & \num{76.3} & 3 & PfCRT + PfClpP + PfATP4 \\
+PP-07 & B & \num{75.0} & 3 & PfDHFR + PfCRT + PfClpP \\
+PP-13 & A* & \num{104.8} & 2 & PfClpP + PfATP4 \\
+PP-02 & A* & \num{91.3} & 2 & PfCRT + PfATP4 \\
+PP-01 & A* & \num{87.8} & 2 & PfCRT + PfATP4 \\
+PP-09 & B & \num{74.2} & 2 & PfCRT + PfATP4 \\
+PP-04 & C & \num{81.1} & 1 & PfATP4 \\
+PP-12 & C & \num{72.4} & 1 & PfCRT \\
+PP-08 & C & \num{70.8} & 0 & \textendash{} \\
+PP-14 & D & \num{69.5} & 0 & \textendash{} \\
+PP-17 & C & \num{68.2} & 0 & \textendash{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three candidates dominate the joint readout: PP-15, PP-06, and PP-11 are the only members that combine a favorable estimate on all four targets with an A* RRS classification. They differ in the resistance channel: PP-15 (RRS$_{\mathrm{mean}}$ \num{111.7}) and PP-06 (\num{92.4}) are resilient on the PfCRT mutant panel, while PP-11 (\num{82.6}) is PfCRT-classified with PfDHFR non-binding in the mutant panel. By contrast, PP-13—previously highlighted on its Pareto-front position—combines the second-highest RRS mean (\num{104.8}) with favorable estimates on only two targets, illustrating that mutation tolerance and target breadth are genuinely independent axes: joint ranking, not either score alone, identifies the most economical multi-target, mutation-resilient hypotheses.
+
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{p1_v6_rrs_mutation_profiles.pdf}
@@ -147,7 +182,7 @@ The four-target profile and the RRS profile answer different questions. A candid
 
 The null and corrected findings are important. The absence of a Bonferroni-significant cross-metric association means that chemical-space relatedness and network position cannot be used as substitutes for target-specific mutation analysis. The retraction of the PP-11 C59R interpretation further demonstrates why non-binding wild-type baselines must be excluded before calculating ratios. In this setting, a narrower and more conditional RRS claim is stronger than an apparently larger pooled-target effect.
 
-Reading the two layers together is more informative than either alone. PP-06 is the only candidate in the top quartile of within-target scores for all four proteins and is simultaneously classified A* on its PfCRT mutant panel (mean RRS \num{92.4}\%), and PP-11, top-quartile on three targets, is likewise A* (\num{82.6}\%), whereas PP-13 combines a Pareto-front position in the four-target profile with the second-highest mean RRS (\num{104.8}\%). These three candidates therefore represent the workflow's most economical combined multi-target and mutation-resilience hypotheses and its most defensible first choices for biochemical, mutant-panel, and molecular-dynamics follow-up. The other A* assignments are either PfCRT-only (PP-02, PP-06, PP-11, PP-13) or pair a moderate four-target profile with PfDHFR resilience (PP-01, PP-15); none of these operational assignments should be read as confirmed activity.
+Reading the two layers together is more informative than either alone, and the joint ranking in \Cref{tab:dual_priority} makes that readout explicit. PP-15, PP-06, and PP-11 are the only candidates with a favorable Vina estimate on all four targets together with an A* RRS classification; PP-15 adds the highest cohort RRS mean (\num{111.7}\%), PP-06 the most favorable PfCRT-cavity estimate (\num{-7.91} \si{\kilo\calorie\per\mole}) with an A* PfCRT profile (\num{92.4}\%), and PP-11 an A* PfCRT profile (\num{82.6}\%) despite PfDHFR non-binding in the mutant panel. These three candidates therefore represent the workflow's most economical combined multi-target and mutation-resilience hypotheses and its most defensible first choices for biochemical, mutant-panel, and molecular-dynamics follow-up. PP-13, despite its second-highest RRS mean (\num{104.8}\%), is favorable on only two targets—an instructive counterexample showing that mutation tolerance and target breadth are independent axes. The remaining A* assignments are PfCRT-only (PP-02, PP-06, PP-11, PP-13) or pair a moderate four-target profile with PfDHFR resilience (PP-01, PP-15); none of these operational assignments should be read as confirmed activity.
 
 The study has substantial limitations. Docking scores are approximate scoring-function outputs and do not establish affinity, kinetics, or cellular activity. PfCRT is represented by a proxy cavity, and PfATP4 by conserved catalytic machinery without a co-crystallized inhibitor. RRS covers PfDHFR and PfCRT but not PfClpP or PfATP4, and the cohort is small and purposefully enriched for predicted polypharmacology. The parent MD systems are separate from Set C and cannot validate the Set C RRS profile. No new IC\textsubscript{50}/EC\textsubscript{50} measurements were available. Finally, independent structural assessment remains necessary before the raw target panel can support stronger structural conclusions. The next experiments should combine biochemical or cellular potency measurements, resistance-mutant assays, orthogonal binding methods, and candidate-specific molecular dynamics.
 
