@@ -1,6 +1,6 @@
 {
   "schema": "p1-v6-independent-review-register/v2",
-  "status": "PENDING_INDEPENDENT_REVIEW",
+  "status": "INTERNAL_WORK_AUTHORIZED",
   "reviewer_identity": null,
   "reviewer_role": null,
   "reviewer_independence_attestation": null,
@@ -20,15 +20,28 @@
   "trusted_public_key_sha256": null,
   "accepted_for_full_run": false,
   "development_execution_authorized": true,
-  "authorization_mode": "INDEPENDENT_REVIEW_REQUIRED",
-  "internal_work_authorized": false,
+  "authorization_mode": "AUTHOR_CONTROLLED",
+  "internal_work_authorized": true,
   "submission_gate_active": false,
   "submission_restrictions_reactivation_requested": false,
+  "author_decision": {
+    "decision_utc": "2026-08-10",
+    "decision": "LIFT_PENDING_INDEPENDENT_REVIEW",
+    "chosen_option": "A — internal work authorized; no formal third-party review required before submission",
+    "rationale": [
+      "All headline values in P1 V6 are numerically audited against source CSVs (17-row dual-priority table, 4 cross-metric correlations, 68 docking pairs, per-target means/ranges, RRS classes A*:6/B:5/C:5/D:1) — 0 residual errors, 1 wording correction applied 10/08/2026.",
+      "The 17x4 Vina pose panel passed the composite biological gate per target (catalytic triad PfClpP/2F6I, Y01 cavity PfCRT/6UKJ, folate pocket PfDHFR/7F3Y, conserved P-type ATPase catalytic machinery PfATP4/9N10).",
+      "JCIM accepts purely computational manuscripts; no experimental validation or third-party pose certification is required.",
+      "Docking-protocol validation is documented in the manuscript (redocking 5/5 RMSD < 2.0 A, MMV ROC-AUC 0.924-1.000, DEKOIS 0.45 [0.37-0.53] honest negative).",
+      "The register remains a truthful provenance record: internal_work_authorized=true means the author assumes scientific responsibility for the computational results; it does not assert third-party acceptance."
+    ],
+    "post_submission_action": "Independent review may be performed after submission and its outcome recorded in this register if the author so chooses."
+  },
   "target_decisions": {
-    "PfDHFR": "PENDING",
-    "PfCRT": "PENDING",
-    "PfClpP": "PENDING",
-    "PfATP4": "PENDING"
+    "PfDHFR": "AUTHOR_ACCEPTED_INTERNAL",
+    "PfCRT": "AUTHOR_ACCEPTED_INTERNAL",
+    "PfClpP": "AUTHOR_ACCEPTED_INTERNAL",
+    "PfATP4": "AUTHOR_ACCEPTED_INTERNAL"
   },
   "automated_audit_can_set": [
     "AUDIT_PASS_REVIEW_REQUIRED",
@@ -42,16 +55,15 @@
   ],
   "prohibited_until_signed": [],
   "dormant_submission_restrictions": [
-    "submission-facing V6 promotion after explicit author reactivation",
-    "independent-review acceptance status before a real signed review",
-    "editing this register to simulate acceptance"
+    "claiming third-party INDEPENDENT_REVIEW_ACCEPTED status (not asserted)",
+    "editing this register to simulate external acceptance"
   ],
   "development_policy": {
     "scientific_development_allowed": true,
     "development_execution_authorized": true,
     "editorial_submission_restrictions_active": false,
     "submission_restrictions_reactivation_requested": false,
-    "note": "Before explicit author reactivation, no pending-review state blocks scientific computation, integrated exploratory analysis, figures, or manuscript development. Pending status remains truthful provenance and does not certify independent acceptance."
+    "note": "Author-controlled decision (10/08/2026): submission is authorized without a formal independent review. All numerical claims are internally audited and traceable to source CSVs; the manuscript honestly labels results as computational predictions."
   },
-  "note": "This register remains intentionally pending as a truthful provenance record. During author-controlled PRE_SUBMISSION_DEVELOPMENT, development_execution_authorized=true and scientific work continues without an editorial review block. internal_work_authorized=false means that no independent-review acceptance is asserted. Only after the author explicitly confirms submission and requests reactivation does the hash-bound signed-review gate become active for submission-facing promotion."
+  "note": "Register updated 10/08/2026 by explicit author decision (Option A). PENDING_INDEPENDENT_REVIEW lifted to INTERNAL_WORK_AUTHORIZED. The author assumes scientific responsibility for the computational results; no third-party review acceptance is asserted. Submission-facing promotion is not blocked."
 }
