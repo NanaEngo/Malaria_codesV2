@@ -24,7 +24,7 @@
 \noindent This supplement contains the numerical material needed to reproduce the integrated computational analysis. It is organized by evidence layer: chemical space, target-anchored docking, RRS, and exploratory cross-metric analysis. The four-target matrix is reported target by target; no cross-target mean is used because the Vina score is not calibrated across unlike receptor pockets.
 
 \section*{S1. Cohort and evidence boundaries}
-The integrated analysis uses the 17-member P2 Set-C polypharmacology-oriented cohort. The docking calculations follow AutoDock Vina conventions \cite{Trott2009,Eberhardt2021}. The MPO top-20 and the parent-study MD top-20 are distinct sets. The parent-study MD systems 201, 438, the 164-labelled PfClpR cohort, and 214 are not MD validation of Set C. The target panel contains four wild-type docking profiles, whereas RRS is calculated from the separate `docking\_mutants.csv` WT/mutant panel and is available only for PfDHFR and PfCRT mutant panels.
+The integrated analysis uses the 17-member P2 Set-C polypharmacology-oriented cohort. The docking calculations follow AutoDock Vina conventions \cite{Trott2009,Eberhardt2021}. The MPO top-20 and the P2 MD top-20 are distinct sets. The P2 MD systems 201, 438, the 164-labelled PfClpR cohort, and 214 are not MD validation of Set C. The target panel contains four wild-type docking profiles, whereas RRS is calculated from the separate `docking\_mutants.csv` WT/mutant panel and is available only for PfDHFR and PfCRT mutant panels.
 
 \section*{S2. Target-anchored docking matrix}
 \begin{table}[h]
@@ -69,7 +69,7 @@ For candidate $i$, mutation $m$, and target $t$:
 \[
 \mathrm{RRS}_{i,m,t}=100|S_{\mathrm{Vina},i,m,t}|/|S_{\mathrm{Vina},i,WT,t}|.
 \]
-Here $S_{\mathrm{Vina}}$ denotes an AutoDock Vina scoring-function output, not an experimental free energy. RRS eligibility is determined from the separate `docking\_mutants.csv` WT/mutant panel, not from the four-target V5 wild-type matrix. Only genuine wild-type binders with $|S_{\mathrm{Vina},i,WT,t}|\geq\qty{5}{\kilo\calorie\per\mole}$ contributed. The 17-candidate class counts were A*: \num{6}, B: \num{5}, C: \num{5}, and D: \num{1}. The observed RRS range was \numrange{68.2}{111.7}. The complete machine-readable values are in \texttt{Project2\_Polypharmacology\_MD\_ValidationV2607/results/c\_rrs\_classification.csv}.
+Here $S_{\mathrm{Vina}}$ denotes an AutoDock Vina scoring-function output, not an experimental free energy. RRS eligibility is determined from the separate `docking\_mutants.csv` WT/mutant panel, not from the four-target wild-type matrix. Only genuine wild-type binders with $|S_{\mathrm{Vina},i,WT,t}|\geq\qty{5}{\kilo\calorie\per\mole}$ contributed. The 17-candidate class counts were A*: \num{6}, B: \num{5}, C: \num{5}, and D: \num{1}. The observed RRS range was \numrange{68.2}{111.7}. The complete machine-readable values are in \texttt{Project2\_Polypharmacology\_MD\_ValidationV2607/results/c\_rrs\_classification.csv}.
 
 \begin{table}[h]
 \centering
