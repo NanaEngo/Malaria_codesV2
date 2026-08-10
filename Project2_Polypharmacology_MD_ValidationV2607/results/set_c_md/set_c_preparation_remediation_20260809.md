@@ -116,11 +116,46 @@ fails closed with "ligand force field must be CGenFF ...").
   (PP-01/PP-02 × 8 receptor states); earlier run cancelled when the solvation
   box bug was found; resubmission queued behind the pipeline fix.
 * `p2_setc_equilibrate.sbatch` — SLURM array (0-15) EM/NVT/NPT per system with
-  `--dependency=afterok:<prep job>`, finalises the manifests.
+  `--dependency=afterok:<prep job>`, finalises the manifests.  **Note (10/08):**
+  must be run with a concurrency limit (`--array=0-15%4`) — see failure record above.
+* `p2_setc_equilibrate_retry.sbatch` — retry array (0-11, `%4`, `--mem=8G`) for
+  the 12 systems that crashed in 15054 (job **15070**).
+
+### Update (2026-08-10) — array 15054 partial failure, root cause, and retry 15070
+
+**Failure.** Array `15054` (16 tasks, EM/NVT/NPT) crashed on **12/16 systems**
+with an OpenMP (`libgomp`) runtime error inside `libgromacs_mpi.so.10` during
+EM, ~3 minutes after submission (failures recorded 23:25–23:26 UTC on
+2026-08-09).  The remaining 4 systems (array indices 3, 4, 13, 15 =
+`PP-01_PfDHFR_S108N`, `PP-01_PfDHFR_I164L`, `PP-02_PfCRT_WT`,
+`PP-02_PfCRT_K76A`) **survived** and progressed normally
+(EM → EM2 → NVT ≈ 50% at last check, NPT pending).
+
+**Root cause: resource oversubscription, not chemistry.** The original sbatch
+declared `--array=0-15` **without a concurrency limit** and `--mem=16G` per
+task, so SLURM launched all 16 tasks simultaneously on the 48-CPU / 128 GB node:
+- CPU: 16 tasks × 4 threads = 64 > 48 available → oversubscription;
+- RAM: 16 × 16 G = 256 G requested > 128 G physical.
+
+The OpenMP thread/stack allocation failure (symbols in the traceback point into
+`libgomp` while GROMACS builds neighbour-search ranges) is the expected symptom
+of that oversubscription.  The earlier local smoke test passed because it ran
+**one system at a time** on the login node.
+
+**Fix (applied).** `scripts/p2_setc_equilibrate_retry.sbatch` re-submits only
+the **12 failed systems** with:
+- `--array=0-11%4` → **max 4 concurrent tasks** (4×4 CPU = 16 ≤ 48; with the 4
+  surviving 15054 tasks still running, 8×4 = 32 ≤ 48);
+- `--mem=8G` per task (gmx_mpi CPU on ~316 k atoms needs far less than 16 G;
+  4×8 G + 4×16 G = 96 G ≤ 128 G).
+
+Retry job: **15070** (submitted 2026-08-10; 4 tasks running, 8 queued).  The 4
+surviving systems finish in array 15054 without interruption.  No chemistry or
+topology change was required — the prepared systems and manifests are intact.
 
 ### Current honest statement
 
-Set-C MD preparation for the 16-system pilot is **in progress**; equilibration
-was validated end-to-end on `PP-01_PfDHFR_WT` (EM restrained + EM free + NVT + NPT, all rc=0, final EM potential −5.21e6 kJ/mol, NPT 310.15 K / 1 bar) and the full array `15054` is running.
+Set-C MD preparation for the 16-system pilot is **in progress**; the pipeline
+was validated end-to-end on `PP-01_PfDHFR_WT` (EM restrained + EM free + NVT + NPT, all rc=0, final EM potential −5.21e6 kJ/mol, NPT 310.15 K / 1 bar).  The first full array `15054` partially failed on resource oversubscription (12/16, fixed by concurrency-limited retry `15070`); the 4 unaffected systems continue.
 `md_rrs_status=NOT_COMPUTED` until production trajectories pass QC.  Docking-RRS
 and MD-RRS remain in separate provenance records.

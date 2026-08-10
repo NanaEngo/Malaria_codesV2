@@ -82,7 +82,7 @@ Tant que l’auteur n’a pas explicitement confirmé la soumission **et** deman
 | MD (4 complexes) | ✅ Complété | 10 ns chacun (40 ns total), **310.15 K** (température physiologique), ligands ACPYPE/GAFF2 (AM1-BCC) ; PfCRT (214) et PfATP4 (438) liés ; PfClpP/PfDHFR non-liés |
 | MM-GBSA (gmx_MMPBSA) | ✅ Complété | 214-PfCRT = −18.25 ± 0.40 kcal/mol (seul valide) ; 164/201 dissociés (67.4/78.2 Å) ; 438 exclu (artefact conversion CHARMM36→AMBER, +473 kcal/mol) |
 | **Manuscrit** | ✅ **Prêt soumission JCIM** | 17 candidats, 136 systèmes de docking, 40 ns MD ; RRS table 17 scaffolds ; compile propre (25 p., 0 erreur) |
-| Set-C MD (pilot RRS/polypharm, 16 systèmes PP-01/PP-02 × PfDHFR/PfCRT WT+mutants) | 🔄 **16/16 préparés ; équilibration array 15054 en cours** | Workaround OpenFF 2.2.0 (AM1-BCC) à la place de CGenFF (binaire licencié indisponible) — **déviation DOCUMENTÉE + approuvée PI** (`forcefield_manifest.json::policy_deviation`), manifests hashés ; smoke EM→NVT→NPT validé rc=0 (310.15 K/1 bar) |
+| Set-C MD (pilot RRS/polypharm, 16 systèmes PP-01/PP-02 × PfDHFR/PfCRT WT+mutants) | 🔄 **16/16 préparés ; équilibration 15054 (4 survivants) + retry 15070 (12) en cours** | Workaround OpenFF 2.2.0 (AM1-BCC) à la place de CGenFF (binaire licencié indisponible — **déviation DOCUMENTÉE + approuvée PI** dans `forcefield_manifest.json::policy_deviation`) ; smoke EM→NVT→NPT validé rc=0. ⚠️ **Array 15054 crashé 12/16 en OpenMP (libgomp)** : cause racine = sursouscription ressources (16×4 CPU=64>48 ; 16×16G=256G>128G), PAS la chimie → **fix : retry 15070** (`p2_setc_equilibrate_retry.sbatch`, array 0-11 `%4`, `--mem=8G`) |
 
 ### P3 — Quantum-Inspired Representations ✅ (Benchmarks canoniques complets)
 
