@@ -23,11 +23,11 @@ PROJECTS = [
             'Cover_Letter_P1_V6.tex',
             'Cover_Letter_P1_V6.pdf',
         ],
-        'graphics': ['p1_v6_toc_graphic.pdf', 'p1_v6_toc_graphic_ACS.tiff'],
+        'graphics': ['p1_v6_toc_graphic.pdf', 'p1_v6_toc_graphic_ACS.tiff', 'p1_v6_toc_graphic_ACS_1200dpi.tiff'],
         'pages': 'main 19 p. / SM 5 p. / cover 1 p. (verified 10/08/2026)',
         'status': 'SUBMISSION-READY — R1–R5 cleared, register INTERNAL_WORK_AUTHORIZED, ACS package assembled',
         'notes': [
-            'TOC graphic ACS-compliant: 3.25x1.75 in, 300 dpi, RGB TIFF + vector PDF.',
+            'TOC graphic ACS-compliant: 3.25x1.75 in, RGB TIFF 300 dpi + 1200 dpi (line art) + vector PDF.',
             'ACS submission package: submission_ACS_P1V6/ with README + Paragon Plus checklist.',
             'TOC graphic present (p1_v6_toc_graphic.pdf).',
             'Use of AI declaration added (main + SM).',

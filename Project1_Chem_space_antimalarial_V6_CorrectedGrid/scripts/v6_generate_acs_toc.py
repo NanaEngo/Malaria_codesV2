@@ -100,12 +100,31 @@ def main() -> None:
     pdf_path = FIG_DIR / "p1_v6_toc_graphic.pdf"
     tiff_path = FIG_DIR / "p1_v6_toc_graphic_ACS.tiff"
     fig.savefig(pdf_path, bbox_inches=None, pad_inches=0, facecolor="white")
-    fig.savefig(tiff_path, dpi=DPI, bbox_inches=None, pad_inches=0,
-                facecolor="white", pil_kwargs={"compression": "tiff_lzw"})
+    # Save a temporary RGBA PNG buffer, then flatten onto white and write RGB TIFF.
+    # ACS requires RGB (no alpha); keeping the flatten inside the script makes
+    # the RGB output reproducible from a single command.
+    import io
+    from PIL import Image
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", dpi=DPI, bbox_inches=None, pad_inches=0,
+                facecolor="white")
+    buf.seek(0)
+    rgba = Image.open(buf).convert("RGBA")
+    bg = Image.new("RGB", rgba.size, (255, 255, 255))
+    bg.paste(rgba, mask=rgba.split()[3])
+    bg.save(tiff_path, dpi=(DPI, DPI), compression="tiff_lzw")
+    # High-resolution TIFF (1200 dpi) for text-bearing line art per ACS guidance.
+    tiff_hi = FIG_DIR / "p1_v6_toc_graphic_ACS_1200dpi.tiff"
+    buf.seek(0)
+    rgba_hi = Image.open(buf).convert("RGBA")
+    bg_hi = Image.new("RGB", rgba_hi.size, (255, 255, 255))
+    bg_hi.paste(rgba_hi, mask=rgba_hi.split()[3])
+    bg_hi.save(tiff_hi, dpi=(1200, 1200), compression="tiff_lzw")
     plt.close(fig)
 
-    print(f"PDF  : {pdf_path}  ({pdf_path.stat().st_size/1024:.0f} KB)")
-    print(f"TIFF : {tiff_path}  ({tiff_path.stat().st_size/1024:.0f} KB, {DPI} dpi, {W_IN}x{H_IN} in)")
+    print(f"PDF   : {pdf_path}  ({pdf_path.stat().st_size/1024:.0f} KB)")
+    print(f"TIFF  : {tiff_path}  ({tiff_path.stat().st_size/1024:.0f} KB, {DPI} dpi RGB, {W_IN}x{H_IN} in)")
+    print(f"TIFF12: {tiff_hi}  ({tiff_hi.stat().st_size/1024:.0f} KB, 1200 dpi RGB)")
 
 
 if __name__ == "__main__":

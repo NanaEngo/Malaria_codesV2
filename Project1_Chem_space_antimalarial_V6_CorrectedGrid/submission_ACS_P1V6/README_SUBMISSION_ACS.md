@@ -74,7 +74,26 @@
 
 ---
 
-## 4. Rappel des points de vigilance
+## 4. Régénération du package (après modification des manuscrits)
+
+```bash
+cd Project1_Chem_space_antimalarial_V6_CorrectedGrid
+# 1. Recompiler le main + SM (pdflatex x2) puis recopier les PDFs :
+cp manuscript/P1_V6_Integrated_Polypharmacology_RRS.pdf   submission_ACS_P1V6/P1_V6_main.pdf
+cp manuscript/P1_V6_Integrated_Polypharmacology_RRS_SM.pdf submission_ACS_P1V6/Supporting_Information.pdf
+cp manuscript/Cover_Letter_P1_V6.pdf                      submission_ACS_P1V6/Cover_Letter_P1_V6.pdf
+cp manuscript/P1_V6_Integrated_Polypharmacology_RRS.bbl   submission_ACS_P1V6/P1_V6_main.bbl
+# 2. Régénérer le TOC (script reproductible : PDF vector + TIFF RGB 300 dpi + TIFF 1200 dpi) :
+/home/nanaengo/miniforge3/envs/malaria_md/bin/python scripts/v6_generate_acs_toc.py
+cp manuscript/Graphics/p1_v6_toc_graphic*.pdf manuscript/Graphics/p1_v6_toc_graphic_ACS*.tiff submission_ACS_P1V6/
+# 3. Régénérer le manifeste SHA-256 :
+/home/nanaengo/miniforge3/envs/malaria_md/bin/python ../scripts/make_submission_manifests.py
+```
+
+> ⚠️ Le TOC 1200 dpi (`p1_v6_toc_graphic_ACS_1200dpi.tiff`) est fourni pour le line art contenant du texte (recommandation ACS ≥ 1200 dpi) ; le TIFF 300 dpi satisfait le minimum pour images couleur/grayscale.
+> ⚠️ **ORCID** : à renseigner dans Paragon Plus (étape auteurs) — le .tex ne contient pas d'ORCID (convention ACS).
+
+## 5. Rappel des points de vigilance
 1. **PfClpP = PDB 2F6I** (triade catalytique Ser252/His223/Asp219) — 4GM2 = PfClpR, explicitement exclu.
 2. **DEKOIS PfDHFR = 0.450 [0.37, 0.53]** (valeur canonique, honnête) — cohérent avec P2 et BMAD.
 3. **Poses = hypothèses computationnelles** — le manuscrit ne revendique ni puissance mesurée ni engagement biologique confirmé.

@@ -3,7 +3,7 @@
 **Journal:** Journal of Chemical Information and Modeling (JCIM, ACS)
 **Pages:** main 19 p. / SM 5 p. / cover 1 p. (verified 10/08/2026)
 **Status:** SUBMISSION-READY — R1–R5 cleared, register INTERNAL_WORK_AUTHORIZED, ACS package assembled
-**Generated:** 2026-08-10 09:25 UTC
+**Generated:** 2026-08-10 09:27 UTC
 
 ## File inventory (SHA-256)
 
@@ -20,12 +20,13 @@
 
 | File | SHA-256 |
 |---|---|
-| p1_v6_toc_graphic.pdf | `cde342e067073a68cf581301b7554e133674619ecc421e3fd8a6cc32db3973a4` |
+| p1_v6_toc_graphic.pdf | `724799b564ac4e60b4875032b56645bd4539ad7f41a2661711eee5eb0bccde40` |
 | p1_v6_toc_graphic_ACS.tiff | `cbba2ddb0288ca55cba9deeab7a72cb26208f41819b25b50ad26900b9ba26b9f` |
+| p1_v6_toc_graphic_ACS_1200dpi.tiff | `3d7cda59a1a12c999a85505d7ff8e2e5ed7607d914cf0e3d5ca86502fbb5419f` |
 
 ## Notes
 
-- TOC graphic ACS-compliant: 3.25x1.75 in, 300 dpi, RGB TIFF + vector PDF.
+- TOC graphic ACS-compliant: 3.25x1.75 in, RGB TIFF 300 dpi + 1200 dpi (line art) + vector PDF.
 - ACS submission package: submission_ACS_P1V6/ with README + Paragon Plus checklist.
 - TOC graphic present (p1_v6_toc_graphic.pdf).
 - Use of AI declaration added (main + SM).
