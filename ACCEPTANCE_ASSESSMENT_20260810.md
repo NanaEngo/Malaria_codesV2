@@ -9,7 +9,7 @@
 | # | Package | Journal cible | État | Est. acceptation* | Bloquants réels | Actions restantes |
 |---|---------|---------------|------|:-----------------:|:----------------|-------------------|
 | **P1 V6** | P1 V6 Integrated Polypharmacology+RRS | JCIM (ACS) | ✅ Package ACS complet (20 fichiers), TOC conforme, register levé | **80–85 %** | Aucun bloquant | ORCID + funding dans Paragon Plus, lecture auteur finale |
-| **P2** | Polypharmacology MD Validation | JCIM (ACS) | 🔄 Manuscrit prêt (25+3 p.) ; **MD Set-C en cours** (jobs 15106/15111) | **75–80 %** (→ 80–85 % après MD-RRS) | 16 systèmes MD + QC + MD-RRS à produire | Attendre/analyser jobs, mettre à jour l'abstract si MD-RRS arrive, recompiler |
+| **P2** | Polypharmacology MD Validation | JCIM (ACS) | 🔄 Manuscrit prêt (25+3 p.) ; **MD Set-C en cours** (jobs 15106/15111/15117) | **75–80 %** (→ 80–85 % après MD-RRS) | 16 systèmes MD + QC + MD-RRS à produire | ⏳ **Option B retenue** : attendre les jobs MD (15106→15111→15117) puis intégrer les résultats et mettre à jour l'abstract |
 | **P3** | Quantum-Inspired Representations | JoC (Springer) | ✅ Benchmarks canoniques + extval complète ; compiles propres | **~82 %** (cible ≥85 %) | Zenodo (upload différé par choix auteur) | Upload Zenodo (DOI réservé), lecture auteur |
 | **P4** | Pareto MCTS + oracles | JoC (Springer) | ✅ v12-activity intégré, recompilé RC=0 (11+4 p.) | **~70–75 %** | Aucun (risque scientifique : MCTS ≤ Random) | Checks finaux JoC (TOC/graphical abstract si requis), lecture auteur |
 | **P5** | GNN/Transformer Drug Discovery | JoC (Springer) | ✅ Benchmark + validation indépendante 100 % | **~75–80 %** | Aucun (risque : verdict honnête-négatif) | Checks finaux JoC + Zenodo, lecture auteur |
@@ -78,12 +78,12 @@
 ## 4. Ordre de soumission recommandé
 
 1. **P1 V6** (JCIM) — le plus mûr (80–85 %), package ACS complet, aucun bloquant
-2. **P2** (JCIM) — en parallèle/juste après (compagnon ; cohérence garantie) ; décider Option A/B selon la disponibilité des résultats MD
+2. **P2** (JCIM) — en parallèle/juste après (compagnon ; cohérence garantie) ; **Option B retenue** (MD-RRS doit être intégré — chaîne 15106→15111→15117 active, ETA ~40–48 h)
 3. **P3** (JoC) — après upload Zenodo (gain ~3 %) si l'auteur le réactive
 4. **P5** (JoC) — après checks finaux + Zenodo
 5. **P4** (JoC) — en dernier (risque scientifique MCTS ≤ Random à assumer dans la narration)
 
 ## 5. Prochaine étape immédiate
 - Décision auteur : **soumettre P1 V6 maintenant** (OUI/NON) → si OUI, préparer les métadonnées Paragon Plus (ORCID, funding) ; 
-- Décision P2 : **Option A** (soumettre avec « future work ») ou **Option B** (attendre les jobs 15106/15111, ~2–3 j) ;
+- Décision P2 : **Option B retenue** (MD-RRS doit être intégré — chaîne 15106→15111→15117 active, ETA ~40–48 h) ;
 - Réactivation éventuelle de l'**upload Zenodo** (P3/P4/P5) — différé par choix auteur (10/08).
