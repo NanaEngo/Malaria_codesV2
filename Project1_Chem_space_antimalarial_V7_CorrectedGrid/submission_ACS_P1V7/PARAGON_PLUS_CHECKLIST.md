@@ -148,7 +148,7 @@ ACS demande les fichiers source LaTeX uniquement **après acceptation**. Pour la
 | Fichier | Taille | Rôle |
 |---------|--------|------|
 | `P1_V7_main.pdf` | ~464 KB | Main manuscript (19 p.) |
-| `Supporting_Information.pdf` | ~369 KB | Supplementary Information (7 p.) |
+| `Supporting_Information.pdf` | ~537 KB | Supplementary Information (17 p.) |
 | `Cover_Letter_P1_V7.pdf` | ~130 KB | Cover letter (1 p.) |
 | `p1_v7_toc_graphic_ACS.tiff` | ~Variable | TOC graphic (3.25×1.75 in, 300 dpi, RGB) |
 | `Figure_2_rrs_mutation_profiles.pdf` | ~Variable | Figure séparée |
