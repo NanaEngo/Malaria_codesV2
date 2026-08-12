@@ -16,19 +16,17 @@ This is standard procedure for ACS journal submissions and is documented in the 
 
 ## Your ORCID Information
 
-**Corresponding Author:**  
-- **Name:** Myke Vital Sao Temgoua
-- **ORCID iD:** 0009-0004-5170-2309
-- **Link:** https://orcid.org/0009-0004-5170-2309
+### All 5 Authors (Complete)
 
-**Co-Authors:**  
-The following co-authors do not currently have ORCID iDs:
-- Jean-Pierre Tchapet Njafa
-- Penabei Samafou
-- Wilfred Fon Mbacham
-- Serge Guy Nana Engo
+| Author Name | ORCID iD | ORCID Link |
+|-------------|----------|------------|
+| **Myke Vital Sao Temgoua** *(Corresponding)* | 0009-0004-5170-2309 | https://orcid.org/0009-0004-5170-2309 |
+| **Serge Guy Nana Engo** | 0000-0002-7484-3508 | https://orcid.org/0000-0002-7484-3508 |
+| **Wilfred Fon Mbacham** | 0000-0002-3934-3233 | https://orcid.org/0000-0002-3934-3233 |
+| **Jean-Pierre Tchapet Njafa** | 0000-0002-1936-8353 | https://orcid.org/0000-0002-1936-8353 |
+| **Penabei Samafou** | 0000-0002-9683-7678 | https://orcid.org/0000-0002-9683-7678 |
 
-**Note:** It is acceptable to submit with only the corresponding author's ORCID. Co-authors can add their ORCIDs later if they create them.
+**Status:** ✅ **ALL 5 ORCID iDs AVAILABLE** for Paragon Plus entry
 
 ---
 
@@ -42,17 +40,17 @@ When you submit your manuscript to https://paragonplus.acs.org/, you will reach 
 
 2. **Locate the ORCID iD field** (it will be clearly labeled)
 
-3. **For Myke Vital Sao Temgoua (corresponding author):**
-   - Enter: `0009-0004-5170-2309`
-   - Or paste the full URL: `https://orcid.org/0009-0004-5170-2309`
-   - The system will validate the format automatically
+3. **Enter each author's ORCID iD:**
 
-4. **For co-authors without ORCID iDs:**
-   - Leave the ORCID field blank
-   - The system will allow submission with blank ORCIDs for co-authors
-   - Co-authors can be invited to add their ORCIDs later through the system
+   - **Myke Vital Sao Temgoua** (corresponding): `0009-0004-5170-2309`
+   - **Serge Guy Nana Engo**: `0000-0002-7484-3508`
+   - **Wilfred Fon Mbacham**: `0000-0002-3934-3233`
+   - **Jean-Pierre Tchapet Njafa**: `0000-0002-1936-8353`
+   - **Penabei Samafou**: `0000-0002-9683-7678`
 
-5. **Click "Save" or "Continue"**
+   You can enter just the 16-digit number or paste the full URL - the system will validate automatically.
+
+4. **Click "Save" or "Continue"** after entering each ORCID
 
 ---
 
@@ -79,17 +77,15 @@ The Paragon Plus system will:
 
 ---
 
-## Co-Author ORCID Registration (Optional)
+## Co-Author ORCID Verification
 
-If your co-authors want to create ORCID iDs before or after submission:
+All co-authors already have registered ORCID iDs. If you need to verify any of them:
 
-1. **Go to:** https://orcid.org/register
-2. **Fill out the form:** Name, email, password
-3. **Verify email:** Click the link sent to their email
-4. **Copy their 16-digit ORCID iD**
-5. **Add to Paragon Plus:** They can be invited to add it to the manuscript
+1. **Visit:** https://orcid.org/
+2. **Enter the ORCID iD** in the search box
+3. **Verify the profile** matches the author name
 
-**Time required:** ~2 minutes per person
+**All 5 ORCIDs have been verified as valid.**
 
 ---
 
@@ -101,12 +97,13 @@ If your co-authors want to create ORCID iDs before or after submission:
 - Funding acknowledgment added ("No external funding was received for this work")
 - Cover letter created and compiled (2 pages)
 - All files ready in `submission_ACS_P1V7/` directory
+- **All 5 author ORCID iDs collected and verified**
 
 ### ⚠️ During Submission
 
 - ORCID iDs will be entered in Paragon Plus web form (not in LaTeX)
-- Only corresponding author's ORCID is required for submission
-- Co-authors can add theirs later if desired
+- **ALL 5 ORCID iDs are available** for entry (see table above)
+- Enter each ORCID when adding/editing author information
 
 ---
 
@@ -117,8 +114,12 @@ When you reach the author information page:
 - [ ] Enter all 5 author names and affiliations
 - [ ] Mark Myke Vital Sao Temgoua as corresponding author
 - [ ] Enter corresponding author email: myke-vital.sao@facsciences-uy1.cm
-- [ ] Enter ORCID for Myke Vital Sao Temgoua: `0009-0004-5170-2309`
-- [ ] Leave ORCID fields blank for co-authors (or invite them to add)
+- [ ] Enter ORCID iDs for all 5 authors:
+  - [ ] Myke Vital Sao Temgoua: `0009-0004-5170-2309`
+  - [ ] Serge Guy Nana Engo: `0000-0002-7484-3508`
+  - [ ] Wilfred Fon Mbacham: `0000-0002-3934-3233`
+  - [ ] Jean-Pierre Tchapet Njafa: `0000-0002-1936-8353`
+  - [ ] Penabei Samafou: `0000-0002-9683-7678`
 - [ ] Verify all author information is correct
 - [ ] Continue to file upload
 
@@ -132,7 +133,7 @@ When you reach the author information page:
 
 ---
 
-**Summary:** Your ORCID (0009-0004-5170-2309) will be entered in the Paragon Plus web form during online submission, not in the LaTeX manuscript. This is standard ACS procedure.
+**Summary:** All 5 ORCID iDs (0009-0004-5170-2309, 0000-0002-7484-3508, 0000-0002-3934-3233, 0000-0002-1936-8353, 0000-0002-9683-7678) will be entered in the Paragon Plus web form during online submission, not in the LaTeX manuscript. This is standard ACS procedure.
 
-**Last Updated:** 2026-01-11  
-**Status:** Ready for submission
+**Last Updated:** 2026-01-11 21:00  
+**Status:** ✅ **Ready for submission - ALL ORCIDs available**
