@@ -54,7 +54,9 @@ The critical fix was array ownership. `p2_setc_production.sbatch` previously sel
 - Added `scripts/p2_setc_gpu_production.sbatch`: serial `%1` GPU array, explicit system ownership, mixed-offload flags, and execution authorization.
 - Extended `p2_setc_md_workflow.py` with an explicit `--backend gpu` mode and topology-include copying/hash provenance; CPU remains the default.
 - Read-only pilot preflight (`results/set_c_md/preflight_20260812/`) returned **0/16 ready** and **FAIL_CLOSED** because the canonical `results/md_systems/set_c` root lacks complete `complex.gro`, `topol.top`, `forcefield_manifest.json`, and/or equilibrated `npt.gro` inputs. No production job was submitted.
-- The next executable step is OpenFF preparation/equilibration for all 16 systems; only after a fresh preflight reports 16/16 ready may the GPU launcher be submitted with the actual equilibration job ID.
+- OpenFF preparation is active as job `15274` in versioned root `results/md_systems/set_c_preparation_20260812_v1`; equilibration `15275` is queued with `afterok:15274`.
+- Corrected gate `15277` is queued with `afterok:15275`. It asserts the fixed PP-01/PP-02 16-system panel, requires `READY_FOR_AUTHORIZED_EXECUTION` with 16/16 rows, and only then submits `p2_setc_gpu_production.sbatch`. Superseded gate `15276` was cancelled before execution after a panel/provenance review.
+- Per-replicate production provenance now carries the gate, equilibration, preflight manifest path, and preflight-manifest SHA-256. No GPU production array is currently running or directly submitted.
 
 ## Scientific boundary
 

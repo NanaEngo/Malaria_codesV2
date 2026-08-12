@@ -32,7 +32,7 @@ conda activate malaria_md
 export PYTHONUNBUFFERED=1
 export OMP_NUM_THREADS=8
 export P2_GMX_BIN=/home/nanaengo/miniforge3/envs/malaria_md/bin/gmx_mpi
-export P2_SETC_ROOT=/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c
+export P2_SETC_ROOT="${P2_SETC_ROOT:-/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c}"
 export P2_MD_EXECUTE_CONFIRM=I_UNDERSTAND
 
 PROJ=/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
@@ -53,8 +53,10 @@ source "$PWD/scripts/md_execution_guard.sh"
 md_guard_parse --execute
 md_guard_require_authorization
 
-printf 'system=%s\narray_job=%s\narray_task=%s\nbackend=gpu_mixed\n' \
-  "$SYS" "$SLURM_ARRAY_JOB_ID" "$SLURM_ARRAY_TASK_ID" > "$OUT/launch_context.txt"
+printf 'system=%s\narray_job=%s\narray_task=%s\nbackend=gpu_mixed\ngate_job_id=%s\nequilibration_job_id=%s\npreflight_manifest=%s\n' \
+  "$SYS" "$SLURM_ARRAY_JOB_ID" "$SLURM_ARRAY_TASK_ID" \
+  "${P2_GATE_JOB_ID:-UNKNOWN}" "${P2_EQUILIBRATION_JOB_ID:-UNKNOWN}" \
+  "${P2_PREFLIGHT_MANIFEST:-UNKNOWN}" > "$OUT/launch_context.txt"
 
 python scripts/p2_setc_md_workflow.py \
   --n-candidates 2 \

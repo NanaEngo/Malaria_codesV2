@@ -13,6 +13,8 @@ set -e
 source /home/nanaengo/miniforge3/etc/profile.d/conda.sh
 conda activate malaria_md
 cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
-mkdir -p logs results/md_systems/set_c
-python scripts/p2_setc_prepare_openff.py --all
+OUTPUT_ROOT="${P2_SETC_OUTPUT_ROOT:-$PWD/results/md_systems/set_c}"
+mkdir -p logs "$OUTPUT_ROOT"
+echo "Preparation output root: $OUTPUT_ROOT"
+python scripts/p2_setc_prepare_openff.py --all --output-root "$OUTPUT_ROOT"
 echo "PREPARATION_ALL_DONE RC=$?"

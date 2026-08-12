@@ -28,6 +28,10 @@ The cohort plan is:
 
 Production stability acceptance requires non-empty `production.xtc`, `production.tpr`, checkpoint and log files; no fatal error, LINCS failure, NaN, or energy divergence; and matching system/force-field/topology hashes. A failed witness or cohort system revises the GPU verdict to `GPU_PATH_REQUIRES_REMEDIATION` and blocks MD-RRS.
 
+## Active preparation checkpoint — job 15274 (12 August 2026)
+
+The 16-system OpenFF preparation was submitted as job `15274` at 17:05 UTC, writing to the versioned root `results/md_systems/set_c_preparation_20260812_v1`. At the 17:10 UTC checkpoint, `PP-01_PfDHFR_WT` was complete and `PP-02_PfDHFR_WT` was in its temporary work directory; the sequential launcher was healthy, with only a non-fatal `pkg_resources` deprecation warning. The incomplete canonical root is not overwritten. Equilibration job `15275` has been submitted with `afterok:15274` and remains pending until the preparation terminates successfully and all 16 generated systems pass manifest/input checks. Initial gate `15276` was cancelled before execution after review identified a candidate-panel/provenance ambiguity. Corrected gate `15277` has been submitted with `afterok:15275`; it asserts the fixed `PP-01`/`PP-02` panel, runs the aggregate preflight, and submits `p2_setc_gpu_production.sbatch` only when the manifest reports exactly `16/16` and `READY_FOR_AUTHORIZED_EXECUTION`. GPU production remains unsubmitted until that gate passes.
+
 ## Preconditions
 
 1. Candidate-specific `system_manifest.json` and `forcefield_manifest.json` are present and identity/hashes pass; the current read-only preflight is 0/16 and therefore blocks submission.

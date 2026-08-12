@@ -393,6 +393,15 @@ def prepare_replicate(row: dict, args: argparse.Namespace, run_records: list[dic
                 },
                 "topology_dependency_sha256": dependency_hashes,
                 "backend": args.backend,
+                "gate_job_id": os.environ.get("P2_GATE_JOB_ID"),
+                "equilibration_job_id": os.environ.get("P2_EQUILIBRATION_JOB_ID"),
+                "preflight_manifest": os.environ.get("P2_PREFLIGHT_MANIFEST"),
+                "preflight_manifest_sha256": (
+                    sha256(Path(os.environ["P2_PREFLIGHT_MANIFEST"]))
+                    if os.environ.get("P2_PREFLIGHT_MANIFEST")
+                    and Path(os.environ["P2_PREFLIGHT_MANIFEST"]).is_file()
+                    else None
+                ),
                 "production_tpr": record["production_tpr"],
                 "production_tpr_sha256": record["production_tpr_sha256"],
             }, indent=2) + "\n",
@@ -434,6 +443,15 @@ def execute_replicate(prepared: tuple[Path, dict, list[str]], args: argparse.Nam
             "system_name": record["system_name"],
             "run_dir": record["run_dir"],
             "md_rrs_status": "NOT_COMPUTED",
+            "gate_job_id": os.environ.get("P2_GATE_JOB_ID"),
+            "equilibration_job_id": os.environ.get("P2_EQUILIBRATION_JOB_ID"),
+            "preflight_manifest": os.environ.get("P2_PREFLIGHT_MANIFEST"),
+            "preflight_manifest_sha256": (
+                sha256(Path(os.environ["P2_PREFLIGHT_MANIFEST"]))
+                if os.environ.get("P2_PREFLIGHT_MANIFEST")
+                and Path(os.environ["P2_PREFLIGHT_MANIFEST"]).is_file()
+                else None
+            ),
             "input_sha256": {
                 "npt.gro": record["coordinates_sha256"],
                 "npt.cpt": record["checkpoint_sha256"],
@@ -564,6 +582,9 @@ def main() -> int:
         "metric_boundary": "RRS, ACSI, and PNS in the status table are docking/cheminformatics-derived; no MD-RRS is inferred.",
         "status_table": rel(status_path),
         "parent_md_excluded": sorted(PARENT_NAMES),
+        "gate_job_id": os.environ.get("P2_GATE_JOB_ID"),
+        "equilibration_job_id": os.environ.get("P2_EQUILIBRATION_JOB_ID"),
+        "preflight_manifest": os.environ.get("P2_PREFLIGHT_MANIFEST"),
     }
     if blocked:
         manifest["status"] = "FAIL_CLOSED_MISSING_OR_INVALID_SET_C_INPUTS"
