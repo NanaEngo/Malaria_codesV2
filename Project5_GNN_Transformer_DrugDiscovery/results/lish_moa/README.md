@@ -28,4 +28,8 @@ The phenotype benchmark was submitted through `scripts/p5_lish_moa_benchmark.sba
 
 ## Result checkpoint — condition with controls COMPLETED (12 August 2026, ~14:05 UTC)
 
-`p5_lish_moa_phenotype_drug_grouped_report.json` + `_folds.csv` produced and audited (25 folds, 0 NaN, stable per-seed AUROC). Summary over 25 folds (n = 3,289 drugs, 206 labels): mean column-wise log loss **0.02378**; macro-AUPRC **0.1428**; macro-AUROC **0.6435**; ≈72% of labels retain test-set variation per fold. Baseline = unweighted per-label logistic on phenotype features, drug-grouped split. Condition `--exclude-controls` still running at this checkpoint. Nothing enters the manuscript until both conditions are audited and compared.
+`p5_lish_moa_phenotype_drug_grouped_report.json` + `_folds.csv` produced and audited (25 folds, 0 NaN, stable per-seed AUROC). Summary over 25 folds (n = 3,289 drugs, 206 labels): mean column-wise log loss **0.02378**; macro-AUPRC **0.1428**; macro-AUROC **0.6435**; ≈72% of labels retain test-set variation per fold. Baseline = unweighted per-label logistic on phenotype features, drug-grouped split. ## Result checkpoint — condition without controls COMPLETED + comparison (12 August 2026, ~15:49 UTC)
+
+`p5_lish_moa_phenotype_drug_grouped_no_controls_report.json` + `_folds.csv` produced and audited (25 folds, 0 NaN). Mean over 25 folds (n = 3,288 drugs, 206 labels): log loss **0.02389**; macro-AUPRC **0.1412**; macro-AUROC **0.6417**; per-seed AUROC 0.6378–0.6480.
+
+**Comparison (reproducible: `scripts/p5_lish_moa_compare.py`):** removing the vehicle controls changes nothing material — Δlog loss = +0.00011, Δmacro-AUROC = −0.00177, Δmacro-AUPRC = −0.00152. **Verdict: baseline robust to control exclusion; benchmark final.** Locked grid: 5 seeds × 5 folds, `drug_grouped`, with controls — log loss 0.02378 (primary), macro-AUROC 0.6435, macro-AUPRC 0.1428. Any upstream P5 method must beat these values on the same fold grid.
