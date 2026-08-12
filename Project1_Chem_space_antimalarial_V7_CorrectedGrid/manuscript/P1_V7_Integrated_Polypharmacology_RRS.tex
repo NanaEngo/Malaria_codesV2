@@ -54,7 +54,7 @@ We asked whether this separation could produce a coherent map from chemical-spac
 
 \section{Materials and Methods}
 \subsection{Chemical-space funnel}
-The upstream library combined \num{396} African natural products with \num{454} synthetic antimalarial compounds. Similarity-based expansion and SELFIES perturbation \cite{Nigam2021,Krenn2020} were followed by structure validation, deduplication, and PAINS filtering \cite{Baell2010}, producing \num{65856} unique molecules. A SMILES variational autoencoder \cite{Kingma2013} was used to obtain latent representations. K-means clustering of the selected 64-dimensional representation yielded \num{484} centroids. This centroid-based sampling reduces computational cost from exhaustive docking (\numrange{500}{1000} CPU-hours per target for full libraries) to tractable multi-target screening while preserving structural diversity through cluster representatives. Multi-parameter optimization combined docking-derived scores, DiffDock confidence \cite{Corso2023}, QED \cite{Bickerton2012}, an ADMET composite, and a Lipinski penalty \cite{Lipinski2004}. The \num{76} centroids above the optimization threshold mapped to \num{53} clusters and expanded to \num{40481} molecules; \num{19913} molecules remained after synthetic-accessibility and MPO filtering.
+The upstream library combined \num{396} African natural products with \num{454} synthetic antimalarial compounds. The dataset was expanded via two complementary approaches: the Cheese API \cite{lzicar_cheese_2024} performed similarity searches (Tanimoto \num{0.7}, Morgan fingerprints radius \num{2}, \num{2048} bits) against ZINC15/ENAMINE-REAL, retrieving \num{100} analogues per seed; and STONED-SELFIES \cite{Nigam2021} generated \num{100} variants per seed via single-character SELFIES mutations (alphabet size \num{50}). Generated molecules were PAINS-filtered \cite{Baell2010}, validated via RDKit and Open Babel \cite{OBoyle2011}, and deduplicated by canonical SMILES, yielding \num{65856} unique molecules (\qty{94.1}{\percent} Lipinski-compliant). A SMILES variational autoencoder \cite{Kingma2013} was used to obtain latent representations. K-means clustering of the selected 64-dimensional representation yielded \num{484} centroids. This centroid-based sampling reduces computational cost from exhaustive docking (\numrange{500}{1000} CPU-hours per target for full libraries) to tractable multi-target screening while preserving structural diversity through cluster representatives. Multi-parameter optimization combined docking-derived scores, DiffDock confidence \cite{Corso2023}, QED \cite{Bickerton2012}, an ADMET composite, and a Lipinski penalty \cite{Lipinski2004}. The \num{76} centroids above the optimization threshold mapped to \num{53} clusters and expanded to \num{40481} molecules; \num{19913} molecules remained after synthetic-accessibility and MPO filtering.
 
 Novelty was evaluated with Morgan fingerprints \cite{Rogers2010} (radius \num{2}, \num{2048} bits). In a \num{5000}-molecule sample, \qty{92.6}{\percent} had maximum whole-molecule Tanimoto similarity below \num{0.4} to the African-NP seed set, while scaffold recovery was \qty{69.3}{\percent} (\num{70}/\num{101} annotated seed scaffolds). The candidate sets were locked before the target-anchored docking analysis.
 
@@ -98,7 +98,7 @@ Per-target resistance-resilience analysis classified the 17-member cohort into s
 
 The PP-11 case illustrates this target-specific design. PP-11 received an A* classification on the PfCRT channel (\num{82.6}~percent mean RRS) despite PfDHFR non-binding in the mutation panel. This pattern does not indicate a general design flaw; rather, it demonstrates that mutation resilience can be target-specific and that the RRS framework correctly avoids pooling incomparable evidence layers. The complete per-mutant RRS values appear in \Cref{tab:rrs_main} and \Cref{fig:rrs_profiles}; these computational outputs represent docking-score ratios, not biological resistance phenotypes, and require experimental validation before informing resistance-circumvention claims.
 
-\begin{table}[htbp]
+\begin{table}[ht!]
 \centering
 \caption{Per-target resistance-resilience scores (RRS, \Cref{eq:rrs}) for the 17-member cohort. Values are percentages of the corresponding wild-type Vina score magnitude; \textemdash{} marks wild-type non-binders ($|S_{\mathrm{Vina},i,WT,t}|<\qty{5}{\kilo\calorie\per\mole}$), excluded from the denominator. RRS$_{\mathrm{mean}}$ is the candidate mean over all eligible target--mutant ratios. Classes are the operational categories defined in \Cref{SM-tab:rrs_classes}, not biological resistance phenotypes.}
 \label{tab:rrs_main}
@@ -137,7 +137,7 @@ These three top-priority candidates differ in their resistance channels and targ
 
 By contrast, PP-13 combines the second-highest cohort RRS mean (\num{104.8}~percent) with favorable estimates on only two targets (PfClpP and PfATP4), demonstrating that high mutation resilience on one or two targets does not guarantee broad target engagement. The complete joint ranking in \Cref{tab:dual_priority} makes this orthogonality explicit: candidates sort by target-count priority, then by RRS within each tier, revealing that neither score alone captures the full prioritization landscape.
 
-\begin{table}[htbp]
+\begin{table}[ht!]
 \centering
 \caption{Combined polypharmacology--RRS prioritization of the 17-member cohort. $N_{\mathrm{fav}}$ counts targets with a favorable within-target Vina estimate ($S_{\mathrm{Vina}}\leq\qty{-6.0}{\kilo\calorie\per\mole}$); favorable targets are listed explicitly. Candidates are sorted by $N_{\mathrm{fav}}$ and then by RRS$_{\mathrm{mean}}$. The threshold is an operational prioritization device, not an experimental affinity cutoff, and the classes are the operational RRS categories of \Cref{SM-tab:rrs_classes}.}
 \label{tab:dual_priority}
@@ -169,14 +169,14 @@ PP-17 & C & \num{68.2} & 0 & \textemdash{} \\
 
 Six candidates have favorable within-target estimates on all four targets; among them, PP-15, PP-06, and PP-11 are the only members that also carry an A* RRS classification. They differ in the resistance channel: PP-15 (RRS$_{\mathrm{mean}}$ \num{111.7}) and PP-06 (\num{92.4}) are resilient on the PfCRT mutant panel, while PP-11 (\num{82.6}) is PfCRT-classified with PfDHFR non-binding in the mutant panel. By contrast, PP-13 combines the second-highest RRS mean (\num{104.8}) with favorable estimates on only two targets, illustrating that mutation tolerance and target breadth are genuinely independent axes: joint ranking, not either score alone, identifies the most economical multi-target, mutation-resilient hypotheses.
 
-\begin{figure}[htbp]
+\begin{figure}[ht!]
 \centering
 \includegraphics[width=\textwidth]{p1_v7_rrs_mutation_profiles.pdf}
 \caption{Exploratory per-target RRS mutation profiles for the 17-member source-panel cohort. Values are ratios of Vina-score magnitudes relative to the declared wild-type denominator; blank cells indicate excluded non-binding wild-type targets. The classes are computational operational categories, not biological resistance phenotypes.}
 \label{fig:rrs_profiles}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[ht!]
 \centering
 \includegraphics[width=\textwidth]{p1_v7_exploratory_metric_relationships.pdf}
 \caption{Exploratory relationships between RRS and PNS or ACSI. Points are colored by the operational RRS class. These associations are descriptive source-panel analyses and do not establish causality, biological activity, or resistance protection.}
