@@ -9,7 +9,7 @@
 
 | Package | Journal | Compile | Claims↔preuves | Verdict |
 |---|---|---|---|---|
-| **P1 V6** | JCIM | ✅ 19 p. main | ✅ audité (2 corrections) | **PRÊT** |
+| **P1 V7** | JCIM | ✅ 25 p. main / 17 p. SM (12/08/2026) | ✅ audité (2 corrections) | **PRÊT** |
 | **P2** | JCIM | ✅ 25 p. main / 3 p. SM | ✅ audité (4 corrections) | **PRÊT** |
 | **P3** | J. Cheminformatics | ✅ 13 p. main | ✅ cohérent BMAD | **PRÊT** |
 | **P4** | J. Cheminformatics | ✅ 14 p. main | ✅ cohérent DAR | **PRÊT** |

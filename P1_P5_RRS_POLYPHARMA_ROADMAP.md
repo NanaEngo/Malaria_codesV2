@@ -1,6 +1,6 @@
 # Master Roadmap P1–P5 — active plan
 
-**Version:** 1.11 — 12 August 2026
+**Version:** 1.12 — 12 August 2026
 **Purpose:** current decisions and next actions only.
 **Detailed history:** `docs/archive/md_full_20260812/P1_P5_RRS_POLYPHARMA_ROADMAP.md`
 
@@ -8,7 +8,7 @@
 
 | Project | Active DAR | Manuscript/workspace | Current state |
 |---|---|---|---|
-| P1 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | `Project1_Chem_space_antimalarial_V6_CorrectedGrid/` | V6 submission-oriented; final author metadata/read-through remain |
+| P1 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | `Project1_Chem_space_antimalarial_V7_CorrectedGrid/` | V7 submission-ready (JCIM); funding + final author read-through remain |
 | P2 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | `Project2_Polypharmacology_MD_ValidationV2607/` | Docking-RRS complete; Set-C MD-RRS pending |
 | P3 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | `Project3_Quantum_Inspired_RepresentationsV2607/` | Canonical benchmarks and external validation complete |
 | P4 | `P4_DATA_ANALYSIS_REPORT.md` | `Project4_Advanced_Monte_CarloV2607/` | v12 scalar benchmark and Pareto analysis complete |
@@ -16,9 +16,10 @@
 
 ## 2. Project priorities
 
-### P1 — V6 submission package
+### P1 — V7 submission package
 
-- Keep V6 as the submission-oriented workspace; V4/V5 remain evidence/remediation layers.
+- Keep V7 as the submission-oriented workspace (supersedes V6 on 11/08/2026: validation tables DEKOIS/MMV/redocking, physicochemical characterization, ORCID ×5); V6/V4/V5 remain evidence/remediation layers.
+- Package `submission_ACS_P1V7/` verified auto-contained (12/08/2026): main 25 p. / SM 17 p. / cover 1 p., 0 undefined refs, xr aux included, `git diff --check` PASS.
 - Preserve the corrected 2F6I accounting and the 17×4 target-wise Vina table.
 - Finish ORCID/funding metadata and final author read-through before deposit.
 - Do not promote exploratory V5 consensus/RRS as independent biological validation.
@@ -27,7 +28,9 @@
 
 - Canonical cohort: 17 Set-C candidates, per-target docking-RRS classes A*:6/B:5/C:5/D:1.
 - The bounded pilot contains 16 prepared systems (PP-01/PP-02 × PfDHFR/PfCRT mutation states) using the explicitly documented OpenFF 2.2.0 AM1-BCC + CHARMM36m/TIP3P deviation.
-- **Live witness only:** `15254` equilibration complete → `15259` production running for isolated `PP-01_PfDHFR_WT` → `15260` QC pending (`afterok:15259`).
+- CPU witness `15259` and dependent QC `15260` were stopped after a partial 858-ps trajectory; that output is non-canonical.
+- GPU benchmark `15262` passed at 19.816 ns/day using mixed offload (`-nb gpu -pme gpu -bonded cpu -update cpu`).
+- **Current live witness:** `15270` is running cleanly from equilibrated inputs with `gpu:1`; `grompp` passed and early GPU production is free of fatal/LINCS errors.
 - This is not the full 16-system production chain. `md_rrs_status=NOT_COMPUTED` until complete trajectories pass QC.
 - Historical 15106/15111/15117 records are superseded; historical four-parent MD remains separate from Set-C.
 
@@ -62,8 +65,8 @@
 
 | Priority | Action | Gate |
 |---:|---|---|
-| 1 | Monitor 15259 and allow 15260 to run only after successful completion | Production complete + trajectory hashes |
-| 2 | Launch/verify the full candidate-specific Set-C production chain | Complete panel, no witness-only promotion |
+| 1 | Monitor 15270 to completion and verify trajectory/checkpoint hashes | Production complete + trajectory QC |
+| 2 | Launch/verify the remaining candidate-specific Set-C production chain with validated GPU staging | Complete declared panel, no witness-only promotion |
 | 3 | Run trajectory QC, then MD-RRS only on PASS-QC rows | Predeclared bound-fraction rule |
 | 4 | Complete P1/P3/P4/P5 metadata, deposits, and author read-through | Submission package audit |
 

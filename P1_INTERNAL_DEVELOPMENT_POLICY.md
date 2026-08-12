@@ -1,6 +1,6 @@
 # P1 Internal Development Policy — Author-controlled pre-submission mode
 
-**Decision (09 August 2026):** Until the author explicitly states that the manuscript has been submitted and requests reactivation, **no editorial, submission, or independent-review restriction blocks scientific development**. P1 V4/V5/V6 analyses, reruns, sensitivity analyses, figures, manuscript refinement, consensus calculations, RRS/PNS exploratory analyses, and debugging may proceed while the work remains under development. The machine-readable phase switch records `development_execution_authorized=true`.
+**Decision (09 August 2026):** Until the author explicitly states that the manuscript has been submitted and requests reactivation, **no editorial, submission, or independent-review restriction blocks scientific development**. P1 V4/V5/V6/V7 analyses, reruns, sensitivity analyses, figures, manuscript refinement, consensus calculations, RRS/PNS exploratory analyses, and debugging may proceed while the work remains under development. The machine-readable phase switch records `development_execution_authorized=true`.
 
 This policy does **not** waive scientific quality control. Target identity, receptor/frame integrity, hashes, input completeness, geometric gates, finite scores, provenance, and genuine software failures remain mandatory diagnostics. A failed scientific QC is reported and corrected; it is not treated as an editorial restriction.
 

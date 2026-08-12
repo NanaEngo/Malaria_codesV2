@@ -13,10 +13,10 @@
 # =============================================================================
 # PRODUCTION MD array for the 16 Set-C systems (10 ns each, single replicate).
 #
-# Each array task (0-15) runs exactly ONE prepared system via the workflow's
-# --array-index mode: the workflow filters its row list to the single
-# candidate-target-mutation owned by this task (directory-name derived), so
-# tasks never race on shared run directories.  Per-task status/manifest files
+# Each array task (0-15) runs exactly ONE prepared system. The exact system
+# name is passed to the workflow via --system-name; this prevents witness or
+# archive directories from remapping an SLURM index through filesystem sorting.
+# Tasks never race on shared run directories.  Per-task status/manifest files
 # are written (set_c_md_status_arrayNN.csv / ..._manifest_arrayNN.json).
 #
 # Launch AFTER the equilibration array completes:
@@ -86,7 +86,7 @@ python scripts/p2_setc_md_workflow.py \
   --target-ns 10 \
   --replicates 1 \
   --ntomp "${P2_SETC_NTOMP:-8}" \
-  --array-index "$SLURM_ARRAY_TASK_ID" \
+  --system-name "$SYS" \
   --auto-approved \
   --execute
 RC=$?

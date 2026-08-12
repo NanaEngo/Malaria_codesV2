@@ -33,6 +33,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -42,13 +43,17 @@ from scipy.spatial import cKDTree
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 RESULTS_DIR = PROJECT_DIR / "results"
-SYSTEM_ROOT = RESULTS_DIR / "md_systems" / "set_c"
-OUTPUT = RESULTS_DIR / "set_c_md" / "set_c_trajectory_qc.csv"
+SYSTEM_ROOT = Path(os.environ.get("P2_SETC_ROOT", RESULTS_DIR / "md_systems" / "set_c"))
+OUTPUT = Path(os.environ.get("P2_SETC_QC_OUTPUT", RESULTS_DIR / "set_c_md" / "set_c_trajectory_qc.csv"))
 TARGET_MUTATIONS = {
     "PfDHFR": ["WT", "N51I", "C59R", "S108N", "I164L"],
     "PfCRT": ["WT", "K76T", "K76A"],
 }
 ANALYSIS_RULE_ID = "setc_p2_minheavy_5A_ge10percent_v1"
+REQUIRED_FORCEFIELD_FIELDS = {
+    "cohort_id", "system_name", "protein_force_field", "ligand_force_field",
+    "water_model", "topology_sha256", "coordinates_sha256", "checkpoint_sha256",
+}
 
 
 def sha256(path: Path) -> str:
@@ -59,21 +64,110 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def verify_prepared_manifests(system_dir: Path, set_c_id: str, target: str, mutation: str, expected_smiles: str) -> list[str]:
+    """Revalidate prepared-system identity and hashes at the QC boundary."""
+    errors: list[str] = []
+    system_path = system_dir / "system_manifest.json"
+    forcefield_path = system_dir / "forcefield_manifest.json"
+    try:
+        system = json.loads(system_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"invalid system_manifest.json: {exc}"]
+    expected = {
+        "cohort_id": "P2_SET_C_POLYPHARM_17",
+        "set_c_id": set_c_id,
+        "target": target,
+        "mutation": mutation,
+        "system_name": f"{set_c_id}_{target}_{mutation}",
+        "smiles": expected_smiles,
+    }
+    for key, value in expected.items():
+        if system.get(key) != value:
+            errors.append(f"system_manifest {key}={system.get(key)!r}, expected {value!r}")
+    try:
+        ff = json.loads(forcefield_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return errors + [f"invalid forcefield_manifest.json: {exc}"]
+    missing = sorted(REQUIRED_FORCEFIELD_FIELDS - set(ff))
+    if missing:
+        errors.append(f"forcefield manifest missing fields: {', '.join(missing)}")
+    if ff.get("cohort_id") != "P2_SET_C_POLYPHARM_17":
+        errors.append("forcefield cohort_id mismatch")
+    if ff.get("system_name") != expected["system_name"]:
+        errors.append("forcefield system_name mismatch")
+    if ff.get("protein_force_field") != "CHARMM36m":
+        errors.append("protein force field is not CHARMM36m")
+    deviation = ff.get("policy_deviation") or {}
+    if ff.get("ligand_force_field") != "CGenFF" and not (
+        ff.get("ligand_force_field") == "OpenFF 2.2.0 (AM1-BCC)"
+        and deviation.get("declared") is True
+        and deviation.get("field") == "ligand_force_field"
+        and deviation.get("canonical_requirement") == "CGenFF"
+        and deviation.get("approved") is True
+    ):
+        errors.append("ligand force-field policy is missing or not approved")
+    if ff.get("water_model") != "TIP3P":
+        errors.append("water model is not TIP3P")
+    for filename, field in (
+        ("topol.top", "topology_sha256"),
+        ("npt.gro", "coordinates_sha256"),
+        ("npt.cpt", "checkpoint_sha256"),
+        ("system_manifest.json", "system_manifest_sha256"),
+    ):
+        path = system_dir / filename
+        if not path.is_file() or not isinstance(ff.get(field), str):
+            errors.append(f"missing hash input or manifest hash: {filename}")
+        elif sha256(path) != ff[field]:
+            errors.append(f"{field} mismatch for {filename}")
+    for relative, expected_hash in (ff.get("topology_dependency_sha256") or {}).items():
+        relative_path = Path(str(relative))
+        if relative_path.is_absolute() or ".." in relative_path.parts:
+            errors.append(f"unsafe topology dependency path: {relative}")
+            continue
+        path = system_dir / relative_path
+        if not path.is_file():
+            errors.append(f"missing topology dependency: {relative}")
+        elif sha256(path) != expected_hash:
+            errors.append(f"topology dependency hash mismatch: {relative}")
+    return errors
+
+
 def find_production_run(system_dir: Path) -> tuple[Path, Path] | None:
-    """Locate the production xtc/tpr (runs/*/replicate_1/)."""
+    """Locate only a terminal, provenance-backed production run."""
     runs = system_dir / "runs"
     if not runs.is_dir():
         return None
-    for run_dir in sorted(runs.iterdir()):
+    for run_dir in sorted(runs.iterdir(), reverse=True):
         if not run_dir.is_dir():
             continue
         rep = run_dir / "replicate_1"
         if not rep.is_dir():
             continue
+        provenance_path = rep / "production_provenance.json"
+        try:
+            provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if provenance.get("status") != "PRODUCTION_COMPLETED_REQUIRES_TRAJECTORY_QC":
+            continue
+        if provenance.get("system_name") != system_dir.name:
+            continue
+        recorded_inputs = provenance.get("input_sha256") or {}
+        input_pairs = (("topol.top", system_dir / "topol.top"), ("npt.gro", system_dir / "npt.gro"), ("npt.cpt", system_dir / "npt.cpt"))
+        if any(recorded_inputs.get(name) != sha256(path) for name, path in input_pairs if path.is_file()):
+            continue
+        if any(not path.is_file() for _, path in input_pairs):
+            continue
         xtc = rep / "production.xtc"
         tpr = rep / "production.tpr"
-        if xtc.is_file() and xtc.stat().st_size > 0 and tpr.is_file() and tpr.stat().st_size > 0:
-            return xtc, tpr
+        if not (xtc.is_file() and xtc.stat().st_size > 0 and tpr.is_file() and tpr.stat().st_size > 0):
+            continue
+        recorded_outputs = provenance.get("outputs_sha256") or {}
+        if recorded_outputs.get("production.xtc") != sha256(xtc):
+            continue
+        if recorded_outputs.get("production.tpr") != sha256(tpr):
+            continue
+        return xtc, tpr
     return None
 
 
@@ -141,6 +235,20 @@ def main() -> int:
         cand = by_rank.get(rank)
         if cand is None:
             print(f"SKIP no candidate row: {sys_name}")
+            continue
+
+        manifest_errors = verify_prepared_manifests(system_dir, set_c_id, target, mutation, cand.smiles)
+        if manifest_errors:
+            rows.append({
+                "set_c_id": set_c_id, "target": target, "mutation": mutation,
+                "smiles": cand.smiles, "bound_fraction": np.nan, "n_frames": 0,
+                "duration_ns": 0.0, "trajectory_path": "", "tpr_path": "",
+                "trajectory_sha256": "", "tpr_sha256": "",
+                "qc_status": "MANIFEST_INVALID: " + "; ".join(manifest_errors),
+                "analysis_rule_id": ANALYSIS_RULE_ID,
+                "candidate_sha256": candidate_hash,
+            })
+            print(f"ERROR {sys_name}: prepared-manifest validation failed")
             continue
 
         found = find_production_run(system_dir)

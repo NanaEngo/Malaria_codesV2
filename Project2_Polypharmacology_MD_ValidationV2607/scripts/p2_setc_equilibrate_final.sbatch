@@ -35,12 +35,14 @@
 # =============================================================================
 
 set -e
-source /home/nanaengo/miniforge3/etc/profile.d/conda.sh
-conda activate malaria_md 2>/dev/null || true
+# Do not rely on shell activation inside Slurm's --wrap environment.  The
+# worker itself requires this exact interpreter and fails closed otherwise.
+export P2_SETC_PYTHON=/home/nanaengo/miniforge3/envs/malaria_md/bin/python
+[ -x "$P2_SETC_PYTHON" ] || { echo "FATAL: missing malaria_md Python" >&2; exit 90; }
 
 export P2_SETC_NTOMP=8
 export P2_GMX_BIN=/home/nanaengo/miniforge3/envs/malaria_md/bin/gmx_mpi
-export P2_SETC_ROOT=/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c
+export P2_SETC_ROOT=${P2_SETC_ROOT:-/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c}
 
 cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
 
@@ -75,7 +77,7 @@ fi
 # Remove stale failure marker so a success is not masked
 rm -f "$P2_SETC_ROOT/$SYS/equilibration_failure.json"
 
-python scripts/p2_setc_equilibrate.py --system "$SYS"
+"$P2_SETC_PYTHON" scripts/p2_setc_equilibrate.py --system "$SYS"
 RC=$?
 echo "=== $SYS finished rc=$RC ==="
 exit $RC

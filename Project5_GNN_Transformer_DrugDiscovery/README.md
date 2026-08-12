@@ -19,6 +19,10 @@ Do learned graph/sequence representations outperform or complement ECFP4 on a cu
 
 On the independent public malaria panel (`n=22,267`), ECFP4-RF reaches 0.9190 versus GIN 0.8843 ± 0.0021 under scaffold split (Δ=0.0346, p=3.35×10⁻⁶). GIN-TFP adds modest complementary signal but does not surpass ECFP4-RF.
 
+## LISH-MoA external extension (isolated, not yet computed)
+
+A separate `P5_LISH_MOA_EXTERNAL_V1` pipeline is prepared under `scripts/p5_lish_moa_prepare.py` and `scripts/p5_lish_moa_benchmark.py`. It evaluates multi-label mechanism-of-action prediction with drug-level aggregation, mean column-wise log loss, macro-AUPRC/AUROC, and calibration-oriented reporting. A structure-only arm is enabled only after an audited one-to-one `drug_id → SMILES` mapping. This extension is not an antimalarial activity validation and does not alter the canonical panel or manuscript results until its mapping and leakage gates pass.
+
 ## Evidence boundary
 
 The result is an honest-negative benchmark, not a claim that all GNNs or Transformers universally underperform. The panel is curated, scaffold split is a chemical extrapolation test, and external validation does not replace experimental activity measurements.

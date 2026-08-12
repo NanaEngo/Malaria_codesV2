@@ -33,7 +33,7 @@
 
 ## Current project files
 
-- **P1:** `Project1_Chem_space_antimalarial_V6_CorrectedGrid/` is the submission-oriented workspace; V4/V5 remain evidence and remediation workspaces.
+- **P1:** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/` is the submission-oriented workspace (supersedes V6 on 11/08/2026); V6/V4/V5 remain evidence and remediation workspaces.
 - **P2:** `Project2_Polypharmacology_MD_ValidationV2607/` is the canonical polypharmacology/RRS workspace.
 - **P3:** `Project3_Quantum_Inspired_RepresentationsV2607/` is canonical; V2607 manuscript sources are archived inside that project.
 - **P4:** `Project4_Advanced_Monte_CarloV2607/` is canonical; v12-activity is the scalar benchmark.

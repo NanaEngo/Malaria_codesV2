@@ -22,7 +22,7 @@
 \title{Supporting Information: Target breadth and mutation resilience in African-natural-product-inspired antimalarial chemotypes}
 \begin{document}
 
-\noindent This supplement contains the numerical material needed to reproduce the integrated computational analysis. It is organized by evidence layer: chemical space, target-anchored docking, RRS, and exploratory cross-metric analysis. The four-target matrix is reported target by target; no cross-target mean is used because the Vina score is not calibrated across unlike receptor pockets.
+\noindent This supplement provides the numerical material required to reproduce the integrated computational analysis. It is organised by evidence layer: chemical space, target-anchored docking, RRS, and exploratory cross-metric analysis. The four-target matrix is reported target by target; no cross-target mean is used because the Vina score is not calibrated across unlike receptor pockets.
 
 \section*{S1. Cohort and evidence boundaries}
 The integrated analysis uses the 17-member P2 Set-C polypharmacology-oriented cohort. Set C was selected using weighted MPO, synthetic accessibility, QED, and target-profile criteria; all 17 entries had $n_{\mathrm{targets\ bound}}=2$ in the source selection table. This enrichment is intentional and limits prevalence-based interpretation. The upstream $n_{\mathrm{targets\ bound}}=2$ label describes the P2 selection criterion; it does not constrain the separate 17-by-4 wild-type docking profile reported here. The docking calculations follow AutoDock Vina conventions \cite{Trott2009,Eberhardt2021}. The MPO top-20 and the P2 MD top-20 are distinct sets. The P2 MD systems 201, 438, the 164-labelled PfClpR cohort, and 214 are not MD validation of Set C. The target panel contains four wild-type docking profiles, whereas RRS is calculated from the separate WT/mutant docking panel and is available only for PfDHFR and PfCRT mutant panels.
@@ -68,10 +68,31 @@ PP-17 & \num{-5.266} & \num{-5.116} & \num{-5.342} & \num{-5.360} \\
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.95\textwidth]{p1_v6_targetwise_profile_summary.pdf}
-\caption{Descriptive target-wise means from the raw docking panel. Bars show the within-target mean across the 17 candidates. Means are shown only within target; no cross-target arithmetic mean or consensus score was used. These summaries are computational scoring-function outputs, not experimental affinity measurements.}
-\label{fig:targetwise_summary}
+\includegraphics[width=0.85\textwidth]{p1_v6_docking_matrix.pdf}
+\caption{Heatmap of the 17×4 wild-type docking matrix. Each cell shows the AutoDock Vina score estimate (\si{\kilo\calorie\per\mole}) for one candidate--target pair. All 68 pairs pass the geometric pose-quality gate. Candidates are ordered by RRS class; y-tick labels are coloured by class. Darker red indicates stronger predicted binding. These are computational scoring-function outputs, not experimental affinity measurements.}
+\label{fig:docking_matrix}
 \end{figure}
+
+\section*{S3b. Reference antimalarial docking scores}
+For context, established antimalarials were docked on the same target grids using the identical protocol. These values calibrate the score ranges reported in the main text and indicate where known inhibitors fall relative to the Set-C candidates.
+
+\begin{table}[h]
+\centering
+\caption{AutoDock Vina score estimates for reference antimalarials on the same target grids used for the Set-C cohort. Values are in \si{\kilo\calorie\per\mole}; they are scoring-function outputs, not experimental free energies. The reference values provide context for the Set-C score ranges but do not establish that the Set-C candidates bind with comparable affinity.}
+\label{tab:reference_docking}
+\begin{tabular}{@{}llr@{}}
+\toprule
+Compound & Target & Vina (\si{\kilo\calorie\per\mole}) \\
+\midrule
+Cycloguanil & PfDHFR & \num{-8.2} \\
+Methotrexate$^a$ & PfDHFR & \num{-30.5} \\
+Chloroquine & PfCRT & \num{-7.5} \\
+Piperaquine & PfCRT & \num{-7.8} \\
+\bottomrule
+\end{tabular}
+
+\medskip\noindent\textsuperscript{$a$}~Methotrexate was docked on the catalytic pocket grid, not the NADPH-adjacent grid used for the Set-C candidates; its score is not directly comparable.
+\end{table}
 
 \section*{S4. RRS definition and class summary}
 For candidate $i$, mutation $m$, and target $t$:
@@ -121,17 +142,7 @@ The panel spans four distinct antimalarial vulnerabilities: PfDHFR represents fo
 The integrated candidate manifest, raw docking table, RRS table, cross-metric matrix, scripts, receptor files, ligand files, and provenance records are available at \url{https://github.com/NanaEngo/Malaria_codesV2}. The figures and derived tables are reproducible computational outputs; they do not substitute for independent structural or experimental validation.
 
 \section*{S8. Available machine-readable resources}
-The accompanying repository provides the computational record used in this study. The available resources include:
-\begin{itemize}
-    \item the locked candidate manifest and canonical molecular identifiers;
-    \item the complete target-wise Vina score matrix, ligand poses, and pose-provenance records;
-    \item the declared wild-type/mutant docking panel used for the per-target RRS analysis;
-    \item the derived RRS, PNS, ACSI, and cross-metric tables;
-    \item the chemical-space similarity data and source data for the coverage figure;
-    \item receptor and ligand input files, configuration files, analysis scripts, and figure-generation scripts;
-    \item integrity manifests and reproducibility metadata.
-\end{itemize}
-Exact file names, directory paths, checksums, and version-specific dependencies are listed in the repository README and submission manifest rather than in the scientific narrative of this supplement. These resources are intended to support independent computational reproduction; they do not convert docking scores into experimental affinity measurements.
+The accompanying repository provides the computational record used in this study, including the locked candidate manifest and canonical molecular identifiers, the complete target-wise Vina score matrix with ligand poses and pose-provenance records, the declared wild-type/mutant docking panel used for the per-target RRS analysis, the derived RRS, PNS, ACSI, and cross-metric tables, the chemical-space similarity data and source data for the coverage figure, receptor and ligand input files, configuration files, analysis scripts, and figure-generation scripts, integrity manifests and reproducibility metadata. Exact file names, directory paths, checksums, and version-specific dependencies are listed in the repository README and submission manifest. These resources support independent computational reproduction; they do not convert docking scores into experimental affinity measurements.
 
 \bibliography{Sao_Chim_Space}
 \end{document}

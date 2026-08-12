@@ -12,6 +12,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs, tabularx, array, multirow}
 \usepackage[table]{xcolor}
+\usepackage[authoryear,round]{natbib}
 \usepackage[hypertexnames=false,colorlinks=true]{hyperref}
 \usepackage{cleveref}
 \usepackage{xr}
@@ -96,6 +97,31 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Interpretation \\
 \end{figure}
 
 \noindent\textit{Additional MD assessment.} A diagnostic continuation of the parent PfDHFR and PfCRT systems did not yield a usable new trajectory. It therefore contributed no new MM-GBSA estimate or MD-RRS result. No candidate-specific Set-C production MD was obtained.
+
+% ============================================================================
+% Table S7: PlasmoDB target annotation and mutation provenance
+% ============================================================================
+\begin{table}[htbp]
+\centering
+\caption{Stable \textit{Plasmodium falciparum} target identifiers and mutation context used in this study. Identifiers are reported for annotation and provenance only; they do not constitute pathway-level target engagement or experimental validation. The machine-readable source is distributed as \texttt{results/plasmodb\_target\_annotation.csv}.}
+\label{tab:s7_plasmodb}
+\begin{tabularx}{\textwidth}{l l l X}
+\toprule
+Target & Stable gene ID & Structural context & Mutation or evidence boundary \\
+\midrule
+PfDHFR & \texttt{PF3D7\_0417200} & 7F3Y WT template & N51I, C59R, S108N, I164L; antifolate-resistance states \\
+PfCRT & \texttt{PF3D7\_0709000} & 6UKJ WT template & K76T clinical resistance marker; K76A comparator state \\
+PfATP4 & \texttt{PF3D7\_1211900} & 9N10 parent-study structure & Target annotation only; not part of the Set-C mutation panel \\
+PfClpP & \texttt{PF3D7\_0307400} & Proteolytic Clp subunit & Not assigned to PDB 4GM2; no PfClpP claim is inferred from the 4GM2 record \\
+PfClpR & \texttt{PF3D7\_1436800} & 4GM2, PfClpR(P61--E244) & 4GM2 is PfClpR, not PfClpP; parent-study identity retained explicitly \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The stable identifiers were retrieved from PlasmoDB/VEuPathDB annotations on 12 August 2026 \citep{plasmodb_2026}; record-level permalinks and the retrieval date are preserved in the machine-readable CSV. The exact database release/build was not captured in the source snapshot and is therefore not treated as an inferred annotation version. Because the present study does not provide an independent multi-gene targetome or a prespecified parasite-proteome background, no GO or pathway-enrichment test was performed. This table therefore supplies biological identity and mutation provenance without converting docking scores into pathway-level evidence \citep{Trapotsi2022MoA}.
+
+\bibliographystyle{unsrtnat}
+\bibliography{Bibliography_Polypharmacology_MD_Validation}
 
 \section*{Use of Artificial Intelligence}
 

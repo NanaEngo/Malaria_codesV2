@@ -1,6 +1,8 @@
-# Draft Manuscrit MD-RRS — P2 (à remplir dès fin du job 15120)
+# Draft Manuscrit MD-RRS — P2 (gabarit non soumis)
 
-**Date :** 10 août 2026 — **Statut :** PRÊT À REMPLIR (placeholders `[X]` à substituer avec les valeurs de `results/set_c_md/md_rrs_classification.csv` + `set_c_trajectory_qc.csv`)
+> **DRAFT ONLY — DO NOT USE AS SOURCE OF TRUTH.** This template is retained for post-QC integration. The current active contract is the 16-system `pilot` mode; the 136-row `full` mode is a separate estimand. No placeholder may be replaced until the corresponding mode-specific QC and provenance manifest is PASS.
+
+**Date :** 12 août 2026 — **Statut :** GABARIT À REMPLIR après un contrat MD-RRS validé (`pilot`: `results/set_c_md/md_rrs_pilot_PP01_PP02.csv`; `full`: `results/set_c_md/md_rrs_classification.csv`)
 
 ---
 
@@ -80,7 +82,7 @@
 | PP-01 | PfCRT | K76A | [x.xxx] | [2000] | [10.000] | PASS |
 | PP-02 | … | (8 lignes) | … | … | … | … |
 
-*Source : `results/set_c_md/set_c_trajectory_qc.csv` (généré par 15120).*
+*Source : mode-specific trajectory-QC CSV (`set_c_trajectory_qc_pilot.csv` or `set_c_trajectory_qc_full.csv`) plus its post-production provenance manifest.*
 
 ---
 
@@ -136,7 +138,7 @@ print('systems bound>=0.1:', (bound.bound_fraction>=0.10).sum())
 
 | Condition | Conséquence | Décision |
 |---|---|---|
-| < 16 systèmes PASS QC | MD-RRS fail-closed (136 rows requis) | Publier avec « docking-RRS only » + rapport QC partiel en SM ; documenter la raison de l'exclusion |
-| N51I échoue encore | 15 systèmes utilisables | Idem ci-dessus ; le gap N51I est documenté |
+| Pilote : < 16 systèmes PASS QC | MD-RRS pilote fail-closed (16 lignes requises) | Conserver « docking-RRS only » pour les candidats concernés ; ne pas compléter par extrapolation |
+| N51I échoue encore | Contrat pilote incomplet | Aucun MD-RRS pilote ; documenter l’échec et conserver le docking-RRS seul |
 | QC PASS mais MD-RRS ≠ docking | Discordance rapportée, jamais relabellée | Renforcer la narration « docking-RRS = premier filtre conservateur » |
-| 15120 échoue (bug) | Vérifier le log, relancer QC manuellement | `python scripts/p2_setc_trajectory_qc.py` puis `python scripts/p2_setc_md_rrs.py --qc-file results/set_c_md/set_c_trajectory_qc.csv` |
+| Wrapper QC/MD-RRS échoue | Vérifier le manifeste terminal, puis relancer avec le même mode et des sorties versionnées | `python scripts/p2_setc_trajectory_qc.py` puis `python scripts/p2_setc_md_rrs.py --cohort-mode pilot --qc-file results/set_c_md/set_c_trajectory_qc_pilot.csv --output results/set_c_md/md_rrs_pilot_PP01_PP02.csv` |

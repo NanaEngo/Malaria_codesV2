@@ -8,7 +8,7 @@
 
 | Project | Current status | Submission-relevant conclusion |
 |---|---|---|
-| **P1** | V6 is the submission-oriented workspace; V4/V5 provide corrected evidence and remediation layers | Chemical-space novelty, target-wise docking, and computational RRS/polypharmacology are reportable only within their stated provenance boundaries |
+| **P1** | V7 is the submission-oriented workspace (JCIM); V6/V4/V5 provide corrected evidence and remediation layers | Chemical-space novelty, target-wise docking, and computational RRS/polypharmacology are reportable only within their stated provenance boundaries |
 | **P2** | Canonical 17-member Set-C cohort and docking-RRS/ACSI/PNS analysis complete; candidate-specific MD is still incomplete | Docking-RRS is canonical; Set-C MD-RRS is not yet computed |
 | **P3** | Canonical classical, hybrid, QKS, TNE/TDA, and external-validation analyses complete | Quantum-inspired descriptors are complementary; no quantum advantage over RBF or ECFP4 is claimed |
 
@@ -20,7 +20,7 @@
 - The V4 2F6I/PfClpP remediation accounts for all **484** centroid attempts: **458 PASS**, **1 PENDING**, **15 protocol exclusions** for unsupported boron chemistry, **5 DOCKED_GATE_FAILED**, and **5 EMBED_FAILURE**. This is a provenance/remediation result, not experimental validation.
 - V5 contains **68/68 finite target-wise Vina records** for 17 candidates × 4 targets. Scores remain target-specific and are not averaged as a common affinity scale.
 - The V5 mutant pilot contains **136/136 finite docking scores** for PfDHFR/PfCRT. It is exploratory and must not replace the canonical P2 RRS table.
-- V6 integrates the exact 17-member cohort by canonical SMILES. The submission package is numerically audited; independent structural review remains a provenance item, not an experimental result.
+- V7 integrates the exact 17-member cohort by canonical SMILES and supersedes V6 (validated 11/08/2026: DEKOIS/MMV/redocking tables, physicochemical characterization, ORCID ×5 collected). The submission package is numerically audited; independent structural review remains a provenance item, not an experimental result.
 
 ### Evidence boundaries
 
@@ -46,13 +46,26 @@ Historical parent-lead MD remains separate: only PfCRT–214 has an interpretabl
 
 ### Live Set-C execution checkpoint — 12 August 2026
 
-The bounded **16-system pilot** (PP-01/PP-02 × PfDHFR/PfCRT mutation states) is prepared under the PI-approved OpenFF 2.2.0 AM1-BCC + CHARMM36m/TIP3P policy deviation. The live jobs are an **isolated `PP-01_PfDHFR_WT` witness**, not the full panel:
+The bounded **16-system pilot** (PP-01/PP-02 × PfDHFR/PfCRT mutation states) is prepared under the PI-approved OpenFF 2.2.0 AM1-BCC + CHARMM36m/TIP3P policy deviation. The live job is an **isolated `PP-01_PfDHFR_WT` witness**, not the full panel:
 
 - **15254:** equilibration complete; hashed `npt.gro`/`npt.cpt` produced.
-- **15259:** witness production running; latest recorded marker approximately 378,000/5,000,000 steps (756 ps/10 ns).
-- **15260:** witness QC pending with `afterok:15259`.
+- **15270:** clean GPU witness production is running from equilibrated inputs; `grompp` passed, one GPU is allocated, and early production has no fatal/LINCS errors.
+- **15259/15260:** superseded CPU witness/QC chain; stopped after a partial 858-ps trajectory and explicitly non-canonical.
 - **Full-panel MD-RRS:** `NOT_COMPUTED`; no witness-only or incomplete result may be promoted.
+- **SLURM audit (12 Aug):** all P2 launchers and Python workflows pass static validation; Set-C production now passes the exact `--system-name` per array task rather than relying on filesystem ordering, and trajectory QC revalidates system/force-field/topology provenance before accepting a run. No new array has been submitted.
 - Historical 15106/15111/15117 identifiers are superseded.
+
+### P2 implementation decision — pilot MD-RRS and PlasmoDB annotation (12 August 2026)
+
+The next MD-RRS implementation is explicitly a **two-candidate pilot**, not a 17-candidate validation: PP-01 and PP-02 × PfDHFR/PfCRT mutation states = **16 systems and 16 QC rows**. The full-cohort contract remains separately defined as 17 candidates × 8 states = 136 systems/rows and is not being silently replaced. Pilot outputs must use a distinct cohort identifier and output path (`P2_SET_C_MD_RRS_PILOT_PP01_PP02`; `md_rrs_pilot_PP01_PP02.csv`) and must never overwrite the canonical full-cohort output.
+
+PlasmoDB/VEuPathDB stable 3D7 identifiers are added as target annotations only: PfDHFR `PF3D7_0417200`, PfCRT `PF3D7_0709000`, PfATP4 `PF3D7_1211900`, PfClpP `PF3D7_0307400`, and PfClpR `PF3D7_1436800`. This annotation documents target identity and mutation context; no PlasmoDB pathway-enrichment test is claimed because the study does not provide an independent multi-gene target set or an appropriate enrichment background. A dynamic pharmacophore occupancy analysis remains optional and cannot be reported before trajectory QC.
+
+**Independent structural annotation branch — LigandExplorer (12 August 2026):** job `15272` ran the local LigandExplorer checkout with the GNN backend on CPU to annotate ligands present in the four accepted receptor structures (`2F6I`, `7F3Y`, `6UKJ`, `9N10`). `4GM2` was intentionally excluded because it is PfClpR rather than active PfClpP. The resolved LigandExplorer commit is `d47eea0d033bb2127ee6836445554881c59edc8e`. The process returned 0, but the fail-closed audit found valid ligand-box JSON artefacts for `7F3Y` (4) and `6UKJ` (2), and no ligand-box artefact for `2F6I` or `9N10`; the run is therefore `COMPLETED_PARTIAL_REQUIRES_MANUAL_REVIEW`, not a complete panel annotation. The output JSONs encode spatial ligand-box data and emitted category labels, not standalone calibrated classification probabilities, activity, or confidence estimates. This branch does not alter candidate selection, docking scores, docking-RRS, MD, or MD-RRS. The versioned runner is `Project2_Polypharmacology_MD_ValidationV2607/scripts/p2_ligandexplorer_annotation.py`; the manual-review record is `results/ligandexplorer_annotation_20260812/annotation_manual_review.md`. No manuscript claim is promoted from this auxiliary result.
+
+### P2 GitHub tool register and existing-use audit — 12 August 2026
+
+The verified application register is maintained in `Project2_Polypharmacology_MD_ValidationV2607/P2_GITHUB_TOOL_REGISTER_20260812.md`. It records the distinction between installed software, executed workflows, and reportable results. GNINA is available as v1.3.2 (binary hash recorded in the P2 tool register), but the preserved ligand-438 attempt wrote an empty output file (0 bytes) and produced no reportable CNN score or pose. The generalized manuscript statement describing GNINA over the full 17 × 4 panel is therefore withdrawn until a complete non-empty output manifest is independently produced. PlasmoDB has already been used for stable target identifiers and mutation context (`results/plasmodb_target_annotation.csv`, Table S7), including the PfClpP/PfClpR identity boundary. A directly scripted WDK REST client has not been evidenced and is not required for the current four-target annotation. No pathway-enrichment analysis is performed or claimed. ProLIF and PLIP are the recommended next auxiliary tools, but only after QC-PASS trajectories or a predeclared static-pose subset, respectively; neither changes docking-RRS or authorizes incomplete MD-RRS promotion.
 
 ## 4. P3 — quantum-inspired representations
 
@@ -67,7 +80,14 @@ Canonical full-library results:
 
 Removing QK reduces hybrid AUC by **0.040**; TFP contributes **0.014**; TNE is mildly negative in the ablation. QKS re-runs show quantum ≈ RBF at n=5,000 and n=19,849; no quantum advantage is claimed. External descriptor analyses retain the **351 TNE failures** as an explicit ITT/complete-case sensitivity issue rather than hiding them. The external QKS pilot (n=150) gives quantum **0.8385** versus RBF **0.8423**, p=0.374; this is an external replication of equivalence, not an advantage.
 
-## 5. Minimal provenance map
+## 5. P3 external MoA extension — planned, not yet a canonical result
+
+A separate P3/P5 extension is being implemented under `P5_LISH_MOA_EXTERNAL_V1`. LISH-MoA is a multi-label pharmacology benchmark (206 scored MoA labels), not an antimalarial activity panel. P3 may consume only the audited, structure-mapped drug-level artifact produced by the P5 preparation workflow; it must not alter the canonical P3 panel, splits, AUC tables, QKS conclusions, or manuscript headline.
+
+The P3 external arm will compare ECFP4, TFP, TNE, and an explicitly labelled optional QKS analysis on the same mapped compounds. Mean column-wise log loss is primary, with macro/micro AUPRC and macro AUROC as secondary metrics. Splits must be grouped by `drug_id`, with scaffold-held-out sensitivity when structures are available.QKS remains separately bounded because its kernel cost is quadratic; `p3_lish_moa_qks_bounded.py` is available for a selected-label/cohort sensitivity analysis, but no such result is yet computed.
+ Any unresolved structure mapping or descriptor failure is reported explicitly; no complete-case filtering may silently change the estimand. A public annotated mirror is now available for the data-access step (`pablormier/kaggle-lish-moa-annotated`; official mapping provenance `LISHarvard/moa_challenge`). It remains a mirror of the competition data, not a new biological validation source. Until its archive hash, extracted training rows, structure mapping, and all gates are available, this extension remains **planned / not computed** and cannot be cited as a P3 result.
+
+## 6. Minimal provenance map
 
 | Result layer | Source evidence | Status |
 |---|---|---|
@@ -86,7 +106,7 @@ Removing QK reduces hybrid AUC by **0.040**; TFP contributes **0.014**; TNE is m
 
 ## 7. Next actions
 
-- **P1:** complete author metadata/funding items and final author read-through for V6.
-- **P2:** finish the isolated witness chain, then run the full candidate-specific production/QC chain before MD-RRS integration.
+- **P1 (V7):** complete funding items and final author read-through for V7; package `submission_ACS_P1V7/` verified auto-contained (main 25 p. / SM 17 p. / cover 1 p., 0 undefined refs, 12/08/2026).
+- **P2:** finish the isolated witness chain, then run the candidate-specific 16-system pilot/QC chain; compute pilot MD-RRS only with its distinct cohort contract and output path.
 - **P3:** preserve the honest-negative external validation framing and complete repository deposit preparation.
 - **All:** keep this summary short; place detailed job narratives and superseded decisions in the archive.

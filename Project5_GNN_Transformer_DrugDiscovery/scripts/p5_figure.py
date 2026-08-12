@@ -28,9 +28,19 @@ OUT_DIR = P5_ROOT / "results"
 
 def load_model_results() -> dict[str, pd.DataFrame]:
     results = {}
+    aliases = {
+        "chemberta": "ChemBERTa",
+        "gin": "GIN",
+        "gin-tfp": "GIN-TFP",
+        "gin-tne": "GIN-TNE",
+        "gin-fp": "GIN-FP",
+        "hybrid-all": "Hybrid-All",
+        "gcn": "GCN",
+        "gat": "GAT",
+    }
     for csv in OUT_DIR.glob("p5_*_results.csv"):
         name = csv.stem.removeprefix("p5_").removesuffix("_results").removesuffix("_random").removesuffix("_scaffold")
-        results[name] = pd.read_csv(csv)
+        results[aliases.get(name.lower(), name)] = pd.read_csv(csv)
     return results
 
 
@@ -43,18 +53,18 @@ def baseline(split: str) -> list[float] | None:
 
 
 def model_mean(results: dict, model: str, split: str) -> tuple[float, float] | None:
-    """Return (mean, 95% CI half-width) across all seeds for model+split."""
+    """Return (mean, 95% CI half-width) from five per-seed means."""
     if model not in results:
         return None
     df = results[model]
     if "split" in df.columns:
         df = df[df["split"] == split]
-    auc = df["test_auc"].values.astype(float)
-    if len(auc) == 0:
+    if df.empty or "seed" not in df.columns:
         return None
-    m = np.mean(auc)
-    se = np.std(auc, ddof=1) / np.sqrt(len(auc))
-    ci = st.t.interval(0.95, len(auc) - 1, loc=m, scale=se) if len(auc) > 1 else (m, m)
+    seed_means = df.groupby("seed")["test_auc"].mean().sort_index().to_numpy(dtype=float)
+    m = np.mean(seed_means)
+    se = np.std(seed_means, ddof=1) / np.sqrt(len(seed_means))
+    ci = st.t.interval(0.95, len(seed_means) - 1, loc=m, scale=se) if len(seed_means) > 1 else (m, m)
     return m, (ci[1] - m)
 
 
@@ -64,7 +74,7 @@ def plot_panel(ax, split: str, results: dict, order: list[str], baselines: dict)
         mm = model_mean(results, m, split)
         if mm:
             rows.append({"model": m, "mean": mm[0], "err": mm[1]})
-    # always append ECFP4 baseline first (bar), CI from its seed means
+    # always append ECFP4 baseline first; use the same five-seed estimand
     seeds = np.asarray(baselines[split], dtype=float)
     bm = seeds.mean()
     se = seeds.std(ddof=1) / np.sqrt(len(seeds))
@@ -82,9 +92,9 @@ def plot_panel(ax, split: str, results: dict, order: list[str], baselines: dict)
     ax.set_title(f"{split.title()} split (5-fold × 5 seeds)", fontsize=12)
     ax.axvline(df.loc[df.model == "ECFP4-RF", "mean"].iloc[0], color="#d62728", ls="--", lw=1.2, alpha=0.6)
     ax.set_xlim(0.5, 1.0)
-    for i, row in df.iterrows():
-        ax.text(min(row["mean"] + row["err"] + 0.01, 0.98), row.name,
-                f"{row['mean']:.3f}±{row['err']:.3f}", va="center", fontsize=8)
+    for y_pos, (_, row) in enumerate(df.iterrows()):
+        ax.text(min(row["mean"] + row["err"] + 0.01, 0.98), y_pos,
+                f"{row['mean']:.3f} (CI ±{row['err']:.3f})", va="center", fontsize=8)
 
 
 def main():
@@ -102,7 +112,7 @@ def main():
     fig, axes = plt.subplots(1, 2, figsize=(15, 7))
     plot_panel(axes[0], "random", results, order, baselines)
     plot_panel(axes[1], "scaffold", results, order, baselines)
-    fig.suptitle("P5 antimalarial NP panel (n=19,836) — GNN/Transformer vs ECFP4-RF", fontsize=14)
+    fig.suptitle("Antimalarial natural-product panel (n=19,836): learned models versus ECFP4-RF", fontsize=14)
     plt.tight_layout()
     out.parent.mkdir(parents=True, exist_ok=True)
     plt.savefig(out, dpi=300, bbox_inches="tight")

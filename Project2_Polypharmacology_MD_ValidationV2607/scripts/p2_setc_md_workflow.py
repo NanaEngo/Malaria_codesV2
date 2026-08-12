@@ -75,7 +75,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--auto-approved", action="store_true", help="Non-interactive invocation only; never bypasses the execution authorization guard.")
     parser.add_argument("--gpu-id", default="auto")
     parser.add_argument("--ntomp", type=int, default=8, help="OpenMP threads for mdrun (default 8; explicit to avoid whole-node grabbing under SLURM arrays).")
-    parser.add_argument("--array-index", type=int, default=-1, help="SLURM array task index (0-15): run only this one prepared system. -1 = sequential full run.")
+    parser.add_argument("--array-index", type=int, default=-1, help="Legacy SLURM array task index. Prefer --system-name for fail-closed ownership.")
+    parser.add_argument("--system-name", default=None, help="Exact prepared system name owned by this task; prevents filesystem-order remapping.")
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
     return parser.parse_args()
 
@@ -345,6 +346,7 @@ def prepare_replicate(row: dict, args: argparse.Namespace, run_records: list[dic
         command = [gmx, "grompp", "-f", mdp.name, "-c", "npt.gro", "-r", "npt.gro", "-t", "npt.cpt", "-p", "topol.top", "-o", "production.tpr"]
         record = {
             "system_name": row["system_name"], "replicate": replicate, "seed": seed,
+            "run_dir": rel(rep_dir),
             "status": "GROMPP_READY", "mdp_sha256": sha256(rep_dir / mdp.name),
             "topology_sha256": sha256(rep_dir / "topol.top"),
             "coordinates_sha256": sha256(rep_dir / "npt.gro"),
@@ -355,6 +357,26 @@ def prepare_replicate(row: dict, args: argparse.Namespace, run_records: list[dic
         subprocess.run(command, cwd=rep_dir, check=True)
         if not (rep_dir / "production.tpr").is_file() or (rep_dir / "production.tpr").stat().st_size == 0:
             raise RuntimeError(f"grompp produced no production.tpr in {rep_dir}")
+        record["production_tpr"] = rel(rep_dir / "production.tpr")
+        record["production_tpr_sha256"] = sha256(rep_dir / "production.tpr")
+        (rep_dir / "production_provenance.json").write_text(
+            json.dumps({
+                "schema_version": 1,
+                "status": "GROMPP_READY",
+                "system_name": row["system_name"],
+                "run_dir": rel(rep_dir),
+                "md_rrs_status": "NOT_COMPUTED",
+                "input_sha256": {
+                    "npt.gro": record["coordinates_sha256"],
+                    "npt.cpt": record["checkpoint_sha256"],
+                    "topol.top": record["topology_sha256"],
+                    mdp.name: record["mdp_sha256"],
+                },
+                "production_tpr": record["production_tpr"],
+                "production_tpr_sha256": record["production_tpr_sha256"],
+            }, indent=2) + "\n",
+            encoding="utf-8",
+        )
         mdrun = [gmx, "mdrun", "-deffnm", "production", "-seed", str(seed), "-v", "-ntomp", str(args.ntomp), *MDRUN_CPU]
         prepared.append((rep_dir, record, mdrun))
     return prepared
@@ -367,7 +389,7 @@ def execute_replicate(prepared: tuple[Path, dict, list[str]], args: argparse.Nam
     record["mdrun_command"] = mdrun
     record["status"] = "RUNNING"
     subprocess.run(mdrun, cwd=rep_dir, check=True)
-    required_outputs = ("production.xtc", "production.edr", "production.log", "production.gro")
+    required_outputs = ("production.tpr", "production.xtc", "production.edr", "production.log", "production.gro")
     missing = [name for name in required_outputs if not (rep_dir / name).is_file() or (rep_dir / name).stat().st_size == 0]
     if missing:
         raise RuntimeError(f"mdrun completed without required outputs in {rep_dir}: {', '.join(missing)}")
@@ -377,7 +399,31 @@ def execute_replicate(prepared: tuple[Path, dict, list[str]], args: argparse.Nam
         "production_xtc": rel(rep_dir / "production.xtc"),
         "production_xtc_sha256": sha256(rep_dir / "production.xtc"),
         "production_edr_sha256": sha256(rep_dir / "production.edr"),
+        "outputs_sha256": {
+            name: sha256(rep_dir / name)
+            for name in required_outputs
+            if (rep_dir / name).is_file()
+        },
     })
+    (rep_dir / "production_provenance.json").write_text(
+        json.dumps({
+            "schema_version": 1,
+            "status": "PRODUCTION_COMPLETED_REQUIRES_TRAJECTORY_QC",
+            "system_name": record["system_name"],
+            "run_dir": record["run_dir"],
+            "md_rrs_status": "NOT_COMPUTED",
+            "input_sha256": {
+                "npt.gro": record["coordinates_sha256"],
+                "npt.cpt": record["checkpoint_sha256"],
+                "topol.top": record["topology_sha256"],
+                "mdp": record["mdp_sha256"],
+            },
+            "outputs_sha256": record["outputs_sha256"],
+            "production_tpr": record["production_tpr"],
+            "production_tpr_sha256": record["outputs_sha256"].get("production.tpr"),
+        }, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
 
 def main() -> int:
@@ -433,17 +479,35 @@ def main() -> int:
                 })
                 rows.append(status)
 
-    # Array mode: keep only the single row owned by this task (identified by
-    # set_c_id/target/mutation from the directory name).
-    array_system = None
-    if args.array_index >= 0:
-        system_dirs = sorted([p.name for p in SYSTEM_ROOT.iterdir() if p.is_dir()])
-        if args.array_index >= len(system_dirs):
+    # Array ownership must be explicit.  The old implementation derived the
+    # owner from sorted filesystem directories, which could silently remap a
+    # task when witness/archive directories were present.  The production
+    # wrapper now passes --system-name; the legacy index mode is retained only
+    # with a deterministic expected panel order and never consults the filesystem.
+    if args.system_name is not None and args.array_index >= 0:
+        raise SystemExit("--system-name and --array-index are mutually exclusive")
+    expected_array_systems = [
+        f"{set_c_id}_{target}_{mutation}"
+        for set_c_id in selected["set_c_id"]
+        for target in args.targets
+        for mutation in TARGET_MUTATIONS[target]
+    ]
+    array_system = args.system_name
+    if args.system_name is not None:
+        if args.system_name not in expected_array_systems:
+            raise SystemExit(
+                f"--system-name {args.system_name!r} is not part of the selected deterministic panel"
+            )
+        rows = [r for r in rows if r["system_name"] == args.system_name]
+        if not rows:
+            raise SystemExit(f"No row for explicitly requested system {args.system_name!r}")
+    elif args.array_index >= 0:
+        if args.array_index >= len(expected_array_systems):
             raise SystemExit(
                 f"--array-index {args.array_index} out of range "
-                f"({len(system_dirs)} prepared system dirs)"
+                f"({len(expected_array_systems)} systems in the selected panel)"
             )
-        array_system = system_dirs[args.array_index]
+        array_system = expected_array_systems[args.array_index]
         rows = [r for r in rows if r["system_name"] == array_system]
         if not rows:
             raise SystemExit(f"Array task {args.array_index}: no row for system {array_system!r}")

@@ -1,45 +1,20 @@
 P3 Physical Validation — Consolidated Summary
 ======================================================================
-Generated: 2026-08-09T13:12:47.109442
+Generated: 2026-08-10T16:10:16.744266
 Implements: P3_Strategic_85PA.md Steps 1–4
 
-Step 3 — Quantum Kernel Polypharmacology (per-fold AUCs)
+Step 4 — TDA Spearman ρ vs #Targets Bound (top 12)
 ----------------------------------------
- fold  model      auc  target_alignment  time_s  gamma
-    1    QKS 0.513258               NaN  2545.0    NaN
-    1    RBF 0.505682          0.086572     NaN    1.0
-    1 Linear 0.477273               NaN     NaN    NaN
-    2    QKS 0.658144               NaN  7916.2    NaN
-    2    RBF 0.642045          0.099773     NaN    0.5
-    2 Linear 0.594697               NaN     NaN    NaN
-    3    QKS 0.824811               NaN 13137.9    NaN
-    3    RBF 0.803030          0.099481     NaN    0.5
-    3 Linear 0.285038               NaN     NaN    NaN
-    4    QKS 0.688447               NaN  2605.3    NaN
-    4    RBF 0.704545          0.084585     NaN    1.0
-    4 Linear 0.626894               NaN     NaN    NaN
-    5    QKS 0.720644               NaN  7818.8    NaN
-    5    RBF 0.694129          0.060338     NaN    2.0
-    5 Linear 0.253788               NaN     NaN    NaN
-
-
-Statistical analysis:
-P3 Physical Validation — Quantum Kernel Polypharmacology Benchmark
-======================================================================
-Generated: 2026-08-09T13:12:46.472498
-Task: classify molecules binding >= 2 targets at ΔG <= -7.0 kcal/mol
-Subsample: n=500 (stratified), prevalence=12.0%
-CV: 5-fold stratified, IQPEmbedding n_repeats=1
-Circuit: 8-qubit IQPEmbedding on lightning.qubit
-
-     QKS:  AUC = 0.6811 ± 0.1129  (95% bootstrap CI [0.5898, 0.7642], n=5 folds)
-     RBF:  AUC = 0.6699 ± 0.1087  (95% bootstrap CI [0.5831, 0.7491], n=5 folds)
-          target alignment = 0.0861 ± 0.0144
-  Linear:  AUC = 0.4475 ± 0.1722  (95% bootstrap CI [0.3110, 0.5841], n=5 folds)
-
-Pairwise Wilcoxon signed-rank tests (Bonferroni-Holm corrected):
-  QKS vs RBF: Wilcoxon W=3.0, p_raw=0.3125, Cliff's δ=+0.120, mean ΔAUC=+0.0112 (n=5)  |  p_Holm=0.3125 (n.s.)
-  QKS vs Linear: Wilcoxon W=0.0, p_raw=0.0625, Cliff's δ=+0.840, mean ΔAUC=+0.2335 (n=5)  |  p_Holm=0.1875 (n.s.)
-  RBF vs Linear: Wilcoxon W=0.0, p_raw=0.0625, Cliff's δ=+0.840, mean ΔAUC=+0.2223 (n=5)  |  p_Holm=0.1875 (n.s.)
-
-Significance: * p<0.05, ** p<0.01, *** p<0.001 (Bonferroni-Holm corrected)
+  tda_feature  spearman_rho    spearman_p  pearson_r     pearson_p  ci95_lo  ci95_hi     N
+     H0_count     -0.247763 2.541809e-236  -0.241897 5.026855e-225      NaN      NaN 17011
+   H0_entropy     -0.242753 1.181708e-226  -0.247189 3.354041e-235      NaN      NaN 17011
+   H1_entropy     -0.189605 1.914491e-137  -0.185334 2.648803e-131      NaN      NaN 17011
+  H0_max_pers     -0.151706  4.045216e-88  -0.128427  1.779479e-63      NaN      NaN 17011
+  pers_img_13      0.138793  6.304633e-74   0.064355  4.403536e-17      NaN      NaN 17011
+ H0_death_std     -0.135742  9.182619e-71  -0.119452  4.236622e-55      NaN      NaN 17011
+H1_birth_mean     -0.117772  1.336791e-53  -0.100525  1.856481e-39      NaN      NaN 17011
+      betti_8      0.116288  2.707119e-52   0.126749  7.311178e-62      NaN      NaN 17011
+      betti_5      0.112361  6.411019e-49   0.109013  3.908538e-46      NaN      NaN 17011
+ H1_mean_pers      0.112350  6.551133e-49   0.117934  9.601327e-54      NaN      NaN 17011
+      betti_6      0.112335  6.751737e-49   0.109057  3.595641e-46      NaN      NaN 17011
+  pers_img_14     -0.111404  4.094622e-48  -0.086467  1.344778e-29      NaN      NaN 17011

@@ -12,14 +12,15 @@
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage[noabbrev,capitalize]{cleveref}
 \setlength{\emergencystretch}{3em}
-\externaldocument[M-]{P1_V7_Integrated_Polypharmacology_RRS}
+\externaldocument[M-]{P1_V7_main}
 \graphicspath{{Graphics/}}
 \author{Myke Vital Sao Temgoua}
+\email{myke-vital.sao@facsciences-uy1.cm}
 \author{Jean-Pierre Tchapet Njafa}
 \author{Penabei Samafou}
 \author{Wilfred Fon Mbacham}
 \author{Serge Guy Nana Engo}
-\title{Supporting Information: Target breadth and mutation resilience in African-natural-product-inspired antimalarial chemotypes}
+\title{Supporting Information: Target breadth and mutation resilience in African-natural-product-inspired antimalarial chemotypes: a computational analysis}
 \begin{document}
 
 \noindent This supplement contains the numerical material needed to reproduce the integrated computational analysis. It is organized by evidence layer: chemical space, target-anchored docking, RRS, and exploratory cross-metric analysis. The four-target matrix is reported target by target; no cross-target mean is used because the Vina score is not calibrated across unlike receptor pockets.
@@ -127,26 +128,83 @@ PNS--wild-type Vina score & \num{0.389} & \num{0.123} & Descriptive/mechanical c
 \section*{S9. Target evidence classes and limitations}
 The panel spans four distinct antimalarial vulnerabilities: PfDHFR represents folate metabolism and antifolate resistance; PfCRT represents a resistance-linked digestive-vacuole transporter; PfClpP represents parasite proteostasis through the caseinolytic protease, a vulnerability supported by recent work on apicoplast chaperonin--Clp proteostasis \cite{Tissawak2025}; and PfATP4 represents P-type ATPase-mediated ion regulation, for which an endogenous structure and modulator-bound state have recently been reported \cite{Haile2025}. PfDHFR uses a catalytic-site ligand anchor; PfClpP uses a catalytic triad; PfCRT uses a membrane-associated Y01 cavity proxy; and PfATP4 uses conserved P-type ATPase machinery without a co-crystallized inhibitor. Consequently, all four-target profiles are exploratory and are not equivalent evidence of biological target engagement. No RRS values are reported for PfClpP or PfATP4.
 
-\section*{S10. Reproducibility and availability}
+\section*{S10. Multi-parameter optimization framework for upstream candidate selection}
+The 17-member Set-C cohort analyzed in this study was selected from a larger upstream library using a multi-parameter optimization (MPO) framework that integrated docking scores, drug-likeness, and ADMET predictions. This section provides the mathematical formulation of the MPO components to document the selection methodology; the full MPO validation (sensitivity analysis, centroid-based screening workflow, and benchmark enrichment) is detailed in the companion chemical-space manuscript (Temgoua \textit{et al.}, submitted). Set-C candidates were drawn from the MPO $\geq$ \num{0.40} optimization-worthy tier, where MPO scores represent computational prioritization evidence rather than confirmed biological activity or synthetic feasibility.
+
+\subsection*{S10.1. MPO scoring components}
+The total MPO score for compound $i$ is defined as:
+\begin{equation}
+\text{MPO}_{\text{total}, i} = \sum_{k=1}^{5} w_k \cdot S_{k,i} + \text{Polypharmacology Bonus}_i
+\label{eq:sm_mpo_total}
+\end{equation}
+where $w_k$ are component weights and $S_{k,i}$ are normalized desirability scores scaled to [\num{0}, \num{1}]. The five components and their weights are:
+
+\textbf{Component 1: Vina binding affinity} (\qty{35}{\percent} weight). Min-max scaled:
+\begin{equation}
+S_{\text{vina}, i} = \frac{\text{Vina}_i - \text{Vina}_{\min}}{\text{Vina}_{\max} - \text{Vina}_{\min}}
+\label{eq:sm_vina}
+\end{equation}
+where more negative values yield higher desirability.
+
+\textbf{Component 2: DiffDock confidence} (\qty{25}{\percent} weight). Logistic sigmoid transformation:
+\begin{equation}
+S_{\text{diff}, i} = \frac{1}{1 + e^{-c_i}}
+\label{eq:sm_diffdock}
+\end{equation}
+where $c_i$ is the DiffDock confidence score \cite{Corso2023}. High-confidence poses ($c > \num{0}$) approach \num{1.0}; low-confidence poses ($c < \num{-1.5}$) approach \num{0}.
+
+\textbf{Component 3: Quantitative estimate of drug-likeness (QED)} (\qty{20}{\percent} weight). Direct use:
+\begin{equation}
+S_{\text{qed}, i} = \text{QED}_i
+\label{eq:sm_qed}
+\end{equation}
+
+\textbf{Component 4: ADMET composite} (\qty{15}{\percent} weight). Average of 11 desirability endpoints:
+\begin{equation}
+S_{\text{admet}, i} = \frac{1}{11} \sum_{m=1}^{11} d_m(\text{ADMET}_{i,m})
+\label{eq:sm_admet}
+\end{equation}
+where endpoints include human intestinal absorption, solubility, Caco-2 permeability, BBB penetration, hERG liability, AMES mutagenicity, hepatotoxicity (DILI), synthetic accessibility, P-glycoprotein substrate status, CYP inhibition, and clearance profile \cite{Swanson2024}.
+
+\textbf{Component 5: Lipinski penalty} (\qty{5}{\percent} weight). Proportional to violations:
+\begin{equation}
+P_{\text{Ro5}, i} = 1 - 0.2 \cdot n_{\text{violations}, i}
+\label{eq:sm_ro5}
+\end{equation}
+where $n_{\text{violations}, i} \in [0,4]$ (MW $> \qty{500}{\dalton}$, $\log P > \num{5}$, HBD $> \num{5}$, HBA $> \num{10}$).
+
+\textbf{Polypharmacology bonus.} Compounds binding multiple targets receive:
+\begin{equation}
+\text{Polypharmacology Bonus}_i = 0.05 \cdot (n_{\text{targets}, i} - 1) \quad \text{if } n_{\text{targets}, i} \geq 2
+\label{eq:sm_poly}
+\end{equation}
+capped at \num{+0.10} (3 targets). The $\text{MPO}_{\text{target}} \geq \num{0.50}$ threshold ensures only candidates meeting minimum quality criteria qualify for the bonus.
+
+\subsection*{S10.2. Weight rationale and scope}
+The \qty{35}{\percent} Vina and \qty{25}{\percent} DiffDock weights (combined \qty{60}{\percent}) prioritize target-engagement evidence; \qty{20}{\percent} QED ensures drug-likeness; \qty{15}{\percent} ADMET addresses early toxicity; and \qty{5}{\percent} Ro5 penalty reflects that Lipinski compliance is partially captured within QED. Component weights were selected based on established drug-discovery priorities \cite{Hughes2008,Gleeson2008,Lipinski2004} rather than target-specific optimization. The MPO framework served as an upstream filter to select Set-C candidates from the \num{65856}-molecule library; it does not validate Set-C quality, and the resulting scores are computational prioritization estimates, not experimental measurements.
+
+The complete MPO methodology, including centroid-based screening workflow (\num{484} centroids $\rightarrow$ \num{76} optimization-worthy $\rightarrow$ \num{53} clusters $\rightarrow$ \num{19913} synthesizable leads), sensitivity analysis (\num{25} weight perturbations, Spearman $\rho = \num{0.792}$ for top-1000), and external validation (DEKOIS, MMV Malaria Box enrichment), is detailed in the companion manuscript on African-natural-product chemical space.
+
+\section*{S11. Reproducibility and availability}
 The integrated candidate manifest, raw docking table, RRS table, cross-metric matrix, scripts, receptor files, ligand files, and provenance records are available at \url{https://github.com/NanaEngo/Malaria_codesV2}. The figures and derived tables are reproducible computational outputs; they do not substitute for independent structural or experimental validation.
 
-\section*{S11. Docking validation and protocol assessment}
+\section*{S12. Docking validation and protocol assessment}
 The docking protocol was validated using three complementary strategies: external benchmark validation (DEKOIS 2.0), positive-control enrichment (MMV Malaria Box), and pose reproduction accuracy (redocking of co-crystallized ligands). This multi-layered approach provides transparent evidence of both protocol capabilities and inherent limitations while addressing known artifacts in structure-based virtual screening.
 
-\subsection*{S11.1. External benchmark and enrichment}
+\subsection*{S12.1. External benchmark and enrichment}
 \input{tables/sm_table_enrichment_validation.tex}
 
 The DEKOIS 2.0 benchmark \cite{Bauer2013} provides property-matched decoys that avoid trivial separation artifacts common in na\"ive active/decoy sets. For PfDHFR (7F3Y), the ROC-AUC of 0.450 [95\% CI: 0.367--0.531] using AutoDock Vina alone establishes a near-random baseline that reflects the documented limitations of single-method docking scoring functions. This result motivated the adoption of a consensus Vina+DiffDock strategy for the primary library screening, which improved enrichment performance substantially (ROC-AUC 0.924 on the MMV Malaria Box positive-control set). The MMV enrichment results for PfCRT and PfATP4 use score-stratified labels (top/bottom 25\% of docked library) and therefore measure retrodictive consistency rather than external discrimination; they serve as internal controls for protocol stability.
 
-\subsection*{S11.2. Redocking validation}
+\subsection*{S12.2. Redocking validation}
 \input{tables/sm_table_redocking_validation.tex}
 
 Redocking of co-crystallized ligands achieved successful pose reproduction (RMSD < 2.0 \si{\angstrom}) in 4 out of 5 tested cases (80\%). The single failure occurred for methotrexate (MTX) at PfDHFR, where the grid center was positioned near the NADPH cofactor binding site rather than the folate substrate pocket. This illustrates target-specific sensitivity to grid positioning and underscores the importance of anchor-guided box placement. For the three targets used in the primary analysis (PfDHFR, PfCRT, PfATP4), all validation ligands reproduced successfully. PfClpP validation used the catalytic triad as the anchor reference rather than a full-length inhibitor, as none was co-crystallized in 2F6I.
 
-\subsection*{S11.3. Validation dataset summary}
+\subsection*{S12.3. Validation dataset summary}
 \input{tables/sm_table_validation_datasets.tex}
 
-\subsection*{S11.4. Validation interpretation and scope}
+\subsection*{S12.4. Validation interpretation and scope}
 The convergent evidence from DEKOIS, MMV enrichment, and redocking establishes that the consensus Vina+DiffDock protocol provides reliable pose sampling and scoring-function enrichment within the documented constraints of physics-based docking. The near-random DEKOIS baseline (single-method Vina) confirms that scoring-function limitations persist and that enrichment depends on consensus strategies rather than on any single method achieving experimental-affinity accuracy. Consequently, all reported Vina scores in this study are computational scoring-function outputs and are not convertible to experimental binding affinities. The validation results support the use of these scores for ranking and enrichment in virtual screening workflows while maintaining explicit boundaries on their physical interpretation.
 
 \section*{S12. Available machine-readable resources}

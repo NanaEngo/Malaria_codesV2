@@ -39,6 +39,7 @@ SYSTEM_ROOT = Path(
 )
 
 GMX = os.environ.get("P2_GMX_BIN", "/home/nanaengo/miniforge3/envs/malaria_md/bin/gmx_mpi")
+PYTHON_EXPECTED = "/home/nanaengo/miniforge3/envs/malaria_md/bin/python"
 TEMP_K = 310.15
 
 # Number of OpenMP threads per mdrun.  MUST be set explicitly: without -ntomp,
@@ -220,11 +221,43 @@ def topology_dependencies(topol: Path) -> dict[str, str]:
     return {key: sha256(path) for key, path in resolved.items()}
 
 
+def validate_equilibration_environment() -> None:
+    if sys.executable != PYTHON_EXPECTED:
+        raise RuntimeError(
+            f"wrong Python interpreter for equilibration: {sys.executable}; "
+            f"expected {PYTHON_EXPECTED}"
+        )
+    if not Path(GMX).is_file() or not os.access(GMX, os.X_OK):
+        raise RuntimeError(f"missing GROMACS executable: {GMX}")
+    version = subprocess.run([GMX, "--version"], capture_output=True, text=True)
+    if version.returncode != 0 or "GROMACS" not in (version.stdout + version.stderr):
+        raise RuntimeError(f"GROMACS smoke check failed: {GMX}")
+
+
 def equilibrate(system_dir: Path, smoke: bool) -> dict:
-    required = ["complex.gro", "topol.top", "system_manifest.json", "forcefield_manifest.json"]
+    required = [
+        "complex.gro", "topol.top", "system_manifest.json", "forcefield_manifest.json",
+        "pre_equilibration_audit.json",
+    ]
     missing = [name for name in required if not (system_dir / name).is_file()]
     if missing:
         return {"system": system_dir.name, "status": "BLOCKED_MISSING_INPUTS", "missing": missing}
+    audit = json.loads((system_dir / "pre_equilibration_audit.json").read_text(encoding="utf-8"))
+    if audit.get("status") != "PASS" or audit.get("grompp_maxwarn") != 0:
+        return {
+            "system": system_dir.name,
+            "status": "BLOCKED_PREPARATION_AUDIT",
+            "audit_status": audit.get("status"),
+            "grompp_maxwarn": audit.get("grompp_maxwarn"),
+        }
+
+    # Bind the audit certificate to the exact current inputs; a stale PASS may
+    # never authorize a changed topology or coordinate file.
+    expected_hashes = audit.get("input_sha256", {})
+    for filename, expected in expected_hashes.items():
+        path = system_dir / filename
+        if expected and (not path.is_file() or sha256(path) != expected):
+            return {"system": system_dir.name, "status": "BLOCKED_STALE_AUDIT", "file": filename}
 
     # EM phase 1: GENTLE unrestrained steepest descent (tiny emstep, no
     # -DPOSRES).  Root-cause fix 2026-08-10: the original phase-1 used
@@ -243,10 +276,10 @@ def equilibrate(system_dir: Path, smoke: bool) -> dict:
     write_mdp(system_dir, "npt.mdp", npt_mdp(smoke))
 
     run([GMX, "grompp", "-f", "em.mdp", "-c", "complex.gro", "-r", "complex.gro",
-         "-p", "topol.top", "-o", "em.tpr", "-maxwarn", "5"], system_dir, "grompp-em")
+         "-p", "topol.top", "-o", "em.tpr", "-maxwarn", "0"], system_dir, "grompp-em")
     run([GMX, "mdrun", "-deffnm", "em", *MDRUN_CPU], system_dir, "mdrun-em")
     run([GMX, "grompp", "-f", "em2.mdp", "-c", "em.gro", "-p", "topol.top",
-         "-o", "em2.tpr", "-maxwarn", "5"], system_dir, "grompp-em2")
+         "-o", "em2.tpr", "-maxwarn", "0"], system_dir, "grompp-em2")
     run([GMX, "mdrun", "-deffnm", "em2", *MDRUN_CPU], system_dir, "mdrun-em2")
     # sanity: final EM2 potential must be finite and negative (a blow-up here would
     # waste the NVT/NPT stages and indicate unresolved clashes)
@@ -261,12 +294,12 @@ def equilibrate(system_dir: Path, smoke: bool) -> dict:
 
     # NVT (from em2)
     run([GMX, "grompp", "-f", "nvt.mdp", "-c", "em2.gro", "-r", "em2.gro", "-p", "topol.top",
-         "-o", "nvt.tpr", "-maxwarn", "5"], system_dir, "grompp-nvt")
+         "-o", "nvt.tpr", "-maxwarn", "0"], system_dir, "grompp-nvt")
     run([GMX, "mdrun", "-deffnm", "nvt", *MDRUN_CPU], system_dir, "mdrun-nvt")
 
     # NPT
     run([GMX, "grompp", "-f", "npt.mdp", "-c", "nvt.gro", "-t", "nvt.cpt", "-r", "nvt.gro",
-         "-p", "topol.top", "-o", "npt.tpr", "-maxwarn", "5"], system_dir, "grompp-npt")
+         "-p", "topol.top", "-o", "npt.tpr", "-maxwarn", "0"], system_dir, "grompp-npt")
     run([GMX, "mdrun", "-deffnm", "npt", *MDRUN_CPU], system_dir, "mdrun-npt")
 
     for name in ("npt.gro", "npt.cpt"):
@@ -313,6 +346,7 @@ def main() -> int:
     parser.add_argument("--smoke", action="store_true", help="Short stages (pipeline validation only)")
     args = parser.parse_args()
 
+    validate_equilibration_environment()
     if args.system:
         dirs = [SYSTEM_ROOT / args.system]
     elif args.all:

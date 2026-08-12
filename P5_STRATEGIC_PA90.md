@@ -121,6 +121,10 @@ featurization/cache.** Un smoke test GPU vs CPU doit être enregistré (rapport 
 
 ---
 
+## 6.1 LISH-MoA external extension (separate, pre-submission)
+
+An isolated `P5_LISH_MOA_EXTERNAL_V1` extension is now implemented as a potential biological representation-transfer benchmark. It is not a replacement for the molecule-disjoint ChEMBL malaria panel. The preparation audit aggregates repeated observations by `drug_id`; the phenotype-only arm is primary, while structure-only and multimodal arms require a versioned one-to-one structure mapping. Mean column-wise log loss is primary, with macro-AUPRC/AUROC secondary. The result remains outside the manuscript until mapping coverage, drug/scaffold split integrity, label sparsity, and reproducibility gates pass. The corresponding P3 descriptor runner consumes only the audited mapped artifact; QKS remains a separate bounded experiment.
+
 ## 6. Registre de Risques (acceptation → mitigation)
 
 | Risque | Prob. | Impact | Mitigation |

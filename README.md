@@ -26,7 +26,7 @@
 ## Current scientific conclusions
 
 - **P1/P2:** chemical novelty, target-wise docking, and per-target docking-RRS support computational prioritisation; they do not establish IC₅₀/EC₅₀, target engagement, or experimental resistance circumvention.
-- **P2:** canonical Set-C RRS classes are A*:6/B:5/C:5/D:1. The live MD chain is an isolated `PP-01_PfDHFR_WT` witness: 15254→15259→15260; full-panel MD-RRS remains `NOT_COMPUTED`.
+- **P2:** canonical Set-C RRS classes are A*:6/B:5/C:5/D:1. The CPU witness was stopped after a partial non-canonical trajectory; GPU benchmark `15262` passed at 19.816 ns/day, and clean GPU witness `15270` is running. Full-panel MD-RRS remains `NOT_COMPUTED`.
 - **P3:** ECFP4 remains stronger than the hybrid; QKS is statistically comparable to RBF, not superior.
 - **P4:** Random exceeds MCTS on the canonical scalar reward, while the Pareto front retains multi-objective trade-offs.
 - **P5:** ECFP4-RF dominates learned models under scaffold split; GIN-TFP provides modest complementary signal.

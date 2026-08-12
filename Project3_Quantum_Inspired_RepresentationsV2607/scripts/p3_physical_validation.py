@@ -275,7 +275,7 @@ def analysis_tne_regression(merged: pd.DataFrame) -> pd.DataFrame:
     )
     plt.tight_layout()
     out_fig = OUT_DIR / "p3_tne_parity.png"
-    plt.savefig(out_fig, dpi=200, bbox_inches="tight")
+    plt.savefig(out_fig, dpi=300, bbox_inches="tight")
     plt.close()
     print(f"\n  Parity figure saved: {out_fig}")
 
@@ -689,7 +689,7 @@ def analysis_tda_promiscuity(merged: pd.DataFrame) -> pd.DataFrame:
     plt.xticks(rotation=45, ha="right", fontsize=8)
     plt.tight_layout()
     out_fig = OUT_DIR / "p3_tda_promiscuity.png"
-    plt.savefig(out_fig, dpi=200, bbox_inches="tight")
+    plt.savefig(out_fig, dpi=300, bbox_inches="tight")
     plt.close()
     print(f"\n  Figure saved: {out_fig}")
 

@@ -1,8 +1,6 @@
-% ============================================================================
 % P4 — Supplementary Information
 % Pareto-guided Monte Carlo tree search for antimalarial design
 % Target: Journal of Cheminformatics
-% ============================================================================
 \documentclass[10pt,a4paper]{article}
 
 \usepackage[margin=2.2cm]{geometry}
@@ -42,17 +40,9 @@ alternatives in antimalarial molecular design}
 \begin{document}
 \maketitle
 
-This Supplementary Information provides the extended scoring definitions,
-additional candidate-level results, molecular-diversity analysis, scalar
-benchmark details and algorithmic ablations that complement the main article.
-The two analyses described in the manuscript are kept separate throughout:
-the scalar benchmark uses the v12 public-activity reward, whereas the
-candidate-level Pareto analysis uses the defined secondary pre-activity vector of
-MPO, SYBA, RRS-informed chemotype similarity and PNS-informed docking proxy.
+This supplementary information provides extended scoring definitions, additional candidate-level results, molecular-diversity analysis, scalar benchmark details and algorithmic ablations. The scalar benchmark uses the v12 public-activity reward; the candidate-level Pareto analysis uses the defined secondary pre-activity vector of MPO, SYBA, RRS-informed chemotype similarity and PNS-informed docking proxy.
 
-% ============================================================================
 \section*{S1\hspace{0.6em}Extended methods and scoring definitions}
-% ============================================================================
 
 \paragraph{Molecular generation.}
 Molecules were constructed from a curated fragment vocabulary using a
@@ -99,9 +89,7 @@ benchmark. Public-activity proximity was the maximum Morgan-2 Tanimoto to
 experimentally active compounds in the independent ChEMBL IC$_{50}$/EC$_{50}$
 panel (\num{22447} molecules, including \num{19321} active entries).
 
-% ============================================================================
 \section*{S2\hspace{0.6em}Pareto-front candidates and domain-proxy profiles}
-% ============================================================================
 
 Using the separate secondary pre-activity objective set, the merged front contained four non-dominated candidates from
 \num{20} independent seeds. Their scores and seed-level values are shown
@@ -152,12 +140,10 @@ polypharmacological binding or resistance resilience experimentally.
   \label{fig:sm_rrs_pns}
 \end{figure}
 
-% ============================================================================
 \section*{S3\hspace{0.6em}Molecular diversity}
-% ============================================================================
 
 For each generation method, the best molecule from each of the \num{20}
-benchmark seeds was retained.ECFP4 Tanimoto dissimilarity and Bemis--Murcko scaffold statistics were calculated with RDKit. The three stochastic methods show non-zero pairwise dissimilarity under the present fragment vocabulary, whereas greedy search returns one repeated local optimum. These statistics characterise the sampled candidate sets.
+benchmark seeds was retained. ECFP4 Tanimoto dissimilarity and Bemis--Murcko scaffold statistics were calculated with RDKit. The three stochastic methods show non-zero pairwise dissimilarity under the present fragment vocabulary, whereas greedy search returns one repeated local optimum. These statistics characterise the sampled candidate sets.
 
 \begin{figure}[htbp]
   \centering
@@ -193,9 +179,7 @@ algorithm yield \num{19} and \num{12} unique scaffolds, respectively. These
 statistics describe the sampled molecule sets and are not intended as a
 claim that one method explores all of chemical space more effectively.
 
-% ============================================================================
 \section*{S4\hspace{0.6em}Extended scalar benchmark}
-% ============================================================================
 
 The scalar benchmark comprised \num{20} independent seeds per method and a
 fixed budget of \num{1000} search iterations. The values in
@@ -220,12 +204,9 @@ time is the mean per seed.}
   \end{tabular}
 \end{table}Random search has the highest mean scalar reward, followed by MCTS, the genetic algorithm and greedy search. The scalar benchmark measures search efficiency; the Pareto analysis measures which candidate-level trade-offs remain available. These are complementary outcomes rather than a single ranking.
 
-% ============================================================================
 \section*{S5\hspace{0.6em}Algorithmic ablations}
-% ============================================================================
 
-A factorial ablation evaluated the chemistry-informed policy, Pareto-front
-maintenance, PUCT exploration, rollout temperature and fragment vocabulary.Each factorial cell used five replicates. Because this experiment uses a distinct reward configuration, its factor effects are interpreted within the ablation only. The marginal factor means are summarised in
+A factorial ablation evaluated the chemistry-informed policy, Pareto-front maintenance, PUCT exploration, rollout temperature and fragment vocabulary. Each factorial cell used five replicates. Because this experiment uses a distinct reward configuration, its factor effects are interpreted within the ablation only. The marginal factor means are summarised in
 \Cref{tab:sm_component_ablation}. The largest observed effects were associated
 with the ScafVAE policy ($\Delta=+\num{0.148}$), Pareto-front maintenance
 ($\Delta=+\num{0.108}$) and the larger fragment vocabulary
@@ -255,13 +236,7 @@ had a smaller effect.
   \end{tabular}
 \end{table}
 
-A separate vocabulary comparison across \num{10} seeds per condition is
-shown in \Cref{tab:sm_vocabulary_ablation}. It found a strong overall effect
-(one-way ANOVA $F=\num{350.1}$, $p=\num{1.12e-26}$). The aromatic-only
-vocabulary performed below the full, medium and minimal vocabularies; the
-medium and minimal conditions differed modestly in the secondary comparison
-($p_{\mathrm{adj}}=\num{0.0052}$), whereas the full and medium conditions did
-not differ significantly.
+A separate vocabulary comparison across \num{10} seeds per condition is shown in \Cref{tab:sm_vocabulary_ablation}. The aromatic-only vocabulary performed below the full, medium and minimal vocabularies; the medium and minimal conditions differed modestly ($p_{\mathrm{adj}}=\num{0.0052}$), whereas the full and medium conditions did not differ significantly.
 
 \begin{table}[htbp]
   \centering
@@ -283,8 +258,8 @@ not differ significantly.
 
 The selection mechanism was also compared with a ParetoPUCT-style variant that restricted each node to non-dominated children before applying the PUCT score. At equal budget (\num{700} iterations and \num{5} seeds), the merged hypervolumes were \num{15.56} for scalar-proxy selection and \num{15.49} for Pareto-restricted selection. Within this sensitivity experiment, the two selection rules produced similar merged hypervolumes; neither rule showed a measurable advantage at the tested budget.
 
-% ============================================================================
 \section*{S6\hspace{0.6em}Data and code availability}
-% ============================================================================Molecule sets, benchmark records, Pareto scores, diversity statistics and ablation summaries are provided with the article's open computational materials. The accompanying scripts regenerate the reported analyses.
+
+Molecule sets, benchmark records, Pareto scores, diversity statistics and ablation summaries are provided with the article's open computational materials. The accompanying scripts regenerate the reported analyses.
 
 \end{document}

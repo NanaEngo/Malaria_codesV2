@@ -26,6 +26,11 @@ Removing QK reduces hybrid AUC by 0.040. QKS is statistically comparable to RBF 
 - Main/SM/cover: `manuscript/LaTeX/`
 - Older manuscript versions: `manuscript/LaTeX/archive/`
 
+## LISH-MoA external extension (isolated, not yet computed)
+
+P3 has a separate `scripts/p3_lish_moa_benchmark.py` runner for ECFP4, TFP, TNE, and Hybrid descriptors on an audited structure-mapped LISH-MoA drug-level artifact.It reports multi-label log loss, macro-AUPRC, and macro-AUROC under drug-grouped and scaffold-held-out splits. The separate `p3_lish_moa_qks_bounded.py` runner evaluates selected frequent labels on an explicitly bounded cohort (default 500 drugs, 6-qubit state-vector QKS); a full 206-label kernel benchmark is not implied because kernel cost is quadratic.
+ This extension is not part of the canonical P3 AUC benchmark and cannot be interpreted as direct antimalarial or target-engagement validation.
+
 ## Evidence boundary
 
 The study supports complementary topological and tensor-network representations, not superiority over ECFP4 or RBF. TNE failures, sample-size effects, and the size-confounded H₁–RRS association remain explicit limitations. Zenodo DOI is reserved; upload is pending.

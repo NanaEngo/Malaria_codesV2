@@ -18,6 +18,12 @@ trajectory hash are accepted.  MD-RRS is defined per target as
 100 * bound_fraction_mut / bound_fraction_WT, averaged only over targets whose
 WT bound fraction is >= ``--min-wt-bound-fraction``.  This is explicitly an
 MD-derived resilience proxy, not the docking-RRS definition.
+
+Two explicit contracts are supported:
+- ``--cohort-mode full``: all 17 canonical candidates and 136 QC rows;
+- ``--cohort-mode pilot``: the predeclared PP-01/PP-02 pilot and 16 QC rows.
+Pilot mode writes ``md_rrs_pilot_PP01_PP02.csv`` and refuses to overwrite the
+full-cohort output. It must not be used to make a claim about all 17 candidates.
 """
 
 from __future__ import annotations
@@ -37,6 +43,11 @@ TARGET_MUTATIONS = {
     "PfDHFR": ["WT", "N51I", "C59R", "S108N", "I164L"],
     "PfCRT": ["WT", "K76T", "K76A"],
 }
+PILOT_CANDIDATE_IDS = {"PP-01", "PP-02"}
+FULL_COHORT_ID = "P2_SET_C_POLYPHARM_17"
+PILOT_COHORT_ID = "P2_SET_C_MD_RRS_PILOT_PP01_PP02"
+FULL_OUTPUT = RESULTS_DIR / "set_c_md" / "md_rrs_classification.csv"
+PILOT_OUTPUT = RESULTS_DIR / "set_c_md" / "md_rrs_pilot_PP01_PP02.csv"
 REQUIRED = {
     "set_c_id", "target", "mutation", "smiles", "bound_fraction", "n_frames",
     "duration_ns", "trajectory_path", "tpr_path", "trajectory_sha256", "tpr_sha256", "qc_status", "analysis_rule_id", "candidate_sha256",
@@ -54,8 +65,14 @@ def sha256(path: Path) -> str:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--qc-file", type=Path, required=True, help="Trajectory-QC bound-fraction CSV")
+    parser.add_argument(
+        "--cohort-mode",
+        choices=("full", "pilot"),
+        default="full",
+        help="Use the complete 17-candidate contract or the predeclared PP-01/PP-02 pilot contract.",
+    )
     parser.add_argument("--min-wt-bound-fraction", type=float, default=0.10)
-    parser.add_argument("--output", type=Path, default=RESULTS_DIR / "set_c_md" / "md_rrs_classification.csv")
+    parser.add_argument("--output", type=Path, default=None)
     return parser.parse_args()
 
 
@@ -77,6 +94,11 @@ def main() -> int:
         raise SystemExit("--min-wt-bound-fraction must be in (0, 1]")
     if not args.qc_file.exists():
         raise SystemExit(f"QC file not found: {args.qc_file}")
+    expected_ids = set(PILOT_CANDIDATE_IDS) if args.cohort_mode == "pilot" else None
+    cohort_id = PILOT_COHORT_ID if args.cohort_mode == "pilot" else FULL_COHORT_ID
+    output = args.output or (PILOT_OUTPUT if args.cohort_mode == "pilot" else FULL_OUTPUT)
+    if args.cohort_mode == "pilot" and output.resolve() == FULL_OUTPUT.resolve():
+        raise SystemExit("Pilot mode refuses to overwrite the canonical full-cohort MD-RRS output")
     frame = pd.read_csv(args.qc_file)
     missing = sorted(REQUIRED - set(frame.columns))
     if missing:
@@ -115,16 +137,25 @@ def main() -> int:
             raise SystemExit(f"Invalid duration/frame count for trajectory: {trajectory}")
     if frame.duplicated(["set_c_id", "target", "mutation"]).any():
         raise SystemExit("QC file contains duplicate candidate/target/mutation rows")
-    expected_rows = 17 * sum(len(mutations) for mutations in TARGET_MUTATIONS.values())
-    if len(frame) != expected_rows or set(frame["target"]) != set(TARGET_MUTATIONS):
-        raise SystemExit(f"QC panel must contain exactly {expected_rows} rows across PfDHFR/PfCRT")
-
     candidates = pd.read_csv(CANDIDATE_FILE)
     candidate_map = dict(zip(candidates["smiles"], candidates["rank"]))
-    expected_ids = {f"PP-{int(rank):02d}" for rank in candidates["rank"]}
+    all_candidate_ids = {f"PP-{int(rank):02d}" for rank in candidates["rank"]}
+    if args.cohort_mode == "pilot":
+        if not PILOT_CANDIDATE_IDS.issubset(all_candidate_ids):
+            raise SystemExit("Pilot candidate IDs are not present in the canonical set-C file")
+    else:
+        expected_ids = all_candidate_ids
+    expected_rows = len(expected_ids) * sum(len(mutations) for mutations in TARGET_MUTATIONS.values())
+    if len(frame) != expected_rows or set(frame["target"]) != set(TARGET_MUTATIONS):
+        raise SystemExit(
+            f"{args.cohort_mode} QC panel must contain exactly {expected_rows} rows across PfDHFR/PfCRT"
+        )
     expected_id_to_smiles = {f"PP-{int(row.rank):02d}": row.smiles for row in candidates.itertuples()}
     if set(frame["set_c_id"]) != expected_ids:
-        raise SystemExit(f"QC panel must contain all 17 set-C IDs; found {sorted(set(frame['set_c_id']))}")
+        raise SystemExit(
+            f"QC panel must contain all {len(expected_ids)} {args.cohort_mode} set-C IDs; "
+            f"found {sorted(set(frame['set_c_id']))}"
+        )
     records = []
     for set_c_id, group in frame.groupby("set_c_id"):
         if set_c_id not in expected_ids:
@@ -153,7 +184,7 @@ def main() -> int:
             raise SystemExit(f"No target with sufficient WT bound fraction for {set_c_id}")
         first = group.iloc[0]
         records.append({
-            "cohort_id": "P2_SET_C_POLYPHARM_17",
+            "cohort_id": cohort_id,
             "set_c_id": set_c_id,
             "rank": int(candidate_map[next(iter(smiles))]),
             "smiles": next(iter(smiles)),
@@ -168,11 +199,14 @@ def main() -> int:
         })
 
     result = pd.DataFrame(records).sort_values("MD_RRS_mean", ascending=False)
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    result.to_csv(args.output, index=False)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    result.to_csv(output, index=False)
     provenance = {
         "schema_version": 1,
-        "cohort_id": "P2_SET_C_POLYPHARM_17",
+        "cohort_id": cohort_id,
+        "cohort_mode": args.cohort_mode,
+        "candidate_ids": sorted(expected_ids),
+        "expected_rows": expected_rows,
         "candidate_sha256": candidate_hash,
         "qc_file": str(args.qc_file),
         "qc_file_sha256": sha256(args.qc_file),
@@ -180,12 +214,14 @@ def main() -> int:
         "min_wt_bound_fraction": args.min_wt_bound_fraction,
         "metric": "MD_RRS = 100 * mutant bound_fraction / WT bound_fraction, averaged over targets with WT >= threshold",
         "docking_rrs_not_replaced": True,
-        "output": str(args.output),
+        "full_cohort_output": str(FULL_OUTPUT),
+        "output": str(output),
     }
-    provenance_path = args.output.with_name("md_rrs_provenance.json")
+    provenance_path = output.with_name(f"{output.stem}_provenance.json")
     provenance_path.write_text(json.dumps(provenance, indent=2) + "\n", encoding="utf-8")
     print(f"MD-RRS rows: {len(result)}")
-    print(f"Output: {args.output}")
+    print(f"Cohort mode: {args.cohort_mode} ({cohort_id})")
+    print(f"Output: {output}")
     print("Trajectory QC status: PASS for all accepted rows")
     return 0
 

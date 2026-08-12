@@ -37,12 +37,16 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
+import math
 import os
 import re
 import shutil
 import subprocess
 import sys
+import tempfile
+import traceback
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -58,6 +62,7 @@ RECEPTORS = V5_RRS / "receptors"
 VINA_SCORES = V5_RRS / "vina_scores"
 
 GMX = os.environ.get("P2_GMX_BIN", "/home/nanaengo/miniforge3/envs/malaria_md/bin/gmx_mpi")
+OBABEL = os.environ.get("P2_OBABEL", "/home/nanaengo/miniforge3/envs/malaria_md/bin/obabel")
 PY = sys.executable
 
 # Receptor state -> (receptor pdb basename, vina score subdir)
@@ -108,6 +113,224 @@ def run(cmd: list[str], cwd: Path, label: str) -> None:
             f"$ {' '.join(cmd)}\n{result.stdout[-2000:]}\n{result.stderr[-2000:]}"
         )
     return result
+
+
+def validate_external_tools() -> None:
+    """Fail before any output is created if the pinned toolchain is unusable.
+
+    Version checks alone are insufficient: job 15197 passed Python imports but
+    resolved ``obabel`` through a broken Python 3.13 wrapper.  This preflight
+    therefore validates the exact absolute executables, required Python modules,
+    AmberTools discovery, a real AM1-BCC charge assignment, and a real temporary
+    PDB-to-SDF conversion before preparation starts.
+    """
+    # OpenFF discovers AmberTools through PATH.  Make the environment explicit
+    # inside the worker: Slurm --wrap jobs may not inherit conda activation, and
+    # the previous witness failed despite antechamber being installed.
+    env_bin = str(Path(PY).parent)
+    os.environ["PATH"] = env_bin + os.pathsep + os.environ.get("PATH", "")
+    os.environ.setdefault("AMBERHOME", str(Path(PY).parent.parent))
+    required_modules = (
+        "openff.toolkit", "openff.interchange", "pdbfixer", "openmm",
+        "scipy", "rdkit",
+    )
+    missing = [name for name in required_modules if importlib.util.find_spec(name) is None]
+    if missing:
+        raise RuntimeError(
+            f"Required malaria_md Python modules are missing: {', '.join(missing)}; "
+            f"interpreter={sys.executable}"
+        )
+    for label, executable, version_args in (
+        ("GROMACS", GMX, ["--version"]),
+        ("Open Babel", OBABEL, ["-V"]),
+    ):
+        path = Path(executable)
+        if not path.is_file() or not os.access(path, os.X_OK):
+            raise RuntimeError(f"{label} executable is missing or not executable: {executable}")
+        result = subprocess.run(
+            [str(path), *version_args], capture_output=True, text=True,
+        )
+        if result.returncode != 0:
+            raise RuntimeError(
+                f"{label} smoke check failed for {executable} (rc={result.returncode}): "
+                f"{result.stderr[-500:]}"
+            )
+        version = (result.stdout + result.stderr).strip()
+        if label == "Open Babel" and "Open Babel" not in version:
+            raise RuntimeError(f"Unexpected Open Babel version output from {executable}")
+        print(f"[preflight] {label}: {executable} :: {version.splitlines()[0]}", flush=True)
+
+    try:
+        from openff.toolkit import Molecule
+        from openff.toolkit.utils.ambertools_wrapper import AmberToolsToolkitWrapper
+        if not AmberToolsToolkitWrapper.is_available():
+            raise RuntimeError(
+                "OpenFF AmberToolsToolkitWrapper is unavailable after explicit PATH setup"
+            )
+        charge_probe = Molecule.from_smiles("CCO")
+        charge_probe.generate_conformers(n_conformers=1)
+        charge_probe.assign_partial_charges(partial_charge_method="am1bcc")
+        if charge_probe.partial_charges is None or len(charge_probe.partial_charges) == 0:
+            raise RuntimeError("AM1-BCC charge smoke produced no charges")
+    except Exception as exc:
+        raise RuntimeError(f"OpenFF/AmberTools AM1-BCC smoke failed: {exc}") from exc
+
+    with tempfile.TemporaryDirectory(prefix="p2_setc_obabel_smoke_") as tmp:
+        tmp_path = Path(tmp)
+        pdb = tmp_path / "smoke.pdb"
+        sdf = tmp_path / "smoke.sdf"
+        pdb.write_text(
+            "HETATM    1  C1  LIG A   1       0.000   0.000   0.000  1.00  0.00          C  \\n"
+            "HETATM    2  O1  LIG A   1       1.200   0.000   0.000  1.00  0.00          O  \\n"
+            "END\\n", encoding="utf-8",
+        )
+        result = subprocess.run(
+            [OBABEL, str(pdb), "-O", str(sdf), "-h", "-p", "7.4"],
+            capture_output=True, text=True,
+        )
+        if result.returncode != 0 or not sdf.is_file() or sdf.stat().st_size == 0:
+            raise RuntimeError(
+                "Open Babel conversion smoke failed for the pinned executable "
+                f"{OBABEL} (rc={result.returncode}): {result.stderr[-1000:]}"
+            )
+    print(f"[preflight] Python modules: {', '.join(required_modules)}", flush=True)
+    print("[preflight] OpenFF/AmberTools AM1-BCC smoke: PASS", flush=True)
+    print(f"[preflight] Open Babel conversion smoke: PASS ({OBABEL})", flush=True)
+
+
+def _gro_atoms(path: Path) -> tuple[list[str], list[tuple[float, float, float]]]:
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if len(lines) < 3:
+        raise RuntimeError(f"truncated GRO file: {path}")
+    try:
+        n_atoms = int(lines[1].strip())
+    except ValueError as exc:
+        raise RuntimeError(f"invalid GRO atom count in {path}") from exc
+    if len(lines) < n_atoms + 3:
+        raise RuntimeError(f"GRO atom count exceeds file length: {path}")
+    atoms, coords = [], []
+    for line in lines[2:2 + n_atoms]:
+        try:
+            xyz = (float(line[20:28]), float(line[28:36]), float(line[36:44]))
+        except (ValueError, IndexError) as exc:
+            raise RuntimeError(f"invalid GRO coordinate line in {path}: {line!r}") from exc
+        if not all(math.isfinite(x) for x in xyz):
+            raise RuntimeError(f"non-finite coordinate in {path}: {line!r}")
+        atoms.append(line)
+        coords.append(xyz)
+    return atoms, coords
+
+
+def _molecule_entries(topol: Path) -> list[tuple[str, int]]:
+    lines = topol.read_text(encoding="utf-8").splitlines()
+    in_molecules = False
+    entries = []
+    for line in lines:
+        stripped = line.split(";", 1)[0].strip()
+        if stripped.lower() == "[ molecules ]":
+            in_molecules = True
+            continue
+        if in_molecules and stripped.startswith("["):
+            break
+        if in_molecules and stripped:
+            fields = stripped.split()
+            if len(fields) >= 2 and fields[1].isdigit():
+                entries.append((fields[0], int(fields[1])))
+    return entries
+
+
+def audit_pre_equilibration(system_dir: Path, lig_resname: str, gmx: str,
+                            system_name: str | None = None) -> dict:
+    """Independent, fail-closed audit of prepared coordinates and topology.
+
+    This catches the previous protein/ligand molecule-order corruption before
+    EM/NVT/NPT.  It runs a final ``grompp`` with ``-maxwarn 0`` and refuses any
+    warning, topology mismatch, NaN coordinate, or suspicious inter-residue
+    overlap.  The audit writes only a small JSON provenance file and a temporary
+    TPR that is removed after the check.
+    """
+    complex_gro = system_dir / "complex.gro"
+    topol = system_dir / "topol.top"
+    ions_mdp = system_dir / "ions.mdp"
+    atoms, coords = _gro_atoms(complex_gro)
+    entries = _molecule_entries(topol)
+    if not entries:
+        raise RuntimeError(f"no [ molecules ] entries found in {topol}")
+    names = [name for name, _ in entries]
+    if lig_resname not in names:
+        raise RuntimeError(f"ligand {lig_resname} absent from [ molecules ]: {names}")
+    ligand_index = names.index(lig_resname)
+    protein_indices = [i for i, name in enumerate(names) if name.lower().startswith("protein")]
+    if not protein_indices or max(protein_indices) >= ligand_index:
+        raise RuntimeError(
+            f"topology molecule order invalid: protein entries {names[:ligand_index]} "
+            f"must precede ligand {lig_resname}; entries={entries}"
+        )
+    solvent_names = {"SOL", "WAT", "TIP3", "NA", "CL"}
+    if any(name in solvent_names for name in names[:ligand_index]):
+        raise RuntimeError(f"solvent/ions precede ligand in topology: {entries}")
+    ligand_atoms = [i for i, line in enumerate(atoms) if line[5:10].strip() == lig_resname]
+    solvent_atoms = [i for i, line in enumerate(atoms) if line[5:10].strip() in solvent_names]
+    if not ligand_atoms:
+        raise RuntimeError(f"ligand residue {lig_resname} absent from {complex_gro}")
+    if solvent_atoms and max(ligand_atoms) >= min(solvent_atoms):
+        raise RuntimeError("ligand coordinates are not contiguous before solvent/ions")
+    if len(atoms) != int(complex_gro.read_text().splitlines()[1].strip()):
+        raise RuntimeError("GRO atom count mismatch")
+
+    # Detect the catastrophic inter-residue overlaps that caused the previous
+    # water/NaN/libgomp failure.  Coordinates are in nm; 0.05 nm = 0.5 Å.
+    import numpy as np
+    from scipy.spatial import cKDTree
+    xyz = np.asarray(coords, dtype=float)
+    tree = cKDTree(xyz)
+    close_pairs = tree.query_pairs(r=0.05)
+    bad_pairs = []
+    for i, j in close_pairs:
+        # Do not exclude same-residue pairs: the previous failure included
+        # collapsed aromatic rings and exploded side chains within TYR/LYS.
+        bad_pairs.append((i, j))
+        if len(bad_pairs) >= 10:
+            break
+    if bad_pairs:
+        raise RuntimeError(f"nonphysical inter-residue overlaps (<0.5 A): {bad_pairs[:3]}")
+
+    # `run()` executes with `cwd=system_dir`; pass filenames relative to that
+    # directory.  Passing paths rooted at the project while also setting cwd
+    # duplicates the work-directory prefix and makes grompp fail closed with
+    # "file does not exist" (witness 15201).  The inputs were already checked
+    # above, so basename-only arguments preserve the same audited files.
+    result = run([gmx, "grompp", "-f", ions_mdp.name, "-c", complex_gro.name,
+                  "-p", topol.name, "-o", "pre_equilibration_audit.tpr",
+                  "-maxwarn", "0"], system_dir, "pre-equilibration-grompp")
+    diagnostics = result.stdout + result.stderr
+    if re.search(r"\bWARNING\b", diagnostics, flags=re.IGNORECASE):
+        raise RuntimeError("pre-equilibration grompp emitted a warning")
+    (system_dir / "pre_equilibration_audit.tpr").unlink(missing_ok=True)
+    audit = {
+        "schema_version": 2,
+        "status": "PASS",
+        "audited_utc": datetime.now(timezone.utc).isoformat(),
+        "system": system_name or system_dir.name,
+        "n_atoms": len(atoms),
+        "molecule_entries": entries,
+        "ligand_resname": lig_resname,
+        "ligand_atom_count": len(ligand_atoms),
+        "nonphysical_overlap_threshold_A": 0.5,
+        "grompp_maxwarn": 0,
+        "grompp": "PASS",
+        "input_sha256": {
+            "complex.gro": sha256(complex_gro),
+            "topol.top": sha256(topol),
+            "ligand_openff.itp": sha256(system_dir / "ligand_openff.itp"),
+            "forcefield_manifest.json": sha256(system_dir / "forcefield_manifest.json") if (system_dir / "forcefield_manifest.json").is_file() else None,
+        },
+        "toolchain": {"python": sys.executable, "gromacs": gmx, "openbabel": OBABEL},
+    }
+    (system_dir / "pre_equilibration_audit.json").write_text(
+        json.dumps(audit, indent=2) + "\n", encoding="utf-8"
+    )
+    return audit
 
 
 def parse_system_name(name: str) -> tuple[str, str, str]:
@@ -253,7 +476,7 @@ def make_ligand_openff(system_dir: Path, smiles: str, pose_pdbqt: Path) -> dict:
     # 2. Open Babel: add hydrogens on the fixed heavy frame -> SDF
     sdf_path = system_dir / "ligand_docked_h.sdf"
     obabel = _sub.run(
-        ["obabel", str(heavy_path), "-O", str(sdf_path), "-h", "-p", "7.4"],
+        [OBABEL, str(heavy_path), "-O", str(sdf_path), "-h", "-p", "7.4"],
         capture_output=True, text=True,
     )
     if obabel.returncode != 0:
@@ -375,17 +598,77 @@ def prepare_protein(system_dir: Path, receptor_pdb: Path, gmx: str) -> None:
     fixer.findMissingAtoms()
     fixer.addMissingAtoms()
     fixer.addMissingHydrogens(7.4)
-    fixed = system_dir / "receptor_fixed.pdb"
-    PDBFile.writeFile(fixer.topology, fixer.positions, open(fixed, "w"), keepIds=True)
+    fixed = (system_dir / "receptor_fixed.pdb").resolve()
+    with fixed.open("w", encoding="utf-8") as handle:
+        PDBFile.writeFile(fixer.topology, fixer.positions, handle, keepIds=True)
+    if not fixed.is_file() or fixed.stat().st_size == 0:
+        raise RuntimeError(
+            f"PDBFixer produced no readable receptor_fixed.pdb: {fixed}"
+        )
+
+    # PDBFixer preserves only residues with coordinates.  If an internal
+    # coordinate gap is left without an explicit TER record, pdb2gmx assumes
+    # that the last atom before the gap and the first atom after it are
+    # covalently connected.  For the PfDHFR inputs this incorrectly joined
+    # ASN231 to ASP283 across missing residues 232--282, producing a 3.7-nm
+    # excluded pair and a fatal grompp warning.  Insert TER only at genuine
+    # numeric gaps within the same chain; do not alter atom coordinates or
+    # existing chain boundaries.  The detected gaps are written as provenance.
+    fixed_lines = fixed.read_text(encoding="utf-8").splitlines()
+    rewritten: list[str] = []
+    gaps: list[dict[str, int | str]] = []
+    last_chain: str | None = None
+    last_resi: int | None = None
+    for line in fixed_lines:
+        if line.startswith("TER"):
+            last_chain, last_resi = None, None
+            rewritten.append(line)
+            continue
+        if line.startswith(("ATOM", "HETATM")):
+            chain = line[21:22]
+            try:
+                resi = int(line[22:26])
+            except ValueError:
+                resi = None
+            if (
+                resi is not None
+                and chain == last_chain
+                and last_resi is not None
+                and resi > last_resi + 1
+            ):
+                rewritten.append("TER")
+                gaps.append({
+                    "chain": chain.strip() or "_",
+                    "previous_residue": last_resi,
+                    "next_residue": resi,
+                })
+            if resi is not None:
+                last_chain, last_resi = chain, resi
+        rewritten.append(line)
+    fixed.write_text("\n".join(rewritten) + "\n", encoding="utf-8")
+    (system_dir / "receptor_gap_ter_provenance.json").write_text(
+        json.dumps({
+            "schema_version": 1,
+            "status": "INTERNAL_TER_INSERTED" if gaps else "NO_INTERNAL_NUMERIC_GAPS",
+            "receptor_fixed_sha256": sha256(fixed),
+            "gaps": gaps,
+            "reason": "prevent pdb2gmx from creating peptide bonds across missing coordinate residues",
+        }, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
     cmd = [
         gmx, "pdb2gmx", "-f", str(fixed), "-o", "protein_processed.gro",
         "-p", "topol.top", "-i", "posre_Protein_chain_A.itp",
         "-water", "tip3p", "-ff", "charmm36-jul2022", "-ignh", "-ter",
     ]
-    # termini prompts (N-terminus then C-terminus per chain; default = option 1)
-    run(["bash", "-lc", f'printf "1\n1\n1\n1\n1\n1\n1\n1\n" | ' +
-        " ".join(cmd)], system_dir, "pdb2gmx")
+    # Answer every N-/C-terminus prompt deterministically. Internal TER
+    # records can create more segments than the original two-chain input, so a
+    # fixed-length printf is unsafe. Capture PIPESTATUS so a successful `yes`
+    # cannot mask a failed pdb2gmx command.
+    pdb2gmx_cmd = " ".join(cmd)
+    run(["bash", "-lc", f"yes 1 | {pdb2gmx_cmd}; rc=${{PIPESTATUS[1]}}; exit $rc"],
+        system_dir, "pdb2gmx")
     if not (system_dir / "protein_processed.gro").is_file():
         raise RuntimeError("pdb2gmx produced no protein_processed.gro")
 
@@ -455,8 +738,14 @@ def add_ligand_to_topol(system_dir: Path, lig_resname: str) -> None:
         # keep the existing entries (protein chains) in place, then append the
         # ligand after the last chain line
         entries = tail.splitlines()
+        # Ignore comments/blank lines while locating the first solvent/ion
+        # molecule.  The pdb2gmx template begins with a comment such as
+        # ``; Compound        #mols``; treating that comment as a solvent entry
+        # inserted MOL0 before the proteins (15200: 17,563 atom-name mismatches).
         first_sol = next((i for i, e in enumerate(entries)
-                          if e.strip().startswith(('SOL', 'NA', 'CL', ';'))), len(entries))
+                          if e.strip() and not e.strip().startswith(';')
+                          and e.strip().split()[0] in {'SOL', 'WAT', 'TIP3', 'NA', 'CL'}),
+                         len(entries))
         insert_at = first_sol if first_sol > 0 else len(entries)
         entries.insert(insert_at, f"{lig_resname}     1")
         text = head + "\n" + "\n".join(entries)
@@ -491,7 +780,7 @@ def solvate_and_ions(system_dir: Path, gmx: str) -> None:
         encoding="utf-8",
     )
     run([gmx, "grompp", "-f", "ions.mdp", "-c", "solvated.gro", "-p", "topol.top",
-         "-o", "ions.tpr", "-maxwarn", "5"], system_dir, "grompp-ions")
+         "-o", "ions.tpr", "-maxwarn", "0"], system_dir, "grompp-ions")
     run(["bash", "-lc", f'echo SOL | {gmx} genion -s ions.tpr -o ions.gro -p topol.top '
                        f'-pname NA -nname CL -conc 0.15 -neutral'],
         system_dir, "genion")
@@ -524,6 +813,11 @@ def write_manifests(system_dir: Path, set_c_id: str, target: str, mutation: str,
         "coordinates_sha256_at_prep": complex_sha,
         "preparation_script": "p2_setc_prepare_openff.py",
         "preparation_gmx": GMX,
+        "preparation_obabel": OBABEL,
+        "preparation_python": sys.executable,
+        "preparation_script_sha256": sha256(Path(__file__).resolve()),
+        "gromacs_executable_sha256": sha256(Path(GMX)),
+        "openbabel_executable_sha256": sha256(Path(OBABEL)),
     }
     (system_dir / "system_manifest.json").write_text(
         json.dumps(system_manifest, indent=2) + "\n", encoding="utf-8")
@@ -565,23 +859,46 @@ def prepare_system(name: str, output_root: Path, smiles_map: dict[str, str],
     if not smiles:
         raise SystemExit(f"No SMILES for {set_c_id} in {SET_C_FILE}")
 
-    system_dir = output_root / name
-    if system_dir.exists() and any(system_dir.iterdir()) and not overwrite:
-        raise RuntimeError(f"System dir already populated (use --overwrite): {system_dir}")
-    system_dir.mkdir(parents=True, exist_ok=True)
-
-    ligand_meta = make_ligand_openff(system_dir, smiles, pose_pdbqt)
-    prepare_protein(system_dir, receptor_pdb, GMX)
-    lig_resname = ligand_moleculetype(system_dir / "ligand_openff.itp")
-    add_ligand_to_topol(system_dir, lig_resname)
-    merge_gro(system_dir / "protein_processed.gro", system_dir / "ligand_openff.gro",
-              system_dir / "complex_unsolv.gro", lig_resname)
-    solvate_and_ions(system_dir, GMX)
-
-    topol_sha = sha256(system_dir / "topol.top")
-    complex_sha = sha256(system_dir / "complex.gro")
-    write_manifests(system_dir, set_c_id, target, mutation, smiles, receptor_pdb,
-                    ligand_meta, topol_sha, complex_sha)
+    final_dir = output_root / name
+    if final_dir.exists() and any(final_dir.iterdir()) and not overwrite:
+        raise RuntimeError(f"System dir already populated (use --overwrite): {final_dir}")
+    work_dir = output_root / f".{name}.work-{os.getpid()}"
+    if work_dir.exists():
+        raise RuntimeError(f"stale preparation work directory exists; refusing reuse: {work_dir}")
+    work_dir.mkdir(parents=True, exist_ok=False)
+    try:
+        ligand_meta = make_ligand_openff(work_dir, smiles, pose_pdbqt)
+        prepare_protein(work_dir, receptor_pdb, GMX)
+        lig_resname = ligand_moleculetype(work_dir / "ligand_openff.itp")
+        add_ligand_to_topol(work_dir, lig_resname)
+        merge_gro(work_dir / "protein_processed.gro", work_dir / "ligand_openff.gro",
+                  work_dir / "complex_unsolv.gro", lig_resname)
+        solvate_and_ions(work_dir, GMX)
+        topol_sha = sha256(work_dir / "topol.top")
+        complex_sha = sha256(work_dir / "complex.gro")
+        # Write the force-field/system manifests before the final audit so the
+        # audit can hash the manifest it is certifying.  Keep the audit's
+        # scientific verdict fail-closed: any later promotion failure deletes
+        # the complete work directory and writes only a failure record.
+        write_manifests(work_dir, set_c_id, target, mutation, smiles, receptor_pdb,
+                        ligand_meta, topol_sha, complex_sha)
+        audit_pre_equilibration(work_dir, lig_resname, GMX, system_name=name)
+        if final_dir.exists():
+            shutil.rmtree(final_dir)
+        os.replace(work_dir, final_dir)
+    except Exception as exc:
+        shutil.rmtree(work_dir, ignore_errors=True)
+        failure = output_root / f"{name}.preparation_failed.json"
+        failure.write_text(json.dumps({
+            "schema_version": 1,
+            "status": "FAILED_BEFORE_PROMOTION",
+            "failed_utc": datetime.now(timezone.utc).isoformat(),
+            "system": name,
+            "error": str(exc),
+            "traceback": traceback.format_exc(),
+            "toolchain": {"python": sys.executable, "gmx": GMX, "obabel": OBABEL},
+        }, indent=2) + "\n", encoding="utf-8")
+        raise
 
     return {
         "system": name,
@@ -590,7 +907,7 @@ def prepare_system(name: str, output_root: Path, smiles_map: dict[str, str],
         "topology_sha256": topol_sha,
         "coordinates_sha256_at_prep": complex_sha,
         "pose_frame_rmsd_nm": ligand_meta["pose_frame_rmsd_nm"],
-        "n_atoms_complex": int((system_dir / "complex.gro").read_text().splitlines()[1]),
+        "n_atoms_complex": int((final_dir / "complex.gro").read_text().splitlines()[1]),
         "status": "PREPARED_AWAITING_EQUILIBRATION",
     }
 
@@ -603,6 +920,7 @@ def main() -> int:
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
 
+    validate_external_tools()
     smiles_map = load_set_c()
     candidates = {"PP-01", "PP-02"}
     systems = []
@@ -618,9 +936,30 @@ def main() -> int:
 
     args.output_root.mkdir(parents=True, exist_ok=True)
     records = []
+    status_path = args.output_root / "preparation_status.json"
     for name in systems:
         print(f"[prep] {name}", flush=True)
-        records.append(prepare_system(name, args.output_root, smiles_map, args.overwrite))
+        try:
+            records.append(prepare_system(name, args.output_root, smiles_map, args.overwrite))
+        except Exception as exc:
+            records.append({"system": name, "status": "FAILED_BEFORE_PROMOTION", "error": str(exc)[-1000:]})
+            status_path.write_text(json.dumps({
+                "schema_version": 1,
+                "cohort_id": COHORT,
+                "status": "FAILED",
+                "systems_requested": len(systems),
+                "records": records,
+                "updated_utc": datetime.now(timezone.utc).isoformat(),
+            }, indent=2) + "\n", encoding="utf-8")
+            raise
+        status_path.write_text(json.dumps({
+            "schema_version": 1,
+            "cohort_id": COHORT,
+            "status": "COMPLETED" if len(records) == len(systems) else "IN_PROGRESS",
+            "systems_requested": len(systems),
+            "records": records,
+            "updated_utc": datetime.now(timezone.utc).isoformat(),
+        }, indent=2) + "\n", encoding="utf-8")
     summary = {
         "schema_version": 1,
         "created_utc": datetime.now(timezone.utc).isoformat(),
