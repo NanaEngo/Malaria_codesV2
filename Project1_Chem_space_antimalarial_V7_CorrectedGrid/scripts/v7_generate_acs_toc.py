@@ -76,7 +76,7 @@ def main() -> None:
     for i, (t, s) in enumerate(zip(targets, subs)):
         x = 0.32 + i * 0.16
         box(ax, x, 0.42, 0.135, 0.42, t,
-            f"anchor {s}\n68/68 gate-pass\nVina grid",
+            f"anchor {s}\n17/17 gate-pass\nVina grid",
             color="#f0fdfa", edge="#0d9488")
 
     # ---- right: RRS readout ----
@@ -86,8 +86,8 @@ def main() -> None:
         color="#fefce8", edge="#ca8a04")
 
     # ---- bottom strip: honest evidence boundary ----
-    ax.text(0.015, 0.155, "Evidence boundary: docking-derived hypotheses — no cross-target mean, "
-                          "no biological validation claimed.",
+    ax.text(0.015, 0.155, "Evidence boundary: 68/68 gate-pass (17 per target) — docking-derived hypotheses, "
+                          "no cross-target mean, no biological validation claimed.",
             fontsize=5.6, color="#7c2d12", ha="left", va="center", zorder=5)
 
     # arrows
