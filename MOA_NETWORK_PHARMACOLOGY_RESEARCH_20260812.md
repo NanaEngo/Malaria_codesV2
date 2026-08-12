@@ -1,7 +1,7 @@
 # Recherche web approfondie — MoA, Pharmacologie de réseau & Découverte de médicaments computationnelle
 
 **Date :** 12 août 2026
-**Statut :** Document de travail (recherche web 2024–2026) — aucune intégration manuscrit effectuée à ce stade.
+**Statut :** Document de travail (recherche web 2024–2026) — **intégration manuscrit effectuée** : Ryszkiewicz2026MTDL, Trapotsi2022MoA, Blake2025Resistome, Sentinel2025Offtarget ajoutés au bib P1 V7 (intro + discussion) et au bib P2 (citations Introduction/Discussion). Les autres références (Axes 1–2) restent disponibles pour P3–P5.
 **Provenance :** 4 recherches web parallèles (pharmacologie de réseau/causalité ; chimiogénomique PN ; PROTACs/nouvelles modalités ; évolution des benchmarks MoA).
 
 > ✅ **Vérification Crossref effectuée le 12/08/2026** (API `api.crossref.org` + résolution `doi.org`) : **19/19 DOIs résolus**.
