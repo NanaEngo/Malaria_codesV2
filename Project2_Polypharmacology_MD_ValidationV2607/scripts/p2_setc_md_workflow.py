@@ -43,10 +43,12 @@ TARGET_MUTATIONS = {
 }
 PARENT_NAMES = {"201_DHFR", "438_ATP4", "164_ClpP", "214_CRT"}
 REQUIRED_INPUTS = ("complex.gro", "topol.top", "md.mdp", "system_manifest.json", "npt.gro", "npt.cpt")
-# GPU-less mdrun: the host A4000 crashes GROMACS GPU update/constraint routines
-# (rc=-6, UpdateConstrainGpu); always append the CPU-only flags (matches the
-# parent study and the equilibration script MDRUN_CPU).
+# The historical GPU update/constraint path was unstable (rc=-6,
+# UpdateConstrainGpu). CPU mode remains the default and is retained for
+# reproducibility; the benchmarked mixed-offload GPU mode keeps bonded/update
+# calculations on the CPU.
 MDRUN_CPU = ["-nb", "cpu", "-pme", "cpu", "-bonded", "cpu", "-update", "cpu"]
+MDRUN_GPU_MIXED = ["-nb", "gpu", "-pme", "gpu", "-bonded", "cpu", "-update", "cpu"]
 REQUIRED_FF_FIELDS = {
     "cohort_id", "system_name", "protein_force_field", "ligand_force_field",
     "water_model", "topology_sha256", "coordinates_sha256",
@@ -74,6 +76,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--execute", action="store_true", help="Run GROMACS after all systems pass validation.")
     parser.add_argument("--auto-approved", action="store_true", help="Non-interactive invocation only; never bypasses the execution authorization guard.")
     parser.add_argument("--gpu-id", default="auto")
+    parser.add_argument("--backend", choices=("cpu", "gpu"), default="cpu", help="mdrun backend; GPU uses the benchmarked mixed-offload flags.")
     parser.add_argument("--ntomp", type=int, default=8, help="OpenMP threads for mdrun (default 8; explicit to avoid whole-node grabbing under SLURM arrays).")
     parser.add_argument("--array-index", type=int, default=-1, help="Legacy SLURM array task index. Prefer --system-name for fail-closed ownership.")
     parser.add_argument("--system-name", default=None, help="Exact prepared system name owned by this task; prevents filesystem-order remapping.")
@@ -341,6 +344,20 @@ def prepare_replicate(row: dict, args: argparse.Namespace, run_records: list[dic
         rep_dir.mkdir(parents=True)
         for filename in ("npt.gro", "npt.cpt", "topol.top"):
             shutil.copy2(system_dir / filename, rep_dir / filename)
+        # Preserve every local #include used by topol.top. Copying only topol.top
+        # is insufficient for grompp and can silently bind a run to a different
+        # working-directory topology. Absolute/out-of-tree includes fail closed.
+        dependency_hashes = {}
+        for relative_name, dependency in topology_dependencies(system_dir / "topol.top").items():
+            relative_path = Path(relative_name)
+            if relative_path.is_absolute() or ".." in relative_path.parts:
+                raise RuntimeError(f"unsafe topology dependency path: {relative_name}")
+            if not dependency.is_file():
+                raise RuntimeError(f"missing topology dependency: {dependency}")
+            destination = rep_dir / relative_path
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(dependency, destination)
+            dependency_hashes[relative_name] = sha256(destination)
         shutil.copy2(mdp, rep_dir / mdp.name)
         seed = replicate * 12345
         command = [gmx, "grompp", "-f", mdp.name, "-c", "npt.gro", "-r", "npt.gro", "-t", "npt.cpt", "-p", "topol.top", "-o", "production.tpr"]
@@ -351,6 +368,8 @@ def prepare_replicate(row: dict, args: argparse.Namespace, run_records: list[dic
             "topology_sha256": sha256(rep_dir / "topol.top"),
             "coordinates_sha256": sha256(rep_dir / "npt.gro"),
             "checkpoint_sha256": sha256(rep_dir / "npt.cpt"),
+            "topology_dependency_sha256": dependency_hashes,
+            "backend": args.backend,
             "grompp_command": command,
         }
         run_records.append(record)
@@ -372,20 +391,23 @@ def prepare_replicate(row: dict, args: argparse.Namespace, run_records: list[dic
                     "topol.top": record["topology_sha256"],
                     mdp.name: record["mdp_sha256"],
                 },
+                "topology_dependency_sha256": dependency_hashes,
+                "backend": args.backend,
                 "production_tpr": record["production_tpr"],
                 "production_tpr_sha256": record["production_tpr_sha256"],
             }, indent=2) + "\n",
             encoding="utf-8",
         )
-        mdrun = [gmx, "mdrun", "-deffnm", "production", "-seed", str(seed), "-v", "-ntomp", str(args.ntomp), *MDRUN_CPU]
+        backend_flags = MDRUN_GPU_MIXED if args.backend == "gpu" else MDRUN_CPU
+        mdrun = [gmx, "mdrun", "-deffnm", "production", "-seed", str(seed), "-v", "-ntomp", str(args.ntomp), *backend_flags]
+        if args.backend == "gpu" and args.gpu_id != "auto":
+            mdrun.extend(["-gpu_id", args.gpu_id])
         prepared.append((rep_dir, record, mdrun))
     return prepared
 
 
 def execute_replicate(prepared: tuple[Path, dict, list[str]], args: argparse.Namespace) -> None:
     rep_dir, record, mdrun = prepared
-    if args.gpu_id != "auto":
-        mdrun.extend(["-gpu_id", args.gpu_id])
     record["mdrun_command"] = mdrun
     record["status"] = "RUNNING"
     subprocess.run(mdrun, cwd=rep_dir, check=True)
@@ -532,9 +554,10 @@ def main() -> int:
         "targets": args.targets,
         "required_system_count": len(rows),
         "ready_system_count": len(rows) - len(blocked),
-        "blocked_system_count": len(blocked),
-        "target_ns": args.target_ns,
-        "replicates": args.replicates,
+        "blocked_system_count": len(blocked),            "target_ns": args.target_ns,
+            "replicates": args.replicates,
+            "backend": args.backend,
+            "gpu_id": args.gpu_id if args.backend == "gpu" else None,
         "execution_requested": bool(args.execute),
         "gromacs_launched": False,
         "md_rrs_status": "NOT_COMPUTED",
@@ -564,6 +587,8 @@ def main() -> int:
 
     run_records: list[dict] = []
     manifest["gromacs_binary"] = gmx
+    manifest["backend"] = args.backend
+    manifest["gpu_id"] = args.gpu_id if args.backend == "gpu" else None
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     manifest["run_id"] = run_id
     try:

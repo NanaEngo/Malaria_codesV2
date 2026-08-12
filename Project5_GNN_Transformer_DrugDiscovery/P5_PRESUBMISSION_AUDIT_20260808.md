@@ -23,7 +23,7 @@ All 22 items verified against the frozen data and manuscript:
 
 - **Question/design:** estimand = mean test ROC AUC per split over 25 fold–seed replicates; unit = molecule; stratified random + Bemis–Murcko scaffold 5-fold × 5 seeds, frozen and released.
 - **Analysis:** paired t on the **5 per-seed means (df=4)** — not 25 independent observations; BH-FDR applied separately across the 4 scaffold and 4 random comparisons; Shapiro–Wilk OK; Wilcoxon consistent (p=0.0625).
-- **Results:** mean ± std across 25 replicates; Δ vs ECFP4; t(4) and p-values; 95% CIs in figure; identical denominators across arms.
+- **Results:** mean ± population SD across the five per-seed means for the manuscript table; raw 25-fold SD retained as `std25`; Δ vs ECFP4; t(4) and p-values; 95% CIs in figure; identical denominators across arms.
 - **Reproducibility:** frozen panel (19,836), frozen splits (`.npy`, hashed), per-fold CSVs + salience JSONs + checkpoints released; pinned environment (torch 2.13.0+cu130, PyG 2.8.0, transformers 5.14.1); `SHA256SUMS` (40 entries).
 - **Integrity:** ChemBERTa cross-fold leak found → corrected (per-fold weight reset) → contaminated checkpoints discarded; initial misaligned p-values corrected (audit 06/08); no selective reporting.
 
@@ -31,11 +31,11 @@ All 22 items verified against the frozen data and manuscript:
 
 | Arm | Random | Scaffold |
 |-----|-------:|---------:|
-| ECFP4–RF | **0.9433 ± 0.0002** | **0.8300 ± 0.0023** |
-| ChemBERTa | 0.9121 ± 0.0047 | 0.7867 ± 0.0338 |
-| GIN | 0.9098 ± 0.0067 | 0.8047 ± 0.0395 |
-| GIN–TFP | 0.9084 ± 0.0060 | 0.8138 ± 0.0352 |
-| GIN–TNE | 0.8918 ± 0.0060 | 0.8090 ± 0.0378 |
+| ECFP4–RF | **0.9433 ± 0.0003** | **0.8300 ± 0.0023** |
+| ChemBERTa | 0.9121 ± 0.0012 | 0.7867 ± 0.0054 |
+| GIN | 0.9098 ± 0.0022 | 0.8047 ± 0.0141 |
+| GIN–TFP | 0.9084 ± 0.0012 | 0.8138 ± 0.0107 |
+| GIN–TNE | 0.8918 ± 0.0018 | 0.8090 ± 0.0149 |
 
 Every GNN/transformer arm is significantly below ECFP4–RF on **both** splits (paired t, df=4; BH-adjusted p < 0.05).
 

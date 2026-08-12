@@ -10,9 +10,9 @@
 
 | # | Fichier (dans ce dossier) | Rôle dans Paragon Plus |
 |---|---|---|
-| 1 | `P1_V7_main.pdf` | **Manuscript (PDF compilé)** — main text, 19 p., 0 erreur |
+| 1 | `P1_V7_main.pdf` | **Manuscript (PDF compilé)** — main text, 25 p., 0 erreur |
 | 2 | `P1_V7_main.tex` + `.bbl` + `.bib` | Source LaTeX du main (facultatif mais recommandé par ACS) |
-| 3 | `P1_V7_SM.pdf` | **Supporting Information** (nom ACS : `Supporting_Information.pdf`) |
+| 3 | `P1_V7_SM.pdf` | **Supporting Information** (17 p.; nom ACS : `Supporting_Information.pdf`) |
 | 4 | `P1_V7_SM.tex` + `.bbl` | Source LaTeX du SM |
 | 4b | `P1_V7_main.aux` + `P1_V7_SM.aux` | **⚠️ REQUIS pour la recompilation** — le main et le SM se référencent croisément via `\usepackage{xr}` + `\externaldocument` (`\cref{SM-...}` / `\cref{M-...}`). Sans ces `.aux`, la recompilation produit des références non résolues. |
 | 5 | `Cover_Letter_P1_V7.pdf` (+ .tex) | **Cover letter** — obligatoire (1 p.) |
@@ -64,8 +64,8 @@
 
 | Contrôle | Résultat |
 |---|---|
-| Compilation main (pdflatex ×2) | ✅ 19 p., 0 erreur, 0 réf. indéfinie |
-| Compilation SM | ✅ 7 p., 0 erreur |
+| Compilation main (pdflatex + BibTeX + final passes) | ✅ 25 p., 0 erreur, 0 réf. indéfinie |
+| Compilation SM (pdflatex + BibTeX + final passes) | ✅ 17 p., 0 erreur |
 | Compilation cover letter | ✅ 1 p. |
 | TOC graphic — dimensions | ✅ 3.25×1.75 in (ratio 1.857) |
 | TOC graphic — résolution | ✅ 300 dpi (975×525 px) |
@@ -106,4 +106,4 @@ cp manuscript/Graphics/p1_v7_toc_graphic*.pdf manuscript/Graphics/p1_v7_toc_grap
 1. **PfClpP = PDB 2F6I** (triade catalytique Ser252/His223/Asp219) — 4GM2 = PfClpR, explicitement exclu; PfATP4 = PDB 9N10.
 2. **DEKOIS PfDHFR = 0.450 [0.37, 0.53]** (valeur canonique, honnête) — cohérent avec P2 et BMAD.
 3. **Poses = hypothèses computationnelles** — le manuscrit ne revendique ni puissance mesurée ni engagement biologique confirmé.
-4. **Lire une dernière fois** le main (19 p.) et le SM avant soumission.
+4. **Lire une dernière fois** le main (25 p.) et le SM (17 p.) avant soumission.

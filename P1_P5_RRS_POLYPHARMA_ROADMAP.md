@@ -1,4 +1,4 @@
-# Master Roadmap P1–P5 — active plan
+# Master Roadmap P1–P6 — active plan
 
 **Version:** 1.12 — 12 August 2026
 **Purpose:** current decisions and next actions only.
@@ -12,7 +12,7 @@
 | P2 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | `Project2_Polypharmacology_MD_ValidationV2607/` | Docking-RRS complete; Set-C MD-RRS pending |
 | P3 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | `Project3_Quantum_Inspired_RepresentationsV2607/` | Canonical benchmarks and external validation complete |
 | P4 | `P4_DATA_ANALYSIS_REPORT.md` | `Project4_Advanced_Monte_CarloV2607/` | v12 scalar benchmark and Pareto analysis complete |
-| P5 | `P5_DATA_ANALYSIS_REPORT.md` | `Project5_GNN_Transformer_DrugDiscovery/` | Benchmark and external validation complete |
+| P5 | `P5_DATA_ANALYSIS_REPORT.md` | `Project5_GNN_Transformer_DrugDiscovery/` | Benchmark and external validation complete |\n| P6 | `Project6_LISH_MoA_Structure_Phenotype/P6_DATA_ANALYSIS_REPORT.md` | `Project6_LISH_MoA_Structure_Phenotype/` | Planned; structure mapping required; no molecular arm run |
 
 ## 2. Project priorities
 
@@ -30,7 +30,7 @@
 - The bounded pilot contains 16 prepared systems (PP-01/PP-02 × PfDHFR/PfCRT mutation states) using the explicitly documented OpenFF 2.2.0 AM1-BCC + CHARMM36m/TIP3P deviation.
 - CPU witness `15259` and dependent QC `15260` were stopped after a partial 858-ps trajectory; that output is non-canonical.
 - GPU benchmark `15262` passed at 19.816 ns/day using mixed offload (`-nb gpu -pme gpu -bonded cpu -update cpu`).
-- **Current live witness:** `15270` is running cleanly from equilibrated inputs with `gpu:1`; `grompp` passed and early GPU production is free of fatal/LINCS errors.
+- **Witness completed:** `15270` completed one `PP-01_PfDHFR_WT` 10-ns GPU trajectory at 28.169 ns/day without fatal/LINCS/NaN indicators; it is stability evidence only.
 - This is not the full 16-system production chain. `md_rrs_status=NOT_COMPUTED` until complete trajectories pass QC.
 - Historical 15106/15111/15117 records are superseded; historical four-parent MD remains separate from Set-C.
 
@@ -51,6 +51,13 @@
 - ECFP4-RF remains strongest under scaffold split (0.8300); GIN-TFP adds modest complementary signal (0.8138 vs GIN 0.8047).
 - Preserve the honest-negative narrative and external replication.
 - Finish deposit and final author review.
+
+### P6 — LISH-MoA structure–phenotype follow-up
+
+- Project 6 is an independent follow-up study, not a P5 revision.
+- The locked phenotype-only reference is log loss 0.02378, macro-AUROC 0.6435, and macro-AUPRC 0.1428 on 3,289 drugs and 206 labels.
+- Molecular arms (ECFP4, GNN, ChemBERTa, TFP/TNE, QKS) are **not run** because no versioned `drug_id → SMILES` mapping is available.
+- Reopen only after mapping provenance, collision handling, drug-grouped/scaffold splits, ECFP4 baseline, and paired statistics pass the P6 gates.
 
 ## 3. Non-negotiable evidence rules
 

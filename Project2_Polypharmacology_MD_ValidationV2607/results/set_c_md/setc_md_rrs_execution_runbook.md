@@ -2,7 +2,7 @@
 
 **Updated:** 12 August 2026
 **Scope:** candidate-specific Set-C trajectories only; parent-study MD systems are excluded.
-**Current status:** CPU witness chain `15254 → 15259 → 15260` was stopped and is non-canonical. GPU benchmark `15262` passed; clean GPU witness `15270` is running. `md_rrs_status=NOT_COMPUTED` until a complete declared cohort passes trajectory QC.
+**Current status:** CPU witness chain `15254 → 15259 → 15260` was stopped and is non-canonical. GPU benchmark `15262` passed the mixed-offload protocol at 19.816 ns/day; clean GPU witness `15270` completed one 10-ns `PP-01_PfDHFR_WT` trajectory at 28.169 ns/day without fatal/LINCS/NaN indicators. **GPU verdict: `GPU_PATH_STABLE_FOR_SERIAL_PRODUCTION`, not cohort validation.** The 16-system pilot remains unprepared and `md_rrs_status=NOT_COMPUTED`.
 
 ## Cohort contracts
 
@@ -13,9 +13,24 @@
 
 The 16-system pilot is 2 candidates × PfDHFR (WT, N51I, C59R, S108N, I164L) and PfCRT (WT, K76T, K76A), with the predeclared 10-ns production protocol. The force-field policy deviation is explicit: OpenFF 2.2.0 AM1-BCC for ligands with CHARMM36m/TIP3P for the protein/solvent; each system must retain `policy_deviation.declared=true` and `policy_deviation.approved=true`.
 
+### GPU stability verdict and serial-cohort plan
+
+The completed GPU benchmark (`15262`) is the evidence used to select the production flags `-nb gpu -pme gpu -bonded cpu -update cpu`; it sustained 19.816 ns/day without fatal or LINCS errors. The live `PP-01_PfDHFR_WT` witness (`15270`) independently checks the equilibrated-input path: `grompp` passed, one A4000 is allocated, and the last audited production checkpoint was free of fatal/LINCS errors. This supports serial GPU production, but neither job authorizes a Set-C MD-RRS claim.
+
+The cohort plan is:
+
+1. Close 15270 and retain its hashes, log, checkpoint, energy output, and terminal status.
+2. Preflight all 16 `system_manifest.json` and `forcefield_manifest.json` files; reject any missing, mismatched, or stale hash before production.
+3. Run one production at a time on the single A4000: PP-01/PP-02 × PfDHFR (WT, N51I, C59R, S108N, I164L) and PfCRT (WT, K76T, K76A). Use explicit `--system-name` selection and versioned pilot output paths. Enforce serial execution with an array throttle `%1` or an explicit per-system dependency chain; never submit the GPU production array with `%4` on the single A4000. The pre-submission manifest must enumerate all 16 expected system names in deterministic order.
+4. Use a controlled `afterany` chain for independent salvage: a failed system must be recorded as `NON-PASS` but must not silently block later systems. The aggregate pilot remains ineligible unless all 16 systems produce valid terminal outputs and pass QC. **Implemented:** `scripts/p2_setc_gpu_production.sbatch` now provides `#SBATCH --gres=gpu:1`, `#SBATCH --array=0-15%1`, explicit `--system-name "$SYS"`, and the approved mixed-offload flags. It remains unsubmitted until the 16-system preparation/equilibration preflight passes.
+5. Treat 19.816 ns/day as a conservative planning rate: 10 ns is approximately 12.1 h of GPU time per system, or approximately 8 days of raw GPU time for 16 systems, before setup/retry overhead. Replace this planning estimate only after the closed witness supplies a measured terminal rate.
+6. Run per-system QC only as diagnostic output until the complete 16-row pilot is present; then run the mode-specific aggregate QC and MD-RRS wrapper.
+
+Production stability acceptance requires non-empty `production.xtc`, `production.tpr`, checkpoint and log files; no fatal error, LINCS failure, NaN, or energy divergence; and matching system/force-field/topology hashes. A failed witness or cohort system revises the GPU verdict to `GPU_PATH_REQUIRES_REMEDIATION` and blocks MD-RRS.
+
 ## Preconditions
 
-1. Candidate-specific `system_manifest.json` and `forcefield_manifest.json` are present and identity/hashes pass.
+1. Candidate-specific `system_manifest.json` and `forcefield_manifest.json` are present and identity/hashes pass; the current read-only preflight is 0/16 and therefore blocks submission.
 2. The actual equilibration and production SLURM IDs are recorded at submission time; no historical ID is copied into a reusable script.
 3. Production trajectories contain non-empty `production.xtc` and `production.tpr` files.
 4. The selected contract is declared explicitly through `P2_SETC_COHORT_MODE`.
@@ -29,12 +44,15 @@ After the actual production job has completed, submit the wrapper with its real 
 cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
 EQ_JOB_ID=<actual-equilibration-job-id>
 PROD_JOB_ID=<actual-production-job-id>
-sbatch --dependency=afterok:${PROD_JOB_ID} \
+# Use afterany so a terminal failed production still writes the fail-closed manifest.
+# The wrapper itself must reject missing/non-PASS rows and must not emit MD-RRS.
+# PROD_JOB_ID must be the newly validated GPU array, not the CPU launcher or a historical ID.
+sbatch --dependency=afterany:${PROD_JOB_ID} \
   --export=ALL,P2_PRODUCTION_JOB_ID=${PROD_JOB_ID},P2_EQUILIBRATION_JOB_ID=${EQ_JOB_ID},P2_SETC_COHORT_MODE=pilot \
   scripts/p2_setc_qc_and_md_rrs.sbatch
 ```
 
-Use `P2_SETC_COHORT_MODE=full` only after the 17-candidate/136-system production contract has been prepared and independently checked. The wrapper writes a mode-specific post-production manifest and refuses missing job IDs.
+Use `P2_SETC_COHORT_MODE=full` only after the 17-candidate/136-system production contract has been prepared and independently checked. The wrapper writes a mode-specific post-production manifest and refuses missing job IDs. For the pilot, aggregate QC/MD-RRS must not be launched merely because one production finishes: all 16 declared systems must be represented first. Per-system diagnostic QC may run earlier, but it cannot produce or overwrite `md_rrs_pilot_PP01_PP02.csv`.
 
 ## Direct QC and MD-RRS commands
 
@@ -66,6 +84,7 @@ Trajectory QC and MD-RRS must agree on one declared `analysis_rule_id`, one dura
 - Full: exactly 136 unique candidate/target/mutation rows and all 17 Set-C IDs.
 - MD-RRS remains separate from docking-RRS. It is a trajectory-derived bound-fraction ratio, not a replacement for the docking metric.
 - A failed or incomplete contract produces a terminal failed/pending manifest and no manuscript result.
+- The GPU witness and the 15262 benchmark are stability evidence only; they are not substitutes for the 16-system pilot contract.
 
 ## Post-QC comparison
 
@@ -91,10 +110,10 @@ The pilot comparison is descriptive and limited to PP-01/PP-02; it must not be g
 
 ## GPU witness live status — job 15270 (12 August 2026, ~15:05 UTC)
 
-- SLURM `p2_setc_gpu_witness` RUNNING on penavoraserver, RunTime 07:18, limit 24 h (End 13 Aug 07:55:41 UTC).
+- SLURM job `15270` is terminal; no current P2 job is visible in `squeue`. The witness completed at 16:27:51 UTC on 12 August 2026.
 - CWD: `results/md_systems/set_c_publication_gpu_v2_20260812/PP-01_PfDHFR_WT/runs/publication_gpu_20260812_v4/replicate_1`.
 - GROMACS production active: `mdrun -s production.tpr -nb gpu -pme gpu -bonded cpu -update cpu -gpu_id 0 -ntomp 8`.
-- Progress at observation: step 4,284,000 / 5,000,000 (dt = 0.002 ps) = 8.57 ns / 10 ns = **85.7 %**.
-- Outputs so far: production.xtc ≈ 1.02 GB, .cpt, .edr, .log present; no NaN/energy divergence in last energy block (Potential −4.34e6 kJ/mol, T = 309.8 K, P ≈ −29 bar).
-- ETA (linear): ~1.4 ns remaining at observed throughput ≈ 1.17 ns/h ⇒ **~16:15–16:30 UTC** for this replicate, well inside the SLURM limit.
-- This is a single witness replicate (PP-01_PfDHFR_WT). Post-QC chain (`set_c_trajectory_qc.py`, `p2_setc_md_rrs.py`) may start per-system as soon as each replicate finishes, without waiting for the whole array.
+- Terminal progress: step 5,000,000 / 5,000,000 (dt = 0.002 ps) = **10 ns / 10 ns**.
+- Terminal outputs: production.xtc ≈ 1.19 GB, production.tpr/.cpt/.edr/.log/.gro present; no fatal, LINCS, NaN, or infinite indicators were found in the terminal log scan.
+- Measured terminal performance: **28.169 ns/day** (wall time 30,672.48 s). This replaces the provisional ETA/rate estimate.
+- This is a single witness replicate (PP-01_PfDHFR_WT). Per-system diagnostic QC may inspect it when complete, but aggregate QC and `p2_setc_md_rrs.py` remain blocked until all 16 pilot systems are present and pass the declared gates.

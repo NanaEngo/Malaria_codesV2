@@ -1,10 +1,10 @@
-\documentclass[10pt,letterpaper]{article}
+\documentclass[9pt,letterpaper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{geometry}
-\geometry{margin=0.8in}
+\geometry{top=0.55in,bottom=0.55in,left=0.68in,right=0.68in}
 \usepackage{enumitem}
-\setlist{itemsep=2pt, topsep=2pt, parsep=0pt}
+\setlist{itemsep=0pt, topsep=1pt, parsep=0pt}
 \usepackage{hyperref}
 \usepackage{setspace}
 \usepackage{siunitx}
@@ -12,6 +12,7 @@
 \DeclareSIUnit\angstrom{\text{\AA}}
 
 \begin{document}
+\fontsize{9}{10.5}\selectfont
 
 \begin{flushleft}
 \textbf{Myke Vital Sao Temgoua} \\
@@ -41,7 +42,7 @@ This work addresses a critical methodological challenge in computational antimal
 \begin{enumerate}
 \item \textbf{Validation documentation:} three complementary approaches: (a) external benchmark (DEKOIS 2.0, PfDHFR ROC-AUC \num{0.45}, reported honestly as near-chance), (b) enrichment validation (MMV Malaria Box, ROC-AUC \numrange{0.924}{1.000}), and (c) redocking validation (four of five reference ligands reproduced with RMSD $< \SI{2.0}{\angstrom}$; the methotrexate exception reflects NADPH-adjacent grid placement). Metrics in Supporting Information Section S12.
 
-\item \textbf{Physicochemical characterization:} all 17 candidates exhibit drug-like properties (\qty{100}{\percent} Lipinski/Veber compliance, mean QED \num{0.703}, low predicted ADMET risk). Details in Supporting Information Tables S2--S4.
+\item \textbf{Physicochemical characterization:} all 17 candidates pass the reported Lipinski/Veber criteria (\qty{100}{\percent} compliance; mean QED \num{0.703}); the available ADMET summary is population-level and is not a candidate-specific safety assessment. Details in Supporting Information Tables S2--S4.
 
 \item \textbf{Multi-parameter optimization framework:} a five-component MPO (Vina affinity 35\%, DiffDock confidence 25\%, QED 20\%, ADMET 15\%, Lipinski penalty 5\%) with a polypharmacology bonus and an MPO $\geq$ 0.40 selection threshold (Section S10).
 

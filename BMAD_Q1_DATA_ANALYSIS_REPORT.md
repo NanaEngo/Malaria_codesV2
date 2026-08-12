@@ -49,9 +49,9 @@ Historical parent-lead MD remains separate: only PfCRT–214 has an interpretabl
 The bounded **16-system pilot** (PP-01/PP-02 × PfDHFR/PfCRT mutation states) is prepared under the PI-approved OpenFF 2.2.0 AM1-BCC + CHARMM36m/TIP3P policy deviation. The live job is an **isolated `PP-01_PfDHFR_WT` witness**, not the full panel:
 
 - **15254:** equilibration complete; hashed `npt.gro`/`npt.cpt` produced.
-- **15270:** clean GPU witness production is running from equilibrated inputs; `grompp` passed, one GPU is allocated, and early production has no fatal/LINCS errors.
+- **15270:** clean GPU witness `PP-01_PfDHFR_WT` completed 10 ns (5,000,000 steps) at 28.169 ns/day with no fatal/LINCS/NaN indicators; this is one-system stability evidence, not a cohort result.
 - **15259/15260:** superseded CPU witness/QC chain; stopped after a partial 858-ps trajectory and explicitly non-canonical.
-- **Full-panel MD-RRS:** `NOT_COMPUTED`; no witness-only or incomplete result may be promoted.
+- **Full-panel MD-RRS:** `NOT_COMPUTED`; the 16-system pilot preflight currently reports 0/16 ready because canonical `set_c` lacks complete prepared topologies/equilibrated inputs. No witness-only or incomplete result may be promoted.
 - **SLURM audit (12 Aug):** all P2 launchers and Python workflows pass static validation; Set-C production now passes the exact `--system-name` per array task rather than relying on filesystem ordering, and trajectory QC revalidates system/force-field/topology provenance before accepting a run. No new array has been submitted.
 - Historical 15106/15111/15117 identifiers are superseded.
 

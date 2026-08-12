@@ -40,10 +40,10 @@
 | Quantité | Manuscrit | Recalcul |
 |----------|-----------|----------|
 | ECFP4-RF scaffold | 0.8300 ± 0.0023 | 0.8300 ± 0.0023 (seed_means reproduits exactement) |
-| GIN scaffold | 0.8047 ± 0.0395 | 0.8047 ± 0.0403 (per-seed 0.789–0.827) |
-| GIN-TFP scaffold | 0.8138 ± 0.0352 | 0.8138 ± 0.0359 |
-| GIN-TNE scaffold | 0.8090 ± 0.0378 | 0.8090 ± 0.0386 |
-| ChemBERTa scaffold | 0.7867 ± 0.0338 | 0.7867 ± 0.0345 |
+| GIN scaffold | 0.8047 ± 0.0141 (five per-seed means) | 0.8047 ± 0.0141; raw 25-fold SD = 0.0395 |
+| GIN-TFP scaffold | 0.8138 ± 0.0107 (five per-seed means) | 0.8138 ± 0.0107; raw 25-fold SD = 0.0352 |
+| GIN-TNE scaffold | 0.8090 ± 0.0149 (five per-seed means) | 0.8090 ± 0.0149; raw 25-fold SD = 0.0378 |
+| ChemBERTa scaffold | 0.7867 ± 0.0054 (five per-seed means) | 0.7867 ± 0.0054; raw 25-fold SD = 0.0338 |
 | GIN random | 0.9098 ± 0.0067 | 0.9098 (Δ=−0.0335 vs ECFP4-RF random) |
 | ChemBERTa random | 0.9121 ± 0.0047 | 0.9121 |
 
@@ -132,17 +132,17 @@ Le changement le plus notable est **qualitatif** : l'audit a transformé une fai
 
 | Comparison (scaffold, paired per-seed) | Manuscrit V2608 | Recalcul indépendant | Verdict |
 |---|---|---|---|
-| ECFP4-RF random | 0.9433 ± 0.0002 | seed_means [0.9428..0.9437] mean 0.9433, std 0.0003 | ✓ |
+| ECFP4-RF random | 0.9433 ± 0.0003 | seed_means [0.9428..0.9437] mean 0.9433, SD 0.0003 | ✓ |
 | ECFP4-RF scaffold | 0.8300 ± 0.0023 | seed_means [0.8334,0.8274,0.8278,0.8295,0.8317], mean 0.8300, std 0.0023 | ✓ |
-| GIN scaffold | 0.8047 ± 0.0395 | 0.8047 (all25), t=−3.87, p=0.018 | ✓ |
-| GIN-TFP scaffold | 0.8138 ± 0.0352 | 0.8138, t=−3.51, p=0.025 | ✓ |
-| GIN-TNE scaffold | 0.8090 ± 0.0378 | 0.8090, t=−3.06, p=0.038 | ✓ |
-| ChemBERTa scaffold | 0.7867 ± 0.0338, t(4)=−18.35, p<0.0001 | seed_means [0.7942,0.7793,0.7904,0.7870,0.7823], t=18.35 | ✓ (signe arbitraire, t abs) |
+| GIN scaffold | 0.8047 ± 0.0141; raw 25-fold SD 0.0395 | 0.8047, t=−3.87, p=0.018 | ✓ |
+| GIN-TFP scaffold | 0.8138 ± 0.0107; raw 25-fold SD 0.0352 | 0.8138, t=−3.51, p=0.025 | ✓ |
+| GIN-TNE scaffold | 0.8090 ± 0.0149; raw 25-fold SD 0.0378 | 0.8090, t=−3.06, p=0.038 | ✓ |
+| ChemBERTa scaffold | 0.7867 ± 0.0054; raw 25-fold SD 0.0338 | seed_means [0.7942,0.7793,0.7904,0.7870,0.7823], t=18.35 | ✓ (signe arbitraire, t abs) |
 | GIN / TFP / TNE / CB random | 0.9098 / 0.9084 / 0.8918 / 0.9121 | 0.9098 / 0.9084 / 0.8918 / 0.9121 (tous p<0.0001 vs 0.9433) | ✓ |
 
 BH-FDR scaffold (raw p essentiels [0.018, 0.025, 0.038, <0.0001]) → adj. 0.0330 / 0.0330 / 0.0378 / 0.0002 : **recalculé conforme** au manuscrit.
 
-**Note statistique (N/A) :** les σ des modèles (0.0395 etc.) sont calculés en population std (ddof=0) sur les 25 fold×seed, alors que la baseline le fait sur les 5 per-seed (0.0023) ; **cohérent avec la caption Fig.1 et la méthode §155** (les t appariés utilisent bien les 5 per-seed). Mélange des aggrégations dans la même colonne — documenté, pas bénin.
+**Convention statistique finale :** les valeurs publiées dans le manuscrit et le tableau de synthèse sont la moyenne ± SD populationnelle (ddof=0) des cinq moyennes par seed ; les tests appariés utilisent ces cinq valeurs (df=4). La dispersion brute des 25 résultats fold×seed est conservée séparément dans `results/p5_replication_stats.csv` sous `std25` et n'est pas substituée silencieusement à la dispersion publiée.
 
 ### 10.2 H3 salience — **REPRODUITE EXACTE** (25 repl.)
 

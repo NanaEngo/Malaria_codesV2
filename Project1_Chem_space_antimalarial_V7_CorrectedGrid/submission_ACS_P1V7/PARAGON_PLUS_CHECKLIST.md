@@ -1,7 +1,7 @@
 # Checklist Paragon Plus — P1 V7 pour JCIM
 
 **Version** 1.0 — 10 août 2026
-**Document cible** : `P1_V7_Integrated_Polypharmacology_RRS` (19 p. main, 7 p. SM)
+**Document cible** : `P1_V7_Integrated_Polypharmacology_RRS` (25 p. main, 17 p. SM)
 **URL** : https://acs.manuscriptcentral.com/ (sélectionner JCIM)
 
 ---
@@ -12,7 +12,7 @@
 |---|--------|--------|--------|
 | 0.1 | Avoir un compte ORCID pour chaque auteur | ⏳ | Créer/compléter sur https://orcid.org — **obligatoire ACS** |
 | 0.2 | Avoir un compte ACS Paragon Plus | ⏳ | https://acs.manuscriptcentral.com/ — les auteurs peuvent avoir un compte |
-| 0.3 | Vérifier que les PDF compilent proprement | ✅ | Main 19 p., SM 5 p., **0 erreur, 0 référence indéfinie** |
+| 0.3 | Vérifier que les PDF compilent proprement | ✅ | Main 25 p., SM 17 p., **0 erreur, 0 référence indéfinie** |
 | 0.4 | Vérifier que le package de soumission est complet | ✅ | `submission_ACS_P1V7/` — 31 fichiers, avec `Graphics/` et manifeste SHA-256 (vérifié) |
 
 ---
@@ -22,7 +22,7 @@
 | # | Action | Valeur/Chemin |
 |---|--------|---------------|
 | 1.1 | Aller sur https://acs.manuscriptcentral.com/ | |
-| 1.2 | Se connecter (ou créer un compte « Author ») | Compte du corresponding author (Serge Guy Nana Engo) |
+| 1.2 | Se connecter (ou créer un compte « Author ») | Compte du corresponding author (Myke Vital Sao Temgoua; confirmer l’auteur correspondant dans le portail) |
 | 1.3 | Cliquer **« Author Dashboard »** → **« Start New Submission »** | |
 | 1.4 | Sélectionner **« Journal of Chemical Information and Modeling »** | JCIM dans la liste déroulante |
 | 1.5 | Sélectionner le type **« Research Article »** | |
@@ -35,7 +35,7 @@
 |---|--------|--------|
 | 2.1 | **Type** | Research Article |
 | 2.2 | **Titre** | African Natural-Product-Inspired Antimalarial Polypharmacology: Computational Resistance Hypotheses |
-| 2.3 | **Résumé** _(copier-coller du .tex, max ~250 mots)_ | Le résumé commence par « Polypharmacology could make antimalarial discovery less vulnerable to single-target resistance… » — disponible dans `P1_V7_Integrated_Polypharmacology_RRS.tex` lignes 27–52. Inclure le paragraphe complet. |
+| 2.3 | **Résumé** _(copier-coller du .tex, max ~250 mots)_ | Copier le résumé final depuis `P1_V7_Integrated_Polypharmacology_RRS.tex` (question centrale sur target breadth et mutation resilience, puis résultats et limites). Ne pas utiliser un résumé d’une version antérieure. |
 | 2.4 | **Abstract/TOC Graphic** — sélectionner le fichier | Uploader `p1_v7_toc_graphic_ACS.tiff` (3.25×1.75 in, 300 dpi, RGB, LZW) |
 | 2.5 | Vérifier que le TOC graphic apparaît correctement dans l'aperçu | L'aperçu montre l'image redimensionnée au format ACS standard |
 
@@ -50,7 +50,7 @@
 | 3.1 | **Manuscript File** (PDF) | `P1_V7_main.pdf` | Le PDF compilé final — **ACS préfère PDF pour la review** |
 | 3.2 | **LaTeX Source Files** (optionnel mais recommandé) | Option 1 : zip contenant les fichiers ci-dessous. Option 2 : uploader chaque fichier séparément | Si LaTeX est demandé, voir §7 |
 | 3.3 | **Supporting Information** | `Supporting_Information.pdf` | Nommé exactement **Supporting_Information.pdf** (convention ACS) |
-| 3.4 | **Cover Letter** | `Cover_Letter_P1_V7.pdf` | 1 page, datée 10 août 2026 |
+| 3.4 | **Cover Letter** | `Cover_Letter_P1_V7.pdf` | 1 page; vérifier la date générée par `\\today` au moment du dépôt |
 | 3.5 | **Table of Contents Graphic** | `p1_v7_toc_graphic_ACS.tiff` | **Format requis ACS :** TIFF RGB 300 dpi, 3.25×1.75 in (975×525 px) |
 | 3.6 | **Figure files** _(séparément si demandé)_ | `Figure_2_rrs_mutation_profiles.pdf`<br>`Figure_3_exploratory_metric_relationships.pdf`<br>`Figure_S_targetwise_profile_summary.pdf`<br>`Figure_S_chemical_space_coverage.pdf` | ACS peut demander les figures en fichiers séparés au format EPS/PDF/TIFF |
 
@@ -68,11 +68,11 @@ ACS exige la saisie manuelle de chaque auteur dans Paragon Plus (même si le .te
 
 | # | Auteur | Prénom | Nom | Email | Affiliation | ORCID requis |
 |---|--------|--------|-----|-------|-------------|--------------|
-| 4.1 | **Corresponding** | Serge Guy | Nana Engo | — (renseigner dans Paragon Plus) | University of Yaoundé I, Cameroon | **✅ Oui — obligatoire ACS** |
-| 4.2 | Co-auteur | Myke Vital Sao | Temgoua | myke-vital.sao@facsciences-uy1.cm | University of Yaoundé I, Cameroon | **✅ Oui** |
-| 4.3 | Co-auteur | Jean-Pierre | Tchapet Njafa | — | University of Yaoundé I, Cameroon | **✅ Oui** |
-| 4.4 | Co-auteur | Penabei | Samafou | — | Université de Sherbrooke, Canada | **✅ Oui** |
-| 4.5 | Co-auteur | Wilfred Fon | Mbacham | — | University of Yaoundé I, Cameroon | **✅ Oui** |
+| 4.1 | **Corresponding** | Myke Vital Sao | Temgoua | myke-vital.sao@facsciences-uy1.cm | University of Yaoundé I, Cameroon | **À vérifier dans Paragon Plus** |
+| 4.2 | Co-auteur | Jean-Pierre | Tchapet Njafa | — | University of Yaoundé I, Cameroon | **À vérifier dans Paragon Plus** |
+| 4.3 | Co-auteur | Penabei | Samafou | — | Université de Sherbrooke, Canada | **À vérifier dans Paragon Plus** |
+| 4.4 | Co-auteur | Wilfred Fon | Mbacham | — | University of Yaoundé I, Cameroon | **À vérifier dans Paragon Plus** |
+| 4.5 | Co-auteur | Serge Guy | Nana Engo | — | University of Yaoundé I, Cameroon | **À vérifier dans Paragon Plus** |
 
 ### Instructions :
 1. Cliquer **« Add Author »** pour chaque auteur
@@ -136,7 +136,7 @@ ACS demande les fichiers source LaTeX uniquement **après acceptation**. Pour la
 |---|--------|--------|
 | 8.1 | Lire l'**aperçu PDF** généré par Paragon Plus | Vérifier que tous les caractères (grec, SI, formules) s'affichent correctement. **Attention :** le convertisseur ACS peut avoir des problèmes avec certains caractères Unicode — vérifier les lettres accentuées et le texte en indice/exposant. |
 | 8.2 | Vérifier les **métadonnées extraites** par le système | Titre, résumé, auteurs, mots-clés — s'assurer que tout a été correctement parsé depuis le PDF |
-| 8.3 | Vérifier le **Supporting Information** | S'assurer que le PDF du SI s'ouvre correctement (7 p.) |
+| 8.3 | Vérifier le **Supporting Information** | S'assurer que le PDF du SI s'ouvre correctement (17 p.) |
 | 8.4 | Vérifier le **TOC Graphic** | L'image apparaît-elle dans l'aperçu aux bonnes dimensions ? |
 | 8.5 | Vérifier la **Cover Letter** | Datée, signée, fichier attaché |
 | 8.6 | **Cliquer « Approve Submission »** | Confirmation finale |
@@ -147,7 +147,7 @@ ACS demande les fichiers source LaTeX uniquement **après acceptation**. Pour la
 
 | Fichier | Taille | Rôle |
 |---------|--------|------|
-| `P1_V7_main.pdf` | ~464 KB | Main manuscript (19 p.) |
+| `P1_V7_main.pdf` | ~449 KB | Main manuscript (25 p.) |
 | `Supporting_Information.pdf` | ~537 KB | Supplementary Information (17 p.) |
 | `Cover_Letter_P1_V7.pdf` | ~130 KB | Cover letter (1 p.) |
 | `p1_v7_toc_graphic_ACS.tiff` | ~Variable | TOC graphic (3.25×1.75 in, 300 dpi, RGB) |

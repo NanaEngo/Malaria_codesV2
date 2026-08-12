@@ -8,7 +8,7 @@ statistics reported in the manuscript:
   1. per-seed means  (mean over the 5 folds for each of the 5 seeds)
   2. paired t-test on the 5 per-seed means vs ECFP4-RF baseline seed means (df=4)
   3. Benjamini-Hochberg FDR across the 4 comparisons, applied separately per split
-  4. mean +/- std over the 25 fold-seed replicates (manuscript convention: np.std)
+  4. mean +/- SD over the 5 per-seed means (the manuscript dispersion), while also retaining the raw 25 fold-seed SD as `std25`
 
 This is a from-data re-derivation: it reads no manuscript text and writes a
 machine-readable appendix table (CSV + JSON) that reviewers can check line by line.
@@ -74,6 +74,7 @@ def main() -> None:
             split_rows.append({
                 "split": split, "arm": DISPLAY.get(arm, arm),
                 "mean25": round(float(np.mean(allv)), 4),
+                "std_seed": round(float(np.std(sm)), 4),
                 "std25": round(float(np.std(allv)), 4),
                 "seed_means": [round(float(x), 4) for x in sm],
                 "delta_vs_ecfp4": round(delta, 4),
@@ -85,7 +86,7 @@ def main() -> None:
             r["bh_adjusted_p"] = float(a)
             rows.append(r)
             summary["arms"][f"{r['arm']}|{split}"] = {
-                "mean25": r["mean25"], "std25": r["std25"], "delta": r["delta_vs_ecfp4"],
+                "mean25": r["mean25"], "std_seed": r["std_seed"], "std25": r["std25"], "delta": r["delta_vs_ecfp4"],
                 "t_df4": r["t_df4"], "raw_p": r["raw_p"], "bh_adjusted_p": r["bh_adjusted_p"],
             }
 

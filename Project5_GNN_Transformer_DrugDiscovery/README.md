@@ -9,19 +9,21 @@ Do learned graph/sequence representations outperform or complement ECFP4 on a cu
 
 ## Canonical results
 
+The table reports mean ROC AUC ± population SD across the five per-seed means (each seed averages five test folds). Raw fold-level SD across all 25 records is retained separately in `results/p5_replication_stats.csv` as `std25`.
+
 | Model | Random | Scaffold |
 |---|---:|---:|
-| **ECFP4-RF** | **0.9433 ± 0.0002** | **0.8300 ± 0.0023** |
-| ChemBERTa | 0.9121 ± 0.0047 | 0.7867 ± 0.0338 |
-| GIN | 0.9098 ± 0.0067 | 0.8047 ± 0.0395 |
-| GIN-TFP | — | 0.8138 ± 0.0352 |
-| GIN-TNE | — | 0.8090 ± 0.0378 |
+| **ECFP4-RF** | **0.9433 ± 0.0003** | **0.8300 ± 0.0023** |
+| ChemBERTa | 0.9121 ± 0.0012 | 0.7867 ± 0.0054 |
+| GIN | 0.9098 ± 0.0022 | 0.8047 ± 0.0141 |
+| GIN-TFP | 0.9084 ± 0.0012 | 0.8138 ± 0.0107 |
+| GIN-TNE | 0.8918 ± 0.0018 | 0.8090 ± 0.0149 |
 
 On the independent public malaria panel (`n=22,267`), ECFP4-RF reaches 0.9190 versus GIN 0.8843 ± 0.0021 under scaffold split (Δ=0.0346, p=3.35×10⁻⁶). GIN-TFP adds modest complementary signal but does not surpass ECFP4-RF.
 
-## LISH-MoA external extension (isolated, not yet computed)
+## LISH-MoA external extension (phenotype-only reference complete; structure arm not computed)
 
-A separate `P5_LISH_MOA_EXTERNAL_V1` pipeline is prepared under `scripts/p5_lish_moa_prepare.py` and `scripts/p5_lish_moa_benchmark.py`. It evaluates multi-label mechanism-of-action prediction with drug-level aggregation, mean column-wise log loss, macro-AUPRC/AUROC, and calibration-oriented reporting. A structure-only arm is enabled only after an audited one-to-one `drug_id → SMILES` mapping. This extension is not an antimalarial activity validation and does not alter the canonical panel or manuscript results until its mapping and leakage gates pass.
+A separate `P5_LISH_MOA_EXTERNAL_V1` pipeline is prepared under `scripts/p5_lish_moa_prepare.py` and `scripts/p5_lish_moa_benchmark.py`. The audited phenotype-only baseline uses drug-level aggregation, mean column-wise log loss, macro-AUPRC/AUROC, and calibration-oriented reporting. The locked reference is log loss 0.02378, macro-AUROC 0.6435, and macro-AUPRC 0.1428 on 3,289 drugs and 206 labels. A structure-only arm remains disabled because no audited one-to-one `drug_id → SMILES` mapping is available. This extension is not an antimalarial activity validation and does not alter the canonical panel or manuscript molecular results.
 
 ## Evidence boundary
 

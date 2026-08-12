@@ -12,7 +12,7 @@ Do learned graph and sequence representations outperform or complement classical
 
 - Panel: **19,836 molecules**, inherited from P3 for direct comparability.
 - Splits: fixed random and scaffold splits; five-fold evaluation with repeated seeds.
-- Primary metric: ROC-AUC; comparisons are seed/fold paired and corrected with BH-FDR.
+- Primary metric: ROC-AUC; comparisons are paired on the five per-seed means and corrected with BH-FDR. Displayed ± values are population SD across those five per-seed means; raw 25-fold SDs remain in `results/p5_replication_stats.csv` as `std25`.
 - Classical reference: ECFP4-RF.
 - Topological fusion: GIN with TFP/TNE features from P3.
 
@@ -20,11 +20,11 @@ Do learned graph and sequence representations outperform or complement classical
 
 | Model | Random AUC | Scaffold AUC |
 |---|---:|---:|
-| **ECFP4-RF** | **0.9433 ± 0.0002** | **0.8300 ± 0.0023** |
-| ChemBERTa | 0.9121 ± 0.0047 | 0.7867 ± 0.0338 |
-| GIN | 0.9098 ± 0.0067 | 0.8047 ± 0.0395 |
-| GIN-TFP | — | 0.8138 ± 0.0352 |
-| GIN-TNE | — | 0.8090 ± 0.0378 |
+| **ECFP4-RF** | **0.9433 ± 0.0003** | **0.8300 ± 0.0023** |
+| ChemBERTa | 0.9121 ± 0.0012 | 0.7867 ± 0.0054 |
+| GIN | 0.9098 ± 0.0022 | 0.8047 ± 0.0141 |
+| GIN-TFP | — | 0.8138 ± 0.0107 |
+| GIN-TNE | — | 0.8090 ± 0.0149 |
 
 Under scaffold splitting, all learned arms remain below ECFP4-RF. GIN-TFP modestly improves over base GIN, but does not close the baseline gap. This is the central honest-negative result, not a failed project.
 
@@ -41,7 +41,7 @@ Salience analysis identifies persistent-homology/TFP dimensions as interpretable
 - GNN/Transformer performance is architecture- and training-budget-dependent.
 - External validation does not replace experimental activity measurements.
 
-## 6. LISH-MoA external mechanism benchmark — planned implementation (12 August 2026)
+## 6. LISH-MoA external mechanism benchmark — completed phenotype-only reference (12 August 2026)
 
 A separate external benchmark is approved for development under the identifier `P5_LISH_MOA_EXTERNAL_V1`. It is an orthogonal multi-label pharmacology task, not a replacement for the molecule-disjoint ChEMBL malaria activity validation and not a direct validation of antimalarial target engagement.
 
@@ -64,15 +64,21 @@ No Kaggle credential is available on the HPC node. The reproducible fallback is 
 
 **Execution checkpoint:** the mirror was downloaded on 12 August 2026 to `/home/nanaengo/lish_moa_data/`; SHA256 is `bc151c7788fea242d2ff0b0f6260bec4df6a09bb395ff4607a34a86a545e77dd` (64,614,297 bytes). Its extracted plain CSV contains 23,814 training observations, 772 gene features, 100 viability features, and 608 labels, with the first 206 treated as scored labels according to the mirror documentation. No SMILES are present; therefore only the phenotype-only P5 arm can proceed from this artifact. Structure-based P3/P5 arms remain `BLOCKED_NO_STRUCTURE_MAPPING`.
 
-**Live execution checkpoint — job 15273 (12 August 2026; observation timestamp approximately 13:56:07 UTC, derived from `StartTime + RunTime`):** This is a historical checkpoint, not a current-status guarantee. At that observation, SLURM reported `RUNNING` on `penavoraserver` (`production` partition; 16 CPUs; 32 GB RAM), with `RunTime=01:33:34`, `StartTime=12:22:33`, and a four-hour hard limit ending at `16:22:33`. The wrapper executes two declared phenotype-only conditions sequentially: (i) `drug_grouped` with controls and (ii) `drug_grouped` with `--exclude-controls`; the optional structure/scaffold command is conditional on the later presence of `results/lish_moa/lish_moa_structure_mapped.csv`, which was absent at this checkpoint. The Python process was active at approximately 100% CPU, while the SLURM stdout/stderr files remained empty because the script does not emit intermediate metrics. Only preparation artifacts were present (`lish_moa_prepare_report.json`, `lish_moa_data_contract.md`, and `lish_moa_drug_level.csv`); no fold CSV or metric JSON was available yet. The remaining wall-clock allowance at observation was approximately 2 h 26 min, but completion time could not be estimated more precisely without intermediate checkpoints. Status: `LISH_MOA_P5_PHENOTYPE_RUNNING`; no number from this job may enter the manuscript until both report JSON files and fold CSVs are parsed and pass the predefined audit gates.
+**Superseded historical execution checkpoint — job 15273 (12 August 2026; observation timestamp approximately 13:56:07 UTC, derived from `StartTime + RunTime`):** This is a historical checkpoint, not a current-status guarantee. At that observation, SLURM reported `RUNNING` on `penavoraserver` (`production` partition; 16 CPUs; 32 GB RAM), with `RunTime=01:33:34`, `StartTime=12:22:33`, and a four-hour hard limit ending at `16:22:33`. The wrapper executes two declared phenotype-only conditions sequentially: (i) `drug_grouped` with controls and (ii) `drug_grouped` with `--exclude-controls`; the optional structure/scaffold command is conditional on the later presence of `results/lish_moa/lish_moa_structure_mapped.csv`, which was absent at this checkpoint. The Python process was active at approximately 100% CPU, while the SLURM stdout/stderr files remained empty because the script does not emit intermediate metrics. Only preparation artifacts were present (`lish_moa_prepare_report.json`, `lish_moa_data_contract.md`, and `lish_moa_drug_level.csv`); no fold CSV or metric JSON was available yet. The remaining wall-clock allowance at observation was approximately 2 h 26 min, but completion time could not be estimated more precisely without intermediate checkpoints. Status: `LISH_MOA_P5_PHENOTYPE_RUNNING`; no number from this job may enter the manuscript until both report JSON files and fold CSVs are parsed and pass the predefined audit gates.
 
-**Result checkpoint — condition (i) with controls COMPLETED (12 August 2026, ~14:05 UTC):** `p5_lish_moa_phenotype_drug_grouped_report.json` and `p5_lish_moa_phenotype_drug_grouped_folds.csv` were produced and **pass the fold-level audit gate**: 25 rows (5 seeds × 5 folds, 5 folds per seed), 0 NaN/inf values, `n_drugs = 3289`, `n_labels = 206`. Mean metrics over 25 folds: **mean column-wise log loss = 0.02378** (primary), **macro-AUPRC = 0.1428**, **macro-AUROC = 0.6435**, mean Brier = 0.00374, mean ECE = 0.00376. Per-seed macro-AUROC is stable (0.6398–0.6465), indicating no seed pathology. Labels with test-set variation: 140–155 per fold (mean 148.2 / 206), i.e. ≈72% of MoA labels retain discriminative signal under drug-grouped splits; the remainder are too rare for fold-level AUROC and are excluded from the macro average per fold. Protocol: unweighted per-label logistic baseline on phenotype features, drug-level aggregation — deliberately the weakest benchmark arm, so any upstream method must beat 0.6435 macro-AUROC on the same fold grid. Interpretation field of the report: "MoA-associated prediction; not causal target engagement". Condition (ii) with `--exclude-controls` was still RUNNING at this checkpoint; its report JSON and folds CSV were not yet present.
+**Audited result checkpoint — condition (i) with controls COMPLETED (12 August 2026, ~14:05 UTC):** `p5_lish_moa_phenotype_drug_grouped_report.json` and `p5_lish_moa_phenotype_drug_grouped_folds.csv` were produced and **pass the fold-level audit gate**: 25 rows (5 seeds × 5 folds, 5 folds per seed), 0 NaN/inf values, `n_drugs = 3289`, `n_labels = 206`. Mean metrics over 25 folds: **mean column-wise log loss = 0.02378** (primary), **macro-AUPRC = 0.1428**, **macro-AUROC = 0.6435**, mean Brier = 0.00374, mean ECE = 0.00376. Per-seed macro-AUROC is stable (0.6398–0.6465), indicating no seed pathology. Labels with test-set variation: 140–155 per fold (mean 148.2 / 206), i.e. ≈72% of MoA labels retain discriminative signal under drug-grouped splits; the remainder are too rare for fold-level AUROC and are excluded from the macro average per fold. Protocol: unweighted per-label logistic baseline on phenotype features, drug-level aggregation — deliberately the weakest benchmark arm, so any upstream method must beat 0.6435 macro-AUROC on the same fold grid. Interpretation field of the report: "MoA-associated prediction; not causal target engagement". At this earlier checkpoint, condition (ii) with `--exclude-controls` was still RUNNING; its report JSON and folds CSV were not yet present. This status was superseded by the completed condition-(ii) audit below.
 
 **Result checkpoint — condition (ii) without controls COMPLETED (12 August 2026, ~15:49 UTC) + conditions comparison:** `p5_lish_moa_phenotype_drug_grouped_no_controls_report.json` and `_folds.csv` were produced and **pass the same fold-level audit gate** (25 folds, 0 NaN, report/fold mean consistent). Mean over 25 folds (n = 3,288 drugs, 206 labels): log loss **0.02389**, macro-AUPRC **0.1412**, macro-AUROC **0.6417**, Brier 0.00375, ECE 0.00381; per-seed AUROC stable (0.6378–0.6480). **Comparison (both conditions fully audited; reproducible via `scripts/p5_lish_moa_compare.py` → `results/lish_moa/p5_lish_moa_conditions_comparison.json`):** removing the vehicle controls changes nothing material — Δlog loss = +0.00011, Δmacro-AUROC = −0.00177, Δmacro-AUPRC = −0.00152 (n_drugs 3,289 → 3,288). **Verdict: the phenotype-driven baseline is robust to control exclusion; the locked benchmark is now final** — log loss 0.02378 (primary), macro-AUROC 0.6435, macro-AUPRC 0.1428 on the 25-fold drug-grouped grid with controls. Both conditions are documented and the manuscript gate is satisfied: any upstream P5 method must beat 0.6435 macro-AUROC (or 0.02378 log loss) on the same fold grid.
 
-### Planned P5 deliverables
+### Completion status and retained scope
 
-`p5_lish_moa_prepare.py` will validate and aggregate the raw package; `p5_lish_moa_benchmark.py` will provide phenotype-only and structure-only baselines when inputs exist; all outputs will be isolated under `results/lish_moa/`. The first run is a smoke/audit run only. Full results will not enter the manuscript until mapping coverage, grouped/scaffold split integrity, label sparsity, calibration, and reproducibility gates pass.
+The phenotype-only benchmark is complete and has passed the predefined audit gates: both declared conditions contain 25 fold records (5 seeds × 5 drug-grouped folds), zero NaN/inf metric cells, and report/fold means that agree. The reproducible comparison is implemented in `scripts/p5_lish_moa_compare.py`; the audited comparison JSON and fold outputs are retained under `results/lish_moa/`. The structure-only and scaffold branches remain intentionally unexecuted because no versioned drug--SMILES mapping with unique `drug_id` rows is available. The completed result is therefore a bounded phenotype-only reference, not a structure-to-MoA benchmark.
+
+### Decision — no structure-model gain claim on LISH-MoA at present
+
+**Decision status: `DO_NOT_RUN_STRUCTURE_ARM` / `NO_LISH_MOA_MODEL_GAIN_CLAIM`.** The existing P5 molecular GNN, ChemBERTa, GIN--TFP, and GIN--TNE models must not be evaluated on the LISH grid, and their molecular ROC-AUC results must not be compared with the LISH phenotype-only baseline. The current artifact has no versioned mapping with unique `drug_id` rows; without it, molecular features, canonical-SMILES collision handling, and scaffold-held-out splits cannot be audited. A newly designed phenotype-only neural model would be a different experiment and could not support a claim about the molecular representations studied in P5. The LISH result therefore remains an orthogonal phenotype reference only.
+
+A future structure-based LISH arm may be opened only after all of the following are recorded: (i) the exact mapping release and hash, with unique `drug_id` rows; (ii) mapping coverage, invalid-SMILES count, duplicate-ID count, and an explicit canonical-SMILES collision-collapse policy; (iii) molecule-disjoint drug-grouped and Bemis--Murcko scaffold splits with no replicate leakage; (iv) an ECFP4--RF reference on the same folds; (v) independently trained GNN, ChemBERTa, and GIN--TFP/GIN--TNE arms with declared hyperparameters; and (vi) paired fold/seed comparisons with multiplicity correction. Any resulting gain would be a LISH MoA-associated prediction result, not evidence of causal target engagement, antimalarial activity, or resistance resilience.
 
 ### Interpretation boundary
 
@@ -80,7 +86,7 @@ A predicted MoA-associated profile is not proof of direct target engagement or c
 
 ## 7. Current manuscript status
 
-The canonical P5 V2608 manuscript, Supporting Information, figures, and cover letter are compiled and numerically audited. The active narrative is the honest-negative benchmark plus interpretable topological complementarity; no claim that GNNs or Transformers universally underperform is made.
+The canonical P5 V2608 manuscript now reports the audited LISH phenotype-only reference as a separate public benchmark, with explicit non-comparability to the molecular ROC-AUC results and an explicit boundary against causal target-engagement claims. The active narrative remains the honest-negative molecular benchmark plus interpretable topological complementarity; no claim that GNNs or Transformers universally underperform is made.
 
 ## 7. Next actions
 
