@@ -1,24 +1,27 @@
 # Set-C Post-Production Runbook: QC → MD-RRS
 
-**Date:** 10 August 2026  
-**Scripts verified:**  
-- `p2_setc_trajectory_qc.py` — ✅ compile OK (malaria_md, py3.11)  
-- `p2_setc_md_rrs.py` — ✅ compile OK (malaria_md, py3.11)  
-**Dependencies verified:** MDAnalysis 2.10.0, scipy 1.17.1, numpy 2.4.6, pandas 2.3.3 (all in malaria_md)  
+> **READ BEFORE EXECUTION:** This document contains historical command examples. **Do not execute legacy 15106/15111/15119 commands.** The current live witness is 15254→15259→15260; full-panel QC/MD-RRS requires a newly verified dependency graph.
+
+**Date:** 12 August 2026
+**Live status:** the current chain is the isolated witness 15254→15259→15260; older 15106/15111/15119 references below are historical execution records. Full-panel MD-RRS remains `NOT_COMPUTED`.
+**Scripts verified:**
+- `p2_setc_trajectory_qc.py` — ✅ compile OK (malaria_md, py3.11)
+- `p2_setc_md_rrs.py` — ✅ compile OK (malaria_md, py3.11)
+**Dependencies verified:** MDAnalysis 2.10.0, scipy 1.17.1, numpy 2.4.6, pandas 2.3.3 (all in malaria_md)
 
 ---
 
 ## ⚠️ Pre-condition: equilibration must complete for all 16 systems
 
-The production array (`15111`, `dependency=afterok:15106`) only runs for systems with `npt.gro`.  
-The MD-RRS script (`p2_setc_md_rrs.py`) is **fail-closed**: it requires **exactly 136 rows** (17 candidates × 8 states) **all with `qc_status=PASS`**, identical `analysis_rule_id`, `duration_ns`, and `n_frames`.  
+The production array (`15111`, `dependency=afterok:15106`) only runs for systems with `npt.gro`.
+The MD-RRS script (`p2_setc_md_rrs.py`) is **fail-closed**: it requires **exactly 136 rows** (17 candidates × 8 states) **all with `qc_status=PASS`**, identical `analysis_rule_id`, `duration_ns`, and `n_frames`.
 
-**Current equilibration state (10 Aug, ~3h30 from start):**  
-- 3/16 npt.gro (PP-01 PfCRT WT/K76A/K76T)  
-- 1/16 FAIL (PP-01_PfDHFR_N51I — libgomp crash)  
-- 12/16 no NPT progress (stalled or queued)  
+**Current equilibration state (10 Aug, ~3h30 from start):**
+- 3/16 npt.gro (PP-01 PfCRT WT/K76A/K76T)
+- 1/16 FAIL (PP-01_PfDHFR_N51I — libgomp crash)
+- 12/16 no NPT progress (stalled or queued)
 
-**→ If the panel remains incomplete, the MD-RRS calculation will FAIL-CLOSED.**  
+**→ If the panel remains incomplete, the MD-RRS calculation will FAIL-CLOSED.**
 The 3 completed systems can still be individually QC'd for manuscript supplementary analysis (bound-fraction reports), but MD-RRS classification requires the full panel.
 
 ---
@@ -47,7 +50,7 @@ sacct -j 15111 --format=JobID,State,Elapsed 2>/dev/null
 
 ## Step 2: Run trajectory QC (bound-fraction analysis)
 
-**Estimated runtime:** ~5–15 min per system (wtih MDAnalysis, max_frames=2000).  
+**Estimated runtime:** ~5–15 min per system (wtih MDAnalysis, max_frames=2000).
 **Total:** ~1.5–4 h for 16 systems on 1 CPU; can be parallelized per system.
 
 ```bash
@@ -148,8 +151,8 @@ python scripts/p2_setc_md_rrs.py \
 - SMILES consistency across all rows
 - All targets (PfDHFR, PfCRT) and all mutations per target present
 
-**MD-RRS formula:**  
-`MD_RRS_mutant = 100 × bound_fraction_mutant / bound_fraction_WT`  
+**MD-RRS formula:**
+`MD_RRS_mutant = 100 × bound_fraction_mutant / bound_fraction_WT`
 Averaged over targets with WT bound_fraction ≥ 0.10.
 
 **MD-RRS classes:** Same as docking-RRS (A: ≥80% all, B: ≥70% all, C: ≥80% specific, D: <60% any).
@@ -181,22 +184,22 @@ print('Agreement rate:', merged['MD_vs_dock'].mean())
 **Problem:** 13/16 systems show no NPT progress. Task `PP-01_PfDHFR_N51I` crashed with a `libgomp` threading error. The remaining 12 are stalled with tiny log files (99–105 bytes) and no NPT output after 8–11 hours running time.
 
 **Symptoms:**
-- `npt.gro`: only 3/16  
-- `npt.log`: only the 3 completed systems have log rows  
-- Task logs: 99–449 bytes, well below the expected size for a completed equilibration  
-- Old job 15081 showed `libgomp.so.1` crash for `PP-01_PfDHFR_N51I` on `penavoraserver`  
+- `npt.gro`: only 3/16
+- `npt.log`: only the 3 completed systems have log rows
+- Task logs: 99–449 bytes, well below the expected size for a completed equilibration
+- Old job 15081 showed `libgomp.so.1` crash for `PP-01_PfDHFR_N51I` on `penavoraserver`
 
 **Likely cause:** OpenMP thread contention on a shared node — multiple GROMACS instances each requesting 8 threads overwhelm the node.
 
-**Recommended fix:**  
-1. Cancel the stuck `15106_[4-7]` tasks:  
+**Recommended fix:**
+1. Cancel the stuck `15106_[4-7]` tasks:
    ```bash
    scancel 15106_4 15106_5 15106_6 15106_7
    ```
-2. Resubmit the failing systems individually with `-ntomp 2` (reduced threads):  
+2. Resubmit the failing systems individually with `-ntomp 2` (reduced threads):
    ```bash
    cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
-   
+
    # For each failing system, edit the sbatch or call the workflow directly:
    for SYS in PP-01_PfDHFR_N51I PP-01_PfDHFR_S108N PP-01_PfDHFR_WT \
               PP-01_PfDHFR_I164L PP-01_PfCRT_K76A PP-01_PfCRT_K76T PP-01_PfCRT_WT \

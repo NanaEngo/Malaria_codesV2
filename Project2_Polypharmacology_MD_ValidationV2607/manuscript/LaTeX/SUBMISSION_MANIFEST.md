@@ -2,8 +2,8 @@
 
 **Journal:** Journal of Chemical Information and Modeling (JCIM, ACS)
 **Pages:** main 25 p. / SM 4 p. / cover 1 p. (verified 10/08/2026)
-**Status:** SUBMISSION-READY (main) — MD-RRS optional strengthening in progress
-**Generated:** 2026-08-10 09:30 UTC
+**Status:** SUBMISSION-READY (main) — Set-C MD-RRS pending; isolated witness chain 15254→15259→15260 active; no full-panel MD-RRS claim is promoted
+**Updated:** 2026-08-12
 
 ## File inventory (SHA-256)
 

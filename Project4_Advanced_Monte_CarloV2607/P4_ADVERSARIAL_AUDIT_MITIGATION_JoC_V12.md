@@ -114,6 +114,18 @@ The defensible mitigation is transparent claim–evidence binding, not a numeric
 - [x] Correct SM ranking and v12 scalar weights
 - [x] Correct abstract length and affiliation overfull box
 - [x] Recompile main-SM-cover (0 errors, 0 undefined; bibtex exit 2 is expected for files without bibliographies)
-- [ ] Complete 20-seed validated pre-activity SYBA rerun in `results/pareto_syba_validated/`
+- [ ] Complete 20-seed validated pre-activity SYBA rerun in `results/pareto_syba_validated/` (not required for the current evidence-bounded submission, but required before any claim of informative search-time SYBA optimisation)
 - [ ] Human visual PDF inspection and package assembly
 - [ ] git commit + push final P4 editorial corrections
+
+## 5. Final editorial pass — 2026-08-10
+
+**Substantive prose revision (same date):** the article was restructured around two explicit estimands: scalar search efficiency and candidate-set geometry. The title and abstract no longer imply that MCTS causally preserves alternatives or is scalar-superior. The journal-required `Contribution` heading now states the methodological contribution without using unverified pre-registration language. The introduction presents a testable decision-oriented question; Results report the scalar benchmark before the candidate-level front; Discussion interprets rather than inventories audit events. RRS/PNS remain computational proxies and the historical accessibility recomputation remains disclosed once in the appropriate methodological context.
+
+- [x] Harmonised the main, SM and cover-letter title: “Pareto-guided Monte Carlo tree search exposes multi-objective trade-offs in antimalarial molecular generation”.
+- [x] Labelled the hypervolume 18.99 as a secondary baseline re-scoring analysis, distinct from the canonical post-hoc Pareto-front hypervolume 1.2366.
+- [x] Removed internal result-file paths from main-text captions where they were not needed for scientific interpretation; repository-level data availability remains at the end of the article.
+- [x] Downgraded RRS/PNS wording to resistance-informed and docking-informed computational proxies; no direct biological validation claim remains.
+- [x] Reframed greedy convergence as repeated path collapse within the evaluated fragment space rather than proof of a globally unique reward attractor.
+- [x] Confirmed that QMC/VMC/DMC is absent from the canonical main, SM and cover letter.
+- [x] Confirmed final source compilation and provenance checks; one minor cover-letter overfull box remains for human visual review.

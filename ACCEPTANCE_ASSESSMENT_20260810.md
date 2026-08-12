@@ -1,6 +1,6 @@
 # Point d'Acceptation Global P1–P5 — 10 août 2026
 
-**Version 1.0 — 10 août 2026.** Synthèse des 5 packages de soumission (P1 V6, P2, P3, P4, P5) : état factuel, estimation de probabilité d'acceptation, risques résiduels, actions restantes avant chaque dépôt. Source : roadmap v1.8, manifestes de soumission, registres de revue, jobs SLURM, `FINAL_CROSS_REVIEW_20260810.md`.
+**Version 1.0 — 10 août 2026 — snapshot historique.** Cette synthèse est conservée pour l'audit; elle est supersédée par `P1_P5_RRS_POLYPHARMA_ROADMAP.md` v1.11 et les DAR actifs. En particulier, les jobs P2 15106/15111/15117 ne représentent plus l'état courant; consulter la chaîne témoin 15254→15259→15260.
 
 ---
 
@@ -84,6 +84,6 @@
 5. **P4** (JoC) — en dernier (risque scientifique MCTS ≤ Random à assumer dans la narration)
 
 ## 5. Prochaine étape immédiate
-- Décision auteur : **soumettre P1 V6 maintenant** (OUI/NON) → si OUI, préparer les métadonnées Paragon Plus (ORCID, funding) ; 
+- Décision auteur : **soumettre P1 V6 maintenant** (OUI/NON) → si OUI, préparer les métadonnées Paragon Plus (ORCID, funding) ;
 - Décision P2 : **Option B retenue** (MD-RRS doit être intégré — chaîne 15106→15111→15117 active, ETA ~40–48 h) ;
 - Réactivation éventuelle de l'**upload Zenodo** (P3/P4/P5) — différé par choix auteur (10/08).

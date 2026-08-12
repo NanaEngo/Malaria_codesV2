@@ -84,7 +84,7 @@ p=0.018, GIN-TFP p=0.025, GIN-TNE p=0.038). → **Pivot L3+L4 confirmé.**
 - ✅ **ChemBERTa random (H2)** — job 12815 terminé, 0.9121 ± 0.0047 (leak-fixed).
 - ✅ Courbes d'apprentissage — capture par époque et figure générées à partir des runs leak-fixed ; les courbes décrivent la convergence, pas une validation indépendante.
 - ✅ **Réplication ECFP4-RF indépendante (08/08, jobs 12844/12845)** : re-run sur splits figés → **verdict PASS** (random 0.9433 / scaffold 0.8300, Δ 0.000 vs committé, tolérance 0.005) — `p5_replication_verification.json`.
-- ✅ **Validation externe MoleculeNet malaria (08/08, jobs 12846-12848)** : panel public n=22,267, split scaffold → **ECFP4-RF 0.9190 > GIN 0.8843 (Δ=−0.0346, p<0.0001)** ; random 0.9547 vs 0.9237 (Δ=−0.031, p=0.0001). Le verdict « fingerprints > GNN » est **reproduit sur un panel public indépendant** → L3 renforcé hors panel canonique.
+- ✅ **Validation externe MoleculeNet/ChEMBL malaria (08/08, jobs 12846-12848)** : le panel ChEMBL filtré contient 22,447 composés; après exclusion de 180 molécules chevauchant le panel P5, le panel public disjoint utilisé pour l'évaluation contient **22,267** composés. Sous scaffold split, **ECFP4-RF 0.9190 > GIN 0.8843 (Δ=−0.0346, p<0.0001)** ; random 0.9547 vs 0.9237 (Δ=−0.031, p=0.0001). Le verdict « fingerprints > GNN » est **reproduit sur un panel public disjoint** → L3 renforcé hors panel canonique.
 - ✅ **Manuscrit `P5_manuscript_V2608.tex` compilé (08/08 06:58)** : 0 TODO/FIXME/undefined, sections H1/H2/H3 + leak audit + Discussion, figures (benchmark, learning curves, salience), Cover Letter JoC.
 
 ### Phase 3 — Génération (stretch, seulement si Phase 1–2 montrent un gain net)

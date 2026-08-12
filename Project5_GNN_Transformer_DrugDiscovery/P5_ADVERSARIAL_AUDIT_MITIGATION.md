@@ -203,3 +203,23 @@ Recalcul **indépendant** (script dédié, depuis les CSVs bruts `p5_*_results.c
 **Deux imprécisions internes au §10 corrigées** (sans impact sur les verdicts) : t ChemBERTa 18.27 → **18.35** ; p externe scaffold 1e-6 → **3.35e-06**.
 
 **Conclusion : P5 V2608 audit_v2 = CLEAN.** Ne reste pour la clôture roadmap que **L5 (upload Zenodo + release GitHub)**.
+
+---
+
+## 11. Audit éditorial et statistique final — 10 août 2026
+
+Une révision adversariale supplémentaire a porté sur le titre, l'abstract, l'introduction, les conclusions, les légendes, les figures et la cohérence des estimands.
+
+### Corrections appliquées
+
+- Le titre a été recentré sur le benchmark leak-audité, sans formulation promotionnelle sur la « taille » des modèles.
+- Le tableau H1 et la figure principale utilisent désormais le même estimand de dispersion : moyenne et SD calculées sur les cinq moyennes par seed, chacune agrégeant cinq folds. Les 25 valeurs fold--seed restent disponibles comme données sous-jacentes.
+- La méthode des splits précise que les scaffolds du test sont disjoints du train, tandis que la validation est tirée de la partie non-test et peut partager des scaffolds avec le train. L'early stopping est donc présenté comme sélection d'optimisation, et non comme une validation OOD stricte.
+- La salience est désormais décrite comme une **magnitude brute des poids de projection**. Les descripteurs n'ayant pas été standardisés dans l'entraînement canonique, aucune importance causale ou « signal majoritaire » n'est revendiquée.
+- L'analyse ChEMBL est explicitement une **analyse de transfert externe** : son découpage indépendant 60/20/20 par groupes de scaffolds n'est pas présenté comme une réplication stricte des fichiers de folds internes.
+- La légende TFP corrige les intervalles : persistent-image = dimensions 33--57 ; Betti = 58--77.
+- `p5_figure.py` a été corrigé afin que les IC de tous les modèles utilisent les cinq moyennes par seed et que les annotations restent alignées après le tri des barres. La figure PNG a été régénérée à 300 dpi.
+
+### Verdict
+
+Les claims centraux restent soutenus : ECFP4--RF est supérieur aux bras testés sur le panel interne et dans l'analyse externe, la fuite ChemBERTa est corrigée et la salience topologique est limitée à une observation descriptive. Les limites relatives au tuning, au partage de scaffolds dans la validation, à l'absence de standardisation des descripteurs et au caractère non prospectif des labels ChEMBL sont maintenant explicites.

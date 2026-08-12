@@ -2,8 +2,9 @@
 
 **Date:** July 25, 2026 (evening) — v1; **updated Aug 7, 2026 — final expanded H₁–RRS cohort (n=494) supersedes the legacy n=77 analysis**; **updated Aug 2, 2026 — v3 adversarial re-audit** (full manuscript re-verification against deposited data, after canonical benchmarks) ; **Aug 2, 2026 — v3.1 manuscript trim documented** (26→18 p., fusion des tables, `tab:qkernel`→SM S13, élimination des doublons main↔SM — voir §« Actions to Reach ≥85% » action 5 et BMAD §3.14) ; **Aug 2, 2026 — v3.2 qubit-consistency + final proofreading documented** (corrections 8q/6q : caveat NISQ + Limitations reformulés « 6--8 qubits » / « canonical 6-qubit Phase-2 configuration », alignés sur la vérité terrain `N_QUBITS=6` canonique vs 8q discriminator/NISQ ; fix Overfull 199 pt table S13 ; phrase de positionnement vs 2 revues quantum — voir BMAD §3.14a)
 **Scope:** Critical self-assessment of P3 manuscript from a Q1 journal reviewer perspective
+**Document status:** Historical adversarial audit and mitigation log. Its dated findings, acceptance heuristics, and pending-item language are retained for provenance; they do **not** override the canonical manuscript, `BMAD_Q1_DATA_ANALYSIS_REPORT.md`, or `CENTRAL_QUESTIONS_PROJECTS.md`. The historical physical-validation tracker is not evidence of a completed canonical result.
 **Methodology:** Identify weaknesses a reviewer would flag, assess severity, propose mitigations
-**Current Acceptance Probability:** 75–82% → Target ≥85% (v3.1: ~79–82%, ChEMBL honnête négatif 02/08 −5% ; Zenodo ⚠️ PENDING +3% → ~82%)
+**Current acceptance estimate in this historical snapshot:** 75–82% → Target ≥85%. This heuristic is not a current scientific result or a submission decision.
 
 ---
 

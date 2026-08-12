@@ -110,7 +110,7 @@
 ## 4. Points de vigilance résiduels (non bloquants, à garder en tête)
 
 1. **P1 V6 (19 p.) vs V4 (18 p.)** : le nombre de pages a légèrement changé après les corrections — vérifier que le format JCIM (20 p. max main) reste respecté. **19 p. OK.**
-2. **P2 : le MD-RRS (jobs 15106/15111) tourne encore** — si les résultats arrivent, le wording « set-C MD … future work » (abstract) devra être mis à jour. Non bloquant aujourd'hui.
+2. **P2 : le MD-RRS complet reste en attente** — les anciens jobs 15106/15111 sont supersédés; le témoin isolé 15254→15259→15260 est en cours et ne peut pas produire à lui seul un MD-RRS de cohorte. Le wording manuscript ne doit être mis à jour qu'après QC complet du panneau.
 3. **Zenodo P3** : DOI réservé, upload différé par l'auteur — mention cohérente dans la Data Availability.
 4. **PfClpP naming** : P1 V6 utilise correctement PfClpP (2F6I) et P2 utilise PfClpR (4GM2, avec note d'identité) — pas de conflit car chaque manuscrit documente sa propre cible. Les reviewers croisés verront une terminologie différente mais correctement justifiée.
 

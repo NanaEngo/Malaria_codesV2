@@ -1,57 +1,30 @@
-# Zenodo Deposit — Malaria Codes V2607
+# Zenodo deposit status
 
-**Status:** RESERVED DOI; upload pending — this repository does **not** claim that the Zenodo record is published.
+**Updated:** 12 August 2026
+**Status:** DOI reserved; upload pending. The repository does not claim that a Zenodo record is published.
 
-**Reserved DOI:** [10.5281/zenodo.19608875](https://doi.org/10.5281/zenodo.19608875)
+- Reserved DOI: `10.5281/zenodo.19608875`
+- Current reviewer-accessible source: `https://github.com/NanaEngo/Malaria_codesV2`
+- Planned licences: MIT for source code; CC-BY 4.0 for redistributable data where rights permit.
 
-**Repository:** [github.com/NanaEngo/Malaria_codesV2](https://github.com/NanaEngo/Malaria_codesV2)
+## Deposit policy
 
-**Planned licences:** MIT for source code; CC-BY 4.0 for data where redistribution rights permit.
+Until upload and DOI publication are verified:
 
-## Important status note
+1. Cite the public repository, not the reserved DOI as an available dataset.
+2. Do not describe the deposit as complete.
+3. Generate a fresh manifest and SHA-256 list immediately before upload.
+4. Exclude credentials, restricted files, unnecessary SLURM logs, and large trajectories unless deliberately packaged.
+5. Update manuscript Data Availability wording only after the final record is published.
 
-The DOI above is reserved, but the archive has not yet been uploaded and published. Until publication, the GitHub repository is the current reviewer-accessible source. Do not cite the DOI as an already available dataset record, and do not describe the deposit as complete.
+## Current project sources
 
-The root file `zenodo_manifest.txt` is a **historical/preparatory manifest** generated on 2 August 2026. It contains legacy V2/archive paths and is not a current proof of publication. The P1 package remains under active scientific development while 2F6I revalidation/QC findings are reconciled. Use `Project1_Chem_space_antimalarial_V4_CorrectedGrid/project-tracking.md` and the dated critical-review records for current status; no editorial restriction is active before explicit author reactivation.
+| Project | Data-analysis source | Deposit state |
+|---|---|---|
+| P1 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` and `Project1_Chem_space_antimalarial_V6_CorrectedGrid/` | Active pre-submission development |
+| P2 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` and `Project2_Polypharmacology_MD_ValidationV2607/` | Docking-RRS complete; Set-C MD-RRS pending |
+| P3 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` and `Project3_Quantum_Inspired_RepresentationsV2607/` | Benchmark/external validation complete; deposit pending |
+| P4 | `P4_DATA_ANALYSIS_REPORT.md` and `Project4_Advanced_Monte_CarloV2607/` | v12/Pareto package ready; deposit pending |
+| P5 | `P5_DATA_ANALYSIS_REPORT.md` and `Project5_GNN_Transformer_DrugDiscovery/` | Benchmark/public validation complete; deposit pending |
 
-## Project-level manifests (current)
-
-| Project | Manifest | Status |
-|---------|----------|--------|
-| P1 V4 | `Project1_Chem_space_antimalarial_V4_CorrectedGrid/project-tracking.md` + dated critical reviews | Active scientific development; 2F6I revalidation/QC remains in progress; no editorial restriction before explicit author reactivation |
-| P5 | `Project5_GNN_Transformer_DrugDiscovery/P5_ZENODO_DEPOSIT_MANIFEST.txt` (67 files, 289.6 MB, generated 08/08/2026) | Reserved DOI; upload pending |
-
-## Canonical P1 V4 submission package
-
-The current P1 manuscript package is located under:
-
-`Project1_Chem_space_antimalarial_V4_CorrectedGrid/manuscript/`
-
-Canonical files are:
-
-- `Antimalarial_Candidates_African_NP_V2607.tex` — main manuscript source
-- `Antimalarial_Candidates_African_NP_V2607.pdf` — compiled main manuscript
-- `Antimalarial_Candidates_African_NP_V2607_SM.tex` — Supplementary Material source
-- `Antimalarial_Candidates_African_NP_V2607_SM.pdf` — compiled Supplementary Material
-- `Cover_Letter.tex` — cover-letter source
-- `Cover_Letter.pdf` — compiled cover letter
-- `../bibliography/Sao_Chim_Space.bib` — bibliography database used by the manuscript sources
-- `../project-tracking.md` — current provenance and submission status
-
-This is a working computational manuscript package, not an approved submission package. The V5-derived overlay remains provisional and pending independent review; the historical 484-centroid PfClpP arm requires complete 2F6I revalidation before submission.
-
-The package is under active revision. Compilation checks must be rerun after each manuscript change; page counts and review status in dated audit records are not submission authorization.
-
-Historical auxiliary prose files such as `FINAL_STATUS.txt` and `COVER_LETTER_COMPARISON.txt` are not submission files and must not be used as current evidence for deposit status or validation claims.
-
-## Broader archive scope (planned, not yet deposited)
-
-A future archive may include selected reproducibility materials from Projects 1–5, subject to final author approval, rights/licence review, removal of secrets and restricted files, and an updated manifest generated immediately before upload. Large GROMACS trajectories, docking intermediates, SLURM logs, credentials, and other restricted or unnecessary files should not be uploaded by default.
-
-## Citation after publication
-
-After the Zenodo record is actually uploaded and published, update this file and the manuscripts' data-availability wording with the final record metadata and version-specific DOI. Until then, cite the public repository and state that the Zenodo DOI is reserved with upload pending.
-
-## Contact
-
-Corresponding author: myke-vital.sao@facsciences-uy1.cm
+The active Markdown index is `docs/MD_DOCUMENT_INDEX.md`. Historical deposit notes and manifests are retained under the project trees and `docs/archive/`; they are not evidence that Zenodo publication occurred.

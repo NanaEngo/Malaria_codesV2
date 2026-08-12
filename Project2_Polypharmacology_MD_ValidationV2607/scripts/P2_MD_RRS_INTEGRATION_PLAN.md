@@ -1,6 +1,8 @@
-# Plan d'Intégration MD-RRS dans P2 — 10 août 2026
+# Plan d'Intégration MD-RRS dans P2 — snapshot historique
 
-**Objectif :** intégrer les résultats du MD-RRS Set-C (16 systèmes, 2 candidats × 2 cibles × 4 états WT/mutant) dans le manuscrit P2 dès la fin de la chaîne post-production.
+> **DO NOT EXECUTE:** this plan contains the superseded 15106→15111→15117 chain and historical command examples. The current live witness is 15254→15259→15260; consult the active BMAD DAR before preparing a new full-panel execution. No Set-C MD-RRS result is currently available.
+
+**Objectif :** intégrer les résultats du MD-RRS Set-C (16 systèmes, 2 candidats × 2 cibles × 4 états WT/mutant) dans le manuscrit P2 uniquement après une chaîne complète et un QC PASS. **État courant (12/08/2026) :** le témoin isolé 15254→15259→15260 est en cours; les anciens jobs 15106/15111/15117 sont historiques et aucun MD-RRS de cohorte n'est disponible.
 
 ## 1. Chaîne post-production (soumise)
 
