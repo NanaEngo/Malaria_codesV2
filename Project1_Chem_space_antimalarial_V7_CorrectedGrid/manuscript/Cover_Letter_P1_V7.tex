@@ -1,0 +1,79 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=1in, bottom=0.9in}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{siunitx}
+\sisetup{separate-uncertainty=true, range-phrase=--}
+\DeclareSIUnit\angstrom{\text{\AA}}
+\onehalfspacing
+
+\begin{document}
+
+\begin{flushleft}
+\textbf{Myke Vital Sao Temgoua} \\
+Department of Physics, Faculty of Science \\
+University of Yaound\'{e} I \\
+P.O. Box 812, Yaound\'{e}, Cameroon \\
+\href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[1.5em]
+\today
+\end{flushleft}
+
+\begin{flushleft}
+Prof.\ Kenneth M.\ Merz, Jr., Editor-in-Chief \\
+\textit{Journal of Chemical Information and Modeling} \\
+American Chemical Society
+\end{flushleft}
+
+\vspace{0.5em}
+
+\noindent Dear Prof.\ Merz,
+
+We submit our manuscript \textbf{``Target breadth and mutation resilience in African-natural-product-inspired antimalarial chemotypes: a computational analysis''} for consideration as an Article in \textit{Journal of Chemical Information and Modeling}.
+
+This work addresses a critical methodological challenge in computational antimalarial drug discovery: evaluating target breadth and mutation resilience as distinct, complementary properties when prioritizing candidates from African natural-product-inspired chemical space, while maintaining clear boundaries between computational evidence and biological activity.
+
+We analyze a 17-member polypharmacology-oriented cohort across four mechanistically diverse antimalarial targets (PfDHFR, PfCRT, PfClpP, and PfATP4) using target-specific structural anchors and a per-target resistance-resilience scoring (RRS) framework. The workflow integrates three evidence layers: chemical-space expansion (\num{65856} hybrid library molecules $\rightarrow$ \num{19913} synthesizable candidates), target-anchored AutoDock Vina docking generating a complete $\num{17}\times\num{4}$ scoring matrix (\num{68}/\num{68} geometric quality pass rate), and per-target RRS calculated separately for PfDHFR (N51I, C59R, S108N, I164L) and PfCRT (K76T, K76A) mutant panels. The cohort yielded six A*, five B, five C, and one D RRS profiles (range \numrange{68.2}{111.7}), with weak cross-metric associations after multiplicity correction (PNS--RRS $\rho=-\num{0.559}$, ACSI--RRS $\rho=-\num{0.132}$).
+
+\noindent\textbf{Key Enhancements:}
+
+This submission incorporates comprehensive validation, physicochemical characterization, and methodological documentation:
+
+\begin{enumerate}
+\item \textbf{Validation Documentation:} Transparent assessment through three complementary approaches: (a) external benchmark (DEKOIS 2.0, PfDHFR ROC-AUC \num{0.45}, reported honestly as near-chance), (b) enrichment validation (MMV Malaria Box, ROC-AUC \numrange{0.924}{1.000}), and (c) redocking validation (5 ligands, RMSD $< \SI{2.0}{\angstrom}$). Complete metrics in Supporting Information Section S12.
+
+\item \textbf{Physicochemical Characterization:} All 17 candidates exhibit drug-like properties (\qty{100}{\percent} Lipinski/Veber compliance, mean QED \num{0.703}, low predicted ADMET risk). Details in Supporting Information Tables S4--S6.
+
+\item \textbf{Multi-Parameter Optimization Framework:} Candidate selection utilized a seven-component MPO framework (Vina affinity 35\%, DiffDock confidence 25\%, QED 20\%, ADMET 15\%, Lipinski penalty 5\%, polypharmacology bonus) with MPO $\geq$ 0.40 threshold. Complete mathematical formulation and weight rationale in Supporting Information Section S10.
+
+\item \textbf{Methodological Rigor:} Complete grid box specifications for all four targets, computational efficiency documentation (\qty{99.3}{\percent} cost reduction via centroid-based library reduction), and strict evidence boundaries maintained throughout.
+\end{enumerate}
+
+\noindent\textbf{Evidence Boundaries:}
+
+The study maintains clear distinctions between computational evidence layers. Results do not claim experimental affinity, confirmed simultaneous target engagement, biological resistance circumvention, or measured IC\textsubscript{50}/EC\textsubscript{50} values. The workflow produces: (a) four-target docking profiles from which polypharmacology hypotheses can be generated, (b) per-target RRS values summarizing mutation-panel docking ratios, and (c) exploratory cross-metric associations connecting distinct evidence types without conflation.
+
+\noindent\textbf{Accessibility and Impact:}
+
+The centroid-based library reduction strategy addresses a critical accessibility gap, particularly for research groups in endemic regions (\qty{94}{\percent} of malaria cases). By reducing computational costs by orders of magnitude while maintaining structural diversity, this workflow enables systematic multi-target screening without high-performance infrastructure, supporting reproducibility and broader participation in computational antimalarial research.
+
+\noindent\textbf{Reproducibility:}
+
+Complete computational provenance is provided: source code, candidate manifests, receptor/ligand files, grid configurations, raw docking poses, geometric quality filters, RRS protocols, and machine-readable tables are archived at \url{https://github.com/NanaEngo/Malaria_codesV2}. Supporting Information (\num{17} pages, \num{12} sections, \num{9} tables, \num{2} figures) includes complete validation datasets, physicochemical characterization, and methodological specifications.
+
+This integrated approach, connecting chemical-space exploration to target-anchored docking and mutation-aware scoring while maintaining strict evidence boundaries, provides a reproducible template for hypothesis generation in resistance-challenged therapeutic areas. The work will interest the JCIM readership engaged in computational drug discovery, multi-target prioritization strategies, African natural product chemoinformatics, and validation frameworks for docking-derived hypotheses.
+
+\noindent This manuscript is original, not under consideration elsewhere, and all authors have reviewed and approved the submission. We declare no competing financial interests.
+
+\vspace{1em}
+
+\noindent Sincerely,
+
+\vspace{1em}
+
+\noindent \textbf{Myke Vital Sao Temgoua} \\
+(on behalf of all co-authors)
+
+\end{document}
