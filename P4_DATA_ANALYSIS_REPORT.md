@@ -1,7 +1,7 @@
 # P4 Data Analysis Report — active summary
 
 **Scope:** Pareto-guided MCTS, multi-objective candidate generation, and QMC diagnostics.
-**Updated:** 12 August 2026
+**Updated:** 17 August 2026
 **Long-form history:** `docs/archive/md_full_20260812/P4_DATA_ANALYSIS_REPORT.md`
 
 ## 1. Central question

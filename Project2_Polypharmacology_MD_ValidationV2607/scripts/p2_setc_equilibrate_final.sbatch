@@ -42,9 +42,15 @@ export P2_SETC_PYTHON=/home/nanaengo/miniforge3/envs/malaria_md/bin/python
 
 export P2_SETC_NTOMP=8
 export P2_GMX_BIN=/home/nanaengo/miniforge3/envs/malaria_md/bin/gmx_mpi
-export P2_SETC_ROOT=${P2_SETC_ROOT:-/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c}
 
-cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
+PROJECT_DIR=/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
+cd "$PROJECT_DIR"
+: "${P2_SETC_ROOT:?FATAL: P2_SETC_ROOT must be explicitly exported}"
+P2_SETC_ROOT="$(realpath -m "$P2_SETC_ROOT")"
+export P2_SETC_ROOT
+EXPECTED_ROOT="$PROJECT_DIR/results/md_systems/set_c_preparation_20260812_v1"
+[ "$P2_SETC_ROOT" = "$EXPECTED_ROOT" ] || { echo "FATAL: equilibration root must be $EXPECTED_ROOT, got $P2_SETC_ROOT" >&2; exit 91; }
+[ -d "$P2_SETC_ROOT" ] || { echo "FATAL: equilibration root does not exist: $P2_SETC_ROOT" >&2; exit 92; }
 
 SYSTEMS=(
   PP-01_PfCRT_K76A

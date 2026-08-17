@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Set-C MD + docking-RRS/polypharmacology workflow.
 
-This is the execution entry point for the canonical 17-candidate set-C cohort.
+This is the execution entry point for the canonical 17-candidate set-C cohort. The active 16-system pilot must use the explicitly exported versioned preparation root; the legacy `results/md_systems/set_c` root is rejected.
 It deliberately does not invent structures or force-field parameters from SMILES
 or docking scores. A candidate-target-state may run only when its directory has
 been prepared independently with CHARMM36m protein FF and either the canonical CGenFF ligand FF or the documented, PI-approved OpenFF 2.2.0 (AM1-BCC) deviation (declared in each forcefield_manifest.json policy_deviation block), and carries matching manifests.
@@ -34,7 +34,13 @@ PROJECT_DIR = Path(__file__).resolve().parents[1]
 RESULTS_DIR = PROJECT_DIR / "results"
 SET_C_FILE = RESULTS_DIR / "candidate_selection" / "md_top20_candidates_polypharm.csv"
 DOCKING_FILE = RESULTS_DIR / "docking_mutants.csv"
-SYSTEM_ROOT = RESULTS_DIR / "md_systems" / "set_c"
+_root_env = os.environ.get("P2_SETC_ROOT")
+if not _root_env:
+    raise RuntimeError("P2_SETC_ROOT must be explicitly exported; refusing the legacy Set-C root")
+SYSTEM_ROOT = Path(_root_env).expanduser().resolve()
+EXPECTED_SYSTEM_ROOT = (PROJECT_DIR / "results" / "md_systems" / "set_c_preparation_20260812_v1").resolve()
+if SYSTEM_ROOT != EXPECTED_SYSTEM_ROOT:
+    raise RuntimeError(f"P2_SETC_ROOT must equal {EXPECTED_SYSTEM_ROOT}, got {SYSTEM_ROOT}")
 OUTPUT_DIR = RESULTS_DIR / "set_c_md"
 
 TARGET_MUTATIONS = {
@@ -200,7 +206,7 @@ def topology_dependencies(topol: Path) -> dict[str, Path]:
         if not current.is_file():
             continue
         text = current.read_text(errors="replace")
-        for include in re.findall(r'^\\s*#include\\s+["<]([^">]+)[">]', text, flags=re.MULTILINE):
+        for include in re.findall(r'^\s*#include\s+["<]([^">]+)[">]', text, flags=re.MULTILINE):
             dependency = (current.parent / include).resolve()
             key = str(dependency.relative_to(topol.parent.resolve())) if dependency.is_relative_to(topol.parent.resolve()) else str(dependency)
             if key not in resolved:
@@ -296,7 +302,9 @@ def inspect_system(row: dict) -> tuple[dict, list[str]]:
 
 
 def make_production_mdp(system_dir: Path, target_ns: float, temperature: float = 310.15) -> Path:
-    nsteps = int(round(target_ns * 1_000_000 / 0.002))
+    # target_ns is expressed in ns, whereas GROMACS dt is in ps.
+    # 1 ns = 1000 ps; at dt=0.002 ps, 10 ns requires 5,000,000 steps.
+    nsteps = int(round(target_ns * 1_000 / 0.002))
     path = system_dir / "set_c_production.mdp"
     path.write_text(f"""; Canonical set-C production MD; generated only after manifest validation.
 integrator = md
@@ -327,7 +335,7 @@ pcoupltype = isotropic
 tau_p = 2.0
 compressibility = 4.5e-5
 ref_p = 1.0
-gen_vel = yes
+gen_vel = no
 """, encoding="utf-8")
     return path
 
@@ -408,7 +416,10 @@ def prepare_replicate(row: dict, args: argparse.Namespace, run_records: list[dic
             encoding="utf-8",
         )
         backend_flags = MDRUN_GPU_MIXED if args.backend == "gpu" else MDRUN_CPU
-        mdrun = [gmx, "mdrun", "-deffnm", "production", "-seed", str(seed), "-v", "-ntomp", str(args.ntomp), *backend_flags]
+        # GROMACS 2025.4 does not expose the historical `mdrun -seed`
+        # option; stochastic seeds belong in the MDP. Keep the deterministic
+        # seed in provenance, but do not pass an unsupported CLI flag.
+        mdrun = [gmx, "mdrun", "-deffnm", "production", "-v", "-ntomp", str(args.ntomp), *backend_flags]
         if args.backend == "gpu" and args.gpu_id != "auto":
             mdrun.extend(["-gpu_id", args.gpu_id])
         prepared.append((rep_dir, record, mdrun))

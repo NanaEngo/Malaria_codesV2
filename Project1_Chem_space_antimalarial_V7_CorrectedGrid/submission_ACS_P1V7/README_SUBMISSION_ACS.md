@@ -48,7 +48,7 @@
 4. Téléverser les fichiers dans l'ordre du tableau §1
 5. Renseigner **authors + ORCID** (corresponding author obligatoire)
 6. Renseigner **keywords** (≥ 4) : polypharmacology, resistance resilience, antimalarial, natural products, molecular docking, virtual screening
-7. Déclarer **funding sources** (si applicable) et **competing interests** (none)
+7. Déclarer explicitement **Funding sources: No external funding was received for this work** et séparément **Competing interests: none**
 8. Répondre aux **questions de soumission** (originality, prior publication, ethical compliance)
 9. **Review PDF** généré par le système — vérifier : TOC graphic affiché, SM correct, pagination
 10. **Submit**

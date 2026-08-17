@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-11T14:39:23.252836+00:00",
+  "status": "COLABFOLD_REQUESTED_GPU",
+  "method": "ColabFold full-length sequence prediction; not experimental loop validation",
+  "accession": "W7FI62",
+  "strain": "7G8",
+  "sequence_path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_sequence_reference_20260811/W7FI62.fasta",
+  "sequence_sha256": "a0750941dc7de0997ea4148ad642e672f3787f291dd52538a14889a97a0d8beb",
+  "python": "/home/nanaengo/miniforge3/envs/pfcrt_colabfold/bin/python",
+  "slurm_job_id": "15236",
+  "command": "colabfold_batch --msa-mode mmseqs2_uniref_env --model-type alphafold2_ptm --num-models 1 --num-recycle 1 --num-seeds 1 --num-relax 0",
+  "output_boundary": "isolated /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_colabfold_gpu_retry_20260811; no canonical PDB or set_c modification; no MD authorization",
+  "gpu_preflight": "passed: CUDA JAX device required before inference",
+  "jax_platforms": "cuda,cpu",
+  "xla_mem_fraction": "0.75"
+}

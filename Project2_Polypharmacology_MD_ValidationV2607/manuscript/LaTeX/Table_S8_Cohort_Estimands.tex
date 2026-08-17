@@ -1,0 +1,17 @@
+% Table S8: Cohort and estimand separation
+\begin{table}[htbp]
+\centering
+\caption{Cohort and estimand separation. The Set-C docking cohort and the parent-study MD cohort are non-overlapping. The Set-C MD pilot is not included because it did not satisfy the complete-trajectory and quality-control criteria.}
+\label{tab:s8_cohort_estimands}
+\scriptsize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}p{0.17\textwidth} >{\raggedright\arraybackslash}p{0.13\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\toprule
+Evidence layer & Cohort & Systems & Primary analyses & Interpretation boundary \\
+\midrule
+Set-C docking & PP-01--PP-17 & 136 & WT/mutant docking; RRS, ACSI, PNS & Docking-derived prioritisation; not measured binding or MD-RRS \\
+Parent-study MD & Ligands 164, 201, 214, 438 & 4 WT complexes $\times$ \SI{10}{\nano\second} & RMSD, contacts, bound-state assessment, MM-GBSA where valid & Separate structural check; one interpretable MM-GBSA estimate (PfCRT--214) \\
+Set-C MD pilot & PP-01/PP-02 & 16 planned systems & Predeclared trajectory QC and pilot MD-RRS & Not included: complete-trajectory and QC criteria not satisfied \\
+Full Set-C MD-RRS & PP-01--PP-17 & 136 planned systems & Full trajectory QC and MD-RRS & Not computed; requires complete PASS-QC cohort \\
+\bottomrule
+\end{tabularx}
+\end{table}

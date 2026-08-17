@@ -1,0 +1,17 @@
+{
+  "input": "/home/nanaengo/Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery/results/lish_moa/lish_moa_drug_level.csv",
+  "features": "phenotype",
+  "split": "drug_grouped",
+  "exclude_controls": true,
+  "n_drugs": 3288,
+  "n_labels": 206,
+  "mean_metrics": {
+    "mean_columnwise_log_loss": 0.023887131740530417,
+    "macro_auprc": 0.14124029673356903,
+    "macro_auroc": 0.6416769582138712,
+    "mean_brier": 0.003750215510217584,
+    "mean_ece": 0.003809337877157422
+  },
+  "protocol": "5 seeds x 5 folds; drug-level aggregation; unweighted per-label logistic baseline",
+  "interpretation": "MoA-associated prediction; not causal target engagement"
+}

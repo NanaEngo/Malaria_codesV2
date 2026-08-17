@@ -2,7 +2,7 @@
 """Set-C equilibration worker (EM/NVT/NPT) + force-field manifest finalisation.
 
 Consumes the prepared system directories produced by ``p2_setc_prepare_openff.py``
-(results/md_systems/set_c/PP-XX_<Target>_<Mut>/).  For each system it:
+(the explicitly exported versioned Set-C root, `set_c_preparation_20260812_v1/PP-XX_<Target>_<Mut>/`).  For each system it:
 
   1. runs steepest-descent EM (em.mdp, 5000 steps);
   2. runs NVT equilibration (100 ps, V-rescale, 310.15 K);
@@ -34,9 +34,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
-SYSTEM_ROOT = Path(
-    os.environ.get("P2_SETC_ROOT", PROJECT_DIR / "results" / "md_systems" / "set_c")
-)
+_root_env = os.environ.get("P2_SETC_ROOT")
+if not _root_env:
+    raise RuntimeError("P2_SETC_ROOT must be explicitly exported; refusing the legacy Set-C root")
+SYSTEM_ROOT = Path(_root_env).expanduser().resolve()
+EXPECTED_SYSTEM_ROOT = (PROJECT_DIR / "results" / "md_systems" / "set_c_preparation_20260812_v1").resolve()
+if SYSTEM_ROOT != EXPECTED_SYSTEM_ROOT:
+    raise RuntimeError(f"P2_SETC_ROOT must equal {EXPECTED_SYSTEM_ROOT}, got {SYSTEM_ROOT}")
 
 GMX = os.environ.get("P2_GMX_BIN", "/home/nanaengo/miniforge3/envs/malaria_md/bin/gmx_mpi")
 PYTHON_EXPECTED = "/home/nanaengo/miniforge3/envs/malaria_md/bin/python"

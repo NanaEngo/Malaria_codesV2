@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "status": "INTERNAL_TER_INSERTED",
+  "receptor_fixed_sha256": "521bff24ef42efb295d39ab06e2962df41ad50275c02a86b173dcbf7b58c11a3",
+  "gaps": [
+    {
+      "chain": "A",
+      "previous_residue": 85,
+      "next_residue": 96
+    },
+    {
+      "chain": "A",
+      "previous_residue": 231,
+      "next_residue": 283
+    },
+    {
+      "chain": "B",
+      "previous_residue": 85,
+      "next_residue": 96
+    },
+    {
+      "chain": "B",
+      "previous_residue": 231,
+      "next_residue": 284
+    }
+  ],
+  "reason": "prevent pdb2gmx from creating peptide bonds across missing coordinate residues"
+}

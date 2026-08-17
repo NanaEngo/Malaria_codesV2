@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-11T14:37:09.701826+00:00",
+  "status": "COLABFOLD_COMPLETED",
+  "method": "ColabFold full-length sequence prediction; not experimental loop validation",
+  "accession": "W7FI62",
+  "strain": "7G8",
+  "sequence_path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_sequence_reference_20260811/W7FI62.fasta",
+  "sequence_sha256": "a0750941dc7de0997ea4148ad642e672f3787f291dd52538a14889a97a0d8beb",
+  "python": "/home/nanaengo/miniforge3/envs/pfcrt_colabfold/bin/python",
+  "slurm_job_id": "15235",
+  "command": "colabfold_batch --msa-mode mmseqs2_uniref_env --model-type alphafold2_ptm --num-models 1 --num-recycle 1 --num-seeds 1 --num-relax 0",
+  "output_boundary": "isolated /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_colabfold_gpu_20260811; no canonical PDB or set_c modification; no MD authorization",
+  "gpu_preflight": "passed: CUDA JAX device required before inference",
+  "completed_utc": "2026-08-11T14:37:19.493057+00:00",
+  "outputs": {
+    "cite.bibtex": "e7a700949b57d86b804f63abda492679b5711262fc5d7e9f81835bd95fa8cf94",
+    "config.json": "2f6e526b4a58b124995ad98066bf7eb7a31cc2349e1e01f77b5e664047973b33",
+    "provenance_preflight.json": "90daccd5328bdcd0e483b60d15bbb7a656b81b33f39bfbbbf03e1ef978af91bc",
+    "sp_W7FI62_CRT_PLAF8_Chloroquine_resistance_transporter_OS_Plasmodium_falciparum__isolate_7G8__OX_57266_GN_CRT_PE_1_SV_1_coverage.png": "7024760424a99e0e33404fe4f1871b0e4f841c340c8ef3ca9ab39e558998ef23",
+    "sp_W7FI62_CRT_PLAF8_Chloroquine_resistance_transporter_OS_Plasmodium_falciparum__isolate_7G8__OX_57266_GN_CRT_PE_1_SV_1.a3m": "6c71b5ec564f416aeeace89bea1afd30bc1b7e104f032f64fe50ca4a2daf2fc5",
+    "log.txt": "ef6c1b86169dd12ac88abf6ebedbccf888bd9d8da79a8475676a66e0b6c40357"
+  }
+}

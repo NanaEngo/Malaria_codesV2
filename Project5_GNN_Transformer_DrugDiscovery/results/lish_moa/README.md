@@ -14,6 +14,12 @@ benchmark until its audit gates pass.
 6. Run the P3 descriptor benchmark on the mapped artifact.
 7. Treat QKS as a separate bounded experiment; it is not computed by the descriptor runner.
 
+## Decision status — structure-based P5 models
+
+**Current decision: do not run the structure arm and do not claim a model gain.** The prepared artifact has no versioned mapping with unique `drug_id` rows, so ECFP4, GNN, ChemBERTa, TFP, and TNE cannot currently be evaluated with auditable molecular features or scaffold splits. Canonical-SMILES collisions could be handled by the preparation script, but no such mapping artifact is currently available. The completed phenotype-only logistic baseline remains a separate reference and is not numerically comparable with the P5 molecular ROC-AUC results.
+
+Reopen this arm only after a hashed mapping release with unique `drug_id` rows, coverage/invalid-SMILES/collision audit, molecule-disjoint drug-grouped and scaffold splits, an ECFP4-RF reference, and paired seed/fold statistics are available. A new phenotype-only neural model would be a separate experiment and would not test the molecular P5 representation claim. A successful result would support only MoA-associated prediction; it would not establish target engagement, antimalarial activity, or resistance resilience.
+
 ## Scientific boundary
 
 MoA labels are phenotype-associated multi-label endpoints. They do not establish
@@ -22,9 +28,9 @@ Primary metric is mean column-wise log loss; macro AUPRC, AUROC, and calibration
 are secondary. All splits occur after drug-level aggregation, so assay replicates
 cannot cross train/test. Raw Kaggle files and credentials must not be committed.
 
-## Live checkpoint — job 15273 (12 August 2026)
+## Superseded historical checkpoint — job 15273 (12 August 2026)
 
-The phenotype benchmark was submitted through `scripts/p5_lish_moa_benchmark.sbatch` as SLURM job `15273`. The wrapper runs the phenotype-only `drug_grouped` condition with controls and then repeats it with `--exclude-controls`; a structure/scaffold run is conditional on a verified `lish_moa_structure_mapped.csv`, which was not present at submission. At the latest recorded checkpoint (approximately 13:56:07 UTC; historical status), the job was `RUNNING` on the production partition with 16 CPUs and 32 GB RAM. Only the preparation artifacts were present; final fold CSVs and metric JSON reports were not yet available. No result from this job is reportable or manuscript-ready until both phenotype reports and their fold-level audit have been checked.
+The phenotype benchmark was submitted through `scripts/p5_lish_moa_benchmark.sbatch` as SLURM job `15273`. The wrapper runs the phenotype-only `drug_grouped` condition with controls and then repeats it with `--exclude-controls`; a structure/scaffold run is conditional on a verified `lish_moa_structure_mapped.csv`, which was not present at submission. At that historical checkpoint (approximately 13:56:07 UTC), the job was `RUNNING` on the production partition with 16 CPUs and 32 GB RAM. Only preparation artifacts were present at that time; final fold CSVs and metric JSON reports were not yet available. This checkpoint was superseded by the completed, audited results below.
 
 ## Result checkpoint — condition with controls COMPLETED (12 August 2026, ~14:05 UTC)
 

@@ -1,6 +1,6 @@
 # Master Roadmap P1–P6 — active plan
 
-**Version:** 1.12 — 12 August 2026
+**Version:** 1.13 — 13 August 2026
 **Purpose:** current decisions and next actions only.
 **Detailed history:** `docs/archive/md_full_20260812/P1_P5_RRS_POLYPHARMA_ROADMAP.md`
 
@@ -9,7 +9,7 @@
 | Project | Active DAR | Manuscript/workspace | Current state |
 |---|---|---|---|
 | P1 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | `Project1_Chem_space_antimalarial_V7_CorrectedGrid/` | V7 submission-ready (JCIM); funding + final author read-through remain |
-| P2 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | `Project2_Polypharmacology_MD_ValidationV2607/` | Docking-RRS complete; Set-C MD-RRS pending |
+| P2 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | `Project2_Polypharmacology_MD_ValidationV2607/` | Docking-RRS complete; production 15320 active; Set-C MD-RRS pending |
 | P3 | `BMAD_Q1_DATA_ANALYSIS_REPORT.md` | `Project3_Quantum_Inspired_RepresentationsV2607/` | Canonical benchmarks and external validation complete |
 | P4 | `P4_DATA_ANALYSIS_REPORT.md` | `Project4_Advanced_Monte_CarloV2607/` | v12 scalar benchmark and Pareto analysis complete |
 | P5 | `P5_DATA_ANALYSIS_REPORT.md` | `Project5_GNN_Transformer_DrugDiscovery/` | Benchmark and external validation complete |\n| P6 | `Project6_LISH_MoA_Structure_Phenotype/P6_DATA_ANALYSIS_REPORT.md` | `Project6_LISH_MoA_Structure_Phenotype/` | Planned; structure mapping required; no molecular arm run |
@@ -31,7 +31,8 @@
 - CPU witness `15259` and dependent QC `15260` were stopped after a partial 858-ps trajectory; that output is non-canonical.
 - GPU benchmark `15262` passed at 19.816 ns/day using mixed offload (`-nb gpu -pme gpu -bonded cpu -update cpu`).
 - **Witness completed:** `15270` completed one `PP-01_PfDHFR_WT` 10-ns GPU trajectory at 28.169 ns/day without fatal/LINCS/NaN indicators; it is stability evidence only.
-- This is not the full 16-system production chain. `md_rrs_status=NOT_COMPUTED` until complete trajectories pass QC.
+- The corrected versioned 16-system equilibration completed `15288` with 16/16 terminal outputs. Gate `15312` passed the exact 16/16 preflight. Production `15313` was stopped fail-closed after a GROMACS 2025.4 CLI audit found unsupported `mdrun -seed`; `15317` was then stopped after detecting an ns-to-step conversion error in the generated MDP. No trajectory is reportable. The corrected MDP passes exact-step and GPU smoke tests. Final gate `15319` passed 16/16 and production `15320` is active under `%1`; task 0 confirms 5,000,000 steps / 10,000 ps with GPU offload. No MD-RRS result is available yet.
+- The previous wrong-root equilibration 15275 was cancelled; its 69-file hash snapshot is retained as non-canonical. `md_rrs_status=NOT_COMPUTED` until complete trajectories pass QC.
 - Historical 15106/15111/15117 records are superseded; historical four-parent MD remains separate from Set-C.
 
 ### P3 — quantum-inspired representations
@@ -72,8 +73,8 @@
 
 | Priority | Action | Gate |
 |---:|---|---|
-| 1 | Monitor 15270 to completion and verify trajectory/checkpoint hashes | Production complete + trajectory QC |
-| 2 | Launch/verify the remaining candidate-specific Set-C production chain with validated GPU staging | Complete declared panel, no witness-only promotion |
+| 1 | Monitor production 15320 to completion and verify trajectory/checkpoint hashes | All 16 production systems complete |
+| 2 | Run aggregate trajectory QC on production 15320 after all 16 tasks terminate | Exactly 16 PASS-QC rows |
 | 3 | Run trajectory QC, then MD-RRS only on PASS-QC rows | Predeclared bound-fraction rule |
 | 4 | Complete P1/P3/P4/P5 metadata, deposits, and author read-through | Submission package audit |
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Set-C production-trajectory QC: bound-fraction per candidate/target/mutation.
 
-For every prepared system under results/md_systems/set_c with a completed
-production run (production.xtc + production.tpr under runs/*/replicate_1/),
+For every prepared system under the explicitly exported versioned Set-C root
+(with a completed production run: production.xtc + production.tpr under runs/*/replicate_1/),
 compute:
 
 - per-frame protein--ligand minimum heavy-atom distance (cKDTree, PBC-aware
@@ -43,7 +43,13 @@ from scipy.spatial import cKDTree
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 RESULTS_DIR = PROJECT_DIR / "results"
-SYSTEM_ROOT = Path(os.environ.get("P2_SETC_ROOT", RESULTS_DIR / "md_systems" / "set_c"))
+_root_env = os.environ.get("P2_SETC_ROOT")
+if not _root_env:
+    raise RuntimeError("P2_SETC_ROOT must be explicitly exported; refusing the legacy Set-C root")
+SYSTEM_ROOT = Path(_root_env).expanduser().resolve()
+EXPECTED_SYSTEM_ROOT = (PROJECT_DIR / "results" / "md_systems" / "set_c_preparation_20260812_v1").resolve()
+if SYSTEM_ROOT != EXPECTED_SYSTEM_ROOT:
+    raise RuntimeError(f"P2_SETC_ROOT must equal {EXPECTED_SYSTEM_ROOT}, got {SYSTEM_ROOT}")
 OUTPUT = Path(os.environ.get("P2_SETC_QC_OUTPUT", RESULTS_DIR / "set_c_md" / "set_c_trajectory_qc.csv"))
 TARGET_MUTATIONS = {
     "PfDHFR": ["WT", "N51I", "C59R", "S108N", "I164L"],

@@ -1,9 +1,9 @@
 # AGENTS.md — active project instructions
 
-**Updated:** 12 August 2026
+**Updated:** 13 August 2026
 **Long-form historical instructions:** `docs/archive/md_full_20260812/AGENTS.md`
 
-**P1 SOUMISSION JCIM = V7 (canonical):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/manuscript/P1_V7_Integrated_Polypharmacology_RRS.tex` (main 25 p.) + `_SM.tex` (13 p.) + cover letter; **package ACS auto-contenu `submission_ACS_P1V7/`** (PDF + .bbl/.aux pour xr + .bib). **V7 supersedes V6 (10/08/2026)** with comprehensive validation (DEKOIS 2.0 external benchmark, MMV enrichment, redocking RMSD — 3 tables + SM S11), physicochemical characterization (3 tables), enhanced narrative (Discussion +125%), methodological rigor (grid box specs, 99.3% cost reduction). **V4/V5/V6 = archives pré-soumission** (V4 : espace chimique + remédiation 2F6I 484 ; V5 : docking ciblé ; V6 : version 10/08/2026). Compilation V7 : main 25 p., SM 13 p., 0 erreur / 0 réf. indéfinie ✅ — **FULLY SUBMISSION-READY (ORCID ×5 collectés)** ; restent : funding + lecture auteur finale avant dépôt Paragon Plus.
+**P1 SOUMISSION JCIM = V7 (canonical):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/manuscript/P1_V7_Integrated_Polypharmacology_RRS.tex` (main 25 p.) + `_SM.tex` (17 p.) + cover letter; **package ACS auto-contenu `submission_ACS_P1V7/`** (PDF + .bbl/.aux pour xr + .bib). **V7 supersedes V6 (10/08/2026)** with comprehensive validation (DEKOIS 2.0 external benchmark, MMV enrichment, redocking RMSD — 3 tables + SM S11), physicochemical characterization (3 tables), enhanced narrative (Discussion +125%), methodological rigor (grid box specs, 99.3% cost reduction). **V4/V5/V6 = archives pré-soumission** (V4 : espace chimique + remédiation 2F6I 484 ; V5 : docking ciblé ; V6 : version 10/08/2026). Compilation V7 : main 25 p., SM 17 p., cover 1 p., 0 erreur / 0 réf. indéfinie ✅ — package techniquement prêt; restent la vérification des métadonnées en ligne, la lecture auteur finale et la revue structurale indépendante avant toute promotion soumission.
 
 ## 1. Canonical source map
 
@@ -17,7 +17,7 @@
 - **P2:** `Project2_Polypharmacology_MD_ValidationV2607/`
 - **P3:** `Project3_Quantum_Inspired_RepresentationsV2607/`
 - **P4:** `Project4_Advanced_Monte_CarloV2607/`
-- **P5:** `Project5_GNN_Transformer_DrugDiscovery/`
+- **P5:** `Project5_GNN_Transformer_DrugDiscovery/`\n- **P6:** `Project6_LISH_MoA_Structure_Phenotype/` (follow-up LISH-MoA; structure arm blocked pending mapping)
 
 Read the relevant DAR before changing code, parameters, protocols, or manuscript claims.
 
@@ -25,19 +25,29 @@ Read the relevant DAR before changing code, parameters, protocols, or manuscript
 
 | Project | Status | Essential result or boundary |
 |---|---|---|
-| P1 | **V7 submission-ready (JCIM)** | V7 enhanced + validated (DEKOIS/MMV/redocking), 25 p. main / 13 p. SM, ORCID ×5 collectés, package ACS prêt; V6/V5/V4 = archives |
-| P2 | Docking-RRS complete; MD-RRS pending | 17 Set-C candidates; A*:6/B:5/C:5/D:1; no Set-C MD-RRS yet; GPU witness 15270 in production (8.7/10 ns, 12/08) |
+| P1 | **V7 technically submission-ready (JCIM)** | V7 enhanced + validated (DEKOIS/MMV/redocking), 25 p. main / 17 p. SM / 1 p. cover, package refreshed; final author/metadata review and independent structural review remain |
+| P2 | Docking-RRS complete; Set-C MD pilot in production | 17 Set-C candidates; A*:6/B:5/C:5/D:1; 16-system equilibration PASS; gate 15319 PASS; production 15320 task 0 RUNNING with exact 10-ns MDP; no Set-C MD-RRS yet |
 | P3 | Benchmarks complete | ECFP4 0.9475; hybrid 0.8876; QKS ≈ RBF; no quantum advantage claimed |
 | P4 | v12 benchmark complete | Random 0.6724 > MCTS 0.6649; Pareto front is a separate pre-activity artifact |
-| P5 | Benchmark complete | ECFP4-RF dominates under scaffold split; topological fusion is modestly complementary; LISH-MoA external benchmark running (15273) |
+| P5 | Benchmark complete | ECFP4-RF dominates under scaffold split; topological fusion is modestly complementary; phenotype-only LISH-MoA baseline is complete and separate |
+| P6 | Planned follow-up | LISH-MoA structure–phenotype study; no molecular arm until a versioned drug_id→SMILES mapping passes audit |
 
 ## 3. Live P2 jobs
 
-The bounded Set-C pilot has 16 prepared systems (PP-01/PP-02 × PfDHFR/PfCRT mutation states) under the PI-approved documented OpenFF 2.2.0 AM1-BCC + CHARMM36m/TIP3P policy deviation.
+The bounded Set-C pilot has 16 prepared and equilibrated systems (PP-01/PP-02 × PfDHFR/PfCRT mutation states) under the PI-approved documented OpenFF 2.2.0 AM1-BCC + CHARMM36m/TIP3P policy deviation. Production is active under the final corrected launcher; MD-RRS remains blocked until all 16 trajectories pass QC.
 
-- **15270:** `p2_setc_gpu_witness` RUNNING (12/08, 7 h 26/24 h) — production GPU witness `PP-01_PfDHFR_WT`, step 4 351 000/5 000 000 = 8.70 ns/10 ns, ETA ~16:20 UTC; log: `results/md_systems/set_c_publication_gpu_v2_20260812/PP-01_PfDHFR_WT/runs/publication_gpu_20260812_v4/replicate_1/production.log`.
+- **15270:** `p2_setc_gpu_witness` COMPLETED — isolated `PP-01_PfDHFR_WT` 10-ns witness at 28.169 ns/day; stability evidence only.
+- **15282/15287:** previous corrected equilibration/gate pair canceled after the author-requested restart; retained as scheduler provenance only.
+- **15288:** completed corrected 16-system CPU equilibration array; all 16 systems finalized with `rc=0` and non-empty `npt.gro`/`npt.cpt`.
+- **15293:** historical gate failed before preflight because `set -u` exposed non-nounset-safe GMXRC variables; no production was promoted.
+- **15307:** gate passed `16/16` and submitted production `15308`; `15308` was stopped after detecting missing staged topology dependencies and an incompatible `gen-vel` setting.
+- **15312:** corrected gate passed `16/16` after the dependency-staging and continuation fixes, submitting production `15313`.
+- **15313:** stopped fail-closed after GROMACS 2025.4 rejected the unsupported `mdrun -seed` option; no trajectory is reportable.
+- **15317:** stopped fail-closed after detecting an ns-to-step conversion error (`5,000,000,000` instead of `5,000,000` for 10 ns); no trajectory is reportable. The corrected MDP passed exact-step and 10-step GPU smoke tests.
+- **15319/15320:** final gate passed `16/16`; production array `15320` is active with `%1`, task 0 confirms `5,000,000` steps / `10,000 ps` and GPU PP/PME offload. No MD-RRS result exists yet.
 - Historical 15106/15111/15117/15254/15259/15260 identifiers are superseded by the GPU witness chain.
-- Post-QC chain (`set_c_trajectory_qc.py`, `p2_setc_md_rrs.py`) may start per-system as soon as each replicate finishes.
+- Post-QC chain (`set_c_trajectory_qc.py`, `p2_setc_md_rrs.py`) remains blocked for aggregate MD-RRS until all 16 production trajectories finish and pass QC.
+- **Cleanup audit (13 Aug):** six failed production run directories and 1,087 autosave/backup files (~13.7 GB), plus ten untracked Antechamber/SQM/energy temporary files, were removed after reference-safety checks. The 428 exact diagnostic duplicates (~3.93 GB) and legacy `results/md_systems/set_c` root (~16 GB) were retained because historical scripts still reference them. The active `15320` run, logs, manifests, DARs, and unique historical evidence are protected. Twelve empty orphan directories outside the active preparation root were removed; active `runs/` placeholders were preserved.
 - **Full Set-C MD-RRS:** `NOT_COMPUTED`; no witness-only result may be promoted.
 
 ## 4. Provenance rules
@@ -76,7 +86,7 @@ P1–P5 remain in author-controlled pre-submission development. No administrativ
 | DEKOIS V2 (pfDHFR) | ✅ Terminé | AUC = 0.45 [0.37, 0.53] — Meeko uniforme |
 | Redocking | ✅ Validé | RMSD < 2.0 Å toutes cibles |
 | Validation Tartarus | ✅ Complété | ρ = 0.013 (p = 0.091), MPO orthogonal au docking |
-| **Manuscrit V7 (JCIM, canonical)** | ✅ **Enhanced & Ready** | Main 25 p., SM 13 p., 0 erreur; DEKOIS/MMV/redocking + physicochemical tables; ORCID ×5 collectés; package `submission_ACS_P1V7/`; restent : funding |
+| **Manuscrit V7 (JCIM, canonical)** | ✅ **Enhanced & technically ready** | Main 25 p., SM 17 p., cover 1 p., 0 erreur; DEKOIS/MMV/redocking + physicochemical tables; package `submission_ACS_P1V7/`; restent : métadonnées, lecture auteur, revue structurale indépendante |
 | **Manuscrit V6 (archive)** | ✅ **Archive** | Étude intégrée RRS + polypharmacologie (Set C 17, classes A*:6/B:5/C:5/D:1) |
 | **Manuscrit V4 (archive pré-soumission)** | ✅ **Remédiation 2F6I COMPLÈTE** | 484 = 458 PASS + 1 PENDING + 25 non-PASS; dossier prêt-à-signer; registre PENDING |
 | **Cover Letter** | ✅ **Conforme** | 1 page, sans référence aux manuscrits compagnons |

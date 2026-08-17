@@ -1,8 +1,8 @@
 # Set-C MD → MD-RRS execution runbook
 
-**Updated:** 12 August 2026
+**Updated:** 13 August 2026
 **Scope:** candidate-specific Set-C trajectories only; parent-study MD systems are excluded.
-**Current status:** CPU witness chain `15254 → 15259 → 15260` was stopped and is non-canonical. GPU benchmark `15262` passed the mixed-offload protocol at 19.816 ns/day; clean GPU witness `15270` completed one 10-ns `PP-01_PfDHFR_WT` trajectory at 28.169 ns/day without fatal/LINCS/NaN indicators. **GPU verdict: `GPU_PATH_STABLE_FOR_SERIAL_PRODUCTION`, not cohort validation.** The 16-system pilot remains unprepared and `md_rrs_status=NOT_COMPUTED`.
+**Current status:** CPU witness chain `15254 → 15259 → 15260` was stopped and is non-canonical. GPU benchmark `15262` passed the mixed-offload protocol at 19.816 ns/day; clean GPU witness `15270` completed one 10-ns `PP-01_PfDHFR_WT` trajectory at 28.169 ns/day without fatal/LINCS/NaN indicators. **GPU verdict: `GPU_PATH_STABLE_FOR_SERIAL_PRODUCTION`, not cohort validation.** The 16-system pilot equilibration `15288` is complete with 16/16 terminal outputs. Gate `15319` passed the exact preflight. Production arrays `15308`, `15313`, and `15317` were stopped fail-closed after launcher audits; production `15320` is now active under `%1`. No Set-C MD-RRS result is reportable and `md_rrs_status=NOT_COMPUTED`. Wrong-root equilibration `15275`, gates `15293`/`15307`, and stopped production arrays are retained only as non-canonical provenance.
 
 ## Cohort contracts
 
@@ -22,19 +22,23 @@ The cohort plan is:
 1. Close 15270 and retain its hashes, log, checkpoint, energy output, and terminal status.
 2. Preflight all 16 `system_manifest.json` and `forcefield_manifest.json` files; reject any missing, mismatched, or stale hash before production.
 3. Run one production at a time on the single A4000: PP-01/PP-02 × PfDHFR (WT, N51I, C59R, S108N, I164L) and PfCRT (WT, K76T, K76A). Use explicit `--system-name` selection and versioned pilot output paths. Enforce serial execution with an array throttle `%1` or an explicit per-system dependency chain; never submit the GPU production array with `%4` on the single A4000. The pre-submission manifest must enumerate all 16 expected system names in deterministic order.
-4. Use a controlled `afterany` chain for independent salvage: a failed system must be recorded as `NON-PASS` but must not silently block later systems. The aggregate pilot remains ineligible unless all 16 systems produce valid terminal outputs and pass QC. **Implemented:** `scripts/p2_setc_gpu_production.sbatch` now provides `#SBATCH --gres=gpu:1`, `#SBATCH --array=0-15%1`, explicit `--system-name "$SYS"`, and the approved mixed-offload flags. It remains unsubmitted until the 16-system preparation/equilibration preflight passes.
+4. Use a controlled `afterany` chain for independent salvage: a failed system must be recorded as `NON-PASS` but must not silently block later systems. The aggregate pilot remains ineligible unless all 16 systems produce valid terminal outputs and pass QC. **Implemented and active:** `scripts/p2_setc_gpu_production.sbatch` provides `#SBATCH --gres=gpu:1`, `#SBATCH --array=0-15%1`, explicit `--system-name "$SYS"`, and the approved mixed-offload flags. Final gate `15319` passed and production `15320` is running serially.
 5. Treat 19.816 ns/day as a conservative planning rate: 10 ns is approximately 12.1 h of GPU time per system, or approximately 8 days of raw GPU time for 16 systems, before setup/retry overhead. Replace this planning estimate only after the closed witness supplies a measured terminal rate.
 6. Run per-system QC only as diagnostic output until the complete 16-row pilot is present; then run the mode-specific aggregate QC and MD-RRS wrapper.
 
 Production stability acceptance requires non-empty `production.xtc`, `production.tpr`, checkpoint and log files; no fatal error, LINCS failure, NaN, or energy divergence; and matching system/force-field/topology hashes. A failed witness or cohort system revises the GPU verdict to `GPU_PATH_REQUIRES_REMEDIATION` and blocks MD-RRS.
 
-## Active preparation checkpoint — job 15274 (12 August 2026)
+## Active Set-C checkpoint — serial production (13 August 2026)
 
-The 16-system OpenFF preparation was submitted as job `15274` at 17:05 UTC, writing to the versioned root `results/md_systems/set_c_preparation_20260812_v1`. At the 17:10 UTC checkpoint, `PP-01_PfDHFR_WT` was complete and `PP-02_PfDHFR_WT` was in its temporary work directory; the sequential launcher was healthy, with only a non-fatal `pkg_resources` deprecation warning. The incomplete canonical root is not overwritten. Equilibration job `15275` has been submitted with `afterok:15274` and remains pending until the preparation terminates successfully and all 16 generated systems pass manifest/input checks. Initial gate `15276` was cancelled before execution after review identified a candidate-panel/provenance ambiguity. Corrected gate `15277` has been submitted with `afterok:15275`; it asserts the fixed `PP-01`/`PP-02` panel, runs the aggregate preflight, and submits `p2_setc_gpu_production.sbatch` only when the manifest reports exactly `16/16` and `READY_FOR_AUTHORIZED_EXECUTION`. GPU production remains unsubmitted until that gate passes.
+Preparation job `15274` is retained as terminal provenance; its versioned root `results/md_systems/set_c_preparation_20260812_v1` passed a fresh strict **16/16** inventory (`complex.gro`, `topol.top`, both manifests, and `pre_equilibration_audit.json=PASS`). The scheduler record for 15274 is no longer queryable because accounting storage is disabled.
+
+The first equilibration attempt `15275` used the wrong legacy root and was cancelled; its 69-file hash inventory is retained at `results/set_c_md/noncanonical_eq_root_snapshot_20260812T194605Z.json`. It is non-canonical and must not enter QC or manuscript analysis. Corrected equilibration **15288** completed with explicit `P2_SETC_ROOT=results/md_systems/set_c_preparation_20260812_v1`: all 16 tasks finalized `npt.gro`/`npt.cpt` with `rc=0`.
+
+Gate **15312** passed the exact `16/16` `READY_FOR_AUTHORIZED_EXECUTION` preflight. Production `15313` was stopped after `grompp` passed but GROMACS 2025.4 rejected the unsupported `mdrun -seed` option. The launcher has been corrected; production `15317` was also stopped after a 1000-fold ns-to-step conversion error was detected. The final MDP now requests exactly 5,000,000 steps for 10 ns, and a 10-step GPU smoke test passes. Final gate `15319` passed 16/16 and production `15320` is active with `%1` serialization; task 0 confirms the exact 10-ns protocol and GPU offload without fatal/LINCS errors. `md_rrs_status=NOT_COMPUTED` until all 16 trajectories pass QC.
 
 ## Preconditions
 
-1. Candidate-specific `system_manifest.json` and `forcefield_manifest.json` are present and identity/hashes pass; the current read-only preflight is 0/16 and therefore blocks submission.
+1. Candidate-specific `system_manifest.json` and `forcefield_manifest.json` are present and identity/hashes pass in the new versioned root. The historical 0/16 read-only preflight applies only to the incomplete canonical root `results/md_systems/set_c`; the active versioned root contains the completed 16/16 equilibration outputs, while production `15320` remains in progress.
 2. The actual equilibration and production SLURM IDs are recorded at submission time; no historical ID is copied into a reusable script.
 3. Production trajectories contain non-empty `production.xtc` and `production.tpr` files.
 4. The selected contract is declared explicitly through `P2_SETC_COHORT_MODE`.
@@ -67,7 +71,7 @@ source /home/nanaengo/miniforge3/etc/profile.d/conda.sh
 conda activate malaria_md
 cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
 
-export P2_SETC_ROOT="$PWD/results/md_systems/set_c"
+export P2_SETC_ROOT="$PWD/results/md_systems/set_c_preparation_20260812_v1"
 export P2_SETC_QC_OUTPUT="$PWD/results/set_c_md/set_c_trajectory_qc_pilot.csv"
 python scripts/p2_setc_trajectory_qc.py \
   --bound-angstrom 5.0 --min-frames 500 --min-bound-fraction 0.10 --max-frames 2000

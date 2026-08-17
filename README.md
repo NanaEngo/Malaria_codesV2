@@ -1,6 +1,6 @@
 # Malaria_codesV2 — project entry point
 
-**Updated:** 12 August 2026
+**Updated:** 13 August 2026
 **Purpose:** computational antimalarial discovery across chemical space, docking/RRS, quantum-inspired representations, Monte Carlo generation, and GNN/Transformer benchmarking.
 
 ## Read first
@@ -17,7 +17,7 @@
 
 | Project | Workspace | Status |
 |---|---|---|
-| **P1** | `Project1_Chem_space_antimalarial_V6_CorrectedGrid/` | V6 is submission-oriented; V4/V5 remain evidence/remediation layers |
+| **P1** | `Project1_Chem_space_antimalarial_V7_CorrectedGrid/` | V7 is submission-oriented; V4/V5/V6 remain evidence/remediation layers |
 | **P2** | `Project2_Polypharmacology_MD_ValidationV2607/` | Docking-RRS/polypharmacology complete; Set-C MD-RRS pending |
 | **P3** | `Project3_Quantum_Inspired_RepresentationsV2607/` | Canonical benchmarks and external validation complete |
 | **P4** | `Project4_Advanced_Monte_CarloV2607/` | v12 scalar benchmark and Pareto analysis complete |
@@ -26,7 +26,7 @@
 ## Current scientific conclusions
 
 - **P1/P2:** chemical novelty, target-wise docking, and per-target docking-RRS support computational prioritisation; they do not establish IC₅₀/EC₅₀, target engagement, or experimental resistance circumvention.
-- **P2:** canonical Set-C RRS classes are A*:6/B:5/C:5/D:1. The CPU witness was stopped after a partial non-canonical trajectory; GPU benchmark `15262` passed at 19.816 ns/day, and witness `15270` completed one 10-ns `PP-01_PfDHFR_WT` trajectory at 28.169 ns/day. Full-panel MD-RRS remains `NOT_COMPUTED`.
+- **P2:** canonical Set-C RRS classes are A*:6/B:5/C:5/D:1. Equilibration `15288` completed 16/16; gate `15319` passed; production `15320` is active serially with the exact 10-ns MDP and GPU offload. Full-panel MD-RRS remains `NOT_COMPUTED` until all 16 trajectories pass QC.
 - **P3:** ECFP4 remains stronger than the hybrid; QKS is statistically comparable to RBF, not superior.
 - **P4:** Random exceeds MCTS on the canonical scalar reward, while the Pareto front retains multi-objective trade-offs.
 - **P5:** ECFP4-RF dominates learned models under scaffold split; GIN-TFP provides modest complementary signal.

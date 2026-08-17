@@ -1,7 +1,7 @@
 # P5 Data Analysis Report — active summary
 
 **Scope:** GNN/Transformer drug-discovery benchmark on the canonical P3-derived antimalarial panel.
-**Updated:** 12 August 2026
+**Updated:** 17 August 2026
 **Long-form history:** `docs/archive/md_full_20260812/P5_DATA_ANALYSIS_REPORT.md`
 
 ## 1. Central question

@@ -1,6 +1,6 @@
 # P2 — polypharmacology, RRS, and MD validation
 
-**Status checkpoint (12 August 2026):** docking/RRS/ACSI/PNS analysis complete; Set-C candidate-specific MD-RRS pending.
+**Status checkpoint (13 August 2026):** docking/RRS/ACSI/PNS analysis complete; Set-C equilibration is complete (16/16), while candidate-specific MD-RRS remains pending after two production launchers were stopped fail-closed during compatibility audits.
 **DAR:** `BMAD_Q1_DATA_ANALYSIS_REPORT.md`
 **Roadmap:** `P1_P5_RRS_POLYPHARMA_ROADMAP.md`
 
@@ -21,13 +21,15 @@ The bounded pilot contains 16 prepared systems (PP-01/PP-02 × PfDHFR/PfCRT muta
 
 - **15259/15260:** CPU witness and dependent QC were stopped after a partial 858-ps trajectory; the output is non-canonical.
 - **15262:** mixed GPU/CPU benchmark passed at 19.816 ns/day without fatal or LINCS errors.
-- **15270:** clean GPU witness is running from equilibrated inputs; `grompp` passed and GPU offload is active.
-- **Pilot MD-RRS contract:** `PP-01/PP-02` × 8 states = 16 QC rows; use `--cohort-mode pilot`, which writes `results/set_c_md/md_rrs_pilot_PP01_PP02.csv` and cannot overwrite the full-cohort output.
+- **15270:** clean GPU witness completed one 10-ns trajectory; it is stability evidence only.
+- **15319/15320:** final gate passed 16/16; production task `15320_0` is running serially and confirms exactly 5,000,000 steps / 10 ns with GPU PP/PME offload. The previous failed launchers remain non-canonical; no MD-RRS result is reportable until all 16 trajectories pass QC.
+- **Pilot MD-RRS contract:** `PP-01/PP-02` × 8 states = 16 QC rows; use `--cohort-mode pilot`, which writes `results/set_c_md/md_rrs_pilot_PP01_PP02.csv` and cannot overwrite the full-cohort output. Production `15320` is active; aggregate QC waits for all 16 terminal trajectories.
 - **Full-panel MD-RRS:** `NOT_COMPUTED`; the separate full contract requires 17 candidates × 8 states = 136 PASS-QC rows.
 - **PlasmoDB annotation:** stable target IDs and mutation context are recorded in `results/plasmodb_target_annotation.csv` and SM Table S7; no pathway enrichment is claimed. PlasmoDB record retrieval is evidenced, but no directly scripted WDK REST client is currently part of the workflow.
 - **GitHub tool register:** verified current/available applications, effective-use evidence, licenses, and integration priorities are recorded in `P2_GITHUB_TOOL_REGISTER_20260812.md`.
 - **GNINA status:** executable available (`v1.3.2`), but the preserved ligand-438 attempt produced an empty output file (0 bytes); therefore no GNINA score or pose is reportable for P2. The generalized 17 × 4 consensus claim is withdrawn pending a new complete, non-empty manifest.
 - Legacy 15106/15111/15117 jobs are superseded.
+- **Cleanup audit (13 August):** failed run directories, 1,087 autosave/backup files (~13.7 GB), and ten untracked Antechamber/SQM/energy temporary files were removed after reference-safety checks. Exact diagnostic duplicates and the legacy `results/md_systems/set_c` root were retained because historical scripts reference them. Active production and canonical evidence are protected.
 
 ## Canonical locations
 

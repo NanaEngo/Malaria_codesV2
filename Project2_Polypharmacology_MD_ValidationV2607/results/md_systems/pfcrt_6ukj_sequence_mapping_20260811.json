@@ -1,0 +1,4491 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-11T12:56:53.296004+00:00",
+  "status": "MAPPING_AUDIT_ONLY",
+  "scientific_interpretation": "NO_LOOP_RECONSTRUCTION_NO_MD",
+  "reference": {
+    "path": "data/proteins/6UKJ.pdb",
+    "sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562",
+    "chain": "A",
+    "seqres_length": 464,
+    "coordinate_residue_count": 350,
+    "alignment_score_method": "Needleman-Wunsch match=2 mismatch=-3 gap=-4",
+    "mapping_note": "PDB-number window 114-122; DBREF W7FI62; independent UniProt archive; mature/PDB mapping validated at residue 76",
+    "seqadv": [
+      {
+        "raw": "SEQADV 6UKJ ARG A    0  UNP  W7FI62              EXPRESSION TAG",
+        "pdb_residue": "ARG",
+        "pdb_number": "0",
+        "note": "EXPRESSION TAG"
+      },
+      {
+        "raw": "SEQADV 6UKJ ALA A    1  UNP  W7FI62              EXPRESSION TAG",
+        "pdb_residue": "ALA",
+        "pdb_number": "1",
+        "note": "EXPRESSION TAG"
+      },
+      {
+        "raw": "SEQADV 6UKJ ALA A  425  UNP  W7FI62              EXPRESSION TAG",
+        "pdb_residue": "ALA",
+        "pdb_number": "425",
+        "note": "EXPRESSION TAG"
+      },
+      {
+        "raw": "SEQADV 6UKJ ALA A  426  UNP  W7FI62              EXPRESSION TAG",
+        "pdb_residue": "ALA",
+        "pdb_number": "426",
+        "note": "EXPRESSION TAG"
+      },
+      {
+        "raw": "SEQADV 6UKJ ALA A  427  UNP  W7FI62              EXPRESSION TAG",
+        "pdb_residue": "ALA",
+        "pdb_number": "427",
+        "note": "EXPRESSION TAG"
+      },
+      {
+        "raw": "SEQADV 6UKJ ASN A  437  UNP  W7FI62              EXPRESSION TAG",
+        "pdb_residue": "ASN",
+        "pdb_number": "437",
+        "note": "EXPRESSION TAG"
+      }
+    ]
+  },
+  "key_checks": {
+    "pdb_loop_window": [
+      114,
+      122
+    ],
+    "pdb_left_boundary": {
+      "seqres_index": 120,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 113,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    "pdb_right_boundary": {
+      "seqres_index": 126,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "pdb_res_num": 123,
+      "pdb_residue": "HIS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    "missing_loop_seqres_records": [
+      {
+        "seqres_index": 121,
+        "seqres_residue": "ASN",
+        "one_letter": "N",
+        "coordinate_present": false,
+        "mapping_status": "missing_loop"
+      },
+      {
+        "seqres_index": 122,
+        "seqres_residue": "SER",
+        "one_letter": "S",
+        "coordinate_present": false,
+        "mapping_status": "missing_loop"
+      },
+      {
+        "seqres_index": 123,
+        "seqres_residue": "LYS",
+        "one_letter": "K",
+        "coordinate_present": false,
+        "mapping_status": "missing_loop"
+      },
+      {
+        "seqres_index": 124,
+        "seqres_residue": "GLU",
+        "one_letter": "E",
+        "coordinate_present": false,
+        "mapping_status": "missing_loop"
+      },
+      {
+        "seqres_index": 125,
+        "seqres_residue": "ARG",
+        "one_letter": "R",
+        "coordinate_present": false,
+        "mapping_status": "missing_loop"
+      }
+    ],
+    "missing_loop_pdb_numbers": [
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122
+    ],
+    "pdb_residue_76_observed": {
+      "seqres_index": 79,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 76,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    "pdb_residue_76_status": "present_in_coordinates",
+    "sequence_ordinal_for_pdb_76": {
+      "seqres_index": 79,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 76,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    }
+  },
+  "records": [
+    {
+      "seqres_index": 1,
+      "seqres_residue": "MET",
+      "one_letter": "M",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 2,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 3,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 4,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 5,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 6,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 7,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 8,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 9,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 10,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 11,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 12,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 13,
+      "seqres_residue": "GLN",
+      "one_letter": "Q",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 14,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 15,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 16,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 17,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 18,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 19,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 20,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 21,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 22,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 23,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 24,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 25,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 26,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 27,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 28,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 29,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 30,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 31,
+      "seqres_residue": "GLN",
+      "one_letter": "Q",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 32,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 33,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 34,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 35,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 36,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 37,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 38,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 39,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 40,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 41,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 42,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 43,
+      "seqres_residue": "CYS",
+      "one_letter": "C",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 44,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 45,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 46,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 47,
+      "seqres_residue": "CYS",
+      "one_letter": "C",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 48,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 49,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 50,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 47,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 51,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 48,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 52,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 49,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 53,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 50,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 54,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 51,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 55,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 52,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 56,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 53,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 57,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "pdb_res_num": 54,
+      "pdb_residue": "GLU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 58,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 55,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 59,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 56,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 60,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "pdb_res_num": 57,
+      "pdb_residue": "ASP",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 61,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 58,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 62,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 59,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 63,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 60,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 64,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 61,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 65,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 62,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 66,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 63,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 67,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 64,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 68,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 65,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 69,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 66,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 70,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 67,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 71,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 68,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 72,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 69,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 73,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 70,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 74,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 71,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 75,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 72,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 76,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 73,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 77,
+      "seqres_residue": "MET",
+      "one_letter": "M",
+      "pdb_res_num": 74,
+      "pdb_residue": "MET",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 78,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 75,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 79,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 76,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 80,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 77,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 81,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 78,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 82,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 79,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 83,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 80,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 84,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "pdb_res_num": 81,
+      "pdb_residue": "ARG",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 85,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 82,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 86,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 83,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 87,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 84,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 88,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 85,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 89,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 86,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 90,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 87,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 91,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 88,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 92,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 89,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 93,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 90,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 94,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 91,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 95,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 92,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 96,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 93,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 97,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 94,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 98,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "pdb_res_num": 95,
+      "pdb_residue": "GLU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 99,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 96,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 100,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "pdb_res_num": 97,
+      "pdb_residue": "HIS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 101,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 98,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 102,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 99,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 103,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 100,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 104,
+      "seqres_residue": "CYS",
+      "one_letter": "C",
+      "pdb_res_num": 101,
+      "pdb_residue": "CYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 105,
+      "seqres_residue": "MET",
+      "one_letter": "M",
+      "pdb_res_num": 102,
+      "pdb_residue": "MET",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 106,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 103,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 107,
+      "seqres_residue": "MET",
+      "one_letter": "M",
+      "pdb_res_num": 104,
+      "pdb_residue": "MET",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 108,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 105,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 109,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 106,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 110,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 107,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 111,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 108,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 112,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 109,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 113,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 110,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 114,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 111,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 115,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 112,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 116,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 117,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 118,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 119,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 120,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 113,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 121,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "coordinate_present": false,
+      "mapping_status": "missing_loop"
+    },
+    {
+      "seqres_index": 122,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "coordinate_present": false,
+      "mapping_status": "missing_loop"
+    },
+    {
+      "seqres_index": 123,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "coordinate_present": false,
+      "mapping_status": "missing_loop"
+    },
+    {
+      "seqres_index": 124,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "coordinate_present": false,
+      "mapping_status": "missing_loop"
+    },
+    {
+      "seqres_index": 125,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "coordinate_present": false,
+      "mapping_status": "missing_loop"
+    },
+    {
+      "seqres_index": 126,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "pdb_res_num": 123,
+      "pdb_residue": "HIS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 127,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "pdb_res_num": 124,
+      "pdb_residue": "ARG",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 128,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 125,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 129,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 126,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 130,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 127,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 131,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 128,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 132,
+      "seqres_residue": "GLN",
+      "one_letter": "Q",
+      "pdb_res_num": 129,
+      "pdb_residue": "GLN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 133,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 130,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 134,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 131,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 135,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 132,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 136,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 133,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 137,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 134,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 138,
+      "seqres_residue": "MET",
+      "one_letter": "M",
+      "pdb_res_num": 135,
+      "pdb_residue": "MET",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 139,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 136,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 140,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "pdb_res_num": 137,
+      "pdb_residue": "ASP",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 141,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 138,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 142,
+      "seqres_residue": "CYS",
+      "one_letter": "C",
+      "pdb_res_num": 139,
+      "pdb_residue": "CYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 143,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 140,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 144,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 141,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 145,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 142,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 146,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 143,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 147,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 144,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 148,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 145,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 149,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 146,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 150,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 147,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 151,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 148,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 152,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 149,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 153,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "pdb_res_num": 150,
+      "pdb_residue": "ARG",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 154,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 151,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 155,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 152,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 156,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 153,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 157,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 154,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 158,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 155,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 159,
+      "seqres_residue": "GLN",
+      "one_letter": "Q",
+      "pdb_res_num": 156,
+      "pdb_residue": "GLN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 160,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 157,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 161,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 158,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 162,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 159,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 163,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 160,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 164,
+      "seqres_residue": "GLN",
+      "one_letter": "Q",
+      "pdb_res_num": 161,
+      "pdb_residue": "GLN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 165,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 162,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 166,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 163,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 167,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 164,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 168,
+      "seqres_residue": "PRO",
+      "one_letter": "P",
+      "pdb_res_num": 165,
+      "pdb_residue": "PRO",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 169,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 166,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 170,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 167,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 171,
+      "seqres_residue": "MET",
+      "one_letter": "M",
+      "pdb_res_num": 168,
+      "pdb_residue": "MET",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 172,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 169,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 173,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 170,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 174,
+      "seqres_residue": "CYS",
+      "one_letter": "C",
+      "pdb_res_num": 171,
+      "pdb_residue": "CYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 175,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 172,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 176,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 173,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 177,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 174,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 178,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 175,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 179,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "pdb_res_num": 176,
+      "pdb_residue": "ARG",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 180,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 177,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 181,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "pdb_res_num": 178,
+      "pdb_residue": "ARG",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 182,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 179,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 183,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "pdb_res_num": 180,
+      "pdb_residue": "HIS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 184,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 181,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 185,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 182,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 186,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 183,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 187,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 184,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 188,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 185,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 189,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 186,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 190,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 187,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 191,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 188,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 192,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 189,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 193,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 190,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 194,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 191,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 195,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 192,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 196,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 193,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 197,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 194,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 198,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 195,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 199,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 196,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 200,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 197,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 201,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "pdb_res_num": 198,
+      "pdb_residue": "GLU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 202,
+      "seqres_residue": "MET",
+      "one_letter": "M",
+      "pdb_res_num": 199,
+      "pdb_residue": "MET",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 203,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 200,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 204,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 201,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 205,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 202,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 206,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 203,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 207,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "pdb_res_num": 204,
+      "pdb_residue": "GLU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 208,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 205,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 209,
+      "seqres_residue": "GLN",
+      "one_letter": "Q",
+      "pdb_res_num": 206,
+      "pdb_residue": "GLN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 210,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "pdb_res_num": 207,
+      "pdb_residue": "GLU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 211,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "pdb_res_num": 208,
+      "pdb_residue": "GLU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 212,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 209,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 213,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 210,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 214,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 211,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 215,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 212,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 216,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 213,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 217,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 214,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 218,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 215,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 219,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 216,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 220,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 217,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 221,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 218,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 222,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 219,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 223,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 220,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 224,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 221,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 225,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 222,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 226,
+      "seqres_residue": "PRO",
+      "one_letter": "P",
+      "pdb_res_num": 223,
+      "pdb_residue": "PRO",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 227,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 224,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 228,
+      "seqres_residue": "CYS",
+      "one_letter": "C",
+      "pdb_res_num": 225,
+      "pdb_residue": "CYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 229,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 226,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 230,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 227,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 231,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 228,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 232,
+      "seqres_residue": "MET",
+      "one_letter": "M",
+      "pdb_res_num": 229,
+      "pdb_residue": "MET",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 233,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 230,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 234,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "pdb_res_num": 231,
+      "pdb_residue": "ARG",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 235,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "pdb_res_num": 232,
+      "pdb_residue": "GLU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 236,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 233,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 237,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 234,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 238,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 235,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 239,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 236,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 240,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 237,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 241,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 238,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 242,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 239,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 243,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 240,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 244,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "pdb_res_num": 241,
+      "pdb_residue": "ASP",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 245,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 242,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 246,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 243,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 247,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "pdb_res_num": 244,
+      "pdb_residue": "ARG",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 248,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 245,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 249,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 246,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 250,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 247,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 251,
+      "seqres_residue": "MET",
+      "one_letter": "M",
+      "pdb_res_num": 248,
+      "pdb_residue": "MET",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 252,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 249,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 253,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 250,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 254,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 251,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 255,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 252,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 256,
+      "seqres_residue": "GLN",
+      "one_letter": "Q",
+      "pdb_res_num": 253,
+      "pdb_residue": "GLN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 257,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 254,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 258,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 255,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 259,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 256,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 260,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 257,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 261,
+      "seqres_residue": "CYS",
+      "one_letter": "C",
+      "pdb_res_num": 258,
+      "pdb_residue": "CYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 262,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 259,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 263,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 260,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 264,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 261,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 265,
+      "seqres_residue": "PRO",
+      "one_letter": "P",
+      "pdb_res_num": 262,
+      "pdb_residue": "PRO",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 266,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 263,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 267,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 264,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 268,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 265,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 269,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 266,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 270,
+      "seqres_residue": "PRO",
+      "one_letter": "P",
+      "pdb_res_num": 267,
+      "pdb_residue": "PRO",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 271,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 268,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 272,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 269,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 273,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 270,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 274,
+      "seqres_residue": "GLN",
+      "one_letter": "Q",
+      "pdb_res_num": 271,
+      "pdb_residue": "GLN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 275,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 272,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 276,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "pdb_res_num": 273,
+      "pdb_residue": "HIS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 277,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 274,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 278,
+      "seqres_residue": "PRO",
+      "one_letter": "P",
+      "pdb_res_num": 275,
+      "pdb_residue": "PRO",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 279,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 276,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 280,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 277,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 281,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "pdb_res_num": 278,
+      "pdb_residue": "GLU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 282,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 279,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 283,
+      "seqres_residue": "TRP",
+      "one_letter": "W",
+      "pdb_res_num": 280,
+      "pdb_residue": "TRP",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 284,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 281,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 285,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 282,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 286,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 283,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 287,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 284,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 288,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 285,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 289,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 286,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 290,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 287,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 291,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 288,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 292,
+      "seqres_residue": "CYS",
+      "one_letter": "C",
+      "pdb_res_num": 289,
+      "pdb_residue": "CYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 293,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 290,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 294,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 291,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 295,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 292,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 296,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 293,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 297,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "pdb_res_num": 294,
+      "pdb_residue": "ARG",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 298,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 295,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 299,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 296,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 300,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 297,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 301,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 298,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 302,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "pdb_res_num": 299,
+      "pdb_residue": "GLU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 303,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 300,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 304,
+      "seqres_residue": "CYS",
+      "one_letter": "C",
+      "pdb_res_num": 301,
+      "pdb_residue": "CYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 305,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 302,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 306,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 303,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 307,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 304,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 308,
+      "seqres_residue": "MET",
+      "one_letter": "M",
+      "pdb_res_num": 305,
+      "pdb_residue": "MET",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 309,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 306,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 310,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 307,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 311,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 308,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 312,
+      "seqres_residue": "CYS",
+      "one_letter": "C",
+      "pdb_res_num": 309,
+      "pdb_residue": "CYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 313,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "pdb_res_num": 310,
+      "pdb_residue": "ASP",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 314,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "pdb_res_num": 311,
+      "pdb_residue": "ASP",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 315,
+      "seqres_residue": "CYS",
+      "one_letter": "C",
+      "pdb_res_num": 312,
+      "pdb_residue": "CYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 316,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "pdb_res_num": 313,
+      "pdb_residue": "ASP",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 317,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 314,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 318,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 315,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 319,
+      "seqres_residue": "TRP",
+      "one_letter": "W",
+      "pdb_res_num": 316,
+      "pdb_residue": "TRP",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 320,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 317,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 321,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 318,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 322,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 319,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 323,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 320,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 324,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 321,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 325,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 322,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 326,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 323,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 327,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 324,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 328,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 325,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 329,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "pdb_res_num": 326,
+      "pdb_residue": "ASP",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 330,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 327,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 331,
+      "seqres_residue": "CYS",
+      "one_letter": "C",
+      "pdb_res_num": 328,
+      "pdb_residue": "CYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 332,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "pdb_res_num": 329,
+      "pdb_residue": "ASP",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 333,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 330,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 334,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 331,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 335,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 332,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 336,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 333,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 337,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 334,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 338,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 335,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 339,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 336,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 340,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 337,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 341,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "pdb_res_num": 338,
+      "pdb_residue": "ASP",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 342,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 339,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 343,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 340,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 344,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 341,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 345,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 342,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 346,
+      "seqres_residue": "MET",
+      "one_letter": "M",
+      "pdb_res_num": 343,
+      "pdb_residue": "MET",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 347,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 344,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 348,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 345,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 349,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 346,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 350,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 347,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 351,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 348,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 352,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 349,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 353,
+      "seqres_residue": "CYS",
+      "one_letter": "C",
+      "pdb_res_num": 350,
+      "pdb_residue": "CYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 354,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 351,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 355,
+      "seqres_residue": "GLN",
+      "one_letter": "Q",
+      "pdb_res_num": 352,
+      "pdb_residue": "GLN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 356,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 353,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 357,
+      "seqres_residue": "PRO",
+      "one_letter": "P",
+      "pdb_res_num": 354,
+      "pdb_residue": "PRO",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 358,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 355,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 359,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 356,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 360,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 357,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 361,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 358,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 362,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 359,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 363,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 360,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 364,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 361,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 365,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 362,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 366,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 363,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 367,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 364,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 368,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 365,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 369,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "pdb_res_num": 366,
+      "pdb_residue": "ALA",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 370,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 367,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 371,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "pdb_res_num": 368,
+      "pdb_residue": "ASP",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 372,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 369,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 373,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 370,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 374,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "pdb_res_num": 371,
+      "pdb_residue": "ARG",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 375,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "pdb_res_num": 372,
+      "pdb_residue": "GLU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 376,
+      "seqres_residue": "PRO",
+      "one_letter": "P",
+      "pdb_res_num": 373,
+      "pdb_residue": "PRO",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 377,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "pdb_res_num": 374,
+      "pdb_residue": "ARG",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 378,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 375,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 379,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 376,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 380,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "pdb_res_num": 377,
+      "pdb_residue": "ASP",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 381,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 378,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 382,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 379,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 383,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "pdb_res_num": 380,
+      "pdb_residue": "THR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 384,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 381,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 385,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 382,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 386,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 383,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 387,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 384,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 388,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 385,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 389,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "pdb_res_num": 386,
+      "pdb_residue": "PHE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 390,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 387,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 391,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "pdb_res_num": 388,
+      "pdb_residue": "SER",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 392,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 389,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 393,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 390,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 394,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "pdb_res_num": 391,
+      "pdb_residue": "TYR",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 395,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "pdb_res_num": 392,
+      "pdb_residue": "ARG",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 396,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "pdb_res_num": 393,
+      "pdb_residue": "VAL",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 397,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "pdb_res_num": 394,
+      "pdb_residue": "GLY",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 398,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 395,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 399,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 396,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 400,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "pdb_res_num": 397,
+      "pdb_residue": "ILE",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 401,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "pdb_res_num": 398,
+      "pdb_residue": "LEU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 402,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "pdb_res_num": 399,
+      "pdb_residue": "GLU",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 403,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "pdb_res_num": 400,
+      "pdb_residue": "ARG",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 404,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 401,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 405,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "pdb_res_num": 402,
+      "pdb_residue": "LYS",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 406,
+      "seqres_residue": "MET",
+      "one_letter": "M",
+      "pdb_res_num": 403,
+      "pdb_residue": "MET",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 407,
+      "seqres_residue": "ARG",
+      "one_letter": "R",
+      "pdb_res_num": 404,
+      "pdb_residue": "ARG",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped"
+    },
+    {
+      "seqres_index": 408,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 409,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 410,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 411,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 412,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 413,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 414,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 415,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 416,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 417,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 418,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 419,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 420,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 421,
+      "seqres_residue": "VAL",
+      "one_letter": "V",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 422,
+      "seqres_residue": "ASP",
+      "one_letter": "D",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 423,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 424,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 425,
+      "seqres_residue": "ILE",
+      "one_letter": "I",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate"
+    },
+    {
+      "seqres_index": 426,
+      "seqres_residue": "THR",
+      "one_letter": "T",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 427,
+      "seqres_residue": "GLN",
+      "one_letter": "Q",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 428,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 429,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 430,
+      "seqres_residue": "ALA",
+      "one_letter": "A",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 431,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 432,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 433,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 434,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 435,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 436,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 437,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 438,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 439,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 440,
+      "seqres_residue": "ASN",
+      "one_letter": "N",
+      "pdb_res_num": 405,
+      "pdb_residue": "ASN",
+      "coordinate_present": true,
+      "finite_coordinates": true,
+      "mapping_status": "mapped",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 441,
+      "seqres_residue": "LEU",
+      "one_letter": "L",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 442,
+      "seqres_residue": "TYR",
+      "one_letter": "Y",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 443,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 444,
+      "seqres_residue": "GLN",
+      "one_letter": "Q",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 445,
+      "seqres_residue": "GLY",
+      "one_letter": "G",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 446,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 447,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 448,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 449,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 450,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 451,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 452,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 453,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 454,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 455,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 456,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 457,
+      "seqres_residue": "TRP",
+      "one_letter": "W",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 458,
+      "seqres_residue": "SER",
+      "one_letter": "S",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 459,
+      "seqres_residue": "HIS",
+      "one_letter": "H",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 460,
+      "seqres_residue": "PRO",
+      "one_letter": "P",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 461,
+      "seqres_residue": "GLN",
+      "one_letter": "Q",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 462,
+      "seqres_residue": "PHE",
+      "one_letter": "F",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 463,
+      "seqres_residue": "GLU",
+      "one_letter": "E",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    },
+    {
+      "seqres_index": 464,
+      "seqres_residue": "LYS",
+      "one_letter": "K",
+      "coordinate_present": false,
+      "mapping_status": "missing_coordinate",
+      "construct_annotation": "expression_tag_or_construct"
+    }
+  ]
+}

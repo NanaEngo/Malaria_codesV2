@@ -159,7 +159,7 @@
 - [x] Bibliography included (.bib file)
 - [x] Auxiliary files included (.aux, .bbl)
 - [ ] **Author ORCID records verified and entered in Paragon Plus** (required online metadata)
-- [x] **Funding acknowledgment present in manuscript** (no external funding)
+- [x] **Funding declaration present in manuscript:** “No external funding was received for this work.”
 - [ ] Cover letter prepared (separate file)
 - [ ] Final author review completed
 - [ ] TOC graphic verified (300+ DPI)
@@ -222,7 +222,7 @@ For each of 5 authors:
 ### Critical (Pre-Submission)
 
 1. **ORCID metadata:** Verify and enter each author’s ORCID in Paragon Plus; ACS online metadata is authoritative
-2. **Funding:** No external funding statement is present and compiled; verify the online field
+2. **Funding metadata:** manuscript declaration is complete; enter “No external funding” in the Paragon Plus Funding sources field. This is an online metadata action, not a manuscript blocker.
 
 ### Optional (Can Be Added During Revision)
 
@@ -246,6 +246,6 @@ P.O. Box 812, Yaoundé, Cameroon
 
 ---
 
-**Package Status:** ✅ Ready for submission pending ORCID + Funding additions
-**Last Updated:** 2026-08-12 (claims and package coherence refresh)
+**Package Status:** ✅ Ready for submission pending ORCID/author metadata verification and final author approval; funding declaration is complete.
+**Last Updated:** 2026-08-12 (claims, package coherence, and no-funding metadata audit)
 **Manifest Version:** 1.1

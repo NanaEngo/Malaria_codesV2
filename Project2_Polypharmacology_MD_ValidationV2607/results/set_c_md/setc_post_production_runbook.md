@@ -1,9 +1,9 @@
 # Set-C Post-Production Runbook: QC → MD-RRS
 
-> **READ BEFORE EXECUTION:** This document contains historical command examples. **Do not execute legacy 15106/15111/15119 commands.** The current live witness is 15254→15259→15260; full-panel QC/MD-RRS requires a newly verified dependency graph.
+> **READ BEFORE EXECUTION:** This document contains historical command examples. **Do not execute legacy 15106/15111/15119/15254/15259/15260 commands.** The canonical production chain is equilibration `15288` → gate `15319` → production `15320` (13/16 complete, ETA ~Aug 18). Full-panel QC/MD-RRS requires all 16 trajectories to pass QC.
 
 **Date:** 12 August 2026
-**Live status:** the current chain is the isolated witness 15254→15259→15260; older 15106/15111/15119 references below are historical execution records. Full-panel MD-RRS remains `NOT_COMPUTED`.
+**Live status (17 Aug 2026):** production `15320` is 13/16 complete on GPU (A4000, `%1` throttle). All PP-01 × 8 + PP-02 DhFR × 5 finished; PP-02_PfDHFR_I164L running; PP-02_PfCRT × 3 queued. Older 15106/15111/15119/15254/15259/15260 references are historical and non-canonical. Full-panel MD-RRS remains `NOT_COMPUTED` pending 16/16 QC passes.
 **Scripts verified:**
 - `p2_setc_trajectory_qc.py` — ✅ compile OK (malaria_md, py3.11)
 - `p2_setc_md_rrs.py` — ✅ compile OK (malaria_md, py3.11)

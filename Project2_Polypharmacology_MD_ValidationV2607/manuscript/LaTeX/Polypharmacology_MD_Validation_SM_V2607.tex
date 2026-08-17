@@ -23,10 +23,17 @@
 
 \graphicspath{{../Graphics/}}
 
-\title{Supplementary Information for \\ ``Resistance-Aware Computational Analysis of Antimalarial Leads \\
-from African Natural Products''}
+\title{Supplementary Information for \\ ``Resistance-Aware Polypharmacology of Antimalarial Leads \\
+from African Natural Products: Docking, Network Scoring, and Targeted Molecular Dynamics''}
+\author{Myke Vital Sao Temgoua\\
+Jean-Pierre Tchapet Njafa\\
+Serge Guy Nana Engo\\
+Penabei Samafou\\
+Wilfred Fon Mbacham}
+\date{}
 
 \begin{document}
+\emergencystretch=2em
 \maketitle
 
 % ============================================================================
@@ -61,6 +68,7 @@ from African Natural Products''}
 \centering
 \caption{Endpoint-analysis interpretation for the four parent-study consensus complexes used for production MD. These systems are distinct from the 17 set-C polypharmacology candidates. Mean $\pm$ standard deviation is shown only for the single interpretable MM-GBSA result from 101 snapshots; dissociated or conversion-corrupted systems are reported as N/A. Mutant RRS is a docking-based analysis of set C and is not assigned to these MD systems.}
 \label{tab:s3_mmgbsa_mutants}
+\scriptsize
 \begin{tabular}{l l S[table-format=-2.2] S[table-format=1.2] l}
 \toprule
 Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Interpretation \\
@@ -70,9 +78,9 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Interpretation \\
 214 & PfCRT-WT & -18.25 & 0.40 & Interpretable (gmx\_MMPBSA) \\
 438 & PfATP4-WT & {--} & {--} & N/A; conversion corrupted$^\S$ \\
 \bottomrule
-\multicolumn{5}{l}{$^\ast$PDB 4GM2 is PfClpR rather than PfClpP; the 164-labelled system is therefore not structural validation of PfClpP.} \\
-\multicolumn{5}{l}{$^\ddagger$Ligand dissociated during production; no binding free energy is inferred.} \\
-\multicolumn{5}{l}{$^\S$Excluded due to two-chain topology incompatibility with CHARMM36-to-AMBER conversion.} \\
+\multicolumn{5}{p{0.90\linewidth}}{$^\ast$PDB 4GM2 is PfClpR rather than PfClpP; the 164-labelled system is therefore not structural validation of PfClpP.} \\
+\multicolumn{5}{p{0.90\linewidth}}{$^\ddagger$Ligand dissociated during production; no binding free energy is inferred.} \\
+\multicolumn{5}{p{0.90\linewidth}}{$^\S$Excluded due to two-chain topology incompatibility with CHARMM36-to-AMBER conversion.} \\
 \end{tabular}
 \end{table}
 
@@ -92,18 +100,18 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Interpretation \\
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{rrs_radar_profiles.pdf}
-\caption{Per-compound, docking-derived RRS profiles across all six resistance mutations for the 17 set-C polypharmacological leads. The four parent-study MD systems are not included. Each axis represents one mutation; concentric rings indicate \qty{50}{\percent}, \qty{100}{\percent}, and \qty{150}{\percent} RRS (WT-normalised). Class A* and Class A compounds fill the outer region (RRS $>$ \qty{100}{\percent}).}
+\caption{Per-compound, docking-derived RRS profiles across all six resistance mutations for the 17 set-C polypharmacological leads. The four parent-study MD systems are not included. Each axis represents one mutation; concentric rings indicate \qty{50}{\percent}, \qty{100}{\percent}, and \qty{150}{\percent} RRS (WT-normalised). Larger radial values indicate greater preservation of the docking score relative to the corresponding wild-type target; the plot does not encode absolute binding potency.}
 \label{fig:s4_rrs_radar}
 \end{figure}
 
-\noindent\textit{Additional MD assessment.} A diagnostic continuation of the parent PfDHFR and PfCRT systems did not yield a usable new trajectory. It therefore contributed no new MM-GBSA estimate or MD-RRS result. No candidate-specific Set-C production MD was obtained.
+\noindent\textit{Scope of the MD evidence.} The parent-study trajectories provide a targeted structural check on four wild-type complexes; they do not constitute candidate-specific Set-C production MD. No trajectory-derived MD-RRS estimate or mutant-state MM-GBSA result is included in this Supporting Information.
 
 % ============================================================================
 % Table S7: PlasmoDB target annotation and mutation provenance
 % ============================================================================
 \begin{table}[htbp]
 \centering
-\caption{Stable \textit{Plasmodium falciparum} target identifiers and mutation context used in this study. Identifiers are reported for annotation and provenance only; they do not constitute pathway-level target engagement or experimental validation. The machine-readable source is distributed as \texttt{results/plasmodb\_target\_annotation.csv}.}
+\caption{Stable \textit{Plasmodium falciparum} target identifiers and mutation context used in this study. Identifiers are reported for annotation and provenance only; they do not constitute pathway-level target engagement, causal network evidence, or experimental validation. The accompanying source-data record preserves the target annotations and retrieval provenance.}
 \label{tab:s7_plasmodb}
 \begin{tabularx}{\textwidth}{l l l X}
 \toprule
@@ -119,6 +127,11 @@ PfClpR & \texttt{PF3D7\_1436800} & 4GM2, PfClpR(P61--E244) & 4GM2 is PfClpR, not
 \end{table}
 
 The stable identifiers were retrieved from PlasmoDB/VEuPathDB annotations on 12 August 2026 \citep{plasmodb_2026}; record-level permalinks and the retrieval date are preserved in the machine-readable CSV. The exact database release/build was not captured in the source snapshot and is therefore not treated as an inferred annotation version. Because the present study does not provide an independent multi-gene targetome or a prespecified parasite-proteome background, no GO or pathway-enrichment test was performed. This table therefore supplies biological identity and mutation provenance without converting docking scores into pathway-level evidence \citep{Trapotsi2022MoA}.
+
+% ============================================================================
+% Table S8: Cohort and estimand separation
+% ============================================================================
+\input{Table_S8_Cohort_Estimands.tex}
 
 \bibliographystyle{unsrtnat}
 \bibliography{Bibliography_Polypharmacology_MD_Validation}

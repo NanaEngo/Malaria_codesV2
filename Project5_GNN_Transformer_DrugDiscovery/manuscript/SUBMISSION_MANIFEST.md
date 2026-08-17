@@ -1,7 +1,7 @@
 # Submission Manifest — P5
 
 **Journal:** Journal of Cheminformatics (Springer)
-**Pages:** main 12 p. / cover 1 p. — no SM (none referenced) (verified 10/08/2026)
+**Pages:** main 13 p. / cover 1 p. — no SM (none referenced) (verified 12/08/2026)
 **Status:** SUBMISSION-READY — external MoleculeNet validation + audit v2 + leak-audited benchmarks
 **Generated:** 2026-08-10 09:30 UTC
 
@@ -9,10 +9,10 @@
 
 | File | Size (B) | SHA-256 |
 |---|---|---|
-| P5_manuscript_V2608.tex | 36825 | `9457948c9eba5949f6890ef997ea9785d9180baac31b1e1fab3e07ef8f2f4e6a` |
-| P5_manuscript_V2608.pdf | 753620 | `d15cb9922511941be488b1c58d32984ef10d0b66ae263d6d4407c4bb84714c7f` |
-| Cover_Letter_P5_JoC.tex | 4561 | `43592ce6c58a2d1c506fb458e420199993d8101b98b15afa56c93ee507d39aeb` |
-| Cover_Letter_P5_JoC.pdf | 80988 | `e5e57237230e245299d128a3ba4b24e80cb9f8f337af216a3757add848167345` |
+| P5_manuscript_V2608.tex | 36825 | `3c305d4d65f446019170ba07d252542b1265aefa6ed8466a2a8236cb1d7062ef` |
+| P5_manuscript_V2608.pdf | 762988 | `3801a6e2451a71dbf8730565088cf7136208f522c889bce197a514ca6d45d3a8` |
+| Cover_Letter_P5_JoC.tex | 4561 | `d642d2b730784f0325d11383f9668d361a6eb09ff87998caf6f93fa871dc036e` |
+| Cover_Letter_P5_JoC.pdf | 88930 | `b604300189b183a4d592bcf9b340315d488045fc5d771c83c2a6e02b17928e0e` |
 | Bibliography_P5.bib | 10346 | `36bf63f4824b2a998b11e36d34023368033dfec7197d70590a3d5c2c13ebf1e5` |
 
 ## Notes

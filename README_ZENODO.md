@@ -1,6 +1,6 @@
 # Zenodo deposit status
 
-**Updated:** 12 August 2026
+**Updated:** 13 August 2026
 **Status:** DOI reserved; upload pending. The repository does not claim that a Zenodo record is published.
 
 - Reserved DOI: `10.5281/zenodo.19608875`

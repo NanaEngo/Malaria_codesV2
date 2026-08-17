@@ -10,8 +10,10 @@
 #SBATCH --error=logs/p2_setc_qc_rrs_%j.err
 
 # No literal dependency is encoded here. Submit only after recording the actual
-# production/equilibration IDs, for example:
-#   sbatch --dependency=afterok:${PROD_JOB_ID} \
+# production/equilibration IDs. The downstream wrapper uses afterany deliberately:
+# it writes a terminal fail-closed manifest even when an independent production
+# task fails; it never promotes an incomplete cohort.
+#   sbatch --dependency=afterany:${PROD_JOB_ID} \
 #     --export=ALL,P2_PRODUCTION_JOB_ID=${PROD_JOB_ID},P2_EQUILIBRATION_JOB_ID=${EQ_JOB_ID},P2_SETC_COHORT_MODE=pilot \
 #     scripts/p2_setc_qc_and_md_rrs.sbatch
 #
@@ -25,6 +27,11 @@ conda activate malaria_md
 export PYTHONUNBUFFERED=1
 
 cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
+: "${P2_SETC_ROOT:?FATAL: P2_SETC_ROOT must be explicitly exported for QC/MD-RRS}"
+P2_SETC_ROOT="$(realpath -m "$P2_SETC_ROOT")"
+EXPECTED_ROOT="/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c_preparation_20260812_v1"
+[ "$P2_SETC_ROOT" = "$EXPECTED_ROOT" ] || { echo "FATAL: QC/MD-RRS root must be $EXPECTED_ROOT, got $P2_SETC_ROOT" >&2; exit 91; }
+export P2_SETC_ROOT
 RESULTS_DIR="results/set_c_md"
 SCRIPTS_DIR="scripts"
 TIMESTAMP=$(date -u +%Y%m%dT%H%M%SZ)
@@ -50,6 +57,7 @@ esac
 # Keep pilot and full QC artifacts disjoint: a later run must not overwrite
 # the QC input contract of the other cohort mode.
 QC_CSV="$RESULTS_DIR/set_c_trajectory_qc_${COHORT_MODE}.csv"
+export P2_SETC_QC_OUTPUT="$QC_CSV"
 MANIFEST="$RESULTS_DIR/post_production_manifest_${COHORT_MODE}.json"
 
 write_manifest() {

@@ -30,7 +30,7 @@ def generate_latex_table(output_path):
     # Table header
     latex_lines.append(r"\begin{table}[h!]")
     latex_lines.append(r"\centering")
-    latex_lines.append(r"\caption{ADMET profile summary for Set-C polypharmacology candidates. Since candidate-specific ADMET predictions were not available during manuscript preparation, this table reports population-level statistics from the parent chemical space (n=810 African-natural-product-inspired compounds from P1 library). CYP450 values represent predicted inhibition probabilities; hERG represents cardiotoxicity risk; SI represents selectivity index (antiparasitic activity vs mammalian toxicity). All 17 Set-C candidates exhibit favorable drug-likeness (100\% Lipinski/Veber compliance, mean QED 0.703), suggesting low-to-moderate ADMET risk. Individual candidate profiling via experimental or computational validation is recommended for lead optimization.}")
+    latex_lines.append(r"\caption{ADMET profile summary for Set-C polypharmacology candidates. Since candidate-specific ADMET predictions were not available during manuscript preparation, this table reports population-level statistics from the parent chemical space (n=810 African-natural-product-inspired compounds from P1 library). CYP450 values represent predicted inhibition probabilities; hERG represents cardiotoxicity risk; SI represents selectivity index (antiparasitic activity vs mammalian toxicity). All 17 Set-C candidates exhibit favorable drug-likeness (100\% Lipinski/Veber compliance, mean QED 0.703), these drug-likeness measures do not constitute candidate-specific ADMET predictions. Individual candidate profiling via experimental or computational validation is recommended for lead optimization.}")
     latex_lines.append(r"\label{tab:admet}")
     latex_lines.append(r"\small")
     latex_lines.append(r"\begin{tabular}{lcc}")
@@ -108,7 +108,7 @@ def main():
     print("    • CYP2D6: 17.0%")
     
     print("\n✓ Safety Profile:")
-    print("  - hERG cardiotoxicity risk: LOW (mean 11.7%, median 11.8%)")
+    print("  - hERG estimate: population-level mean 11.7%, median 11.8%; not candidate-specific")
     print("  - Selectivity index: 100% have SI > 10 (highly selective)")
     
     print("\n✓ Set-C Drug-Likeness (n=17, candidate-specific):")
@@ -128,7 +128,7 @@ def main():
     print("\n✓ Scientifically defensible because:")
     print("  - Set-C selected from same chemical space as P1 library")
     print("  - All 17 candidates have excellent drug-likeness (100% compliance)")
-    print("  - Population statistics provide reasonable proxy")
+    print("  - Population statistics are reported as context, not candidate-specific prediction")
     print("  - Table clearly states limitations and source")
     
     print("\n" + "=" * 70)

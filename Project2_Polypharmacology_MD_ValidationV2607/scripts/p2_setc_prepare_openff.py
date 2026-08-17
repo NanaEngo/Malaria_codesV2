@@ -53,7 +53,6 @@ from pathlib import Path
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 RESULTS_DIR = PROJECT_DIR / "results"
 SET_C_FILE = RESULTS_DIR / "candidate_selection" / "md_top20_candidates_polypharm.csv"
-SYSTEM_ROOT = RESULTS_DIR / "md_systems" / "set_c"
 V5_RRS = (
     Path("/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V5_CorrectedGrid")
     / "results" / "rrs_pilot"
@@ -916,9 +915,16 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--system", help="Single system name, e.g. PP-01_PfDHFR_WT")
     parser.add_argument("--all", action="store_true", help="Prepare the full 16-system pilot")
-    parser.add_argument("--output-root", type=Path, default=SYSTEM_ROOT)
+    parser.add_argument("--output-root", type=Path, default=None,
+                        help="Required versioned output root; legacy default is disabled")
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
+    if args.output_root is None:
+        parser.error("--output-root is required; refusing the legacy results/md_systems/set_c root")
+    args.output_root = args.output_root.expanduser().resolve()
+    expected_root = (PROJECT_DIR / "results" / "md_systems" / "set_c_preparation_20260812_v1").resolve()
+    if args.output_root != expected_root:
+        parser.error(f"--output-root must be {expected_root}, got {args.output_root}")
 
     validate_external_tools()
     smiles_map = load_set_c()

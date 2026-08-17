@@ -1,0 +1,30 @@
+{
+  "accession": "W7FI62",
+  "boundary": "isolated technical stability witness only; no ligand, pocket validation, mutant, RRS, Set-C, QC, or production-MD authorization",
+  "created_utc": "2026-08-11T15:40:31.997790+00:00",
+  "ensemble_manifest": {
+    "declared_model_sha256": "474206c1927ddcf831160e24f27084c4d3ac90a811bb09dcd08f7705a0825754",
+    "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_colabfold_gpu_ensemble_20260811/provenance_ensemble_completed.json",
+    "relative_model": "sp_W7FI62_CRT_PLAF8_Chloroquine_resistance_transporter_OS_Plasmodium_falciparum__isolate_7G8__OX_57266_GN_CRT_PE_1_SV_1_relaxed_rank_001_alphafold2_ptm_model_5_seed_001.pdb",
+    "sha256": "b285f7d136de44e24603300579e6259dc6f4835004a31963a319c83fc4c67976",
+    "slurm_job_id": "15241"
+  },
+  "input_model": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_colabfold_gpu_ensemble_20260811/sp_W7FI62_CRT_PLAF8_Chloroquine_resistance_transporter_OS_Plasmodium_falciparum__isolate_7G8__OX_57266_GN_CRT_PE_1_SV_1_relaxed_rank_001_alphafold2_ptm_model_5_seed_001.pdb",
+  "input_model_sha256": "474206c1927ddcf831160e24f27084c4d3ac90a811bb09dcd08f7705a0825754",
+  "model_semantics": "complete AlphaFold2-PTM prediction; not experimental PfCRT structure",
+  "protocol": {
+    "engine": "OpenMM",
+    "ionic_strength_m": 0.15,
+    "minimization_max_iterations": 5000,
+    "protein_force_field": "amber14-all.xml",
+    "solvent_padding_nm": 1.0,
+    "steps": 10000,
+    "temperature_k": 310.15,
+    "timestep_fs": 2.0,
+    "water_model": "amber14/tip3p.xml"
+  },
+  "reference_fasta": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_sequence_reference_20260811/W7FI62.fasta",
+  "reference_fasta_sha256": "a0750941dc7de0997ea4148ad642e672f3787f291dd52538a14889a97a0d8beb",
+  "schema_version": 1,
+  "status": "TECHNICAL_MODEL_STABILITY_REQUESTED"
+}

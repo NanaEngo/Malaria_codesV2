@@ -9,9 +9,10 @@
 \sisetup{separate-uncertainty=true, range-phrase=--}
 \DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
 \DeclareSIUnit\angstrom{\text{\AA}}
-\onehalfspacing
+\singlespacing
 
 \begin{document}
+\emergencystretch=2em
 
 \begin{flushleft}
 \textbf{Myke-Vital Temgoua Sao} \\
@@ -32,11 +33,11 @@ American Chemical Society
 
 \noindent Dear Prof.\ Merz,
 
-We submit our manuscript \textbf{``Resistance-Aware Computational Analysis of Antimalarial Leads from African Natural Products''} for consideration as an Article in \textit{JCIM}.
+We submit our manuscript \textbf{``Resistance-Aware Polypharmacology of Antimalarial Leads from African Natural Products: Docking, Network Scoring, and Targeted Molecular Dynamics''} for consideration as an Article in \textit{JCIM}.
 
-This work presents a resistance-aware computational analysis that combines docking-based RRS, ACSI, and PNS profiling of 17 set-C polypharmacology candidates with a separate targeted MD check of four named parent-study consensus complexes (10 ns each; 40 ns total). The 17 set-C candidates were evaluated against six clinically relevant mutations (PfDHFR-N51I, C59R, S108N, I164L; PfCRT-K76T, K76A) by docking; they were not subjected to the parent-study production MD. Only PfCRT--214 yielded an interpretable MM-GBSA endpoint estimate, while the other parent-study systems were dissociated or conversion-excluded. External Tartarus analysis reports orthogonality between MPO and raw docking affinity (Spearman $\rho \approx 0$, $p = 0.09$), not independence among MPO components.
+This work tests a layered, resistance-aware prioritisation strategy rather than assigning a systems-level mechanism of action from docking alone. The 17 Set-C candidates were evaluated by docking-derived RRS across six resistance states, with ACSI and PNS providing complementary chemical-space and network-ranking dimensions; four separate parent-study complexes underwent targeted wild-type MD (\SI{10}{\nano\second} each; \SI{40}{\nano\second} total). Six candidates were Class~A*, five Class~B, five Class~C, and one Class~D under the per-target RRS definition. Only PfCRT--214 yielded an interpretable MM-GBSA estimate; the other parent-study systems were dissociated or conversion-excluded. Tartarus analysis provided no evidence of a composite MPO--affinity association, and this null result is interpreted as separation of ranking dimensions rather than proof of statistical independence.
 
-The code, compact scoring outputs, and source-data manifests are available in the GitHub repository under an open-source licence. Large parent-study trajectories are identified with their analysis boundaries and are not used beyond the systems and checksums that can be verified. Statistical robustness is addressed through confidence intervals and Bonferroni-corrected hypothesis testing.
+The code, compact scoring outputs, and source-data manifests are available in the GitHub repository under an open-source licence. Large parent-study trajectories are identified with their analysis boundaries and are not used beyond the systems and checksums that can be verified. Statistical interpretation is bounded by effect sizes, exact $p$-values, and pre-specified Bonferroni correction; incomplete Set-C MD-RRS is not presented as a result.
 
 \noindent\textbf{Suggested reviewers.}
 \begin{enumerate}

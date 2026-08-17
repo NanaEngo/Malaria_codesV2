@@ -1,0 +1,65 @@
+{
+  "schema_version": 2,
+  "status": "PASS",
+  "audited_utc": "2026-08-12T17:26:20.522769+00:00",
+  "system": "PP-02_PfDHFR_N51I",
+  "n_atoms": 316120,
+  "molecule_entries": [
+    [
+      "Protein_chain_A",
+      1
+    ],
+    [
+      "Protein_chain_A2",
+      1
+    ],
+    [
+      "Protein_chain_A3",
+      1
+    ],
+    [
+      "Protein_chain_B",
+      1
+    ],
+    [
+      "Protein_chain_B2",
+      1
+    ],
+    [
+      "Protein_chain_B3",
+      1
+    ],
+    [
+      "MOL0",
+      1
+    ],
+    [
+      "SOL",
+      99126
+    ],
+    [
+      "NA",
+      293
+    ],
+    [
+      "CL",
+      302
+    ]
+  ],
+  "ligand_resname": "MOL0",
+  "ligand_atom_count": 56,
+  "nonphysical_overlap_threshold_A": 0.5,
+  "grompp_maxwarn": 0,
+  "grompp": "PASS",
+  "input_sha256": {
+    "complex.gro": "131b961d8863f81e61021b3c0e590723269cc7f50ddcdc667adc74f7c894cd4d",
+    "topol.top": "2587a4985da77eb75672d01bdf1b8674b5bc76580b36375b9e7bedd699ccbcbb",
+    "ligand_openff.itp": "84c821cbab1cc2048b098f301e94fa51c9ff90f37a0482a91ba743148965ad76",
+    "forcefield_manifest.json": "428124b8d94520b35089e2a88f60ec4797eb7777df4c829511e5e1d3d60742f5"
+  },
+  "toolchain": {
+    "python": "/home/nanaengo/miniforge3/envs/malaria_md/bin/python",
+    "gromacs": "/home/nanaengo/miniforge3/envs/malaria_md/bin/gmx_mpi",
+    "openbabel": "/home/nanaengo/miniforge3/envs/malaria_md/bin/obabel"
+  }
+}

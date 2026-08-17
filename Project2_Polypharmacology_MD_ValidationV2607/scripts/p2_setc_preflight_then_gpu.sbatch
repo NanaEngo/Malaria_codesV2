@@ -14,11 +14,27 @@
 # It never promotes a partial panel and never launches GPU production when
 # the exact 16-system contract is not READY.
 set -euo pipefail
+
+# Validate lineage inputs before Conda/GROMACS initialization.
+: "${P2_EQUILIBRATION_JOB_ID:?FATAL: gate requires the actual equilibration job ID}"
+[[ "$P2_EQUILIBRATION_JOB_ID" =~ ^[0-9]+$ ]] || {
+  echo "FAIL-CLOSED: invalid P2_EQUILIBRATION_JOB_ID=$P2_EQUILIBRATION_JOB_ID" >&2
+  exit 22
+}
+
+# The malaria_md activation scripts source GROMACS' GMXRC, which references
+# optional shell variables that are not nounset-safe. Keep errexit/pipefail,
+# but suspend nounset only for this controlled environment initialization.
+set +u
 source /home/nanaengo/miniforge3/etc/profile.d/conda.sh
 conda activate malaria_md
+set -u
 
 PROJECT_DIR=/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607
-ROOT="${P2_SETC_ROOT:-$PROJECT_DIR/results/md_systems/set_c_preparation_20260812_v1}"
+: "${P2_SETC_ROOT:?FATAL: P2_SETC_ROOT must be explicitly exported}"
+ROOT="$(realpath -m "$P2_SETC_ROOT")"
+EXPECTED_ROOT="$PROJECT_DIR/results/md_systems/set_c_preparation_20260812_v1"
+[ "$ROOT" = "$EXPECTED_ROOT" ] || { echo "FAIL-CLOSED: gate root must be $EXPECTED_ROOT, got $ROOT" >&2; exit 91; }
 PRE_OUT="$PROJECT_DIR/results/set_c_md/preflight_after_equilibration_${SLURM_JOB_ID}"
 mkdir -p "$PRE_OUT" "$PROJECT_DIR/logs"
 cd "$PROJECT_DIR"
@@ -77,8 +93,26 @@ if [ "$STATUS" != "READY_FOR_AUTHORIZED_EXECUTION" ] || [ "$READY" != "16" ] || 
   exit 21
 fi
 
+PREFLIGHT_SHA256=$(sha256sum "$MANIFEST" | awk '{print $1}')
+GATE_PROVENANCE="$PRE_OUT/gate_provenance.json"
+python - "$GATE_PROVENANCE" "$MANIFEST" "$PREFLIGHT_SHA256" <<'PY'
+import json, os, sys
+out, manifest, manifest_sha = sys.argv[1:]
+with open(out, "w") as fh:
+    json.dump({
+        "gate_job_id": os.environ["SLURM_JOB_ID"],
+        "equilibration_job_id": os.environ.get("P2_EQUILIBRATION_JOB_ID", "UNKNOWN"),
+        "root": os.environ["P2_SETC_ROOT"],
+        "preflight_manifest": manifest,
+        "preflight_manifest_sha256": manifest_sha,
+        "status": "READY_FOR_AUTHORIZED_EXECUTION",
+        "ready_system_count": 16,
+        "required_system_count": 16,
+    }, fh, indent=2)
+PY
+
 PROD=$(sbatch --parsable \
-  --export=ALL,P2_SETC_ROOT="$ROOT",P2_GATE_JOB_ID="$SLURM_JOB_ID",P2_EQUILIBRATION_JOB_ID="${P2_EQUILIBRATION_JOB_ID:-UNKNOWN}",P2_PREFLIGHT_MANIFEST="$MANIFEST" \
+  --export=ALL,P2_SETC_ROOT="$ROOT",P2_GATE_JOB_ID="$SLURM_JOB_ID",P2_EQUILIBRATION_JOB_ID="${P2_EQUILIBRATION_JOB_ID:-UNKNOWN}",P2_PREFLIGHT_MANIFEST="$MANIFEST",P2_GATE_PROVENANCE="$GATE_PROVENANCE" \
   scripts/p2_setc_gpu_production.sbatch)
 
 echo "PREFLIGHT_STATUS=PASS"

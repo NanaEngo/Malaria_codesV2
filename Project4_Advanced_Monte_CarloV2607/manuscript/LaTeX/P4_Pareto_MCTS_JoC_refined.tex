@@ -142,7 +142,7 @@ Structural diversity of the generated molecule sets is analysed in the Supplemen
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.98\textwidth]{Graphics/p4_evidence_overview.pdf}
+  \includegraphics[width=0.98\textwidth]{p4_evidence_overview.pdf}
   \caption{Integrated evidence overview generated directly from the source data. (A) Paired per-seed differences between MCTS and random search under the v12 public-activity-augmented scalar reward; the horizontal band is the 95\% confidence interval for the mean difference. (B) The locked pre-activity Pareto front, with the RRS-informed proxy encoded by colour and the PNS-informed proxy by marker shape; SA is constant. (C) Observed high-minus-low main effects from the factorial ablation; these relative effects use a different oracle configuration and are not comparable to the main benchmark's absolute rewards.}
   \label{fig:overview}
 \end{figure}
@@ -168,7 +168,7 @@ We then examined the candidates under a joint objective vector comprising MPO, a
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.86\textwidth]{Graphics/rrs_pns_profile.pdf}
+  \includegraphics[width=0.86\textwidth]{rrs_pns_profile.pdf}
   \caption{Domain-specific objective readout from the common pre-activity oracle applied to recorded best-in-seed molecules. (A) RRS distributions, with individual molecules shown and the valid row count reported for each method. (B) Fraction of valid rows with PNS = 1, the maximum value of the normalized three-column docking proxy; intermediate PNS values are retained in the source data. MCTS is shown descriptively against re-scored scalar baselines; the unequal counts and the single deterministic greedy row preclude an inferential method comparison. The canonical four-point MCTS front itself contains three PNS = 1 solutions and spans RRS = \num{0.141}--\num{0.223}.}
   \label{fig:rrs_pns}
 \end{figure}

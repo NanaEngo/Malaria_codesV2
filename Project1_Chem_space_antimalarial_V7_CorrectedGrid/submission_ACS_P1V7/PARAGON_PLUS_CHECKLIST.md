@@ -1,6 +1,6 @@
 # Checklist Paragon Plus — P1 V7 pour JCIM
 
-**Version** 1.0 — 10 août 2026
+**Version** 1.1 — 12 août 2026
 **Document cible** : `P1_V7_Integrated_Polypharmacology_RRS` (25 p. main, 17 p. SM)
 **URL** : https://acs.manuscriptcentral.com/ (sélectionner JCIM)
 
@@ -97,7 +97,7 @@ ACS exige la saisie manuelle de chaque auteur dans Paragon Plus (même si le .te
 
 | # | Champ | Valeur |
 |---|-------|--------|
-| 6.1 | **Funding sources** | Aucun financement spécifique déclaré (le manuscrit dit « no competing financial interest »). Si applicable, saisir l'organisme et le numéro de subvention. |
+| 6.1 | **Funding sources** | **No external funding was received for this work.** Saisir explicitement « No external funding » dans le champ Funding sources ; ne pas confondre ce champ avec la déclaration séparée de competing interests. |
 | 6.2 | **Cover letter comments** (optionnel) | Texte libre résumant la contribution (déjà dans la cover letter PDF) |
 | 6.3 | **Special issue** (si applicable) | Non |
 | 6.4 | **Has this manuscript been submitted before?** | Non |

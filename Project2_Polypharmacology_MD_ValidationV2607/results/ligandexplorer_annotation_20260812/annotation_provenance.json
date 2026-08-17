@@ -1,0 +1,210 @@
+{
+  "analysis_role": "STRUCTURAL_LIGAND_ANNOTATION_ONLY",
+  "artifact_audit": {
+    "all_pdbs_have_valid_artifacts": false,
+    "per_pdb": {
+      "2F6I": {
+        "artifact_status": "NO_CLASSIFICATION_ARTIFACT",
+        "invalid_json": [],
+        "json_count": 0,
+        "target": "PfClpP",
+        "valid_artifacts": [],
+        "valid_json_count": 0
+      },
+      "6UKJ": {
+        "artifact_status": "LIGAND_BOX_ARTIFACT_PRESENT",
+        "invalid_json": [],
+        "json_count": 2,
+        "target": "PfCRT",
+        "valid_artifacts": [
+          {
+            "file": "6UKJ/Ligand_organic_covalent_Y01_A_501.json",
+            "sha256": "6978c79618c61d787cff59a9d92567987d7a840adc0999bfb4727ac43a7937e6"
+          },
+          {
+            "file": "6UKJ/Ligand_peptide_covalent_VAL_A_393.json",
+            "sha256": "9401bbaa9eedd58b309e108cb6a15d17c663c3c25ea4df782fc6906cbe2524da"
+          }
+        ],
+        "valid_json_count": 2
+      },
+      "7F3Y": {
+        "artifact_status": "LIGAND_BOX_ARTIFACT_PRESENT",
+        "invalid_json": [],
+        "json_count": 4,
+        "target": "PfDHFR",
+        "valid_artifacts": [
+          {
+            "file": "7F3Y/Ligand_DNA_UMP_B_703.json",
+            "sha256": "693039e2eddd78e9db914dd0b7de7207fa38a946da677911b037197e144a4145"
+          },
+          {
+            "file": "7F3Y/Ligand_RNA_NDP_B_701.json",
+            "sha256": "01ca0551432257360e82d408ce37a33a9aa1f515bbff4374498a1ddfd0243f5c"
+          },
+          {
+            "file": "7F3Y/Ligand_peptide_MTX_A_704.json",
+            "sha256": "3036a12295b4c6d7ba12134e9be70676c532a1446830cca61e8f26c20e03a053"
+          },
+          {
+            "file": "7F3Y/Ligand_peptide_MTX_B_702.json",
+            "sha256": "a496a82a4ed0c0cf393b9490b7e641a1f4da2c3079d5fa4b2efb0c50e3ae8764"
+          }
+        ],
+        "valid_json_count": 4
+      },
+      "9N10": {
+        "artifact_status": "NO_CLASSIFICATION_ARTIFACT",
+        "invalid_json": [],
+        "json_count": 0,
+        "target": "PfATP4",
+        "valid_artifacts": [],
+        "valid_json_count": 0
+      }
+    }
+  },
+  "claim_boundary": {
+    "can_support": "annotation of ligands present in receptor PDB structures and structural relevance review",
+    "cannot_support": [
+      "IC50/EC50 or biological activity",
+      "docking affinity or docking-RRS",
+      "MD stability or MD-RRS",
+      "experimental target engagement"
+    ]
+  },
+  "command": [
+    "/home/nanaengo/ligandexplorer/venv/bin/ligandexplorer",
+    "-i",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/ligandexplorer_annotation_20260812/p2_receptor_panel.zip",
+    "-o",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/ligandexplorer_annotation_20260812/ligandexplorer_output",
+    "--backend",
+    "gnn",
+    "--device",
+    "cpu"
+  ],
+  "created_utc": "2026-08-12T08:52:03.136452+00:00",
+  "excluded_receptor": {
+    "filename": "4GM2.pdb",
+    "reason": "PfClpR paralog, not active PfClpP; excluded from the P2 PfClpP annotation panel"
+  },
+  "finished_utc": "2026-08-12T08:55:07.935793+00:00",
+  "input_archive": {
+    "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/ligandexplorer_annotation_20260812/p2_receptor_panel.zip",
+    "sha256": "c92562f47692270fbad892751284499769188c0ccb49ff9d8bbf178af5534020",
+    "size_bytes": 683370
+  },
+  "input_integrity_audit": {
+    "archive": {
+      "current_sha256": "c92562f47692270fbad892751284499769188c0ccb49ff9d8bbf178af5534020",
+      "exists": true,
+      "hash_match": true,
+      "recorded_sha256": "c92562f47692270fbad892751284499769188c0ccb49ff9d8bbf178af5534020"
+    },
+    "git_commit": {
+      "current": "d47eea0d033bb2127ee6836445554881c59edc8e",
+      "match": true,
+      "recorded": "d47eea0d033bb2127ee6836445554881c59edc8e"
+    },
+    "panel_valid": true,
+    "pdb": {
+      "2F6I": {
+        "current_sha256": "12d02a92e72ab52267fcfb2f7fad2520271b7b311d7f538c16f6395d9f9f62d6",
+        "exists": true,
+        "hash_match": true,
+        "recorded_sha256": "12d02a92e72ab52267fcfb2f7fad2520271b7b311d7f538c16f6395d9f9f62d6"
+      },
+      "6UKJ": {
+        "current_sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562",
+        "exists": true,
+        "hash_match": true,
+        "recorded_sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562"
+      },
+      "7F3Y": {
+        "current_sha256": "f630faa7915c4da1db22c9301cc5bbb9dee83558ffe5b4bbe2520f3931701ef4",
+        "exists": true,
+        "hash_match": true,
+        "recorded_sha256": "f630faa7915c4da1db22c9301cc5bbb9dee83558ffe5b4bbe2520f3931701ef4"
+      },
+      "9N10": {
+        "current_sha256": "102e55cefea0f918cb003adbdacc2f27651021788c1aebb0a40c020069f75359",
+        "exists": true,
+        "hash_match": true,
+        "recorded_sha256": "102e55cefea0f918cb003adbdacc2f27651021788c1aebb0a40c020069f75359"
+      }
+    }
+  },
+  "ligandexplorer": {
+    "backend": "gnn",
+    "binary": "/home/nanaengo/ligandexplorer/venv/bin/ligandexplorer",
+    "device": "cpu",
+    "git_commit": "d47eea0d033bb2127ee6836445554881c59edc8e",
+    "help_first_line": "usage: ligandexplorer [-h] -o OUTPUT_DIR -i INPUT_ZIP [-f FIX_PDB_FILE]",
+    "help_sha256": "03f96b113b8f5aeac2e1bdc77d5b39eb1a205ca2b7462672a668e422727f95e7"
+  },
+  "output_files": [
+    "ligandexplorer_output/2F6I/2F6I.pdb",
+    "ligandexplorer_output/2F6I/water.pdb",
+    "ligandexplorer_output/6UKJ/6UKJ.pdb",
+    "ligandexplorer_output/6UKJ/Ligand_organic_covalent_Y01_A_501.json",
+    "ligandexplorer_output/6UKJ/Ligand_organic_covalent_Y01_A_501.pdb",
+    "ligandexplorer_output/6UKJ/Ligand_peptide_covalent_VAL_A_393.json",
+    "ligandexplorer_output/6UKJ/Ligand_peptide_covalent_VAL_A_393.pdb",
+    "ligandexplorer_output/6UKJ/protein.pdb",
+    "ligandexplorer_output/6UKJ/water.pdb",
+    "ligandexplorer_output/7F3Y/7F3Y.pdb",
+    "ligandexplorer_output/7F3Y/Ligand_DNA_UMP_B_703.json",
+    "ligandexplorer_output/7F3Y/Ligand_DNA_UMP_B_703.pdb",
+    "ligandexplorer_output/7F3Y/Ligand_RNA_NDP_B_701.json",
+    "ligandexplorer_output/7F3Y/Ligand_RNA_NDP_B_701.pdb",
+    "ligandexplorer_output/7F3Y/Ligand_peptide_MTX_A_704.json",
+    "ligandexplorer_output/7F3Y/Ligand_peptide_MTX_A_704.pdb",
+    "ligandexplorer_output/7F3Y/Ligand_peptide_MTX_B_702.json",
+    "ligandexplorer_output/7F3Y/Ligand_peptide_MTX_B_702.pdb",
+    "ligandexplorer_output/7F3Y/Other_carbohydrate_GOL_B_704.pdb",
+    "ligandexplorer_output/7F3Y/Other_organic_GOL_A_705.pdb",
+    "ligandexplorer_output/7F3Y/protein.pdb",
+    "ligandexplorer_output/7F3Y/water.pdb",
+    "ligandexplorer_output/9N10/9N10.pdb",
+    "ligandexplorer_output/9N10/water.pdb"
+  ],
+  "receptor_panel": [
+    {
+      "filename": "2F6I.pdb",
+      "pdb_id": "2F6I",
+      "sha256": "12d02a92e72ab52267fcfb2f7fad2520271b7b311d7f538c16f6395d9f9f62d6",
+      "size_bytes": 917487,
+      "source": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/2F6I.pdb",
+      "target": "PfClpP"
+    },
+    {
+      "filename": "7F3Y.pdb",
+      "pdb_id": "7F3Y",
+      "sha256": "f630faa7915c4da1db22c9301cc5bbb9dee83558ffe5b4bbe2520f3931701ef4",
+      "size_bytes": 875853,
+      "source": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/7F3Y.pdb",
+      "target": "PfDHFR"
+    },
+    {
+      "filename": "6UKJ.pdb",
+      "pdb_id": "6UKJ",
+      "sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562",
+      "size_bytes": 438453,
+      "source": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/6UKJ.pdb",
+      "target": "PfCRT"
+    },
+    {
+      "filename": "9N10.pdb",
+      "pdb_id": "9N10",
+      "sha256": "102e55cefea0f918cb003adbdacc2f27651021788c1aebb0a40c020069f75359",
+      "size_bytes": 738396,
+      "source": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/9N10.pdb",
+      "target": "PfATP4"
+    }
+  ],
+  "return_code": 0,
+  "schema_version": 1,
+  "status": "COMPLETED_PARTIAL_REQUIRES_MANUAL_REVIEW",
+  "stderr_sha256": "fd0f340699e969b634281f571f659dee8ad5297a36fdf25718b54b83de327ca6",
+  "stdout_sha256": "3c988b9dbe81c8a6df712ce4b7de8f81684e4ef3a41ff11e3e51f080d8834694"
+}
