@@ -326,3 +326,42 @@ and zero true LINCS/NaN/fatal markers before any variant extension is considered
 
 Current scientific classification: `TECHNICAL_TOPOLOGY_AND_STABILITY_EVIDENCE_ONLY`;
 `BIOLOGICAL_MODEL_VALIDATION = PENDING`.
+
+## Closing section — 18 Aug 2026: both chains resolved
+
+### Set-C pilot chain (production → QC → MD-RRS) — COMPLETE
+
+- Production `15320` 16/16 (10 ns each, GPU A4000 `%1`); trajectory QC 16/16
+  PASS; pilot MD-RRS `COMPUTED_WITH_COHORT_CONTRACT` (job `15386` after two
+  fixed failures: 15384 GMXRC `set +u`, 15385 MDAnalysis `timespan`).
+- Pilot result: PP-01/PP-02 MD_RRS = 100.0 (class A), saturated because
+  `bound_fraction=1.000` for all 16 systems — ceiling, not affinity-equality
+  proof. Full-cohort mode (17 candidates/136 systems) remains NOT_COMPUTED by
+  design.
+- See `setc_post_production_runbook.md` closing section and
+  `setc_md_rrs_execution_runbook.md` status.
+
+### PfCRT 114–122 reconstruction — BIOLOGICAL gate now PASSED (technical)
+
+The former internal COOH/NH2 split at the 114–122 gap (the reason for the
+`BIOLOGICAL_MODEL_VALIDATION = PENDING` verdict above) has been resolved by a
+restrained OpenMM junction-repair protocol, then validated under the canonical
+GROMACS policy:
+
+1. `scripts/p2_pfcrt_junction_repair_openmm.py` — rigid Kabsch graft could not
+   satisfy both junctions (C(113)-N(114): 0.85–3.26 Å, C(122)-N(123): 3.5–5.5
+   Å; 0/16 passing). OpenMM position restraints on the core + harmonic C-N
+   restraints at 1.33 Å + L-BFGS + 10 K relaxation → **15/15 unique
+   PASS_GEOMETRY** (junction bonds 1.32–1.37 Å, loop sequence NKKGNSKER
+   unchanged, no core clash).
+2. Selected `candidate_model_03_seed_001` (loop pLDDT 55.2).
+3. `scripts/p2_pfcrt_canonical_md_witness.sh` — canonical CHARMM36m/TIP3P
+   pdb2gmx: **1 continuous chain** (VAL47 NH2 → ASN405 COOH, no internal
+   split), 359 residues; grompp RC=0; solvation + ions; EM + NVT completed
+   (see `results/md_systems/pfcrt_md_witness_20260818/`).
+
+Updated scientific classification (18 Aug): `GEOMETRY_REPAIR_WITNESS_ONLY` +
+`CANONICAL_POLICY_TOPOLOGY_CHECK_PASS` — the loop is geometrically sound and
+processable under the P2 policy. This remains a **technical** validation:
+no production MD on the repaired PfCRT, no binding/affinity/RRS, no Set-C
+promotion from the reconstruction.

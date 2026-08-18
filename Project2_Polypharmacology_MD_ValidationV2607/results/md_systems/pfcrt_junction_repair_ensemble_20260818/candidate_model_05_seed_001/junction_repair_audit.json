@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "status": "PASS_GEOMETRY",
+  "created_utc": "2026-08-18T21:58:22.281443+00:00",
+  "scientific_interpretation": "GEOMETRY_REPAIR_WITNESS_ONLY",
+  "boundary": "isolated junction repair; no Set-C, no binding/affinity, no RRS, no mutation study",
+  "input_grafted": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_colabfold_gpu_ensemble_grafted_20260811/candidate_model_05_seed_001.pdb",
+  "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_05_seed_001/repaired.pdb",
+  "audit": {
+    "pass": true,
+    "sequence_114_122": "NKKGNSKER",
+    "finite_coordinates": true,
+    "peptide_bond_distances_A": {
+      "113-114": 1.3610973413308098,
+      "114-115": 1.3440496588283184,
+      "115-116": 1.3454200870393909,
+      "116-117": 1.3411478461001431,
+      "117-118": 1.33396457426423,
+      "118-119": 1.340669637231799,
+      "119-120": 1.3420348187227706,
+      "120-121": 1.3364947474452926,
+      "121-122": 1.3397768487411301,
+      "122-123": 1.3522081339739966
+    },
+    "peptide_bonds_plausible": true,
+    "minimum_loop_to_core_heavy_atom_distance_A": 2.7918164912041457,
+    "minimum_loop_to_core_pair": [
+      121,
+      "O",
+      123,
+      "N"
+    ],
+    "core_clash_screen_pass": true,
+    "loop_plddt_mean": 25.0523178807947,
+    "loop_plddt_mean_heavy_only": 51.82054794520549,
+    "input_grafted_sha256": "5f95a05ed5da0efa72ecd4f5794a944f558b881e9a56a16ef223bd9ff4f32517",
+    "reference_sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562",
+    "prediction_sha256": "27c68cc34c575c8c95a12cca3517e01be55702774d3f86bbb265e28e5cae1734",
+    "energy_before_kj_mol": 4502806408.631119,
+    "energy_after_minimize_kj_mol": -39300.778228759766,
+    "energy_after_relax_kj_mol": -38917.91928100586,
+    "junction_pairs_atom_indices": [
+      [
+        1138,
+        1140
+      ],
+      [
+        1271,
+        1291
+      ]
+    ],
+    "core_atom_count": 2851,
+    "n_atoms": 5936,
+    "platform": "CUDA",
+    "relax_temperature_k": 10.0,
+    "relax_steps": 2000,
+    "relax_dt_ps": 0.001
+  }
+}

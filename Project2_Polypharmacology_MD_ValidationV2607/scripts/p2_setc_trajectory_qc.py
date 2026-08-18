@@ -194,7 +194,12 @@ def compute_bound_fraction(tpr: Path, xtc: Path, bound_angstrom: float, max_fram
         raise RuntimeError(f"selection failed: protein={len(protein)} ligand={len(ligand)}")
 
     min_dists = []
+    first_time_ps: float | None = None
+    last_time_ps = 0.0
     for ts in universe.trajectory:
+        if first_time_ps is None:
+            first_time_ps = ts.time
+        last_time_ps = ts.time
         box = ts.dimensions
         dists = distance_array(ligand.positions, protein.positions, box=box)
         min_dists.append(dists.min())
@@ -202,7 +207,11 @@ def compute_bound_fraction(tpr: Path, xtc: Path, bound_angstrom: float, max_fram
             break
     min_dists = np.array(min_dists)
     n_frames = len(min_dists)
-    duration_ns = universe.trajectory.timespan / 1000.0 if n_frames > 1 else 0.0
+    # MDAnalysis >= 2.6 removed the reader-level ``timespan`` attribute;
+    # compute the sampled span from the first/last frame times instead.
+    duration_ns = (
+        ((last_time_ps - first_time_ps) / 1000.0) if n_frames > 1 and first_time_ps is not None else 0.0
+    )
     bound_fraction = float(np.mean(min_dists < bound_angstrom)) if n_frames else 0.0
     return {
         "n_frames": n_frames,

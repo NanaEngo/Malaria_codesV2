@@ -22,8 +22,12 @@
 # production contract has been prepared and independently verified.
 
 set -euo pipefail
+# GMXRC from malaria_md contains optional variables that are not nounset-safe;
+# disable nounset only around activation, as in the production launcher.
+set +u
 source /home/nanaengo/miniforge3/etc/profile.d/conda.sh
 conda activate malaria_md
+set -u
 export PYTHONUNBUFFERED=1
 
 cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607

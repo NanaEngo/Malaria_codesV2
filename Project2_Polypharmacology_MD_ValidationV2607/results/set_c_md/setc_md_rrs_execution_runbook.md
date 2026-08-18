@@ -1,8 +1,8 @@
 # Set-C MD → MD-RRS execution runbook
 
-**Updated:** 13 August 2026
+**Updated:** 18 August 2026
 **Scope:** candidate-specific Set-C trajectories only; parent-study MD systems are excluded.
-**Current status:** CPU witness chain `15254 → 15259 → 15260` was stopped and is non-canonical. GPU benchmark `15262` passed the mixed-offload protocol at 19.816 ns/day; clean GPU witness `15270` completed one 10-ns `PP-01_PfDHFR_WT` trajectory at 28.169 ns/day without fatal/LINCS/NaN indicators. **GPU verdict: `GPU_PATH_STABLE_FOR_SERIAL_PRODUCTION`, not cohort validation.** The 16-system pilot equilibration `15288` is complete with 16/16 terminal outputs. Gate `15319` passed the exact preflight. Production arrays `15308`, `15313`, and `15317` were stopped fail-closed after launcher audits; production `15320` is now active under `%1`. No Set-C MD-RRS result is reportable and `md_rrs_status=NOT_COMPUTED`. Wrong-root equilibration `15275`, gates `15293`/`15307`, and stopped production arrays are retained only as non-canonical provenance.
+**Current status:** **Pilot contract COMPLETE (18 Aug 2026).** Production `15320` finished 16/16 (10 ns each, GPU A4000 `%1` throttle). Post-production wrapper `15386` ran trajectory QC → MD-RRS in pilot mode: **16/16 QC PASS** (rule `setc_p2_minheavy_5A_ge10percent_v1`), `md_rrs_status=COMPUTED_WITH_COHORT_CONTRACT`, manifest `post_production_manifest_pilot.json` (schema v3). Outputs: `set_c_trajectory_qc_pilot.csv`, `md_rrs_pilot_PP01_PP02.csv`. MD-RRS = 100.0 (class A) for PP-01 and PP-02 — saturated because `bound_fraction=1.000` for all 16 systems including mutants; the 10-ns window cannot resolve partial affinity loss, so class A is a ceiling, not an affinity-equality proof. Full-cohort (`full` mode, 17 candidates/136 systems) remains `NOT_COMPUTED` by design: that production contract has not been prepared. GPU witness `15270` and benchmark `15262` are stability evidence only. Wrong-root equilibration `15275`, gates `15293`/`15307`, stopped production arrays `15308`/`15313`/`15317`, and failed wrapper attempts `15384`/`15385` are retained as non-canonical provenance.
 
 ## Cohort contracts
 
@@ -34,7 +34,7 @@ Preparation job `15274` is retained as terminal provenance; its versioned root `
 
 The first equilibration attempt `15275` used the wrong legacy root and was cancelled; its 69-file hash inventory is retained at `results/set_c_md/noncanonical_eq_root_snapshot_20260812T194605Z.json`. It is non-canonical and must not enter QC or manuscript analysis. Corrected equilibration **15288** completed with explicit `P2_SETC_ROOT=results/md_systems/set_c_preparation_20260812_v1`: all 16 tasks finalized `npt.gro`/`npt.cpt` with `rc=0`.
 
-Gate **15312** passed the exact `16/16` `READY_FOR_AUTHORIZED_EXECUTION` preflight. Production `15313` was stopped after `grompp` passed but GROMACS 2025.4 rejected the unsupported `mdrun -seed` option. The launcher has been corrected; production `15317` was also stopped after a 1000-fold ns-to-step conversion error was detected. The final MDP now requests exactly 5,000,000 steps for 10 ns, and a 10-step GPU smoke test passes. Final gate `15319` passed 16/16 and production `15320` is active with `%1` serialization; task 0 confirms the exact 10-ns protocol and GPU offload without fatal/LINCS errors. `md_rrs_status=NOT_COMPUTED` until all 16 trajectories pass QC.
+Gate **15312** passed the exact `16/16` `READY_FOR_AUTHORIZED_EXECUTION` preflight. Production `15313` was stopped after `grompp` passed but GROMACS 2025.4 rejected the unsupported `mdrun -seed` option. The launcher has been corrected; production `15317` was also stopped after a 1000-fold ns-to-step conversion error was detected. The final MDP now requests exactly 5,000,000 steps for 10 ns, and a 10-step GPU smoke test passes. Final gate `15319` passed 16/16 and production `15320` is active with `%1` serialization; task 0 confirms the exact 10-ns protocol and GPU offload without fatal/LINCS errors. `md_rrs_status=NOT_COMPUTED` until all 16 trajectories pass QC. *(Historical 13-Aug status: since superseded — production `15320` finished 16/16, QC 16/16 PASS and pilot MD-RRS `COMPUTED_WITH_COHORT_CONTRACT` on 18 Aug; see Current status above.)*
 
 ## Preconditions
 
@@ -93,6 +93,47 @@ Trajectory QC and MD-RRS must agree on one declared `analysis_rule_id`, one dura
 - MD-RRS remains separate from docking-RRS. It is a trajectory-derived bound-fraction ratio, not a replacement for the docking metric.
 - A failed or incomplete contract produces a terminal failed/pending manifest and no manuscript result.
 - The GPU witness and the 15262 benchmark are stability evidence only; they are not substitutes for the 16-system pilot contract.
+
+## Discriminative MD-RRS (multi-threshold) — 18 Aug 2026
+
+`results/set_c_md/md_rrs_discriminative_manifest.json` + `set_c_trajectory_metrics_pilot.csv` + `md_rrs_discriminative_pilot.csv`
+
+Re-analysis of the same 16 production trajectories (no new MD) with a
+continuous metric family: per-frame min heavy-atom protein--ligand distance,
+bound fractions at 2.0/2.5/3.0/3.5/4.0/5.0 A, mean/p5/median min distance,
+and `MD_RRS_d = 100 * mutant / WT` per continuous metric.
+
+Key results:
+
+- The binary 5 A bound fraction still saturates at 1.000 for all 16 systems
+  (no dissociation event in 10 ns) - the continuous layer lifts the ceiling.
+- **No mutant shows a weaker-binding signature**: e.g. PP-02 PfDHFR N51I has
+  mean_min = 1.82 A vs WT 2.52 A (MD_RRS_mean_min = 72.2, binds *tighter*);
+  PP-02 PfCRT K76T 2.77 A vs WT 3.17 A. Several mutants show slightly
+  shorter contact distances than WT within this window.
+- Interpretation (mandatory): the discriminative metrics remove the binary
+  saturation but do **not** demonstrate resistance. 10 ns single-replicate
+  windows measure local geometry, not affinity; no reduced-binding phenotype
+  is established for any mutant.
+
+## MD-RRS vs docking-RRS cross-comparison - 18 Aug 2026
+
+`results/set_c_md/md_vs_docking_comparison_pilot.csv` (mapping via canonical
+candidate smiles). Conventions: dock_RRS = |dG_mut|/|dG_WT| x 100 (>100 =
+mutant binds tighter); MD_RRS_mean_min_dist = mean min-distance ratio (<100 =
+mutant closer/tighter).
+
+Key result: **the two metrics disagree in direction for PP-01** - docking
+predicts *looser* binding for every PP-01 mutant (RRS 83.9-92.5), while the
+10 ns MD shows *tighter* contacts (MD_RRS_dist 91-103). For PP-02 PfCRT both
+point tighter (87-95). PP-02 PfDHFR mutants have no docking baseline (NaN).
+
+Interpretation (mandatory): this is a methodological divergence, not a
+resolved phenotype. Docking scores static binding energy; the 10 ns
+single-replicate MD measures local geometry without dissociation events.
+Neither metric alone establishes resistance. The docking RRS<100 for the
+known resistance mutations (N51I/C59R/S108N/I164L) is suggestive but would
+require experimental or longer-timescale validation.
 
 ## Post-QC comparison
 

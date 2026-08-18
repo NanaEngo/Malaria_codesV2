@@ -1,9 +1,9 @@
 # Set-C Post-Production Runbook: QC → MD-RRS
 
-> **READ BEFORE EXECUTION:** This document contains historical command examples. **Do not execute legacy 15106/15111/15119/15254/15259/15260 commands.** The canonical production chain is equilibration `15288` → gate `15319` → production `15320` (13/16 complete, ETA ~Aug 18). Full-panel QC/MD-RRS requires all 16 trajectories to pass QC.
+> **READ BEFORE EXECUTION:** This document contains historical command examples. **Do not execute legacy 15106/15111/15119/15254/15259/15260 commands.** The canonical production chain is equilibration `15288` → gate `15319` → production `15320` → QC/MD-RRS wrapper `15386` (pilot, **COMPLETE 18 Aug 2026**). See the closing section at the end of this file.
 
 **Date:** 12 August 2026
-**Live status (17 Aug 2026):** production `15320` is 13/16 complete on GPU (A4000, `%1` throttle). All PP-01 × 8 + PP-02 DhFR × 5 finished; PP-02_PfDHFR_I164L running; PP-02_PfCRT × 3 queued. Older 15106/15111/15119/15254/15259/15260 references are historical and non-canonical. Full-panel MD-RRS remains `NOT_COMPUTED` pending 16/16 QC passes.
+**Live status (18 Aug 2026):** production `15320` **16/16 complete**; trajectory QC **16/16 PASS** (job `15386`); pilot MD-RRS **`COMPUTED_WITH_COHORT_CONTRACT`** — manifest `post_production_manifest_pilot.json` (`schema v3`), outputs `set_c_trajectory_qc_pilot.csv` + `md_rrs_pilot_PP01_PP02.csv`. Older 15106/15111/15119/15254/15259/15260 references are historical and non-canonical. Full-panel (17-candidate/136-system) MD-RRS remains `NOT_COMPUTED` by design: the full-cohort production contract has not been prepared.
 **Scripts verified:**
 - `p2_setc_trajectory_qc.py` — ✅ compile OK (malaria_md, py3.11)
 - `p2_setc_md_rrs.py` — ✅ compile OK (malaria_md, py3.11)
@@ -295,3 +295,39 @@ Full completion ≈ **Aug 12 evening UTC** — achievable and now robust at the 
 
 **Attendu :** ~3 systèmes PfCRT (PP-02 K76A/K76T/WT) ressuscités → npt.gro recréés → la production
 15119 trouvera 14-15/16 systèmes (N51I PP-01 exclu, PP-02 N51I index 9 à risque).
+
+---
+
+## ✅ Closing section — 18 Aug 2026: pilot QC + MD-RRS COMPLETE
+
+**Chain:** production `15320` (16/16, 10 ns each) → wrapper `p2_setc_qc_and_md_rrs.sbatch` (pilot mode, `P2_SETC_COHORT_MODE=pilot`).
+
+### Submission history (3 attempts)
+
+| Job | Outcome | Cause | Fix |
+|---|---|---|---|
+| **15384** | 🔴 Failed immediately | `GMXRC: line 10: shell: unbound variable` — wrapper sources `malaria_md` under `set -u`; GROMACS `GMXRC` reads optional env vars (same recurrent bug as 15293/15237/15244) | `set +u` before sourcing `GMXRC` in `p2_setc_qc_and_md_rrs.sbatch` |
+| **15385** | 🔴 Failed during QC | MDAnalysis 2.10 removed the `XTCReader.timespan` attribute → `AttributeError` per system | `p2_setc_trajectory_qc.py`: record first/last frame times during the frame loop; compute duration from those |
+| **15386** | 🟢 **COMPLETED** (21:22→21:29 UTC) | — | — |
+
+### Contract checks (all PASS)
+
+1. Exactly **16 unique** candidate/target/mutation rows; `PP-01` and `PP-02` both present.
+2. All 16 rows `qc_status=PASS` under rule `setc_p2_minheavy_5A_ge10percent_v1`.
+3. Trajectory/TPR SHA-256 hashes all valid 64-hex; files exist on disk.
+4. Candidate SHA-256 matches the canonical Set-C candidate file.
+5. `md_rrs_status=COMPUTED_WITH_COHORT_CONTRACT` in `post_production_manifest_pilot.json`.
+
+### MD-RRS pilot results vs docking-RRS
+
+| set_c_id | MD_RRS | MD class | docking RRS | docking class |
+|---|---|---|---|---|
+| PP-01 | 100.0 | A | 87.78 | A* |
+| PP-02 | 100.0 | A | 91.26 | A* |
+
+**Interpretation caveat (mandatory):** `bound_fraction = 1.000` for *all* 16 systems, mutants included, so `MD_RRS = 100 × mutant/WT = 100` saturates. The 10-ns single-replicate window cannot resolve partial affinity loss; class `A` is a **ceiling**, not proof of affinity equality. This pilot comparison is descriptive and limited to PP-01/PP-02 — it must not be generalized to the remaining 15 candidates (runbook §"Post-QC comparison").
+
+### Remaining work (not part of this contract)
+
+- Full-cohort (`full` mode): requires the 17-candidate/136-system production contract to be prepared and independently checked before `md_rrs_classification.csv` can be produced (runbook §cohort modes). Not authorized at this stage.
+- **Discriminative MD-RRS (18 Aug 2026): DONE for the existing trajectories** — `results/set_c_md/md_rrs_discriminative_manifest.json` re-analyzes the 16 existing 10 ns runs with multi-threshold bound fractions (2.0-5.0 A) and continuous min-distance metrics. The binary 5 A ceiling is lifted, but no mutant shows a weaker-binding signature within 10 ns (several bind tighter); resistance is not demonstrated. See the "Discriminative MD-RRS" section in `setc_md_rrs_execution_runbook.md`.

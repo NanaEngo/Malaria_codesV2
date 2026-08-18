@@ -1,43 +1,26 @@
 {
   "schema_version": 1,
-  "status": "GROMPP_READY",
+  "status": "PRODUCTION_COMPLETED_REQUIRES_TRAJECTORY_QC",
   "system_name": "PP-02_PfDHFR_I164L",
   "run_dir": "results/md_systems/set_c_preparation_20260812_v1/PP-02_PfDHFR_I164L/runs/20260817T140642Z/replicate_1",
   "md_rrs_status": "NOT_COMPUTED",
-  "input_sha256": {
-    "npt.gro": "8cc2ab244061ad857ddd61088c1dff7ed6283ad042a74161a60d49a65783bfd8",
-    "npt.cpt": "5c08eadb3656e631021735ddc39b1f2cf0f1cd55701db05ec1334095f7ec7385",
-    "topol.top": "49206f5b2688b5424a3cec820cef2a540272477a8a08e96290ac999819e0ceeb",
-    "set_c_production.mdp": "56362eaf34a84f7592d24288f3f02def8622a41f9bcdff7008e4125878b0aa43"
-  },
-  "topology_dependency_sha256": {
-    "charmm36-jul2022.ff/forcefield.itp": "279b3011bf4ae0ec35d0327fb62355cedfb26b01faec32642ada8ad739d7811c",
-    "ligand_openff.itp": "0825b2fc38a850663e7e5cee50b69ff3f3965499dc8a73d3997e1ab84124e952",
-    "topol_Protein_chain_A.itp": "6c8aa9c40cfd295e71166d0eba4f92d6504e8aad07a4479ea9fbd1f2a7374be6",
-    "topol_Protein_chain_A2.itp": "25438f674f7eaf920dba6e7e2ca8bce80298d9f4b0b01c871777386d4702d252",
-    "topol_Protein_chain_A3.itp": "2aae2ebca64e51652b9202a0f35143f3db807d9441a7ac3e11e06e7fd02f9406",
-    "topol_Protein_chain_B.itp": "5ee171cb69cfe0c8c613b7b2cc7ced3d5d0b1b2faff20503aa34680ef9590ca0",
-    "topol_Protein_chain_B2.itp": "47b3b7b68c68229ed7c6990f35020d74ff9028d576e92f0e4b776413781afa51",
-    "topol_Protein_chain_B3.itp": "c4e1a76bb26152ecdafbb41e11d09bd737aa4321e635080df00d42cb708a0b16",
-    "charmm36-jul2022.ff/tip3p.itp": "03edae6a67887742ecc52f48098508c0d86e2f268d2ad5115282eea595d4bf9d",
-    "charmm36-jul2022.ff/ions.itp": "1cbd7d7b2f7b5e2c7d442d4c6514902ecf037a59e948cbfe35f99f0293a96662",
-    "posre_Protein_chain_A_Protein_chain_B3.itp": "111630aed275b92123d0f8e4ed26b8a6030c887f07a81609a9094012e6388405",
-    "posre_Protein_chain_A_Protein_chain_B2.itp": "577a7adab6a3fa84be8ea9059bcc258e11f62b9966379690c0a4497b133d423b",
-    "posre_Protein_chain_A_Protein_chain_B.itp": "636e4f065219dc70537c2462fa435cb636a87b26eca067ce6dcb484dd6b9da63",
-    "posre_Protein_chain_A_Protein_chain_A3.itp": "da0c42b0ee0a3b66df6a5c950393ab8e762371ca51ade9f8c7c200e85790cb17",
-    "posre_Protein_chain_A_Protein_chain_A2.itp": "07696e0e5e8cc8f09d60333276b035a7d16deac9d617bcabaaf3791e2bb776b1",
-    "posre_Protein_chain_A_Protein_chain_A.itp": "636e4f065219dc70537c2462fa435cb636a87b26eca067ce6dcb484dd6b9da63",
-    "charmm36-jul2022.ff/ffnonbonded.itp": "898c0fa8fcdc8cd32da2fc53b1443a345676868ce8bf67867a708c8aa2a96f67",
-    "charmm36-jul2022.ff/ffbonded.itp": "57488a7656cb8cc83e7361a3a58e2fad99130e072baf2392f3674504d4dac7a4",
-    "charmm36-jul2022.ff/cmap.itp": "d5bf6f32ce9d185fbbd64b4fd1a0780080261e066eebd128697c6c213d88c25f",
-    "charmm36-jul2022.ff/nbfix.itp": "abbb2b64c8da07b01bdb631be8cbab64129da37e0bcb72b7dcfa1992493e3362",
-    "charmm36-jul2022.ff/ffmissingdihedrals.itp": "67e6fe88303c7b05a6f6c7a6b5b6f8c5bac361c58d298537766406c3469a3e93"
-  },
-  "backend": "gpu",
   "gate_job_id": "15319",
   "equilibration_job_id": "15288",
   "preflight_manifest": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/set_c_md/preflight_after_equilibration_15319/set_c_md_execution_manifest.json",
   "preflight_manifest_sha256": "057c053c7fa239c2a6ee8244a23abbc8f9d24ffcd23846968ef157e38171414b",
+  "input_sha256": {
+    "npt.gro": "8cc2ab244061ad857ddd61088c1dff7ed6283ad042a74161a60d49a65783bfd8",
+    "npt.cpt": "5c08eadb3656e631021735ddc39b1f2cf0f1cd55701db05ec1334095f7ec7385",
+    "topol.top": "49206f5b2688b5424a3cec820cef2a540272477a8a08e96290ac999819e0ceeb",
+    "mdp": "56362eaf34a84f7592d24288f3f02def8622a41f9bcdff7008e4125878b0aa43"
+  },
+  "outputs_sha256": {
+    "production.tpr": "bf7e3a433b7dac08a504cc09324863f1e54121796790df15b8854fbe279e7189",
+    "production.xtc": "84330c6de988e203d8725823630d95544a7798bf4bf9dc1e77384b258ea28892",
+    "production.edr": "7c156e7f66c636fd2e4f158dd9894d3d15198da37df795e322be98f731d914c5",
+    "production.log": "883b844df3e5d6e1d37eb19abcc0565883cfbaa1129cbee679bda3e6b5e9b89d",
+    "production.gro": "f3eefd2bd32156c1bf86b4e7529c69ae3f26c1e5623e9a40c481d70f06eead6a"
+  },
   "production_tpr": "results/md_systems/set_c_preparation_20260812_v1/PP-02_PfDHFR_I164L/runs/20260817T140642Z/replicate_1/production.tpr",
   "production_tpr_sha256": "bf7e3a433b7dac08a504cc09324863f1e54121796790df15b8854fbe279e7189"
 }
