@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-07-29T08:17:55.600974+00:00",
+  "script": "p3_generate_persistence_diagrams.py",
+  "git": {
+    "commit": "5cd7eec03f09b8424296d4dbe35f941a7e2874ec",
+    "short": "5cd7eec0",
+    "dirty": true
+  },
+  "dependencies": {
+    "rdkit": "2025.3.6",
+    "ripser": "0.6.14",
+    "numpy": "2.4.6",
+    "matplotlib": "3.10.9",
+    "pandas": "2.3.3"
+  },
+  "seed_path": "/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V2_CorrectedGrid/p1_stoned_mmv_seeds.csv",
+  "tda_path": "/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/results/p3_tda_fingerprints.csv",
+  "output_pdf": "/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/Graphics/persistence_diagrams.pdf",
+  "selection": {
+    "african_np": {
+      "row_index": 81,
+      "smiles": "Fc1ccc2[nH]c3c(NCCCN4CCOCC4)ncnc3c2c1",
+      "H1_count": 6,
+      "H1_mean_pers": 0.7770787477493286
+    },
+    "generated_non_seed": {
+      "row_index": 15352,
+      "smiles": "CCCC(O)(CCC)CC(=O)Nc1nnc(Cc2cccc(OC)c2)s1",
+      "H1_count": 1,
+      "H0_max_pers": 3.336180686950684
+    }
+  }
+}
