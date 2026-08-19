@@ -1,0 +1,57 @@
+name: sync-data-results
+
+# Keep the `data-results` branch in sync with `master`.
+#
+# data-results is the "full repo with all data" branch. It mirrors master's
+# tree (master is the source of truth for code and manuscripts) and carries
+# forward any files that exist only on data-results (archive snapshots,
+# working notes, legacy V2/V3 copies). The rebuild is a conflict-free union:
+# for any path present on both branches, master's version wins.
+#
+# Runs on every push to master. A manual run (workflow_dispatch) and a daily
+# scheduled run act as safety nets.
+#
+# NOTE on permissions:
+#   - The default GITHUB_TOKEN has `contents: write` and can push to
+#     data-results. Pushes made with GITHUB_TOKEN do NOT re-trigger workflows,
+#     so there is no infinite loop.
+#   - If data-results is protected by a branch rule that blocks the
+#     GITHUB_TOKEN, set a PAT with `repo` scope as the `SYNC_TOKEN` secret;
+#     the job uses it automatically when present.
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+  schedule:
+    # Daily safety-net sync (05:17 UTC)
+    - cron: "17 5 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-data-results
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: Sync data-results with master
+        run: bash .github/scripts/sync_data_results.sh
+        env:
+          # Fall back to a PAT if the default token cannot push
+          GIT_PUSH_TOKEN: ${{ secrets.SYNC_TOKEN || github.token }}
+
+      - name: Surface sync commit (for logs)
+        if: always()
+        run: |
+          git fetch origin data-results --prune
+          git log --oneline -3 origin/data-results
