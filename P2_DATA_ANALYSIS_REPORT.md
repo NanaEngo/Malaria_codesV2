@@ -122,5 +122,6 @@ Summary: `results/set_c_md/mmgbsa_summary_pilot.csv` + `mmgbsa_manifest.json` �
 
 - [x] MM-GBSA aggregation (16/16) → section 4.3 filled; manuscript `tab:mmmgbsa_setc` + Set-C pilot results subsection (`sec:setc_pilot`) added; abstract sentence already present (19 Aug revision).
 - [x] Unit tests: `tests/test_pfcrt_pipeline.py` — 14/14 PASS (incl. MM-GBSA aggregation + PBC-fix tests).
-- [ ] Final LaTeX compile + figure (MD_RRS vs dock_RRS scatter) if added.
-- [ ] Git commit + push.
+- [x] Final LaTeX compile — main + SI compile with 0 errors, 0 undefined references.
+- [x] Figure: MD-RRS vs dock-RRS scatter added — `scripts/generate_md_dock_rrs_scatter.py` → SI Figure S5 (`fig:s5_setc_rrs_scatter`), cross-referenced from main-text `sec:setc_pilot`.
+- [ ] Git commit + push (figure + manuscript updates).

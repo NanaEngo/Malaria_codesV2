@@ -104,7 +104,16 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Interpretation \\
 \label{fig:s4_rrs_radar}
 \end{figure}
 
-\noindent\textit{Scope of the MD evidence.} The parent-study trajectories provide a targeted structural check on four wild-type complexes; they do not constitute candidate-specific Set-C production MD. A 16-system Set-C MD pilot (PP-01 and PP-02 against the six-mutant panel, \SI{10}{\nano\second} each) passed the prespecified trajectory-QC gate (16/16) and is reported as a secondary analysis; its trajectory-derived MD-RRS and mutant-state MM-GBSA estimates are summarised in Table~S9.
+\noindent\textit{Scope of the MD evidence.} The parent-study trajectories provide a targeted structural check on four wild-type complexes; they do not constitute candidate-specific Set-C production MD. A 16-system Set-C MD pilot (PP-01 and PP-02 against the six-mutant panel, \SI{10}{\nano\second} each) passed the prespecified trajectory-QC gate (16/16) and is reported as a secondary analysis; its trajectory-derived MD-RRS and mutant-state MM-GBSA estimates are summarised in Table~S9 and compared with docking RRS in Figure~S5.
+
+% ============================================================================
+% Figure S5: Set-C pilot MD-RRS / MM-GBSA RRS vs docking RRS scatter
+% ============================================================================
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{p2_setc_rrs_scatter.pdf}
+\caption{Set-C MD pilot trajectory-derived RRS estimates versus docking RRS (WT-normalised, WT = \num{100}). Panel (a): MD-RRS (mean-minimum-distance geometry) versus docking RRS for the eight mutant systems with both estimates; panel (b): MM-GBSA RRS versus docking RRS, with the four PP-02 PfDHFR systems (no docking WT reference in the pilot) shown on the MM-GBSA axis only. Points are coloured by target (PfCRT, blue; PfDHFR, orange) and shaped by candidate (PP-01, circle; PP-02, square). Docking predicted looser mutant binding for all systems (RRS $< \num{100}$); the trajectory-derived estimates do not reproduce this pattern. Secondary, exploratory analysis; no primary claim is based on it.}\label{fig:s5_setc_rrs_scatter}
+\end{figure}
 
 % ============================================================================
 % Table S7: PlasmoDB target annotation and mutation provenance
