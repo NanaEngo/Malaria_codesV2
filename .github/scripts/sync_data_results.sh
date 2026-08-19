@@ -45,6 +45,13 @@ die()  { echo "[sync] ERROR: $*" >&2; exit 1; }
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT"
 
+# --- ensure git identity (needed for commit-tree on CI runners) -----------------
+if ! git config --get user.name >/dev/null 2>&1; then
+    log "setting fallback git identity"
+    git config user.name  "GitHub Actions (sync-data-results)"
+    git config user.email "actions@github.com"
+fi
+
 # --- fetch latest refs --------------------------------------------------------
 git fetch origin master data-results --prune || die "git fetch failed"
 
