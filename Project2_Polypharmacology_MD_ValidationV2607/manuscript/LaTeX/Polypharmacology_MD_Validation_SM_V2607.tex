@@ -17,7 +17,9 @@
 \usepackage{cleveref}
 \usepackage{xr}
 \externaldocument[MAIN-]{Polypharmacology_MD_Validation_V2607}
-\usepackage{siunitx}
+\usepackage[
+  retain-explicit-plus = true,
+]{siunitx}
 \DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
 \DeclareSIUnit\angstrom{\text{\AA}}
 
@@ -108,7 +110,7 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Interpretation \\
 \label{fig:s3_rrs_radar}
 \end{figure}
 
-\noindent\textit{Scope of the MD evidence.} The parent-study trajectories provide a targeted structural check on four wild-type complexes; they do not constitute candidate-specific Set-C production MD. A 16-system Set-C MD pilot (PP-01 and PP-02 against the six-mutant panel, \SI{10}{\nano\second} each) passed the prespecified trajectory-QC gate (16/16) and is reported as a secondary analysis; its trajectory-derived MD-RRS and mutant-state MM-GBSA estimates are summarised in Table~S7 and compared with docking RRS in Figure~S4.
+\noindent\textit{Scope of the MD evidence.} The parent-study trajectories provide a targeted structural check on four wild-type complexes; they do not constitute candidate-specific Set-C production MD. A 16-system Set-C MD pilot (PP-01 and PP-02 against the six-mutant panel, \SI{10}{\nano\second} each) passed the prespecified trajectory-QC gate (16/16) and is reported as a secondary analysis; its trajectory-derived MD-RRS and mutant-state MM-GBSA estimates are summarised in \cref{tab:s7_setc_mmgbsa} and compared with docking RRS in \cref{fig:s4_setc_rrs_scatter}.
 
 % ============================================================================
 % Figure S4: Set-C pilot MD-RRS / MM-GBSA RRS vs docking RRS scatter
