@@ -40,10 +40,11 @@ Does a resistance-aware, target-level computational workflow (docking-derived RR
 The 5 Å bound-fraction ceiling (all 16 systems = 1.000) is lifted with continuous metrics:
 bound fractions at 2.0–4.0 Å, mean/p5 min heavy-atom distance, and MD_RRS_d = (mutant distance / WT distance) × 100 (>100 = looser).
 
-**Key finding: no mutant shows a weaker-binding signature within 10 ns.**
-- PP-01 PfDHFR N51I: mean_min 1.82 Å vs WT 2.52 Å (binds *tighter*; 85% of frames < 2 Å)
-- PP-01 PfCRT K76T: 2.77 Å vs WT 3.17 Å (tighter)
-- All MD_RRS_d ratios in range [91, 103]; bf(2 Å) 0.45–1.00.
+**Key finding: no mutant shows a *reproducible* weaker-binding signature within 10 ns.** Verified per-system values (`set_c_trajectory_metrics_pilot.csv`, mean minimum heavy-atom distance):
+- PP-02 PfDHFR N51I: 1.82 Å vs WT 2.52 Å — markedly tighter (85.0% of frames < 2 Å vs 0.9%); MD_RRS_d = 72.2
+- PP-02 PfCRT K76T: 2.77 Å vs WT 3.17 Å — tighter; MD_RRS_d = 87.3
+- PP-01 PfDHFR N51I: 2.67 Å vs WT 2.94 Å — tighter (90.0% frames < 3 Å vs 58.9%); MD_RRS_d = 91.0
+- MD_RRS_d (mean-ratio) range across the 12 mutant states: **72.2–102.8**; two states marginally above 100 (PP-01 PfCRT K76T 102.8, PP-02 PfDHFR C59R 102.0), within ±3% of the WT reference — not a reproducible weakening signal within a single 10 ns replicate.
 
 **Honest caveat:** 10 ns measures local geometry, not affinity; this does **not** demonstrate resistance.
 
@@ -53,10 +54,11 @@ bound fractions at 2.0–4.0 Å, mean/p5 min heavy-atom distance, and MD_RRS_d =
 
 | Candidate | Docking (RRS) | MD 10 ns (MD_RRS_d) | Direction |
 |---|---|---|---|
-| PP-01 (all 6 mutants) | 83.9–92.5 → **looser** (docking predicts weaker mutant binding) | 91–103 → tighter/neutral | **Divergent** |
-| PP-02 PfCRT (K76T/K76A) | 87.9–94.6 looser | 90–103 tighter/neutral | Divergent |
+| PP-01 (6 mutants) | 83.9–92.5 → **looser** | 91.0–102.8 → 5 tighter, 1 marginally looser (PfCRT K76T 102.8, concordant with docking) | **Divergent for 5/6** |
+| PP-02 PfCRT (K76T/K76A) | 87.9–94.6 looser | 87.3–90.2 tighter | **Divergent** |
+| PP-02 PfDHFR (4 mutants) | n/a (no pilot WT reference) | 72.2–102.0 (3 tighter, C59R 102.0 marginally looser) | n/a |
 
-**Interpretation:** methodological divergence (static docking energy vs local 10 ns geometry); neither demonstrates resistance. Documented as a limitation, not a phenotype claim.
+**Interpretation:** methodological divergence dominates (static docking energy vs local 10 ns geometry) — 7 of the 8 systems with both estimates diverge, with PP-01 PfCRT K76T the single concordant case. Neither method demonstrates resistance. Documented as a limitation, not a phenotype claim.
 
 ### 4.3 Set-C MM-GBSA (16 systems) — NEW 19 Aug
 
@@ -125,4 +127,8 @@ Summary: `results/set_c_md/mmgbsa_summary_pilot.csv` + `mmgbsa_manifest.json` �
 - [x] Final LaTeX compile — main + SI compile with 0 errors, 0 undefined references.
 - [x] Figure: MD-RRS vs dock-RRS scatter added — `scripts/generate_md_dock_rrs_scatter.py` → SI Figure S4 (`fig:s4_setc_rrs_scatter`), cross-referenced from main-text `sec:setc_pilot`.
 - [x] **Manuscript audit & refinement (19 Aug)**: corrected intro WHO burden figures to WMR 2025 (282M cases / 610k deaths in 2024; artemisinin partial resistance ≥8 African countries) with new citation `letebo2026surveillance`; removed report-style hedging/meta-commentary (repeated ``does not establish X'' ×4, ``no primary claim'' ×4, ``(16/16)'' ×5, ``We explicitly state'', ``It should not be described as'', ``The appropriate conclusion is''); added literature-grounded Discussion passages (co-occurrence surveillance, end-point free-energy caveats via `mmgbsa_best_practices_2025`); **fixed SI numbering to sequential S1–S7 / S1–S4** (was rendering Table 1–7 / Figure 1–3 while prose cited S0/S3/S5…S9); renamed all SI labels to match; removed `\date{\today}`, fixed `margin=2.cm` typo, deduplicated keywords. Main + SI compile 0 errors / 0 undefined refs; 14/14 tests pass.
-- [ ] Git commit + push (figure + manuscript updates).
+- [x] Git commit + push (figure + manuscript updates) — pushed to origin/master (`930e40fbe`, `6f7b59b28`, `316f9b466`, `3d527398f`).
+- [x] **siunitx/cleveref consistency pass (19 Aug)**: wrapped all remaining bare statistics (α, ρ, p, ΔG_bind, +473 kcal/mol, Bonferroni thresholds) in `\num{}`/`\SI{}`/`\qty{}`; enabled `retain-explicit-plus` so signed values keep their signs; verified all table numeric cells use S-columns and all cross-references use `\cref` (no bare `\ref`); main + SI compile 0 errors / 0 undefined refs; 14/14 tests pass (`3d527398f`).
+- [x] **DAR data-accuracy audit (19 Aug)**: verified §2 correlations (PNS–RRS ρ=−0.559, p=0.020; ACSI–PNS ρ=−0.078; ACSI–RRS ρ=−0.132) by SMILES-merged recomputation; verified §4.3 all 16 MM-GBSA rows against `mmgbsa_summary_pilot.csv`; **corrected §4.1/§4.2** — the trajectory examples (PP-02 PfDHFR N51I 1.82 Å vs 2.52 Å; PP-02 PfCRT K76T 2.77 vs 3.17) were mis-attributed to PP-01, the MD_RRS_d range is 72.2–102.8 (not [91, 103]), and PP-01 PfCRT K76T (MD 102.8) is the single concordant case (7/8 divergent).
+- [x] **Deep web search + manuscript refinement (19 Aug)**: via PubMed/WHO (web_search tool unavailable) added three verified 2025–2026 references: `young2026artemisinin` (spatial-temporal mapping of Pfkelch13 ART-R in Africa; Lancet Infect Dis 2026, from medRxiv 2025) in the Intro; `okombo2026collateral` (PfCRT-mediated piperaquine efflux; Nat Commun 2026) in the mutant-panel Methods; `wicht2026chk1` (CHIR-124 dual PfArk1/hemozoin inhibition; ACS Chem Biol 2026) in the polypharmacology Discussion. Main + SI compile 0 errors / 0 undefined refs / 0 bibtex warnings; 14/14 tests pass.
+- [x] **Desuet-file cleanup (19 Aug)**: removed 14 orphaned scripts with zero references (`quick_analysis.py`, `visualize_quick_results.py`, `analyze_214_python.py`, `analyze_214_trajectory.sh`, `custom_mmgbsa.py`, `extract_md_logs.py`, `md_convergence_check.py`, `mdanalysis_{214,438}_comprehensive.py`, `mdanalysis_full_analysis.py`, `p2_gap_{progressive_nvt,short_npt}.sbatch`, `p2_historical_diagnostic_md.sbatch`, `run_colabfold_pfatp4.sh`), the superseded `comprehensive_analysis/` result dirs (values differ from the manuscript's `production_analysis` source), the stray gitignored `gmx_MMPBSA.log`, caches (`.pytest_cache`, `__pycache__`), the leftover `MD_systems/164_ClpP/` dir, and `.xtc_offsets` runtime files. Kept all provenance-chain artifacts (ColabFold attempt dirs referenced by the repair audit, v2_top20, redock_438, mmgbsa outputs).
