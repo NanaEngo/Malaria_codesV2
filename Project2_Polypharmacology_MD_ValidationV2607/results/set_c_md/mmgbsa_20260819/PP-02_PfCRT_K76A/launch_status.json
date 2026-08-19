@@ -1,0 +1,17 @@
+{
+  "system": "PP-02_PfCRT_K76A",
+  "pid": 2018002,
+  "launched_utc": "2026-08-19T06:15:05.722939+00:00",
+  "out_dir": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/set_c_md/mmgbsa_20260819/PP-02_PfCRT_K76A",
+  "replicate": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c_preparation_20260812_v1/PP-02_PfCRT_K76A/runs/20260818T123144Z/replicate_1",
+  "index_groups": {
+    "receptor": 1,
+    "ligand": 13
+  },
+  "input": "&general\n  sys_name=\"PP-02_PfCRT_K76A\"\n  startframe=1\n  endframe=1000\n  interval=10\n  keep_files=0\n/\n&gb\n  igb=5\n  saltcon=0.150\n/\n",
+  "pbc_fixed": true,
+  "trajectory": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c_preparation_20260812_v1/PP-02_PfCRT_K76A/runs/20260818T123144Z/replicate_1/production_whole.xtc",
+  "rerun_pid": 2052272,
+  "rerun_launched_utc": "2026-08-19T12:02:37.391161+00:00",
+  "rerun_note": "PBC split (protein across boundary) caused BOND/UB overflow in the first pass; re-run on production_whole.xtc (gmx trjconv -pbc whole)."
+}

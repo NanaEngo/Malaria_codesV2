@@ -104,7 +104,7 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Interpretation \\
 \label{fig:s4_rrs_radar}
 \end{figure}
 
-\noindent\textit{Scope of the MD evidence.} The parent-study trajectories provide a targeted structural check on four wild-type complexes; they do not constitute candidate-specific Set-C production MD. No trajectory-derived MD-RRS estimate or mutant-state MM-GBSA result is included in this Supporting Information.
+\noindent\textit{Scope of the MD evidence.} The parent-study trajectories provide a targeted structural check on four wild-type complexes; they do not constitute candidate-specific Set-C production MD. A 16-system Set-C MD pilot (PP-01 and PP-02 against the six-mutant panel, \SI{10}{\nano\second} each) passed the prespecified trajectory-QC gate (16/16) and is reported as a secondary analysis; its trajectory-derived MD-RRS and mutant-state MM-GBSA estimates are summarised in Table~S9.
 
 % ============================================================================
 % Table S7: PlasmoDB target annotation and mutation provenance
@@ -132,6 +132,37 @@ The stable identifiers were retrieved from PlasmoDB/VEuPathDB annotations on 12 
 % Table S8: Cohort and estimand separation
 % ============================================================================
 \input{Table_S8_Cohort_Estimands.tex}
+
+% ============================================================================
+% Table S9: Set-C MD pilot MM-GBSA (16 systems)
+% ============================================================================
+\begin{table}[htbp]
+\centering
+\caption{Set-C MD pilot endpoint estimates (secondary, exploratory analysis). All \num{16} systems passed the prespecified trajectory-QC gate (16/16); $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots $\pm$ standard deviation. MMG-RRS and MD-RRS use the same mutant/WT ratio convention as the docking RRS (WT = \num{100}); n/a = no WT reference available in the pilot for PP-02 PfDHFR (docking RRS was computed against the parent 17-candidate cohort only). The two systems flagged with $^\ast$ failed the first MM-GBSA pass (BOND/UB overflow from a protein split across the periodic boundary) and were re-run on PBC-whole trajectories.}\label{tab:s9_setc_mmgbsa}
+\scriptsize
+\begin{tabularx}{\textwidth}{l l l S[table-format=-2.2] S[table-format=1.2] S[table-format=2.2] S[table-format=2.2] S[table-format=2.2]}
+\toprule
+Candidate & Target & State & {$\Delta G_{\mathrm{bind}}$ (\si{\kcalmol})} & {SD} & {MMG-RRS} & {MD-RRS} & {Docking RRS} \\
+\midrule
+PP-01 & PfCRT & K76A & -35.29 & 1.17 & 115.3 & 97.8 & 90.86 \\
+PP-01 & PfCRT & K76T & -29.51 & 2.65 & 96.4 & 102.8 & 92.47 \\
+PP-01 & PfCRT & WT & -30.61 & 1.65 & 100.0 & 100.0 & {--} \\
+PP-01 & PfDHFR & C59R & -26.56 & 1.91 & 105.0 & 98.9 & 85.47 \\
+PP-01 & PfDHFR & I164L & -26.13 & 2.34 & 103.3 & 97.2 & 83.87 \\
+PP-01 & PfDHFR & N51I & -29.83 & 1.50 & 118.0 & 91.0 & 86.40 \\
+PP-01 & PfDHFR & S108N & -30.21 & 3.62 & 119.5 & 96.1 & 87.60 \\
+PP-01 & PfDHFR & WT & -25.29 & 2.94 & 100.0 & 100.0 & {--} \\
+PP-02 & PfCRT & K76A$^\ast$ & -24.53 & 1.27 & 97.8 & 90.2 & 94.62 \\
+PP-02 & PfCRT & K76T & -30.45 & 1.38 & 121.4 & 87.3 & 87.91 \\
+PP-02 & PfCRT & WT & -25.08 & 2.56 & 100.0 & 100.0 & {--} \\
+PP-02 & PfDHFR & C59R & -28.85 & 1.88 & 95.7 & 102.0 & n/a \\
+PP-02 & PfDHFR & I164L & -31.06 & 1.52 & 103.0 & 97.4 & n/a \\
+PP-02 & PfDHFR & N51I & -34.02 & 2.68 & 112.8 & 72.2 & n/a \\
+PP-02 & PfDHFR & S108N & -27.09 & 1.55 & 89.8 & 97.5 & n/a \\
+PP-02 & PfDHFR & WT$^\ast$ & -30.16 & 2.06 & 100.0 & 100.0 & {--} \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \bibliographystyle{unsrtnat}
 \bibliography{Bibliography_Polypharmacology_MD_Validation}

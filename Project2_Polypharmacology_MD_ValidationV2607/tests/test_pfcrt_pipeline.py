@@ -169,3 +169,62 @@ def test_md_witness_manifest_pass():
     # density TIP3P-typical at 310 K
     assert 950.0 <= manifest["npt"]["density_kg_m3"]["mean"] <= 1050.0
     assert manifest["npt"]["error_markers"] == 0
+
+
+# ---------------------------------------------------------------------------
+# Set-C MM-GBSA aggregation (16 systems)
+# ---------------------------------------------------------------------------
+
+def test_mmgbsa_manifest_computed_16():
+    path = SET_C_MD / "mmgbsa_manifest.json"
+    assert path.is_file(), "MM-GBSA manifest missing"
+    manifest = json.loads(path.read_text())
+    assert manifest["status"] == "MMGBSA_COMPUTED"
+    assert manifest["n_systems"] == 16
+
+
+def test_mmgbsa_summary_csv_16_rows():
+    import csv
+
+    path = SET_C_MD / "mmgbsa_summary_pilot.csv"
+    assert path.is_file(), "MM-GBSA summary CSV missing"
+    rows = list(csv.DictReader(path.open()))
+    assert len(rows) == 16  # 2 candidates x (5 PfDHFR + 3 PfCRT)
+    for r in rows:
+        # binding free energies must be negative and physically sane
+        dg = float(r["mmgbsa_dg_kcal_mol"])
+        assert -60.0 < dg < 0.0, f"unphysical dG for {r['system']}: {dg}"
+        sd = float(r["mmgbsa_sd_kcal_mol"])
+        assert 0.0 < sd < 20.0
+        assert int(r["n_frames"]) == 100
+
+
+def test_mmgbsa_rrs_present_for_all_12_mutants():
+    import csv
+
+    path = SET_C_MD / "mmgbsa_summary_pilot.csv"
+    rows = list(csv.DictReader(path.open()))
+    mutants = [r for r in rows if r["mutation"] != "WT"]
+    assert len(mutants) == 12  # 2 candidates x 6 mutants
+    for r in mutants:
+        assert r["mmgbsa_rrs"] not in ("", None), f"missing MM-GBSA RRS for {r['system']}"
+        rrs = float(r["mmgbsa_rrs"])
+        assert 50.0 < rrs < 200.0, f"RRS out of plausible range for {r['system']}: {rrs}"
+
+
+def test_mmgbsa_pbc_fix_documented():
+    """The two PBC-split systems must be re-run on production_whole.xtc."""
+    import re
+
+    for sys_name in ("PP-02_PfDHFR_WT", "PP-02_PfCRT_K76A"):
+        status = json.loads(
+            (SET_C_MD / "mmgbsa_20260819" / sys_name / "launch_status.json").read_text()
+        )
+        assert status.get("pbc_fixed") is True
+        assert "production_whole.xtc" in status.get("trajectory", "")
+        # final result must be valid (100 frames, no overflow)
+        final = SET_C_MD / "mmgbsa_20260819" / sys_name / "FINAL_RESULTS_MMPBSA.dat"
+        assert final.is_file()
+        text = final.read_text()
+        assert "Calculations performed using 100 complex frames" in text
+        assert "*************" not in text

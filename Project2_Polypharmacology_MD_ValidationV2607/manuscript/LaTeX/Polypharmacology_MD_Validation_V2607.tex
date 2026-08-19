@@ -110,7 +110,7 @@
 % ============================================================================
 
 \begin{abstract}
-Polypharmacology can increase the genetic barrier to resistance, but docking-derived target profiles do not by themselves establish a systems-level mechanism of action. We therefore analysed two non-overlapping computational cohorts: \num{17} candidates selected under a multi-target prioritisation scheme and evaluated by docking-derived Resistance Resilience Score (RRS), African Chemical Space Index (ACSI), and Polypharmacology Network Score (PNS), and four separate parent-study complexes evaluated by targeted wild-type molecular dynamics (MD) and MM-GBSA. Across \num{136} docking systems covering PfDHFR and PfCRT wild-type and resistance-mutant states, the cohort contained \num{6} Class~A*, \num{5} Class~B, \num{5} Class~C, and \num{1} Class~D candidate. The composite PNS--RRS association was negative but did not survive Bonferroni correction ($\rho=-\num{0.559}$, $p=\num{0.020}$; $\alpha=\num{0.017}$); two of \num{17} candidates (\qty{11.8}{\percent}) had ACSI $>\num{0.70}$. In the separate parent-study MD cohort, two of four systems retained bound ligands, but only PfCRT--214 yielded an interpretable MM-GBSA estimate ($-\SI{18.25}{\kcalmol}\pm\SI{0.40}{\kcalmol}$). These results support target-level computational prioritisation and expose the distinction between docking-based polypharmacology and experimentally established MoA; they do not establish biological target engagement, resistance circumvention, or pathway-level mechanism.
+Polypharmacology can increase the genetic barrier to resistance, but docking-derived target profiles do not by themselves establish a systems-level mechanism of action. We therefore analysed two non-overlapping computational cohorts: \num{17} candidates selected under a multi-target prioritisation scheme and evaluated by docking-derived Resistance Resilience Score (RRS), African Chemical Space Index (ACSI), and Polypharmacology Network Score (PNS), and four separate parent-study complexes evaluated by targeted wild-type molecular dynamics (MD) and MM-GBSA. Across \num{136} docking systems covering PfDHFR and PfCRT wild-type and resistance-mutant states, the cohort contained \num{6} Class~A*, \num{5} Class~B, \num{5} Class~C, and \num{1} Class~D candidate. The composite PNS--RRS association was negative but did not survive Bonferroni correction ($\rho=-\num{0.559}$, $p=\num{0.020}$; $\alpha=\num{0.017}$); two of \num{17} candidates (\qty{11.8}{\percent}) had ACSI $>\num{0.70}$. In the separate parent-study MD cohort, two of four systems retained bound ligands, but only PfCRT--214 yielded an interpretable MM-GBSA estimate ($-\SI{18.25}{\kcalmol}\pm\SI{0.40}{\kcalmol}$). A secondary 16-system Set-C MD pilot (two prioritised candidates against the six-mutant panel, \SI{10}{\nano\second} each) passed trajectory QC and returned trajectory-derived MD-RRS and MM-GBSA estimates that did not reproduce the docking-predicted weakening of mutant binding within the pilot timescale. These results support target-level computational prioritisation and expose the distinction between docking-based polypharmacology and experimentally established MoA; they do not establish biological target engagement, resistance circumvention, or pathway-level mechanism.
 \end{abstract}
 
 \noindent\textbf{Keywords:} malaria, drug resistance, molecular dynamics, molecular docking, natural products, binding free energy, MM-GBSA, African natural products, resistance mutations, antimalarial leads
@@ -139,12 +139,12 @@ We asked whether a resistance-aware, target-level workflow can distinguish predi
 
 \subsection{Study design and estimand separation}
 
-The analysis was organised into distinct evidence layers. The Set-C cohort comprised 17 candidates selected for polypharmacology and 136 docking systems: PfDHFR wild type plus four mutants and PfCRT wild type plus two mutants. These systems supported the docking-derived RRS, ACSI, and PNS analyses. A separate parent-study cohort comprised four named wild-type complexes (Ligands 164, 201, 214, and 438) simulated for \SI{10}{\nano\second} each; these trajectories supported structural stability assessment and, where topology and bound-state checks passed, MM-GBSA estimation. The two cohorts were not merged, and no MM-GBSA value was assigned to a Set-C candidate. A subsequent 16-system Set-C MD pilot was not included because it did not satisfy the prespecified complete-trajectory and quality-control criteria. Accordingly, docking-RRS and trajectory-derived MD-RRS are treated as different estimands throughout.
+The analysis was organised into distinct evidence layers. The Set-C cohort comprised 17 candidates selected for polypharmacology and 136 docking systems: PfDHFR wild type plus four mutants and PfCRT wild type plus two mutants. These systems supported the docking-derived RRS, ACSI, and PNS analyses. A separate parent-study cohort comprised four named wild-type complexes (Ligands 164, 201, 214, and 438) simulated for \SI{10}{\nano\second} each; these trajectories supported structural stability assessment and, where topology and bound-state checks passed, MM-GBSA estimation. The two cohorts were not merged. A subsequent 16-system Set-C MD pilot (PP-01 and PP-02 against the six-mutant panel, \SI{10}{\nano\second} each) was completed, passed the prespecified trajectory-QC gate (16/16), and is reported here as an explicitly secondary and exploratory analysis: it provides trajectory-derived MD-RRS and MM-GBSA estimates for the two prioritised candidates, but it is not promoted as a primary claim. Docking-RRS and trajectory-derived MD-RRS are treated as different estimands throughout.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.98\textwidth]{p2_cohort_workflow.pdf}
-\caption{Study design and separation of computational estimands. The 17-member Set-C cohort supports docking-derived RRS, ACSI, and PNS analyses, whereas the four parent-study complexes support a separate targeted MD and MM-GBSA check. The incomplete Set-C MD pilot is not promoted as a result.}
+\caption{Study design and separation of computational estimands. The 17-member Set-C cohort supports docking-derived RRS, ACSI, and PNS analyses, whereas the four parent-study complexes support a separate targeted MD and MM-GBSA check. The 16-system Set-C MD pilot (PP-01 and PP-02) is reported as a secondary analysis, not a primary claim.}
 \label{fig:study_workflow}
 \end{figure}
 
@@ -262,7 +262,7 @@ Backbone and ligand RMSD, per-residue RMSF, radius of gyration, and solvent-acce
 
 Binding free energies were estimated using \texttt{gmx\_MMPBSA} with the OBC2 generalised Born model (igb = 5), \SI{0.15}{\molar} ionic strength, and dielectric constants of \num{80.0} (solvent) and \num{1.0} (protein). Snapshots were extracted at \SI{100}{\pico\second} intervals across the \SI{10}{\nano\second} parent-study trajectories. Endpoint estimates were retained only when the ligand remained bound and the topology conversion passed validation: this yielded one interpretable result (PfCRT--214, \num{101} snapshots). Dissociated systems (the 164-labelled PfClpR cohort and PfDHFR--201) and the PfATP4--438 conversion-corrupted system were reported as N/A rather than assigned binding energies. Per-residue energy decomposition was not used to rescue an invalid endpoint. MM-GBSA is therefore treated as a cautious, system-specific diagnostic rather than a calibrated thermodynamic measurement \citep{gmx_mmpbsa_2021, mmgbsa_best_practices_2025}.
 
-Candidate-specific production MD was not included for the 16-system Set-C pilot because the complete trajectory and quality-control criteria were not satisfied; consequently, no Set-C MD-RRS estimate is reported. This limitation defines the scope of the present docking-RRS and polypharmacology analysis.
+Candidate-specific production MD was completed for the 16-system Set-C pilot (PP-01 and PP-02 against the six-mutant panel, \SI{10}{\nano\second} each, CHARMM36m/GAFF2, \SI{310.15}{\kelvin}), and all 16 trajectories passed the prespecified trajectory-QC gate (bound fraction, duration, and topology hashes). MM-GBSA was applied to the same 16 systems with the identical GB$^{\text{OBC2}}$ (igb=5) protocol. Because the pilot is a two-candidate exploratory extension rather than the prespecified 17-candidate cohort, its MD-RRS and MM-GBSA values are reported as secondary results and are not merged into the primary docking-RRS classification; no primary claim is based on the pilot.
 
 \subsection{Cross-metric correlation analysis}
 
@@ -618,6 +618,38 @@ RRS vs.\ $\Delta G_{\mathrm{WT}}$ & H3 & -0.433 & 0.0824 & No & Weak negative tr
 \end{tabularx}
 \end{table}
 
+\subsection{Set-C MD pilot: trajectory-derived MD-RRS and MM-GBSA}\label{sec:setc_pilot}
+
+All \num{16} Set-C pilot MM-GBSA runs completed with the identical parent-cohort protocol (\texttt{gmx\_MMPBSA} v1.5.0.3, GB$^{\text{OBC2}}$ igb=5, \SI{0.15}{\molar} salt, \SI{100}{\pico\second} snapshots, CHARMM36-to-AMBER conversion; \cref{tab:mmmgbsa_setc}). Binding free energies were negative for every system (mean $\Delta G_{\mathrm{bind}} = \num{-29.04} \pm \num{3.00}$~\si{\kcalmol}, range \num{-35.29} to \num{-24.53}~\si{\kcalmol}), i.e. all ligands remained bound within the pilot timescale. The mutant/WT MM-GBSA ratio (MMG-RRS, same convention as docking RRS) exceeded \num{100} for eight of twelve mutants, and the four below-\num{100} cases (PP-01 PfCRT K76T \num{96.4}, PP-02 PfCRT K76A \num{97.8}, PP-02 PfDHFR C59R \num{95.7}, PP-02 PfDHFR S108N \num{89.8}) all lie within the expected $\pm$\SI{2}{-}\num{3}~\si{\kcalmol} MM-GBSA accuracy of their wild-type references. Docking predicted looser mutant binding for all twelve states (RRS \num{83.9}--\num{94.6}); the pilot MM-GBSA therefore does not reproduce the docking-predicted weakening of mutant binding, consistent with the trajectory-derived MD-RRS geometry comparison. No mutant shows a reproducible weaker-binding signature within the \SI{10}{\nano\second} pilot window; this is a methodological divergence between static docking energy and a single-replicate endpoint estimate, not a phenotype claim.
+
+\begin{table}[htbp]
+\centering
+\caption{Set-C MD pilot mutant-state MM-GBSA estimates (secondary, exploratory analysis; not merged into the primary docking-RRS classification). $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots $\pm$ standard deviation; MMG-RRS is the mutant/WT $\Delta G_{\mathrm{bind}}$ ratio ($\times \num{100}$, same convention as docking RRS; WT = \num{100}); docking RRS is shown for comparison (n/a = no WT docking reference in the pilot for PP-02 PfDHFR).}\label{tab:mmmgbsa_setc}
+\small
+\begin{tabularx}{\textwidth}{l l l S[table-format=-2.2] S[table-format=1.2] S[table-format=2.2] S[table-format=2.2]}
+\toprule
+Candidate & Target & State & {$\Delta G_{\mathrm{bind}}$ (\si{\kcalmol})} & {SD} & {MMG-RRS} & {Docking RRS} \\
+\midrule
+PP-01 & PfCRT & K76A & -35.29 & 1.17 & 115.3 & 90.86 \\
+PP-01 & PfCRT & K76T & -29.51 & 2.65 & 96.4 & 92.47 \\
+PP-01 & PfCRT & WT & -30.61 & 1.65 & 100.0 & {--} \\
+PP-01 & PfDHFR & C59R & -26.56 & 1.91 & 105.0 & 85.47 \\
+PP-01 & PfDHFR & I164L & -26.13 & 2.34 & 103.3 & 83.87 \\
+PP-01 & PfDHFR & N51I & -29.83 & 1.50 & 118.0 & 86.40 \\
+PP-01 & PfDHFR & S108N & -30.21 & 3.62 & 119.5 & 87.60 \\
+PP-01 & PfDHFR & WT & -25.29 & 2.94 & 100.0 & {--} \\
+PP-02 & PfCRT & K76A & -24.53 & 1.27 & 97.8 & 94.62 \\
+PP-02 & PfCRT & K76T & -30.45 & 1.38 & 121.4 & 87.91 \\
+PP-02 & PfCRT & WT & -25.08 & 2.56 & 100.0 & {--} \\
+PP-02 & PfDHFR & C59R & -28.85 & 1.88 & 95.7 & n/a \\
+PP-02 & PfDHFR & I164L & -31.06 & 1.52 & 103.0 & n/a \\
+PP-02 & PfDHFR & N51I & -34.02 & 2.68 & 112.8 & n/a \\
+PP-02 & PfDHFR & S108N & -27.09 & 1.55 & 89.8 & n/a \\
+PP-02 & PfDHFR & WT & -30.16 & 2.06 & 100.0 & {--} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 
 % ============================================================================
 % 4. DISCUSSION
@@ -649,7 +681,7 @@ The cross-metric analysis asks whether the three prioritisation layers provide o
 
 H1 showed a moderate negative association in the prespecified direction, but the evidence was insufficient after multiplicity correction. The pattern is compatible with a potency--resilience trade-off described in resistance evolution, in which successive selective regimes favour different resistance mechanisms \citep{Blake2025Resistome}; it is not evidence that the present compounds will select resistance in vivo. Because the only interpretable MM-GBSA estimate belongs to the separate parent-study cohort, no PNS--MM-GBSA association was estimated.
 
-H3 could not be evaluated: no mutant MM-GBSA data were generated for the 17 candidates, so $\Delta\Delta G$ (WT minus mutant) values are unavailable. Future work with full MD simulations of mutant complexes will be needed to validate docking-based RRS as a proxy for free energy resilience.
+H3 is only partially addressed: mutant-state MM-GBSA estimates are now available for the two prioritised Set-C pilot candidates (PP-01 and PP-02, six mutants each; \cref{sec:setc_pilot}), but their single-replicate \SI{10}{\nano\second} design and the \num{\sim 2}--\num{3}~\si{\kcalmol} expected MM-GBSA uncertainty are too coarse to validate docking RRS as a free-energy resilience proxy for the full \num{17}-candidate cohort. Future work with replicate, longer mutant simulations will be needed to validate docking-based RRS as a proxy for free-energy resilience.
 
 \subsection{Single-target optimisation of top candidates}
 
@@ -657,7 +689,7 @@ The central design tension is that the Set-C cohort was selected for multi-targe
 
 \subsection{Value of MD validation}
 
-The targeted MD analysis demonstrates why docking should be treated as a triage layer. Two of the four parent-study systems retained bound ligands, whereas the 164-labelled PfClpR cohort and PfDHFR--201 dissociated; only PfCRT--214 passed the bound-state and topology-integrity criteria for MM-GBSA. The resulting $-\SI{18.25}{\kcalmol}\pm\SI{0.40}{\kcalmol}$ is a system-specific endpoint estimate, not a calibration for the 17 Set-C candidates. The separation between cohorts prevents a spurious docking-to-MM-GBSA conversion and makes the negative evidence scientifically useful: a stable receptor trajectory does not validate a ligand pose. Mutant MM-GBSA was not generated, so the key mechanistic test—whether docking RRS predicts mutant free-energy resilience—remains unresolved.
+The targeted MD analysis demonstrates why docking should be treated as a triage layer. Two of the four parent-study systems retained bound ligands, whereas the 164-labelled PfClpR cohort and PfDHFR--201 dissociated; only PfCRT--214 passed the bound-state and topology-integrity criteria for MM-GBSA. The resulting $-\SI{18.25}{\kcalmol}\pm\SI{0.40}{\kcalmol}$ is a system-specific endpoint estimate, not a calibration for the 17 Set-C candidates. The separation between cohorts prevents a spurious docking-to-MM-GBSA conversion and makes the negative evidence scientifically useful: a stable receptor trajectory does not validate a ligand pose. Mutant MM-GBSA was generated only for the two Set-C pilot candidates (\cref{sec:setc_pilot}); within the single-replicate \SI{10}{\nano\second} window it did not reproduce the docking-predicted weakening of mutant binding, so the key mechanistic test—whether docking RRS predicts mutant free-energy resilience—remains unresolved at converged timescales.
 
 \subsection{Comparison with existing polypharmacology tools}
 
@@ -675,7 +707,7 @@ Tartarus was designed for inverse molecular-design benchmarking \citep{tartarus_
 
 \subsection{Limitations}
 
-The mutant structures were generated by homology modeling rather than experimental determination, introducing modeling uncertainty into the docking results. No production MD was included for the 17 Set-C candidates or their mutant systems; the available MD consists of a separate, targeted \SI{10}{\nano\second} check of four named parent-study wild-type complexes. A 16-system Set-C pilot was not included because it did not satisfy the complete-trajectory and quality-control criteria. This duration and single-trajectory design cannot establish long-timescale residence, replicate consistency, or convergence. MM-GBSA provides an approximate endpoint estimate and does not fully account for entropic contributions; in this study only PfCRT--214 passed the bound-state and topology-integrity checks. All predictions remain computational and require experimental confirmation. The four targets examined here represent a subset of the proteins relevant to African malaria treatment; expansion to additional targets such as PfATP1 and PfPI4K would strengthen the polypharmacological assessment.
+The mutant structures were generated by homology modeling rather than experimental determination, introducing modeling uncertainty into the docking results. No full production MD was generated for the 17 Set-C candidates; the available MD consists of a separate, targeted \SI{10}{\nano\second} check of four named parent-study wild-type complexes and a 16-system Set-C MD pilot (PP-01 and PP-02 against the six-mutant panel, \SI{10}{\nano\second} each) that passed the prespecified trajectory-QC gate (16/16) and is reported as a secondary, exploratory analysis (\cref{sec:setc_pilot}). The pilot's single-replicate, \SI{10}{\nano\second} design cannot establish long-timescale residence, replicate consistency, or convergence. MM-GBSA provides an approximate endpoint estimate and does not fully account for entropic contributions; in this study only PfCRT--214 passed the bound-state and topology-integrity checks. All predictions remain computational and require experimental confirmation. The four targets examined here represent a subset of the proteins relevant to African malaria treatment; expansion to additional targets such as PfATP1 and PfPI4K would strengthen the polypharmacological assessment.
 
 \textbf{PfCRT PNS imputation.}
 PfCRT (PF3D7\_0709000) has no curated STRING PPI interactions at the 700 confidence threshold used in this study. Its composite centrality was therefore imputed with the network mean (rather than set to \num{1.0}); this avoids a mechanical PNS--binding-score relationship. The imputation is a sensitivity limitation, not evidence that PfCRT has no biological interactions.

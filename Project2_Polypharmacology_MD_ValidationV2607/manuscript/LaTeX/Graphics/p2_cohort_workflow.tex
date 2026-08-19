@@ -24,7 +24,7 @@
 \node[md, below=of parent] (mdmetrics) {Trajectory analysis\\RMSD, contacts, bound-state QC};
 \node[result, below=of mdmetrics] (mmgbsa) {MM-GBSA when valid\\\textbf{one interpretable result}: PfCRT--214};
 
-\node[md, below=of mmgbsa] (pilot) {Set-C MD pilot\\16 systems planned\\not included before complete QC};
+\node[md, below=of mmgbsa] (pilot) {Set-C MD pilot\\16 systems, 16/16 QC PASS\\reported as secondary};
 \node[boundary, fit=(setc) (dockmetrics) (rrs), label={[blue!65!black]above:\\small Docking-derived estimand}] (dockbox) {};
 \node[boundary, fit=(parent) (mdmetrics) (mmgbsa), label={[orange!75!black]above:\\small Trajectory-derived estimand}] (mdbox) {};
 
@@ -35,6 +35,6 @@
 \draw[arrow] (parent) -- (mdmetrics);
 \draw[arrow] (mdmetrics) -- (mmgbsa);
 \draw[arrow, dashed] (setc.south) -- ++(0,-7mm) -| (pilot.west);
-\node[align=center, text width=35mm, font=\scriptsize, below=1mm of pilot] {MD-RRS remains\\\textbf{NOT COMPUTED} until complete PASS QC};
+\node[align=center, text width=35mm, font=\scriptsize, below=1mm of pilot] {MD-RRS + MM-GBSA\\\textbf{COMPUTED} (16/16 PASS)};
 \end{tikzpicture}
 \end{document}
