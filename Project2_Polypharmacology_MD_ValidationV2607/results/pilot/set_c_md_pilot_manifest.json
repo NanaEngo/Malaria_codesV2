@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "status": "PREFLIGHT_ONLY_MISSING_SET_C_COMPLEXES",
+  "execution": {
+    "gromacs_launched": false,
+    "production_md_run": false,
+    "reason": "This script only selects and validates a future set-C pilot; it never launches MD."
+  },
+  "cohorts": {
+    "set_c": {
+      "source": "results/candidate_selection/md_top20_candidates_polypharm.csv",
+      "n_candidates_total": 17,
+      "selected_ids": [
+        "PP-01",
+        "PP-02"
+      ],
+      "purpose": "Targeted future MD pilot; distinct from parent-study MD systems."
+    },
+    "parent_md_excluded": [
+      "164-PfClpP",
+      "201-PfDHFR",
+      "214-PfCRT",
+      "438-PfATP4"
+    ]
+  },
+  "targets": [
+    "PfCRT",
+    "PfDHFR"
+  ],
+  "required_mutations": {
+    "PfCRT": [
+      "WT",
+      "K76T",
+      "K76A"
+    ],
+    "PfDHFR": [
+      "WT",
+      "N51I",
+      "C59R",
+      "S108N",
+      "I164L"
+    ]
+  },
+  "provenance": {
+    "docking_file": "results/docking_mutants.csv",
+    "docking_rows": 136,
+    "system_table": "results/pilot/set_c_md_pilot_systems.csv"
+  },
+  "required_complex_files": [
+    "complex.gro",
+    "topol.top",
+    "md.mdp",
+    "system_manifest.json"
+  ],
+  "missing_prepared_complex_dirs": [
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-01_PfCRT_K76A",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-01_PfCRT_K76T",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-01_PfCRT_WT",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-01_PfDHFR_C59R",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-01_PfDHFR_I164L",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-01_PfDHFR_N51I",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-01_PfDHFR_S108N",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-01_PfDHFR_WT",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-02_PfCRT_K76A",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-02_PfCRT_K76T",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-02_PfCRT_WT",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-02_PfDHFR_C59R",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-02_PfDHFR_I164L",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-02_PfDHFR_N51I",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-02_PfDHFR_S108N",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c/PP-02_PfDHFR_WT"
+  ],
+  "selection": [
+    {
+      "set_c_id": "PP-01",
+      "rank": 1,
+      "smiles": "COc1ccc(-c2cc(=O)c3c(O)c(OC)c(OC)cc3o2)cc1",
+      "composite_score": 0.9927007299270072
+    },
+    {
+      "set_c_id": "PP-02",
+      "rank": 2,
+      "smiles": "COc1ccc(C[C@@H]2CO[C@H](O)[C@H]2Cc2ccc(OC)c(OC)c2)cc1OC",
+      "composite_score": 0.5760352956566238
+    }
+  ]
+}

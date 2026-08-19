@@ -1,0 +1,59 @@
+{
+  "rows": [
+    {
+      "condition": "with_controls",
+      "n_drugs": 3289,
+      "n_labels": 206,
+      "folds": 25,
+      "nan_cells": 0,
+      "mean_columnwise_log_loss": 0.02378,
+      "mean_columnwise_log_loss_min": 0.02242,
+      "mean_columnwise_log_loss_max": 0.02536,
+      "macro_auprc": 0.14276,
+      "macro_auprc_min": 0.11771,
+      "macro_auprc_max": 0.18682,
+      "macro_auroc": 0.64345,
+      "macro_auroc_min": 0.60781,
+      "macro_auroc_max": 0.66449,
+      "mean_brier": 0.00374,
+      "mean_brier_min": 0.00354,
+      "mean_brier_max": 0.00401,
+      "mean_ece": 0.00376,
+      "mean_ece_min": 0.00356,
+      "mean_ece_max": 0.00403,
+      "auroc_seed_range": "0.6398-0.6465"
+    },
+    {
+      "condition": "no_controls",
+      "n_drugs": 3288,
+      "n_labels": 206,
+      "folds": 25,
+      "nan_cells": 0,
+      "mean_columnwise_log_loss": 0.02389,
+      "mean_columnwise_log_loss_min": 0.0223,
+      "mean_columnwise_log_loss_max": 0.02561,
+      "macro_auprc": 0.14124,
+      "macro_auprc_min": 0.1154,
+      "macro_auprc_max": 0.16949,
+      "macro_auroc": 0.64168,
+      "macro_auroc_min": 0.61177,
+      "macro_auroc_max": 0.6685,
+      "mean_brier": 0.00375,
+      "mean_brier_min": 0.00353,
+      "mean_brier_max": 0.00407,
+      "mean_ece": 0.00381,
+      "mean_ece_min": 0.00361,
+      "mean_ece_max": 0.00408,
+      "auroc_seed_range": "0.6378-0.6480"
+    },
+    {
+      "condition": "delta (no_controls - with_controls)",
+      "n_drugs": -1,
+      "mean_columnwise_log_loss": 0.00011,
+      "macro_auprc": -0.00152,
+      "macro_auroc": -0.00177,
+      "mean_brier": 1e-05,
+      "mean_ece": 5e-05
+    }
+  ]
+}

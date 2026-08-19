@@ -1,0 +1,298 @@
+{
+  "blocked_system_count": 4,
+  "cohort_id": "P2_PARENT_STUDY_MD_4",
+  "execution_authorized": false,
+  "execution_performed": false,
+  "generated_utc": "2026-08-09T17:02:39.553827+00:00",
+  "gromacs_launched": false,
+  "hash_scope": [
+    "ions.gro",
+    "topol.top",
+    "npt.gro",
+    "npt.cpt",
+    "forcefield_manifest.json"
+  ],
+  "policy": {
+    "cohort_id": "P2_PARENT_STUDY_MD_4",
+    "ligand_force_field": "CGenFF",
+    "protein_force_field": "CHARMM36m",
+    "temperature_k": 310.15,
+    "water_model": "TIP3P"
+  },
+  "read_only_inputs": true,
+  "ready_system_count": 0,
+  "remediation_rule": "Generate candidate-specific CHARMM36m+CGenFF/TIP3P inputs and independently verify all hashes; never copy historical GAFF2/ACPYPE coordinates or fabricate manifests.",
+  "report_written": true,
+  "schema": "p2-parent-md-input-preflight/v2",
+  "scope_note": "Four-system input/provenance gate; it does not validate completed trajectories or historical execution.",
+  "status": "FAIL_CLOSED_BLOCKED",
+  "system_count": 4,
+  "systems": [
+    {
+      "blockers": [
+        "strict force-field validation: protein_force_field must be CHARMM36m",
+        "strict force-field validation: ligand_force_field must be CGenFF for a publication-grade future rerun",
+        "strict force-field validation: source_manifest_path must record non-empty provenance",
+        "strict force-field validation: source_manifest_sha256 must be a 64-character SHA-256 hex string",
+        "manifest protein_force_field='CHARMM36-jul2022', expected 'CHARMM36m'",
+        "manifest ligand_force_field='GAFF2 (AM1-BCC via ACPYPE)', expected 'CGenFF'"
+      ],
+      "canonical_directory": "201_PfDHFR",
+      "forcefield_manifest": {
+        "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/201_PfDHFR/forcefield_manifest.json",
+        "present": true,
+        "sha256": "16f32643ca5fcb5446cdf28c3431b8bba3e103dba1f2cef84a827d64e03c6da9"
+      },
+      "optional_stage_outputs": {
+        "em.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/201_PfDHFR/em.gro",
+          "present_nonempty": true,
+          "sha256": "93102863430c8103f96d570741d62b4f3226d8135e94932d28a33e0250124cf0",
+          "size_bytes": 6037003
+        },
+        "nvt.cpt": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/201_PfDHFR/nvt.cpt",
+          "present_nonempty": true,
+          "sha256": "d20f86851cfa982b0f606b49032d1ea795b5a767aaabc11166fca58a5e8179fb",
+          "size_bytes": 3221528
+        },
+        "nvt.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/201_PfDHFR/nvt.gro",
+          "present_nonempty": true,
+          "sha256": "03e6c17f26ee7c148e115af24d7ff2a8ad87adbcf71c97d56fb9ac5355d87bac",
+          "size_bytes": 9256675
+        }
+      },
+      "policy_alias": "201_DHFR",
+      "required_files": {
+        "ions.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/201_PfDHFR/ions.gro",
+          "present_nonempty": true,
+          "sha256": "fa43467afd32b336f18bdd0a81f097dbe7fd82619c449f819473096ed396f7d9",
+          "size_bytes": 6037003
+        },
+        "npt.cpt": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/201_PfDHFR/npt.cpt",
+          "present_nonempty": true,
+          "sha256": "e0f4a3d2cfcd2f51a4fde3c6316c753cbbd58054fb0b064beb2399673420b7f4",
+          "size_bytes": 3221756
+        },
+        "npt.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/201_PfDHFR/npt.gro",
+          "present_nonempty": true,
+          "sha256": "73a28198c754e1a435a7217a87026c9f970dc2d3dd6482697c544ff303873541",
+          "size_bytes": 9256675
+        },
+        "topol.top": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/201_PfDHFR/topol.top",
+          "present_nonempty": true,
+          "sha256": "df65c801b18ecd370fbb0ea8e1dec08391c943ca8ed0d8f87a9358ecdc1103d0",
+          "size_bytes": 2572938
+        }
+      },
+      "status": "BLOCKED",
+      "system_dir": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/201_PfDHFR"
+    },
+    {
+      "blockers": [
+        "missing/empty npt.gro",
+        "missing/empty npt.cpt",
+        "strict force-field validation: protein_force_field must be CHARMM36m",
+        "strict force-field validation: ligand_force_field must be CGenFF for a publication-grade future rerun",
+        "strict force-field validation: source_manifest_path must record non-empty provenance",
+        "strict force-field validation: coordinates_sha256 must be a 64-character SHA-256 hex string",
+        "strict force-field validation: checkpoint_sha256 must be a 64-character SHA-256 hex string",
+        "strict force-field validation: source_manifest_sha256 must be a 64-character SHA-256 hex string",
+        "strict force-field validation: missing file for hash verification: /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/npt.gro",
+        "strict force-field validation: missing file for hash verification: /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/npt.cpt",
+        "manifest protein_force_field='CHARMM36-jul2022', expected 'CHARMM36m'",
+        "manifest ligand_force_field='GAFF2 (AM1-BCC via ACPYPE)', expected 'CGenFF'"
+      ],
+      "canonical_directory": "438_PfATP4",
+      "forcefield_manifest": {
+        "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/forcefield_manifest.json",
+        "present": true,
+        "sha256": "b755d0e4952757967c6e27dd9bcc776af6cd46965a5486a806df2d8b0554b8dd"
+      },
+      "optional_stage_outputs": {
+        "em.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/em.gro",
+          "present_nonempty": true,
+          "sha256": "7206a94273989c94aabc0d1e05302e4d8e32f433340baf9cfb6d26ca7db10bac",
+          "size_bytes": 18936154
+        },
+        "nvt.cpt": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/nvt.cpt",
+          "present_nonempty": true,
+          "sha256": "f3ac58b0e67159adae79dc3a92d497c08353f8f6287d3cc165b13d5956a75cf8",
+          "size_bytes": 10101080
+        },
+        "nvt.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/nvt.gro",
+          "present_nonempty": true,
+          "sha256": "078f30fd04a9c2fa328ca8a9e099e3239cfd51afb5255d6b2128416e18b94cfc",
+          "size_bytes": 29035378
+        }
+      },
+      "policy_alias": "438_ATP4",
+      "required_files": {
+        "ions.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/ions.gro",
+          "present_nonempty": true,
+          "sha256": "f2994eb58b6b5e633de2161b95126c9e6b4208febd611e507f94344fe6bb53dc",
+          "size_bytes": 18936163
+        },
+        "npt.cpt": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/npt.cpt",
+          "present_nonempty": false,
+          "sha256": null,
+          "size_bytes": 0
+        },
+        "npt.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/npt.gro",
+          "present_nonempty": false,
+          "sha256": null,
+          "size_bytes": 0
+        },
+        "topol.top": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4/topol.top",
+          "present_nonempty": true,
+          "sha256": "4f5ec390278bb0a3f5b6975f44d091a9d5d1ee6e8b9b534ba0dd1f8ee2a8a69c",
+          "size_bytes": 4342370
+        }
+      },
+      "status": "BLOCKED",
+      "system_dir": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/438_PfATP4"
+    },
+    {
+      "blockers": [
+        "strict force-field validation: protein_force_field must be CHARMM36m",
+        "strict force-field validation: ligand_force_field must be CGenFF for a publication-grade future rerun",
+        "strict force-field validation: source_manifest_path must record non-empty provenance",
+        "strict force-field validation: source_manifest_sha256 must be a 64-character SHA-256 hex string",
+        "manifest protein_force_field='CHARMM36-jul2022', expected 'CHARMM36m'",
+        "manifest ligand_force_field='GAFF2 (AM1-BCC via ACPYPE)', expected 'CGenFF'"
+      ],
+      "canonical_directory": "164_PfClpP",
+      "forcefield_manifest": {
+        "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/164_PfClpP/forcefield_manifest.json",
+        "present": true,
+        "sha256": "0c643d21d128b6a4d68dc06e8a3ba24ffc01605dcd6343869475591b46b92635"
+      },
+      "optional_stage_outputs": {
+        "em.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/164_PfClpP/em.gro",
+          "present_nonempty": true,
+          "sha256": "85345f82a2035d3facb37c786d7f7d6e6dad2bf61197770631feeb3b43eb479d",
+          "size_bytes": 1936692
+        },
+        "nvt.cpt": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/164_PfClpP/nvt.cpt",
+          "present_nonempty": true,
+          "sha256": "f79db5cbf788d2dd7dde77c461d8f12adeb23d7ccae466ab068103f7502991f8",
+          "size_bytes": 1034696
+        },
+        "nvt.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/164_PfClpP/nvt.gro",
+          "present_nonempty": true,
+          "sha256": "c7594607d4d2f991943b67dbbf1eeb300750a8ab140db407e43e0bf30620eb52",
+          "size_bytes": 2969532
+        }
+      },
+      "policy_alias": "164_ClpP",
+      "required_files": {
+        "ions.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/164_PfClpP/ions.gro",
+          "present_nonempty": true,
+          "sha256": "98d1296db9f1d76a627e96ed6bf59137cbbac5aa7c86eae2d58641138d05ae71",
+          "size_bytes": 1936692
+        },
+        "npt.cpt": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/164_PfClpP/npt.cpt",
+          "present_nonempty": true,
+          "sha256": "a96cb1bce2ed4141ceabf1900ccd03592c493ed94d30bacc3090af24ab3569be",
+          "size_bytes": 1034924
+        },
+        "npt.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/164_PfClpP/npt.gro",
+          "present_nonempty": true,
+          "sha256": "ec689b757fdf6144cfe5b46009e7373c9792c5e8e2edd5b604910fa2c9858470",
+          "size_bytes": 2969532
+        },
+        "topol.top": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/164_PfClpP/topol.top",
+          "present_nonempty": true,
+          "sha256": "a4498d0f5e9f8ce9e3f5a04828af53dfdf832393a0bafc2e1ab21e73f2b5de3f",
+          "size_bytes": 848970
+        }
+      },
+      "status": "BLOCKED",
+      "system_dir": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/164_PfClpP"
+    },
+    {
+      "blockers": [
+        "strict force-field validation: protein_force_field must be CHARMM36m",
+        "strict force-field validation: ligand_force_field must be CGenFF for a publication-grade future rerun",
+        "strict force-field validation: source_manifest_path must record non-empty provenance",
+        "strict force-field validation: source_manifest_sha256 must be a 64-character SHA-256 hex string",
+        "manifest protein_force_field='CHARMM36-jul2022', expected 'CHARMM36m'",
+        "manifest ligand_force_field='GAFF2 (AM1-BCC via ACPYPE)', expected 'CGenFF'"
+      ],
+      "canonical_directory": "214_PfCRT",
+      "forcefield_manifest": {
+        "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT/forcefield_manifest.json",
+        "present": true,
+        "sha256": "13decc70270d0e09a5c4233e1c67bdd676ffb805d5a17499d8f905b1f34b798f"
+      },
+      "optional_stage_outputs": {
+        "em.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT/em.gro",
+          "present_nonempty": true,
+          "sha256": "365b3951e8e93cd687c8a31ca2bbf3fb622e2360dd0505c87173e63e1b5e6546",
+          "size_bytes": 3461516
+        },
+        "nvt.cpt": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT/nvt.cpt",
+          "present_nonempty": true,
+          "sha256": "f647c806aecab6d90e5bc310726744d84b6bb7bb1799cd41b1e50cd65af2c468",
+          "size_bytes": 1847936
+        },
+        "nvt.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT/nvt.gro",
+          "present_nonempty": true,
+          "sha256": "1bb471d262f874ef9bdb54c2531f4e9a7bbc67bc9189706e80b16d1bfd3688d4",
+          "size_bytes": 5307596
+        }
+      },
+      "policy_alias": "214_CRT",
+      "required_files": {
+        "ions.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT/ions.gro",
+          "present_nonempty": true,
+          "sha256": "b0bff7e1ba1310ffa6b07e0f65c33a0c753a354a4c07746b68b543f58ed4189f",
+          "size_bytes": 3461516
+        },
+        "npt.cpt": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT/npt.cpt",
+          "present_nonempty": true,
+          "sha256": "cd23fe13cd7fe722383db9a44446bcf14eff0f948ae53cf21cc9e95e8bed3808",
+          "size_bytes": 1848164
+        },
+        "npt.gro": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT/npt.gro",
+          "present_nonempty": true,
+          "sha256": "787177aa28ca9fc227a1277553f1dacce0fa54c16842b378db756560c2ee88b7",
+          "size_bytes": 5307596
+        },
+        "topol.top": {
+          "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT/topol.top",
+          "present_nonempty": true,
+          "sha256": "35eb51617a5e4e4ea0da3702deb16e66caf49f72d03c6a3fab163f27aece8cc5",
+          "size_bytes": 1617234
+        }
+      },
+      "status": "BLOCKED",
+      "system_dir": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/MD_systems/214_PfCRT"
+    }
+  ]
+}

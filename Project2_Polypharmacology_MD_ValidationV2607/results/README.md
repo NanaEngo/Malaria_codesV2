@@ -69,7 +69,7 @@ md_systems/
 **Purpose**: Generated resistance mutant protein structures
 
 **Targets and Mutations**:
-- **4GM2 (PfClpP)**: [Specific mutations to be determined]
+- **4GM2 (PfClpR; not PfClpP)**: no PfClpP-specific mutation analysis is accepted from this entry
 - **6UKJ (PfCRT)**: K76T, N75E, M74I, A220S
 - **7F3Y (PfDHFR)**: S108N, N51I, C59R, I164L
 - **9N10 (PfATP4)**: [Specific mutations to be determined]

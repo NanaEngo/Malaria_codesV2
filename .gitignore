@@ -381,3 +381,10 @@ charges
 wbo
 xtbrestart
 xtbtopo.mol
+
+# --- Manuscript submission self-containment: track .bbl/.aux for canonical submission docs ---
+# (xr cross-references + ACS LaTeX upload require .bbl/.aux; negation of *.bbl/*.aux above)
+!Project1_Chem_space_antimalarial_V4_CorrectedGrid/manuscript/*.bbl
+!Project1_Chem_space_antimalarial_V5_CorrectedGrid/manuscript/*.bbl
+!Project1_Chem_space_antimalarial_V6_CorrectedGrid/submission_ACS_P1V6/*.bbl
+!Project1_Chem_space_antimalarial_V6_CorrectedGrid/submission_ACS_P1V6/*.aux

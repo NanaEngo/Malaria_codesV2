@@ -38,9 +38,11 @@ from rdkit.Chem import rdchem
 try:
     from deepchem.feat import CircularFingerprint, MACCSKeysFingerprint, RDKitDescriptors
     DEEPCHEM_AVAILABLE = True
-except ImportError:
+except Exception as exc:  # noqa: BLE001 - deepchem is optional; any import failure
+    # (e.g. jax/numpy incompatibility in the host env) must not block the
+    # P5 benchmark, which computes ECFP4 via RDKit directly.
     DEEPCHEM_AVAILABLE = False
-    print("Warning: DeepChem not available. DeepChem descriptors disabled.")
+    print(f"Warning: DeepChem descriptors disabled (import failed: {exc})")
 
 P5_ROOT = Path(__file__).resolve().parent.parent
 PANEL = P5_ROOT / "results" / "p5_canonical_panel.csv"

@@ -1,12 +1,21 @@
 % ============================================================================
 % Cover Letter — Paper 4 (JoC / BMC)
 % ============================================================================
-\documentclass[11pt,a4paper]{letter}
+\documentclass[10pt,a4paper]{letter}
 
-\usepackage[margin=2.3cm]{geometry}
+\usepackage[margin=1.7cm]{geometry}
 \usepackage{microtype}
+\usepackage{siunitx}
 \usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
 \usepackage{enumitem}
+
+\sisetup{
+  detect-all           = true,
+  group-minimum-digits = 4,
+  range-phrase         = {--},
+  range-units          = single,
+}
 
 \signature{Myke Vital Sao Temgoua \\ \small Corresponding Author}
 \address{%
@@ -25,22 +34,24 @@
 }
 
 \opening{Dear Editors,}
+\small
+\setlength{\parskip}{0.35em}
 
-We are pleased to submit our manuscript, \textbf{``Pareto-guided Monte Carlo tree search explores multi-objective trade-offs missed by scalar antimalarial generation''}, for consideration as a Research Article in the \textit{Journal of Cheminformatics}.
+We are pleased to submit our manuscript, \textbf{``Pareto-guided Monte Carlo tree search for analysing multi-objective alternatives in antimalarial molecular design''}, for consideration as a Research Article in the \textit{Journal of Cheminformatics}.
 
-The work addresses a recurring limitation of de novo molecular design: scalar reward aggregation that conceals trade-offs between potency, synthetic accessibility and drug-likeness. We introduce a Pareto-guided Monte Carlo tree search (MCTS) agent that maintains a non-dominated front across multi-parameter optimisation (MPO), synthetic Bayesian accessibility (SYBA), resistance-resilience (RRS) and polypharmacology-network (PNS) scores, guided by a scaffold-aware fragment policy.
+Molecular design is a decision problem in which potency, accessibility and risk-related properties can be weighted differently at different stages of lead optimisation. Our manuscript introduces a scaffold-aware Pareto-guided Monte Carlo tree search (MCTS) for antimalarial fragment assembly. The method retains resistance-informed chemotype similarity and a polypharmacology-informed docking score in a candidate archive, allowing alternative profiles to be reviewed rather than reduced to one ranking. These terms are computational design proxies; the study does not present them as biochemical or cellular validation.
 
-A four-method, 20-seed benchmark under a fixed search budget yields a transparent ranking: random search achieves the highest mean scalar reward (0.7335), followed by MCTS at its screened optimal configuration (0.7276; mean gap 0.0059, paired $t_{19}=2.41$, $p=0.026$), deterministic greedy search (0.7211) and a genetic algorithm (0.7027). MCTS is therefore competitive on single-objective performance and, under the multi-objective protocol, returns a Pareto front of non-dominated candidates (four solutions, hypervolume 1.2366) spanning the potency--accessibility trade-off, including a high-potency / low-accessibility extreme that scalar optimisation misses. Component ablations identify the chemistry-informed policy and the Pareto front itself as the dominant performance drivers.
+Across \num{20} seeds, the scalar benchmark ranked random search first (\num{0.6724}), followed by MCTS (\num{0.6649}), the genetic algorithm (\num{0.6453}) and greedy search (\num{0.4278}). MCTS therefore incurs a measurable scalar-performance cost relative to random search, but the candidate-level analysis retained four non-dominated profiles with hypervolume \num{1.2366}. The largest effects in the separate factorial ablation were associated with the chemistry-informed policy ($\Delta=+\num{0.148}$) and Pareto-front maintenance ($\Delta=+\num{0.108}$); these are within-ablation effects under a distinct reward configuration.
 
-We believe this transparent, methods-focused contribution aligns closely with the scope of the \textit{Journal of Cheminformatics}: rigorous benchmarking, open deposition of code and molecule sets, and honest reporting of both strengths and limitations of a multi-objective search strategy. All data and code are released under the MIT licence and are immediately available to reviewers in the public repository (\url{https://github.com/NanaEngo/Malaria_codesV2}) and on Zenodo (reserved DOI \url{https://doi.org/10.5281/zenodo.19608875}).
+The manuscript's central contribution is methodological rather than a claim of scalar algorithmic superiority: it shows how a Pareto archive can preserve chemically distinct decision options while a matched benchmark quantifies the cost of doing so. The public code, molecule sets and analysis outputs are available under the MIT licence at \url{https://github.com/NanaEngo/Malaria_codesV2} for reviewer inspection. We believe this combination of an honest baseline comparison and an explicit decision-oriented objective archive is well aligned with the journal's computational cheminformatics scope.
 
-This work is original, is not under consideration elsewhere, and all authors have approved the submission.
+This work is original, is not under consideration elsewhere, all authors have approved the submission, and the authors declare no competing financial interests.
 
 \closing{We thank you for your consideration.}
 
 \ps{%
 \textbf{Suggested reviewers:}\\
-\begin{itemize}[leftmargin=*, itemsep=1pt]
+\begin{itemize}[leftmargin=*, itemsep=0pt, topsep=0pt]
   \item Dr.\ Jan H.\ Jensen (graph-based genetic algorithms / MCTS for chemical space)
   \item Prof.\ Gisbert Schneider (generative molecular design)
   \item Dr.\ Ola Engkvist (de novo design, multi-objective optimisation)

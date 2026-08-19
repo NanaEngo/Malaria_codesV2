@@ -23,7 +23,7 @@ except ImportError:
 TARGETS = [
     {"pdb": "7F3Y", "chain": "A", "name": "PfDHFR-TS 7F3Y"},
     {"pdb": "6UKJ", "chain": "A", "name": "PfCRT 6UKJ"},
-    {"pdb": "4GM2", "chain": "A", "name": "PfClpP 4GM2"},
+    {"pdb": "4GM2", "chain": "A", "name": "PfClpR 4GM2 (not PfClpP)"},
     {"pdb": "9N10", "chain": "A", "name": "PfATP4 9N10"},
 ]
 

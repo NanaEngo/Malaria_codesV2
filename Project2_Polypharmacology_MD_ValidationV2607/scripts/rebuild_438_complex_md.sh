@@ -20,13 +20,33 @@
 
 # Note: deliberately avoiding -u because GROMACS GMXRC sources scripts
 # that reference unbound variables, which would cause immediate exit with -u.
-set -eo pipefail
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=md_execution_guard.sh
+source "${SCRIPT_DIR}/md_execution_guard.sh"
+md_guard_parse "$@" || { echo "Usage: $0 [--dry-run|--execute]" >&2; exit 64; }
+if [[ "$MD_GUARD_EXECUTE" != "1" ]]; then
+    md_guard_print_plan "rebuild_438_complex_md.sh" "rebuild 438-PfATP4 pose and run a fresh validation trajectory"
+    exit 0
+fi
+md_guard_require_authorization || exit $?
+md_guard_require_parent_preflight || {
+    echo "ERROR: parent MD preflight failed closed; no GROMACS command will run." >&2
+    exit 2
+}
+md_guard_check_parent_system "438_ATP4"
+
+# A fresh 438 rerun is permitted only after a validated, internally consistent
+# force-field manifest exists. The historical GAFF2/CHARMM36 setup is not
+# silently upgraded or treated as publication-grade.
 
 # ===== Configuration =====
 PROJECT_DIR="/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607"
 SYS_DIR="$PROJECT_DIR/MD_systems/438_PfATP4"
 RESULTS_DIR="$PROJECT_DIR/results/redock_438"
 WORK_DIR="$SYS_DIR/rebuild_test"
+GMX_BIN="${P2_GMX_BIN:-gmx}"
 BINDING_CENTER="134.84,133.10,97.63"
 
 # Source conda
@@ -50,6 +70,7 @@ echo "=============================================="
 echo ""
 
 mkdir -p "$WORK_DIR"
+md_guard_validate_forcefield_manifest "$SYS_DIR"
 
 # ===== Step 1: Check new pose =====
 echo "=== Step 1: Checking new Vina pose ==="
@@ -186,8 +207,8 @@ fi
 echo "  Protein: $PROTEIN_GRO"
 echo "  Ligand:  $WORK_DIR/ligand_438_new.gro"
 
-gmx editconf -f "$PROTEIN_GRO" -o "$WORK_DIR/protein.pdb" 2>&1 | tail -2
-gmx editconf -f "$WORK_DIR/ligand_438_new.gro" -o "$WORK_DIR/ligand.pdb" 2>&1 | tail -2
+"$GMX_BIN" editconf -f "$PROTEIN_GRO" -o "$WORK_DIR/protein.pdb"
+"$GMX_BIN" editconf -f "$WORK_DIR/ligand_438_new.gro" -o "$WORK_DIR/ligand.pdb"
 
 # Combine
 {
@@ -201,14 +222,14 @@ echo ""
 
 # ===== Step 5: Simulation box =====
 echo "=== Step 5: Creating simulation box ==="
-gmx editconf -f "$WORK_DIR/complex.pdb" -o "$WORK_DIR/complex_boxed.gro" \
-    -c -d 1.2 -bt dodecahedron 2>&1 | tail -2
+"$GMX_BIN" editconf -f "$WORK_DIR/complex.pdb" -o "$WORK_DIR/complex_boxed.gro" \
+    -c -d 1.2 -bt dodecahedron
 echo ""
 
 # ===== Step 6: Solvate =====
 echo "=== Step 6: Solvating ==="
-gmx solvate -cp "$WORK_DIR/complex_boxed.gro" -cs spc216.gro \
-    -o "$WORK_DIR/solvated.gro" -p "$WORK_DIR/topol.top" 2>&1 | tail -3
+"$GMX_BIN" solvate -cp "$WORK_DIR/complex_boxed.gro" -cs spc216.gro \
+    -o "$WORK_DIR/solvated.gro" -p "$WORK_DIR/topol.top"
 echo ""
 
 # ===== Step 7: Add ions =====
@@ -221,14 +242,14 @@ emstep = 0.01
 nsteps = 50000
 EOF
 
-gmx grompp -f "$WORK_DIR/ions.mdp" -c "$WORK_DIR/solvated.gro" \
-    -p "$WORK_DIR/topol.top" -o "$WORK_DIR/ions.tpr" -maxwarn 5 2>&1 | tail -2
+"$GMX_BIN" grompp -f "$WORK_DIR/ions.mdp" -c "$WORK_DIR/solvated.gro" \
+    -p "$WORK_DIR/topol.top" -o "$WORK_DIR/ions.tpr"
 
 # Fix: use OMPI_MCA_plm=isolated to prevent Open MPI from killing genion
 # Also backup topology before genion modifies it
 cp "$WORK_DIR/topol.top" "$WORK_DIR/topol.top.bak"
-echo "SOL" | gmx genion -s "$WORK_DIR/ions.tpr" -o "$WORK_DIR/ions.gro" \
-    -p "$WORK_DIR/topol.top" -pname NA -nname CL -conc 0.15 -neutral 2>&1 | tail -3
+echo "SOL" | "$GMX_BIN" genion -s "$WORK_DIR/ions.tpr" -o "$WORK_DIR/ions.gro" \
+    -p "$WORK_DIR/topol.top" -pname NA -nname CL -conc 0.15 -neutral
 echo ""
 
 # ===== Step 8: Energy Minimisation =====
@@ -253,13 +274,13 @@ constraints = h-bonds
 constraint-algorithm = LINCS
 EOF
 
-gmx grompp -f "$WORK_DIR/em.mdp" -c "$WORK_DIR/ions.gro" \
-    -p "$WORK_DIR/topol.top" -o "$WORK_DIR/em.tpr" -maxwarn 5 2>&1 | tail -2
+"$GMX_BIN" grompp -f "$WORK_DIR/em.mdp" -c "$WORK_DIR/ions.gro" \
+    -p "$WORK_DIR/topol.top" -o "$WORK_DIR/em.tpr"
 
 # Use cd + relative -deffnm for reliable output paths
 cd "$WORK_DIR"
-gmx mdrun -v -s em.tpr -deffnm em \
-    -ntmpi 1 -ntomp 8 -gpu_id 0 2>&1 | tail -5
+"$GMX_BIN" mdrun -v -s em.tpr -deffnm em \
+    -ntomp 8 -gpu_id 0
 cd - > /dev/null
 
 EM_ENERGY=$(grep "Potential" "$WORK_DIR/em.log" 2>/dev/null | tail -1 | awk '{print $NF}')
@@ -298,12 +319,12 @@ gen_temp = 310.15
 gen_seed = -1
 EOF
 
-gmx grompp -f "$WORK_DIR/nvt.mdp" -c "$WORK_DIR/em.gro" \
-    -p "$WORK_DIR/topol.top" -o "$WORK_DIR/nvt.tpr" -maxwarn 5 2>&1 | tail -2
+"$GMX_BIN" grompp -f "$WORK_DIR/nvt.mdp" -c "$WORK_DIR/em.gro" \
+    -p "$WORK_DIR/topol.top" -o "$WORK_DIR/nvt.tpr"
 
 cd "$WORK_DIR"
-gmx mdrun -v -s nvt.tpr -deffnm nvt \
-    -ntmpi 1 -ntomp 8 -gpu_id 0 2>&1 | tail -5
+"$GMX_BIN" mdrun -v -s nvt.tpr -deffnm nvt \
+    -ntomp 8 -gpu_id 0
 cd - > /dev/null
 echo ""
 
@@ -341,18 +362,18 @@ compressibility = 4.5e-5
 gen_vel = no
 EOF
 
-gmx grompp -f "$WORK_DIR/npt.mdp" -c "$WORK_DIR/nvt.gro" \
+"$GMX_BIN" grompp -f "$WORK_DIR/npt.mdp" -c "$WORK_DIR/nvt.gro" \
     -t "$WORK_DIR/nvt.cpt" -p "$WORK_DIR/topol.top" \
-    -o "$WORK_DIR/npt.tpr" -maxwarn 5 2>&1 | tail -2
+    -o "$WORK_DIR/npt.tpr"
 
 cd "$WORK_DIR"
-gmx mdrun -v -s npt.tpr -deffnm npt \
-    -ntmpi 1 -ntomp 8 -gpu_id 0 2>&1 | tail -5
+"$GMX_BIN" mdrun -v -s npt.tpr -deffnm npt \
+    -ntomp 8 -gpu_id 0
 cd - > /dev/null
 echo ""
 
-# ===== Step 11: Production MD (2 ns) =====
-echo "=== Step 11: Production MD (2 ns) ==="
+# ===== Step 11: Production MD (2 ns diagnostic only) =====
+echo "=== Step 11: Production MD (2 ns diagnostic only) ==="
 cat > "$WORK_DIR/md_prod.mdp" << 'EOF'
 integrator = md
 nsteps = 1000000
@@ -386,19 +407,19 @@ compressibility = 4.5e-5
 gen_vel = no
 EOF
 
-gmx grompp -f "$WORK_DIR/md_prod.mdp" -c "$WORK_DIR/npt.gro" \
+"$GMX_BIN" grompp -f "$WORK_DIR/md_prod.mdp" -c "$WORK_DIR/npt.gro" \
     -t "$WORK_DIR/npt.cpt" -p "$WORK_DIR/topol.top" \
-    -o "$WORK_DIR/md_prod.tpr" -maxwarn 5 2>&1 | tail -2
+    -o "$WORK_DIR/md_prod.tpr"
 
 cd "$WORK_DIR"
-gmx mdrun -v -s md_prod.tpr -deffnm md_prod \
-    -ntmpi 1 -ntomp 8 -gpu_id 0 2>&1 | tail -5
+"$GMX_BIN" mdrun -v -s md_prod.tpr -deffnm md_prod \
+    -ntomp 8 -gpu_id 0
 cd - > /dev/null
 echo ""
 
 # ===== Step 12: MM-GBSA Analysis =====
 echo "=== Step 12: MM-GBSA Analysis ==="
-if python -c "import gmx_MMPBSA" 2>/dev/null; then
+if command -v gmx_MMPBSA >/dev/null 2>&1; then
     cat > "$WORK_DIR/mmpbsa.in" << 'EOF'
 &general
   sys_name="438_PfATP4_rebuild"
@@ -417,12 +438,14 @@ EOF
         -o "$WORK_DIR/FINAL_RESULTS_MMPBSA_rebuild.dat" \
         -sp "$WORK_DIR/md_prod.tpr" \
         -cp "$WORK_DIR/topol.top" \
-        -nogui 2>&1 | tail -10 || echo "  WARNING: gmx_MMPBSA failed"
+        -nogui
+    [[ -s "$WORK_DIR/FINAL_RESULTS_MMPBSA_rebuild.dat" ]] || {
+        echo "ERROR: gmx_MMPBSA returned no validated output; refusing interpretation." >&2
+        exit 1
+    }
 else
-    echo "  gmx_MMPBSA not available. Will compute binding energy from MD."
-    echo "  Using gmx energy for VBGBSA approximation..."
-    echo "System Non-Protein" | gmx energy -f "$WORK_DIR/md_prod.edr" -s "$WORK_DIR/md_prod.tpr" \
-        -o "$WORK_DIR/protein_ligand_energy.xvg" 2>&1 | tail -5 || true
+    echo "  ERROR: gmx_MMPBSA is unavailable; no binding-energy proxy will be substituted." >&2
+    exit 1
 fi
 echo ""
 
@@ -450,12 +473,10 @@ echo "  OLD MM-GBSA (clash):  +473.0 kcal/mol"
 echo ""
 
 if [ -n "${MMGBSA_TOTAL:-}" ]; then
-    if (( $(echo "$MMGBSA_TOTAL < 100" | bc -l 2>/dev/null) )); then
-        echo "  ✅ RESULT: Clash resolved! ΔG = $MMGBSA_TOTAL kcal/mol"
-    elif (( $(echo "$MMGBSA_TOTAL < 0" | bc -l 2>/dev/null) )); then
-        echo "  🟡 RESULT: Improved (negative binder) but check components"
+    if (( $(echo "$MMGBSA_TOTAL < 0" | bc -l) )); then
+        echo "  RESULT: Negative endpoint reported; inspect topology and convergence before interpretation."
     else
-        echo "  ❌ RESULT: Clash persists. ΔG = $MMGBSA_TOTAL kcal/mol"
+        echo "  RESULT: Non-negative endpoint; clash or non-binding remains possible."
     fi
 fi
 echo ""

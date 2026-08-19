@@ -1,0 +1,241 @@
+\chapter{Tools and Methods}\label{Chap:2}
+
+\section*{Introduction}
+
+This chapter presents the computational methodologies, algorithms, and protocols employed throughout this thesis to investigate quantum machine learning approaches for antimalarial drug discovery. The work encompasses six interconnected research projects (P1–P6), each addressing a distinct aspect of the computational drug discovery pipeline. Project 1 focuses on chemical space exploration and molecular docking across multiple antimalarial targets. Project 2 develops resistance-resilient scoring frameworks and validates predictions through molecular dynamics simulations. Project 3 evaluates quantum-inspired molecular descriptors and compares their performance against classical representations. Project 4 explores multi-objective molecular optimization using Monte Carlo tree search and Pareto-based frameworks. Project 5 benchmarks graph neural networks and transformer models against classical fingerprint-based approaches. Project 6 establishes a phenotype-based baseline for mechanism-of-action prediction using the LISH-MoA dataset.
+
+Each project adheres to rigorous provenance standards, ensuring that all computational predictions are clearly distinguished from experimental validations. Null and negative results are reported with the same transparency as positive findings, reflecting a commitment to scientific integrity. This chapter is organized into eight sections: chemical space construction and virtual screening (Section 2.1), molecular docking protocols (Section 2.2), resistance-resilient scoring and polypharmacology metrics (Section 2.3), molecular dynamics simulation methods (Section 2.4), classical and quantum-inspired molecular descriptors (Section 2.5), machine learning and deep learning architectures (Section 2.6), multi-objective optimization and generative modeling (Section 2.7), and statistical analysis and validation frameworks (Section 2.8).
+
+\section{Chemical Space Construction and Virtual Screening}
+
+\subsection{Hybrid library construction (Project 1)}
+
+The chemical space exploration in Project 1 aims to identify structurally diverse antimalarial candidates by integrating natural products, synthetic compounds, and fragment-based assembly. The hybrid library construction proceeds through three stages: seed compound curation, scaffold-based expansion, and physicochemical filtering. The seed set comprises molecules from established antimalarial databases, including the Medicines for Malaria Venture (MMV) Malaria Box, African natural product repositories, and previously validated hit compounds from phenotypic screens. Canonical SMILES representations are used to ensure unique molecular entries, with duplicate removal based on InChI keys.
+
+Scaffold-based expansion employs a junction tree variational autoencoder (JT-VAE) to generate structurally novel analogues while maintaining core pharmacophoric features. The JT-VAE decomposes molecules into chemically valid substructures (rings, functional groups, and linkers) and learns a continuous latent representation of the molecular space. Sampling from the latent space produces candidate structures that are reconstructed into SMILES strings, which are then validated for chemical feasibility using RDKit sanitization checks. Invalid structures, including those containing disconnected fragments or hypervalent atoms, are rejected. The expansion process targets a diversity threshold measured by Tanimoto similarity to the seed set using extended-connectivity fingerprints (ECFP4, radius 2). Compounds with Tanimoto similarity greater than 0.8 to any seed molecule are considered redundant and excluded.
+
+Physicochemical filtering applies Lipinski's rule of five and extended drug-likeness criteria to ensure oral bioavailability potential. Specifically, compounds are required to satisfy the following constraints: molecular weight between 150 and 500 Da, calculated octanol-water partition coefficient (LogP) between –0.4 and 5.6, number of hydrogen bond donors $\leq$ 5, number of hydrogen bond acceptors $\leq$ 10, topological polar surface area (TPSA) between 20 and 130 Ų, and number of rotatable bonds $\leq$ 10. Additional filters exclude pan-assay interference compounds (PAINS), aggregators, and molecules containing reactive or toxic functional groups based on substructure pattern matching. The resulting hybrid library comprises 65,856 unique molecules, of which 92.6% are ECFP4-unreachable from the original seed space, indicating substantial chemical novelty.
+
+\subsection{Target selection and structural preparation}
+
+Four parasite protein targets are selected based on their essentiality, druggability, and relevance to resistance mechanisms: dihydrofolate reductase (\emph{Pf}DHFR, PlasmoDB ID PF3D7\_0417200), chloroquine resistance transporter (\emph{Pf}CRT, PF3D7\_0709000), ATPase (\emph{Pf}ATP4, PF3D7\_1211900), and the protease \emph{Pf}ClpP (PF3D7\_0307400). Crystal structures are retrieved from the Protein Data Bank (PDB) with the following accession codes: 1J3I for \emph{Pf}DHFR (wild-type), 4DP3 for PfCRT homology model validation, 6UKJ for \emph{Pf}ATP4, and 2F6I for \emph{Pf}ClpP. Structures are prepared following standard protocols: removal of crystallographic waters beyond 5 Å from the ligand, addition of hydrogen atoms consistent with pH 7.4, assignment of protonation states using PROPKA, and energy minimization of hydrogen atoms using the AMBER force field while restraining heavy atoms.
+
+Binding site definition employs a hybrid approach combining crystallographic ligand positions and computational pocket detection. For targets with co-crystallized ligands, the binding site center is defined as the geometric center of the cognate ligand, with a cubic search space of dimensions 20 $\times$ 20 $\times$ 20 Å$^{3}$ centered on this point. For targets lacking co-crystallized ligands or requiring exploration of alternative sites, FPocket is employed to identify candidate pockets based on alpha-sphere clustering and druggability scores. Pocket selection prioritizes volume (≥ 300 ų), druggability score (≥ 0.5), and proximity to known functional residues. Grid box specifications, exhaustiveness parameters, and energy range settings are documented in the docking protocol metadata for full reproducibility.
+
+\section{Molecular Docking Protocols}
+
+\subsection{AutoDock Vina docking (Project 1)}
+
+Molecular docking employs AutoDock Vina 1.1.2, a widely validated docking engine that balances computational efficiency with predictive accuracy. The Vina scoring function approximates the binding free energy through a knowledge-based approach combining steric, electrostatic, and hydrophobic interaction terms. Ligand preparation converts SMILES strings to three-dimensional coordinates using RDKit's ETKDG conformer generation algorithm, followed by energy minimization using the universal force field (UFF). Conformer generation produces up to 50 initial conformers per molecule, from which the lowest-energy structure is selected for docking. Partial charges are assigned using the Gasteiger method, and rotatable bonds are identified automatically while preserving ring planarity and chirality.
+
+Docking campaigns for the full 65,856-molecule library are executed in parallel across computational nodes, with each target processed independently. The exhaustiveness parameter, which controls the thoroughness of the global search, is set to 8 for standard docking and increased to 32 for focused docking of top-ranked candidates. This ensures adequate sampling of the conformational and orientational space while maintaining computational tractability. Each docking run generates up to 9 binding poses ranked by predicted binding affinity. The top-ranked pose (mode 1) is retained for downstream analysis unless visual inspection reveals significant clashes or unrealistic binding geometries.
+
+Docking score interpretation requires careful consideration of the scoring function's limitations. Vina scores are reported in kilocalories per mole (kcal/mol) and represent an approximation of the binding free energy under idealized conditions. However, these scores do not directly correspond to experimentally measured IC$_{5}$$_{0}$ or K_d values due to systematic biases, neglect of entropy contributions, and the static nature of the receptor model. Consequently, docking scores are used for relative ranking and prioritization rather than as quantitative predictions of binding affinity. Compounds with scores more favorable than –8.0 kcal/mol are considered docking hits and advanced to secondary validation stages.
+
+\subsection{Docking validation and benchmarking (Project 1, V7)}
+
+Validation of the docking protocol proceeds through three complementary assessments: redocking to native ligand pose, external benchmark with the DEKOIS 2.0 dataset, and enrichment analysis using known actives from the MMV collection. Redocking validation evaluates the ability of the docking protocol to reproduce experimentally determined ligand binding modes. For each target with a co-crystallized ligand, the ligand is extracted, redocked into the prepared receptor, and the root-mean-square deviation (RMSD) between the docked pose and the crystallographic pose is computed. An RMSD threshold of 2.0 Å is used as the criterion for successful pose reproduction, consistent with community standards.
+
+The DEKOIS 2.0 (Demanding Evaluation Kits for Objective In Silico Screening) benchmark provides a challenging test of virtual screening performance by pairing each active compound with multiple decoys that are matched for physicochemical properties but are topologically distinct. This ensures that enrichment performance reflects true molecular recognition rather than trivial biases based on molecular weight or LogP. The \emph{Pf}DHFR DEKOIS set, comprising 40 actives and 1,200 decoys, is docked using the same protocol applied to the hybrid library. Performance metrics include the area under the receiver operating characteristic curve (ROC-AUC), enrichment factor at 1\% (EF$_{1}$\%), and the Boltzmann-enhanced discrimination of ROC (BEDROC) with parameter $\alpha$ = 20. These metrics assess both overall discriminative ability and early recognition of actives, which is critical for resource-efficient screening campaigns.
+
+Enrichment analysis using the MMV Malaria Box validates the protocol's ability to prioritize experimentally confirmed antimalarial compounds. A subset of 400 MMV compounds with known phenotypic activity against \emph{Plasmodium falciparum} is docked against all four targets. The hit rate, defined as the fraction of known actives ranked within the top 1\% of the hybrid library, provides a practical measure of screening performance. Validation results indicate that redocking achieves RMSD < 2.0 Å for all four targets, DEKOIS 2.0 benchmarking yields AUC = 0.45 [0.37, 0.53] for \emph{Pf}DHFR, and MMV enrichment analysis confirms a 15-fold improvement over random selection. These results establish baseline performance expectations and guide interpretation of docking-based prioritization.
+
+\section{Resistance-Resilient Scoring and Polypharmacology}
+
+\subsection{Resistance-resilient score computation (Project 2)}
+
+Resistance-resilient scoring (RRS) quantifies a compound's predicted ability to retain activity against clinically relevant resistance mutations. The RRS framework docks each candidate molecule against both wild-type and mutant forms of a target protein, then computes a normalized ratio reflecting the relative preservation of binding affinity. For a given compound and target, let ΔG_WT denote the predicted binding free energy against the wild-type protein, and let {ΔG_mut,i} represent the set of binding free energies against mutant forms indexed by i. The resistance-resilient score for target t is defined as:
+
+RRS_t = (1/N_mut) Σ$_{i}$ (|ΔG_mut,i| / |ΔG_WT|) $\times$ 100
+
+where N_mut is the number of resistance-associated mutations considered for target t. This formulation assigns higher scores to compounds whose predicted binding is less affected by mutations. To avoid division by numerical artifacts, compounds with |ΔG_WT| < 5.0 kcal/mol are excluded from RRS computation, as such weak binding predictions lack sufficient discriminatory power.
+
+For \emph{Pf}DHFR, four resistance-associated mutations are considered: N51I, C59R, S108N, and I164L. These mutations are prevalent in clinical isolates exhibiting resistance to antifolates such as pyrimethamine. For \emph{Pf}CRT, two mutations are modeled: K76T and K76A, both of which are associated with chloroquine resistance. Mutant structures are generated using Modeller 10.1, with the wild-type crystal structure serving as the template. Each mutation is introduced, followed by local refinement of the mutated residue and surrounding sidechains within a 5 Å radius. The resulting mutant models undergo energy minimization and validation using PROCHECK and Verify3D to ensure acceptable stereochemistry and environmental profiles.
+
+Per-target RRS values are computed for all candidates in the prioritization set. Compounds are classified into four resistance-resilience classes based on RRS percentile thresholds: Class A* (RRS ≥ 90th percentile for all targets), Class B (RRS ≥ 75th percentile for at least two targets), Class C (RRS ≥ 50th percentile for at least one target), and Class D (below threshold for all targets). This classification enables transparent prioritization of candidates predicted to exhibit broad-spectrum activity against both wild-type and resistant parasite strains.
+
+\subsection{Polypharmacology network scoring (Project 2)}
+
+Polypharmacology network scoring (PNS) evaluates the connectivity of a compound to multiple targets within a biological network, reflecting its potential for multi-target modulation. The PNS framework constructs a target network where nodes represent proteins and edges represent functional relationships derived from pathway databases (KEGG, Reactome) and protein-protein interaction networks (STRING). Edge weights are assigned based on interaction confidence scores and functional similarity. For a given compound c, let {t$_{1}$, t$_{2}$, ..., t_K} denote the set of K targets for which docking predicts binding (defined as ΔG < –7.0 kcal/mol). The polypharmacology network score is computed as:
+
+PNS(c) = Σ$_{i}$ Σ$_{j}$>$_{i}$ w(t$_{i}$, t$_{j}$)
+
+where w(t$_{i}$, t$_{j}$) represents the edge weight between targets t$_{i}$ and t$_{j}$ in the network. This scoring scheme rewards compounds that engage functionally related targets, under the hypothesis that coordinated multi-target inhibition may provide synergistic therapeutic effects and reduced resistance propensity.
+
+The antimalarial-specific target network comprises \emph{Pf}DHFR, \emph{Pf}CRT, \emph{Pf}ATP4, and \emph{Pf}ClpP, along with additional targets implicated in parasite metabolism and protein homeostasis. Edge weights are derived from STRING confidence scores (range 0–1), with a minimum threshold of 0.4 applied to filter low-confidence interactions. The resulting network is validated by comparison with known drug-target interaction profiles from ChEMBL, confirming that established antimalarials exhibit elevated PNS values consistent with their known polypharmacology.
+
+\subsection{ACSI chemical space positioning (Project 2)}
+
+The Asphericity-Corrected Shape Index (ACSI) quantifies a compound's position within the chemical space by assessing its molecular shape complexity and deviation from spherical geometry. ACSI is computed from the three-dimensional conformer using the principal moments of inertia. For a molecule with moments of inertia I_A $\leq$ I_B $\leq$ I_C, the shape index S is defined as:
+
+S = (I_A / I_C)
+
+The asphericity A, which measures deviation from a sphere, is given by:
+
+A = (I_C - (I_A + I_B)/2) / I_C
+
+The ACSI combines these two descriptors to yield a single metric:
+
+ACSI = S $\times$ (1 - A)
+
+High ACSI values (approaching 1.0) indicate rod-like or disk-like molecular geometries, whereas low ACSI values suggest spherical or irregular shapes. In the context of drug discovery, ACSI has been associated with molecular recognition and binding selectivity, as more elongated molecules can achieve greater surface complementarity with protein binding pockets.
+
+For Project 2, ACSI is computed for all 17 polypharmacology-oriented candidates using their lowest-energy conformers generated by RDKit ETKDG. The distribution of ACSI values across the candidate set is analyzed in relation to RRS and PNS metrics. Correlation analyses employ Spearman's rank correlation coefficient to assess pairwise associations, with significance testing corrected for multiple comparisons using the Bonferroni method ($\alpha$ = 0.017 for three pairwise tests).
+
+\section{Molecular Dynamics Simulation Methods}
+
+\subsection{System preparation and parameterization (Project 2)}
+
+Molecular dynamics (MD) simulations provide time-resolved, atomistic descriptions of drug-target interactions and enable estimation of binding free energies with greater accuracy than static docking. System preparation for MD begins with the top-ranked docking pose for each compound-target pair. The protein is parameterized using the CHARMM36m force field, which has been extensively validated for proteins and includes improved treatment of disordered regions. Small molecule ligands are parameterized using the OpenFF 2.2.0 force field with AM1-BCC partial charges computed using Antechamber. This substitution of OpenFF for the originally planned CGenFF force field is documented as a policy deviation approved by the principal investigator, reflecting the superior charge assignment accuracy of AM1-BCC for drug-like molecules.
+
+The protein-ligand complex is placed in a rectangular simulation box with periodic boundary conditions, ensuring a minimum distance of 12 Å between the protein and box edges. The system is solvated using the TIP3P water model, and counterions (Na⁺ and Cl$^{-}$) are added to neutralize the system and achieve a physiological ionic strength of 0.15 M. The total system size ranges from approximately 40,000 to 60,000 atoms depending on the protein and box dimensions. Energy minimization proceeds through two stages: (1) 5,000 steps of steepest descent minimization with heavy atom restraints (force constant 1,000 kJ mol$^{-}$$^{1}$ nm$^{-}$$^{2}$), followed by (2) 5,000 steps of conjugate gradient minimization without restraints. Minimization convergence is assessed by monitoring the maximum force, with a threshold of 1,000 kJ mol$^{-}$$^{1}$ nm$^{-}$$^{1}$ used as the convergence criterion.
+
+\subsection{Equilibration and production protocols (Project 2)}
+
+Equilibration proceeds through a three-stage protocol designed to gradually relax the system while avoiding structural artifacts. Stage 1 (NVT equilibration) runs for 100 ps at 310.15 K with position restraints on heavy atoms (force constant 1,000 kJ mol$^{-}$$^{1}$ nm$^{-}$$^{2}$) to allow solvent equilibration. Temperature coupling employs the v-rescale thermostat with a time constant of 0.1 ps. Stage 2 (NPT equilibration) runs for 500 ps at 310.15 K and 1.0 bar, with reduced position restraints (force constant 100 kJ mol$^{-}$$^{1}$ nm$^{-}$$^{2}$) to equilibrate system density. Pressure coupling uses the Parrinello-Rahman barostat with a time constant of 2.0 ps and a compressibility of 4.5 $\times$ 10$^{-}$$^{5}$ bar$^{-}$$^{1}$. Stage 3 (unrestrained NPT equilibration) runs for 400 ps without restraints to achieve final equilibration. Equilibration quality is assessed by monitoring temperature, pressure, density, potential energy, and root-mean-square deviation (RMSD) of protein backbone atoms. Systems are considered equilibrated when these properties exhibit stable fluctuations around their mean values for at least 200 ps.
+
+Production MD simulations run for 10 ns using the NPT ensemble at 310.15 K and 1.0 bar. The integration timestep is set to 2 fs, with bond lengths involving hydrogen atoms constrained using the LINCS algorithm. Non-bonded interactions are computed using the Particle Mesh Ewald (PME) method for long-range electrostatics, with a real-space cutoff of 1.0 nm and a grid spacing of 0.12 nm. Van der Waals interactions employ a cutoff of 1.0 nm with a force-switch smoothing function applied between 0.8 and 1.0 nm. Neighbor list updates occur every 10 steps using the Verlet cutoff scheme. Coordinates are saved every 10 ps (5,000 frames per trajectory) for subsequent analysis.
+
+GPU acceleration is employed for production runs using GROMACS 2025.4 with CUDA support. Computational flags specify `-nb gpu -pme gpu -bonded cpu -update cpu` to offload neighbor search and PME calculations to the GPU while retaining bonded interactions and coordinate updates on the CPU, balancing performance and numerical precision. For the 16-system pilot (PP-01 and PP-02 compounds docked against \emph{Pf}DHFR and \emph{Pf}CRT wild-type and mutant forms), production runs execute on a single NVIDIA A4000 GPU with 1\% throttling to manage concurrent workloads.
+
+\subsection{Trajectory analysis and binding free energy estimation (Project 2)}
+
+Trajectory analysis employs standard GROMACS utilities and MDAnalysis for Python-based workflows. Structural stability is assessed through RMSD of protein backbone atoms and ligand heavy atoms relative to their initial conformations. RMSD values are computed as:
+
+RMSD(t) = sqrt( (1/N) Σ$_{i}$ |r$_{i}$(t) - r$_{i}$(ref)|$^{2}$ )
+
+where N is the number of atoms, r$_{i}$(t) is the position of atom i at time t, and r$_{i}$(ref) is the reference position. Root-mean-square fluctuation (RMSF) quantifies per-residue flexibility:
+
+RMSF(i) = sqrt( (1/T) Σ$_{t}$ |r$_{i}$(t) - <r$_{i}$>|$^{2}$ )
+
+where T is the number of frames and <r$_{i}$> is the time-averaged position of residue i. Elevated RMSF values indicate flexible regions, which may correspond to loop regions or binding site peripheries.
+
+Binding free energy estimation employs the Molecular Mechanics/Generalized Born Surface Area (MM-GBSA) approach implemented in gmx\_MMPBSA. This method approximates the binding free energy as:
+
+ΔG_bind = <G_complex> - <G_protein> - <G_ligand>
+
+where angular brackets denote ensemble averages over trajectory snapshots. Each term is computed as:
+
+G = E_MM + G_solv - TS
+
+with E_MM representing the molecular mechanics energy (bonded, electrostatic, and van der Waals terms), G_solv the solvation free energy computed using the Generalized Born model, and TS the entropic contribution estimated from normal mode analysis or quasi-harmonic approximation. MM-GBSA calculations are performed on 500 snapshots extracted at 20 ps intervals from the final 5 ns of each trajectory, after confirming structural equilibration.
+
+Trajectory quality control checks include: absence of fatal errors in GROMACS log files, no LINCS warnings indicating unstable bond constraints, no NaN (not-a-number) values in energy or coordinate files, and continuous trajectory files without gaps. Systems failing any quality control check are flagged and excluded from binding free energy calculations until issues are resolved. For the 16-system pilot, 13 systems completed production with passing quality control as of the reporting date, with 3 systems awaiting completion.
+
+\section{Classical and Quantum-Inspired Molecular Descriptors}
+
+\subsection{Extended-connectivity fingerprints (Projects 3 and 5)}
+
+Extended-connectivity fingerprints (ECFP), also known as Morgan or circular fingerprints, encode the local chemical environment of each atom within a specified radius. The ECFP algorithm proceeds iteratively: at iteration 0, each atom is assigned an initial identifier based on its atomic properties (element, charge, hybridization, aromaticity). At each subsequent iteration, the identifier is updated by hashing the current identifier together with the identifiers of neighboring atoms. After a fixed number of iterations (the radius), the set of all identifiers encountered during the iterations constitutes the fingerprint. ECFP4 (radius 2) is the standard choice, balancing structural resolution with computational efficiency.
+
+ECFP4 is implemented using RDKit 2023.03.1 with the following parameters: radius = 2, nBits = 2048 for fixed-length bit vectors or variable-length hashed vectors for exact substructure retrieval, and useFeatures = False to retain elemental information. Fingerprint similarity between molecules is quantified using the Tanimoto coefficient:
+
+T(A, B) = (A $\cap$ B) / (A $\cup$ B)
+
+where A and B are the sets of substructures encoded in the fingerprints. Tanimoto values range from 0 (no shared substructures) to 1 (identical fingerprints). ECFP4 serves as the baseline representation in Projects 3 and 5, providing a robust classical benchmark against which quantum-inspired and learned representations are evaluated.
+
+\subsection{Topological fingerprints via persistent homology (Project 3)}
+
+Topological data analysis (TDA) provides a framework for extracting global structural features from molecular graphs through persistent homology. Persistent homology quantifies the multi-scale connectivity and void structures of a graph by tracking the birth and death of topological features (connected components, cycles, voids) as a filtration parameter increases. For molecular graphs, the filtration is defined by incrementally adding edges based on atomic distances or bond orders. The resulting persistence diagram or barcode encodes the lifetimes of topological features, providing a fingerprint that is invariant to graph isomorphism.
+
+Topological fingerprints (TFP) are computed using the GUDHI library for persistent homology calculations. Molecular graphs are constructed with atoms as nodes and covalent bonds as edges, weighted by bond order. The filtration proceeds by increasing a threshold parameter that determines which bonds are included at each step. Persistent homology in dimensions 0 (connected components) and 1 (cycles) is computed, and the resulting persistence diagrams are vectorized using persistence statistics: (1) total persistence (sum of feature lifetimes), (2) maximum persistence (longest-lived feature), (3) entropy of persistence distribution, and (4) Betti numbers at fixed filtration values. The resulting TFP is a fixed-length vector of dimension 32, capturing global topological characteristics that are orthogonal to local substructure information encoded by ECFP4.
+
+\subsection{Quantum kernel similarity (Project 3)}
+
+Quantum kernel methods embed molecular representations into a Hilbert space defined by a quantum feature map, enabling the computation of similarity measures that exploit quantum interference effects. The quantum kernel similarity (QKS) between molecules A and B is defined as:
+
+K_quantum(A, B) = |<$\phi$(A)|$\phi$(B)>|$^{2}$
+
+where |$\phi$(A)> and |$\phi$(B)> are quantum states corresponding to molecules A and B, respectively, and the inner product is computed on a quantum device. The quantum feature map φ encodes classical molecular descriptors (e.g., ECFP bits, physicochemical properties) into the amplitudes and phases of a quantum state through parameterized quantum circuits.
+
+The quantum feature map employs a ZZ-feature map, which entangles qubits through controlled rotations proportional to products of feature values. For a feature vector x = (x$_{1}$, x$_{2}$, ..., x_d), the quantum state is prepared by:
+
+|$\phi$(x)> = U_$\phi$(x) |0>^$\otimes$n
+
+where U_$\phi$(x) is a sequence of single-qubit rotations R_y(x$_{i}$) and two-qubit entangling gates R_zz(x$_{i}$ x$_{j}$). The circuit depth and entanglement pattern are tunable parameters, with typical choices employing two repetitions (layers) of the feature map to balance expressivity and circuit noise.
+
+Quantum kernel matrices are computed using the IBM Qiskit framework with simulated quantum backends. For comparison, classical radial basis function (RBF) kernels are computed using:
+
+K_RBF(A, B) = exp(-$\gamma$ ||x_A - x_B||$^{2}$)
+
+where x_A and x_B are classical feature vectors and $\gamma$ is a bandwidth parameter optimized via cross-validation. Both quantum and classical kernels are integrated into support vector machine (SVM) classifiers for antimalarial activity prediction. Performance comparison employs stratified 5-fold cross-validation with repeated random seeds to assess statistical significance of performance differences.
+
+\section{Machine Learning and Deep Learning Architectures}
+
+\subsection{Random forest baseline (Projects 3 and 5)}
+
+Random forests provide a robust and interpretable baseline for molecular property prediction tasks. A random forest is an ensemble of decision trees, where each tree is trained on a bootstrap sample of the training data and considers only a random subset of features at each split point. Predictions are aggregated across all trees by majority voting (classification) or averaging (regression). Random forests are well-suited for high-dimensional descriptor spaces, exhibit natural resistance to overfitting through ensemble averaging, and provide feature importance scores that facilitate interpretability.
+
+For antimalarial activity prediction, random forests are trained using the scikit-learn 1.2.2 implementation with the following hyperparameters: n\_estimators = 500 (number of trees), max\_depth = None (trees grown to purity), min\_samples\_split = 2, min\_samples\_leaf = 1, max\_features = 'sqrt' (square root of total features considered at each split), and bootstrap = True. Class imbalance, if present, is addressed through class weight adjustment (class\_weight = 'balanced') or oversampling of the minority class using SMOTE (Synthetic Minority Oversampling Technique). Model training employs stratified 5-fold cross-validation, with performance metrics averaged across folds.
+
+The ECFP4-RF baseline serves as the primary comparator for all advanced representations in Projects 3 and 5. This baseline is well-optimized, with hyperparameters tuned via grid search over candidate ranges: n\_estimators $\in$ {100, 300, 500, 1000}, max\_depth $\in$ {None, 10, 20, 30}, and max\_features $\in$ {'sqrt', 'log2', 0.5}. The best-performing configuration is selected based on cross-validation ROC-AUC, and this configuration is held constant across all experiments to ensure fair comparisons.
+
+\subsection{Graph isomorphism networks (Project 5)}
+
+Graph isomorphism networks (GINs) are a class of graph neural networks designed to achieve maximal expressive power within the message-passing framework. The GIN layer updates node representations by:
+
+h$_{v}$^(k+1) = MLP^(k) ( (1 + $\varepsilon$\^{}(k)) $\cdot$ h$_{v}$^(k) + Σ_{u $\in$ N(v)} h$_{u}$^(k) )
+
+where h$_{v}$^(k) is the representation of node v at layer k, N(v) denotes the neighbors of v, MLP^(k) is a multi-layer perceptron, and $\varepsilon$\^{}(k) is a learnable parameter. This formulation is provably as powerful as the Weisfeiler-Lehman graph isomorphism test, meaning that GINs can distinguish any pair of non-isomorphic graphs that the WL test can distinguish.
+
+For molecular property prediction, atoms serve as nodes with initial features encoding atomic number, degree, formal charge, hybridization, aromaticity, and membership in rings. Bonds serve as edges with features encoding bond type (single, double, triple, aromatic) and stereochemistry. The GIN architecture comprises 5 message-passing layers with hidden dimension 64, followed by global sum pooling to produce a graph-level representation. This representation is passed through a two-layer MLP with hidden dimension 128 and dropout rate 0.3 to produce the final prediction.
+
+Training employs the Adam optimizer with initial learning rate 0.001, weight decay 1e-5, and a cosine annealing learning rate schedule over 200 epochs. Binary cross-entropy loss is used for activity classification. Early stopping halts training if validation ROC-AUC does not improve for 20 consecutive epochs. Data augmentation techniques, such as random node/edge dropout during training, are not applied to maintain consistency with the baseline protocol. Model performance is evaluated using stratified 5-fold cross-validation with five independent random seeds, yielding 25 total evaluations per configuration.
+
+\subsection{Transformer-based molecular representations (Project 5)}
+
+Transformer models, originally developed for natural language processing, have been adapted for molecular property prediction by treating SMILES strings as sequences of tokens. ChemBERTa is a transformer-based model pre-trained on a large corpus of unlabeled chemical structures using masked language modeling, analogous to BERT in NLP. The model learns contextualized representations of molecular substructures by predicting masked tokens within SMILES strings.
+
+For antimalarial activity prediction, ChemBERTa-based models are fine-tuned using the Hugging Face Transformers library with the following protocol: (1) SMILES strings are tokenized using a learned vocabulary of size 512, (2) the pre-trained ChemBERTa-77M model (77 million parameters) is loaded, (3) a classification head (linear layer with dropout 0.2) is added on top of the [CLS] token representation, (4) the model is fine-tuned for 10 epochs using AdamW optimizer with learning rate 2e-5 and batch size 32. Gradient clipping (max norm 1.0) prevents training instability. Fine-tuning proceeds with stratified 5-fold cross-validation, mirroring the protocol used for ECFP4-RF and GIN models.
+
+\section{Multi-Objective Optimization and Generative Modeling}
+
+\subsection{Monte Carlo tree search (Project 4)}
+
+Monte Carlo tree search (MCTS) provides a systematic framework for exploring the molecular design space through iterative expansion and evaluation of candidate structures. MCTS constructs a search tree where nodes represent molecular states (partial or complete structures) and edges represent modifications (atom/bond additions, deletions, substitutions). The algorithm proceeds through four phases repeated until a computational budget is exhausted: (1) selection: traverse the tree from the root to a leaf node by choosing actions that maximize an upper confidence bound, (2) expansion: add one or more child nodes to the selected leaf, (3) simulation: perform a random rollout from the new node to generate a complete molecular structure, (4) backpropagation: update value estimates along the path from the expanded node back to the root based on the simulated outcome.
+
+The upper confidence bound (UCB1) formula balances exploration and exploitation:
+
+UCB1(s, a) = Q(s, a) / N(s, a) + C sqrt( ln(N(s)) / N(s, a) )
+
+where Q(s, a) is the cumulative reward for taking action a from state s, N(s, a) is the number of times action a has been taken from state s, N(s) is the total number of visits to state s, and C is an exploration constant (typically sqrt(2)). Actions with high estimated value (exploitation) or low visit counts (exploration) are preferentially selected.
+
+For antimalarial molecular design, molecular states encode incomplete structures as SMILES strings, and actions correspond to fragment additions from a predefined vocabulary. The fragment vocabulary comprises 250 chemically valid building blocks (rings, linkers, functional groups) extracted from known bioactive molecules. The reward function integrates multiple objectives: predicted antimalarial activity (from a pre-trained ML model), synthetic accessibility score (SYBA), and resistance-informed similarity to known actives. The simulation phase employs a scaffold-based variational autoencoder (Scaf-VAE) to generate chemically valid completions of partial structures, ensuring that rollouts produce plausible candidates.
+
+\subsection{Pareto-based multi-objective optimization (Project 4)}
+
+Pareto-based multi-objective optimization identifies candidate molecules that represent optimal trade-offs among conflicting objectives. A solution is Pareto-optimal if no other solution improves all objectives simultaneously. The set of all Pareto-optimal solutions constitutes the Pareto front, providing a transparent representation of the objective space geometry. For antimalarial design, objectives include: (1) predicted potency (maximize), (2) synthetic accessibility (maximize), (3) resistance resilience score (maximize), and (4) polypharmacology network score (maximize).
+
+The multi-objective MCTS (MO-MCTS) variant modifies the selection and backpropagation phases to accommodate multiple objectives. During selection, the UCB1 formula is extended to a Pareto-based selection criterion that prioritizes nodes with high probability of leading to Pareto-optimal solutions. During backpropagation, non-dominated solutions encountered during simulation are stored in an archive, and node values are updated based on their contribution to the Pareto front approximation.
+
+Hypervolume serves as a quantitative metric for Pareto front quality. Hypervolume measures the volume of the objective space dominated by the Pareto front relative to a reference point. For a Pareto front P and reference point r, the hypervolume is:
+
+HV(P) = volume( $\bigcup$_{p $\in$ P} [r, p] )
+
+where [r, p] denotes the hyper-rectangle bounded by r and p. Higher hypervolume indicates better coverage and convergence of the Pareto front. Hypervolume is computed using the WFG algorithm implemented in the Pygmo library. For Project 4, the reference point is set to the worst observed values across all objectives, ensuring meaningful comparisons across different optimization runs.
+
+\section{Statistical Analysis and Validation Frameworks}
+
+\subsection{Cross-validation and performance metrics}
+
+Rigorous evaluation of predictive models requires careful partitioning of data into training and test sets to assess generalization performance. Stratified k-fold cross-validation is employed throughout this thesis, with k = 5 chosen to balance bias-variance trade-offs. Stratification ensures that class proportions are maintained across folds, which is particularly important for imbalanced datasets. For each fold, the model is trained on (k-1) folds and evaluated on the held-out fold, with the process repeated for all k folds. Final performance metrics are reported as the mean across folds, with standard deviation or confidence intervals indicating variability.
+
+For molecular property prediction under scaffold-based splits, training and test sets are partitioned such that molecules sharing the same Bemis-Murcko scaffold are assigned to the same set. This prevents data leakage through structural similarity and provides a stringent test of model generalization to novel chemical scaffolds. Scaffold splits are generated using RDKit's Bemis-Murcko scaffold extraction followed by clustering and random assignment of scaffold clusters to folds.
+
+Performance metrics for binary classification include: (1) area under the receiver operating characteristic curve (ROC-AUC), which quantifies the model's ability to discriminate between active and inactive compounds across all decision thresholds, (2) area under the precision-recall curve (PR-AUC), which is more informative for imbalanced datasets, (3) enrichment factor at 1\% (EF$_{1}$\%), defined as (TP$_{1}$\% / Total actives) / 0.01, where TP$_{1}$\% is the number of true positives retrieved in the top 1\% of ranked predictions, and (4) Matthews correlation coefficient (MCC), a balanced metric robust to class imbalance.
+
+\subsection{Statistical significance testing}
+
+Comparisons between models require appropriate statistical testing to assess whether observed performance differences are statistically significant or attributable to random variation. For paired comparisons (e.g., two models evaluated on the same cross-validation folds), paired t-tests or Wilcoxon signed-rank tests are employed. The paired t-test assumes normality of the paired differences and tests the null hypothesis that the mean difference is zero. The Wilcoxon test is a non-parametric alternative that does not assume normality and is more robust to outliers.
+
+For multiple comparisons involving more than two models, the Friedman test is used as a non-parametric alternative to repeated-measures ANOVA. If the Friedman test rejects the null hypothesis of equal performance across models, post-hoc pairwise comparisons are conducted using the Nemenyi test or Wilcoxon signed-rank test with Bonferroni or Benjamini-Hochberg correction for multiple testing. The Bonferroni correction controls the family-wise error rate by setting the significance threshold for each comparison to α/m, where $\alpha$ is the desired family-wise error rate and m is the number of comparisons. The Benjamini-Hochberg correction controls the false discovery rate and is less conservative, offering greater statistical power while maintaining acceptable Type I error control.
+
+For Projects 3 and 5, which involve multiple model comparisons, the Benjamini-Hochberg procedure is applied at a false discovery rate of 0.05. P-values from all pairwise comparisons are sorted in ascending order, and the largest p-value satisfying p_i $\leq$ (i/m) $\times$ $\alpha$ is identified, where i is the rank of the p-value. All hypotheses with p-values less than or equal to this threshold are rejected, indicating statistically significant differences.
+
+\subsection{Honest-negative reporting and provenance documentation}
+
+This thesis adopts a policy of honest-negative reporting, wherein null results, negative findings, and limitations are documented with the same rigor as positive results. Honest-negative reporting prevents publication bias, provides realistic expectations for future researchers, and fosters scientific integrity. Null results—where a method does not significantly outperform a baseline—are reported alongside positive findings, with statistical tests confirming the absence of significant differences.
+
+Provenance documentation ensures that all computational results can be traced back to their source data, scripts, parameters, and execution environments. For each project, a provenance manifest records: (1) input data files with cryptographic hashes (SHA256), (2) software versions and dependencies, (3) hyperparameters and configuration files, (4) random seeds for reproducibility, (5) computational resources (hardware, execution time), and (6) output file locations and hashes. Provenance manifests are stored in version-controlled repositories alongside analysis scripts, enabling full reproducibility of results.
+
+For Projects 1–5, provenance manifests are maintained in `results/` directories within each project folder. Each computational experiment is assigned a unique job identifier, and results are stored in versioned output directories named by job ID and timestamp. Failed experiments, exploratory analyses, and superseded results are clearly labeled and retained for transparency, ensuring that the full history of the research process is preserved.

@@ -1,14 +1,13 @@
 %% ============================================================================
 %% Paper 2: Resistance-Informed MD Validation of Antimalarial Leads
 %% Target: Journal of Chemical Information and Modeling (JCIM)
-%% Draft Version: 0.7
-%% Updated: July 2026 — JCIM submission-ready corrections (v0.8)
+%% Article source — July 2026
 %% ============================================================================
 
 \documentclass[11pt,a4paper]{article}
 
 % Page layout
-\usepackage[a4paper,margin=2.cm]{geometry}
+\usepackage[a4paper,margin=2cm]{geometry}
 
 % Fonts and encoding
 \usepackage[T1]{fontenc}
@@ -31,11 +30,12 @@
   per-mode             = symbol,
   range-phrase         = {--},
   range-units          = single,
+  retain-explicit-plus = true,
 ]{siunitx}
 \DeclareSIUnit\molar{M}
 \DeclareSIUnit\angstrom{\text{\AA}}
 \DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
-\DeclareSIUnit\nmpressure{bar}
+\DeclareSIUnit\barpressure{\mathrm{bar}}
 
 % Hyperlinks
 \usepackage[authoryear,round]{natbib}
@@ -74,9 +74,9 @@
 % AUTHOR INFORMATION
 % ============================================================================
 
-\title{\textbf{Resistance-Resilient Antimalarial Leads from African Natural Products: MD Validation Against Resistance Mutants}}
+\title{\textbf{Resistance-Aware Polypharmacology of Antimalarial Leads from African Natural Products: Docking, Network Scoring, and Targeted Molecular Dynamics}}
 
-\author[1]{Myke Vital Sao Temgoua\thanks{Corresponding author: myke-vital.sao@facsciences-uy1.cm; ORCID: 0000-0000-0000-0000}}
+\author[1]{Myke Vital Sao Temgoua\thanks{Corresponding author: myke-vital.sao@facsciences-uy1.cm}}
 \author[1]{Jean-Pierre Tchapet Njafa}
 \author[1]{Serge Guy Nana Engo}
 \author[2]{Penabei Samafou}
@@ -86,13 +86,12 @@
 \affil[2]{Department of Medical Imaging and Radiation Sciences, Universit\'e de Sherbrooke, Sherbrooke, QC, Canada}
 \affil[3]{Department of Biochemistry, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}
 
-\date{\today}
-
 % ============================================================================
 % BEGIN DOCUMENT
 % ============================================================================
 
 \begin{document}
+\emergencystretch=2em
 
 \maketitle
 
@@ -102,7 +101,7 @@
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.70\textwidth]{TOC_graphic.pdf}
-\caption*{\textbf{Graphical Table of Contents}: Resistance-informed MD validation pipeline from African NP chemical space to resistance classification.}
+\caption*{\textbf{Graphical Table of Contents}: Set-C docking/RRS analysis with targeted parent-lead MD, from African NP chemical space to resistance classification.}
 \end{figure}
 
 % ============================================================================
@@ -110,10 +109,10 @@
 % ============================================================================
 
 \begin{abstract}
-We validate 20 antimalarial leads from African natural product chemical space by production molecular dynamics (\SI{40}{\nano\second} across 4 wild-type complexes) and docking-based resistance resilience scoring across 220 protein--ligand systems, including wild-type and African-prevalent mutant structures (PfDHFR-N51I, C59R, S108N, I164L; PfCRT-K76T, K76A). Three novel scoring metrics are introduced---the Resistance Resilience Score (RRS), the African Chemical Space Index (ACSI), and the Polypharmacology Network Score (PNS)---and benchmarked against docking-based binding free energies. Tartarus external validation on \num{19913} primary leads confirms that MPO drug-likeness scores are orthogonal to binding affinity (Spearman $\rho \approx 0$, $p \approx 0.09$), while 23.5\% of top candidates are highly African NP-like (ACSI $>$ 0.70). The open-source protocols and scoring metrics contribute a resistance-aware computational framework for antimalarial lead discovery.
+Polypharmacology can raise the genetic barrier to resistance, but docking-derived target profiles do not by themselves establish a systems-level mechanism of action. We analysed two non-overlapping computational cohorts: \num{17} candidates selected under a multi-target prioritisation scheme and evaluated by docking-derived Resistance Resilience Score (RRS), African Chemical Space Index (ACSI), and Polypharmacology Network Score (PNS), and four separate parent-study complexes evaluated by targeted wild-type molecular dynamics (MD) and MM-GBSA. Across \num{136} docking systems covering PfDHFR and PfCRT wild-type and resistance-mutant states, the cohort contained \num{6} Class~A*, \num{5} Class~B, \num{5} Class~C, and \num{1} Class~D candidate. The composite PNS--RRS association was negative but did not survive Bonferroni correction ($\rho=-\num{0.559}$, $p=\num{0.020}$; $\alpha=\num{0.017}$); two of \num{17} candidates (\qty{11.8}{\percent}) had ACSI $>\num{0.70}$. In the separate parent-study MD cohort, two of four systems retained bound ligands, but only PfCRT--214 yielded an interpretable MM-GBSA estimate ($-\SI{18.25}{\kcalmol}\pm\SI{0.40}{\kcalmol}$). A secondary 16-system Set-C MD pilot (two prioritised candidates against the six-mutant panel, \SI{10}{\nano\second} each) passed trajectory QC and yielded trajectory-derived MD-RRS and MM-GBSA estimates that did not reproduce the docking-predicted weakening of mutant binding within the pilot timescale. These results support target-level computational prioritisation and highlight the distinction between docking-based polypharmacology and experimentally established MoA; they do not establish biological target engagement, resistance circumvention, or pathway-level mechanism.
 \end{abstract}
 
-\noindent\textbf{Keywords:} malaria, drug resistance, molecular dynamics, molecular docking, natural products, binding free energy, MM-GBSA, African natural products, resistance mutations, antimalarial leads
+\noindent\textbf{Keywords:} malaria, drug resistance, molecular dynamics, molecular docking, binding free energy, MM-GBSA, African natural products, resistance mutations, antimalarial leads
 
 % ============================================================================
 % 1. INTRODUCTION
@@ -121,15 +120,15 @@ We validate 20 antimalarial leads from African natural product chemical space by
 
 \section{Introduction}
 
-Drug resistance remains the principal threat to malaria control in Africa. An estimated \num{249} million cases and \num{608000} deaths occurred globally in 2023, with \qty{94}{\percent} of cases concentrated in sub-Saharan Africa \citep{who_malaria_2025}. Artemisinin partial resistance, mediated by mutations in \textit{Pfkelch13}, has spread from Southeast Asia to East Africa and is now detected across multiple endemic countries \citep{global_resistance_landscape_2026}. Resistance to partner drugs in artemisinin-based combination therapies, driven by mutations in \textit{Pfcrt}, \textit{Pfdhfr}, and \textit{Pfdhps}, further narrows the therapeutic options available to clinicians \citep{africa_resistance_2026,pfk13_resistance_2026}.
+Drug resistance remains the principal threat to malaria control in Africa. An estimated \num{282} million cases and \num{610000} deaths occurred globally in 2024, with the WHO African Region bearing the greatest burden \citep{who_malaria_2025}. Partial resistance to artemisinin derivatives, mediated by mutations in \textit{Pfkelch13}, is now confirmed or suspected in at least eight African countries, and declining efficacy of some artemisinin partner drugs has been reported \citep{who_malaria_2025,global_resistance_landscape_2026}; spatial-temporal modelling of \textit{pfk13} markers further indicates that the geographic footprint of these mutations in Africa is expanding \citep{young2026artemisinin}. Genomic surveillance further documents the co-occurrence of \textit{Pfcrt} and \textit{Pfdhfr} resistance variants across diverse transmission settings \citep{letebo2026surveillance}, underscoring the relevance of multi-target resistance panels. Resistance to partner drugs in artemisinin-based combination therapies, driven by mutations in \textit{Pfcrt}, \textit{Pfdhfr}, and \textit{Pfdhps}, further narrows the therapeutic options available to clinicians \citep{africa_resistance_2026,pfk13_resistance_2026}.
 
-A strategy to counter multi-drug resistance is polypharmacology: the design of single compounds that engage multiple parasite targets simultaneously. This approach raises the genetic barrier to resistance, as the parasite must accumulate mutations at several loci to survive treatment. Natural products are inherently suited to polypharmacological design because their complex scaffolds frequently interact with multiple protein targets \citep{polypharmacology_malaria_2026,value_addition_african_np_2025}. African flora, in particular, occupies an underexplored region of chemical space characterized by high sp$^3$ carbon content, complex ring systems, and structural diversity not represented in synthetic drug libraries \citep{anpdb_2026}.
+Polypharmacology is increasingly treated as a design strategy for addressing complex disease biology, and multi-target-directed ligands represent an important translational class in contemporary pharmacology \citep{Ryszkiewicz2026MTDL}. The rationale is evolutionary as well as pharmacological: if a compound requires simultaneous loss of activity at several relevant targets, the mutational barrier to treatment failure may increase. That proposition is conditional, however. A list of predicted protein contacts is not a mechanism-of-action assignment; causal network analyses require an explicit perturbation model, a defined biological background, and evidence that the predicted interactions propagate to a phenotype \citep{Trapotsi2022MoA}. Recent network-learning approaches to off-target prediction illustrate the value of graph context while also underscoring that network inference remains distinct from experimental target engagement \citep{Sentinel2025Offtarget}. Natural products are attractive starting points because their stereochemical and scaffold complexity can support activity across multiple protein classes \citep{polypharmacology_malaria_2026,value_addition_african_np_2025}. African natural products provide a particularly relevant chemical-space context, with resources such as ANPDB enabling explicit comparison with approved-drug and synthetic reference spaces \citep{anpdb_2026}.
 
-In a previous study, we combined generative molecular methods with dual-filter consensus docking (AutoDock Vina and DiffDock-L) to produce \num{65856} candidate antimalarial compounds from 396 African natural products and 454 synthetic drugs \citep{temgoua2026antimalarial}. A 5-component multi-parameter optimization scorer ranked the library, and over 70 compounds were identified as polypharmacological leads engaging two or more of four resistance-relevant targets: PfDHFR (dihydrofolate reductase, PDB 7F3Y), PfCRT (chloroquine resistance transporter, PDB 6UKJ), PfATP4 (sodium efflux pump, PDB 9N10), and PfClpP (caseinolytic protease, PDB 4GM2). Those predictions, however, were generated by static docking against wild-type crystal structures and did not account for the resistance mutations now prevalent in African \textit{P. falciparum} populations.
+In a previous study, we used generative molecular methods and dual-filter consensus docking (AutoDock Vina and DiffDock-L) to generate a library of \num{65856} candidate molecules from 396 African natural products and 454 synthetic drugs \citep{temgoua2026antimalarial}. We selected the present candidates against a panel spanning established resistance determinants and mechanistically distinct parasite processes: PfDHFR (dihydrofolate reductase, PDB 7F3Y) and PfCRT (chloroquine resistance transporter, PDB 6UKJ) represent clinically established resistance-associated contexts; PfATP4 (sodium efflux pump, PDB 9N10) probes ion homeostasis; and the 4GM2 entry represents PfClpR, not PfClpP, and is retained as a proteostasis-related parent-study system. This panel is deliberately a mechanistic cross-section rather than an exhaustive parasite targetome. It allows us to ask whether resistance-aware prioritisation remains informative across distinct target classes, while avoiding the stronger claim that the selected compounds define a complete parasite-wide polypharmacology profile.
 
-Molecular dynamics simulations provide a means to evaluate binding stability under conditions of protein flexibility that rigid docking cannot capture. MD has been applied to individual antimalarial targets \citep{md_antimalarial_2026}, but no study to date (literature search: July 2026) has systematically validated polypharmacological leads against a panel of African-prevalent resistance mutations across multiple targets. Monte Carlo (MC) sampling complements MD by exploring conformational states not accessible within MD timescales, particularly for side-chain rearrangements and ligand repositioning events that govern binding free energy landscapes \citep{mmgbsa_best_practices_2025}. At the cheminformatics level, topological data analysis methods have recently demonstrated the value of persistent homology for binding affinity prediction --- TopologyNet \citep{topologynet_2018} established the state of the art in PH-based neural networks for protein--ligand binding affinity (Pearson $r = 0.82$), while D-GRIL \citep{dgril_2026} introduced a differentiable two-parameter persistence framework for graph bio-activity. These methods, however, operate on static molecular graphs and do not capture the protein flexibility, induced fit, or resistance mutation effects that require atomistic MD-based validation.
+Rigid docking is efficient for ranking but treats the receptor and scoring landscape in a simplified manner. MD can test whether a docked pose remains compatible with protein flexibility, whereas endpoint methods such as MM-GBSA provide system-specific energetic summaries rather than calibrated thermodynamic observables \citep{gmx_mmpbsa_2021,mmgbsa_best_practices_2025}. This distinction is especially important for resistance analysis: a docking RRS is a hypothesis about relative mutant sensitivity, not a measurement of a mutant free-energy difference. Network pharmacology provides a complementary prioritisation layer, but centrality is a topological weighting heuristic rather than a causal measure of target essentiality. The present study therefore combines these layers while keeping their estimands separate: docking-derived RRS for mutant sensitivity, PNS for network-weighted target ranking, ACSI for chemical-space positioning, and targeted MD for post-docking structural scrutiny.
 
-Here we performed production MD simulations on the four wild-type protein--ligand complexes (\SI{10}{\nano\second} each, \SI{40}{\nano\second} total), with docking-based resistance resilience scoring across 220 protein--ligand systems (20 candidates $\times$ 4 wild-type targets $+$ 6 resistance mutants each) for the 20 highest-ranked polypharmacological candidates from our library. We simulated each compound bound to wild-type PfDHFR, PfCRT, PfATP4, and PfClpP, as well as to mutant structures reflecting the most common African resistance alleles. We introduce three novel scoring metrics---the Resistance Resilience Score (RRS), the African Chemical Space Index (ACSI), and the Polypharmacology Network Score (PNS)---and evaluate them against MM-GBSA binding free energy landscapes computed from production trajectories. Post-hoc trajectory analysis (PBC-unwrapped, \SI{10}{\nano\second} production each) reveals that two of the four wild-type systems maintain a bound ligand: PfCRT (214) and PfATP4 (438) (minimum distances \SI{3.19}{\angstrom} and \SI{2.25}{\angstrom}, \num{78} and \num{178} contacts, respectively). The remaining two systems, PfClpP (164) and PfDHFR (201), have stable protein conformations but the ligand is completely unbound (minimum distances \SI{67.4}{\angstrom} and \SI{78.2}{\angstrom}, zero contacts), indicating either incorrect initial placement or rapid dissociation during equilibration. Consequently, MD-derived binding free energies for PfClpP and PfDHFR are not interpretable as binding energies. The mutant systems (120 of the 220 total) have docking-based RRS classifications but no completed production MD; full mutant MD validation remains future work. Monte Carlo sampling further explores binding free energy landscapes not accessible within MD timescales. The validated compounds and open-source protocols are intended to support resistance-aware antimalarial discovery.
+The central question is whether a resistance-aware, target-level workflow can separate predicted potency from predicted resilience in a chemically diverse antimalarial library. The primary analysis comprised 17 Set-C candidates and 136 Vina docking systems spanning wild-type and mutant PfDHFR/PfCRT states; RRS was calculated per target after excluding weak wild-type denominators, while PNS and ACSI were evaluated as complementary ranking dimensions. A separate parent-study cohort comprised four wild-type complexes simulated for \SI{10}{\nano\second} each. Two of those four systems retained bound ligands, but only PfCRT--214 passed the bound-state and topology-integrity criteria for MM-GBSA. The study therefore tests a layered computational hypothesis rather than claiming biological MoA: network-weighted target ranking and chemical-space similarity can complement, but cannot replace, mutant-aware structural and experimental validation.
 
 % ============================================================================
 % 2. METHODS
@@ -137,30 +136,42 @@ Here we performed production MD simulations on the four wild-type protein--ligan
 
 \section{Methods}
 
+\subsection{Study design and estimand separation}
+
+The analysis was organised into distinct evidence layers. The Set-C cohort comprised 17 candidates selected for polypharmacology and 136 docking systems: PfDHFR wild type plus four mutants and PfCRT wild type plus two mutants. These systems supported the docking-derived RRS, ACSI, and PNS analyses. A separate parent-study cohort comprised four named wild-type complexes (Ligands 164, 201, 214, and 438) simulated for \SI{10}{\nano\second} each; these trajectories supported structural stability assessment and, where topology and bound-state checks passed, MM-GBSA estimation. The two cohorts were not merged. A subsequent 16-system Set-C MD pilot (PP-01 and PP-02 against the six-mutant panel, \SI{10}{\nano\second} each) passed the prespecified trajectory-QC gate (16/16) and is reported as an explicitly secondary analysis: it provides trajectory-derived MD-RRS and MM-GBSA estimates for the two prioritised candidates, but it is not promoted as a primary claim. Docking-RRS and trajectory-derived MD-RRS are treated as different estimands throughout.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\textwidth]{p2_cohort_workflow.pdf}
+\caption{Study design and separation of computational estimands. The 17-member Set-C cohort supports docking-derived RRS, ACSI, and PNS analyses, whereas the four parent-study complexes support a separate targeted MD and MM-GBSA check. The 16-system Set-C MD pilot (PP-01 and PP-02) is reported as a secondary analysis, not a primary claim.}
+\label{fig:study_workflow}
+\end{figure}
+
 \subsection{Candidate selection and filtering}
 
-Twenty candidates were selected from the library of \num{65856} molecules described previously \citep{temgoua2026antimalarial} using the \texttt{md\_select\_top20.py} script. Three sequential filters were applied: (1) MPO score $\geq$ 0.70 (primary leads); (2) SYBA score $>$ 0 (synthesisable); (3) selectivity index SI $>$ 10 (selectively antiparasitic). The selection additionally required multi-target engagement of at least two of the four docking targets and scaffold diversity of no more than three compounds per Bemis--Murcko scaffold. The set includes the previously named consensus leads Ligands 201, 214, and 87 (PfDHFR), Ligand 438 (PfATP4), and Ligand 164 (polypharmacological). Five approved antimalarial drugs (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) were included as reference controls, giving 220 protein--ligand systems in total (\cref{tab:system_breakdown}).
+Seventeen candidates were selected from the canonical Set-C candidate panel generated from the library of \num{65856} molecules described previously \citep{temgoua2026antimalarial}. The candidate-selection panel is distinct from the production-MD cohort. Three sequential filters were applied: (1) MPO score $\geq$ \num{0.70} (primary leads); (2) SYBA score $>$ \num{0} (synthesisable); (3) selectivity index SI $>$ \num{10} (selectively antiparasitic). The selection additionally required multi-target engagement of at least two of the four docking targets and scaffold diversity of no more than three compounds per Bemis--Murcko scaffold. The selection includes one of the previously named consensus leads (Ligand 87, PfDHFR). The four additional parent-study consensus leads (Ligands 201, 214, 438, 164) were not part of the 17-candidate docking set but were used to construct the wild-type complexes for the production MD check. The 164 system is identified as the 164-labelled PfClpR cohort; PDB 4GM2 is PfClpR rather than PfClpP, so this system is not structural validation of PfClpP. Five approved antimalarial drugs (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) were included as reference controls for the docking analysis (\cref{tab:system_breakdown}).
 
 \begin{table}[htbp]
 \centering
-\caption{Breakdown of the 220 protein--ligand systems by category. $^*$Production MD only; the remaining 216 systems (mutants + controls) have docking-based RRS classification without production MD.}
+\caption{Breakdown of the 136 docking protein--ligand systems by category (17 polypharmacological candidates $\times$ 8 wild-type/mutant PfDHFR and PfCRT structures). $^*$Production MD was performed at \SI{10}{\nano\second} each (\SI{40}{\nano\second} total) on 4 wild-type parent-study complexes. Ligand 164 is retained as the 164-labelled PfClpR cohort; PDB 4GM2 is PfClpR rather than PfClpP, so this system is not presented as PfClpP structural validation. The other systems were Ligand 201 (PfDHFR), Ligand 214 (PfCRT), and Ligand 438 (PfATP4); all were distinct from the 17-candidate docking set.}
 \label{tab:system_breakdown}
-\begin{tabular}{l S[table-format=2.0] S[table-format=1.0] S[table-format=3.0] S[table-format=5.0]}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X S[table-format=2.0] S[table-format=1.0] S[table-format=3.0] l}
 \toprule
 Category & {Ligands} & {Targets} & {Systems} & {MD (\si{\nano\second})} \\
 \midrule
-WT (20 candidates $\times$ 4 targets) & 20 & 4 & 80 & 16000 \\
-Mutants (20 candidates $\times$ 6 mutants) & 20 & 6 & 120 & 12000 \\
-Controls (5 drugs $\times$ 4 targets) & 5 & 4 & 20 & 2000 \\
+PfDHFR WT + 4 mutants (set C) & 17 & 5 & 85 & \textemdash \\
+PfCRT WT + 2 mutants (set C) & 17 & 3 & 51 & \textemdash \\
 \midrule
-\textbf{Total} & {--} & {--} & {\textbf{220}} & {\textbf{40}}$^*$ \\
+\textbf{Docking total} & {--} & {--} & \textbf{136} & \textemdash \\
 \bottomrule
-\end{tabular}
+\multicolumn{5}{p{0.95\textwidth}}{Production MD was not performed on Set-C candidates. Separately, four parent-study consensus complexes (164, 201, 214, 438) were simulated for \SI{10}{\nano\second} each (\SI{40}{\nano\second} total).} \\
+\end{tabularx}
 \end{table}
 
 \subsection{Resistance mutation panel}
 
-Six resistance mutations were selected on the basis of prevalence data from the Worldwide Antimalarial Resistance Network \citep{wwarn_2026} and recent African surveillance studies (\cref{tab:mutations}). The PfDHFR mutations N51I, C59R, and S108N collectively confer high-level resistance to pyrimethamine and are detected in \qtyrange{50}{90}{\percent} of African isolates depending on region \citep{africa_resistance_2026}. Mutant allele frequencies were cross-referenced with PlasmoDB \citep{plasmodb_2026} and the PfAMR database \citep{pfamr_2026}. The PfCRT mutations K76T and K76A mediate resistance to chloroquine and piperaquine, respectively \citep{computational_mutations_2025}. The PfDHFR mutation I164L confers high-level pyrimethamine resistance and, while rare in Africa ($< \qty{5}{\percent}$), was included to assess whether leads remain resilient against the most severe DHFR resistance genotype \citep{africa_resistance_2026}.
+Six resistance mutations were selected on the basis of prevalence data from the Worldwide Antimalarial Resistance Network \citep{wwarn_2026} and recent African surveillance studies (\cref{tab:mutations}). The PfDHFR mutations N51I, C59R, and S108N collectively confer high-level resistance to pyrimethamine and are detected in \qtyrange{50}{90}{\percent} of African isolates depending on region \citep{africa_resistance_2026}. Mutant allele frequencies were cross-referenced with PlasmoDB \citep{plasmodb_2026} and the PfAMR database \citep{pfamr_2026}. The PfCRT mutations K76T and K76A mediate resistance to chloroquine and piperaquine, respectively \citep{computational_mutations_2025}; PfCRT-mediated efflux of piperaquine has been directly implicated in partner-drug failure, and drug combinations that neutralise this efflux are under active investigation \citep{okombo2026collateral}. The PfDHFR mutation I164L confers high-level pyrimethamine resistance and, while rare in Africa ($< \qty{5}{\percent}$), was included to assess whether leads remain resilient against the most severe DHFR resistance genotype \citep{africa_resistance_2026}. Stable PlasmoDB/VEuPathDB target identifiers and the structural identity boundary for PfClpR/PfClpP are provided in \cref{SM-tab:s5_plasmodb}; this annotation is not a pathway-enrichment analysis.
 
 \begin{table}[htbp]
 \centering
@@ -182,33 +193,33 @@ PfDHFR & I164L & Pyrimethamine & $< \qty{5}{\percent}$ Africa & WWARN \\
 
 \subsection{Homology modelling of resistance mutants}
 
-Crystal structures of mutant targets were not available in the PDB. Homology models were generated with SWISS-MODEL using the wild-type structures as templates: PfDHFR (7F3Y), PfCRT (6UKJ), PfATP4 (9N10), and PfClpP (4GM2). Model quality was assessed by QMEAN score, Global Model Quality Estimation, Ramachandran analysis (MolProbity), and C$\alpha$ RMSD to the wild-type template. Models were retained only when QMEAN exceeded $-$4.0, GMQE exceeded 0.7, Ramachandran favored residues exceeded \qty{95}{\percent}, and backbone RMSD was below \SI{1.5}{\angstrom}. Models failing any criterion were regenerated using the following fallback chain: (1) ColabFold (AlphaFold2 backend, faster and free); (2) RoseTTAFold via the Robetta server; (3) PyMOL mutagenesis wizard with energy minimisation in GROMACS (last resort for single-point mutations only).
+Crystal structures of mutant targets were not available in the PDB. Homology models were generated with SWISS-MODEL using the wild-type structures as templates: PfDHFR (7F3Y) and PfCRT (6UKJ). PfATP4 and the 164-labelled parent-MD system were not part of the six-mutant homology-model panel; moreover, PDB 4GM2 is PfClpR rather than PfClpP. Model quality was assessed by QMEAN score, Global Model Quality Estimation, Ramachandran analysis (MolProbity), and C$\alpha$ RMSD to the wild-type template. Models were retained only when QMEAN exceeded \num{-4.0}, GMQE exceeded \num{0.7}, Ramachandran favored residues exceeded \qty{95}{\percent}, and backbone RMSD was below \SI{1.5}{\angstrom}. Models failing any criterion were regenerated using the following fallback chain: (1) ColabFold (AlphaFold2 backend, faster and free); (2) RoseTTAFold via the Robetta server; (3) PyMOL mutagenesis wizard with energy minimisation in GROMACS (last resort for single-point mutations only).
 
 \subsection{Docking protocol validation}
 
-The docking protocol and V2-corrected grid parameters used here are identical to those established in the parent study \citep{temgoua2026antimalarial}: AutoDock Vina 1.2.7 with exhaustiveness 64 against grids centered on the corrected V2 binding-site coordinates of PfDHFR (7F3Y), PfCRT (6UKJ), PfATP4 (9N10), and PfClpP (4GM2). A successful redocking was defined as RMSD $<$ \SI{2.0}{\angstrom} relative to the crystal pose. The parent study performed external enrichment against the MMV Malaria Box (consensus-score ROC-AUC 0.924--1.000 across the four targets) and DEKOIS 2.0 for PfDHFR (Vina only, ROC-AUC 0.509), and calibrated dual-filter thresholds against ChEMBL actives. P2 uses AutoDock Vina + Gnina CNN-affinity as an independent consensus scorer; the validation benchmarks from the parent study are reproduced in Table~S0.
+The docking protocol and V2-corrected grid parameters used here are identical to those established in the parent study \citep{temgoua2026antimalarial}: AutoDock Vina 1.2.7 with exhaustiveness \num{64} against grids centered on the corrected V2 binding-site coordinates of PfDHFR (7F3Y), PfCRT (6UKJ), PfATP4 (9N10), and the historically labelled PfClpR/4GM2 entry (not PfClpP). A successful redocking was defined as RMSD $<$ \SI{2.0}{\angstrom} relative to the crystal pose. The parent study performed external enrichment against the MMV Malaria Box (consensus-score ROC-AUC \numrange{0.924}{1.000} across the three evaluated targets, PfDHFR, PfCRT, and PfATP4) and DEKOIS 2.0 for PfDHFR (Vina only, ROC-AUC \num{0.450}), and calibrated dual-filter thresholds against ChEMBL actives. The present study therefore retains AutoDock Vina as the canonical docking scorer; the validation benchmarks from the parent study are reproduced in \cref{SM-tab:s1_docking_validation}. An exploratory GNINA analysis did not yield a valid pose or score and was excluded from the present evidence set.
 
 \subsection{Tartarus external validation}
 
-To benchmark our MPO scoring against an independent docking tool, we performed QuickVina docking via the Tartarus benchmark framework \citep{tartarus_2024} on the full library of \num{19913} primary leads across three targets (1SYH, 6Y2F, 4LDE). Each smina call used \num{2} CPUs and exhaustiveness \num{10}. The Tartarus composite score (mean of three target scores) and individual target scores were correlated with the weighted MPO score using Spearman $\rho$ to assess whether the two ranking methods capture overlapping or orthogonal compound quality information. A total of \num{20041} molecules overlapped between the Tartarus-docked set and the MPO-scored library, yielding up to $n = \num{17211}$ complete observations per correlation after pairwise filtering. Statistical significance was evaluated at $\alpha = 0.05$ with Bonferroni correction for four comparisons ($\alpha_{\text{adj}} = 0.0125$).
+To benchmark our MPO scoring against an independent docking tool, we performed QuickVina docking via the Tartarus benchmark framework \citep{tartarus_2024} on the full library of \num{19913} primary leads across three targets (1SYH, 6Y2F, 4LDE). Each smina call used \num{2} CPUs and exhaustiveness \num{10}. The Tartarus composite score (mean of three target scores) and individual target scores were correlated with the weighted MPO score using Spearman $\rho$ to assess whether the two ranking methods capture overlapping or distinct dimensions of compound prioritisation. A total of \num{20041} target--molecule observations overlapped between the Tartarus-docked set and the MPO-scored library, yielding up to $n = \num{17211}$ complete observations per correlation after pairwise filtering. Statistical significance was evaluated at $\alpha = \num{0.05}$ with Bonferroni correction for four comparisons ($\alpha_{\text{adj}} = \num{0.0125}$).
 
 \subsection{MPO sensitivity analysis}
 
-The multi-parameter optimisation (MPO) weights used in the parent study (Vina \qty{35}{\percent}, DiffDock \qty{25}{\percent}, QED \qty{20}{\percent}, ADMET \qty{15}{\percent}, Ro5 \qty{5}{\percent}) were validated retrospectively by sensitivity analysis. Each weight was varied $\pm\qty{20}{\percent}$ while keeping the remaining weights proportional, yielding 25 weight combinations. For each combination, MPO scores were recomputed for the \num{65856}-molecule library and the Jaccard similarity of the resulting top-20 hit list to the original top-20 was measured. A Jaccard index $\geq$ 0.70 (at least 14 of 20 compounds stable) was set as the acceptance criterion. Results are reported as a heatmap of Jaccard similarity across weight combinations (Figure~S1).
+The multi-parameter optimisation (MPO) weights used in the parent study (Vina \qty{35}{\percent}, DiffDock \qty{25}{\percent}, QED \qty{20}{\percent}, ADMET \qty{15}{\percent}, Ro5 \qty{5}{\percent}) were validated retrospectively by sensitivity analysis. Each weight was varied $\pm\qty{20}{\percent}$ while keeping the remaining weights proportional, yielding \num{25} weight combinations. For each combination, MPO scores were recomputed for the \num{65856}-molecule library and the Jaccard similarity of the resulting top-20 hit list to the original top-20 was measured. A Jaccard index $\geq$ \num{0.70} (at least \num{14} of \num{20} compounds stable) was set as the acceptance criterion. Results are reported as a heatmap of Jaccard similarity across weight combinations (\cref{SM-fig:s1_mpo_sensitivity}).
 
-\subsection{ADMET cross-validation}
+\subsection{Predicted ADMET profile}
 
-ADMET predictions for the 20 selected candidates were cross-validated using three independent tools: ADMET-AI \citep{admetai_2023}, ADMETlab 3.0 \citep{admetlab3_2024}, and SwissADME \citep{swissadme_2017}. Spearman correlations between ADMET-AI and ADMETlab 3.0 were computed for solubility (LogS), hERG inhibition, blood--brain barrier penetration, and CYP3A4 inhibition. Predictions were further validated against experimental IC$_{50}$ and cytotoxicity data from the MMV Malaria Box for the five reference control compounds. Compounds where any two tools disagreed by more than one risk category were flagged. All ADMET-derived statements in this manuscript use ``predicted'' qualifiers to reflect the computational nature of these estimates. Cross-validation results are summarised in Table~S5.
+Predicted ADMET profiles for the \num{17} set-C candidates were taken from the parent-library screening (ADMET-AI \citep{admetai_2023}; \texttt{eos7kpb\_malaria\_final\_screening.csv}, \num{65856} molecules), in which all \num{17} candidates were scored. Four endpoints with complete coverage are reported in \cref{SM-tab:s3_admet}: aqueous solubility (LogS), CYP3A4 inhibition probability, Caco-2 permeability probability, and predicted human hepatic clearance (Clint$_h$). All values are machine-learning predictions; a three-tool cross-validation (ADMET-AI, ADMETlab 3.0, SwissADME) and experimental ADMET profiling were outside the scope of this study, and no inter-tool concordance is inferred.
 
 \subsection{Docking and resistance resilience score}\label{sec:rrs_formula}
 
-All 20 candidates were docked against each wild-type and mutant structure using AutoDock Vina 1.2.7 with exhaustiveness 64. Gnina 1.1 was run in parallel as an independent CNN-based scorer; the consensus score was computed as the rank-normalised average of Vina and Gnina CNN-affinity scores to avoid unit incompatibility. Grid boxes were centered on the co-crystallized ligand position with \SI{20}{\angstrom}\ dimensions.
+All 17 candidates were docked against each wild-type and mutant structure using AutoDock Vina 1.2.7 with exhaustiveness \num{64}. The resulting 136-system RRS analysis is Vina-derived. GNINA was not used to compute a reportable score for this panel because the exploratory analysis did not yield a valid pose or score; no rank-normalised Vina--GNINA consensus score was calculated. Grid boxes were centered on the co-crystallized ligand position with \SI{20}{\angstrom}\ dimensions.
 
-Compounds with wild-type binding affinity $|\Delta G_{i,\mathrm{WT}}| < \SI{5.0}{\kcalmol}$ were excluded from RRS classification prior to scoring; weak binders cannot constitute resistance-resilient leads regardless of their mutant-to-WT affinity ratio. The Resistance Resilience Score for compound $i$ against mutant $m$ is defined as
+Compounds were docked against wild-type and mutant structures of both PfDHFR and PfCRT. RRS is defined per target: for a given target $t$, compounds whose wild-type binding affinity $|\Delta G_{i,\mathrm{WT},t}| < \SI{5.0}{\kcalmol}$ on that target are excluded from that target's RRS (weak binders cannot constitute resistance-resilient leads regardless of their mutant-to-WT affinity ratio). The per-target Resistance Resilience Score for compound $i$ against mutant $m$ is
 \begin{equation}
-\mathrm{RRS}_{i,m} = \frac{|\Delta G_{i,m}|}{|\Delta G_{i,\mathrm{WT}}|} \times 100,
+\mathrm{RRS}_{i,m,t} = \frac{|\Delta G_{i,m,t}|}{|\Delta G_{i,\mathrm{WT},t}|} \times 100,
 \end{equation}
-where $|\Delta G_{i,m}|$ and $|\Delta G_{i,\mathrm{WT}}|$ are the absolute values of the Vina binding affinities for the mutant and wild-type structures, respectively. Absolute values are used because $\Delta G$ is negative (more negative = stronger binding); without absolute values a compound binding more strongly to the mutant than to the WT would incorrectly score above \qty{100}{\percent}. The overall RRS for each compound is the mean across all mutants tested, i.e., $\mathrm{RRS}_i = \frac{1}{M}\sum_{m=1}^{M} \mathrm{RRS}_{i,m}$, where $M$ is the number of mutants evaluated for compound $i$.
+where $|\Delta G_{i,m,t}|$ and $|\Delta G_{i,\mathrm{WT},t}|$ are the absolute values of the Vina binding affinities for the mutant and wild-type structures of target $t$, respectively. Absolute values are used because $\Delta G$ is negative (more negative = stronger binding); without absolute values a compound binding more strongly to the mutant than to the WT would incorrectly score above \qty{100}{\percent}. The per-mutant RRS for compound $i$ is the mean over targets for which the compound is a genuine binder, $\mathrm{RRS}_{i,m} = \frac{1}{|T_{i,m}|}\sum_{t \in T_{i,m}} \mathrm{RRS}_{i,m,t}$, where $T_{i,m}$ is the set of binding targets scored against mutant $m$; the overall RRS for each compound is the mean across all mutants tested, $\mathrm{RRS}_i = \frac{1}{M}\sum_{m=1}^{M} \mathrm{RRS}_{i,m}$. Targets with near-zero wild-type affinity are excluded so that non-binder targets cannot inflate or distort the ratio.
 
 Compounds were assigned to one of five classes that jointly account for both binding potency and resistance resilience. This dual-criterion classification addresses the ceiling-effect concern that weak binders with $|\Delta G_{\mathrm{WT}}|$ just above the \SI{5.0}{\kcalmol} pre-filter threshold can achieve high RRS values despite being poor leads (a compound with $\Delta G_{\mathrm{WT}} = -5.1$ and $\Delta G_{\mathrm{mutant}} = -5.0$ scores RRS $= \qty{98}{\percent}$, yet is a weaker binder than a compound with $\Delta G_{\mathrm{WT}} = -12.0$ and RRS $= \qty{83}{\percent}$). The classes are:
 \begin{itemize}
@@ -226,21 +237,21 @@ To quantify the position of each compound relative to known drugs and African na
 \begin{equation}
 \mathrm{ACSI} = 0.40\,D_{\mathrm{DrugBank}} + 0.25\,D_{\mathrm{ANPDB}} + 0.20\,f_{\mathrm{sp}^3} + 0.15\,\mathrm{NPL},
 \end{equation}
-where $D_{\mathrm{DrugBank}}$ is the Tanimoto distance (1 $-$ maximum similarity) to the nearest DrugBank compound based on Morgan fingerprints (radius 2, 2048 bits), $D_{\mathrm{ANPDB}}$ is the analogous distance to the African Natural Products Database (\num{11000} compounds), $f_{\mathrm{sp}^3}$ is the fraction of sp$^3$-hybridized carbons, and NPL is a natural product-likeness score based on ring count and aromaticity. All four components were normalized to [0, 1] by min--max scaling before combination. The weights (0.40, 0.25, 0.20, 0.15) were set heuristically based on the relative discriminatory power of each component for African NP chemical space: DrugBank distance is the primary discriminator (\qty{40}{\percent}) as it directly measures novelty relative to approved drugs; ANPDB distance (\qty{25}{\percent}) captures African NP-specificity; fsp$^3$ (\qty{20}{\percent}) captures 3D complexity; NPL (\qty{15}{\percent}) provides a global NP-likeness prior. These weights are initially unoptimised; a sensitivity analysis varying each weight $\pm\qty{20}{\percent}$ is reported in Table~S6 to assess robustness.
+where $D_{\mathrm{DrugBank}}$ is the Tanimoto distance (1 $-$ maximum similarity) to the nearest DrugBank compound based on Morgan fingerprints (radius \num{2}, \num{2048} bits), $D_{\mathrm{ANPDB}}$ is the analogous distance to the African Natural Products Database (\num{11000} compounds), $f_{\mathrm{sp}^3}$ is the fraction of sp$^3$-hybridized carbons, and NPL is a natural product-likeness score based on ring count and aromaticity. All four components were normalized to [\num{0}, \num{1}] by min--max scaling before combination. The weights (\num{0.40}, \num{0.25}, \num{0.20}, \num{0.15}) were set heuristically based on the relative discriminatory power of each component for African NP chemical space: DrugBank distance is the primary discriminator (\qty{40}{\percent}) as it directly measures novelty relative to approved drugs; ANPDB distance (\qty{25}{\percent}) captures African NP-specificity; fsp$^3$ (\qty{20}{\percent}) captures 3D complexity; NPL (\qty{15}{\percent}) provides a global NP-likeness prior. These weights are initially unoptimised; a sensitivity analysis varying each weight $\pm\qty{20}{\percent}$ is reported in \cref{SM-tab:s4_acsi_sensitivity} to assess robustness.
 
 \subsection{Polypharmacology network score}
 
-The \textit{P. falciparum} protein--protein interaction network was retrieved from the STRING database (organism 36329, confidence threshold 700). Composite centrality $C_j = 0.25(C_{D,j}+C_{B,j}+C_{C,j}+C_{E,j})$ was computed for each of the four docking targets, combining degree ($C_D$), betweenness ($C_B$), closeness ($C_C$), and eigenvector ($C_E$) centrality, each normalised to [0,1]. PfCRT (PF3D7\_0709000) is absent from the STRING network at the 700 confidence threshold, consistent with its biological role as a chloroquine resistance transporter with limited protein--protein interaction partners; its centrality is imputed with the network mean composite centrality ($C_j \approx 0.5$) rather than a default value of 1.0, preventing the previously reported linear-dependence artifact ($\rho = -1.000$) between PNS and Vina scores. The Polypharmacology Network Score for compound $i$ is
+The \textit{P. falciparum} protein--protein interaction network was retrieved from the STRING database (organism 36329, confidence threshold \num{700}). Composite centrality $C_j = 0.25(C_{D,j}+C_{B,j}+C_{C,j}+C_{E,j})$ was computed for each of the four docking targets, combining degree ($C_D$), betweenness ($C_B$), closeness ($C_C$), and eigenvector ($C_E$) centrality, each normalised to [\num{0},\num{1}]. PfCRT (PF3D7\_0709000) is absent from the STRING network at the 700 confidence threshold, consistent with its biological role as a chloroquine resistance transporter with limited protein--protein interaction partners; its centrality is imputed with the observed network-mean composite centrality ($C_j = 0.151$) rather than a default value of \num{1.0}, preventing the previously reported linear-dependence artifact ($\rho = -1.000$) between PNS and Vina scores. The Polypharmacology Network Score for compound $i$ is
 \begin{equation}
 \mathrm{PNS}_i = \frac{1}{n_i}\sum_{j=1}^{n_i} C_j\,|\Delta G_{i,j}|,
 \end{equation}
-where $i$ indexes the compound, $n_i$ is the number of targets bound by compound $i$, $C_j$ is the composite centrality defined above, and $\Delta G_{i,j}$ is the Vina binding affinity. Note that $\Delta G_{i,j}$ values are docking-derived (AutoDock Vina 1.2.7), not MD-derived, making PNS a rapid pre-screening metric that does not require simulation. We explicitly state this distinction because readers may assume PNS uses MD-derived binding energies.
+where $i$ indexes the compound, $n_i$ is the number of targets bound by compound $i$, $C_j$ is the composite centrality defined above, and $\Delta G_{i,j}$ is the Vina binding affinity. Note that $\Delta G_{i,j}$ values are docking-derived (AutoDock Vina 1.2.7), not MD-derived, making PNS a rapid pre-screening metric that does not require simulation. The PNS output records two target engagements for each set-C candidate under the parent docking-engagement definition; this is distinct from the RRS denominator rule, which excludes a target whenever $|\Delta G_{\mathrm{WT}}| < \SI{5.0}{\kcalmol}$. Consequently, a candidate can have $n_{\mathrm{targets}}=2$ in the PNS engagement record while receiving RRS ratios for only one target. This distinction matters because the two scores apply different engagement filters.
 
 \subsection{Molecular dynamics simulations}
 
-Simulations were performed with GROMACS 2024.2 \citep{gromacs_2015,lindahl_2024}. Proteins were parameterised with CHARMM36m \citep{charmm36m_2017}. All ligands (PfCRT, PfDHFR, PfATP4, PfClpP) were parameterised with ACPyPE \citep{acpype2012}, which wraps antechamber to assign GAFF2 atom types and AM1-BCC partial charges \citep{wang2004gaff}; this GAFF2 ligand representation interoperates with the CHARMM36m protein through the CHARMM36-to-AMBER conversion performed by \texttt{gmx\_MMPBSA}. Each complex was solvated in a dodecahedral TIP3P water box with a minimum \SI{1.2}{\nano\metre} distance between the solute and the box edge, neutralized, and adjusted to \SI{0.15}{\molar} NaCl.
+Simulations were performed with GROMACS 2024.2 \citep{gromacs_2015,lindahl_2024}. Proteins were parameterised with CHARMM36m \citep{charmm36m_2017}; system construction followed the CHARMM-GUI workflow \citep{charmmgui_2026} and community guidance on GROMACS simulation protocols \citep{bioexcel_gromacs2026_webinar}. All ligands (PfCRT, PfDHFR, PfATP4, and the PfClpR-labelled 4GM2 parent complex) were parameterised with ACPyPE \citep{acpype2012}, which wraps antechamber to assign GAFF2 atom types and AM1-BCC partial charges \citep{wang2004gaff}; this GAFF2 ligand representation interoperates with the CHARMM36m protein through the CHARMM36-to-AMBER conversion performed by \texttt{gmx\_MMPBSA}. Each complex was solvated in a dodecahedral TIP3P water box with a minimum \SI{1.2}{\nano\metre} distance between the solute and the box edge, neutralized, and adjusted to \SI{0.15}{\molar} NaCl.
 
-Energy minimization was performed by steepest descent for \num{50000} steps with a force tolerance of \SI{1000}{\kilo\joule\per\mole\per\nano\metre}. Equilibration consisted of \SI{100}{\pico\second} NVT (V-rescale thermostat, \SI{300}{\kelvin}) followed by \SI{500}{\pico\second} NPT (Parrinello--Rahman barostat, \SI{1}{\bar}), with position restraints of \SI{1000}{\kilo\joule\per\mole\per\nano\metre\squared} on protein heavy atoms. Production runs were \SI{200}{\nano\second} for wild-type systems and \SI{100}{\nano\second} for mutant systems, using a \SI{2}{\femto\second} timestep with LINCS constraints on bonds involving hydrogen. Electrostatics were treated by PME with a \SI{1.2}{\nano\metre} cutoff; van der Waals interactions used a \SI{1.2}{\nano\metre} cutoff. Coordinates were saved every \SI{10}{\pico\second} and energies every \SI{2}{\pico\second}.
+Energy minimization was performed by steepest descent for \num{50000} steps with a force tolerance of \SI{1000}{\kilo\joule\per\mole\per\nano\metre}. Equilibration consisted of \SI{100}{\pico\second} NVT (V-rescale thermostat, \SI{310.15}{\kelvin}) followed by \SI{500}{\pico\second} NPT (Parrinello--Rahman barostat, \SI{1}{\barpressure}), with position restraints of \SI{1000}{\kilo\joule\per\mole\per\nano\metre\squared} on protein heavy atoms. Production runs were \SI{10}{\nano\second} for each of the four wild-type systems at \SI{310.15}{\kelvin} (physiological temperature), using a \SI{2}{\femto\second} timestep with LINCS constraints on bonds involving hydrogen. Electrostatics were treated by PME with a \SI{1.2}{\nano\metre} cutoff; van der Waals interactions used a \SI{1.2}{\nano\metre} cutoff. Coordinates were saved every \SI{10}{\pico\second} and energies every \SI{2}{\pico\second}.
 
 \subsection{Trajectory analysis}
 
@@ -248,21 +259,17 @@ Backbone and ligand RMSD, per-residue RMSF, radius of gyration, and solvent-acce
 
 \subsection{MM-GBSA calculations}
 
-Binding free energies were estimated using AMBERTools 23 \texttt{MMPBSA.py} \citep{gmx_mmpbsa_2021} with the OBC generalised Born model (igb = 2), \SI{0.15}{\molar} ionic strength, and dielectric constants of 80.0 (solvent) and 1.0 (protein). GROMACS trajectories were converted to AMBER format using \texttt{gmx\_MMPBSA} as a format converter before running \texttt{MMPBSA.py} natively, eliminating one conversion layer and reducing silent format errors. Five hundred snapshots were extracted at \SI{100}{\pico\second} intervals from the final \SI{50}{\nano\second} of each stable trajectory. Per-residue energy decomposition was performed to identify residues contributing most to binding. While free energy perturbation (FEP) provides more rigorous thermodynamic integration, MM-GBSA remains the most widely adopted end-point method for high-throughput hit prioritization due to its balance of accuracy and computational tractability \citep{gmx_mmpbsa_2021, mmgbsa_best_practices_2025}.
+Binding free energies were estimated using \texttt{gmx\_MMPBSA} with the OBC2 generalised Born model (igb = 5), \SI{0.15}{\molar} ionic strength, and dielectric constants of \num{80.0} (solvent) and \num{1.0} (protein). Snapshots were extracted at \SI{100}{\pico\second} intervals across the \SI{10}{\nano\second} parent-study trajectories. Endpoint estimates were retained only when the ligand remained bound and the topology conversion passed validation: this yielded one interpretable result (PfCRT--214, \num{101} snapshots). Dissociated systems (the 164-labelled PfClpR cohort and PfDHFR--201) and the PfATP4--438 conversion-corrupted system were reported as N/A rather than assigned binding energies. Per-residue energy decomposition was not used to rescue an invalid endpoint. MM-GBSA is therefore treated as a cautious, system-specific diagnostic rather than a calibrated thermodynamic measurement \citep{gmx_mmpbsa_2021,mmgbsa_best_practices_2025}.
 
-\subsection{Monte Carlo binding free energy landscapes}
-
-Monte Carlo (MC) sampling was performed using OpenMM 8.1 to explore binding free energy landscapes from the final MD frame of each stable system. The Metropolis criterion was applied with a move set comprising ligand translation (\qty{0.5}{\angstrom}, \qty{40}{\percent}), rotation (\qty{15}{\degree}, \qty{30}{\percent}), side-chain torsion (\qty{30}{\degree}, \qty{20}{\percent}), and protein side-chain rotation (\qty{10}{\percent} weight). Each system was sampled for \num{10000} MC steps at \SI{300}{\kelvin}, with snapshots saved every 100 steps for rescoring by MM-GBSA. The acceptance rate was monitored and systems with rates outside \qtyrange{20}{40}{\percent} were flagged for move-set adjustment.
-
-MC-derived binding free energies ($\Delta G_{\mathrm{MC}}$) were compared with MD-derived MM-GBSA values ($\Delta G_{\mathrm{MD}}$) to assess convergence. Systems where $|\Delta G_{\mathrm{MC}} - \Delta G_{\mathrm{MD}}| > \SI{2}{\kcalmol}$ were flagged as sampling-limited and discussed as limitations.
+Candidate-specific production MD was completed for the 16-system Set-C pilot (PP-01 and PP-02 against the six-mutant panel, \SI{10}{\nano\second} each, CHARMM36m/GAFF2, \SI{310.15}{\kelvin}), and all 16 trajectories passed the prespecified trajectory-QC gate (bound fraction, duration, and topology hashes). MM-GBSA was applied to the same 16 systems with the identical GB$^{\text{OBC2}}$ (igb=5) protocol. Because the pilot is a two-candidate extension rather than the prespecified 17-candidate cohort, its MD-RRS and MM-GBSA values are reported as secondary results and are not merged into the primary docking-RRS classification.
 
 \subsection{Cross-metric correlation analysis}
 
-To test whether the three novel metrics capture independent or correlated aspects of compound quality, Spearman correlations (with Bonferroni correction for six pairwise comparisons) were computed between RRS, ACSI, PNS, and MM-GBSA $\Delta G_{\mathrm{bind}}$ for the 20 candidates. Three pre-specified hypotheses were tested: (H1) high-ACSI compounds tend to be more resistance-resilient (higher RRS); (H2) high-PNS compounds tend to have stronger MM-GBSA $\Delta G_{\mathrm{bind}}$; (H3) RRS and MM-GBSA $\Delta\Delta G$ (WT minus mutant) are correlated, validating docking-based resilience as a proxy for free energy resilience. Results are reported as a 4$\times$4 correlation matrix (\cref{fig:crossmetric}) and \cref{tab:crossmetric}.
+To test whether the three novel metrics capture independent or correlated aspects of compound quality, Spearman correlations (with Bonferroni correction for the three pre-specified pairwise comparisons) were computed between RRS, ACSI, PNS, and the WT docking score $\Delta G_{\mathrm{WT}}$ for the polypharmacological candidates. Three pre-specified hypotheses were tested: (H1) high-PNS compounds (stronger predicted binding) tend to be more resistance-susceptible (lower RRS); (H2) high-ACSI compounds tend to be more resistance-resilient (higher RRS); (H3) RRS and $\Delta G_{\mathrm{WT}}$ are correlated, testing whether RRS captures information beyond a trivial rescaling of WT affinity. Only one interpretable MM-GBSA binding free energy was available, and it belongs to the separate parent-study MD cohort rather than to set C. Therefore, no PNS-versus-MM-GBSA test is reported for set C; the set-C analysis uses docking-derived WT scores. Results are reported as a correlation matrix (\cref{fig:crossmetric}) and \cref{tab:crossmetric}.
 
 \subsection{Statistical analysis}
 
-Pearson and Spearman correlations were computed between Vina docking scores, RRS values, MM-GBSA $\Delta G_{\mathrm{bind}}$ estimates, and PNS values. Paired $t$-tests were used to compare method performance where applicable. Analyses were performed in Python 3.10 with SciPy and scikit-learn.
+Spearman correlations were computed among the set-C docking-derived scores, RRS values, and PNS values. The single interpretable parent-study MM-GBSA estimate was not merged into the set-C correlation analysis. Analyses were performed in Python 3.10 with SciPy and scikit-learn.
 
 % ============================================================================
 % 3. RESULTS
@@ -272,15 +279,15 @@ Pearson and Spearman correlations were computed between Vina docking scores, RRS
 
 \subsection{Docking protocol validation}
 
-As validated in the parent study \citep{temgoua2026antimalarial}, re-docking of co-crystallised ligands using grids centered on the corrected V2 binding-site coordinates yielded \qty{100}{\percent} success (RMSD $<$ \SI{2.0}{\angstrom}) for alignable ligands (5/5), whereas MTX failed. Enrichment against the MMV Malaria Box demonstrated that the dual-filter consensus (AutoDock Vina + DiffDock) achieved ROC-AUC values ranging from 0.924 to 1.000 across the four targets; external DEKOIS 2.0 validation for PfDHFR (Vina only, 40 actives / 1200 decoys) yielded a ROC-AUC of 0.509. Detailed enrichment metrics are provided in Table~S0.
+As validated in the parent study \citep{temgoua2026antimalarial}, re-docking of co-crystallised ligands using grids centered on the corrected V2 binding-site coordinates yielded \qty{100}{\percent} success (RMSD $<$ \SI{2.0}{\angstrom}) for alignable ligands (5/5), whereas MTX failed. Enrichment against the MMV Malaria Box demonstrated that the dual-filter consensus (AutoDock Vina + DiffDock) achieved ROC-AUC values ranging from \num{0.924} to \num{1.000} across the three evaluated targets (PfDHFR, PfCRT, PfATP4); external DEKOIS 2.0 validation for PfDHFR (Vina only, \num{40} actives / \num{1200} decoys) yielded a ROC-AUC of \num{0.450}. Detailed enrichment metrics are provided in \cref{SM-tab:s1_docking_validation}.
 
 \subsection{MPO sensitivity analysis}
 
-The MPO sensitivity analysis confirmed that the top-20 hit list is robust to weight perturbations. Varying each weight component by $\pm\qty{20}{\percent}$ produced Jaccard similarity indices $\geq$ 0.70 in 24 of 25 combinations, with the single exception being a $-\qty{20}{\percent}$ perturbation of the Vina weight (Figure~S1). This indicates that the Vina docking score is the most influential MPO component but that the overall ranking is not fragile to moderate weight changes.
+The MPO sensitivity analysis confirmed that the top-20 hit list is robust to weight perturbations. Varying each weight component by $\pm\qty{20}{\percent}$ produced Jaccard similarity indices $\geq$ \num{0.70} in \num{24} of \num{25} combinations, with the single exception being a $-\qty{20}{\percent}$ perturbation of the Vina weight (\cref{SM-fig:s1_mpo_sensitivity}). This indicates that the Vina docking score is the most influential MPO component but that the overall ranking is not fragile to moderate weight changes.
 
-\subsection{ADMET cross-validation}
+\subsection{Predicted ADMET profile}
 
-ADMET predictions from the three independent tools (ADMET-AI, ADMETlab 3.0, and SwissADME) showed high concordance for the 20 selected candidates. Spearman correlations between ADMET-AI and ADMETlab 3.0 exceeded 0.80 for solubility and CYP3A4 inhibition. No compounds were flagged for inter-tool disagreement exceeding one risk category. All five reference control compounds (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) yielded ADMET profiles consistent with their known pharmacokinetic properties. Cross-validation results are summarised in Table~S5.
+Predicted ADMET profiles for the \num{17} set-C candidates are reported in \cref{SM-tab:s3_admet}. Across the cohort, predicted LogS ranges from \num{0.34} to \num{0.73} (log molar), \num{7} of \num{17} candidates (\qty{41}{\percent}) have predicted CYP3A4 inhibition probability $\geq$ \num{0.5}, \num{15} of \num{17} (\qty{88}{\percent}) have predicted Caco-2 permeability probability $\geq$ \num{0.5}, and predicted human hepatic clearance ranges from \num{0.48} to \num{0.63}. These are single-source ADMET-AI predictions; no concordance with experimental pharmacokinetic profiles is claimed.
 
 
 
@@ -309,86 +316,93 @@ PfCRT-K76A & 6UKJ & -1.52 & 0.78 & 96.0 & 0.17 \\
 
 \subsection{Candidate characterisation}
 
-The \num{20} candidates were selected from the \num{19913} primary leads (MPO $\geq$ \num{0.70}, SYBA $>$ \num{0}) in the parent study \citep{temgoua2026antimalarial} using three sequential filters: MPO score $\geq$ \num{0.70}, synthetic accessibility (SYBA $>$ \num{0}), and selectivity index (SI $>$ \num{10}). Top candidates exhibit composite scores ranging from \num{0.550} (Rank~1) to \num{0.521} (Rank~10), with selectivity indices from \num{88} to \num{100} and QED values from \num{0.81} to \num{0.92}. All \num{20} candidates are single-target optimized --- the MPO scoring framework favours strong binding to individual targets rather than genuine multi-target profiles --- with \qty{100}{\percent} satisfying SI $>$ \num{10}, hERG probability $<$ \num{0.5} (mean \num{0.117}), and CYP3A4 inhibition $<$ \num{0.5} (mean \num{0.061}). The five control drugs (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) provide reference activity profiles.
+The \num{17} candidates were selected from the \num{19913} primary leads (MPO $\geq$ \num{0.70}, SYBA $>$ \num{0}) in the parent study \citep{temgoua2026antimalarial} using three sequential filters: MPO score $\geq$ \num{0.70}, synthetic accessibility (SYBA $>$ \num{0}), and selectivity index (SI $>$ \num{10}). Top candidates exhibit composite scores ranging from \num{0.550} (Rank~1) to \num{0.521} (Rank~10), with selectivity indices from \num{88} to \num{100} and QED values from \num{0.81} to \num{0.92}. All \num{17} candidates are single-target optimized --- the MPO scoring framework favours strong binding to individual targets rather than genuine multi-target profiles --- with \qty{100}{\percent} satisfying SI $>$ \num{10}. Predicted ADMET profiles (ADMET-AI, \cref{SM-tab:s3_admet}) indicate CYP3A4 inhibition probability $\geq$ \num{0.5} for \num{7} of \num{17} candidates and Caco-2 permeability probability $\geq$ \num{0.5} for \num{15} of \num{17}; no experimental ADMET data were available. The five control drugs (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) provide reference activity profiles.
 
 \subsection{Resistance resilience classification}
 
-The 14 polypharm scaffolds were classified into four resilience tiers based on their RRS values across the six mutants (\cref{tab:rrs}). Named consensus hits (Ligands 201, 214, 87, 438, 164) are reported in the methods section; their per-mutant RRS values will be computed in subsequent MD-based validation.
+The 17 polypharmacological candidates were classified into five resilience tiers based on their RRS values across the six mutants (\cref{tab:rrs}). The four parent-study consensus leads used in the targeted MD check (Ligands 201, 214, 438, 164) are not part of this 17-candidate RRS set; their per-mutant RRS values were not computed in this study.
 
-One scaffold, PP-11 (7,3$'$-O-dimethylquercetin, a methylated flavonol), exhibited a striking resistance pattern: near-complete loss of binding at PfDHFR-C59R (RRS = \qty{0.4}{\percent}, $\Delta G = -\SI{0.02}{\kcalmol}$) while maintaining RRS \qtyrange{126}{155}{\percent} at all other five mutants. This 3.0$\sigma$ outlier is not a docking artifact: other compounds dock normally at C59R (mean $\Delta G = -\SI{5.8}{\kcalmol}$), and PP-11 docks normally at all other mutants. The selective knockout is consistent with a steric clash between the Arg59 guanidinium group (introduced by the Cys-to-Arg mutation, which doubles side-chain volume from \SI{86}{\angstrom\cubed} to \SI{173}{\angstrom\cubed}) and the rigid, planar flavonoid C-ring. This finding establishes a design rule: planar, $\pi$-conjugated scaffolds such as flavonoids, while highly resilient to most PfDHFR mutations, are selectively vulnerable to C59R --- the most prevalent pyrimethamine resistance allele in Africa (\qtyrange{60}{80}{\percent}). Preference should therefore be given to sp$^3$-rich, conformationally flexible scaffolds for PfDHFR-targeted polypharmacological leads. 
+Because RRS is evaluated per-target and only on targets for which the compound is a genuine binder ($|\Delta G_{\mathrm{WT}}| \geq \SI{5.0}{\kcalmol}$), the classification cleanly separates the two engagement profiles: five scaffolds (PP-02, PP-05, PP-06, PP-11, PP-13) bind PfCRT but not PfDHFR ($|\Delta G_{\mathrm{WT},\mathrm{PfDHFR}}| < \SI{5.0}{\kcalmol}$) and are therefore classified exclusively on their PfCRT-mutant resilience (Classes A* or B), while the remaining scaffolds are PfDHFR-targeted with mixed classes. A striking docking observation --- the apparent loss of PP-11 (7,3$'$-O-dimethylquercetin) binding at PfDHFR-C59R ($\Delta G = -\SI{0.02}{\kcalmol}$ versus $-\SIrange{6.8}{6.9}{\kcalmol}$ at N51I, S108N, and I164L) --- was traced to a target-mixing artifact rather than a biological signal: PP-11's wild-type PfDHFR affinity is only $-\SI{0.70}{\kcalmol}$ (a non-binder), so its PfDHFR mutant ratios are not defined, and the apparent C59R knockout arose only when the near-zero WT baseline was pooled with the much stronger PfCRT affinity. With the per-target correction, PP-11 is classified on PfCRT only and is Class~A* (RRS \qtyrange{82.5}{82.7}{\percent} at K76T/K76A). This correction removes the previously reported ``design rule'' that planar flavonoid scaffolds are selectively vulnerable to C59R: within the per-target framework no scaffold exhibits a target-specific knockout of an otherwise strong interaction.
 
 \begin{table}[htbp]
 \centering
-\caption{Resistance Resilience Score classification for the 14 polypharm scaffolds with complete mutant docking data (PP-04 through PP-17; 3 scaffolds lacking one or more mutant scores are excluded). Compounds with $|\Delta G_{\mathrm{WT}}| < \SI{5.0}{\kcalmol}$ are excluded from RRS classification (marked N/A). Class A* (high-potency pan-resilient): $|\Delta G_{\mathrm{WT}}| \geq \SI{7.0}{\kcalmol}$ AND RRS $\geq$ \qty{80}{\percent} all mutants; Class A: RRS $\geq$ \qty{80}{\percent} all mutants; B: RRS $\geq$ \qty{70}{\percent} all mutants; C: RRS $\geq$ \qty{80}{\percent} specific mutants; D: RRS $<$ \qty{60}{\percent} any mutant. The $|\Delta G_{\mathrm{WT}}|$ column (\si{\kcalmol}) is reported jointly to address the ceiling-effect concern that weak binders just above the filter threshold achieve high RRS. WT binding affinities for these scaffolds will be reported upon completion of MD-based re-scoring.}
+\caption{Resistance Resilience Score classification for the \num{17} polypharm scaffolds with complete mutant docking data (PP-01 through PP-17). RRS is computed per-target and averaged across targets for which the compound is a genuine binder ($|\Delta G_{\mathrm{WT}}| \geq \SI{5.0}{\kcalmol}$); targets where the compound is a non-binder are excluded (\textemdash). Compounds with $|\Delta G_{\mathrm{WT}}| < \SI{5.0}{\kcalmol}$ on all targets are excluded from RRS classification (marked N/A). Class A* (high-potency pan-resilient): $|\Delta G_{\mathrm{WT}}| \geq \SI{7.0}{\kcalmol}$ AND RRS $\geq$ \qty{80}{\percent} all mutants; Class A: RRS $\geq$ \qty{80}{\percent} all mutants; B: RRS $\geq$ \qty{70}{\percent} all mutants; C: RRS $\geq$ \qty{80}{\percent} specific mutants; D: RRS $<$ \qty{60}{\percent} any mutant. The $|\Delta G_{\mathrm{WT}}|$ column (\si{\kcalmol}) is reported jointly to address the ceiling-effect concern that weak binders just above the filter threshold achieve high RRS. WT affinities in this table are docking-derived; no MD-based re-scoring is claimed for set C.}
 \label{tab:rrs}
-\begin{tabularx}{\textwidth}{l S[table-format=1.2] S[table-format=3.1] S[table-format=3.1] S[table-format=3.1] S[table-format=3.1] S[table-format=3.1] S[table-format=3.1] l}
+\resizebox{0.98\textwidth}{!}{%
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{l S[table-format=1.2] S[table-format=3.1] S[table-format=3.1] S[table-format=3.1] S[table-format=3.1] S[table-format=3.1] S[table-format=3.1] l}
 \toprule
 Ligand & {$|\Delta G_{\mathrm{WT}}|$ (\si{\kcalmol})} & {RRS$_{\mathrm{N51I}}$ (\si{\percent})} & {RRS$_{\mathrm{C59R}}$ (\si{\percent})} & {RRS$_{\mathrm{S108N}}$ (\si{\percent})} & {RRS$_{\mathrm{I164L}}$ (\si{\percent})} & {RRS$_{\mathrm{K76T}}$ (\si{\percent})} & {RRS$_{\mathrm{K76A}}$ (\si{\percent})} & Class \\
 
 \midrule
-PP-04 & {--} & 73.3 & 71.3 & 73.3 & 78.4 & 98.3 & 96.7 & B \\
-PP-05 & {--} & 113.6 & 111.8 & 113.0 & 112.3 & 144.6 & 148.8 & A \\
-PP-06 & {--} & 127.8 & 141.9 & 128.8 & 131.0 & 170.9 & 177.5 & A \\
-PP-07 & {--} & 65.4 & 65.4 & 65.9 & 65.7 & 91.7 & 84.6 & C \\
-PP-08 & {--} & 62.9 & 62.9 & 68.1 & 67.2 & 82.8 & 82.0 & C \\
-PP-09 & {--} & 63.8 & 66.0 & 68.5 & 69.2 & 83.1 & 80.5 & C \\
-PP-10 & {--} & 72.7 & 73.0 & 72.4 & 72.5 & 93.3 & 93.5 & B \\
-PP-11 & {--} & 126.4 & 0.4 & 128.8 & 127.5 & 154.6 & 154.2 & C \\
-PP-12 & {--} & 73.7 & 64.8 & 61.7 & 71.1 & 71.8 & 88.9 & C \\
-PP-13 & {--} & 125.1 & 112.1 & 121.4 & 105.0 & 156.4 & 141.0 & A \\
-PP-14 & {--} & 62.6 & 66.0 & 68.5 & 65.3 & 78.3 & 77.2 & D \\
-PP-15 & {--} & 92.6 & 84.7 & 94.6 & 99.1 & 107.7 & 112.5 & A* \\
-PP-16 & {--} & 68.0 & 69.7 & 68.7 & 70.8 & 85.5 & 86.0 & C \\
-PP-17 & {--} & 62.7 & 64.7 & 62.9 & 62.3 & 72.4 & 88.0 & C \\
+PP-01 & 9.3 & 86.4 & 85.5 & 87.6 & 83.9 & 92.5 & 90.9 & A* \\
+PP-02 & 9.1 & {--} & {--} & {--} & {--} & 87.9 & 94.6 & A* \\
+PP-03 & 11.3 & 68.1 & 68.3 & 65.8 & 69.0 & 80.0 & 81.4 & C \\
+PP-04 & 8.0 & 68.8 & 66.9 & 68.8 & 73.5 & 105.3 & 103.6 & C \\
+PP-05 & 10.5 & {--} & {--} & {--} & {--} & 77.1 & 79.3 & B \\
+PP-06 & 9.9 & {--} & {--} & {--} & {--} & 90.6 & 94.1 & A* \\
+PP-07 & 9.1 & 71.8 & 71.8 & 72.4 & 72.2 & 84.2 & 77.6 & B \\
+PP-08 & 7.6 & 62.1 & 62.1 & 67.2 & 66.3 & 83.9 & 83.1 & C \\
+PP-09 & 8.6 & 70.6 & 73.0 & 75.8 & 76.5 & 75.8 & 73.5 & B \\
+PP-10 & 8.4 & 76.0 & 76.4 & 75.7 & 75.8 & 89.4 & 89.6 & B \\
+PP-11 & 10.0 & {--} & {--} & {--} & {--} & 82.7 & 82.5 & A* \\
+PP-12 & 7.8 & 75.2 & 66.1 & 62.9 & 72.5 & 70.4 & 87.2 & C \\
+PP-13 & 8.3 & {--} & {--} & {--} & {--} & 110.2 & 99.4 & A* \\
+PP-14 & 7.6 & 62.2 & 65.5 & 68.0 & 64.9 & 78.8 & 77.7 & D \\
+PP-15 & 9.3 & 123.2 & 112.7 & 125.9 & 131.8 & 86.2 & 90.1 & A* \\
+PP-16 & 8.7 & 72.9 & 74.7 & 73.7 & 75.9 & 80.1 & 80.6 & B \\
+PP-17 & 8.3 & 59.3 & 61.2 & 59.5 & 58.9 & 76.8 & 93.4 & C \\
 \bottomrule
-\end{tabularx}
+\end{tabular}%
+}
 \end{table}
 
 \subsection{African chemical space index}
 
-The ACSI provides the first quantitative measure of African NP-likeness calibrated to the ANPDB. Computation was performed locally on the \num{17} parseable candidates (3 entries were stored as InChI strings and were excluded from fingerprint computation). Four candidates (\qty{23.5}{\percent}) achieved ACSI $>$ \num{0.70}, classifying them as highly African NP-like; \num{8} candidates (\qty{47.1}{\percent}) are moderately NP-like (ACSI between \num{0.50} and \num{0.70}); and the remaining \num{5} (\qty{29.4}{\percent}) are synthetic-like (ACSI $<$ \num{0.50}). The mean ACSI across all \num{17} parseable candidates is \num{0.617}, confirming that the generative expansion preserved African NP character on average.
+ACSI was used to quantify African-NP-like chemical-space positioning relative to the ANPDB and approved-drug references. Computation was performed locally on all \num{17} candidates, which were successfully parsed for fingerprint calculation. Two candidates (\qty{11.8}{\percent}) achieved ACSI $>$ \num{0.70}; \num{10} candidates (\qty{58.8}{\percent}) were moderately NP-like; and the remaining \num{5} (\qty{29.4}{\percent}) were synthetic-like. The mean ACSI was \num{0.543}. These values describe the reference-space positioning of the cohort and are not measures of biological activity or resistance.
 
 \begin{table}[htbp]
 \centering
-\caption{African Chemical Space Index (ACSI) for the top-\num{20} candidates. ACSI components: $D_{\mathrm{DrugBank}}$ = Tanimoto distance to DrugBank reference; $D_{\mathrm{ANPDB}}$ = Tanimoto distance to ANPDB; $f_{sp3}$ = fraction of sp$^3$ carbons; NPL = natural product-likeness score. All components normalised to $[0,1]$. ACSI $>$ \num{0.70}: highly African NP-like; \numrange{0.50}{0.70}: moderate; $<$ \num{0.50}: synthetic-like.}
+\caption{African Chemical Space Index (ACSI) for the \num{17} polypharmacological candidates. ACSI components: $D_{\mathrm{DrugBank}}$ = Tanimoto distance to DrugBank reference; $D_{\mathrm{ANPDB}}$ = Tanimoto distance to ANPDB; $f_{sp3}$ = fraction of sp$^3$ carbons; NPL = natural product-likeness score. All components normalised to $[0,1]$. ACSI $>$ \num{0.70}: highly African NP-like; \numrange{0.50}{0.70}: moderate; $<$ \num{0.50}: synthetic-like.}
 \label{tab:acsi}
 \begin{tabularx}{\textwidth}{l S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] l}
 \toprule
 Ligand & {ACSI} & {$D_{\mathrm{DrugBank}}$} & {$D_{\mathrm{ANPDB}}$} & {$f_{sp3}$} & {NPL} & Tier \\
 \midrule
-Rank 1  & 0.840 & 0.769 & 0.768 & 0.273 & 0.688 & Highly NP-like \\
-Rank 4  & 0.837 & 0.717 & 0.762 & 0.571 & 0.706 & Highly NP-like \\
-Rank 3  & 0.810 & 0.726 & 0.780 & 0.462 & 0.667 & Highly NP-like \\
-Rank 2  & 0.808 & 0.736 & 0.694 & 0.533 & 0.600 & Highly NP-like \\
-Rank 5  & 0.663 & 0.714 & 0.607 & 0.250 & 0.696 & Moderately NP-like \\
-Rank 6  & 0.652 & 0.687 & 0.800 & 0.357 & 0.556 & Moderately NP-like \\
-Rank 7  & 0.593 & 0.692 & 0.630 & 0.333 & 0.526 & Moderately NP-like \\
-Rank 8  & 0.590 & 0.716 & 0.447 & 0.333 & 0.529 & Moderately NP-like \\
-Rank 9  & 0.574 & 0.720 & 0.410 & 0.231 & 0.600 & Moderately NP-like \\
-Rank 10 & 0.564 & 0.696 & 0.463 & 0.400 & 0.500 & Moderately NP-like \\
-Rank 11 & 0.561 & 0.672 & 0.738 & 0.176 & 0.632 & Moderately NP-like \\
-Rank 12 & 0.538 & 0.734 & 0.154 & 0.250 & 0.615 & Moderately NP-like \\
-Rank 13 & 0.480 & 0.609 & 0.750 & 0.625 & 0.316 & Synthetic-like \\
-Rank 14 & 0.434 & 0.619 & 0.692 & 0.077 & 0.750 & Synthetic-like \\
-Rank 15 & 0.397 & 0.600 & 0.657 & 0.200 & 0.667 & Synthetic-like \\
-Rank 16 & 0.363 & 0.588 & 0.661 & 0.350 & 0.480 & Synthetic-like \\
-Rank 17 & 0.302 & 0.679 & 0.000 & 0.273 & 0.400 & Synthetic-like \\
+Rank 14 & 0.823 & 0.656 & 0.362 & 0.455 & 0.607 & Highly NP-like \\
+Rank 8  & 0.743 & 0.692 & 0.355 & 0.200 & 0.462 & Highly NP-like \\
+Rank 9  & 0.605 & 0.735 & 0.000 & 0.333 & 0.562 & Moderately NP-like \\
+Rank 4  & 0.603 & 0.625 & 0.209 & 0.214 & 0.588 & Moderately NP-like \\
+Rank 11 & 0.601 & 0.750 & 0.000 & 0.231 & 0.643 & Moderately NP-like \\
+Rank 1  & 0.599 & 0.747 & 0.000 & 0.250 & 0.615 & Moderately NP-like \\
+Rank 13 & 0.597 & 0.667 & 0.136 & 0.176 & 0.667 & Moderately NP-like \\
+Rank 10 & 0.594 & 0.744 & 0.000 & 0.600 & 0.000 & Moderately NP-like \\
+Rank 17 & 0.589 & 0.725 & 0.000 & 0.286 & 0.615 & Moderately NP-like \\
+Rank 12 & 0.576 & 0.714 & 0.000 & 0.235 & 0.696 & Moderately NP-like \\
+Rank 3  & 0.567 & 0.714 & 0.000 & 0.214 & 0.684 & Moderately NP-like \\
+Rank 5  & 0.551 & 0.727 & 0.000 & 0.071 & 0.778 & Moderately NP-like \\
+Rank 7  & 0.459 & 0.627 & 0.000 & 0.167 & 0.667 & Synthetic-like \\
+Rank 16 & 0.458 & 0.642 & 0.000 & 0.118 & 0.667 & Synthetic-like \\
+Rank 15 & 0.387 & 0.571 & 0.000 & 0.062 & 0.762 & Synthetic-like \\
+Rank 2  & 0.308 & 0.564 & 0.000 & 0.000 & 0.500 & Synthetic-like \\
+Rank 6  & 0.173 & 0.355 & 0.000 & 0.077 & 0.765 & Synthetic-like \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-The top-ranked compound by ACSI (Rank~1, ACSI = \num{0.840}) also has high $D_{\mathrm{DrugBank}}$ (\num{0.769}), confirming it occupies chemical space that is simultaneously unexplored by approved drugs and proximal to African natural products. The \num{5} synthetic-like candidates have a lower mean $f_{sp3}$ (\num{0.225}) compared to the \num{4} highly NP-like candidates (\num{0.424}), consistent with flatter, more aromatic structures that drifted toward drug-like space during generative expansion. The position of the top-20 candidates in the parent study VAE latent space is shown in Figure~S2, illustrating whether high-ACSI compounds cluster in distinct regions of the learned chemical space.
+The highest-ACSI entry (Rank~14, ACSI = \num{0.823}) combined a DrugBank distance of \num{0.656} with a relatively strong African-NP-space component. The \num{5} synthetic-like candidates had a lower mean $f_{sp3}$ (\num{0.085}) than the \num{2} highly NP-like candidates (\num{0.328}), a descriptive pattern compatible with greater aromaticity in the synthetic-like subset. The parent-study VAE-space representation is shown in \cref{SM-fig:s2_vae_latent}; it is presented as a chemical-space visualisation, not as evidence of biological clustering.
 
 \subsection{Tartarus docking calibration}
 
-To benchmark our MPO scoring against an independent docking tool, we performed QuickVina docking via the Tartarus benchmark framework \citep{tartarus_2024} on the full library of \num{19913} primary leads (MPO $\geq$ 0.70, SYBA $>$ 0) against three targets: 1SYH (PfDHFR), 6Y2F (PfCRT homologue), and 4LDE (PfClpP homologue). The full run was executed on an HPC cluster (\num{48} CPUs, estimated \SI{83}{\hour}). Of the \num{19913} docked molecules, \num{20041} overlapped with the MPO-scored library of \num{65856} molecules (the overlap exceeds the Tartarus set because some molecules appear in multiple target panels). After filtering for pairwise complete observations, up to $n = \num{17211}$ target--molecule pairs were available for correlation analysis.
+To benchmark our MPO scoring against an independent docking tool, we performed QuickVina docking via the Tartarus benchmark framework \citep{tartarus_2024} on the full library of \num{19913} primary leads (MPO $\geq$ \num{0.70}, SYBA $>$ \num{0}) against three targets: 1SYH (PfDHFR), 6Y2F (PfCRT homologue), and 4LDE (adenosine A2A receptor). The full run was executed on an HPC cluster (\num{48} CPUs, estimated \SI{83}{\hour}). The \num{19913}-molecule Tartarus panel yielded \num{20041} target--molecule observations overlapping the MPO-scored library of \num{65856} molecules (the overlap exceeds the Tartarus set because some molecules appear in multiple target panels). After filtering for pairwise complete observations, up to $n = \num{17211}$ target--molecule pairs were available for correlation analysis.
 
-Spearman correlations between Tartarus docking scores and the weighted MPO composite score are reported in \cref{tab:tartarus_calibration}. The composite score (mean over three targets) showed no significant correlation with the MPO score ($\rho = \num{0.0129}$, $p = \num{0.0913}$, $n = \num{17211}$), confirming that the two metrics capture orthogonal aspects of compound quality. Individual target correlations were negligible: 1SYH ($\rho = \num{0.0655}$, $p = \num{8.18e-18}$) and 4LDE ($\rho = -\num{0.1415}$, $p = \num{1.17e-77}$) showed statistically significant but substantively weak correlations due to the large sample size ($n > \num{17000}$), while 6Y2F was effectively uncorrelated ($\rho = -\num{0.0040}$, $p = \num{0.604}$).
+Spearman correlations between Tartarus docking scores and the weighted MPO composite score are reported in \cref{tab:tartarus_calibration}. The composite score showed no evidence of association with MPO ($\rho = \num{0.0129}$, $p = \num{0.0913}$, $n = \num{17211}$). Individual target effects were small: 1SYH ($\rho = \num{0.0655}$) and 4LDE ($\rho = -\num{0.1415}$) reached statistical significance because of the large denominator, whereas 6Y2F was effectively uncorrelated ($\rho = -\num{0.0040}$). The composite association is therefore null, with substantively small target-specific effects; the data do not establish orthogonality, independence, or equivalence between the two scoring systems.
 
 \begin{table}[htbp]
 \centering
-\caption{Tartarus docking calibration: Spearman correlations between QuickVina scores and weighted MPO scores across \num{19913} primary leads. Bonferroni-adjusted threshold: $\alpha = 0.05/4 = 0.0125$; $n$ varies due to pairwise filtering for missing target scores.}
+\caption{Tartarus docking calibration: Spearman correlations between QuickVina scores and weighted MPO scores across \num{19913} primary leads. Bonferroni-adjusted threshold: $\alpha = 0.05/4 = \num{0.0125}$; $n$ varies due to pairwise filtering for missing target scores.}
 \label{tab:tartarus_calibration}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{l S[table-format=-1.4] S[table-format=1.2e2] S[table-format=5.0] l}
 \toprule
 Score & {Spearman $\rho$} & {$p$-value} & {$n$} & Significant? \\
@@ -396,34 +410,36 @@ Score & {Spearman $\rho$} & {$p$-value} & {$n$} & Significant? \\
 Composite (mean of 3 targets) & 0.0129 & 9.13e-02 & 17211 & No \\
 1SYH (PfDHFR)               & 0.0655 & 8.18e-18 & 17205 & Yes$^*$ (weak) \\
 6Y2F (PfCRT)                & -0.0040 & 6.04e-01 & 17211 & No \\
-4LDE (PfClpP)               & -0.1415 & 1.17e-77 & 17211 & Yes$^*$ (weak) \\
+4LDE (adenosine A2A receptor)               & -0.1415 & 1.17e-77 & 17211 & Yes$^*$ (weak) \\
 \bottomrule
-\multicolumn{5}{l}{$^*$Statistically significant at Bonferroni-adjusted $\alpha = 0.0125$ but substantively negligible ($|\rho| < 0.15$).} \\
-\end{tabular}
+\multicolumn{5}{l}{$^*$Statistically significant at Bonferroni-adjusted $\alpha = \num{0.0125}$ but substantively negligible ($|\rho| < \num{0.15}$).} \\
+\end{tabular}%
+}
 \end{table}
 
-This orthogonality between MPO and Tartarus scores is expected and informative: the MPO composite captures drug-likeness properties (QED, ADMET, Lipinski Ro5) while Tartarus measures binding affinity. The two metrics capture independent aspects of compound quality, confirming that MPO-optimised candidates are not pre-selected for any particular binding affinity profile. This independence motivates the integration of both MPO ranking and Tartarus docking scores in future lead optimisation pipelines, particularly for the polypharmacological candidates identified in \cref{tab:pns}.
+The two scores emphasise different properties: MPO aggregates drug-likeness components, whereas Tartarus provides an independent docking implementation. Their weak composite association suggests that combining drug-likeness and raw affinity could be informative in future prioritisation, but the present analysis does not establish statistical independence or equivalence between the scoring systems.
 
 \subsection{Tartarus cross-docking correlation}
 
 To further benchmark our docking pipeline against an independent implementation, we correlated Tartarus QuickVina scores with our project's AutoDock Vina and DiffDock-L scores (from \citealt{temgoua2026antimalarial}) for the \num{94} molecules with complete docking data. After SMILES-based merging, \num{24} molecules overlapped between the Tartarus-docked set and the project Vina/DiffDock panel (\cref{tab:tartarus_correlation}). This overlap is limited because the project docking panel contains only the top-ranked candidates, whereas Tartarus was run on all \num{19913} primary leads.
 
-Spearman correlations between Tartarus scores and project docking metrics are reported in \cref{tab:tartarus_correlation}. The Tartarus composite score (mean over three targets) showed no significant correlation with any of the four project Vina target affinities ($|\rho| < 0.25$, $p > 0.05$ for all targets), nor with the normalised composite scores S\textsubscript{vina} ($\rho = -0.097$, $p = 0.653$) and S\textsubscript{diff} ($\rho = -0.022$, $p = 0.918$). These results confirm that the two docking implementations, despite targeting homologous proteins, produce largely orthogonal rankings for this compound set.
+Spearman correlations between Tartarus scores and project docking metrics are reported in \cref{tab:tartarus_correlation}. Across the \num{24}-molecule overlap, all reported associations were small and non-significant after the stated multiplicity consideration ($|\rho|<0.25$ for the four target comparisons; the normalised composite comparisons were also non-significant). This limited overlap supports treating the two docking implementations as complementary sensitivity analyses, but it cannot establish agreement, independence, or generalisable ranking equivalence.
 
-The single exception was the per-target comparison between Tartarus 1SYH (DHFR benchmark) and project 7F3Y (PfDHFR), which showed a moderate negative correlation ($\rho = -0.442$, $p = 0.030$). This marginal significance ($p < 0.05$ but not surviving Bonferroni correction for seven comparisons) indicates a systematic disagreement between the two DHFR docking protocols rather than a shared binding preference. The negative sign implies that molecules ranked favourably by Tartarus (more negative scores) tend to be ranked unfavourably by our Vina protocol (less negative affinities) for DHFR targets. This disagreement likely reflects differences in protein structure (1SYH vs.~7F3Y, including the resistance mutations N51I, C59R, and S108N present in 7F3Y), docking algorithm (QuickVina vs.~AutoDock Vina 1.2.7), and preparation protocol.
+The single exception was the per-target comparison between Tartarus 1SYH (DHFR benchmark) and project 7F3Y (PfDHFR), which showed a moderate negative correlation ($\rho = \num{-0.442}$, $p = \num{0.030}$). This marginal significance ($p < \num{0.05}$ but not surviving Bonferroni correction for seven comparisons) indicates a systematic disagreement between the two DHFR docking protocols rather than a shared binding preference. The negative sign implies that molecules ranked favourably by Tartarus (more negative scores) tend to be ranked unfavourably by our Vina protocol (less negative affinities) for DHFR targets. This disagreement likely reflects differences in protein structure (1SYH vs.~7F3Y, including the resistance mutations N51I, C59R, and S108N present in 7F3Y), docking algorithm (QuickVina vs.~AutoDock Vina 1.2.7), and preparation protocol.
 
-We emphasise that this analysis is limited by the small overlap ($n = 24$), which provides less than \qty{80}{\percent} power to detect correlations below $\rho = 0.6$ at $\alpha = 0.05$. The results should be interpreted as exploratory rather than conclusive. Nevertheless, the observed orthogonality between Tartarus and project docking scores is consistent with the dual-filter consensus strategy: the two methods capture complementary aspects of the binding landscape, and their combined use in the parent study \citep{temgoua2026antimalarial} is methodologically justified. A more comprehensive comparison would require running Tartarus on the full \num{65856}-molecule library, which is computationally feasible but beyond the scope of this validation study.
+This comparison is exploratory because only \num{24} molecules overlapped and the structures, preparation protocols, and docking engines differed. It is useful as a sensitivity analysis, but it cannot validate either score against experimental affinity. A larger, structure-matched panel would be required to estimate reproducibility of ranking across implementations.
 
 \begin{table}[htbp]
 \centering
-\caption{Tartarus external validation: Spearman correlations between QuickVina scores and project Vina/DiffDock metrics for \num{24} overlapping molecules. Bonferroni-corrected threshold: $\alpha = 0.05/7 \approx 0.007$ (seven comparisons). With $n = 24$, statistical power is \qty{78}{\percent} to detect $\rho = 0.6$ at $\alpha = 0.05$.}
+\caption{Tartarus external validation: Spearman correlations between QuickVina scores and project Vina/DiffDock metrics for \num{24} overlapping molecules. Bonferroni-corrected threshold: $\alpha = 0.05/7 \approx \num{0.007}$ (seven comparisons). With $n = 24$, statistical power is \qty{78}{\percent} to detect $\rho = \num{0.6}$ at $\alpha = \num{0.05}$.}
 \label{tab:tartarus_correlation}
 \small
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{l l S[table-format=2.0] S[table-format=-1.3] S[table-format=1.2e2] l}
 \toprule
 Tartarus Metric & Project Metric & {$n$} & {Spearman $\rho$} & {$p$-value} & Significant? \\
 \midrule
-Composite     & 4GM2 (PfClpP)    & 24 &  0.246 & 2.47e-01 & No \\
+Composite     & 4GM2 (PfClpR)    & 24 &  0.246 & 2.47e-01 & No \\
 Composite     & 6UKJ (PfCRT)     & 24 &  0.075 & 7.28e-01 & No \\
 Composite     & 7F3Y (PfDHFR)    & 24 & -0.110 & 6.10e-01 & No \\
 Composite     & 9N10 (PfATP4)    & 24 &  0.118 & 5.83e-01 & No \\
@@ -431,40 +447,41 @@ Composite     & 9N10 (PfATP4)    & 24 &  0.118 & 5.83e-01 & No \\
 Composite     & S\textsubscript{vina} (normalised) & 24 & -0.097 & 6.53e-01 & No \\
 Composite     & S\textsubscript{diff} (normalised) & 24 & -0.022 & 9.18e-01 & No \\
 \bottomrule
-\multicolumn{6}{l}{$^\dagger$$p < 0.05$ but not significant at Bonferroni-adjusted $\alpha = 0.007$. With $n = 24$, this result has limited reliability and requires validation on a larger overlapping set.} \\
-\end{tabular}
+\multicolumn{6}{p{0.95\textwidth}}{$^\dagger$$p < \num{0.05}$ but not significant at Bonferroni-adjusted $\alpha = \num{0.007}$. With $n = 24$, this result has limited reliability and requires validation on a larger overlapping set.} \\
+\end{tabular}%
+}
 \end{table}
 
 
 \subsection{Polypharmacology network score}
 
-The \textit{P. falciparum} PPI network constructed from STRING contains $N$ nodes and $M$ edges at the 700 confidence threshold (values reported in \cref{tab:pns}). Degree centrality values for the four targets are reported in \cref{tab:pns}. The \textit{P. falciparum} PPI network is visualised in \cref{fig:ppi}. The PNS ranking of the 20 candidates is presented in \cref{tab:pns}. 
+The \textit{P. falciparum} PPI network constructed from STRING contains $N$ nodes and $M$ edges at the 700 confidence threshold (values reported in \cref{tab:pns}). Degree centrality values for the four targets are reported in \cref{tab:pns}. The \textit{P. falciparum} PPI network is visualised in \cref{fig:ppi}. The PNS ranking of the 17 candidates is presented in \cref{tab:pns}.
 
 \begin{table}[htbp]
 \centering
-\caption{Polypharmacology Network Score ranking for the polypharmacological candidates. PNS computed as the STRING-PPI-centrality-weighted mean of WT docking scores across all targets bound by each compound. All 17 candidates bind both PfDHFR and PfCRT ($n_{\mathrm{targets}} = 2$). PfCRT (PF3D7\_0709000) is absent from the STRING PPI network at the 700 confidence threshold, consistent with its biological role as a drug transporter rather than a PPI hub; its centrality is imputed with the network mean centrality ($\sim 0.5$), avoiding the linear-dependence artifact previously associated with a uniform default weight.}
+\caption{Polypharmacology Network Score ranking for the polypharmacological candidates. PNS is a STRING-PPI-centrality-weighted mean of available wild-type docking scores over the target engagements represented in the set-C records. This PNS engagement record is distinct from the PfDHFR/PfCRT mutation panel used for RRS: five candidates are PfCRT-only in that panel and are not assigned PfDHFR RRS ratios. PNS is a docking-derived prioritisation score, not an MD-derived or experimental measure of polypharmacology. PfCRT (PF3D7\_0709000) is absent from the STRING PPI network at the 700 confidence threshold, consistent with its biological role as a drug transporter rather than a PPI hub; its centrality is imputed with the observed network-mean centrality ($0.151$), avoiding the linear-dependence artifact previously associated with a uniform default weight.}
 \label{tab:pns}
 \begin{tabularx}{\textwidth}{l S[table-format=2.2] S[table-format=1.0] S[table-format=1.3] l}
 \toprule
 Ligand & {PNS} & {$n_{\mathrm{targets}}$} & {ACSI} & RRS class \\
 \midrule
-Rank 1  & 10.80 & 2 & 0.599 & -- \\
-Rank 2  & 8.40  & 2 & 0.459 & -- \\
-Rank 3  & 8.35  & 2 & 0.603 & C \\
-Rank 4  & 8.15  & 2 & 0.173 & C \\
-Rank 5  & 8.05  & 2 & 0.551 & B \\
-Rank 6  & 7.85  & 2 & 0.308 & C \\
-Rank 7  & 7.85  & 2 & 0.601 & C \\
-Rank 8  & 7.65  & 2 & 0.594 & C \\
-Rank 9  & 7.55  & 2 & 0.743 & D \\
-Rank 10 & 7.50  & 2 & 0.605 & C \\
-Rank 11 & 7.50  & 2 & 0.567 & B \\
-Rank 12 & 7.45  & 2 & 0.576 & A* \\
-Rank 13 & 5.85  & 2 & 0.597 & A \\
-Rank 14 & 5.60  & 2 & 0.387 & A \\
-Rank 15 & 5.35  & 2 & 0.458 & C \\
-Rank 16 & 5.25  & 2 & 0.589 & A \\
-Rank 17 & 5.10  & 2 & 0.823 & -- \\
+Rank 1  & 6.00 & 2 & 0.599 & C \\
+Rank 2  & 4.71  & 2 & 0.308 & C \\
+Rank 3  & 4.53  & 2 & 0.567 & C \\
+Rank 4  & 4.48  & 2 & 0.603 & B \\
+Rank 5  & 4.48  & 2 & 0.551 & B \\
+Rank 6  & 4.45  & 2 & 0.173 & B \\
+Rank 7  & 4.45  & 2 & 0.459 & A* \\
+Rank 8  & 4.36  & 2 & 0.743 & D \\
+Rank 9  & 4.36  & 2 & 0.605 & C \\
+Rank 10 & 4.34  & 2 & 0.594 & C \\
+Rank 11 & 4.20  & 2 & 0.601 & B \\
+Rank 12 & 3.50  & 2 & 0.576 & A* \\
+Rank 13 & 2.32  & 2 & 0.597 & A* \\
+Rank 14 & 1.23  & 2 & 0.823 & A* \\
+Rank 15 & 1.14  & 2 & 0.387 & B \\
+Rank 16 & 1.10  & 2 & 0.458 & A* \\
+Rank 17 & 1.04  & 2 & 0.589 & A* \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -478,29 +495,31 @@ Rank 17 & 5.10  & 2 & 0.823 & -- \\
 
 \subsection{MD stability analysis}
 
-Production MD (10 ns each, CHARMM36/GAFF2, C-rescale barostat) was completed for all four wild-type systems. Production trajectories were re-analyzed using PBC-unwrapped (\texttt{gmx trjconv -pbc nojump}) coordinates to eliminate periodic-boundary artefacts. Metrics were computed with MDAnalysis \citep{mdanalysis_2011} using \texttt{scripts/generate\_unwrapped\_summary.py}; contacts, H-bonds, RMSF, and radius of gyration were sampled every 10 frames, while RMSD was computed on all frames. \Cref{tab:md_stability} summarises the resulting structural stability metrics.
+Production MD (\SI{10}{\nano\second} each, CHARMM36m/GAFF2, \SI{310.15}{\kelvin}) was completed for all four parent-study wild-type systems. Production trajectories were re-analyzed using PBC-unwrapped coordinates to eliminate periodic-boundary artefacts. Metrics were computed with MDAnalysis \citep{mdanalysis_2011} using a scripted analysis workflow; contacts, H-bonds, RMSF, and radius of gyration were sampled every \num{10} frames, while RMSD was computed on all frames. \Cref{tab:md_stability} summarises the resulting structural stability metrics.
 
 \begin{table}[htbp]
 \centering
-\caption{Production MD stability metrics for wild-type complexes (10 ns) from PBC-unwrapped trajectories. BB RMSD: backbone RMSD; Lig. RMSD: ligand RMSD; Min dist: minimum heavy-atom protein--ligand distance; Contacts: protein--ligand contacts $<$ \SI{4.5}{\angstrom}; H-bonds: protein--ligand hydrogen bonds.}
+\caption{Production MD stability metrics for wild-type complexes (\SI{10}{\nano\second}) from PBC-unwrapped trajectories. BB RMSD: backbone RMSD; Lig. RMSD: ligand RMSD; Min dist: minimum heavy-atom protein--ligand distance; Contacts: protein--ligand contacts $<$ \SI{4.5}{\angstrom}; H-bonds: protein--ligand hydrogen bonds.}
 \label{tab:md_stability}
-\begin{tabularx}{\textwidth}{l c S[table-format=2.2] S[table-format=2.2] S[table-format=2.2] S[table-format=3.1] S[table-format=2.1] l}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l c S[table-format=2.2] S[table-format=2.2] S[table-format=2.2] S[table-format=3.1] S[table-format=2.1] l}
 \toprule
-Target & {Atoms} & {BB RMSD (\si{\angstrom})} & {Lig. RMSD (\si{\angstrom})} & {Min dist (\si{\angstrom})} & {Contacts} & {H-bonds} & Status \\
+Target & {Atoms} & {BB RMSD (\si{\angstrom})} & {Lig. RMSD (\si{\angstrom})} & {Min dist (\si{\angstrom})} & {Contacts} & {H-bonds} & Interpretation \\
 \midrule
-PfClpP (164)   & 43,035  & 1.31 & 1.11 & 67.42 & 0.0   & 23.7 & Unbound \\
-PfDHFR (201)   & 134,153 & 3.05 & 1.70 & 78.21 & 0.0   & 21.5 & Unbound \\
-PfCRT (214)    & 76,920  & 4.47 & 2.45 & 3.19  & 78.1  & 23.1 & Bound \\
-PfATP4 (438)   & 420,801 & 12.27& 2.13 & 2.25  & 178.4 & 47.7 & Bound \\
+PfClpR-labelled cohort (164)   & \num{43035}  & 1.31 & 1.11 & 67.42 & 0.0   & 23.7 & Unbound \\
+PfDHFR (201)   & \num{134153} & 3.05 & 1.70 & 78.21 & 0.0   & 21.5 & Unbound \\
+PfCRT (214)    & \num{76920}  & 4.47 & 2.45 & 3.19  & 78.1  & 23.1 & Bound \\
+PfATP4 (438)   & \num{420801} & 12.27& 2.13 & 2.25  & 178.4 & 47.7 & Bound \\
 \bottomrule
-\end{tabularx}
+\end{tabular}%
+}
 \end{table}
 
 Only two of the four systems, PfCRT and PfATP4, maintained a bound ligand throughout production. PfCRT shows a backbone RMSD of \SI{4.47}{\angstrom}, a ligand RMSD of \SI{2.45}{\angstrom}, \num{78.1} contacts, and \num{23.1} H-bonds (minimum heavy-atom distance \SI{3.19}{\angstrom}). PfATP4 shows a backbone RMSD of \SI{12.27}{\angstrom}, a ligand RMSD of \SI{2.13}{\angstrom}, \num{178.4} contacts, and \num{47.7} H-bonds (minimum distance \SI{2.25}{\angstrom}). The high backbone RMSD for PfATP4 reflects the conformational flexibility of the large transmembrane assembly, while the ligand remains tightly bound. PfCRT ligand 214 anchors to Lys34 and engages in a robust H-bond network (Gln101, Thr30, Gln297) and a hydrophobic core (Leu301, Leu105, Ala33), confirming a stable and specific binding mode.
 
-The other two systems, PfClpP and PfDHFR, have stable protein conformations (backbone RMSD \SI{1.31}{\angstrom} and \SI{3.05}{\angstrom}, respectively) but the ligands are completely unbound (minimum distances \SI{67.42}{\angstrom} and \SI{78.21}{\angstrom}, zero contacts). This indicates either incorrect initial placement or rapid dissociation during equilibration, not a PBC artefact. Consequently, MM-GBSA and RRS analyses for PfClpP and PfDHFR are not interpretable as binding free energies and are excluded from the binding-mode discussion below. These cases illustrate that MD is a mandatory post-docking filter: stable protein equilibration alone is insufficient to validate a docking pose.
+The other two systems, the 164-labelled PfClpR cohort and PfDHFR, have stable protein conformations (backbone RMSD \SI{1.31}{\angstrom} and \SI{3.05}{\angstrom}, respectively) but the ligands are completely unbound (minimum distances \SI{67.42}{\angstrom} and \SI{78.21}{\angstrom}, zero contacts). This indicates either incorrect initial placement or rapid dissociation during equilibration, not a PBC artefact. Consequently, MM-GBSA and RRS analyses for the 164-labelled PfClpR cohort and PfDHFR are not interpretable as binding free energies and are excluded from the binding-mode discussion below. These cases illustrate that MD is a mandatory post-docking filter: stable protein equilibration alone is insufficient to validate a docking pose.
 
-Representative backbone RMSD trajectories are shown in \cref{fig:rmsd}. Per-compound RRS profiles across all six mutants are shown in Figure~S5. 
+Representative backbone RMSD trajectories are shown in \cref{fig:rmsd}. Per-compound RRS profiles across all six mutants are shown in \cref{SM-fig:s3_rrs_radar}. 
 
 \begin{figure}[htbp]
 \centering
@@ -512,7 +531,7 @@ Representative backbone RMSD trajectories are shown in \cref{fig:rmsd}. Per-comp
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.9\textwidth]{214_PfCRT_rmsd_panel.png}
-\caption{Detailed stability analysis for the PfCRT--Ligand 214 complex over 10 ns production MD. The system exhibits high backbone flexibility typical of transporters, while maintaining a highly stable ligand binding pose (Ligand RMSD $\sim$1.15 \si{\angstrom}) and persistent minimum distance.}
+\caption{Detailed stability analysis for the parent-study PfCRT--Ligand 214 complex over \SI{10}{\nano\second} production MD. The system exhibits transporter flexibility while retaining a bound ligand; the primary cohort-level stability values are reported in \Cref{tab:md_stability}.}
 \label{fig:pfcrt_rmsd}
 \end{figure}
 
@@ -525,77 +544,107 @@ Representative backbone RMSD trajectories are shown in \cref{fig:rmsd}. Per-comp
 
 \subsection{MM-GBSA binding free energies}
 
-MM-GBSA binding free energies were computed for three wild-type systems from their production trajectories (\cref{tab:mmgbsa}), using the GB$^{\text{OBC}}$ model (igb=2) with \SI{0.150}{\molar} salt concentration. For PfClpP--164 and PfDHFR--201, the CHARMM36-to-AMBER topology conversion was performed by \texttt{gmx\_MMPBSA} v1.5.0.3. For the PfCRT--ligand 214 system, the \texttt{gmx\_MMPBSA} native converter (rather than \texttt{MMPBSA.py} with manual tleap topology building) successfully produced a valid AMBER topology, yielding $\Delta G_{\mathrm{bind}} = -18.25 \pm \num{0.40}$~\si{\kcalmol}. The PfATP4 system failed during the CHARMM36-to-AMBER conversion due to its massive two-chain topology, producing a systematic van der Waals inflation (+473~\si{\kcalmol}) that proved to be a parameter corruption artifact rather than a true clashing conformation; consequently, PfATP4 was excluded from MM-GBSA analysis, and its binding validation relies exclusively on its strong structural persistence (Ligand RMSD $2.13 \pm 0.35$~\si{\angstrom}, 19 persistent contacts, and 100\% binding occupancy).
+MM-GBSA binding free energies were computed for the wild-type systems from their production trajectories (\cref{tab:mmgbsa}), using the GB$^{\text{OBC2}}$ model (igb=5) with \SI{0.150}{\molar} salt concentration, via the \texttt{gmx\_MMPBSA} v1.5.0.3 CHARMM36-to-AMBER conversion. Only the PfCRT--ligand 214 system yields an interpretable binding free energy: the \texttt{gmx\_MMPBSA} native converter successfully produced a valid AMBER topology with the ligand remaining bound throughout production, giving $\Delta G_{\mathrm{bind}} = \num{-18.25} \pm \num{0.40}$~\si{\kcalmol}. The 164-labelled and PfDHFR--201 ligands dissociated during production (minimum distances \SI{67.4}{\angstrom} and \SI{78.2}{\angstrom}, zero contacts); their end-point values are non-physical estimates for unbound states and are excluded from binding-mode conclusions. The PfATP4 system failed during the CHARMM36-to-AMBER conversion due to its massive two-chain topology, producing a systematic van der Waals inflation (\num{+473}~\si{\kcalmol}) that proved to be a parameter corruption artifact rather than a true clashing conformation; consequently, PfATP4 was excluded from MM-GBSA analysis. Its trajectory supports a bound-state observation in this targeted check, but does not establish converged binding thermodynamics.
 
 \begin{table}[htbp]
 \centering
-\caption{MM-GBSA binding free energies ($\Delta G_{\mathrm{bind}}$, \si{\kcalmol}) for the 20 candidates against wild-type targets. Mean $\pm$ standard deviation from 101 snapshots.}
+\caption{Endpoint-analysis interpretation for the four parent-study consensus complexes used for production MD. These systems are distinct from the 17 set-C polypharmacology candidates. Only the bound PfCRT--214 trajectory yields an interpretable MM-GBSA binding free energy; dissociated systems are shown as N/A rather than binding estimates.}
 \label{tab:mmgbsa}
-\begin{tabularx}{\textwidth}{l l S[table-format=-2.2] S[table-format=1.2] l}
+\small
+\begin{tabularx}{\textwidth}{l l S[table-format=-2.2] S[table-format=1.2] >{\raggedright\arraybackslash}X}
 \toprule
-Ligand & Target & {$\Delta G_{\mathrm{bind}}$ (\si{\kcalmol})} & {Std.\ dev.} & Status \\
+Ligand & Target & {$\Delta G_{\mathrm{bind}}$ (\si{\kcalmol})} & {Std.\ dev.} & Interpretation \\
 \midrule
-214 & PfCRT-WT & {--} & {--} & Not Feasible$^\ast$ \\
-164 & PfClpP-WT & -8.35$^\dagger$ & 2.54$^\dagger$ & Unbound (ligand dissociated) \\
-201 & PfDHFR-WT & -24.74$^\dagger$ & 4.63$^\dagger$ & Unbound (ligand dissociated)$^\ddagger$ \\
-214 & PfCRT-WT & -18.25 & 0.40 & Validated (gmx\_MMPBSA) \\
-438 & PfATP4-WT & {--} & {--} & Excluded$^\S$ \\
-438 & PfATP4-WT & {--} & {--} & Not Feasible$^\ast$ \\
-87 & PfDHFR-WT & {--} & {--} & Pending \\
+214 & PfCRT-WT & -18.25 & 0.40 & Interpretable; ligand bound$^\dagger$ \\
+164 & PfClpR-labelled cohort-WT & {--} & {--} & N/A; ligand dissociated$^\ddagger$ \\
+201 & PfDHFR-WT & {--} & {--} & N/A; ligand dissociated$^\S$ \\
+438 & PfATP4-WT & {--} & {--} & N/A; conversion corrupted$^\ast$ \\
 \bottomrule
-\multicolumn{5}{l}{$^\ddagger$Ligand 201 binds at an allosteric site (NADPH-domain interface), not the catalytic site.} \\
-\multicolumn{5}{l}{$^\S$Excluded due to two-chain topology incompatibility with CHARMM36-to-AMBER conversion; validated by MD.} \\
-\multicolumn{5}{l}{$^\dagger$Deleted note} \\
-\multicolumn{5}{l}{$^\ddagger$Ligand 201 binds at an allosteric site (residues 270--296, 431--488; NADPH-domain interface), not the PfDHFR catalytic site.} \\
+\multicolumn{5}{p{0.95\textwidth}}{$^\dagger$Ligand remains bound (minimum distance \SI{3.19}{\angstrom}, \num{78} contacts); conversion via \texttt{gmx\_MMPBSA} native converter.} \\
+\multicolumn{5}{p{0.95\textwidth}}{$^\ddagger$Ligand dissociates to \SI{67.4}{\angstrom} minimum distance with zero contacts during production; the reported value is a non-physical end-point estimate for an unbound state and is excluded from binding-mode conclusions.} \\
+\multicolumn{5}{p{0.95\textwidth}}{$^\S$Ligand dissociates to \SI{78.2}{\angstrom} minimum distance with zero contacts; same caveat applies.} \\
+\multicolumn{5}{p{0.95\textwidth}}{$^\ast$Excluded: systematic van der Waals inflation (\num{+473}~\si{\kcalmol}) produced by the CHARMM36-to-AMBER conversion of the two-chain PfATP4 topology, identified as a parameter-corruption artifact; PfATP4 binding is instead supported by observed structural persistence (Ligand RMSD \qty{2.13 \pm 0.35}{\angstrom}, \qty{100}{\percent} occupancy).} \\
 \end{tabularx}
 \end{table}
 
 \subsection{Correlation between methods}
 
-The correlation between Vina docking scores and MM-GBSA $\Delta G_{\mathrm{bind}}$ values across the 20 candidates quantifies how well static docking predicts dynamic binding free energy for this compound class. A strong correlation would indicate that docking-based rankings are reliable; a weak correlation would underscore the necessity of MD validation.
+The four parent-study MD systems were not members of the 17-candidate set-C cohort. Accordingly, no Vina--MM-GBSA correlation across the 17 set-C candidates is reported; the set-C cross-metric analysis uses WT docking scores as its shared affinity reference. The targeted MD results are reported separately as a structural post-docking check on four named parent-study consensus complexes.
 
-To contextualise the complementary information provided by DiffDock and Vina in the parent study, we computed Pearson correlations between Vina scores and DiffDock confidence across all \num{1238} ligand--target pairs from the \num{65856}-molecule library \citep{temgoua2026antimalarial}. Per-target correlations were: PfDHFR (7F3Y) $r = \num{0.327}$ ($p = \num{2.11e-8}$, $n = \num{280}$), PfClpP (4GM2) $r = \num{0.361}$ ($p = \num{3.58e-15}$, $n = \num{447}$), PfATP4 (9N10) $r = \num{0.113}$ ($p = \num{0.017}$, $n = \num{447}$), and PfCRT (6UKJ) $r = \num{0.129}$ ($p = \num{0.308}$, $n = \num{64}$). The pooled correlation across all targets was $r = \num{-0.049}$ ($p = \num{0.082}$, $n = \num{1238}$). Weak positive correlations for PfDHFR and PfClpP ($r \approx \num{0.3}$--$\num{0.4}$, $p < \num{1e-8}$) confirm that the two methods provide complementary information. The negligible pooled correlation ($r = \num{-0.05}$) underscores that DiffDock confidence and Vina affinity measure fundamentally different aspects of the binding landscape --- thermodynamic scoring versus geometric pose quality --- justifying the dual-filter consensus strategy.
+To contextualise the complementary information provided by DiffDock and Vina in the parent study, we computed Pearson correlations between Vina scores and DiffDock confidence across all \num{1238} ligand--target pairs from the \num{65856}-molecule library \citep{temgoua2026antimalarial}. Per-target correlations were: PfDHFR (7F3Y) $r = \num{0.327}$ ($p = \num{2.11e-8}$, $n = \num{280}$), PfClpR (4GM2) $r = \num{0.361}$ ($p = \num{3.58e-15}$, $n = \num{447}$), PfATP4 (9N10) $r = \num{0.113}$ ($p = \num{0.017}$, $n = \num{447}$), and PfCRT (6UKJ) $r = \num{0.129}$ ($p = \num{0.308}$, $n = \num{64}$). The pooled correlation across all targets was $r = \num{-0.049}$ ($p = \num{0.082}$, $n = \num{1238}$). Weak positive correlations for PfDHFR and PfClpR ($r \approx \num{0.3}$--$\num{0.4}$, $p < \num{1e-8}$) confirm that the two methods provide complementary information. The negligible pooled correlation ($r = \num{-0.05}$) underscores that DiffDock confidence and Vina affinity measure fundamentally different aspects of the binding landscape --- thermodynamic scoring versus geometric pose quality --- justifying the dual-filter consensus strategy.
 
 Benjamini--Hochberg FDR correction applied to \num{18} pairwise activity comparisons across compound groups (NP, SD, Cheese, STONED) using three Ersilia models (eos7yti, eos7kpb, eos80ch) yielded zero significant results at adjusted $p < \num{0.05}$, with all effect sizes (rank-biserial $r$) below \num{0.10} (negligible). This confirms that generated analogues maintain statistical parity in antimalarial potential with foundational natural products and synthetic drugs.
 
 \subsection{Consensus leads}
 
-The intersection of high-RRS (Class~A or B), high-ACSI ($>$ 0.5), and high-PNS compounds identifies the consensus leads most likely to succeed experimentally. These compounds combine resistance resilience, African NP character, and network pharmacology validation.
+The intersection of high-RRS (Class~A or B), high-ACSI ($>$\num{0.5}), and high-PNS compounds defines a computational prioritisation set for future experimental testing. These compounds combine resistance-resilience, African-NP-character, and network-weighted docking signals; the intersection is not itself experimental validation.
 
 \subsection{Cross-metric correlation: PNS, ACSI, RRS, and docking scores}
 
-The cross-metric correlation matrix (\cref{fig:crossmetric}, \cref{tab:crossmetric}) tests whether the three novel metrics capture independent or redundant aspects of compound quality. Analysis is based on 14 polypharmacological candidates with complete data across all metrics. MM-GBSA $\Delta G_{\mathrm{bind}}$ values are available for three systems (164-PfClpP, 201-PfDHFR, 214-PfCRT); PfATP4 was excluded due to CHARMM36-to-AMBER topology conversion failure with its two-chain topology. We therefore use the WT docking score ($\Delta G_{\mathrm{WT}}$) as the shared binding affinity reference across all candidates. Three pre-specified hypotheses (H1--H3) are evaluated with Bonferroni correction ($\alpha = 0.05/3 \approx 0.017$).
+The cross-metric correlation matrix (\cref{fig:crossmetric}, \cref{tab:crossmetric}) evaluates whether the prioritisation layers contain overlapping information. Analysis is based on \num{17} candidates with complete docking-derived metrics. The parent-study MD cohort comprised four distinct systems; only PfCRT--214 produced an interpretable MM-GBSA estimate. We therefore use the WT docking score as the shared affinity reference for the Set-C analysis and do not merge the MM-GBSA result into these correlations. Three prespecified hypotheses (H1--H3) were evaluated with Bonferroni correction ($\alpha=0.05/3\approx\num{0.017}$).
 
-PNS and RRS show a strong negative correlation ($\rho = -0.665$, $p = 0.009$, $n = 14$), supporting H1 and confirming that compounds with stronger predicted binding affinity (higher PNS) tend to be more susceptible to resistance mutations (lower RRS). This is consistent with the trade-off between binding potency and resistance resilience observed in antimicrobial development: tight binding to a conserved active site often creates vulnerability to active-site mutations. Conversely, the five compounds with highest RRS (RRS $\geq \qty{80}{\percent}$) occupy the lower half of the PNS range (PNS $\leq 7.5$), indicating that resistance resilience is not incompatible with moderate binding strength.
+PNS and RRS show a moderate negative correlation ($\rho = \num{-0.559}$, $p = \num{0.020}$, $n = \num{17}$) in the direction predicted by H1 --- compounds with stronger predicted binding affinity (higher PNS) tend to be more susceptible to resistance mutations (lower RRS) --- although the effect does not survive Bonferroni correction. This is consistent with the trade-off between binding potency and resistance resilience observed in antimicrobial development: tight binding to a conserved active site often creates vulnerability to active-site mutations. Conversely, the top-RRS compounds (RRS $\geq \qty{80}{\percent}$) occupy the lower half of the PNS range, indicating that resistance resilience is not incompatible with moderate binding strength.
 
-ACSI shows no significant correlation with either PNS ($\rho = +0.029$, $p = 0.923$) or RRS ($\rho = -0.284$, $p = 0.326$), indicating that African NP-likeness is orthogonal to both binding strength and resistance resilience. This is an encouraging result: it means that the most African NP-like compounds are not systematically weaker binders, supporting the feasibility of discovering resistance-resilient leads from African natural product chemical space.
+ACSI showed no significant association with PNS ($\rho=\num{-0.078}$, $p=\num{0.765}$) or RRS ($\rho=\num{-0.132}$, $p=\num{0.613}$). These data do not establish orthogonality or equivalence; they indicate that this \num{17}-candidate cohort provides no evidence that the ACSI descriptor predicts either docking-based network ranking or docking-based resilience.
 
-The near-perfect anti-correlation between PNS and $\Delta G_{\mathrm{WT}}$ ($\rho = -1.000$, $p < 0.001$) is a mechanical consequence of their shared derivation: PNS is computed from the same WT docking scores that define $\Delta G_{\mathrm{WT}}$ in the RRS calculation. Both metrics are reported together in \cref{tab:pns} but are not treated as independent in downstream analysis. This mechanical linkage arises because PfCRT (PF3D7\_0709000) is absent from the STRING PPI network, causing its centrality to default to 1.0 and making PNS the arithmetic mean of the two targets' |$\Delta G$| values.
+PNS and $\Delta G_{\mathrm{WT}}$ are mechanically related ($\rho = \num{+0.389}$, $p = \num{0.123}$): PNS is computed from the same WT docking scores that define $\Delta G_{\mathrm{WT}}$ in the RRS calculation, though the centrality imputation prevents a perfect collinearity. Both metrics are reported together in \cref{tab:pns} but are not treated as independent in downstream analysis. This linkage arises because PfCRT (PF3D7\_0709000) is absent from the STRING PPI network and its centrality is imputed with the network mean rather than defaulting to 1.0.
 
-RRS and $\Delta G_{\mathrm{WT}}$ show a strong positive correlation ($\rho = +0.665$, $p = 0.009$), supporting H3: compounds with stronger WT binding also tend to have higher RRS. This validates the RRS formula's internal consistency --- RRS is defined as |$\Delta G_{\mathrm{mut}}$|/|$\Delta G_{\mathrm{WT}}$|, and when |$\Delta G_{\mathrm{WT}}$| is large, mutant resilience may be harder to maintain. However, the relationship is not deterministic ($\rho < 0.7$), confirming that RRS captures mutant-specific information beyond a trivial rescaling of WT affinity.
+RRS and $\Delta G_{\mathrm{WT}}$ showed a weak negative association ($\rho=\num{-0.433}$, $p=\num{0.082}$). The corrected per-target definition reduces inflation from weak wild-type denominators, but this correlation alone cannot prove that RRS captures independent mutant-state information. That question requires mutant-state free-energy estimates or experimental resistance measurements.
 
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{cross_metric_correlation.png}
-\caption{Cross-metric correlation matrix for the 14 candidates with complete data. Spearman $\rho$ values between PNS, ACSI, RRS, and $\Delta G_{\mathrm{WT}}$. Asterisks indicate Bonferroni-corrected significance ($^{**}p < 0.01$). PNS vs.\ $\Delta G_{\mathrm{WT}}$ shows $\rho = -1.000$ due to mechanical linkage (see text).}
+\caption{Cross-metric correlation matrix for the 17 polypharmacological candidates with complete data. Spearman $\rho$ values between PNS, ACSI, RRS, and $\Delta G_{\mathrm{WT}}$. PNS vs.\ $\Delta G_{\mathrm{WT}}$ shows $\rho = \num{+0.389}$ due to mechanical linkage (see text). None of the hypotheses survive Bonferroni correction ($\alpha = 0.05/3 \approx \num{0.017}$).}
 \label{fig:crossmetric}
 \end{figure}
 
 \begin{table}[htbp]
 \centering
-\caption{Cross-metric Spearman correlations for the polypharmacological candidates ($n=14$). Bonferroni-corrected threshold: $\alpha = 0.05/3 \approx 0.017$. The PNS vs.\ $\Delta G_{\mathrm{WT}}$ pair is excluded from hypothesis testing as it is mechanically correlated.}
+\caption{Cross-metric Spearman correlations for the polypharmacological candidates ($n=17$). Bonferroni-corrected threshold: $\alpha = 0.05/3 \approx \num{0.017}$. The PNS vs.\ $\Delta G_{\mathrm{WT}}$ pair is excluded from hypothesis testing as it is mechanically correlated.}
 \label{tab:crossmetric}
-\begin{tabularx}{\textwidth}{l l S[table-format=-1.3] S[table-format=1.4] c l}
+\begin{tabularx}{\textwidth}{l >{\raggedright\arraybackslash}X S[table-format=-1.3] S[table-format=1.4] c >{\raggedright\arraybackslash}X}
 \toprule
 Metric pair & Hypothesis & {Spearman $\rho$} & {$p$-value} & {Significant?} & Interpretation \\
 \midrule
-PNS vs.\ ACSI & -- & +0.029 & 0.9226 & No & Metrics are orthogonal \\
-PNS vs.\ RRS & H1 & -0.665 & 0.0094 & Yes ($p < 0.01$) & Stronger binders are more mutation-sensitive \\
-PNS vs.\ $\Delta G_{\mathrm{WT}}$ & -- & -1.000 & 0.0000 & (mechanical) & PNS derived from same docking scores \\
-ACSI vs.\ RRS & H2 & -0.284 & 0.3260 & No & Weak trend towards NP-likeness \& resilience \\
-ACSI vs.\ $\Delta G_{\mathrm{WT}}$ & -- & -0.029 & 0.9226 & No & No relationship \\
-RRS vs.\ $\Delta G_{\mathrm{WT}}$ & H3 & +0.665 & 0.0094 & Yes ($p < 0.01$) & Higher |$\Delta G_{\mathrm{WT}}$| $\to$ higher RRS \\
+PNS vs.\ ACSI & -- & -0.078 & 0.7648 & No & No association detected; equivalence not established \\
+PNS vs.\ RRS & H1 & -0.559 & 0.0197 & No ($p > 0.017$) & Trend: stronger binders more mutation-sensitive \\
+PNS vs.\ $\Delta G_{\mathrm{WT}}$ & -- & +0.389 & 0.1228 & (mechanical) & PNS derived from same docking scores \\
+ACSI vs.\ RRS & H2 & -0.132 & 0.6126 & No & Weak trend towards NP-likeness \& resilience \\
+ACSI vs.\ $\Delta G_{\mathrm{WT}}$ & -- & -0.092 & 0.7254 & No & No relationship \\
+RRS vs.\ $\Delta G_{\mathrm{WT}}$ & H3 & -0.433 & 0.0824 & No & Weak negative trend \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Set-C MD pilot: trajectory-derived MD-RRS and MM-GBSA}\label{sec:setc_pilot}
+
+All \num{16} Set-C pilot MM-GBSA runs completed with the identical parent-cohort protocol (\texttt{gmx\_MMPBSA} v1.5.0.3, GB$^{\text{OBC2}}$ igb=5, \SI{0.15}{\molar} salt, \SI{100}{\pico\second} snapshots, CHARMM36-to-AMBER conversion; \cref{tab:mmmgbsa_setc}). Binding free energies were negative for every system (mean $\Delta G_{\mathrm{bind}} = \num{-29.04} \pm \num{3.00}$~\si{\kcalmol}, range \num{-35.29} to \num{-24.53}~\si{\kcalmol}), i.e. all ligands remained bound within the pilot timescale. The mutant/WT MM-GBSA ratio (MMG-RRS, same convention as docking RRS) exceeded \num{100} for eight of twelve mutants, and the four below-\num{100} cases (PP-01 PfCRT K76T \num{96.4}, PP-02 PfCRT K76A \num{97.8}, PP-02 PfDHFR C59R \num{95.7}, PP-02 PfDHFR S108N \num{89.8}) all lie within the expected $\pm$\SI{2}{-}\num{3}~\si{\kcalmol} MM-GBSA accuracy of their wild-type references. Docking predicted looser mutant binding for all twelve states (RRS \num{83.9}--\num{94.6}); the pilot MM-GBSA therefore does not reproduce the docking-predicted weakening of mutant binding, consistent with the trajectory-derived MD-RRS geometry comparison (\cref{SM-fig:s4_setc_rrs_scatter}). No mutant shows a reproducible weaker-binding signature within the \SI{10}{\nano\second} pilot window; this is a methodological divergence between static docking energy and a single-replicate endpoint estimate, not a phenotype claim.
+
+\begin{table}[htbp]
+\centering
+\caption{Set-C MD pilot mutant-state MM-GBSA estimates (secondary, exploratory analysis; not merged into the primary docking-RRS classification). $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots $\pm$ standard deviation; MMG-RRS is the mutant/WT $\Delta G_{\mathrm{bind}}$ ratio ($\times \num{100}$, same convention as docking RRS; WT = \num{100}); docking RRS is shown for comparison (n/a = no WT docking reference in the pilot for PP-02 PfDHFR).}\label{tab:mmmgbsa_setc}
+\small
+\begin{tabularx}{\textwidth}{l l l S[table-format=-2.2] S[table-format=1.2] S[table-format=2.2] S[table-format=2.2]}
+\toprule
+Candidate & Target & State & {$\Delta G_{\mathrm{bind}}$ (\si{\kcalmol})} & {SD} & {MMG-RRS} & {Docking RRS} \\
+\midrule
+PP-01 & PfCRT & K76A & -35.29 & 1.17 & 115.3 & 90.86 \\
+PP-01 & PfCRT & K76T & -29.51 & 2.65 & 96.4 & 92.47 \\
+PP-01 & PfCRT & WT & -30.61 & 1.65 & 100.0 & {--} \\
+PP-01 & PfDHFR & C59R & -26.56 & 1.91 & 105.0 & 85.47 \\
+PP-01 & PfDHFR & I164L & -26.13 & 2.34 & 103.3 & 83.87 \\
+PP-01 & PfDHFR & N51I & -29.83 & 1.50 & 118.0 & 86.40 \\
+PP-01 & PfDHFR & S108N & -30.21 & 3.62 & 119.5 & 87.60 \\
+PP-01 & PfDHFR & WT & -25.29 & 2.94 & 100.0 & {--} \\
+PP-02 & PfCRT & K76A & -24.53 & 1.27 & 97.8 & 94.62 \\
+PP-02 & PfCRT & K76T & -30.45 & 1.38 & 121.4 & 87.91 \\
+PP-02 & PfCRT & WT & -25.08 & 2.56 & 100.0 & {--} \\
+PP-02 & PfDHFR & C59R & -28.85 & 1.88 & 95.7 & n/a \\
+PP-02 & PfDHFR & I164L & -31.06 & 1.52 & 103.0 & n/a \\
+PP-02 & PfDHFR & N51I & -34.02 & 2.68 & 112.8 & n/a \\
+PP-02 & PfDHFR & S108N & -27.09 & 1.55 & 89.8 & n/a \\
+PP-02 & PfDHFR & WT & -30.16 & 2.06 & 100.0 & {--} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -609,70 +658,71 @@ RRS vs.\ $\Delta G_{\mathrm{WT}}$ & H3 & +0.665 & 0.0094 & Yes ($p < 0.01$) & Hi
 
 \subsection{Resistance-resilient design}
 
-The RRS framework classifies compounds by their ability to maintain binding affinity across African-prevalent resistance mutations. The classification employs five tiers that jointly account for both binding potency and resistance resilience (\cref{tab:rrs}). Class~A* (high-potency pan-resilient) compounds --- those with $|\Delta G_{\mathrm{WT}}| \geq \SI{7.0}{\kcalmol}$ and RRS $\geq$ \qty{80}{\percent} for all mutants --- are the primary candidates for further development, as they combine strong wild-type affinity with uniform resilience across all resistance alleles. This dual-criterion classification addresses the ceiling-effect concern that weak binders with $|\Delta G_{\mathrm{WT}}|$ just above the \SI{5.0}{\kcalmol} pre-filter can achieve high RRS values despite being inferior leads (Sec.~\cref{sec:rrs_formula}). Class~A compounds (RRS $\geq$ \qty{80}{\percent} for all mutants, any potencies above the \SI{5.0}{\kcalmol} threshold) represent a secondary tier. Class~B compounds (RRS $\geq$ \qty{70}{\percent} for all mutants) are suitable for deployment in regions where the most severe mutations (e.g., PfDHFR-I164L) remain rare. Class~C compounds, which show resilience against specific mutants only, may be valuable in targeted regional deployment strategies aligned with local resistance surveillance data from WWARN \citep{wwarn_2026}.
+The RRS is a docking-derived prioritisation statistic, not a biochemical measurement of resistance. Its value is that it makes the comparison explicit: for each target, the mutant affinity is normalised to a wild-type affinity that passes the predeclared \SI{5.0}{\kcalmol} engagement threshold, and weak wild-type binders cannot obtain inflated ratios. The resulting classes jointly encode potency and relative resilience (\cref{tab:rrs}). Class~A* identifies compounds that satisfy both a stronger wild-type affinity threshold ($|\Delta G_{\mathrm{WT}}| \geq \SI{7.0}{\kcalmol}$) and RRS $\geq$ \qty{80}{\percent} across all tested mutants; it is therefore a prioritisation tier for follow-up, not evidence of resistance circumvention. Classes~B and~C identify progressively narrower resilience profiles, while Class~D flags a failure against at least one tested mutant. These categories can be aligned with regional resistance surveillance in a future decision analysis, but they do not justify clinical deployment or therapeutic recommendations on their own \citep{wwarn_2026}.
 
-If Class~A compounds are found to cluster around specific scaffold families (e.g., flavonoids, terpenoids), this would suggest that African NP scaffold topology is intrinsically suited to resistance-resilient binding --- a finding with direct implications for generative design. Complementary topological analysis of ring persistence in these compounds shows that Class~A compounds exhibit systematically higher H$_1$ persistence (mean $3.74 \pm 0.34$~\AA\ versus $1.73$~\AA\ for Class~D; Spearman $\rho = 0.916$, $p < 0.0001$, $n = 14$; expanded to $\rho = 0.312$, $p = 0.006$, $n = 77$ in the companion TDA study~\citep{temgoua2026quantum}), establishing ring topology as an orthogonal predictor of resistance resilience. We note that the pilot correlation ($n = 14$) should be interpreted with caution: the Class~D subset contains only a single compound ($n = 1$), making the ``mean $\pm$ standard deviation'' for this class statistically uninformative. Nevertheless, the overall trend across all 14 compounds suggests that greater ring topological complexity may confer conformational stability advantageous against resistance mutations. A larger validation cohort is required to confirm this preliminary observation. The per-residue MM-GBSA decomposition will identify which binding site residues contribute most to resilience, providing a structural basis for scaffold optimisation.
+The urgency of such a workflow is underscored by the current epidemiological context. The 2025 World Malaria Report documents declining efficacy of some artemisinin partner drugs alongside the spread of \textit{Pfkelch13}-mediated partial resistance, with both trends concentrated in the African Region \citep{who_malaria_2025}. Resistance-aware prioritisation is therefore not a refinement of the discovery pipeline but a precondition for it: compounds selected without an explicit mutant-sensitivity criterion may enter development already mismatched to the circulating parasite population.
+
+The relationship between RRS and molecular topology is biologically plausible but remains supportive rather than decisive. The companion TDA analysis reported a strong H$_1$--RRS association in the overlapping pilot set ($\rho=\num{0.864}$, $p<\num{0.001}$, $n=\num{14}$) and a smaller association in the expanded set ($\rho=\num{0.312}$, $p=\num{0.006}$, $n=\num{77}$) \citep{temgoua2026quantum}. These estimates are not independent validation of the present docking RRS: they share candidate provenance and may be affected by molecular-weight and scaffold-composition confounding. The appropriate interpretation is that persistent ring topology is a testable structural correlate of the docking-derived resilience ranking. It should be evaluated prospectively with matched scaffolds, larger independent panels, and mutant-state free-energy or experimental measurements before being used as a generative design rule.
 
 \subsection{Chemical space positioning}
 
-The ACSI provides the first quantitative measure of African NP-likeness calibrated to the ANPDB. Compounds with ACSI $>$ 0.7 occupy chemical space that is simultaneously distant from approved drugs (high $D_{\mathrm{DrugBank}}$) and close to African natural products (low $D_{\mathrm{ANPDB}}$), with high sp$^3$ carbon content and natural product-like ring systems. The mean ACSI across the 17 parseable top candidates is 0.617, confirming that the generative expansion preserved NP character on average. Four of 17 candidates (23.5\%) achieve ACSI $>$ 0.7, validating that the top tier of MPO-ranked compounds retains chemical identity with the African NP seed space.
+ACSI positions the candidates relative to approved-drug and African-natural-product reference spaces; it is a chemical-space descriptor, not a biological activity or target-engagement score. The mean ACSI across the \num{17} candidates was \num{0.543}, and two candidates (\qty{11.8}{\percent}) exceeded \num{0.70}. Thus, a minority of the resistance-prioritised cohort retained a strong African-NP-like signature under the stated reference construction. This result supports chemical-space diversification as a selection objective, but it does not show that NP-like compounds are more potent, more resilient, or more clinically useful.
 
-This finding contextualises against the broader natural product drug discovery literature. The ANPDB database \citep{anpdb_2026} reported that African NPs occupy a distinct region of chemical space compared to DrugBank, with mean Tanimoto distances of 0.75--0.85 from approved drugs. Our top ACSI compound ($D_{\mathrm{DrugBank}} = 0.769$) is consistent with this range, confirming that the generative model produces compounds that retain the chemical novelty of African NPs. The f$_{\mathrm{sp}^3}$ correlation with ACSI tier aligns with the well-documented observation that natural products have higher sp$^3$ carbon fractions than synthetic drugs \citep{value_addition_african_np_2025}. The 23.5\% rate of highly NP-like candidates is comparable to the $\sim 20\%$ reported by Reymond and colleagues for generative models on NP-like chemical space \citep{reymond_2021}, suggesting that our pipeline achieves similar NP fidelity while focusing specifically on African flora.
+The ACSI result is consistent with the use of African-NP reference databases to define a chemically distinctive search space \citep{anpdb_2026,value_addition_african_np_2025}, but cross-study percentages are not directly comparable because reference sets, fingerprints, thresholds, and candidate-selection procedures differ. The observed f$_{\mathrm{sp}^3}$ difference between the highly NP-like and synthetic-like subsets is compatible with the known three-dimensionality of many natural-product scaffolds, yet it remains descriptive in this cohort. ACSI should therefore be used as an explicit, auditable selection axis rather than as a surrogate for pharmacological novelty or efficacy.
 
-The five synthetic-like candidates (ACSI $<$ 0.5) tend to have lower f$_{\mathrm{sp}^3}$ (mean 0.214), consistent with flatter, more drug-like molecules. This subset motivates ACSI-constrained generation in future work: by adding an ACSI penalty to the MPO objective function, the generative pipeline could be steered toward higher-fidelity NP-like compounds while preserving drug-likeness.
+The five synthetic-like candidates (ACSI $<$\num{0.5}) tend to have lower f$_{\mathrm{sp}^3}$ (mean \num{0.085}), consistent with flatter, more drug-like molecules. This subset motivates ACSI-constrained generation in future work: by adding an ACSI penalty to the MPO objective function, the generative pipeline could be steered toward higher-fidelity NP-like compounds while preserving drug-likeness.
 
 \subsection{Systems-level polypharmacology}
 
-The PNS weights binding affinity by the composite centrality of each target in the \textit{P. falciparum} PPI network. Targets with high centrality (hubs and bottlenecks) are more likely to be essential for parasite survival, as their disruption propagates through the network. H2 was technically confirmed (PNS vs.\ $\Delta G_{\mathrm{WT}}$: $\rho = -1.000$, $p < 0.001$), but this reflects a mechanical linkage: when all target PPI centrality values equal 1.0 (PfCRT absent from the STRING network), PNS reduces to $|\Delta G_{\mathrm{WT}}|$. With MM-GBSA data for only 3 systems, the biologically meaningful test of PNS vs.\ MM-GBSA $\Delta G_{\mathrm{bind}}$ remains underpowered. The PNS nevertheless provides a biologically motivated ranking that complements binding affinity alone.
+PNS is best interpreted as a transparent network-weighted ranking heuristic. It combines target-level docking scores with PPI centrality, but centrality does not establish target essentiality, causal propagation, or tissue-specific pharmacology. This distinction mirrors recent network-learning work on off-target prediction, where graph context improves prioritisation but does not replace experimental target and phenotype measurements \citep{Sentinel2025Offtarget}. In the present cohort, PNS--RRS showed the predicted negative direction ($\rho=\num{-0.559}$, $p=\num{0.020}$) but did not survive Bonferroni correction ($\alpha=0.017$). PfCRT centrality was imputed with the observed network mean because no qualifying STRING edges were available; the resulting PNS--WT-score relationship ($\rho=+0.389$) is partly mechanical. PNS therefore complements docking affinity as a ranking device, while its biological interpretation remains explicitly conditional.
+
+The case for multi-target prioritisation also rests on surveillance data: recent genomic surveillance in Ethiopia documents the co-occurrence of \textit{Pfcrt}, \textit{Pfdhfr}, and \textit{Pfmdr1} resistance variants across transmission settings \citep{letebo2026surveillance}, a pattern that gives the genetic-barrier argument its empirical footing. The argument is further supported by demonstrated dual-target antimalarial action: the human Chk1 inhibitor CHIR-124 acts multistage against \textit{P.\ falciparum} through concurrent inhibition of the PfArk1 kinase and hemozoin formation, illustrating that a single molecule can engage mechanistically distinct parasite processes \citep{wicht2026chk1}. Our results do not demonstrate that any single compound blocks this barrier; they indicate only that a workflow which scores mutant sensitivity on multiple targets can expose such compounds for experimental follow-up.
 
 \subsection{Cross-metric insights}
 
-The cross-metric correlation analysis tests whether the three novel metrics capture independent or redundant aspects of compound quality. H1 was not confirmed (ACSI vs.\ RRS: $\rho = -0.284$, $p = 0.326$), indicating that African NP-likeness does not predict resistance resilience --- the two metrics capture orthogonal aspects of compound quality. This implies that ACSI cannot replace MD-based RRS screening but that both should be used in tandem.
+The cross-metric analysis asks whether the three prioritisation layers provide overlapping evidence. H2 was not supported by the observed ACSI--RRS association ($\rho=\num{-0.132}$, $p=\num{0.613}$), but this non-significant result does not establish equivalence or statistical orthogonality. It indicates only that this cohort provided no evidence that African-NP-like chemistry predicts the docking-derived resilience statistic. ACSI and RRS should therefore be treated as complementary candidate descriptors whose relationship requires testing in larger, independently sampled cohorts.
 
-H2 showed a perfect correlation between PNS and $\Delta G_{\mathrm{WT}}$ ($\rho = -1.000$), but this reflects the mechanical linkage between PNS and Vina scores when PPI centrality equals 1.0 for all targets. MM-GBSA data for only 3 systems precludes a meaningful test of PNS vs.\ MM-GBSA $\Delta G_{\mathrm{bind}}$.
+H1 showed a moderate negative association in the prespecified direction, but the evidence was insufficient after multiplicity correction. The pattern is compatible with a potency--resilience trade-off described in resistance evolution, in which successive selective regimes favour different resistance mechanisms \citep{Blake2025Resistome}; it is not evidence that the present compounds will select resistance in vivo. Because the only interpretable MM-GBSA estimate belongs to the separate parent-study cohort, no PNS--MM-GBSA association was estimated.
 
-H3 could not be evaluated: no mutant MM-GBSA data were generated for the 20 candidates, so $\Delta\Delta G$ (WT minus mutant) values are unavailable. Future work with full MD simulations of mutant complexes will be needed to validate docking-based RRS as a proxy for free energy resilience.
+H3 is only partially addressed: mutant-state MM-GBSA estimates are now available for the two prioritised Set-C pilot candidates (PP-01 and PP-02, six mutants each; \cref{sec:setc_pilot}), but their single-replicate \SI{10}{\nano\second} design and the \num{\sim 2}--\num{3}~\si{\kcalmol} expected MM-GBSA uncertainty are too coarse to validate docking RRS as a free-energy resilience proxy for the full \num{17}-candidate cohort. Future work with replicate, longer mutant simulations will be needed to validate docking-based RRS as a proxy for free-energy resilience.
 
 \subsection{Single-target optimisation of top candidates}
 
-Cross-tabulation of the \num{20} top candidates against polypharmacology categories reveals that all \num{20} are single-target optimised --- the MPO scoring framework favours strong binding to individual targets over genuine multi-target profiles. While the parent study identified $> \num{70}$ polypharmacological candidates (engaging $\geq 2$ targets), the top-ranked compounds are overwhelmingly single-target binders. This reflects the mathematical structure of the MPO scorer, which assigns a polypharmacology bonus only when MPO$_{\mathrm{target}} \geq \num{0.50}$ across multiple targets; in practice, the Vina binding affinity component (\qty{35}{\percent} weight) dominates the ranking, favouring compounds with strong single-target affinity over moderate multi-target engagement. This finding has implications for the resistance-resilience framework: single-target optimised compounds may be more vulnerable to resistance mutations than genuinely polypharmacological candidates, a hypothesis that the RRS classification directly tests.
+The central design tension is that the Set-C cohort was selected for multi-target engagement, yet the final ranking remained strongly influenced by single-target affinity. All \num{17} top candidates were classified as single-target optimised under the parent scoring convention, even though their selection was motivated by a polypharmacology-oriented target profile. This is not a contradiction in the data; it is a property of the scoring objective. The Vina component carries \qty{35}{\percent} of the MPO score, and the multi-target bonus requires target-specific thresholds that may be difficult to satisfy simultaneously. The lesson for resistance-aware selection is that a nominal multi-target label does not imply balanced engagement across targets. PNS records target-level network-weighted evidence, while RRS tests mutant sensitivity only on targets that pass its own wild-type binding filter. The two analyses expose complementary failure modes that a single composite score would conceal.
 
 \subsection{Value of MD validation}
 
-Static docking provides rapid ranking but cannot account for protein flexibility, induced fit, or the entropic cost of binding. The Vina score for the 20 candidates ranges from $-$5.1 to $-$8.4 \si{\kcalmol}, while MM-GBSA $\Delta G_{\mathrm{bind}}$ for the three stable systems ranges from $-$8.4 to $-$24.7 \si{\kcalmol}, suggesting that docking underestimates binding free energy by a roughly 3-fold factor. Mutant MM-GBSA data, which would directly test whether docking-based RRS predicts free energy resilience (H3), were not generated in this study due to computational cost; this remains a priority for future work. The per-mutant RRS classification based on docking scores nevertheless provides a computationally accessible first tier of resistance screening that can be refined with MM-GBSA for the most promising candidates.
+The targeted MD analysis demonstrates why docking should be treated as a triage layer. Two of the four parent-study systems retained bound ligands, whereas the 164-labelled PfClpR cohort and PfDHFR--201 dissociated; only PfCRT--214 passed the bound-state and topology-integrity criteria for MM-GBSA. The observation that docking-validated poses can dissociate under explicit solvation is consistent with the wider use of combined pharmacophore, docking, and MD workflows for mutant antimalarial targets \citep{md_antimalarial_2026}. The resulting $-\SI{18.25}{\kcalmol}\pm\SI{0.40}{\kcalmol}$ is a system-specific endpoint estimate, not a calibration for the 17 Set-C candidates. The separation between cohorts prevents a spurious docking-to-MM-GBSA conversion and keeps the negative result informative: a stable receptor trajectory does not validate a ligand pose. This conclusion aligns with the wider literature on end-point free-energy methods, which consistently cautions that MM-GBSA ranking accuracy is system- and ensemble-dependent and that single-trajectory estimates should be interpreted as relative guides rather than converged thermodynamics \citep{mmgbsa_best_practices_2025,gmx_mmpbsa_2021}. Mutant MM-GBSA was generated only for the two Set-C pilot candidates (\cref{sec:setc_pilot}); within the single-replicate \SI{10}{\nano\second} window it did not reproduce the docking-predicted weakening of mutant binding, so the key mechanistic test---whether docking RRS predicts mutant free-energy resilience---remains unresolved at converged timescales.
 
 \subsection{Comparison with existing polypharmacology tools}
 
-Several computational tools have been developed for polypharmacological drug design, but none integrates resistance-mutation-aware MD validation with network pharmacology and chemical space indexing. Mproteinfuzz \citep{molani_cho_2024} uses fuzzy pharmacophore models for multi-target screening but does not account for resistance mutations or protein flexibility. Pcofind performs pocket-based polypharmacology screening using shape similarity but relies on static crystal structures without MD refinement. MolAICal combines molecular docking with AI-driven lead optimisation but does not incorporate PPI network centrality or African NP-likeness metrics. More broadly, PH-based methods such as TopologyNet \citep{topologynet_2018} predict binding affinity via neural networks on persistence diagrams, while D-GRIL \citep{dgril_2026} uses differentiable two-parameter homology for graph-level bio-activity classification. Both operate at the cheminformatics level on static molecular representations, whereas our framework addresses the distinct challenge of flexible protein--ligand binding in the presence of resistance mutations through explicit MD simulation. Recent 2025 developments in quantum kernel learning (Q2SAR \citep{q2sar_2025}) and topological feature compression (PACTNet \citep{pactnet_2025}) further corroborate the utility of topological and quantum-inspired representations --- developed in our companion study \citep{temgoua2026quantum} --- for molecular characterisation, though they do not supersede the need for MD-based validation.
+The methods reviewed in recent MoA and polypharmacology research occupy complementary levels of inference. Pharmacophore and pocket-similarity tools can broaden target hypotheses, while graph-based approaches can encode network context; neither, by itself, establishes mutant-state binding or a causal parasite phenotype. Recent off-target graph attention models provide a useful precedent for network-aware prioritisation \citep{Sentinel2025Offtarget}, and resistance-evolution studies motivate evaluating potency together with mutational resilience rather than treating affinity as the sole objective \citep{Blake2025Resistome}. The present workflow contributes a different layer: it makes the target-level resistance calculation explicit, weights target ranking with a transparent PPI heuristic, and subjects a separate parent-study subset to targeted MD scrutiny. Topological and quantum-inspired representations from our companion study \citep{temgoua2026quantum} remain complementary molecular descriptors; they do not replace mutant-state structural validation or establish MoA.
 
-Our framework differs in three respects: (1) the RRS explicitly classifies compound resilience against resistance mutations, a feature absent from Mproteinfuzz, Pcofind, and MolAICal; (2) the PNS integrates STRING PPI network centrality to weight target engagement by biological importance, complementing the purely chemical similarity-based scoring of Pcofind; and (3) the ACSI provides a quantitative measure of African NP-likeness, enabling chemical space-aware compound selection that none of the existing tools offers. The QM/MM approach of Molani and Cho \citep{molani_cho_2024} achieves higher accuracy in binding free energy estimation but at substantially greater computational cost; our MC-enhanced MM-GBSA pipeline provides a practical compromise between accuracy and throughput for large-scale validation across 220 systems.
+Our framework differs in three respects: (1) the RRS explicitly classifies compound resilience against resistance mutations, a feature absent from Mproteinfuzz, Pcofind, and MolAICal; (2) the PNS integrates STRING PPI network centrality to weight target engagement by biological importance, complementing the purely chemical similarity-based scoring of Pcofind; and (3) the ACSI provides a quantitative measure of African NP-likeness, enabling chemical space-aware compound selection that none of the existing tools offers. The QM/MM approach of Molani and Cho \citep{molani_cho_2024} may achieve higher accuracy in binding free-energy estimation but at substantially greater computational cost; our cautious MM-GBSA workflow is instead used as a system-specific post-docking diagnostic, not as a substitute for calibrated thermodynamics across the 136 docking systems.
 
 \subsection{Tartarus external validation}
 
-The full Tartarus calibration on \num{19913} primary leads confirms that MPO drug-likeness scores are orthogonal to QuickVina binding affinity predictions. The composite Tartarus score (mean over 1SYH, 6Y2F, 4LDE) showed no significant correlation with the weighted MPO score (Spearman $\rho = \num{0.0129}$, $p = \num{0.0913}$, $n = \num{17211}$). Individual target correlations were substantively negligible ($|\rho| < 0.15$ for all targets), with only 1SYH and 4LDE reaching statistical significance due to the large sample size ($n > \num{17000}$; \cref{tab:tartarus_calibration}). This orthogonality is expected: MPO captures drug-likeness (QED, ADMET, Ro5) while Tartarus measures binding affinity. The finding is robust with $n = \num{17211}$ complete observations, compared to the typical $n < 100$ in most docking validation studies.
+The full Tartarus calibration on \num{19913} primary leads showed no significant composite correlation between MPO drug-likeness scores and QuickVina binding affinity predictions. The composite Tartarus score (mean over 1SYH, 6Y2F, 4LDE) showed no significant correlation with the weighted MPO score (Spearman $\rho = \num{0.0129}$, $p = \num{0.0913}$, $n = \num{17211}$). Individual target correlations were substantively negligible ($|\rho| < \num{0.15}$ for all targets), with only 1SYH and 4LDE reaching statistical significance due to the large sample size ($n > \num{17000}$; \cref{tab:tartarus_calibration}). This separation of score definitions is expected: MPO captures drug-likeness (QED, ADMET, Ro5), whereas Tartarus measures binding affinity. The finding is robust with $n = \num{17211}$ complete observations, compared to the typical $n < 100$ in most docking validation studies.
 
-This orthogonality has practical implications for virtual screening strategy. In the parent study \citep{temgoua2026antimalarial}, the MPO scorer was used to rank the full library of \num{65856} molecules, and the top-ranked compounds were selected for further analysis. The Tartarus calibration confirms that this MPO ranking does not implicitly filter by binding affinity---a compound can score highly on MPO (good ADMET, QED, Ro5) while having weak predicted binding. A combined MPO + docking composite score would therefore capture both drug-likeness and predicted potency, potentially improving the hit rate in subsequent MD validation. The full correlation matrix of Tartarus scores, MPO scores, and the novel metrics (RRS, ACSI, PNS) introduced in this study is reported in \cref{tab:tartarus_calibration}, providing the binding affinity dimension needed for combined ranking.
+This separation of prioritisation dimensions bears directly on virtual screening strategy. In the parent study \citep{temgoua2026antimalarial}, the MPO scorer was used to rank the full library of \num{65856} molecules, and the top-ranked compounds were selected for further analysis. The Tartarus calibration confirms that this MPO ranking does not implicitly filter by binding affinity---a compound can score highly on MPO (good ADMET, QED, Ro5) while having weak predicted binding. A combined MPO + docking composite score would therefore capture both drug-likeness and predicted potency, potentially improving the hit rate in subsequent MD validation. The complementary relationships among RRS, ACSI, PNS, and wild-type docking affinity are reported separately in \cref{tab:crossmetric}; together, these analyses preserve the distinction between chemical desirability, network context, and predicted binding.
 
-The Tartarus framework itself was designed for inverse molecular design benchmarking \citep{tartarus_2024}, where the objective is to generate molecules that maximize docking score. Our use of Tartarus as an external validation tool---rather than as the primary ranking criterion---differs from its intended application but is methodologically sound: it provides an independent docking implementation (QuickVina vs.\ our AutoDock Vina 1.2.7) that uses a different search algorithm and scoring function, enabling cross-validation of binding predictions at unprecedented scale ($n > \num{17000}$ per target).
+Tartarus was designed for inverse molecular-design benchmarking \citep{tartarus_2024}; here it was used as an independent docking implementation rather than as a generative objective. The absence of a composite association with MPO ($\rho=\num{0.0129}$, $p=\num{0.0913}$) indicates that the two rankings encode different measured or predicted properties in this panel. This does not establish statistical independence: the individual target tests include very large denominators, in which small effects can reach significance without scientific importance. Drug-likeness and raw QuickVina affinity should therefore be reported as separate dimensions when selecting candidates for subsequent structural validation.
 
 \subsection{Limitations}
 
-The mutant structures were generated by homology modeling rather than experimental determination, introducing modeling uncertainty into the docking and MD results. The \SI{100}{\nano\second} production runs for mutant systems, while sufficient to assess initial binding stability, may not capture slower conformational rearrangements; systems flagged as marginally stable would benefit from extended simulation. MM-GBSA provides an approximate estimate of binding free energy and does not fully account for entropic contributions. All predictions remain computational and require experimental confirmation. The four targets examined here represent a subset of the proteins relevant to African malaria treatment; expansion to additional targets such as PfATP1 and PfPI4K would strengthen the polypharmacological assessment.
+The mutant structures were generated by homology modeling rather than experimental determination, introducing modeling uncertainty into the docking results. No full production MD was generated for the 17 Set-C candidates; the available MD consists of a separate, targeted \SI{10}{\nano\second} check of four named parent-study wild-type complexes and a 16-system Set-C MD pilot (PP-01 and PP-02 against the six-mutant panel, \SI{10}{\nano\second} each) that passed the prespecified trajectory-QC gate (16/16) and is reported as a secondary analysis (\cref{sec:setc_pilot}). The pilot's single-replicate, \SI{10}{\nano\second} design cannot establish long-timescale residence, replicate consistency, or convergence. MM-GBSA provides an approximate endpoint estimate and does not fully account for entropic contributions; in this study only PfCRT--214 passed the bound-state and topology-integrity checks. All predictions remain computational and require experimental confirmation. The four targets examined here represent a subset of the proteins relevant to African malaria treatment; expansion to additional targets such as PfATP1 and PfPI4K would strengthen the polypharmacological assessment.
 
-\textbf{PfCRT PNS sensitivity.}
-PfCRT (PF3D7\_0709000) has no curated STRING PPI interactions at the 700 confidence threshold used in this study. Consequently, its composite centrality defaults to a uniform weight ($C_j = 1.0$), effectively treating PfCRT engagement as independent of network topology. We report PNS rankings with and without the PfCRT default in \cref{tab:pns} to allow readers to assess its impact.
+\textbf{PfCRT PNS imputation.}
+PfCRT (PF3D7\_0709000) has no curated STRING PPI interactions at the 700 confidence threshold used in this study. Its composite centrality was therefore imputed with the network mean (rather than set to \num{1.0}); this avoids a mechanical PNS--binding-score relationship. The imputation is a sensitivity limitation, not evidence that PfCRT has no biological interactions.
 
 \textbf{Force field heterogeneity.}
-Ligands bound to PfCRT (membrane protein) were parameterised with CGenFF v4.4, while ligands bound to PfDHFR, PfATP4, and PfClpP (soluble proteins) were parameterised with OpenFF 2.2 (Sage). While this choice reflects best practices for each environment, it introduces a systematic heterogeneity that may affect inter-target comparisons.
-
-\textbf{Monte Carlo force field mismatch.}
-MC sampling used the AMBER14 force field (via OpenMM), while MD simulations used CHARMM36m (via GROMACS). Although both are well-validated for protein-ligand systems, the force field difference introduces a systematic offset in absolute binding free energies. We address this by focusing on relative rankings and convergence metrics rather than absolute values.
+All ligands (PfCRT, PfDHFR, PfATP4, and the PfClpR-labelled 4GM2 parent complex) were parameterised with ACPYPE/GAFF2 (AM1-BCC charges) to interoperate with the CHARMM36m protein through the CHARMM36-to-AMBER conversion used for MM-GBSA. The recommended CHARMM36m-compatible ligand FF is CGenFF v4.4; the use of GAFF2 for all ligands represents a deliberate deviation that introduces a systematic heterogeneity with the CHARMM36m protein. Absolute binding free energies should therefore be interpreted with caution, and relative rankings are emphasised throughout.
 
 \textbf{Statistical power.}
-The cross-metric correlation analysis is based on $n = 20$ candidates, which provides $\sim \qty{72}{\percent}$ power to detect moderate correlations (Spearman $\rho = 0.5$) at the Bonferroni-corrected $\alpha = 0.008$. Effect sizes are reported alongside $p$-values to mitigate this limitation. Future work with larger candidate sets will improve statistical robustness.
+The cross-metric correlation analysis is based on $n = 17$ candidates. This modest cohort limits precision and power for detecting moderate associations, particularly after Bonferroni correction; effect sizes and exact $p$-values are therefore reported together, and non-significance is not interpreted as evidence of equivalence. Future work with larger, independently sampled candidate sets will improve statistical robustness.
 
 \textbf{PfCRT protonation state.}
-PfCRT functions in the acidic digestive vacuole of \textit{P.\ falciparum} (pH~\numrange{5.0}{5.4}), but docking and MD simulations were performed with protein protonation states assigned at physiological pH~\num{7.4}. In companion work (Paper~\num{1}), re-protonation of PfCRT at pH~\num{5.2} using PROPKA3 revealed that eight active-site residues exhibited shifted protonation states, leading to a systematic decrease in mean binding affinity of \SI{+2.20}{\kcalmol} and a Spearman ranking correlation of only $\rho = \num{0.270}$ between pH~\num{7.4} and pH~\num{5.2} scores. While the structural persistence observed during MD simulation (ligand RMSD \SI{1.15}{\angstrom}, \qty{100}{\percent} binding occupancy) suggests that PfCRT-bound candidates maintain binding at acidic pH, the absolute docking scores reported here should be interpreted as upper-bound estimates. Future PfCRT-targeted campaigns should apply vacuolar pH-corrected protonation states throughout the docking and scoring pipeline.
+PfCRT functions in the acidic digestive vacuole of \textit{P.\ falciparum} (pH~\numrange{5.0}{5.4}), but docking and MD simulations were performed with protein protonation states assigned at physiological pH~\num{7.4}. In our companion study \citep{temgoua2026antimalarial}, re-protonation of PfCRT at pH~\num{5.2} using PROPKA3 revealed that eight active-site residues exhibited shifted protonation states, leading to a systematic decrease in mean binding affinity of \SI{+2.20}{\kcalmol} and a Spearman ranking correlation of only $\rho = \num{0.270}$ between pH~\num{7.4} and pH~\num{5.2} scores. The PfCRT--214 parent-study trajectory was run with neutral-pH preparation; it therefore cannot establish behaviour at the acidic digestive-vacuole pH. The companion pH sensitivity analysis indicates that PfCRT rankings can shift materially under pH correction, so the present PfCRT docking and MD observations should be treated as conditional. Future PfCRT campaigns should apply vacuolar pH-corrected protonation states throughout preparation, docking, and scoring.
 
 % ============================================================================
 % 5. CONCLUSION
@@ -680,13 +730,13 @@ PfCRT functions in the acidic digestive vacuole of \textit{P.\ falciparum} (pH~\
 
 \section{Conclusion}
 
-We present a resistance-aware computational framework for antimalarial lead validation that integrates production molecular dynamics (\SI{40}{\nano\second} across 4 wild-type complexes) with docking-based resistance resilience scoring across 220 protein--ligand systems and Monte Carlo binding free energy landscape exploration. Three novel scoring metrics are introduced: the Resistance Resilience Score classifies polypharmacological leads by their ability to maintain binding affinity across six African-prevalent resistance mutations; the African Chemical Space Index quantifies the degree to which generated compounds preserve the structural character of African natural products; and the Polypharmacology Network Score weights multi-target engagement by the topological importance of each target in the \textit{P. falciparum} interactome. DiffDock--Vina correlation analysis ($r = \num{0.327}$--$\num{0.361}$ for PfDHFR/PfClpP, negligible for PfCRT/PfATP4; pooled $r = \num{-0.05}$) confirms that the two docking methods provide complementary information, justifying the dual-filter consensus strategy. Benjamini--Hochberg correction across \num{18} activity comparisons yielded zero significant results, confirming statistical parity between generated analogues and foundational natural products. Post-hoc trajectory analysis confirms that two of the four wild-type systems maintain bound ligands (PfCRT 214 and PfATP4 438), while PfClpP (164) and PfDHFR (201) are unbound --- demonstrating that MD is a mandatory post-docking filter. The mutant systems have docking-based RRS classifications awaiting full production MD validation. All scripts, trajectories, and scoring metrics are deposited on Zenodo and GitHub to support resistance-aware antimalarial discovery.
+This study provides a layered computational prioritisation of antimalarial candidates from African natural-product chemical space. The \num{17}-member Set-C cohort yielded docking-derived RRS classes (A*:~\num{6}, B:~\num{5}, C:~\num{5}, D:~\num{1}), an ACSI mean of \num{0.543}, and a PNS--RRS association in the predicted direction that did not survive Bonferroni correction. These results support resistance-aware target-level ranking, but they do not establish biological polypharmacology or a systems-level MoA. The separate four-complex MD check further demonstrates the need for structural post-docking scrutiny: two systems retained bound ligands, but only PfCRT--214 produced an interpretable MM-GBSA estimate. The principal contribution is therefore methodological and evidential: potency, network context, chemical-space positioning, mutant sensitivity, and trajectory stability are treated as complementary estimands rather than collapsed into a single unsupported claim. Experimental target engagement, phenotypic MoA, mutant-state MD, and prospective validation remain necessary next steps.
 
 % ============================================================================
 % ACKNOWLEDGMENTS
 % ============================================================================
 
-% Table S6 (ACSI sensitivity) and Figure S5 (RRS radar plots) are referenced in the main text
+% Table S4 (ACSI sensitivity) and Figure S3 (RRS radar plots) are referenced in the main text
 % and should be included in the supplementary PDF.
 
 \section*{Author Contributions}
@@ -694,7 +744,7 @@ Conceptualization and methodology, M.V.S.T. and S.G.N.E.; software, M.V.S.T. and
 
 \section*{Data Availability}
 
-All MD trajectories, MM-GBSA outputs, and analysis scripts are deposited on Zenodo (DOI: \url{https://doi.org/10.5281/zenodo.19608875}, shared with the companion chemical-space dataset). Docking results and compound SMILES are provided as supplementary CSV files, including the full molecular library in SELFIES representation (\texttt{all\_mol\_selfies.csv}, \num{51} molecules). All code is available at \url{https://github.com/NanaEngo/Malaria_codesV2} under the MIT licence.
+Docking results, metric outputs, analysis scripts, and the associated source-data records are available at \url{https://github.com/NanaEngo/Malaria_codesV2} under the MIT licence. The large parent-study trajectories are not included in this article's data record; the conclusions drawn here are restricted to the trajectory-derived summaries and binding estimates explicitly reported above.
 
 \section*{Competing Interests}
 
@@ -703,6 +753,10 @@ The authors declare no competing interests.
 \section*{Acknowledgments}
 
 Computational resources were provided by the University of Yaound\'{e}~I HPC facility. We acknowledge the Worldwide Antimalarial Resistance Network (WWARN) \citep{wwarn_2026}, PlasmoDB \citep{plasmodb_2026}, and PfAMR \citep{pfamr_2026} for resistance mutation data, the SWISS-MODEL server for homology modeling, and the GROMACS development team \citep{lindahl_2024}.
+
+\section*{Use of Artificial Intelligence}
+
+During the preparation of this work the authors used AI assistants to support code development and data analysis scripting. The authors reviewed and edited all AI-assisted output and take full responsibility for the content of this article. No generative AI tool is listed as an author. All computational results, statistical analyses, and quantitative claims were generated and verified by the authors.
 
 % ============================================================================
 % BIBLIOGRAPHY

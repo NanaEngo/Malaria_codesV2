@@ -1,7 +1,7 @@
 # Project 4 — Advanced Monte Carlo Strategies (P4)
 
 **Target journal:** *Journal of Cheminformatics* (JoC) — canonical manuscript: `P4_Pareto_MCTS_JoC_refined.tex`
-**Status:** v11 20-seed benchmark complete (optimal MCTS config); manuscript ready for submission
+**Status:** v12-activity 20-seed benchmark complete (optimal MCTS config); canonical JoC manuscript undergoing final editorial validation
 **Date:** August 2026
 **Repository:** https://github.com/NanaEngo/Malaria_codesV2
 
@@ -11,9 +11,9 @@
 
 P4 implements a **de novo molecular generation framework** combining:
 - **MCTS + ScafVAE** — Tree search guided by a chemistry-informed fragment policy (PUCT) with medchem filters.
-- **Pareto MCTS** — Multi-objective optimization via non-dominated front (MPO, SYBA, SA; HV ≥ 0.58).
+- **Pareto MCTS** — Multi-objective optimization via non-dominated front (MPO, SYBA, RRS, PNS; SA is constant and excluded from dominance/HV; HV = 1.2366 under the locked convention).
 - **Real P1/P2 oracles** — MPO, docking (Tartarus), SYBA, SA, RRS, PNS.
-- **4-method benchmark** — MCTS vs Random vs Greedy vs GA (n=10 seeds, Wilcoxon signed-rank test).
+- **4-method benchmark** — MCTS vs Random vs GA vs Greedy (20 independent seeds, paired t-tests with documented multiplicity).
 - **QMC validation** — Two-tiered electronic-structure validation pipeline (wB97X-D DFT + DMC diffusion Monte Carlo).
 
 **Novelty:** First integration of (1) Pareto-MCTS with ScafVAE-informed fragment policy incorporating PAINS/Brenk safety priors, (2) 4-method benchmark with Fréchet ChemNet Distance (FCD) and scaffold diversity metrics, (3) QMC-based electronic correlation validation for de novo design candidates.
@@ -93,7 +93,7 @@ Project4_Advanced_Monte_CarloV2607/
 | `scripts/p4_mcts_policy.py` | ScafVAE policy with multi-fingerprint | July 2026 |
 | `scripts/p4_mcts_agent.py` | MCTS agent with trajectory rollout mitigation | July 2026 |
 | `scripts/p4_mcts_pareto.py` | Pareto optimization and hypervolume (pymoo) | July 2026 |
-| `scripts/p4_mcts_benchmark.py` | 4-method 20-seed benchmark script (v11 optimal MCTS config) | Aug 2026 |
+| `scripts/p4_mcts_benchmark.py` | 4-method 20-seed benchmark script (v12-activity canonical scalar benchmark) | Aug 2026 |
 | `manuscript/LaTeX/P4_Pareto_MCTS_JoC_refined.tex` | **Canonical manuscript (JoC)** | Aug 2026 |
 | `manuscript/LaTeX/P4_Pareto_MCTS_JoC_SM.tex` | Supplementary Material (S1–S3) | Aug 2026 |
 

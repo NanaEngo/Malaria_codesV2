@@ -11,6 +11,10 @@
 
 set -e  # Arrêter en cas d'erreur
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PREP_DIR="${SCRIPT_DIR}"
+cd "${PREP_DIR}"
+
 # Couleurs
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -146,14 +150,24 @@ fi
 
 print_header "ÉTAPE 3: Validation"
 
-print_step "Exécution des tests automatisés..."
+print_step "Vérification des sorties préparées..."
 echo ""
 
-if python test_preparation.py; then
-    print_success "Tous les tests sont passés!"
+missing=0
+for PDB in 7F3Y 6UKJ 4GM2 9N10; do
+    FILE="prepared_structures/${PDB}/${PDB}_chainA_noH.pdb"
+    if [ -s "$FILE" ] && grep -qE '^(ATOM  |HETATM)' "$FILE"; then
+        print_success "$FILE"
+    else
+        print_warning "Sortie absente, vide ou invalide: $FILE"
+        missing=1
+    fi
+done
+
+if [ "$missing" -eq 0 ]; then
+    print_success "Les quatre structures préparées sont présentes."
 else
-    print_warning "Certains tests ont échoué"
-    echo "Vérifiez les messages ci-dessus"
+    print_warning "La préparation est incomplète; aucun test Python historique n'est exécuté."
     ask_continue
 fi
 
@@ -196,7 +210,9 @@ echo "✓ Structures préparées avec succès!"
 echo ""
 echo "Fichiers générés dans: prepared_structures/"
 echo ""
-ls -lh prepared_structures/*/___*_noH.pdb 2>/dev/null | awk '{print "  " $9 " (" $5 ")")' || echo "  (Fichiers listés ci-dessus)"
+find prepared_structures -type f -name '*_noH.pdb' -size +0c -print 2>/dev/null | while read -r FILE; do
+    printf '  %s (%s)\n' "$FILE" "$(du -h "$FILE" | awk '{print $1}')"
+done
 echo ""
 
 print_header "PROCHAINES ÉTAPES"

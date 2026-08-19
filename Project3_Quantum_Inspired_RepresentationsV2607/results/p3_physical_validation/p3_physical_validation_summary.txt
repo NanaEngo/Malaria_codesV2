@@ -1,36 +1,20 @@
 P3 Physical Validation — Consolidated Summary
 ======================================================================
-Generated: 2026-07-29T01:44:58.407219
+Generated: 2026-08-10T16:10:16.744266
 Implements: P3_Strategic_85PA.md Steps 1–4
 
-Step 3 — Quantum Kernel Polypharmacology (per-fold AUCs)
+Step 4 — TDA Spearman ρ vs #Targets Bound (top 12)
 ----------------------------------------
- fold  model      auc  target_alignment  time_s  gamma
-    1    QKS 0.303030               NaN     5.2    NaN
-    1    RBF 0.424242          0.120150     NaN 0.0005
-    1 Linear 0.484848               NaN     NaN    NaN
-    2    QKS 0.409091               NaN     5.1    NaN
-    2    RBF 0.181818          0.199971     NaN 5.0000
-    2 Linear 0.681818               NaN     NaN    NaN
-
-
-Statistical analysis:
-P3 Physical Validation — Quantum Kernel Polypharmacology Benchmark
-======================================================================
-Generated: 2026-07-29T01:44:57.983217
-Task: classify molecules binding >= 2 targets at ΔG <= -7.0 kcal/mol
-Subsample: n=50 (stratified), prevalence=12.0%
-CV: 2-fold stratified, IQPEmbedding n_repeats=1
-Circuit: 8-qubit IQPEmbedding on lightning.qubit
-
-     QKS:  AUC = 0.3561 ± 0.0750  (95% bootstrap CI [0.3030, 0.4091], n=2 folds)
-     RBF:  AUC = 0.3030 ± 0.1714  (95% bootstrap CI [0.1818, 0.4242], n=2 folds)
-          target alignment = 0.1601 ± 0.0399
-  Linear:  AUC = 0.5833 ± 0.1393  (95% bootstrap CI [0.4848, 0.6818], n=2 folds)
-
-Pairwise Wilcoxon signed-rank tests (Bonferroni-Holm corrected):
-  QKS vs RBF: insufficient paired data (n=2)
-  QKS vs Linear: insufficient paired data (n=2)
-  RBF vs Linear: insufficient paired data (n=2)
-
-Significance: * p<0.05, ** p<0.01, *** p<0.001 (Bonferroni-Holm corrected)
+  tda_feature  spearman_rho    spearman_p  pearson_r     pearson_p  ci95_lo  ci95_hi     N
+     H0_count     -0.247763 2.541809e-236  -0.241897 5.026855e-225      NaN      NaN 17011
+   H0_entropy     -0.242753 1.181708e-226  -0.247189 3.354041e-235      NaN      NaN 17011
+   H1_entropy     -0.189605 1.914491e-137  -0.185334 2.648803e-131      NaN      NaN 17011
+  H0_max_pers     -0.151706  4.045216e-88  -0.128427  1.779479e-63      NaN      NaN 17011
+  pers_img_13      0.138793  6.304633e-74   0.064355  4.403536e-17      NaN      NaN 17011
+ H0_death_std     -0.135742  9.182619e-71  -0.119452  4.236622e-55      NaN      NaN 17011
+H1_birth_mean     -0.117772  1.336791e-53  -0.100525  1.856481e-39      NaN      NaN 17011
+      betti_8      0.116288  2.707119e-52   0.126749  7.311178e-62      NaN      NaN 17011
+      betti_5      0.112361  6.411019e-49   0.109013  3.908538e-46      NaN      NaN 17011
+ H1_mean_pers      0.112350  6.551133e-49   0.117934  9.601327e-54      NaN      NaN 17011
+      betti_6      0.112335  6.751737e-49   0.109057  3.595641e-46      NaN      NaN 17011
+  pers_img_14     -0.111404  4.094622e-48  -0.086467  1.344778e-29      NaN      NaN 17011

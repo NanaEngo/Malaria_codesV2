@@ -15,7 +15,9 @@ Polypharmacology Network Score (PNS)
     where C_j = 0.25*(C_D,j + C_B,j + C_C,j + C_E,j) = composite centrality of target j.
 
 Inputs expected:
-    results/md_top20_candidates.csv          — from md_select_top20.py
+    results/candidate_selection/md_top20_candidates_polypharm.csv
+                                               — canonical set-C polypharm cohort (17 rows)
+                                               Use --candidate-file to override explicitly.
     results/docking_mutants.csv              — Vina scores vs WT + 6 mutants
                                                columns: smiles, target, mutation, vina_score
     data/external/anpdb_smiles.csv           — ANPDB reference (smiles column)
@@ -28,10 +30,13 @@ Outputs:
     results/c_pns_ranking.csv
 
 Usage:
-    python scripts/md_calculate_rrs_acsi_pns.py [--skip-rrs] [--skip-acsi] [--skip-pns]
+    python scripts/md_calculate_rrs_acsi_pns.py [--candidate-file PATH]
+        [--skip-rrs] [--skip-acsi] [--skip-pns]
 """
 
 import argparse
+import hashlib
+import json
 import warnings
 from pathlib import Path
 
@@ -94,31 +99,44 @@ def calculate_rrs(docking_df: pd.DataFrame) -> pd.DataFrame:
     """
     Compute RRS for each compound from docking scores vs WT and mutants.
 
+    RRS is computed per-target (|ΔG_mut,t|/|ΔG_WT,t| × 100) and averaged
+    across targets, so that target mixing cannot inflate the ratio. RRS is
+    only defined on targets where the compound is a real binder
+    (|ΔG_WT,t| ≥ 5.0 kcal/mol), avoiding division by near-zero baselines.
+
     docking_df columns: smiles, target, mutation, vina_score
     """
     records = []
     for smiles, grp in docking_df.groupby("smiles"):
-        wt_rows = grp[grp["mutation"] == "WT"]
-        if wt_rows.empty:
+        wt = grp[grp["mutation"] == "WT"]
+        if wt.empty:
             continue
-        dg_wt = wt_rows["vina_score"].mean()
-        if dg_wt == 0:
+        # Per-target WT baselines (grouping by smiles alone would pool targets)
+        wt_by_target = wt.groupby("target")["vina_score"].mean()
+        # Restrict to targets where the compound is a genuine binder
+        binding_targets = {t: d for t, d in wt_by_target.items() if abs(d) >= 5.0}
+        if not binding_targets:
             continue
-        # Pre-filter: weak binders excluded from RRS (roadmap §Step 6)
-        if abs(dg_wt) < 5.0:
-            continue
+        dg_wt_anchor = max(binding_targets.values(), key=abs)
 
         rrs_vals = {"WT": 100.0}
         for mut in [m for m in MUTATIONS if m != "WT"]:
             mut_rows = grp[grp["mutation"] == mut]
             if mut_rows.empty:
                 continue
-            dg_mut = mut_rows["vina_score"].mean()
-            # Use absolute values: ΔG is negative; |ΔG_mut|/|ΔG_WT| × 100
-            rrs_vals[mut] = (abs(dg_mut) / abs(dg_wt)) * 100.0
+            # Per-target ratio, averaged across binding targets that have this mutant
+            ratios = []
+            for target, dg_wt in binding_targets.items():
+                t_rows = mut_rows[mut_rows["target"] == target]
+                if t_rows.empty:
+                    continue
+                dg_mut = t_rows["vina_score"].mean()
+                ratios.append(abs(dg_mut) / abs(dg_wt) * 100.0)
+            if ratios:
+                rrs_vals[mut] = np.mean(ratios)
 
         rrs_mean = np.mean([v for k, v in rrs_vals.items() if k != "WT"])
-        rrs_class = classify_rrs(rrs_vals, dg_wt)
+        rrs_class = classify_rrs(rrs_vals, dg_wt_anchor)
 
         row = {"smiles": smiles, "RRS_mean": rrs_mean, "RRS_class": rrs_class}
         row.update({f"RRS_{k}": v for k, v in rrs_vals.items()})
@@ -306,11 +324,72 @@ def calculate_pns(docking_df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
-# Main
+# Provenance and main
 # ---------------------------------------------------------------------------
+
+def add_output_provenance(frame: pd.DataFrame, cohort_id: str, candidate_file: str, candidate_sha256: str) -> pd.DataFrame:
+    """Attach immutable cohort identity to every generated metric row."""
+    result = frame.copy()
+    result.insert(0, "cohort_id", cohort_id)
+    result.insert(1, "candidate_file", candidate_file)
+    result.insert(2, "candidate_sha256", candidate_sha256)
+    return result
+
+
+def validate_docking_cohort(
+    docking_df: pd.DataFrame,
+    candidate_smiles: set[str],
+    canonical_set_c: bool = True,
+) -> None:
+    """Require a complete docking panel, with the canonical set-C panel when applicable.
+
+    Explicit custom cohorts retain structural checks (exact candidate coverage,
+    unique candidate/target/mutation rows, and finite scores) without being
+    incorrectly forced into the canonical PfDHFR/PfCRT mutation panel.
+    """
+    required = {"smiles", "target", "mutation", "vina_score"}
+    missing = sorted(required - set(docking_df.columns))
+    if missing:
+        raise SystemExit(f"Docking file is missing required columns: {', '.join(missing)}")
+    observed = docking_df[docking_df["smiles"].isin(candidate_smiles)].copy()
+    expected_mutations = {
+        "PfDHFR": {"WT", "N51I", "C59R", "S108N", "I164L"},
+        "PfCRT": {"WT", "K76T", "K76A"},
+    }
+    if canonical_set_c:
+        expected_rows = len(candidate_smiles) * sum(len(states) for states in expected_mutations.values())
+        if len(observed) != expected_rows:
+            raise SystemExit(
+                "Docking cohort is incomplete or contains duplicates: "
+                f"expected {expected_rows} candidate-state rows, found {len(observed)}"
+            )
+    elif observed.empty:
+        raise SystemExit("Custom docking cohort contains no rows for the requested candidates")
+    if set(observed["smiles"]) != candidate_smiles:
+        raise SystemExit("Docking cohort does not cover exactly the candidate SMILES set")
+    if not np.isfinite(pd.to_numeric(observed["vina_score"], errors="coerce")).all():
+        raise SystemExit("Docking cohort contains non-finite vina_score values")
+    keys = observed.groupby(["smiles", "target", "mutation"]).size()
+    if (keys != 1).any():
+        raise SystemExit("Docking cohort has duplicate candidate/target/mutation rows")
+    if canonical_set_c:
+        for target, states in expected_mutations.items():
+            target_rows = observed[observed["target"] == target]
+            if set(target_rows["mutation"]) != states or len(target_rows) != len(candidate_smiles) * len(states):
+                raise SystemExit(f"Docking mutation panel mismatch for {target}")
+        unexpected_targets = set(observed["target"]) - set(expected_mutations)
+        if unexpected_targets:
+            raise SystemExit(f"Unexpected docking targets in canonical cohort: {sorted(unexpected_targets)}")
+
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--candidate-file",
+        type=Path,
+        default=RESULTS_DIR / "candidate_selection" / "md_top20_candidates_polypharm.csv",
+        help="Candidate cohort CSV; defaults to canonical set C (17 polypharm candidates).",
+    )
     parser.add_argument("--skip-rrs",  action="store_true")
     parser.add_argument("--skip-acsi", action="store_true")
     parser.add_argument("--skip-pns",  action="store_true")
@@ -320,16 +399,51 @@ def main():
     print("Paper 2 metrics: RRS / ACSI / PNS")
     print("=" * 60)
 
-    candidates = pd.read_csv(RESULTS_DIR / "md_top20_candidates.csv")
-    smiles_list = candidates["smiles"].tolist()
+    candidate_file = args.candidate_file
+    if not candidate_file.is_absolute():
+        candidate_file = PROJECT_DIR / candidate_file
+    if not candidate_file.exists():
+        raise SystemExit(f"Candidate cohort file not found: {candidate_file}")
+    candidates = pd.read_csv(candidate_file)
+    if "smiles" not in candidates.columns:
+        raise SystemExit(f"Candidate cohort lacks a smiles column: {candidate_file}")
+    candidate_rel = str(candidate_file.relative_to(PROJECT_DIR)) if candidate_file.is_relative_to(PROJECT_DIR) else str(candidate_file)
+    candidate_hash = hashlib.sha256(candidate_file.read_bytes()).hexdigest()
+    cohort_id = "P2_SET_C_POLYPHARM_17" if candidate_file.name == "md_top20_candidates_polypharm.csv" and len(candidates) == 17 else "EXPLICIT_COHORT"
+    print(f"Candidate cohort: {candidate_rel}")
+    print(f"Candidate rows: {len(candidates)}")
+    if len(candidates) != 17 and candidate_file.name == "md_top20_candidates_polypharm.csv":
+        raise SystemExit("Canonical set-C cohort must contain exactly 17 rows")
+    smiles_list = candidates["smiles"].dropna().tolist()
+    if len(smiles_list) != len(set(smiles_list)):
+        raise SystemExit("Candidate cohort contains duplicate SMILES; refusing ambiguous outputs")
+
+    # Fail closed against accidental set-B/set-C mixing. The docking file must
+    # contain exactly the requested cohort before RRS/PNS are written.
+    docking_file = RESULTS_DIR / "docking_mutants.csv"
+    if docking_file.exists():
+        docking_smiles = set(pd.read_csv(docking_file)["smiles"].dropna())
+        candidate_smiles = set(smiles_list)
+        if docking_smiles != candidate_smiles:
+            raise SystemExit(
+                "Cohort mismatch: candidate file and docking_mutants.csv have "
+                f"different SMILES sets (candidates={len(candidate_smiles)}, "
+                f"docking={len(docking_smiles)}). Refusing mixed-cohort outputs."
+            )
+        docking_for_validation = pd.read_csv(docking_file)
+        validate_docking_cohort(
+            docking_for_validation,
+            candidate_smiles,
+            canonical_set_c=(cohort_id == "P2_SET_C_POLYPHARM_17"),
+        )
 
     # --- RRS ---
     if not args.skip_rrs:
-        docking_file = RESULTS_DIR / "docking_mutants.csv"
         if docking_file.exists():
             print("\nCalculating RRS...")
             docking_df = pd.read_csv(docking_file)
             rrs_df = calculate_rrs(docking_df)
+            rrs_df = add_output_provenance(rrs_df, cohort_id, candidate_rel, candidate_hash)
             out = RESULTS_DIR / "c_rrs_classification.csv"
             rrs_df.to_csv(out, index=False)
             print(f"  Saved: {out}")
@@ -345,6 +459,7 @@ def main():
     if not args.skip_acsi:
         print("\nCalculating ACSI...")
         acsi_df = calculate_acsi(smiles_list)
+        acsi_df = add_output_provenance(acsi_df, cohort_id, candidate_rel, candidate_hash)
         out = RESULTS_DIR / "c_acsi_scores.csv"
         acsi_df.to_csv(out, index=False)
         print(f"  Saved: {out}")
@@ -354,11 +469,11 @@ def main():
 
     # --- PNS ---
     if not args.skip_pns:
-        docking_file = RESULTS_DIR / "docking_mutants.csv"
         if docking_file.exists():
             print("\nCalculating PNS...")
             docking_df = pd.read_csv(docking_file)
             pns_df = calculate_pns(docking_df)
+            pns_df = add_output_provenance(pns_df, cohort_id, candidate_rel, candidate_hash)
             out = RESULTS_DIR / "c_pns_ranking.csv"
             pns_df.to_csv(out, index=False)
             print(f"  Saved: {out}")
@@ -367,6 +482,24 @@ def main():
         else:
             print(f"\n  Skipping PNS: {docking_file.name} not found")
 
+    provenance = {
+        "schema_version": 2,
+        "cohort_id": cohort_id,
+        "candidate_file": candidate_rel,
+        "candidate_sha256": candidate_hash,
+        "candidate_count": int(len(candidates)),
+        "docking_file": str(docking_file.relative_to(PROJECT_DIR)) if docking_file.exists() else None,
+        "docking_system_count": int(len(pd.read_csv(docking_file))) if docking_file.exists() else 0,
+        "metrics": [name for name, skipped in (("RRS", args.skip_rrs), ("ACSI", args.skip_acsi), ("PNS", args.skip_pns)) if not skipped],
+        "metric_provenance": "Docking/cheminformatics-derived; no production MD assigned to set C.",
+        "parent_md_systems_excluded": ["201-PfDHFR", "438-PfATP4", "164-PfClpP", "214-PfCRT"],
+        "interpretable_mmgbsa": "214-PfCRT only; -18.25 +/- 0.40 kcal/mol",
+        "mc_status": "No completed MC trajectories or MC-derived free energies in canonical evidence set",
+    }
+    provenance_path = RESULTS_DIR / "metrics" / "canonical_set_c_provenance.json"
+    provenance_path.parent.mkdir(parents=True, exist_ok=True)
+    provenance_path.write_text(json.dumps(provenance, indent=2) + "\n", encoding="utf-8")
+    print(f"\nProvenance manifest: {provenance_path}")
     print("\n" + "=" * 60)
     print("Done.")
     print("=" * 60)

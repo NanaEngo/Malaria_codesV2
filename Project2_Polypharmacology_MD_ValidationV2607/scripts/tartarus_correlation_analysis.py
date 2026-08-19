@@ -77,7 +77,7 @@ TARTARUS_TARGETS = {
 }
 
 OUR_TARGETS = {
-    "aff_4gm2": "4GM2 (PfClpP)",
+    "aff_4gm2": "4GM2 (PfClpR; not PfClpP)",
     "aff_6ukj": "6UKJ (PfCRT)",
     "aff_7f3y": "7F3Y (PfDHFR)",
     "aff_9n10": "9N10 (PfATP4)",
@@ -431,7 +431,7 @@ def plot_distributions(tar_df, proj_df, save_path: Path):
             ax.legend(fontsize=8)
 
     # Row 2: Project targets (affinities)
-    proj_cols = [("aff_4gm2", "4GM2 (PfClpP)"), ("aff_6ukj", "6UKJ (PfCRT)"),
+    proj_cols = [("aff_4gm2", "4GM2 (PfClpR; not PfClpP)"), ("aff_6ukj", "6UKJ (PfCRT)"),
                  ("aff_7f3y", "7F3Y (PfDHFR)")]
     for i, (col, label) in enumerate(proj_cols):
         if col in proj_df.columns:
@@ -458,7 +458,7 @@ def plot_per_target_scatter(merged_df, save_path: Path):
     comparisons = [
         ("score_1syh", "aff_7f3y", "Tartarus 1SYH (DHFR)", "Project 7F3Y (PfDHFR)"),
         ("score_6y2f", "aff_6ukj", "Tartarus 6Y2F (protease)", "Project 6UKJ (PfCRT)"),
-        ("score_4lde", "aff_4gm2", "Tartarus 4LDE (A2a)", "Project 4GM2 (PfClpP)"),
+        ("score_4lde", "aff_4gm2", "Tartarus 4LDE (A2a)", "Project 4GM2 (PfClpR; not PfClpP)"),
         ("score_1syh", "aff_9n10", "Tartarus 1SYH (DHFR)", "Project 9N10 (PfATP4)"),
     ]
 

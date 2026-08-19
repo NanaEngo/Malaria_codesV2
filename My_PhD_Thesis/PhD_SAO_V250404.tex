@@ -1,0 +1,159 @@
+% Definition du chemin des styles particuliers
+\makeatletter\def\input@path{
+	{./Chapters/}{./Graphics/}
+}\makeatother%% Define some paths
+
+\documentclass[12pt,a4paper,oneside,openany]{book}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french, english]{babel}
+
+\usepackage{amsmath,amsfonts,amssymb,mathtools,graphicx,textcomp,xcolor,colortbl,color,
+	caption,floatrow,hyperref,geometry,enumerate,fancyhdr,multirow,here,longtable,
+	csquotes,setspace,physics,svg,array, here, textalpha, tabularx, lscape}
+	
+\usepackage{cleveref}
+\usepackage[affil-it]{authblk}
+
+\usepackage{pgfkeys,tikz,tikzpagenodes,booktabs}
+\usetikzlibrary{quotes}
+
+\usepackage[most]{tcolorbox}
+\usepackage[section]{algorithm}
+\usepackage{algpseudocode}
+
+\usepackage[backend=biber,style=numeric,giveninits=true, url=false,labelalpha=true,sorting=none, maxnames=19]{biblatex}
+\usepackage[nottoc]{tocbibind}
+\bibliography{Bib_thesis_SAO.bib}
+% Pour la gestion des chiffres et unités
+\usepackage[detect-all=true, group-minimum-digits=4]{siunitx}
+
+% Pour la gestion des légendes des tableaux et figures
+\usepackage[labelfont=bf,textfont={footnotesize,it}]{caption}
+
+% Pour d'indenter les premiers paragraphes
+\usepackage{indentfirst} 
+
+\newtheorem{Rem}{Remark}[section]
+\newtheorem{Exe}{Example}[section]
+\newcommand{\tb}[1]{\fbox{\textcolor{blue}{#1}}}
+\definecolor{c040404}{RGB}{4,4,4}
+\definecolor{gris1}{gray}{0.85}
+\definecolor{gris2}{gray}{0.65}
+
+%\rowcolors{1}{gray!20}{white}
+\arrayrulecolor{green!50!black}\renewcommand{\arraystretch}{1.2}
+
+%-----------------------------------------------------------------------------
+%
+% Format de titres de chapitres, sections et sous-sections
+\newcommand\chapterstring{Chapter}
+\usepackage{titlesec}
+%
+% chapitres dans un box
+\titleformat{\chapter}[frame] {\bfseries\sffamily\color{blue}} {\filright
+	\enspace \Large \chapterstring~\thechapter} {14pt} {\Large\filcenter}
+%
+% sections avec rule
+\titleformat{\section}{\vspace{0mm plus 1cm}\addpenalty{-1000}\color{blue} 
+	\Large\bfseries\sffamily}{\thesection}{1em}{}[{\color{blue}\titlerule[0.5pt]}]
+%
+% sous-sections
+\titleformat{\subsection}{\addpenalty{-500}\large\bfseries\sffamily}{
+	\thesubsection}{1em}{} 
+%
+% sous-sous-sections 
+%\titleformat{\subsubsection}{\penalty-500\vspace{0pt plus 2pt}{}\bfseries\sffamily}{\thesubsubsection}{}{}[\vspace{-7pt}]
+\titleformat{\subsubsection}{\addpenalty{-500}\bfseries\sffamily}{\thesubsubsection}{0.5em}{}
+
+% Augmenter l'espace vertical entre les paragraphes 
+\setlength{\parskip}{0.75ex plus 0.5ex minus 0.2ex}
+
+% Prise en compte du numéro de la section dans les différentes numérotations
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+
+\geometry{
+	paperwidth=21cm,
+	left=2cm,
+	right=2cm,
+	paperheight=29.7cm,
+	top=1.cm,
+	height=26.5cm,
+	headheight=12.0pt,
+	headsep=0.5cm,
+	footskip=1cm
+}
+
+\hypersetup{%
+	colorlinks=true, 	% Colorise les liens
+	linkcolor=blue,  	% Couleur de liens internes
+	urlcolor=blue,	 	% Couleur des hyperliens 
+	citecolor=blue,	 	% Couleur des liens de citation
+	bookmarksopen=true, % Ouvre le signets PDF au départ
+	pdfauthor={Vital SAO},
+	pdfsubject={PhD Thesis},
+	pdftitle= Quantum machine learning approach for malaria drugs discovery}
+
+%Ecrit Tableau dans caption
+%\captionsetup[table]{name=Tableau} 
+
+%\floatname{algorithm}{Algorithme}
+%\frenchbsetup{StandardLists=true}
+
+\definecolor{white}{rgb}{1,1,1}
+\definecolor{myblue}{RGB}{166,178,175}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codered}{RGB}{255, 20, 147}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{codebrown}{RGB}{165, 42, 42}
+\definecolor{codeblue}{RGB}{0, 191, 255}
+
+%\frenchbsetup{StandardLayout=true}
+
+% Etendre la numérotation des sections
+\setcounter{secnumdepth}{6}
+
+% Gestion de la page (un exemple)
+
+%
+\pagestyle{fancy}
+\renewcommand\headrulewidth{1pt}
+\renewcommand\footrulewidth{1pt}
+\lhead{}
+\chead{\textbf{\footnotesize PhD Thesis, Nucl. Phy., Dos., Rad.}}
+\rhead{}
+\lfoot{\textbf{\footnotesize UYI - FS - PHYSICS DPT}}
+\cfoot{\textbf{\thepage}}
+\rfoot{\textbf{\footnotesize M. V. SAO TEMGOUA}}
+
+% Quelques macros
+\input{tikzmacros.tex}
+\input{latexdefs_SAO.tex}
+\input{mtc.tex}
+
+\begin{document}
+	\input{cover_pageV250404}
+	\frontmatter
+	{\setlength{\parskip}{0pt plus 1pt}
+		\tableofcontents
+		\listoffigures
+		\listoftables
+		\par} %Interligne 1pt dans la TOC
+	
+	\input{Gen_intro}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\mainmatter
+	\input{chap_lit_rev}
+	%
+	\input{chap_to_met}
+	%
+	\input{chap_res_dis}
+	%
+	\backmatter
+	\input{Gen_con}
+	%
+	\printbibliography[heading=bibintoc]
+\end{document}

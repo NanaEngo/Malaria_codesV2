@@ -1,0 +1,89 @@
+{
+  "audit_performed": true,
+  "canonical_execution_policy": {
+    "allowed_entrypoints": [
+      {
+        "exists": true,
+        "path": "scripts/md_full_pipeline.sh",
+        "sha256": "de109e1ef5852c525cb53dcaad1b8c6f8ec8113c9a0f591656d81e110bd2a948"
+      },
+      {
+        "exists": true,
+        "path": "scripts/md_run_minimisation.sh",
+        "sha256": "55b96ec77bf3bf1f84cccad7a85e5c65a70bd416041769ac8fc14dee563868bf"
+      },
+      {
+        "exists": true,
+        "path": "scripts/md_run_nvt.sh",
+        "sha256": "614387d2b6c1f33f14d07ca5143572a706cbaab28d6b480313fe0510d32d0560"
+      },
+      {
+        "exists": true,
+        "path": "scripts/md_run_npt.sh",
+        "sha256": "522bd285e958d5c16f359db1694aef5b35ca7880c3802b5fe38f326ac5d01efc"
+      },
+      {
+        "exists": true,
+        "path": "scripts/md_run_production.sh",
+        "sha256": "5330ee1b26b77cd487fc6e5902506a279695066c4150357adf013ea9081ad940"
+      },
+      {
+        "exists": true,
+        "path": "scripts/rebuild_438_complex_md.sh",
+        "sha256": "ca4a2cf35f2514f948158203b06bef3a6e9f0cc27cf2da4e0ce992006c355f7e"
+      },
+      {
+        "exists": true,
+        "path": "scripts/p2_setc_md_workflow.py",
+        "sha256": "a1abad85e6cacd05249636708860a04b58e120d4491c2a0f21af5f43aeaf254b"
+      }
+    ],
+    "requirements": [
+      "--execute where supported",
+      "P2_MD_EXECUTE_CONFIRM=I_UNDERSTAND",
+      "exhaustive parent or set-C preflight",
+      "canonical force-field manifest and hash validation",
+      "no -maxwarn in publication-grade execution"
+    ]
+  },
+  "execution_performed": false,
+  "generated_utc": "2026-08-07T23:15:28.067132+00:00",
+  "gromacs_launched_by_audit": false,
+  "interpretation_rule": "Legacy scripts and outputs are historical/provenance context only; they cannot support new publication-grade trajectory, MD-RRS, or validated MM-GBSA claims.",
+  "legacy_noncanonical_entrypoints": [
+    {
+      "exists": true,
+      "path": "scripts/md_build_complexes.py",
+      "reason": "historical preparation utility; direct GROMACS calls; not publication-grade",
+      "sha256": "db0b3e83deb8e9bb5186a854301bab191ade78dadf10714f7781bb3eee6d1b7f"
+    },
+    {
+      "exists": true,
+      "path": "scripts/md_fix_dissociated_ligands.py",
+      "reason": "historical rescue utility; direct GROMACS calls; not publication-grade",
+      "sha256": "f7e4afd7637fb2ae9b5f7e8d6ec69838e22e20730052c244940364e4ad9a07eb"
+    },
+    {
+      "exists": true,
+      "path": "scripts/prepare_pfdhfr_with_docked_pose.py",
+      "reason": "historical one-off parent-lead preparation; not canonical",
+      "sha256": "c5f84894ea7b7b1feae26e2bce3bbca2ca3d09407554f12fd35bb27e676550b9"
+    },
+    {
+      "exists": true,
+      "path": "scripts/auto_mmpbsa_438.sh",
+      "reason": "historical monitor for excluded 438 conversion-artifact workflow",
+      "sha256": "057cbe10bcb477962c780236cee8174f81efce9e1cd5948fe3dfac4e8342c27f"
+    },
+    {
+      "exists": true,
+      "file_count": 53,
+      "path": "scripts/preparation/",
+      "reason": "historical preparation examples and generated command templates",
+      "sha256": null
+    }
+  ],
+  "report_written": true,
+  "schema": "p2-gromacs-entrypoint-audit/v2",
+  "status": "AUDIT_COMPLETE_NO_EXECUTION"
+}

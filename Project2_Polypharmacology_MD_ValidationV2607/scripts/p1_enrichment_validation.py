@@ -67,11 +67,14 @@ TARGETS = {
         "config": DOCKING / "Docking_6UKJ" / "config.txt",
         "chembl_target": "CHEMBL1795182",  # PfCRT
     },
-    "PfClpP_4GM2": {
+    # PDB 4GM2 is PfClpR, not PfClpP.  No PfClpP enrichment claim is
+    # accepted from this entry; retain the target only as an explicit block.
+    "PfClpR_4GM2_BLOCKED": {
         "pdb":    "4GM2",
         "pdbqt":  DATA / "proteins" / "4GM2.pdbqt",
         "config": DOCKING / "Docking_4GM2" / "config.txt",
-        "chembl_target": "CHEMBL4179069",  # PfClpP
+        "chembl_target": None,
+        "blocked_reason": "PDB 4GM2 is PfClpR rather than PfClpP; no PfClpP enrichment.",
     },
 }
 
@@ -361,6 +364,9 @@ def run_part_a() -> pd.DataFrame:
     
     for target_name, cfg in TARGETS.items():
         print(f"\n  Target: {target_name} ({cfg['pdb']})")
+        if cfg.get("blocked_reason"):
+            print(f"  BLOCKED: {cfg['blocked_reason']}")
+            continue
         
         # Try to load DEKOIS actives + decoys first (preferred)
         dekois_actives, dekois_decoys = load_dekois_actives_and_decoys(cfg["pdb"])
@@ -619,6 +625,9 @@ def run_part_b() -> pd.DataFrame:
     records = []
     
     for target_name, cfg in TARGETS.items():
+        if cfg.get("blocked_reason"):
+            print(f"\n  BLOCKED {target_name}: {cfg['blocked_reason']}")
+            continue
         chembl_id = cfg.get("chembl_target")
         if not chembl_id:
             print(f"\n  Skipping {target_name}: no ChEMBL target ID.")

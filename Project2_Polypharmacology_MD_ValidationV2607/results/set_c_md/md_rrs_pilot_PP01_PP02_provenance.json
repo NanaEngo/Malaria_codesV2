@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "cohort_id": "P2_SET_C_MD_RRS_PILOT_PP01_PP02",
+  "cohort_mode": "pilot",
+  "candidate_ids": [
+    "PP-01",
+    "PP-02"
+  ],
+  "expected_rows": 16,
+  "candidate_sha256": "5fe90a6b7047626822e378cd0bcb5c41f7458b93a4ee63af3af3ead58ae45c36",
+  "qc_file": "results/set_c_md/set_c_trajectory_qc_pilot.csv",
+  "qc_file_sha256": "14633707224f1890a74aad57d10c912c43f17cf52ed39880b416772292cddc6f",
+  "analysis_rule_ids": [
+    "setc_p2_minheavy_5A_ge10percent_v1"
+  ],
+  "min_wt_bound_fraction": 0.1,
+  "metric": "MD_RRS = 100 * mutant bound_fraction / WT bound_fraction, averaged over targets with WT >= threshold",
+  "docking_rrs_not_replaced": true,
+  "full_cohort_output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/set_c_md/md_rrs_classification.csv",
+  "output": "results/set_c_md/md_rrs_pilot_PP01_PP02.csv"
+}

@@ -28,7 +28,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.loader import DataLoader
-from sklearn.metrics import roc_auc_score, average_precision_score
+from sklearn.metrics import roc_auc_score, average_precision_score, f1_score, balanced_accuracy_score
 from scipy import stats
 
 # Local imports
@@ -71,21 +71,78 @@ def get_device(name: str) -> torch.device:
 
 
 def load_splits(split_type: str) -> list:
-    """Returns list of 5 folds, each fold = list of 5 seed dicts"""
-    # For simplicity: return per-seed fold arrays
-    pass
+    """Load and validate frozen split files as ``folds x seeds``.
+
+    Each returned item is a list of five dictionaries with ``train``, ``val``
+    and ``test`` index arrays.  Split files are immutable provenance inputs;
+    missing or malformed files fail loudly rather than silently regenerating
+    folds during a benchmark.
+    """
+    if split_type not in {"random", "scaffold"}:
+        raise ValueError(f"Unsupported split_type={split_type!r}")
+
+    split_files = [
+        P5_ROOT / "results" / f"p5_splits_{split_type}_5fold_seed{seed}.npy"
+        for seed in SEEDS
+    ]
+    missing = [str(path) for path in split_files if not path.exists()]
+    if missing:
+        raise FileNotFoundError(
+            "Missing frozen split file(s); refusing to regenerate splits: "
+            + ", ".join(missing)
+        )
+
+    per_seed = [np.load(path, allow_pickle=True) for path in split_files]
+    if any(len(splits) != N_FOLDS for splits in per_seed):
+        raise ValueError(
+            f"Expected {N_FOLDS} folds for every {split_type} split file"
+        )
+
+    folds = []
+    for fold_idx in range(N_FOLDS):
+        seed_folds = []
+        for seed_idx, splits in enumerate(per_seed):
+            record = splits[fold_idx]
+            if not isinstance(record, dict) or not {"train", "val", "test"}.issubset(record):
+                raise ValueError(
+                    f"Malformed {split_type} split at fold={fold_idx}, "
+                    f"seed={SEEDS[seed_idx]}"
+                )
+            train = np.asarray(record["train"], dtype=np.int64)
+            val = np.asarray(record["val"], dtype=np.int64)
+            test = np.asarray(record["test"], dtype=np.int64)
+            if len(np.unique(train)) != len(train) or len(np.unique(val)) != len(val) or len(np.unique(test)) != len(test):
+                raise ValueError(
+                    f"Duplicate indices in {split_type} split at fold={fold_idx}, "
+                    f"seed={SEEDS[seed_idx]}"
+                )
+            if (set(train) & set(val)) or (set(train) & set(test)) or (set(val) & set(test)):
+                raise ValueError(
+                    f"Overlapping train/val/test indices in {split_type} split at "
+                    f"fold={fold_idx}, seed={SEEDS[seed_idx]}"
+                )
+            seed_folds.append({"train": train, "val": val, "test": test})
+        folds.append(seed_folds)
+    return folds
 
 
 class P5Benchmark:
     def __init__(self, model_name: str, split_type: str = "random",
                  device: str = "auto", dry_run: bool = False,
-                 ckpt_path: Path | None = None, curves_only: bool = False):
+                 ckpt_path: Path | None = None, curves_only: bool = False,
+                 epochs: int = EPOCHS, tag: str = ""):
         self.model_name = model_name
         self.split_type = split_type
         self.device = get_device(device)
         self.dry_run = dry_run
-        self.ckpt_path = ckpt_path or (P5_ROOT / "results" / f"p5_{model_name}_{split_type}_ckpt.json")
+        # ``tag`` (e.g. "_replic") suffixes every output file so replication
+        # runs never overwrite canonical results.
+        self.tag = tag
+        self.ckpt_path = ckpt_path or (P5_ROOT / "results" / f"p5_{model_name}_{split_type}_ckpt{tag}.json")
         self.curves_only = curves_only
+        if epochs < 1:
+            raise ValueError("epochs must be >= 1")
+        self.epochs = epochs
 
         panel = pd.read_csv(P5_ROOT / "results" / "p5_canonical_panel.csv")
         self.smiles = panel["smiles"].tolist()
@@ -151,16 +208,8 @@ class P5Benchmark:
         return panel[[f"tne_{i}" for i in range(192)]].values.astype(np.float32)
 
     def _load_splits(self, split_type: str) -> list:
-        # Returns list of 5 folds, each fold is list of 5 seed dicts {train,val,test}
-        split_files = []
-        for seed in SEEDS:
-            f = P5_ROOT / "results" / f"p5_splits_{split_type}_5fold_seed{seed}.npy"
-            split_files.append(np.load(f, allow_pickle=True))
-        # transpose: folds x seeds
-        folds = []
-        for f_idx in range(N_FOLDS):
-            folds.append([sf[f_idx] for sf in split_files])
-        return folds
+        """Use the module-level fail-closed frozen-split loader."""
+        return load_splits(split_type)
 
     def _make_data_list(self, indices: np.ndarray) -> list:
         from torch_geometric.data import Data
@@ -176,10 +225,8 @@ class P5Benchmark:
             dl.append(d)
         return dl
 
-    def train_fold(self, fold_idx: int, seed: int) -> tuple[float, dict | None]:
-        """Returns (test_auc, desc_salience) where desc_salience is None for
-        non-fusion models. desc_salience = mean |W| over head input rows for the
-        descriptor columns (H3 attribution, no gradients needed)."""
+    def train_fold(self, fold_idx: int, seed: int) -> tuple[float, float, float, float, dict | None, list]:
+        """Returns (test_auc, test_ap, test_f1, test_bacc, desc_salience, curve)."""
         set_seed(seed)
         fold = self.folds[fold_idx][SEEDS.index(seed)]
         tr_idx, val_idx, te_idx = fold["train"], fold["val"], fold["test"]
@@ -205,7 +252,7 @@ class P5Benchmark:
         wait = 0
         curve = []
 
-        for epoch in range(EPOCHS):
+        for epoch in range(self.epochs):
             model.train()
             for batch in tr_loader:
                 batch = batch.to(self.device)
@@ -257,12 +304,16 @@ class P5Benchmark:
                 te_preds.append(torch.sigmoid(logits).cpu().numpy())
                 te_true.append(batch.y.cpu().numpy())
         te_auc = roc_auc_score(np.concatenate(te_true), np.concatenate(te_preds))
+        te_ap = average_precision_score(np.concatenate(te_true), np.concatenate(te_preds))
+        te_bin = (np.concatenate(te_preds) >= 0.5).astype(int)
+        te_f1 = f1_score(np.concatenate(te_true), te_bin)
+        te_bacc = balanced_accuracy_score(np.concatenate(te_true), te_bin)
 
         salience = None
         if self.desc is not None:
             w = best_state["head.0.weight"]  # [hidden, hidden+n_desc]
             salience = w[:, HIDDEN:].abs().mean(dim=0).numpy()  # [n_desc]
-        return float(te_auc), salience, curve
+        return float(te_auc), float(te_ap), float(te_f1), float(te_bacc), salience, curve
 
     def run(self) -> list[dict]:
         results = []
@@ -274,14 +325,14 @@ class P5Benchmark:
                     continue
                 print(f"Training {self.model_name} fold {f_idx} seed {seed} on {self.device}...")
                 if self.dry_run:
-                    te_auc = 0.5  # dummy
+                    te_auc, te_ap, te_f1, te_bacc, curve = 0.5, 0.5, 0.5, 0.5, []
                     salience = None
-                    curve = []
                 else:
-                    te_auc, salience, curve = self.train_fold(f_idx, seed)
+                    te_auc, te_ap, te_f1, te_bacc, salience, curve = self.train_fold(f_idx, seed)
                 results.append({
                     "model": self.model_name, "fold": f_idx, "seed": seed,
-                    "test_auc": te_auc, "split": self.split_type,
+                    "test_auc": te_auc, "test_ap": te_ap, "test_f1": te_f1,
+                    "test_bacc": te_bacc, "split": self.split_type,
                     "curve": curve,
                 })
                 if salience is not None and not self.curves_only:
@@ -294,14 +345,14 @@ class P5Benchmark:
         return results
 
     def _save_curves(self, results: list):
-        p = P5_ROOT / "results" / f"p5_{self.model_name}_{self.split_type}_curves.json"
+        p = P5_ROOT / "results" / f"p5_{self.model_name}_{self.split_type}_curves{self.tag}.json"
         curves = [{"fold": r["fold"], "seed": r["seed"], "curve": r["curve"]} for r in results]
         json.dump({"model": self.model_name, "split": self.split_type, "curves": curves}, open(p, "w"), indent=2)
         print(f"Curves written to {p} (canonical ckpt/CSV untouched)")
 
     def _accumulate_salience(self, sal: np.ndarray):
         """Mean |W| desc-projection per dim, accumulated across folds/seeds."""
-        p = P5_ROOT / "results" / f"p5_{self.model_name}_{self.split_type}_salience.json"
+        p = P5_ROOT / "results" / f"p5_{self.model_name}_{self.split_type}_salience{self.tag}.json"
         data = {"dim": list(range(len(sal))), "salience_mean": None, "n_seen": 0}
         if p.exists():
             data = json.load(open(p))
@@ -325,14 +376,24 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--epochs", type=int, default=EPOCHS)
     ap.add_argument("--curves-only", action="store_true")
+    ap.add_argument("--tag", default="",
+                    help="Output suffix (e.g. '_replic'); canonical files untouched when empty")
     args = ap.parse_args()
 
-    bench = P5Benchmark(args.model, args.split, args.device, args.dry_run, curves_only=args.curves_only)
+    bench = P5Benchmark(
+        args.model,
+        args.split,
+        args.device,
+        args.dry_run,
+        curves_only=args.curves_only,
+        epochs=args.epochs,
+        tag=args.tag,
+    )
     results = bench.run()
 
     # save CSV (never in dry-run or curves-only)
     if not args.dry_run and not args.curves_only:
-        out_csv = P5_ROOT / "results" / f"p5_{args.model}_{args.split}_results.csv"
+        out_csv = P5_ROOT / "results" / f"p5_{args.model}_{args.split}_results{args.tag}.csv"
         pd.DataFrame(results).to_csv(out_csv, index=False)
         print(f"Results written to {out_csv}")
 

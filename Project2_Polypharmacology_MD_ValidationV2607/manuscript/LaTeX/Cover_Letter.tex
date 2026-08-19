@@ -9,9 +9,10 @@
 \sisetup{separate-uncertainty=true, range-phrase=--}
 \DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
 \DeclareSIUnit\angstrom{\text{\AA}}
-\onehalfspacing
+\singlespacing
 
 \begin{document}
+\emergencystretch=2em
 
 \begin{flushleft}
 \textbf{Myke-Vital Temgoua Sao} \\
@@ -19,7 +20,7 @@ Department of Physics, Faculty of Science \\
 University of Yaound\'{e} I \\
 P.O. Box 812, Yaound\'{e}, Cameroon \\
 \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[1.5em]
-July 7, 2026
+August 10, 2026
 \end{flushleft}
 
 \begin{flushleft}
@@ -32,11 +33,11 @@ American Chemical Society
 
 \noindent Dear Prof.\ Merz,
 
-We submit our manuscript \textbf{``Resistance-Resilient Antimalarial Leads from African Natural Products: MD Validation Against Resistance Mutants''} for consideration as an Article in \textit{JCIM}.
+We submit our manuscript \textbf{``Resistance-Aware Polypharmacology of Antimalarial Leads from African Natural Products: Docking, Network Scoring, and Targeted Molecular Dynamics''} for consideration as an Article in \textit{JCIM}.
 
-This work presents the first systematic MD validation of antimalarial leads against a panel of African-prevalent resistance mutations, with production MD (\SI{40}{\nano\second} across 4 wild-type complexes) and docking-based scoring across 220 protein--ligand systems. We validate 20 candidates from a generative antimalarial library against six clinically relevant mutations (PfDHFR-N51I, C59R, S108N, I164L; PfCRT-K76T, K76A) using MM-GBSA free energy calculations. Three novel metrics are introduced: the Resistance Resilience Score (RRS) classifying compounds by binding resilience across mutants, the African Chemical Space Index (ACSI) quantifying NP character retention (\qty{23.5}{\percent} highly NP-like), and the Polypharmacology Network Score (PNS) weighting target engagement by STRING interactome centrality. External Tartarus benchmarking confirms that MPO drug-likeness and binding affinity are orthogonal (Spearman $\rho \approx 0$, $p = 0.09$).
+This work tests a layered, resistance-aware prioritisation strategy rather than assigning a systems-level mechanism of action from docking alone. The 17 Set-C candidates were evaluated by docking-derived RRS across six resistance states, with ACSI and PNS providing complementary chemical-space and network-ranking dimensions; four separate parent-study complexes underwent targeted wild-type MD (\SI{10}{\nano\second} each; \SI{40}{\nano\second} total). Six candidates were Class~A*, five Class~B, five Class~C, and one Class~D under the per-target RRS definition. Only PfCRT--214 yielded an interpretable MM-GBSA estimate; the other parent-study systems were dissociated or conversion-excluded. Tartarus analysis provided no evidence of a composite MPO--affinity association, and this null result is interpreted as separation of ranking dimensions rather than proof of statistical independence.
 
-All protocols, trajectories, and scoring outputs are deposited on Zenodo and GitHub under open-source licences. Statistical robustness is ensured through bootstrap confidence intervals and Bonferroni-corrected hypothesis testing.
+The code, compact scoring outputs, and source-data manifests are available in the GitHub repository under an open-source licence. Large parent-study trajectories are identified with their analysis boundaries and are not used beyond the systems and checksums that can be verified. Statistical interpretation is bounded by effect sizes, exact $p$-values, and pre-specified Bonferroni correction; incomplete Set-C MD-RRS is not presented as a result.
 
 \noindent\textbf{Suggested reviewers.}
 \begin{enumerate}

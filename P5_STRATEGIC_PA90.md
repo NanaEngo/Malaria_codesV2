@@ -1,7 +1,7 @@
 # P5 — Plan Stratégique d'Implémentation (PA ≥ 90 %)
 
-**Version:** v1 (01/08/2026)
-**Statut:** 🔄 Document vivant — **à améliorer régulièrement** à chaque milestone
+**Version:** v2 (08/08/2026)
+**Statut:** ✅ Phase 1-2 complétées — clôture L5 (Zenodo) & push GitHub en cours ; mise à jour 08/08 avec benchmark public + réplication
 **Boussole liée:** `P5_DATA_ANALYSIS_REPORT.md` (données), `AGENTS.md` (workflow)
 
 > Objectif : produire un manuscrit P5 **Q1 avec probabilité d'acceptation (PA) ≥ 90 %**.
@@ -13,9 +13,9 @@
 ## 1. Thèse & Déclaration de Nouveauté (le « pourquoi » de la soumission)
 
 > *« Sur un panel de produits naturels antimalariens curé (n = 19,836), les GNN compacts avec
-> fusion de descripteurs topologiques (TDA/TFP, TNE) réduisent l'écart — et sous scaffold split
-> dépassent — les fingerprints classiques, tandis que les transformers n'offrent aucun "free lunch"
-> à cette échelle. »*
+> fusion de descripteurs topologiques (TDA/TFP, TNE) apportent un signal interprétable mais ne
+> dépassent pas les fingerprints classiques sous scaffold split, tandis que les transformers
+> n'offrent aucun "free lunch" à cette échelle. »*
 
 **3 piliers défendables (Q1):**
 1. **Référence inter-projet unique** : mêmes panel, splits, protocole que P3 → comparaison directe
@@ -35,11 +35,11 @@ La PA se construit par **leviers indépendants**. Chaque levier rempli → point
 |:-:|:-------|:------------:|:-----------------------|:------:|
 | L1 | Panel/protocole reproductible & figé | +20 pts | Panel 19,836 ✓, splits figés ✓, sanity 0.9428 ✓ | ✅ **Fait (v1-prep)** |
 | L2 | Résultat positif significatif | +25 pts | ~~≥1 fusion topologique > ECFP4 sous scaffold (DeLong p<0.05)~~ **`H1 FAIL (04/08)`** | ❌ **Échoué (remplacé)** |
-| L3 | Honest negative / null | +30 pts | **H1 nul**: aucune GNN/fusion > ECFP4-RF scaffold (0.8300) ; GIN −0.025 (p=0.051), GIN-TFP −0.016 (p=0.081), GIN-TNE −0.023 (p=0.015). **H2 nul**: ChemBERTa scaffold 0.7867 vs 0.8300 (Δ −0.043, p<0.0001) → transformer ≤ GNN ≤ fingerprints | ✅ **Fait (04/08)** |
+| L3 | Honest negative / null | +30 pts | **H1 confirmé**: aucune GNN/fusion > ECFP4-RF scaffold (0.8300) ; GIN −0.025 (p=0.018), GIN-TFP −0.016 (p=0.025), GIN-TNE −0.021 (p=0.038), tous BH-FDR significatifs. **H2 nul**: ChemBERTa scaffold 0.7867 vs 0.8300 (Δ −0.043, p<0.0001) → transformer ≤ GNN ≤ fingerprints | ✅ **Fait (06/08)** |
 | L4 | Contribution méthodologique/interprétabilité | +20 pts | Attribution/salience des dims TFP/TNE (H3, bridge P3 H1-RRS) — **DONNÉES ACQUISES (04/08)** : TFP pers_img dominant (sal 0.079), TNE top dims 68/43/92/66/165 | ✅ **Données faites (04/08)** — écriture L4 en cours |
-| L5 | Benchmark/dataset libéré (Zenodo) | +10 pts | Zenodo deposit (DOI) aligné P1/P3 | ⏳ Phase 3 |
-| L6 | Narration/figures publication-grade | +15 pts | Figures bar + courbes d'apprentissage, manuscrit LaTeX complet | ⏳ Phase 2-3 |
-| | **Total** | **95 pts** | | ~70/95 |
+| L5 | Benchmark/dataset libéré | +10 pts | Public GitHub release; Zenodo DOI reserved, upload pending | ⏳ Phase 3 |
+| L6 | Narration/figures publication-grade | +15 pts | Figures bar + courbes d'apprentissage, manuscrit LaTeX complet | ✅ **Manuscrit `V2608` compilé (08/08)** — journal JoC, 0 TODO, cover letter ✓ |
+| | **Total** | **95 pts** | | ~70/95 (+ buffer extern quel) |
 
 **Gate de décision — EXÉCUTÉ (04/08) :** L2 a échoué (aucune fusion > ECFP4 sous scaffold, voir
 résultats v3 §10). **Thèse basculée sur L3+L4+L5** (honest negative + topologie) — aligné sur le
@@ -68,9 +68,10 @@ famille GNN/fusion ≤ fingerprints sous OOD scaffold »), documenté avec p-val
 | M1.6 | **Résultats v1 + analyse statistique** | — | L2/L3 évalués |
 
 **Configuration v1 (Phase 1) :** deployé 04/08 — **`H1 FAIL`** : GIN random 0.9098±0.0067,
-GIN scaffold 0.8047±0.0395, GIN-TFP 0.8137±0.0300, GIN-TNE 0.8068±0.0366 vs ECFP4-RF scaffold
-**0.8300** (random 0.9433). Aucune GNN/fusion ne bat ECFP4-RF sous scaffold (paired t : TNE p=0.015
-significativement pire, GIN p=0.051 ns, TFP p=0.081 ns). → **Pivot L3+L4 actif.**
+GIN scaffold 0.8047±0.0395, GIN-TFP 0.8138±0.0352, GIN-TNE 0.8090±0.0378 vs ECFP4-RF scaffold
+**0.8300** (random 0.9433). Aucune GNN/fusion ne bat ECFP4-RF sous scaffold ; les quatre bras sont
+significativement inférieurs après appariement par moyennes par seed et correction BH-FDR (GIN
+p=0.018, GIN-TFP p=0.025, GIN-TNE p=0.038). → **Pivot L3+L4 confirmé.**
 
 ### Phase 2 — Scaffold + Interprétabilité (v2)
 - [x] Ré-exécuter les modèles sous scaffold split (5 folds × 5 seeds) — **fait (04/08)** : GIN,
@@ -78,10 +79,13 @@ significativement pire, GIN p=0.051 ns, TFP p=0.081 ns). → **Pivot L3+L4 actif
 - ✅ **H3 salience — données ACQUISES (04/08)** : capture salience (mean \|W\| sur colonnes desc de
   `head.0.weight`) + re-runs fusion jobs 12811/12812 → **TFP : pers_img (33:58) dominant (0.079)**,
   **TNE : top dims 68/43/92/66/165**, top-10% = 17.3% salience. Écriture contribution L4 en cours.
-- ✅ **ChemBERTa scaffold (H2) COMPLET (04/08, job 12813, leak-fixed)** : **0.7867 ± 0.0338** vs ECFP4-RF
+- ✅ **ChemBERTa scaffold (H2) COMPLET (06/08, job 12813, leak-fixed)** : **0.7867 ± 0.0338** vs ECFP4-RF
   0.8300 → **Δ −0.043, p<0.0001** (paired t, 5 seeds). Hiérarchie scaffold : ECFP4-RF > GIN-TFP > GIN-TNE > GIN > ChemBERTa. Transformer ≤ GNN ≤ fingerprints CONFIRMÉ → L3 doublé.
-- 🔄 **ChemBERTa random (H2)** — job 12814 en cours (premier run avec capture `curve` par époch).
-- ⏳ Courbes d'apprentissage (N = 500 → 19,836) — capture par époch prête (`curve` key), à produire après 12814.
+- ✅ **ChemBERTa random (H2)** — job 12815 terminé, 0.9121 ± 0.0047 (leak-fixed).
+- ✅ Courbes d'apprentissage — capture par époque et figure générées à partir des runs leak-fixed ; les courbes décrivent la convergence, pas une validation indépendante.
+- ✅ **Réplication ECFP4-RF indépendante (08/08, jobs 12844/12845)** : re-run sur splits figés → **verdict PASS** (random 0.9433 / scaffold 0.8300, Δ 0.000 vs committé, tolérance 0.005) — `p5_replication_verification.json`.
+- ✅ **Validation externe MoleculeNet/ChEMBL malaria (08/08, jobs 12846-12848)** : le panel ChEMBL filtré contient 22,447 composés; après exclusion de 180 molécules chevauchant le panel P5, le panel public disjoint utilisé pour l'évaluation contient **22,267** composés. Sous scaffold split, **ECFP4-RF 0.9190 > GIN 0.8843 (Δ=−0.0346, p<0.0001)** ; random 0.9547 vs 0.9237 (Δ=−0.031, p=0.0001). Le verdict « fingerprints > GNN » est **reproduit sur un panel public disjoint** → L3 renforcé hors panel canonique.
+- ✅ **Manuscrit `P5_manuscript_V2608.tex` compilé (08/08 06:58)** : 0 TODO/FIXME/undefined, sections H1/H2/H3 + leak audit + Discussion, figures (benchmark, learning curves, salience), Cover Letter JoC.
 
 ### Phase 3 — Génération (stretch, seulement si Phase 1–2 montrent un gain net)
 - Génération GNN/Transformer validée sur les top-candidats P3, ou réutilisation P4 MCTS.
@@ -117,6 +121,10 @@ featurization/cache.** Un smoke test GPU vs CPU doit être enregistré (rapport 
 
 ---
 
+## 6.1 LISH-MoA external extension (separate, pre-submission)
+
+An isolated `P5_LISH_MOA_EXTERNAL_V1` extension is now implemented as a potential biological representation-transfer benchmark. It is not a replacement for the molecule-disjoint ChEMBL malaria panel. The preparation audit aggregates repeated observations by `drug_id`; the phenotype-only arm is primary, while structure-only and multimodal arms require a versioned one-to-one structure mapping. Mean column-wise log loss is primary, with macro-AUPRC/AUROC secondary. The result remains outside the manuscript until mapping coverage, drug/scaffold split integrity, label sparsity, and reproducibility gates pass. The corresponding P3 descriptor runner consumes only the audited mapped artifact; QKS remains a separate bounded experiment.
+
 ## 6. Registre de Risques (acceptation → mitigation)
 
 | Risque | Prob. | Impact | Mitigation |
@@ -147,10 +155,14 @@ featurization/cache.** Un smoke test GPU vs CPU doit être enregistré (rapport 
 5. [x] **H2 ChemBERTa scaffold COMPLET (job 12813)** : 0.7867 vs 0.8300, p<0.0001 → transformer ≤ GNN CONFIRMÉ
 6. [x] **H3 re-runs fusion + salience (jobs 12811/12812)** : TFP pers_img dominant, TNE top dims identifiées
 7. [x] **`p5_figure.py` écrit → bar figure** bipanel random/scaffold avec CI honnêtes ECFP4 — **04/08**
-8. [ ] **H2 ChemBERTa random** (job 12814 en cours) → premier run avec courbes par époch
-9. [ ] Courbes d'apprentissage (`p5_learning_curves.py` prêt, à exécuter après 12814)
-10. [ ] Manuscrit LaTeX (thèse honest-negative L3 + interprétabilité L4)
-11. [ ] Mise à jour régulière de **ce** document à chaque milestone
+8. [x] **H2 ChemBERTa random** (job 12815) : 0.9121 ± 0.0047, leak-fixed
+9. [x] Courbes d'apprentissage (`p5_learning_curves.py`) générées à partir des runs leak-fixed
+10. [x] Manuscrit LaTeX (thèse honest-negative L3 + interprétabilité L4)
+11. [x] Mise à jour régulière de **ce** document à chaque milestone — **v2 (08/08)**
+12. [x] **Réplication indépendante ECFP4-RF (jobs 12844/12845)** : verdict PASS — 08/08
+13. [x] **Validation externe MoleculeNet malaria (jobs 12846-12848)** : ECFP4-RF > GIN, p<0.0001 — 08/08
+14. [x] **Manuscrit `V2608` + Cover Letter compilés** (0 erreur/undefined, 0 TODO) — 08/08
+15. [ ] **L5 : upload Zenodo + GitHub release + git push final** (seul levier resté ouvert)
 
 ---
 

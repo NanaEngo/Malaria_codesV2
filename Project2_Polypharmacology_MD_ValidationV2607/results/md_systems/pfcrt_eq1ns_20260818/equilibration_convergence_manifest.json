@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "status": "CONVERGED",
+  "created_utc": "2026-08-19T05:01:00.261844+00:00",
+  "jobs": [
+    "15387",
+    "15388"
+  ],
+  "note": "15387 ran 784 ps (3 h walltime cutoff); 15388 resumed from the checkpoint to 1 ns",
+  "duration_ps": 1000.0,
+  "temperature": {
+    "name": "temperature_k",
+    "n": 1001,
+    "mean": 310.16763267432566,
+    "std": 0.9353076453396241,
+    "min": 307.038544,
+    "max": 313.180237,
+    "first_half_mean": 310.118326554,
+    "second_half_mean": 310.2168403792415,
+    "drift_pct": 0.031761478266466164
+  },
+  "pressure": {
+    "name": "pressure_bar",
+    "n": 1001,
+    "mean": -3.9499838721278726,
+    "std": 84.22907829524394,
+    "min": -232.688965,
+    "max": 322.684937,
+    "first_half_mean": -7.522268822,
+    "second_half_mean": -0.38482923153692544,
+    "drift_pct": -180.69541095665554
+  },
+  "density": {
+    "name": "density_kg_m3",
+    "n": 1001,
+    "mean": 1021.1207485174826,
+    "std": 1.5400143638382613,
+    "min": 1016.857117,
+    "max": 1026.163086,
+    "first_half_mean": 1021.2093742860002,
+    "second_half_mean": 1021.0322996467066,
+    "drift_pct": -0.017341204705774226
+  },
+  "log_scan": {
+    "rows": 13819,
+    "error_markers": [],
+    "performance_ns_per_day": 6.119
+  },
+  "verdict": {
+    "temperature_within_5K": true,
+    "density_drift_lt_1pct": true,
+    "no_error_markers": true,
+    "note": "temperature/pressure/density convergence is descriptive; a single 1 ns replicate does not establish equilibrium"
+  }
+}

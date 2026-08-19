@@ -422,7 +422,7 @@ def main():
         ax.grid(True, alpha=0.3)
         plt.tight_layout()
         out_png = RESULTS_DIR / "p3_ga_discriminator.png"
-        fig.savefig(out_png, dpi=150, bbox_inches="tight")
+        fig.savefig(out_png, dpi=300, bbox_inches="tight")
         plt.close()
         print(f"  Plot saved: {out_png}")
     except Exception as e:

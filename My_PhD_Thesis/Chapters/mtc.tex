@@ -1,0 +1,36 @@
+%
+% Divers macros tcolorbox
+%-----------------------------------------------------------------------------
+% Divers Box en couleur avec le package tcolorbox
+% Faire attention à l'ordre des options!!!
+\usepackage[most]{tcolorbox}
+%\usepackage{varioref}
+%
+%-----------------------------------------------------------------------------
+% Macro des ``theorems'' colorés
+
+% Théorème avec caption et label=th:
+\newtcbtheorem[number within=section]{theorem}{Théorème}
+{fonttitle=\bfseries\upshape,fontupper=\slshape,arc=0mm, colback=red!3,colframe=red!75!black, separator sign dash,breakable}{th}
+%
+% Définition avec caption et label=df:
+\newtcbtheorem[number within=section]{definition}{Définition}
+{fonttitle=\bfseries\upshape, fontupper=\slshape, arc=0mm, colback=blue!3,colframe=blue!75!black,separator sign dash,breakable}{df}
+%
+% % Remarque avec caption et label=rq:
+\newtcbtheorem[number within=section]{remark}{Remarque}
+{fonttitle=\bfseries\upshape,fontupper=\slshape, arc=0mm, colback=yellow!3,colframe=yellow!35!black,separator sign dash,breakable,beamer}{rq}
+
+%Nécessaire pour la page de garde
+
+\newtcolorbox{boxtitle}[2][]{%
+  attach boxed title to top center
+               = {yshift=-8pt},
+  colback      = blue!5!white,
+  colframe     = blue!75!black,
+  fonttitle    = \bfseries,
+  colbacktitle = blue!85!black,
+  title        = #2,#1,
+  enhanced,
+}
+

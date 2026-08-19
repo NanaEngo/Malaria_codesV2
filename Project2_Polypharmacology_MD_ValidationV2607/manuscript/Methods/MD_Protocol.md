@@ -1,5 +1,9 @@
 # MD Simulation Protocol: Polypharmacological Antimalarial Leads
 
+## Historical protocol — superseded for active P2 claims
+
+> This file is retained as a historical methods note. Its 300 K, 200 ns, 20-system, and three-replicate examples are not the canonical P2 results. Active claims are defined by `scripts/md_simulation_protocol.md` and the canonical manuscript: four parent-study complexes, 10 ns each at 310.15 K; no set-C production MD.
+
 ## Version 1.0 - April 8, 2026
 
 ---
@@ -434,7 +438,7 @@ md5sum -c md_checksums.md5
 │   └── ...
 ├── PfCRT_6UKJ/
 ├── PfATP4_9N10/
-└── PfClpP_4GM2/
+└── Historical_164_PfClpP_4GM2/  (cohort label; 4GM2 is PfClpR, not PfClpP)
 ```
 
 ### 7.3 Storage Requirements

@@ -1,6 +1,8 @@
 #!/bin/bash
 # ==============================================================================
-# Install Gnina v1.3.3 on HPC (nanaengo@100.73.21.40)
+# Historical GNINA installer targeting v1.3.3 (nanaengo@100.73.21.40)
+# The currently retained binary was independently audited as v1.3.2; this script
+# is not provenance for that binary and must not be used to infer execution results.
 #
 # Gnina is a deep learning docking tool that uses CNN scoring.
 # It requires CUDA-capable GPU and NVIDIA drivers.

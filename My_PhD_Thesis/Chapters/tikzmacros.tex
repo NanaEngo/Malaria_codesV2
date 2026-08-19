@@ -1,0 +1,75 @@
+\usepackage{xcolor}
+\definecolor{orange1}{HTML}{F1753A}
+\definecolor{orange2}{HTML}{F7A13E}
+\definecolor{orange3}{HTML}{FC6300}
+\definecolor{root}{HTML}{B2B2B2}
+\usepackage{tikz}
+\usepackage{pgfmath}
+\usetikzlibrary{decorations.text, arrows.meta,calc,shadows.blur,shadings}
+%\usepackage{tikz}
+\usetikzlibrary{mindmap}
+
+\tikzstyle{noeuds}=[every node/.style=concept, concept color=blue!40]
+\tikzstyle{level 1 concept}+=[level distance=5cm , sibling angle = 120]
+\tikzstyle{level 2 concept}+=[level distance=4cm , sibling angle = 60]
+
+\renewcommand*\familydefault{\sfdefault} % Set font to serif family
+
+% arctext from Andrew code with modifications:
+%Variables: 1: ID, 2:Style 3:box height 4: Radious 5:start-angl 6:end-angl 7:text {format along path} 
+\def\arctext[#1][#2][#3](#4)(#5)(#6)#7{
+
+\draw[
+    color=white,
+    thick,
+    line width=1.3pt,
+    fill=#2
+]
+(#5:#4cm+#3) coordinate (above #1) arc (#5:#6:#4cm+#3)
+-- (#6:#4) coordinate (right #1) -- (#6:#4cm-#3) coordinate (below right #1) 
+arc (#6:#5:#4cm-#3) coordinate (below #1)
+-- (#5:#4) coordinate (left #1) -- cycle;
+\def\a#1{#4cm+#3}
+\def\b#1{#4cm-#3}
+\path[
+    decoration={
+        raise = -0.5ex, % Controls relavite text height position.
+        text  along path,
+        text = {#7},
+        text align = center,        
+    },
+    decorate
+    ]
+    (#5:#4) arc (#5:#6:#4);
+}
+
+%arcarrow, this is mine, for beerware purpose...
+%Function: Draw an arrow from arctex coordinate specific nodes to another 
+%Arrow start at the start of arctext box and could be shifted to change the position
+%to avoid go over another box.
+%Var: 1:Start coordinate 2:End coordinate 3:angle to shift from acrtext box  
+\def\arcarrow[#1](#2)(#3)[#4]{
+    \draw[thick,-,>=latex,color=#1,line width=1pt,shorten >=-2pt, shorten <=-2pt] 
+        let \p1 = (#2), \p2 = (#3), % To access cartesian coordinates x, and y.
+            \n1 = {veclen(\x1,\y1)}, % Distance from the origin
+            \n2 = {veclen(\x2,\y2)}, % Distance from the origin
+            \n3 = {atan2(\y1,\x1)} % Angle where acrtext starts.
+        in (\n3-#4: \n1) -- (\n3-#4: \n2); % Draw the arrow.
+}
+
+\def\arete{3} \def\epaisseur{5} \def\rayon{2}
+\newcommand{\ruban}{(0,0)
+++(0:0.57735*\arete-0.57735*\epaisseur+2*\rayon)
+++(-30:\epaisseur-1.73205*\rayon)
+arc (60:0:\rayon) -- ++(90:\epaisseur)
+arc (0:60:\rayon) -- ++(150:\arete)
+arc (60:120:\rayon) -- ++(210:\epaisseur)
+arc (120:60:\rayon) -- cycle}
+
+
+
+
+
+
+
+

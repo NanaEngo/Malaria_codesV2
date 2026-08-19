@@ -58,11 +58,14 @@ TARGETS = {
         "config": DOCKING / "Docking_6UKJ" / "config.txt",
         "chembl_target": "CHEMBL1795182", # PfCRT
     },
-    "PfClpP_4GM2": {
+    # PDB 4GM2 is PfClpR, not PfClpP.  No PfClpP ChEMBL calibration is
+    # accepted from this entry; retain the target only as an explicit block.
+    "PfClpR_4GM2_BLOCKED": {
         "pdb":    "4GM2",
         "pdbqt":  DATA / "proteins" / "4GM2.pdbqt",
         "config": DOCKING / "Docking_4GM2" / "config.txt",
-        "chembl_target": "CHEMBL4179069", # PfClpP
+        "chembl_target": None,
+        "blocked_reason": "PDB 4GM2 is PfClpR rather than PfClpP; no PfClpP calibration.",
     },
 }
 
@@ -193,6 +196,8 @@ def main():
     print("=" * 60)
 
     cfg = TARGETS[args.target]
+    if cfg.get("blocked_reason"):
+        raise SystemExit(f"BLOCKED: {cfg['blocked_reason']}")
     print(f"  Fetching ChEMBL actives for {args.target} "
           f"(ChEMBL ID: {cfg['chembl_target']})...")
     actives = fetch_chembl_pf_actives(cfg["chembl_target"])

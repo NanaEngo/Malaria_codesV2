@@ -1,6 +1,12 @@
 """
 MD Simulation: Ligand Topology Preparation
 
+This is a preparation utility, not an execution command. Its GAFF2 fallback is
+retained only for diagnostics and is never sufficient evidence for a
+CHARMM36m-compatible production campaign; a future production system must
+record the chosen ligand force field in a provenance manifest and fail closed
+when the approved force-field policy is not met.
+
 Force field strategy (per roadmap v1.4):
   - PfDHFR, PfATP4, PfClpP ligands: OpenFF 2.2 (Sage) via OpenFF Toolkit
     Fully automated, no manual penalty review, validated on drug-like/NP molecules.
@@ -229,7 +235,7 @@ def _fallback_gaff2(pdb_file, output_dir, ligand_name, net_charge, timeout=1200)
     Each attempt uses a shorter timeout (``timeout_per_attempt``) to avoid
     blocking the entire pipeline on a single problematic ligand.
     """
-    print(f"  [GAFF2 FALLBACK] Using ACPYPE for {ligand_name} — not compatible with CHARMM36m.")
+    print(f"  [GAFF2 FALLBACK] Using ACPYPE for {ligand_name} — diagnostic only; incompatible with CHARMM36m protein and blocked for publication-grade production.")
 
     # Use shorter per-attempt timeouts so one failure does not block everything
     timeout_per_attempt = min(timeout // 3, 360)  # max 360 s per attempt

@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import warnings
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -53,8 +54,13 @@ def load_curves() -> dict[str, dict[str, tuple[np.ndarray, np.ndarray, np.ndarra
             padded = np.full((len(curves), max_len), np.nan)
             for i, c in enumerate(curves):
                 padded[i, : len(c)] = np.asarray(c, dtype=float)
-            mean = np.nanmean(padded, axis=0)
-            std = np.nanstd(padded, axis=0, ddof=1)
+            # all-NaN epoch slices (curves early-stopped at different lengths)
+            # would trigger a numpy RuntimeWarning; suppress it, NaN is handled by matplotlib
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", RuntimeWarning)
+                mean = np.nanmean(padded, axis=0)
+                ddof = 1 if len(curves) > 1 else 0
+                std = np.nanstd(padded, axis=0, ddof=ddof)
             result[model][split] = (np.arange(1, max_len + 1), mean, std, len(curves))
     return result
 

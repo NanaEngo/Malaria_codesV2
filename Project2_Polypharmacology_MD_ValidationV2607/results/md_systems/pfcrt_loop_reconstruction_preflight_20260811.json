@@ -1,0 +1,110 @@
+{
+  "schema_version": 2,
+  "created_utc": "2026-08-11T13:03:30.385419+00:00",
+  "status": "BLOCKED_NO_LOOP_MODELING_BACKEND",
+  "scientific_interpretation": "PREFLIGHT_ONLY_NO_CANDIDATE_NO_LOOP_RECONSTRUCTION_NO_MD",
+  "preflight_provenance": {
+    "script": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/scripts/p2_pfcrt_loop_reconstruction_preflight.py",
+    "script_sha256": "832e7418e3d6cd1a442b892e981a85a474236242cfa0e472f96abdf482f28c2e",
+    "python": "/home/nanaengo/miniforge3/envs/malaria_md/bin/python",
+    "python_version": "3.11.15 | packaged by conda-forge | (main, Jun 11 2026, 03:34:02) [GCC 14.3.0]",
+    "packages": {
+      "pdbfixer": {
+        "available": true,
+        "version": null
+      },
+      "openmm": {
+        "available": true,
+        "version": "8.5.2"
+      },
+      "modeller": {
+        "available": false,
+        "version": null
+      }
+    }
+  },
+  "reference": {
+    "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/6UKJ.pdb",
+    "sha256": "9d5d008f38b7d7937f37737868c7bee047d01c0ea51e48cfe077595b28e77562",
+    "chain": "A"
+  },
+  "mapping_artifact": {
+    "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_6ukj_sequence_mapping_20260811.json",
+    "sha256": "b57c011c227f7deffafece1c8956c352157c4e9fed14ae499c0cb10cc094c7ac",
+    "status": "MAPPING_AUDIT_ONLY",
+    "reference_hash_match": true,
+    "missing_loop_pdb_numbers": [
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122
+    ],
+    "critical_checks_pass": true
+  },
+  "uniprot_provenance": {
+    "path": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_sequence_reference_20260811/W7FI62_provenance.json",
+    "sha256": "8b04583e5a41670b776ab339f795bcd5833836f55fdaf38ddeac443c60b2235d",
+    "status": "FETCHED_AUTHORITATIVE_SEQUENCE",
+    "accession": "W7FI62",
+    "critical_checks_pass": true
+  },
+  "gap_detection": {
+    "requested_pdb_window": [
+      114,
+      122
+    ],
+    "expected_sequence": [
+      "ASN",
+      "LYS",
+      "LYS",
+      "GLY",
+      "ASN",
+      "SER",
+      "LYS",
+      "GLU",
+      "ARG"
+    ],
+    "matching_pdbfixer_regions": [
+      {
+        "key": [
+          0,
+          67
+        ],
+        "residues": [
+          "ASN",
+          "LYS",
+          "LYS",
+          "GLY",
+          "ASN",
+          "SER",
+          "LYS",
+          "GLU",
+          "ARG"
+        ]
+      }
+    ],
+    "exactly_one_matching_region": true,
+    "mapping_gap_exact": true
+  },
+  "backend": {
+    "pdbfixer": {
+      "available": true,
+      "version": null
+    },
+    "openmm": {
+      "available": true,
+      "version": "8.5.2"
+    },
+    "modeller": {
+      "available": false,
+      "version": null
+    }
+  },
+  "boundary": "No candidate coordinates were generated. No PDBFixer private residue-builder was called. No canonical PDB, mutant PDB, Set-C directory, trajectory, QC output, or MD-RRS output was modified.",
+  "next_required_input": "Provide a licensed/available internal-loop modeling backend (e.g., MODELLER, Rosetta, or a validated external comparative-model artifact) with sequence, template, seed, and output hashes before candidate generation."
+}

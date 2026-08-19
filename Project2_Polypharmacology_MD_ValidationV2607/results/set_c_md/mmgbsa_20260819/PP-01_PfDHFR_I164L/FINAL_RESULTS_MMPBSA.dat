@@ -1,0 +1,121 @@
+| Run on Wed Aug 19 07:23:50 2026
+|
+|gmx_MMPBSA Version=v1.5.0.3 based on MMPBSA.py v.16.0
+|Complex Structure file:                /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c_preparation_20260812_v1/PP-01_PfDHFR_I164L/runs/20260814T202407Z/replicate_1/production.tpr
+|Complex (GROMACS) topology file:       /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c_preparation_20260812_v1/PP-01_PfDHFR_I164L/runs/20260814T202407Z/replicate_1/topol.top
+|Complex (AMBER) topology file:                                       COM.prmtop
+|Receptor (AMBER) topology file:                                      REC.prmtop
+|Ligand (AMBER) topology file:                                        LIG.prmtop
+|Initial trajectories:                                            COM_traj_0.xtc
+|
+|Receptor mask:                  ":1-1093"
+|Ligand mask:                    ":1094"
+|Ligand residue name is:         "MOL0"
+|
+|Calculations performed using 100 complex frames
+|
+|Generalized Born ESURF calculated using 'LCPO' surface areas
+|
+|Using temperature = 298.15 K)
+|All units are reported in kcal/mol
+|
+|SD - Sample standard deviation, SEM - Sample standard error of the mean
+|SD(Prop.), SEM(Prop.) - SD and SEM obtained with propagation of uncertainty formula
+|https://en.wikipedia.org/wiki/Propagation_of_uncertainty#Example_formulae
+|
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+GENERALIZED BORN:
+
+Complex:
+Energy Component       Average     SD(Prop.)         SD   SEM(Prop.)        SEM
+-------------------------------------------------------------------------------
+BOND                   3828.41         54.39      54.39         5.44       5.44
+ANGLE                  8936.15         79.26      79.26         7.93       7.93
+DIHED                 11812.87         37.81      37.81         3.78       3.78
+UB                     1214.41         14.81      14.81         1.48       1.48
+IMP                     616.32         18.73      18.73         1.87       1.87
+CMAP                   -576.29         28.00      28.00         2.80       2.80
+VDWAALS               -8274.81         46.95      46.95         4.70       4.70
+EEL                  -72247.06        239.58     239.58        23.96      23.96
+1-4 VDW                3747.20         28.87      28.87         2.89       2.89
+1-4 EEL               48299.78        104.83     104.83        10.48      10.48
+EGB                  -13338.34        197.78     197.78        19.78      19.78
+ESURF                   412.11          3.88       3.88         0.39       0.39
+
+GGAS                  -2643.02        288.88     238.43        28.89      23.84
+GSOLV                -12926.23        197.82     196.48        19.78      19.65
+
+TOTAL                -15569.25        350.12     109.87        35.01      10.99
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+Receptor:
+Energy Component       Average     SD(Prop.)         SD   SEM(Prop.)        SEM
+-------------------------------------------------------------------------------
+BOND                   3815.73         54.09      54.09         5.41       5.41
+ANGLE                  8919.62         79.49      79.49         7.95       7.95
+DIHED                 11794.70         37.59      37.59         3.76       3.76
+UB                     1214.41         14.81      14.81         1.48       1.48
+IMP                     616.32         18.73      18.73         1.87       1.87
+CMAP                   -576.29         28.00      28.00         2.80       2.80
+VDWAALS               -8241.42         47.26      47.26         4.73       4.73
+EEL                  -72313.11        239.51     239.51        23.95      23.95
+1-4 VDW                3714.13         28.93      28.93         2.89       2.89
+1-4 EEL               48510.12        104.99     104.99        10.50      10.50
+EGB                  -13335.95        197.66     197.66        19.77      19.77
+ESURF                   413.19          3.88       3.88         0.39       0.39
+
+GGAS                  -2545.77        288.91     237.96        28.89      23.80
+GSOLV                -12922.76        197.70     196.37        19.77      19.64
+
+TOTAL                -15468.53        350.07     109.15        35.01      10.92
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+Ligand:
+Energy Component       Average     SD(Prop.)         SD   SEM(Prop.)        SEM
+-------------------------------------------------------------------------------
+BOND                     12.67          2.92       2.92         0.29       0.29
+ANGLE                    16.53          3.06       3.06         0.31       0.31
+DIHED                    18.17          3.67       3.67         0.37       0.37
+UB                        0.00          0.00       0.00         0.00       0.00
+IMP                       0.00          0.00       0.00         0.00       0.00
+CMAP                      0.00          0.00       0.00         0.00       0.00
+VDWAALS                   0.93          1.63       1.63         0.16       0.16
+EEL                      69.20          1.65       1.65         0.17       0.17
+1-4 VDW                  33.07          2.58       2.58         0.26       0.26
+1-4 EEL                -210.35          2.03       2.03         0.20       0.20
+EGB                     -18.08          1.24       1.24         0.12       0.12
+ESURF                     3.27          0.02       0.02         0.00       0.00
+
+GGAS                    -59.77          6.90       3.66         0.69       0.37
+GSOLV                   -14.82          1.24       1.24         0.12       0.12
+
+TOTAL                   -74.59          7.01       3.52         0.70       0.35
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+Delta (Complex - Receptor - Ligand):
+Energy Component       Average     SD(Prop.)         SD   SEM(Prop.)        SEM
+-------------------------------------------------------------------------------
+ΔBOND                    -0.00          2.61       0.00         0.26       0.00
+ΔANGLE                   -0.00          2.83       0.00         0.28       0.00
+ΔDIHED                    0.00          3.45       0.00         0.34       0.00
+ΔUB                       0.00          0.00       0.00         0.00       0.00
+ΔIMP                      0.00          0.00       0.00         0.00       0.00
+ΔCMAP                     0.00          0.00       0.00         0.00       0.00
+ΔVDWAALS                -34.32          1.32       3.41         0.13       0.34
+ΔEEL                     -3.15          1.58       3.78         0.16       0.38
+Δ1-4 VDW                 -0.00          2.52       0.00         0.25       0.00
+Δ1-4 EEL                  0.00          1.88       0.00         0.19       0.00
+ΔEGB                     15.69          1.12       3.20         0.11       0.32
+ΔESURF                   -4.35          0.02       0.40         0.00       0.04
+
+ΔGGAS                   -37.47          2.06       5.83         0.21       0.58
+ΔGSOLV                   11.34          1.12       3.00         0.11       0.30
+
+ΔTOTAL                  -26.13          2.34       3.76         0.23       0.38
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------

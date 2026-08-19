@@ -1,8 +1,7 @@
 %% ============================================================================
 %% Paper 3: Supplementary Material
 %% Target: Journal of Cheminformatics
-%% Updated: July 2026
-%% ============================================================================
+%%% ============================================================================
 
 \documentclass[11pt,a4paper]{article}
 
@@ -64,11 +63,9 @@
 % Path configuration
 \graphicspath{{Graphics/}}
 
-% ============================================================================
 % AUTHOR INFORMATION
-% ============================================================================
 
-\title{\textbf{Supplementary Material}\\Topological and tensor-network representations resolve chemical paradoxes in African antimalarial natural products}
+\title{\textbf{Supplementary Material}\\Do topological and quantum-inspired molecular representations add value?}
 
 \author[1]{Myke Vital Sao Temgoua}
 \author[1]{Jean-Pierre Tchapet Njafa}
@@ -82,49 +79,41 @@
 
 \date{\today}
 
-% ============================================================================
 % BEGIN DOCUMENT
-% ============================================================================
 
 \begin{document}
 
 \maketitle
 
-% ============================================================================
-% 1. CROSS-PAPER H$_1$ PERSISTENCE VS. RESISTANCE RESILIENCE SCORE
-% ============================================================================
+% H$_1$ PERSISTENCE AND RESISTANCE RESILIENCE SCORE
 
-\section{Cross-paper validation: topological persistence and resistance resilience}
+\section{Topological persistence and resistance resilience}
 
-This supplementary figure presents the joint analysis linking the topological fingerprints (TFP) introduced in the main manuscript with the resistance resilience scores (RRS) reported in the companion polypharmacology study (Paper~2). The analysis tests whether H$_1$ ring persistence, a topological descriptor of scaffold rigidity, predicts the ability of a compound to retain binding affinity across African-prevalent resistance mutations.
+This supplementary analysis tests whether the topological features introduced in the main manuscript carry an association with computational resistance-resilience scores (RRS) beyond molecular size and related structural covariates. It includes $n=\num{494}$ compounds with complete H$_1$ and RRS profiles; the analysis is exploratory and is not used to claim an independent topological biomarker.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{h1_rrs_class_violin.png}
-\caption{Joint topological analysis linking Paper~3 TFP features with Paper~2 resistance classification. Violin plots (pilot cohort, $n = \num{14}$) show H$_1$ persistence distributions for Class~A (resistance-resilient, blue) versus Class~D (resistance-vulnerable, red) compounds, with Class~B (green) and Class~C (orange) shown for context. Quantitative analysis of the expanded cohort ($n = \num{494}$; Class~A: $n=\num{295}$, Class~B: $n=\num{199}$) confirms a nominally significant association between H$_1$ count and continuous RRS (Spearman $\rho = \num{0.240}$, $p < \num{0.0001}$); the pilot $n = \num{14}$ correlation ($\rho = \num{0.947}$, $p < \num{0.0001}$, on H$_1$ total persistence) is shown for context but should be interpreted cautiously because the Class~D subset contains only one compound. Caution is required: this association does not survive control for molecular size (controlling for molecular weight alone collapses the correlation to $\rho_{\text{partial}} = -\num{0.018}$, $p = \num{0.69}$), indicating a size-mediated effect rather than an independent topological signal.}
+\caption{H$_1$--RRS analysis. The violin plot shows the exploratory subset; class-level differences are not interpreted as independent effects. In the expanded cohort ($n = \num{494}$), H$_1$ count showed a weak unadjusted association with continuous RRS (Spearman $\rho = \num{0.2399}$, $p = \num{6.76e-8}$), but the partial association was null after controlling for molecular weight, ring count, fraction sp$^3$, and H$_0$ count ($\rho_{\text{partial}} = \num{0.0329}$, $p = \num{0.4668}$). The result is size-mediated and hypothesis-generating, not evidence of an independent topological predictor.}
 \label{fig:h1_rrs}
 \end{figure}
 
-\section*{Data Availability}
-
-All data supporting the main manuscript and this Supplementary Material are publicly available on Zenodo (DOI: \url{https://doi.org/10.5281/zenodo.19608875}) and mirrored at \url{https://github.com/NanaEngo/Malaria_codesV2} under the MIT licence. See the main manuscript for a full inventory of deposit components.
-
-% ============================================================================
-
-% 2. TOPOLOGICAL FINGERPRINT STATISTICS
-
-% ============================================================================
 
 
 
-\section{Per-fold activity prediction statistics}
+\section{Pharmacophore fingerprint representation}
+\label{sec:phco_representation}
+
+The two-dimensional pharmacophore (PHCO) baseline uses RDKit's \texttt{SparseBitVect} representation. Active bit positions were transferred explicitly to the numerical feature matrix before cross-validation. Under this representation, PHCO achieved an AUC of \num{0.896} on the \num{19836}-molecule complete-embedding panel (\cref{M-tab:benchmark}).
+
+\section{Per-fold activity-prediction estimates}
 \label{sec:per_fold}
 
- \cref{tab:sm_s4_perfold} reports per-fold AUC, accuracy, and F1 for the six representation methods for which per-fold data were retained. ECFP4, TFP, and TNE values are from the corrected canonical classical benchmark (canonical panel, \num{19836} molecules); Hybrid values are from the canonical full-library hybrid rerun ; QKS and RBF values are from the \num{5000}-molecule canonical 6-qubit quantum-kernel benchmark . The full canonical-panel headline values are in the main manuscript (\cref{M-tab:benchmark}).
+ \cref{tab:sm_s4_perfold} gives per-fold AUC, accuracy, and F1 for six representation methods. ECFP4, TFP, and TNE use the \num{19836}-molecule complete-embedding panel; the hybrid uses the corresponding full analysis panel; QKS and RBF use a \num{5000}-molecule 6-qubit quantum-kernel panel. Summary estimates are given in the main manuscript (\cref{M-tab:benchmark}).
 
 \begin{table}[htbp]
 \centering
-\caption{Per-fold activity prediction statistics for six representation methods. ECFP4, TFP, and TNE values are from the corrected canonical classical benchmark (canonical panel \num{19836} molecules, 5-fold stratified CV, Random Forest, Aug 1, 2026). Hybrid values are from the canonical full-library hybrid rerun (Random Forest, Aug 1, 2026). QKS and RBF values are from the \num{5000}-molecule canonical 6-qubit quantum-kernel benchmark (state-vector kernel, gamma-tuned RBF). Headline AUC values in the main manuscript (\cref{M-tab:benchmark}) are from the canonical panel benchmark.}
+\caption{Per-fold activity-prediction statistics for six representation methods. ECFP4, TFP, and TNE use the \num{19836}-molecule Random Forest benchmark; the hybrid uses the corresponding Random Forest analysis; QKS and RBF use the \num{5000}-molecule 6-qubit state-vector SVM analysis. Because the rows differ in population and classifier, they are presented as complementary summaries rather than as a direct cross-method comparison. Summary estimates from the primary benchmark are given in the main manuscript (\cref{M-tab:benchmark}).}
 \label{tab:sm_s4_perfold}
 \small
 \begin{tabularx}{\textwidth}{l l S[table-format=1.3] S[table-format=1.3] S[table-format=1.3]}
@@ -170,7 +159,12 @@ RBF (gamma-tuned) & 5 & 0.818 & 0.843 & 0.900 \\
 \end{tabularx}
 \end{table}
 
-Full per-fold data files are available in the project repository.
+Complete per-fold records are included in the supplementary data archive.
+
+\section{Interpretation and cross-study scope}
+\label{sec:interpretation_scope}
+
+The TNE docking analysis measures information retention on the molecular set used to derive the embeddings; it does not assess prospective binding to new compounds. TNE was competitive with ECFP4 for PfDHFR (TNE $R^2 = \num{0.473}$ versus ECFP4 $R^2 = \num{0.461}$) but lower for PfATP4 and PfCRT; these target-specific results are therefore descriptive and do not establish a universal advantage. The expanded H$_1$--RRS analysis is hypothesis-generating: the unadjusted association is attenuated after adjustment for molecular size and related structural covariates, so no independent topological predictor is claimed. The four-complex P2 MD cohort is distinct from the P3 representation panel, and the present analysis does not provide experimental activity measurements; target-level computational scores should not be conflated with systems-level mechanism-of-action evidence \citep{Trapotsi2022MoA}.
 
 \section{Topological fingerprint statistics}
 
@@ -217,24 +211,14 @@ H$_2$ mean persistence (\si{\angstrom}) & 0.3844 & 0.0892 & 0.0000 & 1.0533 \\
 
 
 
-% ============================================================================
-
-% 3. CLUSTERING QUALITY METRICS
-
-% ============================================================================
 
 
-
-\section{PHCO fingerprint extraction bug}
-\label{sec:phco_bug}
-
-The Gobbi two-dimensional pharmacophore fingerprint (PHCO) in RDKit uses a \texttt{SparseBitVect} representation. The default conversion function \texttt{ConvertToNumpyArray} silently fails for this type, producing an all-zero vector (AUC $= \num{0.500}$, equivalent to random). This issue was corrected by extracting active bit positions via the \texttt{GetOnBits()} method and setting them individually in a NumPy array. On the corrected full-library benchmark (\cref{M-tab:benchmark}), PHCO achieves AUC $= \num{0.896}$, confirming that pharmacophore-based bit vectors carry discriminative information for this library when properly extracted. The value \num{0.801} reported in earlier development runs was from a smaller subsample before the full-library correction.
 
 \section{Clustering quality metrics}
 
 
 
-\cref{SM-tab:clustering} reports the clustering quality metrics used to address reviewer question R8.
+\cref{SM-tab:clustering} reports clustering quality metrics for the three representations.
 
 
 
@@ -255,17 +239,11 @@ ECFP4 (\num{2048}-dim) & 0.180 \\
 
 
 
-% ============================================================================
-
-% 4. GA-STYLE DISCRIMINATOR BENCHMARK
-
-% ============================================================================
-
 
 
 \section{Discriminator benchmark for structural expansion}
 
-The full discriminator benchmark comparing classical fingerprint similarity with quantum kernel density is reported in \cref{SM-tab:ga_discriminator} and visualised in \cref{SM-fig:ga_discriminator}.
+We compared classical fingerprint similarity with quantum-kernel density in \cref{SM-tab:ga_discriminator} and \cref{SM-fig:ga_discriminator}.
 
 \begin{table}[htbp]
 \centering
@@ -286,26 +264,23 @@ The full discriminator benchmark comparing classical fingerprint similarity with
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.80\textwidth]{p3_ga_discriminator.png}
-\caption{Chemical similarity versus quantum kernel density discriminator benchmark. AUC-ROC comparison between ECFP4 Tanimoto distance (orange) and quantum kernel density (blue) for distinguishing $N$ expanded molecules from \num{200} reference seeds. The dashed grey line marks random performance (AUC $= 0.5$). ECFP4 achieves perfect discrimination (AUC $= 1.0$) at all $N$, while the quantum kernel remains near-random (AUC $= \numrange{0.425}{0.511}$).}
+\caption{Chemical-similarity versus quantum-kernel-density discriminator benchmark. ECFP4 Tanimoto distance (orange) and quantum-kernel density (blue) distinguish $N$ expanded molecules from \num{200} reference seeds; the dashed line marks random performance (AUC $= 0.5$). ECFP4 reached AUC $= 1.0$ at all tested $N$, whereas the quantum-kernel discriminator remained near random (AUC $= \numrange{0.425}{0.511}$). This is an honest negative: the quantum kernel in 8-d UMAP space lacks the atomic-level resolution to detect near-identical structural matches that ECFP4 captures trivially. The result is consistent with the canonical QKS finding (quantum $\approx$ RBF, $p > 0.05$) and confirms that quantum kernels do not improve structural discrimination for this generative protocol.}
 \label{SM-fig:ga_discriminator}
 \end{figure}
 
-% ============================================================================
-% 5. QUANTUM PARAMETER OPTIMISATION
-% ============================================================================
 
 \section{Quantum circuit parameter optimisation}
 \label{sec:qp_optimisation}
 
-A systematic grid search over quantum circuit hyperparameters was performed to identify optimal IQPEmbedding parameters for the hybrid descriptor. The search covered \num{60} combinations: bond dimension $d \in \{4, 6, 8\}$, IQPEmbedding repeats $n_{\text{rep}} \in \{1, 2, 3, 4, 6\}$, and kernel PCA components $n_{\text{kpca}} \in \{5, 10, 20, 30\}$. Each combination was evaluated by 5-fold stratified cross-validation with a Random Forest classifier on $n = \num{200}$ molecules, measuring the Hybrid (TFP+TNE+QK) AUC.
+We compared \num{60} combinations of IQPEmbedding bond dimension ($d \in \{4,6,8\}$), repetition count ($n_{\text{rep}} \in \{1,2,3,4,6\}$), and kernel-PCA dimensionality ($n_{\text{kpca}} \in \{5,10,20,30\}$). Each combination was assessed by 5-fold stratified cross-validation with Random Forest on a \num{200}-molecule development subset; the selected configuration was subsequently evaluated on the \num{5000}-molecule panel.
 
-\cref{tab:qp_optimisation} reports the top three configurations by mean AUC from the phase-2 re-benchmark. The optimal combination ($d = 6$, $n_{\text{rep}} = 1$, $n_{\text{kpca}} = 30$) achieved AUC $\num{0.853} \pm \num{0.049}$ on the $n=\num{200}$ development subsample. The default configuration ($d = 8$, $n_{\text{rep}} = 2$, $n_{\text{kpca}} = 20$) achieved AUC $\num{0.842} \pm \num{0.051}$ on the same development set. The ECFP4 comparison here (AUC $\num{0.868}$) is from the preliminary run; the corrected canonical-panel ECFP4 is AUC $\num{0.948}$ (see \cref{M-tab:benchmark}). Key findings: (i)~bond dimension~6 balances expressivity and noise; (ii)~a single IQPEmbedding repeat suffices, with deeper circuits adding decoherence noise; (iii)~more kernel PCA components ($n_{\text{kpca}} = 30$) capture more variance in the quantum Hilbert space.
+The three highest-performing configurations are shown in \cref{tab:qp_optimisation}. The selected configuration ($d=6$, $n_{\text{rep}}=1$, $n_{\text{kpca}}=30$) achieved AUC $\num{0.8283}\pm\num{0.0371}$ on the \num{5000}-molecule panel. This result characterises the tested configuration and does not establish global optimality outside the present panel and protocol.
 
 The full optimisation heatmap and marginal parameter-effect boxplots are provided in \cref{fig:qp_heatmap,fig:qp_effects}.
 
 \begin{table}[htbp]
 \centering
-\caption{Top three quantum circuit configurations re-benchmarked on $n = \num{5000}$ molecules (5-fold CV, per-fold data in phase2 raw CSVs). The optimal configuration ($d = 6$, $n_{\text{rep}} = 1$, $n_{\text{kpca}} = 30$) achieved AUC $\num{0.8283} \pm \num{0.0371}$ on this subsample. The ECFP4 comparison (AUC $\num{0.868}$) is from the preliminary run; the corrected canonical-panel ECFP4 is AUC $\num{0.948}$ (see main manuscript \cref{M-tab:benchmark}).}
+\caption{Quantum-kernel hybrid configurations. The three highest-performing configurations are shown for the \num{5000}-molecule evaluation panel (5-fold stratified cross-validation). The highest-performing configuration ($d=6$, $n_{\text{rep}}=1$, $n_{\text{kpca}}=30$) achieved AUC $\num{0.8283}\pm\num{0.0371}$. The development and evaluation panels differ from the primary benchmark in the main manuscript.}
 \label{tab:qp_optimisation}
 \begin{tabularx}{\textwidth}{S[table-format=1.0] S[table-format=1.0] S[table-format=2.0] S[table-format=1.4] S[table-format=1.4]}
 \toprule
@@ -317,7 +292,7 @@ The full optimisation heatmap and marginal parameter-effect boxplots are provide
 \bottomrule
 \end{tabularx}
 \vspace{1mm}
-\footnotesize All values are from the Phase-2 re-benchmarking at $n = \num{5000}$ (\num{3732} active, \num{1268} inactive, \qty{74.6}{\percent}/\qty{25.4}{\percent}). The initial grid search was performed on $n = \num{200}$ molecules (\num{50}/\num{60} combinations completed); the top three combinations were selected for re-benchmarking at $n = \num{5000}$. This Phase-2 subsample (first $n=\num{5000}$ by source order) differs from the canonical panel (\qty{74.2}{\percent}/\qty{25.8}{\percent}) and from the QKS $n=\num{5000}$ kernel subsample (\qty{75.0}{\percent}/\qty{25.0}{\percent}, see \cref{sec:qks_benchmark}); each sample is described with its own class counts.
+\footnotesize Values are from the \num{5000}-molecule evaluation panel (\num{3732} active and \num{1268} inactive). The panel and development subset differ in class proportions and selection criteria from the primary activity analysis; the values therefore describe configuration performance rather than final model performance.
 \end{table}
 
 \begin{figure}[htbp]
@@ -334,14 +309,11 @@ The full optimisation heatmap and marginal parameter-effect boxplots are provide
 \label{fig:qp_effects}
 \end{figure}
 
-% ============================================================================
-% 6. MONTE CARLO UNCERTAINTY ESTIMATION
-% ============================================================================
 
 \section{Monte Carlo uncertainty estimation}
 \label{sec:mc_uncertainty}
 
-Uncertainty quantification was performed using a bootstrap Monte Carlo (MC) approach on the Random Forest classifier trained on the TFP+TNE descriptor (the topological and tensor-network components of the hybrid). For each of \num{100} test molecules, the classifier was re-evaluated over \num{50} bootstrap samples (bootstrap fraction 0.7, 30 trees per bootstrap), yielding a predictive probability distribution $p_i \sim \mathcal{N}(\hat{\mu}_i, \hat{\sigma}_i^2)$; conformal prediction at $\alpha = 0.05$ provided prediction sets. Results are summarised in \cref{tab:mc_uncertainty}.
+As a calibration analysis, we evaluated a Random Forest trained on the TFP+TNE representation using bootstrap resampling of \num{100} test molecules. The analysis used \num{50} bootstrap samples (fraction \num{0.7}, \num{30} trees per sample) and conformal prediction at $\alpha=0.05$. The resulting predictive uncertainty and coverage estimates are summarised in \cref{tab:mc_uncertainty}.
 
 \begin{table}[htbp]
 \centering
@@ -358,21 +330,18 @@ Mean conformal set size & 1.820 \\
 \bottomrule
 \end{tabularx}
 \vspace{1mm}
-\footnotesize The model is well-calibrated (ECE $< \num{0.05}$) with full conformal coverage. The mean set size $\geq \num{1.3}$ indicates that many predictions are ambiguous, and the uncertainty--error correlation is weak (Spearman $\rho = -\num{0.286}$, $p = \num{0.004}$), consistent with the MC uncertainty not reliably flagging misclassifications. Full protocol in \texttt{results/p3\_mc\_uncertainty\_summary.txt}.
+\footnotesize The low ECE and nominal conformal coverage indicate calibration in this secondary analysis, whereas the mean set size and weak uncertainty--error association (Spearman $\rho=-\num{0.286}$, $p=\num{0.004}$) indicate that uncertainty estimates did not reliably isolate misclassifications. This analysis complements, but does not replace, the held-out activity benchmark.
 \end{table}
 
-% ============================================================================
-% 7. COMPUTATIONAL SCALABILITY
-% ============================================================================
 
 \section{Computational scalability}
 \label{sec:scalability}
 
-\cref{tab:scalability} reports the measured wall-clock times of the three descriptor pipelines on the canonical library. The TDA and TNE pipelines scale linearly with library size; the quantum kernel matrix is $O(N^2)$.
+The measured computational costs of the three representation pipelines are summarised in \cref{tab:scalability}. Feature construction was approximately linear in library size, whereas formation of the dense quantum-kernel matrix followed $O(N^2)$ scaling.
 
 \begin{table}[htbp]
 \centering
-\caption{Computational scalability of the P3 pipelines on the canonical library. TDA and TNE timings are the measured full-library runtimes (\SI{19849}{mol}); the QK timing is the per-fold kernel-matrix build measured on a \num{19849}-molecule fold (32 parallel workers, state-vector simulator).}
+\caption{Computational scalability of the representation pipelines. TDA and TNE timings were measured on the \num{19849}-molecule library; the QK timing is the per-fold kernel-matrix construction time for a \num{19849}-molecule fold using 32 parallel workers and a state-vector simulator.}
 \label{tab:scalability}
 \begin{tabularx}{\textwidth}{l l l l}
 \toprule
@@ -384,61 +353,52 @@ QK kernel matrix (per fold, $n=19{,}849$) & \SI{817}{\second} & $n^2/2$ pairs & 
 \bottomrule
 \end{tabularx}
 \vspace{1mm}
-\footnotesize TDA timing is the measured full-library runtime (\texttt{p3\_tda\_summary.txt}); TNE timing is the measured full-library runtime (\texttt{p3\_tne\_summary.txt}, 4 workers); QK timing is the mean per-fold quantum-kernel build time from the $n=19{,}849$ kernel benchmark (\texttt{p3\_qks\_benchmark\_n19849.csv}, 32 workers). The $O(N^2)$ kernel cost restricts QKS to lead optimisation on sets of $\leq 10^4$ compounds.
+\footnotesize Timings were measured on the full feature-generation library using the stated parallel configurations. The quadratic kernel cost motivates restricting QKS to smaller lead-optimisation panels unless approximate or batched kernel methods are introduced.
 \end{table}
 
-% ============================================================================
-% 8. EFFECT SIZES FOR PAIRWISE COMPARISONS
-% ============================================================================
 
 \section{Effect sizes for pairwise AUC comparisons}
 \label{sec:effect_sizes}
 
-Cohen's $d$ effect sizes for all pairwise AUC comparisons against the corrected full-library ECFP4 baseline are reported in \cref{tab:effect_sizes}. The values are now computed from the canonical 19,836-molecule classical benchmark (Random Forest, 5-fold stratified CV) rather than the earlier 200-molecule development subsample, which contained a copy-paste error in the TNE per-fold values.
+Cohen's $d$ effect sizes for pairwise AUC comparisons against ECFP4 are reported in \cref{tab:effect_sizes}. These estimates use the \num{19836}-molecule classical benchmark (Random Forest, 5-fold stratified cross-validation) and are intended to complement, not replace, the fold-level uncertainty estimates.
 
 \input{../../results/p3_effect_sizes/p3_effect_sizes_table.tex}
 
 
-% ============================================================================
-% 9. ChEMBL ENRICHMENT BENCHMARK
-% ============================================================================
 
-\section{ChEMBL enrichment benchmark}
+\section{ChEMBL enrichment analysis}
 \label{sec:chembl_enrichment}
 
-\cref{tab:chembl_enrichment} reports the docking enrichment benchmark of our Vina protocol against ChEMBL-confirmed antimalarial actives and inactives for three Plasmodium targets.
+\cref{tab:chembl_enrichment} reports the enrichment of the Vina docking protocol for ChEMBL-annotated antimalarial actives and inactives across three Plasmodium targets.
 
 \begin{table}[htbp]
 \centering
-\caption{ChEMBL enrichment benchmark for the Vina docking protocol against experimentally confirmed antimalarials.}
+\caption{ChEMBL enrichment screen for the Vina docking protocol using experimentally annotated antimalarial compounds. Enrichment is a computational docking-screen metric and should not be interpreted as experimental binding confirmation.}
 \label{tab:chembl_enrichment}
 \begin{tabularx}{\textwidth}{l c c c c l}
 \toprule
-Target & PDB & {Actives} & {Inactives} & {Enrichment} & Verdict \\
+Target & PDB & {Actives} & {Inactives} & {Enrichment} & Interpretation \\
 \midrule
-PfDHFR & 7F3Y & 53 & 18 & 5.43$\times$ & EXCELLENT \\
-PfATP4 & 9N10 & 73 & 87 & $\infty$ & EXCELLENT \\
-PfCRT & 6UKJ & 12 & 19 & 1.46$\times$ & -- \\
+PfDHFR & 7F3Y & 53 & 18 & 5.43$\times$ & High estimate \\
+PfATP4 & 9N10 & 73 & 87 & Not estimable & No inactive hits \\
+PfCRT & 6UKJ & 12 & 19 & 1.46$\times$ & Below 2$\times$ \\
 \bottomrule
 \end{tabularx}
 \vspace{1mm}
-\footnotesize Active hit rate for PfDHFR: \qty{60.4}{\percent} (EXCELLENT) vs. \qty{11.1}{\percent} inactive. PfATP4: 0/87 inactives recovered. PfCRT: 1.46x did not meet the 2x threshold.
+\footnotesize The estimates are descriptive and have no uncertainty intervals. For PfATP4, the denominator is zero because no inactive compound was recovered; the enrichment ratio is therefore undefined rather than infinite. These docking-screen results do not establish experimental binding.
 \end{table}
 
 
 
-% ============================================================================
-% 9C. ChEMBL EXPERIMENTAL VALIDATION
-% ============================================================================
 
-\section{ChEMBL experimental validation}
+\section{ChEMBL analogue novelty screen}
 \label{sec:chembl_validation}
 
-The top-10 candidates (\cref{tab:chembl_validation_top10}) were queried against three \textit{Plasmodium falciparum} targets (PfDHFR, PfCRT, PfATP4) via the ChEMBL REST API (release 37); PfClpP was excluded because no \textit{P.~falciparum} ClpP target exists in ChEMBL. The search was subsequently expanded to the full RRS-TFP cohort of 494 compounds across all three targets (1482 candidate--target pairs), identifying ChEMBL structural analogues by ECFP4 Tanimoto similarity (threshold $\geq 0.25$).
+The top-10 candidates (\cref{tab:chembl_validation_top10}) were queried against three \textit{Plasmodium falciparum} targets (PfDHFR, PfCRT, PfATP4) through the ChEMBL REST API (release 37). All targets used the same Tanimoto threshold ($\geq 0.20$); PfClpP was not included because no corresponding \textit{P.~falciparum} ClpP target was available in ChEMBL. Only PfCRT returned analogues above the threshold. Ten candidate-level analogue records were retrieved, with some records referring to the same ChEMBL compound, and all were annotated as inactive. The analysis is therefore a novelty screen: it documents the absence of close active analogues in the queried records but does not measure activity of the proposed candidates.
 
 \begin{table}[htbp]
 \centering
-\caption{ChEMBL experimental validation of the top-10 candidates: closest structural analogue with experimental IC$_{50}$ data per candidate (Tanimoto threshold $\geq 0.20$). All ten analogues are experimentally \textbf{inactive} (IC$_{50}$ 12.5--55~$\mu$M), and their low Tanimoto similarity to the generated candidates (0.229--0.379) supports the chemical novelty of the proposed leads.}
+\caption{ChEMBL analogue novelty screen for the top-10 candidates. The table lists the closest retrieved analogue with an experimental IC$_{50}$ annotation for each candidate-level record (Tanimoto threshold $\geq 0.20$). Only PfCRT yielded qualifying records; all were annotated as inactive (IC$_{50}$ 12.5--55~$\si{\micro\molar}$), and similarities were low (0.229--0.379). The screen supports chemical novelty relative to the queried records but does not test candidate activity.}
 \label{tab:chembl_validation_top10}
 \small
 \begin{tabularx}{\textwidth}{c l l l l l}
@@ -458,79 +418,50 @@ Rank & Target & ChEMBL ID & Activity & {IC$_{50}$ ($\mu$M)} & Tanimoto \\
 \bottomrule
 \end{tabularx}
 \vspace{1mm}
-\footnotesize All closest analogues are ChEMBL-confirmed inactive; the low Tanimoto similarities (0.229--0.379) mean no analogue is a close structural congener. This is an honest negative result: it confirms structural novelty of the generated candidates but provides no positive experimental validation. Deposited as \texttt{results/p3\_chembl\_validation/p3\_chembl\_validation.csv}.
-\end{table}
-
-\begin{table}[htbp]
-\centering
-\caption{ChEMBL experimental validation: expanded search across 77 RRS-TFP compounds against 3 \textit{Plasmodium} targets (231 candidate--target pairs, Tanimoto $\geq 0.25$). Seven structural analogues were identified (\qty{3.0}{\percent} match rate); three showed experimental activity below 1~$\mu$M (PfATP4), while the remaining four were inactive. The low match rate supports the structural novelty of the generated chemical space.}
-\label{tab:chembl_validation}
-\small
-\begin{tabularx}{\textwidth}{c l l l l l}
-\toprule
-Cpd & Target & ChEMBL ID & Activity & {IC$_{50}$ ($\mu$M)} & Tanimoto \\
-\midrule
-12 & PfCRT & CHEMBL6966 & Inactive & 30.0 & 0.258 \\
-29 & PfCRT & CHEMBL1830987 & Inactive & 69.0 & 0.322 \\
-47 & PfATP4 & CHEMBL6150594 & Active & 0.40 & 0.261 \\
-65 & PfCRT & CHEMBL4745810 & Inactive & 12.5 & 0.284 \\
-75 & PfATP4 & CHEMBL6162944 & Active & 0.40 & 0.273 \\
-76 & PfCRT & CHEMBL1830987 & Inactive & 69.0 & 0.270 \\
-76 & PfATP4 & CHEMBL6175630 & Active & 0.79 & 0.329 \\
-\bottomrule
-\end{tabularx}
-\vspace{1mm}
-\footnotesize The expanded search queried all 77 RRS-TFP compounds against PfDHFR, PfCRT, and PfATP4 (231 pairs; PfClpP excluded). Seven structural analogues (\qty{3.0}{\percent} match rate) exceeded the Tanimoto $\geq 0.25$ threshold. Three PfATP4 matches are experimentally active (IC$_{50}$ 0.4--0.79~$\mu$M), indicating that generated candidates with structural homology to known PfATP4 actives retain binding potential. The remaining four PfCRT matches are inactive. No structural analogue of any generated compound was found for PfDHFR at this threshold. The low overall match rate (\qty{3.0}{\percent}) provides preliminary evidence of structural novelty, though direct IC$_{50}$ measurements remain necessary for activity confirmation. Target identifiers were verified against the ChEMBL REST API (PfDHFR-TS = CHEMBL4296323, PfCRT = CHEMBL1795182, PfATP4 = CHEMBL6066156); all seven entries were independently re-queried and confirmed, and activity classification conservatively honours ChEMBL relational values ($<$, $>$, $\sim$) where present.
+\footnotesize All retrieved records were annotated as inactive in ChEMBL. The low similarities indicate that no retrieved record was a close structural congener. This negative screen supports novelty relative to the queried records but does not measure activity. The machine-readable records are included with the supplementary data.
 \end{table}
 
 
-% ============================================================================
-% 9B. SOTA TOPOLOGICAL BENCHMARK
-% ============================================================================
 
-\section{SOTA topological benchmark}
+\section{Topological representation comparison}
 \label{SM-sec:sota_benchmark}
 
-\cref{SM-tab:sota} reports the performance of five TDA descriptor strategies paired with Random Forest (RF) and Support Vector Machine (SVM) classifiers on the full \num{19849}-molecule library (RF) and a stratified subsample of $n = \num{5000}$ molecules (SVM, due to kernel matrix $O(N^2)$ scaling). All evaluations use 5-fold stratified cross-validation with class-weighted classifiers.
+\cref{SM-tab:sota} compares five persistent-homology vectorisation strategies. Random Forest was evaluated on the full \num{19849}-molecule feature library, whereas SVM was evaluated on a stratified $n=\num{5000}$ subsample because of kernel-matrix scaling. The two classifier blocks are presented separately because their populations and label distributions differ.
 
 \begin{table}[htbp]
 \centering
-\caption{SOTA topological benchmark: five TDA descriptor strategies with RF ($n = \num{19849}$, full library) and SVM ($n = \num{5000}$, subsample) classifiers (5-fold stratified CV, class-weighted). Cohen's $d$ quantifies the practical magnitude of AUC difference versus the preliminary ECFP4 baseline ($d > 0.8$ large, $0.5 < d \leq 0.8$ medium, $d \leq 0.5$ small). \textbf{Note:} this table uses the preliminary ECFP4 baseline (AUC \num{0.868}); the corrected canonical-panel benchmark gives ECFP4 AUC \num{0.948} and TFP AUC \num{0.876} (see main manuscript \cref{M-tab:benchmark}).}
+\caption{Comparison of five persistent-homology vectorisations (5-fold stratified cross-validation, class-weighted classifiers). Random Forest rows use the full \num{19849}-molecule feature library; SVM rows use a stratified $n=\num{5000}$ subsample. The classifier blocks have different populations and label distributions and should not be compared directly with one another or with the primary benchmark in the main manuscript (\cref{M-tab:benchmark}).}
 \label{SM-tab:sota}
-\begin{tabularx}{\textwidth}{l l S[table-format=1.4] S[table-format=1.4] S[table-format=1.4] S[table-format=1.0] S[table-format=+1.2]}
+\begin{tabularx}{\textwidth}{l l S[table-format=1.4] S[table-format=1.4] S[table-format=1.4] S[table-format=1.0]}
 \toprule
-{Strategy} & {Classifier} & {AUC} & {Accuracy} & {F1} & {Features} & {Cohen's $d$} \\
+{Strategy} & {Classifier} & {AUC} & {Accuracy} & {F1} & {Features} \\
 \midrule
-PersStats & RF & 0.8731 & 0.8332 & 0.8906 & 22 & +0.85 \\
-TFP-12 & RF & 0.8668 & 0.8275 & 0.8858 & 12 & -0.20 \\
-TFP-Enriched & RF & 0.8666 & 0.8308 & 0.8887 & 32 & -0.23 \\
-PersImage & RF & 0.8596 & 0.8265 & 0.8856 & 25 & -1.40 \\
-BettiCurve & RF & 0.8110 & 0.7837 & 0.8557 & 20 & -9.52 \\
-PersStats & SVM & 0.8042 & 0.7398 & 0.7436 & 22 & -5.32 \\
-PersImage & SVM & 0.7912 & 0.7270 & 0.7312 & 25 & -6.40 \\
-TFP-Enriched & SVM & 0.7891 & 0.7208 & 0.7250 & 32 & -6.58 \\
-TFP-12 & SVM & 0.7857 & 0.7198 & 0.7220 & 12 & -6.86 \\
-BettiCurve & SVM & 0.7198 & 0.6646 & 0.6620 & 20 & -12.35 \\
+PersStats & RF & 0.8731 & 0.8332 & 0.8906 & 22 \\
+TFP-12 & RF & 0.8668 & 0.8275 & 0.8858 & 12 \\
+TFP-Enriched & RF & 0.8666 & 0.8308 & 0.8887 & 32 \\
+PersImage & RF & 0.8596 & 0.8265 & 0.8856 & 25 \\
+BettiCurve & RF & 0.8110 & 0.7837 & 0.8557 & 20 \\
+PersStats & SVM & 0.8042 & 0.7398 & 0.7436 & 22 \\
+PersImage & SVM & 0.7912 & 0.7270 & 0.7312 & 25 \\
+TFP-Enriched & SVM & 0.7891 & 0.7208 & 0.7250 & 32 \\
+TFP-12 & SVM & 0.7857 & 0.7198 & 0.7220 & 12 \\
+BettiCurve & SVM & 0.7198 & 0.6646 & 0.6620 & 20 \\
 \bottomrule
 \end{tabularx}
 \vspace{1mm}
-\footnotesize All classifiers used \texttt{class\_weight=balanced} to mitigate the class imbalance (\qty{75.9}{\percent}/\qty{24.1}{\percent} under the preliminary MPO-derived labels used in this run; the canonical panel uses eos80ch labels with a \qty{74.2}{\percent}/\qty{25.8}{\percent} split, see main manuscript). RF: $n_{\text{estimators}} = 500$. SVM: RBF kernel, $C = 10$, $\gamma = \texttt{scale}$. PersStats (22 features) captures persistence birth, death, persistence, and entropy across H$_0$, H$_1$, H$_2$ dimensions. Cohen's $d$ is computed approximately as $(\text{AUC}_{\text{strategy}} - \text{AUC}_{\text{ECFP4}}) / \sigma_{\text{pooled}}$ with $\sigma_{\text{pooled}} = 0.006$ (RF) and $0.012$ (SVM), approximately estimated from fold-level standard deviations across all strategies.
+\footnotesize All classifiers used \texttt{class\_weight=balanced}. RF used $n_{\text{estimators}}=500$; SVM used an RBF kernel with $C=10$ and $\gamma=\texttt{scale}$. PersStats contains 22 persistence statistics, TFP-12 contains 12 homology summaries, TFP-Enriched contains 32 combined features, PersImage contains 25 features, and BettiCurve contains 20 features. The label proportions differ from those in the primary eOS80ch analysis.
 \end{table}
 
-Key findings: (i)~PersStats + RF achieves AUC \num{0.873} on this run, numerically exceeding the preliminary ECFP4 baseline (AUC \num{0.868}) with only 22 topological features---though this $\Delta$AUC of $+\num{0.005}$ does not reach statistical significance ($p > \num{0.05}$), so the two methods should be interpreted as performing comparably rather than PersStats being definitively superior; (ii)~RF consistently outperforms SVM across all strategies (mean $\Delta\text{AUC} = +\num{0.077}$; note: RF was evaluated on the full $n = \num{19849}$ library while SVM was restricted to $n = \num{5000}$ due to $O(N^2)$ kernel scaling, so this comparison is confounded by sample size); (iii)~TFP-Enriched (32 features) is marginally inferior to TFP-12 (12 features, $\Delta\text{AUC} = -\num{0.0002}$), suggesting the additional 20 features introduce noise rather than signal; (iv)~BettiCurve underperforms (AUC \num{0.811}), indicating Betti number sequences alone lack the discriminative power of persistence statistics. These comparisons use the preliminary ECFP4 baseline (AUC \num{0.868}); the corrected canonical-panel benchmark is complete and reported in the main manuscript Table~\cref{M-tab:benchmark}, where ECFP4 attains AUC \num{0.948} and TFP AUC \num{0.876}. The SOTA comparisons here are internal to the TDA strategy family and are not directly comparable to the canonical cross-descriptor benchmark.
+Within the RF block, PersStats had the highest AUC among the topological strategies ($\num{0.8731}$), followed by TFP-12 ($\num{0.8668}$), TFP-Enriched ($\num{0.8666}$), PersImage ($\num{0.8596}$), and BettiCurve ($\num{0.8110}$). The corresponding SVM block showed the same broad ordering, although all SVM estimates were obtained on a different subsample. These results indicate that persistence summaries are useful complementary representations; they do not replace the primary comparison in the main manuscript, where the complete 78-feature TFP achieved AUC $\num{0.876}$ and ECFP4 remained strongest.
 
-% ============================================================================
-% 9D. TOPOLOGYNET ANALOG BENCHMARK (MLP vs RF on PersStats)
-% ============================================================================
 
 \section{TopologyNet analog: neural network on persistent homology features}
-\label{sec:topologynet_analog}
 
-To contextualise the PersStats + RF result within the neural-network literature (TopologyNet~\citep{topologynet_2018}, D-GRIL~\citep{dgril_2026}), we benchmarked a Multi-Layer Perceptron (MLP) on the same 22 PersStats features used by the best RF model. The MLP used 3 hidden layers (128, 64, 32 neurons), ReLU activation, class-balanced sample weighting, and early stopping (5-fold stratified CV, $n = \num{5000}$ stratified subsample).
+To compare PersStats with a neural-network classifier (TopologyNet~\citep{topologynet_2018}, D-GRIL~\citep{dgril_2026}), we benchmarked an MLP on the same 22 PersStats features. The MLP used 3 hidden layers (128, 64, 32 neurons), ReLU activation, class-balanced sample weighting, and early stopping (5-fold stratified CV, $n = \num{5000}$ subsample).
 
 \begin{table}[htbp]
 \centering
-\caption{TopologyNet analog: MLP versus Random Forest on PersStats 22 features ($n = \num{5000}$, 5-fold stratified CV, class-weighted). RF outperforms MLP by $\Delta$AUC $= +\num{0.061}$, confirming that tree-based methods better capture persistent homology feature interactions for this chemical space.}
+\caption{MLP versus Random Forest on 22 PersStats features ($n=\num{5000}$, 5-fold stratified cross-validation). RF AUC $= \num{0.860}$; MLP AUC $= \num{0.799}$ ($\Delta\mathrm{AUC}=-\num{0.061}$).}
 \label{tab:topologynet_analog}
 \begin{tabularx}{\textwidth}{l S[table-format=1.4] S[table-format=1.4] S[table-format=1.0]}
 \toprule
@@ -540,72 +471,43 @@ Random Forest & 0.860 & 0.014 & 22 \\
 MLP (128+64+32) & 0.799 & 0.015 & 22 \\
 \bottomrule
 \end{tabularx}
-\vspace{1mm}
-\footnotesize Both classifiers use PersStats 22 features (H$_0$/H$_1$ persistence statistics). MLP uses class-balanced sample weighting to handle the \qty{75.9}{\percent}/\qty{24.1}{\percent} class imbalance. The RF result here (AUC \num{0.860} on $n = \num{5000}$) is slightly below the full-library result (AUC \num{0.873} on $n = \num{19849}$, \cref{SM-tab:sota}), consistent with the larger training set in the full benchmark.
 \end{table}
 
-The MLP underperforms RF by $\Delta$AUC = $-0.061$, consistent with the broader SOTA benchmark finding that tree-based methods better capture PH feature interactions. This is consistent with the observation that PersStats features have limited non-linear interactions --- deep architectures that excel on raw graph or image data add no benefit over a well-tuned ensemble of decision trees on pre-computed persistence statistics. TopologyNet~\citep{topologynet_2018} and D-GRIL~\citep{dgril_2026} operate on richer inputs (full persistence diagrams or multi-parameter persistence) where neural architectures may extract additional signal; on summary statistics alone, RF is the more appropriate classifier.
+The MLP underperforms RF by $\Delta$AUC = $-0.061$, consistent with the broader benchmark finding that tree-based methods better capture PH feature interactions on summary statistics. TopologyNet~\citep{topologynet_2018} and D-GRIL~\citep{dgril_2026} operate on richer inputs (full persistence diagrams or multi-parameter persistence) where neural architectures may extract additional signal; on summary statistics alone, RF is the more appropriate classifier.
 
 \vspace{4mm}
 
-% ============================================================================
-% 10. APPLICABILITY DOMAIN AND COMPARISON WITH EXISTING TOOLS
-% ============================================================================
 
 \section{Applicability domain and comparison with existing tools}
-\label{sec:applicability_comparison}
-
-The following subsections provide additional details on the applicability domain analysis and the comparison with existing tools, which are referenced in the main manuscript.
 
 \subsection{Applicability domain analysis}
-\label{SM-sec:applicability_domain}
 
-We frame the quantum kernel not merely as a binary classifier but as an applicability-domain discriminator that conceptually parallels the discriminator functions employed in genetic-algorithm-based molecular generation \citep{jensen2019augmenting}. Rather than relying solely on geometric distance in classical fingerprint space, the quantum kernel density $\rho(x)$ supplies a native Hilbert-space boundary condition that distinguishes expanded molecules from the empirical seed space. This furnishes a rigorous applicability-domain metric for natural products that avoids the dimensionality-reduction artefacts common to Tanimoto-based domain estimations.
-
+We used quantum-kernel density as a complementary applicability-domain diagnostic alongside classical fingerprint similarity. The density score $\rho(x)$ describes proximity to the empirical seed space in the simulated feature space; it is presented as a descriptive diagnostic rather than a validated applicability-domain metric.
 
 \subsection{Comparison with existing tools}
 
+To assess information retention after TNE compression, we analysed Tartarus docking scores \citep{tartarus_2024}: \num{19913} primary leads docked with QuickVina against three targets (1SYH/PfDHFR, 6Y2F/PfATP4, 4LDE/PfCRT). Random Forest regressors were trained on TNE-only vectors (\num{192}-dim) to predict each target's docking score, with ECFP4 as baseline.
 
-To validate whether the TNE compression preserves binding-relevant geometry, we leveraged the Tartarus docking benchmark \citep{tartarus_2024}: \num{19913} primary leads docked with QuickVina against three targets (1SYH/PfDHFR, 6Y2F/PfATP4, 4LDE/PfCRT). Random Forest regressors were trained on TNE-only vectors (\num{192}-dim) to predict each target's docking score, with ECFP4 as baseline.
+For PfDHFR (1SYH), TNE achieved an R\textsuperscript{2} of \num{0.473} (Spearman $\rho = \num{0.695}$), slightly outperforming ECFP4 (R\textsuperscript{2} = \num{0.461}, $\rho = \num{0.689}$). For the remaining targets, ECFP4 maintained an advantage: 6Y2F (TNE R\textsuperscript{2} = \num{0.464} vs.\ ECFP4 \num{0.578}) and 4LDE (TNE R\textsuperscript{2} = \num{0.334} vs.\ ECFP4 \num{0.517}). These results show that the \num{15.6}$\times$ padded (\num{6.1}$\times$ real-atom mean) TNE compression retains information sufficient to predict docking scores on the same molecular set used to derive the embeddings, competitive with classical \num{2048}-bit fingerprints for specific targets. This is a test of information retention, not generalisation to novel compounds.
 
-For PfDHFR (1SYH), TNE achieved an R\textsuperscript{2} of \num{0.473} (Spearman $\rho = \num{0.695}$), slightly outperforming ECFP4 (R\textsuperscript{2} = \num{0.461}, $\rho = \num{0.689}$). For the remaining targets, ECFP4 maintained an advantage: 6Y2F (TNE R\textsuperscript{2} = \num{0.464} vs.\ ECFP4 \num{0.578}) and 4LDE (TNE R\textsuperscript{2} = \num{0.334} vs.\ ECFP4 \num{0.517}). These results confirm that the \num{15.6}$\times$ padded (\num{6.1}$\times$ real-atom mean) TNE compression retains substantial binding-relevant information, competitive with classical \num{2048}-bit fingerprints for specific targets.
+We next examined whether the Quantum Kernel Score captured polypharmacological docking profiles. Compounds were labelled as polypharmacological if they bound $\geq 2$ targets at $\Delta G \leq -\SI{7.0}{\kcalmol}$ (\qty{12.0}{\percent} prevalence in the merged $N=\num{17011}$ set). QKS remained within the variability of the tuned RBF comparator for this endpoint, which is interpreted as exploratory.
 
-We further tested whether the Quantum Kernel Score captures polypharmacological binding preferences. Compounds were labelled as polypharmacological if they bound $\geq 2$ targets at $\Delta G \leq -\SI{7.0}{\kcalmol}$ (\qty{12.0}{\percent} prevalence in the merged $N=\num{17011}$ set). The $n=\num{1000}$, 10-fold benchmark was terminated because a single $900\times900$ kernel matrix exceeded practical wall time. A partial 5-fold run at $n=500$ (state-vector kernel, IQPEmbedding, \texttt{lightning.qubit}) completed three folds before termination, yielding per-fold QKS AUC \num{0.513}/\num{0.658}/\num{0.825} vs.\ gamma-tuned RBF AUC \num{0.506}/\num{0.642}/\num{0.803}; a 2-fold pilot at $n=50$ gave QKS AUC \num{0.356} vs.\ RBF AUC \num{0.303} (per-fold values in the deposited \texttt{p3\_polypharm\_qks.csv} outputs). These partial results place QKS within noise of the tuned RBF baseline and do not demonstrate a task-specific quantum advantage for polypharmacology classification; a definitive comparison requires a state-vector benchmark at larger $n$ within the $O(N^2)$ kernel budget.
-
-Finally, topological features from persistent homology showed highly significant correlations with multi-target binding promiscuity across $N=\num{17011}$ molecules (Figure~\cref{fig:sm_tda_promiscuity}). H$_0$ count ($\rho = -\num{0.248}$, $p < 10^{-137}$), H$_0$ entropy ($\rho = -\num{0.243}$, $p < 10^{-137}$), and H$_1$ entropy ($\rho = -\num{0.190}$, $p < 10^{-137}$) all negatively correlate with the number of targets bound, indicating that molecules with lower topological complexity in their ring systems and structural components are conformationally flexible enough to engage multiple targets --- a topological signature of polypharmacology. These correlations are computed on the \num{17011}-molecule merged Tartarus$\times$TNE$\times$TDA dataset with complete docking scores (label: $\geq 2$ targets bound at $\Delta G \leq -\SI{7.0}{\kcalmol}$) by \texttt{p3\_physical\_validation.py}; the full per-feature table is deposited as \texttt{p3\_physical\_validation/p3\_tda\_promiscuity.csv}. An earlier exploratory Tartarus-only run (\texttt{p3\_tartarus\_tda\_spearman.csv}, $N=\num{19900}$, un-thresholded target count) is superseded and not used in the manuscript.
+Persistent-homology features showed weak-to-moderate associations with the number of docking-defined targets across $N=\num{17011}$ molecules (\cref{fig:sm_tda_promiscuity}). The strongest associations were inverse correlations for H$_0$ count ($\rho=-\num{0.248}$), H$_0$ entropy ($\rho=-\num{0.243}$), and H$_1$ entropy ($\rho=-\num{0.190}$). The endpoint is a docking-derived target count rather than an experimental polypharmacology measurement; these associations are consequently hypothesis-generating and should not be interpreted as mechanistic rules.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.80\textwidth]{p3_tda_promiscuity.png}
-\caption{Topological predictors of multi-target binding promiscuity (supplementary view). Spearman correlation between persistent-homology features and the number of targets bound across $N=\num{17011}$ molecules. Strongest signals: H$_0$ count ($\rho=-0.248$), H$_0$ entropy ($\rho=-0.243$), and H$_1$ entropy ($\rho=-0.190$), all $p<10^{-137}$.}
+\caption{Exploratory associations between persistent-homology features and docking-defined target counts ($N=\num{17011}$). Bars show Spearman correlations with 95\% bootstrap intervals; the strongest inverse associations were H$_0$ count ($\rho=-\num{0.248}$), H$_0$ entropy ($\rho=-\num{0.243}$), and H$_1$ entropy ($\rho=-\num{0.190}$). The endpoint is computational docking, not experimental polypharmacology.}
 \label{fig:sm_tda_promiscuity}
 \end{figure}
 
-% ============================================================================
-% 4. DISCUSSION
-% ============================================================================
-
-\section{Discussion}
-
-
-
-\subsection{Mechanistic explanation for classical fingerprint superiority}
-
-
-The overall ranking from the corrected canonical benchmark placed ECFP4 (AUC \num{0.948}) at the top, followed by AP (\num{0.940}), BPF (\num{0.939}), FCFP4 (\num{0.918}), MACCS (\num{0.905}), PHCO (\num{0.896}), the hybrid (\num{0.888}), TFP (\num{0.876}) and TNE (\num{0.722}). This ordering reflects a fundamental difference in the information captured by each representation class. ECFP4 encodes local atom environments at radius 2, directly capturing the substructure-level features that dominate molecular recognition in protein--ligand binding. For antimalarial activity prediction, these local pharmacophoric patterns---hydrogen-bond donors/acceptors, aromatic rings, hydrophobic groups---are the primary determinants of target engagement. TDA captures global topology (ring systems, molecular cavities) that is correlated with but not directly predictive of binding affinity. TNE compresses the molecular tensor along low-rank modes that may not align with activity-relevant features. The quantum kernel, while capable of capturing non-linear feature interactions in its 6-qubit Hilbert space, operates on UMAP-reduced features that have already discarded much of the substructure-level information present in the original ECFP4 fingerprints. Nevertheless, the hybrid's ability to approach ECFP4 performance (AUC \num{0.888} versus \num{0.948}) demonstrates that the QK kernel PCA features, when combined with TFP and TNE, can recover a large fraction of the discriminative signal.
-
-This interpretation is consistent with a recent spectral analysis of molecular kernels \citep{jamali2025spectral}, which showed that ECFP-based kernels exhibit a positive correlation between spectral richness and generalization, while local 3D kernel methods show negative or inconclusive correlations. Our TFP and TNE descriptors, being derived from 3D molecular conformations, fall into the ``local 3D kernel'' category where spectral richness can actively hinder generalization. The practical implication is that future hybrid approaches should weight ECFP4 features more heavily than TDA/TNE features, using the latter as supplementary rather than equal contributors.
-
-A key additional finding is that, with the canonical 6-qubit circuit, the gamma-tuned RBF kernel and the quantum kernel show \textbf{no statistically significant difference} at any sample size (\cref{SM-tab:qkernel}; $n = \num{5000}$: QK AUC \num{0.820} versus RBF \num{0.826}, paired $t$-test $p = \num{0.419}$; $n = \num{19849}$: QK \num{0.823} versus RBF \num{0.829}, $p = \num{0.060}$, the latter a borderline trend toward lower QK performance), while the quantum kernel \textbf{significantly outperforms} the linear kernel at scale ($p \leq \num{0.0006}$). The apparent earlier advantage (QK \num{0.936} versus RBF \num{0.105}) was an artefact of untuned RBF hyperparameters, which vanishes after proper gamma calibration; earlier 8-qubit runs reporting a quantum disadvantage at scale ($n = \num{5000}$: \num{0.752} versus \num{0.840}, $p = \num{0.003}$; $n = \num{19849}$: \num{0.659} versus \num{0.825}, $p = \num{0.0006}$) were artefacts of the suboptimal 8-qubit circuit and a train/test scaling mismatch (C3) that are not reproduced by the canonical protocol. The canonical hybrid (TFP+TNE+QK) achieves AUC \num{0.888}. The ablation study (\cref{M-tab:hybrid}) confirms that removing QKS degrades performance from AUC \num{0.888} to AUC \num{0.847} (Hybrid$-$QKS, $\Delta = -\num{0.040}$, the principal positive contributor), demonstrating that the 30 kernel PCA components preserve non-linear Hilbert-space structure that a single density scalar discards (an earlier single-scalar formulation captured substantially less signal; historical, non-canonical run).
-
-
+\section{Extended analysis}
 
 \subsection{Quantum kernel density vs classical fingerprint discriminator}
 
+We compared quantum-kernel density with a classical chemical-similarity baseline \citep{jensen2019augmenting}. The comparison used $N = 50$, $100$, $200$, $500$ STONED-SELFIES-expanded molecules from \num{200} reference seeds. The classical baseline scored each molecule by its maximum ECFP4 Tanimoto similarity to any reference seed; the quantum kernel density scored each molecule by its mean kernel similarity to the reference set in the 8-qubit Hilbert space. Discriminator performance was measured as AUC-ROC.
 
-To benchmark the quantum kernel density against a classical chemical similarity baseline---the primary component of discriminator functions used in genetic-algorithm-based molecular generation \citep{jensen2019augmenting}---we performed a direct comparison across varying numbers of STONED-SELFIES-expanded molecules ($N = 50$, $100$, $200$, $500$) using the \texttt{lightning.qubit} simulator. Each molecule was produced via two random SELFIES-character mutations from a pool of \num{200} reference seeds (\num{105} active, \num{95} inactive, balanced by eos80ch activity score). The classical baseline scored each molecule by its maximum ECFP4 Tanimoto similarity to any reference seed (high similarity = in-domain). The quantum kernel density scored each molecule by its mean kernel similarity to the reference set in the IQPEmbedding 8-qubit Hilbert space ($\rho(x_i) = \frac{1}{|\mathcal{R}|}\sum_{r \in \mathcal{R}} K(x_i, x_r)$). Discriminator performance was measured as AUC-ROC for the task of distinguishing reference molecules (label $= 1$) from expanded molecules (label $= 0$).
-
-The results (\cref{SM-tab:ga_discriminator} and \cref{SM-fig:ga_discriminator}) reveal a clear hierarchy: the ECFP4 Tanimoto baseline achieves perfect separation (AUC $= \num{1.000}$) at all $N$ values, while the quantum kernel density achieves performance near or below random chance (AUC $= \numrange{0.425}{0.511}$). The perfect Tanimoto score carries an important caveat: with only two SELFIES-character mutations per molecule, a fraction of expanded molecules may be structurally identical to their seed, in which case AUC $= \num{1.0}$ is a trivial consequence of including seed-identical molecules in the expanded set. The quantum kernel density, by contrast, operates on an 8-dimensional UMAP-reduced feature space that discards the atomic-level resolution needed to detect near-identical structural matches. This explains its near-random performance and, for $N \leq 200$, below-random AUC: the reduced space obscures proximity information rather than enhancing it. The quantum kernel's strength lies in capturing non-linear feature interactions in chemically diverse spaces---as demonstrated by its standalone AUC of \num{0.823} in the QKS binary classification benchmark (\cref{SM-tab:qkernel})---rather than in fine-grained near-neighbour detection. For applicability-domain assessment in generative computational protocols where expanded molecules are structurally close to training seeds, classical fingerprint-based distance metrics provide a simpler and more robust baseline, while quantum kernel methods add value primarily for structurally heterogeneous or out-of-distribution regimes.
+The ECFP4 Tanimoto baseline achieved perfect separation (AUC $= \num{1.000}$) at all $N$ values, while the quantum kernel density achieved near-random performance (AUC $= \numrange{0.425}{0.511}$). The perfect Tanimoto score carries a caveat: with only two SELFIES-character mutations per molecule, a fraction of expanded molecules may be structurally identical to their seed. The quantum kernel density operates on an 8-dimensional UMAP-reduced feature space that discards the atomic-level resolution needed to detect near-identical structural matches. For applicability-domain assessment in generative protocols where expanded molecules are structurally close to training seeds, classical fingerprint-based distance metrics provide a simpler and more robust baseline.
 
 
 
@@ -616,46 +518,10 @@ The results (\cref{SM-tab:ga_discriminator} and \cref{SM-fig:ga_discriminator}) 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.75\textwidth]{applicability_domain.pdf}
-\caption{Applicability domain analysis via quantum kernel density. Distribution of $\rho(x)$ for African natural-product seeds (orange), synthetic drug seeds (blue), and expanded molecules (grey). Compounds below the $\mu - 2\sigma$ threshold (dashed line) are flagged as outside the training distribution.}
+\caption{(A) Classification performance per fold. AUC-ROC for quantum kernel and RBF kernel across 5-fold stratified cross-validation at $n = 19{,}849$ and $n = 5{,}000$. Quantum and RBF overlap at all folds (quantum $= 0.823 \pm 0.008$, RBF $= 0.829 \pm 0.007$; paired $t = -2.59$, $p = 0.060$, ns). (B) Kernel-target alignment per fold. The quantum kernel achieves substantially higher alignment ($0.622 \pm 0.013$) than RBF ($0.145 \pm 0.006$), yet this geometric advantage does not translate into classification performance ($\Delta$AUC $= -0.006$).}
 \label{SM-fig:domain}
 \end{figure}
 
-
-
-\subsection{TNE compression and scaffold information content}
-
-
-The TNE achieves a padded compression ratio of \num{15.6}$\times$ (based on $N_{\max}=100$ zero-padding) and a real mean compression ratio of \num{6.1}$\times$ (based on \num{39} mean atoms) from the input molecular tensor to the core descriptor (\num{192} elements) with a reconstruction error of only 0.113. The padded ratio is higher than the mean real ratio because smaller molecules have proportionally more zero-padded elements, which compress trivially. Three observations suggest that compressed TNE descriptors retain scaffold-relevant information.
-
-First, TNE reconstruction error is lower for molecules with common ring systems (mean error for molecules within \num{0.1} Tanimoto of a seed natural product: \num{0.098}) than for structurally divergent molecules (\num{0.137}), indicating that the Tucker decomposition captures the ring topologies shared across the library. Second, the TNE clustering analysis found that TNE-based clusters have higher chemical coherence than VAE-latent clusters, with Silhouette scores exceeding the VAE baseline (\num{0.35} versus \num{0.229}). Third, the TNE factor matrices encode individual mode contributions; the factor matrix corresponding to the atom-coordinate mode (mode~3) correlates strongly with molecular volume (Spearman $\rho = \num{0.71}$), indicating that structural information is preserved in specific tensor modes. Together, these results suggest that Tucker decomposition compresses molecules preferentially along non-structural modes while retaining the topological information needed for activity prediction.
-
-
-
-\subsection{Integration with resistance-resilient MD validation}
-
-
-The 17 polypharmacological leads identified in a related MD validation study \citep{temgoua2027md} include both Class~A (resistance-resilient, active against drug-sensitive and resistant \textit{P.~falciparum} strains) and Class~D (resistance-vulnerable) compounds; of these, 14 carried complete resistance-resilience (RRS) classifications and formed the analysis cohort.
-
-To establish a direct topological signature of clinical resilience, we compared TFP features between these classes. An initial pilot of 14 polypharmacological leads suggested a strong relationship (Spearman $\rho = \num{0.947}$, $p < \num{0.0001}$, computed on H$_1$ total persistence); expanding the cohort to $n = \num{494}$ compounds yielded $\rho = \num{0.240}$ ($p < \num{0.0001}$, H$_1$ count), confirming that H$_1$ count is nominally associated with resistance resilience while showing the expected attenuation as sample size increases. In line with this H$_1$ count association, Class~A compounds in the pilot cohort also exhibited higher H$_1$ topological features than Class~D across all four metrics (count, total persistence, mean lifetime; max lifetime marginal; \cref{fig:h1_rrs}), although the Class~D subset in the pilot contains only a single compound ($n = 1$), so the pilot comparison should be interpreted cautiously. Crucially, a partial-correlation analysis shows that this association does not survive control for molecular size: controlling for molecular weight alone collapses the H$_1$--RRS correlation to $\rho_{\text{partial}} = -\num{0.018}$ ($p = \num{0.69}$), and controlling for all four size descriptors (MW, ring count, $F_{\mathrm{sp}^3}$, H$_0$ count) yields $\rho_{\text{partial}} = \num{0.033}$ ($p = \num{0.467}$). Because H$_1$ count correlates strongly with molecular weight (Spearman $\rho = \num{0.504}$), the apparent association is best interpreted as a size-mediated effect rather than an independent topological contribution to resistance resilience. The attenuated but nominally significant unadjusted correlation therefore requires cautious interpretation.
-
-The cross-paper relationship is visualised in \cref{fig:h1_rrs} of the Supplementary Material, which shows H$_1$ persistence distributions across RRS classes.
-
-This finding suggests that ring topology (H$_1$) could serve as a computationally inexpensive descriptor for prioritising resistance-resilient candidates in future generative campaigns, though its size-mediated nature means it should be treated as a coarse surrogate rather than an independent topological marker until larger, size-controlled cohorts are analysed. Dynamic persistent homology on full MD trajectories remains an extension for follow-up work once the polypharmacological MD simulations are complete.
-
-% ============================================================================
-% D-GRIL BUILD ATTEMPT (Reproducibility Case Study)
-% ============================================================================
-
-\subsection{D-GRIL build attempt (reproducibility case study)}
-\label{sec:dgril_build}
-
-D-GRIL~\citep{dgril_2026} introduces differentiable 2-parameter persistent homology trained end-to-end via PyTorch Geometric, a qualitatively different paradigm from our static PersStats feature vectors where the bi-filtration function is learned and gradients are back-propagated through the C++ extension (\texttt{mpml.so}). A build was attempted on 25 July 2026 under Python 3.10, PyTorch 2.0.1, CUDA 11.7, and GCC 11.4. The C++ extension compiled successfully after resolving four dependency issues: (i)~setuptools downgrade to 59.5.0 to restore the deprecated \texttt{pkg\_resources} module required by the legacy build script; (ii)~Boost C++ headers installed via conda-forge (no \texttt{sudo apt-get install} available on the HPC development node); (iii)~PyTorch 2.0.1 with CUDA 11.7 wheels to match the prebuilt binaries; and (iv)~\texttt{CPLUS\_INCLUDE\_PATH} and \texttt{LIBRARY\_PATH} set to the conda environment to resolve \texttt{hash.hpp} and \texttt{torch/extension.h} paths. However, the compiled \texttt{mpml.so} module failed to load at runtime with a \texttt{libc10.so} linker error, indicating an Application Binary Interface (ABI) mismatch between the C++ extension (compiled with GCC 11.4) and the prebuilt PyTorch 2.0.1 binary (compiled with an older GCC toolchain). This is a known issue when mixing system and conda compiler toolchains for PyTorch C++ extensions.\footnote{PyTorch C++ extension ABI compatibility: \url{https://pytorch.org/docs/stable/cpp_extension.html}.}
-
-We document this build barrier transparently for two reasons: (1)~it demonstrates that D-GRIL's architecture is feasible and compiles on modern toolchains with moderate effort, and (2)~it highlights a systemic reproducibility challenge in differentiable topological deep learning---C++ extensions compiled for specific PyTorch/compiler versions are fragile and non-portable across clusters. The MLP-on-PersStats analog in~\cref{sec:topologynet_analog} provides a comparable feature-based baseline for the static TDA paradigm; D-GRIL's differentiable 2-parameter PH represents a distinct end-to-end approach that learns the bi-filtration function during training rather than pre-computing it.
-
-% ============================================================================
-% NISQ VERIFICATION
-% ============================================================================
 
 \section{Quantum kernel circuit algorithm}
 \label{sec:qkernel_algorithm}
@@ -678,52 +544,99 @@ The kernel value is $K(x_1, x_2) = |\langle \phi(x_1) | \phi(x_2) \rangle|^2$, e
 \label{sec:qks_benchmark}
 
 \subsubsection{Evaluation protocol}
-The kernel comparison (\cref{SM-tab:qkernel}) follows the exact pipeline used for the hybrid benchmark (\cref{sec:qp_optimisation}): 5-fold stratified cross-validation (\texttt{StratifiedKFold} with \texttt{random\_state=42}), UMAP reduction of the 2048-bit Morgan (radius 2) fingerprints to 6 dimensions (Jaccard metric, \texttt{random\_state=42}, $n_{\text{neighbors}}=15$, $min\_dist=0.1$) followed by scaling to $[-1,1]$, and support vector machines with precomputed kernels. The canonical 6-qubit circuit (IQPEmbedding, 1 repeat) is the Phase-2 winning configuration. Benchmarks were run at two sample sizes: the first \num{5000} molecules of the library by source order (\num{3750} active, \num{1250} inactive) and the full canonical panel of \num{19836} molecules (\num{14721} active, \num{5115} inactive).
+The kernel comparison (\cref{SM-tab:qkernel}) uses the same preprocessing and evaluation procedure as the hybrid analysis (\cref{sec:qp_optimisation}): 5-fold stratified cross-validation (\texttt{StratifiedKFold} with \texttt{random\_state=42}), UMAP reduction of the 2048-bit Morgan (radius 2) fingerprints to 6 dimensions (Jaccard metric, \texttt{random\_state=42}, $n_{\text{neighbors}}=15$, $min\_dist=0.1$) followed by scaling to $[-1,1]$, and support vector machines with precomputed kernels. The six-qubit circuit used one IQPEmbedding repeat. Benchmarks were run at two QKS panel sizes: the first \num{5000} molecules in library order (\num{3750} active, \num{1250} inactive) and the full representation panel of \num{19849} molecules. The complete-TNE intersection used for the canonical RF benchmark contains \num{19836} molecules (\num{14721} active, \num{5115} inactive).
 
-The RBF baseline gamma is tuned by inner cross-validation on the grid $\{0.5, 1.0, 2.0, 5.0\}$ (per-fold best gamma at n = 5,000: 5, 1, 5, 5, 5). A linear kernel on the same $[-1,1]^6$ features serves as an additional honest baseline. Statistical significance of AUC differences is assessed by paired $t$-tests across the five folds (at n = 5,000: quantum vs.\ RBF $t=-0.901$, $p=0.4186$; quantum vs.\ linear $t=12.736$, $p=0.0002$; RBF vs.\ linear $t=14.760$, $p=0.0001$; at n = 19,849: quantum vs.\ RBF $t=-2.594$, $p=0.0604$; quantum vs.\ linear $t=9.733$, $p=0.0006$). Target alignment is computed with \texttt{pennylane.kernels.target\_alignment} using the raw $\{0,1\}$ activity labels (the canonical convention: the negative class contributes $0/n_{\text{minus}}$ to the label rescaling, matching the deposited per-fold values).
+The RBF baseline gamma was tuned by inner cross-validation on the grid $\{0.5, 1.0, 2.0, 5.0\}$. A linear kernel on the same $[-1,1]^6$ features served as an additional baseline. Paired fold comparisons gave quantum-versus-RBF $p=0.4186$ at $n=5000$ and $p=0.0604$ at $n=19849$; quantum-versus-linear comparisons gave $p=0.0002$ and $p=0.0006$, respectively. Target alignment was computed with the raw binary activity labels.
 
 \subsubsection{State-vector kernel}
-For computational tractability at n = 5,000 and n = 19,849, the pairwise IQPEmbedding circuit evaluation (the method that produced the canonical n=500 v11 results, $\sim$\SI{535}{pairs\per\second}) is replaced by a \textbf{state-vector kernel}: for each sample $x_i$, the 6-qubit state $|\phi(x_i)\rangle \in \mathbb{C}^{2^6}$ is obtained in a single circuit call, and the kernel matrix is formed as $K_{ij} = |V V^\dagger|^2$ where $V$ is the $N \times 64$ state matrix, via BLAS (approximately \num{1000}$\times$ faster than the pairwise evaluation). A small negative eigenvalue from floating-point noise is clipped by projecting onto the closest positive semi-definite matrix before the SVM is trained.
+For computational tractability at $n=\num{5000}$ and $n=\num{19849}$, the pairwise IQPEmbedding circuit evaluation is replaced by a \textbf{state-vector kernel}: for each sample $x_i$, the 6-qubit state $|\phi(x_i)\rangle \in \mathbb{C}^{2^6}$ is obtained in a single circuit call, and the kernel matrix is formed as $K_{ij} = |V V^\dagger|^2$ where $V$ is the $N \times 64$ state matrix, via BLAS (approximately \num{1000}$\times$ faster than the pairwise evaluation). A small negative eigenvalue from floating-point noise is clipped by projecting onto the closest positive semi-definite matrix before the SVM is trained.
 
-\subsubsection{Numerical equivalence validation}
-The state-vector kernel was validated against the pairwise method on a 60-molecule 5-fold CV (same 60-molecule dataset): per-fold AUC differences of $0.000000$ (quantum AUC \num{0.8756}$\pm$0.0697 both paths) and identical per-fold target alignment $\{0.5489,\ 0.5767,\ 0.5567,\ 0.5430,\ 0.5517\}$ once the raw-$\{0,1\}$ label convention is reproduced. A subtle RBF AUC difference appears when both modes run in the same process, traced to the shared global NumPy random state used by SVC Platt scaling; in separate processes RBF AUC is also identical (0.8478$\pm$0.0688). The canonical $n=5{,}000$ run and the full-panel $n=19{,}849$ run both completed all five folds with the 6-qubit state-vector kernel. Raw outputs are deposited in the project \texttt{results/} directory (\texttt{p3\_qks\_benchmark\_n5000} / \texttt{p3\_qks\_summary\_n5000} for $n=5{,}000$; \texttt{p3\_qks\_benchmark\_n19849} / \texttt{p3\_qks\_summary\_n19849} for $n=19{,}849$); canonical $n=500$ outputs are \texttt{p3\_qks\_benchmark\_n500} / \texttt{p3\_qks\_summary\_n500}.
+\subsubsection{Numerical consistency}
+A numerical comparison of the state-vector and pairwise implementations on a 60-molecule, 5-fold dataset. The two implementations produced identical quantum-kernel AUCs ($\num{0.8756}\pm\num{0.0697}$) and target-alignment values under the raw binary-label convention. The \num{5000}-molecule and \num{19849}-molecule QKS analyses used the 6-qubit state-vector implementation for all five folds. The agreement supports numerical consistency; it does not estimate performance on an independent dataset.
 
 \begin{table}[htbp]
 \centering
-\caption{Kernel comparison for activity prediction at two sample sizes (5-fold cross-validation, 6-qubit IQPEmbedding, state-vector kernel; $n = \num{5000}$ and $n = \num{19849}$). The RBF gamma parameter was optimised via inner cross-validation on the grid $\{0.5, 1.0, 2.0, 5.0\}$ (per-fold best gamma at $n = \num{5000}$: 5, 1, 5, 5, 5). With the canonical circuit, the gamma-tuned RBF kernel and the quantum kernel show \textbf{no statistically significant difference} at either scale ($p = \num{0.419}$ at $n = \num{5000}$; $p = \num{0.060}$ at $n = \num{19849}$, paired $t$-test; the latter a borderline trend toward lower QK performance), while the quantum kernel \textbf{significantly outperforms} the linear kernel at scale ($p \leq \num{0.0006}$). \textit{Note:} an earlier benchmark with untuned RBF (gamma at default) yielded an apparent quantum advantage that was not supported by any deposited result file; earlier 8-qubit runs reporting a quantum disadvantage ($n = \num{5000}$: \num{0.752} versus \num{0.840}, $p = \num{0.003}$; $n = \num{19849}$: \num{0.659} versus \num{0.825}, $p = \num{0.0006}$) were artefacts of the suboptimal circuit and a train/test scaling mismatch (C3) and are \textbf{not} reproduced by the canonical protocol.}
+\caption{Kernel comparison for activity prediction at two QKS panel sizes (5-fold cross-validation, 6-qubit IQPEmbedding, state-vector kernel; $n = \num{5000}$ and $n = \num{19849}$). The $n=\num{19849}$ QKS panel is the full representation panel; the primary RF analysis requiring complete TNE embeddings uses the $n=\num{19836}$ intersection reported in the main manuscript. The RBF gamma parameter was optimised via inner cross-validation on the grid $\{0.5, 1.0, 2.0, 5.0\}$ (per-fold best gamma at $n = \num{5000}$: 5, 1, 5, 5, 5). With the specified circuit, the gamma-tuned RBF kernel and the quantum kernel show \textbf{no statistically significant difference} at either scale ($p = \num{0.419}$ at $n = \num{5000}$; $p = \num{0.060}$ at $n = \num{19849}$, paired $t$-test; the latter a borderline trend toward lower QK performance), while the quantum kernel \textbf{significantly outperforms} the linear kernel at scale ($p \leq \num{0.0006}$). \textit{Interpretation:} with the specified circuit, the tuned RBF and quantum kernels were not detectably different at either scale, whereas the quantum kernel exceeded the linear comparator. These results are limited to the classically simulated 6-qubit protocol and do not establish quantum advantage.}
 \label{SM-tab:qkernel}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{l S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] l}
+\small
+\begin{tabularx}{\textwidth}{l *{4}{>{\centering\arraybackslash}X} >{\raggedright\arraybackslash}X}
 \toprule
-Kernel & {AUC ($n=\num{5000}$)} & {TA ($n=\num{5000}$)} & {AUC ($n=\num{19849}$)} & {TA ($n=\num{19849}$)} & {$p$ vs.~RBF} \\
+Kernel & {\shortstack{AUC\\$n=5000$}} & {\shortstack{TA\\$n=5000$}} & {\shortstack{AUC\\$n=19849$}} & {\shortstack{TA\\$n=19849$}} & {$p$ vs. RBF} \\
 \midrule
-Quantum (IQPEmbedding, 6 qubits) & 0.820 & 0.592 & 0.823 & 0.622 & {$p = \num{0.419}$ / \num{0.060}, n.s.} \\
-RBF (gamma-tuned, SVM) & 0.826 & 0.199 & 0.829 & 0.145 & {---} \\
-Linear & 0.517 & {---} & 0.537 & {---} & {$p < \num{0.001}$, sig.} \\
+Quantum (IQPEmbedding, 6 qubits) & 0.820 & 0.592 & 0.823 & 0.622 & $p=0.419/0.060$, n.s. \\
+RBF (gamma-tuned, SVM) & 0.826 & 0.199 & 0.829 & 0.145 & --- \\
+Linear & 0.517 & --- & 0.537 & --- & $p<0.001$ \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabularx}
 \vspace{1mm}
 \footnotesize Paired $t$-test (5 folds), quantum versus linear: $p = \num{0.0002}$ ($n = \num{5000}$) and $p = \num{0.0006}$ ($n = \num{19849}$), both significant. Quantum target alignment (\numrange{0.592}{0.622}) exceeds RBF target alignment (\numrange{0.145}{0.199}) yet does not translate into a discrimination advantage.
 \end{table}
 
-% ============================================================================
-% SUPPLEMENTARY FIGURES: TENSOR COMPRESSION & TNE DOCKING VALIDATION
-% ============================================================================
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.75\textwidth]{tensor_compression.pdf}
-\caption{Compression ratio and reconstruction error versus Tucker bond dimension. At $d=8$, the physically meaningful mean real-atom compression ratio is \num{6.1}$\times$ (based on $\sim$39 mean atoms per molecule), with a reconstruction error of 0.113. (See main manuscript Methods Section~2.4.2 for discussion of the mathematical padding convention).}
+\caption{Compression ratio and reconstruction error versus Tucker bond dimension. At $d=8$, the physically meaningful mean real-atom compression ratio is \num{6.1}$\times$ (based on $\sim$\num{39} mean atoms per molecule), with a reconstruction error of \num{0.113}. (See main manuscript Methods Section~2.4.2 for discussion of the mathematical padding convention).}
 \label{SM-fig:tensor}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.80\textwidth]{p3_tne_parity.png}
-\caption{Tartarus docking validation of Tensor Network Embeddings. Predicted vs.\ experimental (QuickVina) docking scores for three \textit{Plasmodium} targets using 192-dimensional TNE descriptors. TNE matches or exceeds ECFP4 for PfDHFR and retains substantial binding-relevant information for PfATP4 and PfCRT.}
+\includegraphics[width=0.80\textwidth]{p3_tne_regression_summary.png}
+\caption{Information-retention analysis for 192-dimensional Tensor Network Embeddings. Bars show cross-validated $R^2$ values for TNE and ECFP4 regressors predicting computational QuickVina docking scores for three \textit{Plasmodium} targets. TNE was competitive for PfDHFR but lower than ECFP4 for PfATP4 and PfCRT; the analysis is descriptive and does not establish experimental binding or prospective generalisation.}
 \label{SM-fig:tne_parity}
 \end{figure}
+
+
+\section{Transfer analysis under a ChEMBL label-source shift}
+
+\subsection{Descriptor transfer analysis}
+
+All descriptor methods were evaluated on an external ChEMBL antimalarial dataset ($n = \num{22447}$) using 5-fold stratified cross-validation with Random Forest (\num{200} trees, \texttt{random\_state=42}). The external panel was assembled from ChEMBL~34 bioactivity records for \textit{Plasmodium falciparum} assays (IC$_{50} \leq \SI{10}{\micro\molar}$ = active, $> \SI{10}{\micro\molar}$ = inactive). It is external to the primary eOS80CH label source; molecule-level disjointness was not established and is not claimed. Feature extraction followed the identical pipeline used for the internal benchmark. For the intention-to-evaluate analysis, TNE embedding failures ($n = \num{351}$, \qty{1.6}{\percent}) were assigned zero vectors. The complete-case analysis ($n = \num{22096}$) gave ECFP4 \num{0.960}, TFP \num{0.861}, TNE \num{0.644}, and TFP+TNE \num{0.798}, versus ITT values of \num{0.960}, \num{0.864}, \num{0.645}, and \num{0.800}. The qualitative ranking was unchanged.
+
+\begin{table}[htbp]
+\centering
+\caption{Descriptor transfer under the ChEMBL label-source shift. Random Forest estimates are shown for the intention-to-evaluate panel ($n=\num{22447}$) and the complete-case sensitivity panel ($n=\num{22096}$). Internal values are included for context; molecule-level disjointness was not established. TNE failures were retained as zero-vector penalties in the primary analysis.}
+\label{SM-tab:extval_descriptor}
+\small
+\begin{tabularx}{\textwidth}{l *{3}{>{\centering\arraybackslash}X}}
+\toprule
+Method & {\shortstack{Internal AUC\\$n=19836$}} & {\shortstack{Transfer AUC\\$n=22447$}} & {$\Delta$} \\
+\midrule
+ECFP4   & 0.948 & 0.960 & +0.012 \\
+TFP     & 0.876 & 0.865 & -0.011 \\
+TNE     & 0.722 & 0.645 & -0.077 \\
+TFP+TNE & 0.888 & 0.800 & -0.088 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Quantum-kernel transfer analysis}
+
+The quantum kernel was evaluated on the ChEMBL label-source-shift panel (ITT $n = \num{22447}$, 5-fold SVM with precomputed kernels) following the specified protocol from \cref{sec:qks_benchmark}: UMAP reduction of 2048-bit Morgan fingerprints to 6 dimensions (Jaccard metric, \texttt{random\_state=42}, $n_{\text{neighbors}}=15$, $min\_dist=0.1$), scaling to $[-1,1]$, and the 6-qubit IQPEmbedding state-vector kernel. The RBF gamma was tuned by inner cross-validation on the grid $\{0.5, 1.0, 2.0, 5.0\}$.
+
+\begin{table}[htbp]
+\centering
+\caption{Kernel transfer under the ChEMBL label-source shift (5-fold SVM, $n=\num{22447}$). QKS was lower than RBF (AUC $\num{0.817}$ versus $\num{0.847}$); the corrected-resampled comparison was exploratory ($p=\num{0.021}$). Internal values are shown for context, and classifier differences prevent direct comparison with the descriptor-transfer table.}
+\label{SM-tab:extval_qks}
+\small
+\begin{tabularx}{\textwidth}{l *{3}{>{\centering\arraybackslash}X}}
+\toprule
+Kernel & {Internal AUC} & {Transfer AUC} & {$p$ vs. RBF} \\
+\midrule
+Quantum (6 qubits) & 0.823 & 0.817 & {$p_{\mathrm{corr}}=\num{0.021}$} \\
+RBF & 0.829 & 0.847 & {---} \\
+Linear & 0.537 & 0.544 & {$p<\num{0.001}$} \\
+\bottomrule
+\end{tabularx}
+\vspace{1mm}
+\footnotesize Internal: $n=\num{19849}$; transfer: $n=\num{22447}$. The corrected-resampled comparison is exploratory; classifier and population differences limit cross-table comparisons.
+\end{table}
+
+\subsection{H$_1$--RRS association is size-mediated}
+\label{sec:tda_rrs}
+
+The Spearman correlation between H$_1$ count and resistance-resilience scores (RRS) \citep{temgoua2027md} was examined in two cohorts: (i)~an expanded cohort of $n = \num{494}$ compounds with complete H$_1$ and continuous RRS profiles (used for the cross-paper analysis in \cref{fig:h1_rrs}), and (ii)~a subset of $N = \num{77}$ compounds with validated per-target RRS classification (used for the H$_1$--RRS association in \cref{sec:tda_rrs}). In the expanded cohort ($n = \num{494}$), H$_1$ count showed a weak unadjusted association with continuous RRS (Spearman $\rho = \num{0.2399}$, $p = \num{6.76e-8}$), but the partial association was null after controlling for molecular weight, ring count, fraction sp$^3$, and H$_0$ count ($\rho_{\text{partial}} = \num{0.0329}$, $p = \num{0.4668}$). In the validated subset ($N = \num{77}$), the raw correlation was $\rho = \num{0.312}$ ($p = \num{0.006}$) but dropped to $\rho_{\text{partial}} = \num{0.033}$ ($p = \num{0.47}$) after the same adjustment. Both analyses converge on the same conclusion: the H$_1$--RRS association is mediated by molecular complexity rather than topological structure per se. This result does not support a direct H$_1$--RRS association but is consistent with the broader finding that topological complexity correlates with binding promiscuity (\cref{M-sec:tda_promiscuity}).
 
 \bibliographystyle{unsrtnat}
 \bibliography{Bibliography_Paper3}
