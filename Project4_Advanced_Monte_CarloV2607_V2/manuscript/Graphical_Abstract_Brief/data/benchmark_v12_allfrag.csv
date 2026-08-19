@@ -1,0 +1,8 @@
+# P4 v12-activity benchmark repeated on the FULL 80-fragment vocabulary (job 15133).
+# 20 seeds, 1000 iterations per seed. Confirmed cell-for-cell in P4 DAR section 1.12.
+# This is Table 4 of the manuscript. Per-seed files are not in the public deposit.
+method,mean_reward,sd,min,max
+Random,0.6701,0.0108,0.6505,0.6910
+MCTS+ScafVAE,0.6488,0.0152,0.6190,0.6772
+Greedy,0.4593,0.0000,0.4593,0.4593
+Genetic algorithm,0.6427,0.0138,0.6139,0.6663

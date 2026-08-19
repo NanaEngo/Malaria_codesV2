@@ -1,0 +1,9 @@
+# 2^5 factorial ablation, 160 runs, 5 replicates per cell. Earlier development oracle
+# configuration: WITHIN-ABLATION effects only, NOT comparable to the v12 absolute rewards.
+# Source: results/ablation/p4_component_ablation_summary.csv
+factor,level_a,mean_a,level_b,mean_b,delta
+ScafVAE policy,False,0.630,True,0.778,0.148
+Pareto front,False,0.650,True,0.758,0.108
+Vocabulary,Small,0.665,Large,0.743,0.079
+c_PUCT,2.0,0.677,1.0,0.731,0.055
+Temperature,1.5,0.698,0.5,0.710,0.012

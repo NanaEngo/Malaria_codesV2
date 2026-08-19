@@ -1,0 +1,177 @@
+================================================================================
+GRAPHICAL ABSTRACT TEMPLATE - PAPER 4
+Pareto-guided Monte Carlo tree search for analysing multi-objective
+alternatives in antimalarial molecular design
+Target: Journal of Cheminformatics | Canvas: 920 x 300 px | PNG | < 150 KB
+Read Graphical_Abstract_Specification.md before using this template.
+================================================================================
+
+--------------------------------------------------------------------------------
+SECTION 1 - THE BRIEF IN ONE PARAGRAPH
+--------------------------------------------------------------------------------
+Build a three-panel graphical abstract for a computational chemistry paper that
+reports an HONEST NEGATIVE RESULT. A Pareto-guided Monte Carlo tree search does
+NOT beat random search on a single weighted reward. The paper's contribution is
+that keeping a Pareto archive preserves chemically distinct design options that
+a fixed weighting throws away, and that the paper quantifies what that costs.
+The figure must make the negative result plainly visible while showing why the
+method is still worth having. Any design that reads as "our method won" is
+scientifically false and must not be produced.
+
+--------------------------------------------------------------------------------
+SECTION 2 - LAYOUT SKELETON
+--------------------------------------------------------------------------------
+
++------------------------------------------------------------------------------+
+|  PANEL A  (~276 px)   |  PANEL B  (~276 px)    |  PANEL C  (~368 px)         |
+|  HOW IT WORKS         |  WHAT IT SCORED        |  WHY IT MATTERS             |
+|                       |                        |                             |
+|  benzene root         |  4 bars, mean +/- SD   |  MPO vs SYBA plane          |
+|      |                |                        |   P2 *          * P1        |
+|   fragment tree       |  Random    0.6724      |                             |
+|    /   |   \          |  MCTS      0.6649      |          * P4               |
+|   o    o    o         |  GA        0.6453      |   P3 *                      |
+|    \   |   /          |  Greedy    0.4278      |                             |
+|   non-dominated       |                        |  weight-space bar:          |
+|   archive (4 kept)    |  d = -0.0075           |  [P2 95.6% |mid|P3 0.3%]    |
+|                       |  p = 0.000085          |                             |
++------------------------------------------------------------------------------+
+|  "Random search wins the scalar reward; the Pareto archive keeps the options |
+|   a single weighting would discard."                        (optional strip) |
++------------------------------------------------------------------------------+
+
+Reading order is strictly left to right: method, then honest result, then the
+payoff. Do not reorder the panels.
+
+--------------------------------------------------------------------------------
+SECTION 3 - PANEL A: HOW IT WORKS
+--------------------------------------------------------------------------------
+Content:
+  - A search tree rooted at a benzene ring.
+  - Branches = adding one fragment at a time (at most 10 additions per episode).
+  - A handful of leaf molecules; four of them marked as retained.
+  - Label the retained set "non-dominated archive".
+
+Caption words allowed: "fragment assembly", "scaffold-aware tree search",
+  "non-dominated archive", "20 seeds", "1000 iterations".
+Caption words forbidden: "optimal", "best", "winner", "improved".
+
+Do NOT draw: proteins, binding pockets, parasites, cells, mosquitoes, test
+tubes, or any laboratory imagery. Nothing in this study was measured
+experimentally.
+
+--------------------------------------------------------------------------------
+SECTION 4 - PANEL B: WHAT IT SCORED  (the honest result)
+--------------------------------------------------------------------------------
+Source: data/benchmark_v12_medium.csv
+
+  Method              Mean      SD        Bar order
+  ------------------  --------  --------  ---------
+  Random              0.6724    0.0056    1st (highest)
+  MCTS+ScafVAE        0.6649    0.0068    2nd
+  Genetic algorithm   0.6453    0.0124    3rd
+  Greedy              0.4278    0.0000    4th
+
+Rules for this panel:
+  - Random is the tallest bar and must be immediately legible as such.
+  - Do NOT highlight, outline, saturate or otherwise privilege the MCTS bar.
+  - Greedy's SD is exactly 0.0000 because it is deterministic. Show no error
+    bar for it. Do not invent one. Do not omit the greedy bar.
+  - Suggested y-axis: 0.40 to 0.70. Do NOT start the axis near 0.64 to make the
+    Random-MCTS gap look dramatic, and do NOT start at 0 to make it vanish.
+    The gap is small and real: state it numerically instead.
+  - Annotate: "MCTS - Random = -0.0075 (95% CI -0.0107 to -0.0043), p = 0.000085"
+    or an abbreviated form if space is tight.
+
+Optional, only with spare room: a note that on the full 80-fragment vocabulary
+the gap widens to -0.0214, with random ahead in 19 of 20 seeds
+(data/benchmark_v12_allfrag.csv).
+
+--------------------------------------------------------------------------------
+SECTION 5 - PANEL C: WHY IT MATTERS  (the payoff)
+--------------------------------------------------------------------------------
+Source: data/pareto_front_4_candidates.csv and data/scalar_weight_sweep.csv
+
+Plot the four retained candidates in the MPO (x) vs SYBA (y) plane:
+
+  Label  SMILES                                        MPO     SYBA    seed
+  -----  --------------------------------------------  ------  ------  ----
+  P1     CNC(=O)c1ccc(OC(C)C(C)(C)C)c(OC)c1            0.910   1.000   13
+  P2     COc1c(C)cc(-c2ccc(S(N)(=O)=O)cc2)cc1C         0.945   1.000   18
+  P3     CC1CCC(n2cccn2)NC1(c1ccccc1)C1OCCO1           0.946   0.021   5
+  P4     COc1cc(CO)c(O)c(C)c1C                         0.729   0.994   6
+
+The story in this panel: P3 has the HIGHEST MPO of all four (0.946) but the
+lowest SYBA (0.021). P2 is nearly as good on MPO (0.945) with SYBA 1.000. A
+single fixed weighting picks P2 across 95.6% of the weight space and only ever
+picks P3 when w_MPO exceeds about 0.997 - 0.3% of the space. The Pareto archive
+is what keeps P3 visible at all. Make that legible.
+
+Recommended: a horizontal weight-space bar beneath the scatter, segmented
+  [ P2 : 0.0000-0.9556 | mid : 0.9556-0.9968 | P3 : 0.9968-1.0000 ]
+with the P3 segment visibly tiny and labelled "0.3%".
+
+Structure rendering: render from the SMILES strings above, unmodified. If only
+two structures fit, use P2 and P3 - they carry the trade-off. Verify each
+rendered structure round-trips to its source SMILES before delivery.
+
+Do NOT plot SA or SA-inverse as an axis: it is constant (3.0) for all four
+candidates and carries zero information.
+
+--------------------------------------------------------------------------------
+SECTION 6 - HARD PROHIBITIONS
+--------------------------------------------------------------------------------
+[X] Any visual implying the proposed method outperformed the baselines.
+[X] Trophies, medals, crowns, upward arrows, green ticks, "best"/"superior".
+[X] Protein structures, ribbons, docking poses, binding pockets.
+[X] Parasites, mosquitoes, blood cells, patients, laboratory glassware.
+[X] IC50, EC50, potency, efficacy, activity, target engagement, resistance
+    reversal - as text or as imagery.
+[X] Molecular dynamics imagery: trajectories, solvent boxes, simulation frames.
+    No MD was performed in this study.
+[X] Mixing the two hypervolume conventions. 1.2366 is 3-objective (bound 1.331).
+    18.99 is 4-objective negated (bound 19.45). Never on one axis or legend.
+[X] RRS or PNS labelled as measured resistance or measured polypharmacology.
+    They are computational proxies: a fingerprint similarity and an average of
+    three docking columns. Always qualify with "-informed proxy".
+[X] Red/green as the only channel distinguishing any two categories.
+[X] Invented, rounded, rescaled or "cleaned up" numbers.
+
+--------------------------------------------------------------------------------
+SECTION 7 - APPROVED TEXT SNIPPETS (use verbatim or shorten, do not embellish)
+--------------------------------------------------------------------------------
+Title bar:
+  "Pareto-guided MCTS for multi-objective antimalarial design"
+
+Panel headers:
+  A: "Scaffold-aware fragment search"
+  B: "Scalar benchmark (20 seeds)"
+  C: "The trade-off a single weighting hides"
+
+Closing line (pick one):
+  "Random search wins the scalar reward; the Pareto archive keeps the options a
+   single weighting would discard."
+  "A single weighted score selects P2 in 95.6% of weightings - and discards the
+   highest-MPO candidate."
+  "Search efficiency and decision support are different questions."
+
+Proxy disclaimer, if RRS/PNS appear anywhere:
+  "RRS/PNS are computational proxies, not experimental measurements."
+
+--------------------------------------------------------------------------------
+SECTION 8 - DELIVERY CHECKLIST
+--------------------------------------------------------------------------------
+[ ] 920 x 300 px, PNG, RGB, under 150 KB.
+[ ] Legible at 50% zoom; no text below ~8 pt equivalent.
+[ ] Colour-blind safe palette.
+[ ] Random is visibly the top scorer in panel B.
+[ ] Greedy present, no fabricated error bar.
+[ ] All four (or two) structures round-trip to the supplied SMILES.
+[ ] Exactly one hypervolume convention shown, with its bound.
+[ ] No prohibited imagery or wording from Section 6.
+[ ] No caption, no figure number, no citations - standalone asset.
+[ ] Every number traceable to a file in data/.
+
+================================================================================
+END OF TEMPLATE
+================================================================================
