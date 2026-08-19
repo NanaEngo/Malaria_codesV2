@@ -78,57 +78,6 @@ from sklearn.svm import SVC
 import pennylane as qml
 from pennylane.kernels import kernel_matrix, closest_psd_matrix
 
-# ── JAX / CuPy detection ────────────────────────────────────────────
-try:
-    import jax
-    import jax.numpy as jnp
-    _HAS_JAX = True
-    _JAX_BACKEND = jax.devices()[0].platform  # 'cpu' or 'gpu'
-except ImportError:
-    _HAS_JAX = False
-    _JAX_BACKEND = None
-
-try:
-    import cupy as cp
-    _HAS_CUPY = True
-    _CUPY_AVAILABLE = cp.is_available()
-    if not _CUPY_AVAILABLE:
-        print("  [CuPy] Imported but no GPU available — falling back to CPU")
-except ImportError:
-    _HAS_CUPY = False
-    _CUPY_AVAILABLE = False
-    print("  [CuPy] Not installed — GPU features unavailable")
-except Exception as _cupy_err:
-    _HAS_CUPY = False
-    _CUPY_AVAILABLE = False
-    print(f"  [CuPy] Import error: {_cupy_err}")
-
-# ── Device override (set via --device CLI arg) ──
-_DEVICE_OVERRIDE: str | None = None
-
-
-def best_device(n_qubits: int = 6, prefer_cpu: bool = False) -> str:
-    """Select the fastest available PennyLane device.
-
-    Priority (from pennylane skill):
-    - prefer_cpu=False: lightning.gpu > lightning.qubit > default.qubit
-    - prefer_cpu=True:  lightning.qubit > default.qubit (skip GPU)
-
-    Returns device name string for qml.device().
-    """
-    if prefer_cpu:
-        _devices_to_try = ["lightning.qubit", "default.qubit"]
-    else:
-        _devices_to_try = ["lightning.gpu", "lightning.qubit", "default.qubit"]
-    for d in _devices_to_try:
-        try:
-            qml.device(d, wires=n_qubits)
-            return d
-        except Exception:
-            continue
-    return "default.qubit"
-
-
 N_QUBITS = 8
 
 PROJECT_DIR = Path(__file__).parent.parent
@@ -349,19 +298,15 @@ def cv_score(X: np.ndarray, y: np.ndarray,
 _KERNEL_CACHE: dict = {}
 
 
-def _get_kernel_fn(n_qubits: int, n_repeats: int = 1, prefer_cpu: bool = False):
+def _get_kernel_fn(n_qubits: int, n_repeats: int = 1):
     """Get or create a cached quantum kernel function for given parameters.
 
-    Uses best_device() to select the fastest available device.
-    If prefer_cpu=True, skips lightning.gpu (GPU overhead > CPU
-    for pair-by-pair quantum kernel evaluation).
-
-    Each worker process creates the QNode only ONCE.
+    Uses IQPEmbedding on lightning.qubit. Each worker process creates the
+    QNode only ONCE (on first block), then reuses it for all subsequent blocks.
     """
-    key = (n_qubits, n_repeats, prefer_cpu)
+    key = (n_qubits, n_repeats)
     if key not in _KERNEL_CACHE:
-        dev_name = _DEVICE_OVERRIDE or best_device(n_qubits, prefer_cpu=prefer_cpu)
-        dev = qml.device(dev_name, wires=n_qubits)
+        dev = qml.device("lightning.qubit", wires=n_qubits)
 
         @qml.qnode(dev)
         def _kernel(x1, x2):
@@ -377,87 +322,16 @@ def _get_kernel_fn(n_qubits: int, n_repeats: int = 1, prefer_cpu: bool = False):
     return _KERNEL_CACHE[key]
 
 
-def _get_kernel_fn_jax(n_qubits: int, n_repeats: int = 1, prefer_cpu: bool = False):
-    """JIT-compiled kernel function via JAX interface (10-100x faster).
-
-    Uses pennylane-lightning with JAX backend and XLA compilation.
-    The entire kernel matrix is computed via jax.vmap, avoiding the
-    per-pair QNode overhead.
-
-    Falls back to standard _get_kernel_fn if JAX is unavailable.
-    """
-    if not _HAS_JAX:
-        return _get_kernel_fn(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-
-    key = (n_qubits, n_repeats, prefer_cpu, "jax")
-    if key not in _KERNEL_CACHE:
-        dev_name = _DEVICE_OVERRIDE or best_device(n_qubits, prefer_cpu=prefer_cpu)
-        dev_jax = qml.device(dev_name, wires=n_qubits)
-
-        @qml.qnode(dev_jax, interface="jax", diff_method=None)
-        def _circuit(x1, x2):
-            qml.IQPEmbedding(x1, wires=range(n_qubits), n_repeats=n_repeats)
-            qml.adjoint(qml.IQPEmbedding)(x2, wires=range(n_qubits), n_repeats=n_repeats)
-            return qml.probs(wires=range(n_qubits))
-
-        # JIT the full matrix computation: vmap over all pairs
-        @jax.jit
-        def _mat(X):
-            return jax.vmap(
-                lambda x1: jax.vmap(
-                    lambda x2: _circuit(x1, x2)[0]
-                )(X)
-            )(X)
-
-        _KERNEL_CACHE[key] = _mat
-
-    return _KERNEL_CACHE[key]
-
-
-def _kernel_matrix_jax(X: np.ndarray,
-                        n_qubits: int,
-                        n_repeats: int,
-                        dtype: type = np.float64,
-                        prefer_cpu: bool = False) -> np.ndarray:
-    """Compute full kernel matrix using JAX JIT + vmap (10-100x faster).
-
-    Batches ALL pairwise evaluations into a single XLA-compiled operation.
-    On GPU, uses CuPy interop to avoid GPU->CPU transfer overhead.
-
-    Args:
-        X: (n, n_qubits) input array scaled to [-1, 1]
-        n_qubits: Number of qubits
-        n_repeats: IQPEmbedding repeat count
-        dtype: Output dtype (float32 or float64)
-        prefer_cpu: If True, skip lightning.gpu
-
-    Returns:
-        K: (n, n) symmetric kernel matrix
-    """
-    if not _HAS_JAX:
-        raise RuntimeError("JAX not available — use chunked kernel instead")
-
-    _mat_fn = _get_kernel_fn_jax(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-    X_jax = jnp.array(X, dtype=jnp.float32)
-    K_jax = _mat_fn(X_jax)
-
-    # Use CuPy interop on GPU for zero-copy conversion
-    if _HAS_CUPY and _CUPY_AVAILABLE and _JAX_BACKEND == "gpu":
-        return cp.asnumpy(cp.array(K_jax, dtype=dtype))
-    return np.array(K_jax, dtype=dtype)
-
-
 def _compute_block_task(i0: int, i1: int, j0: int, j1: int,
                          X_chunk: np.ndarray,
-                         n_qubits: int, n_repeats: int,
-                         prefer_cpu: bool = False) -> np.ndarray:
+                         n_qubits: int, n_repeats: int) -> np.ndarray:
     """
     Compute one block of the kernel matrix (top-level for joblib pickling).
 
     Uses the module-level cached kernel function (_get_kernel_fn) so each
     worker creates the PennyLane device + QNode only ONCE.
     """
-    _kfn = _get_kernel_fn(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
+    _kfn = _get_kernel_fn(n_qubits, n_repeats)
     return kernel_matrix(X_chunk[i0:i1], X_chunk[j0:j1], _kfn)
 
 
@@ -465,32 +339,16 @@ def _kernel_matrix_chunked(X: np.ndarray,
                              block_size: int = 200,
                              n_jobs: int = 1,
                              n_qubits: int = 8,
-                             n_repeats: int = 1,
-                             prefer_cpu: bool = False,
-                             use_jax: bool = False,
-                             dtype: type = np.float64) -> np.ndarray:
+                             n_repeats: int = 1) -> np.ndarray:
     """
     Compute kernel matrix via block decomposition, optionally parallel.
 
-    When use_jax=True and JAX is available, the entire matrix is computed
-    in a single batched operation (order of magnitude faster).
-
-    Otherwise, exploits symmetry: only computes blocks i_block <= j_block
+    Exploits symmetry: only computes blocks i_block <= j_block
     and mirrors K[j,i] = K[i,j].T for the lower triangle.
 
     Parallel mode uses joblib with loky (process) backend.
     """
     n = len(X)
-
-    # ── JAX fast-path: single batched call (no block decomposition) ──
-    if use_jax and _HAS_JAX:
-        print(f"        JAX JIT kernel: {n}x{n} matrix, {n_qubits}q, {n_repeats}rep, device={_DEVICE_OVERRIDE or best_device(n_qubits, prefer_cpu=prefer_cpu)}")
-        K = _kernel_matrix_jax(X, n_qubits, n_repeats, dtype=dtype, prefer_cpu=prefer_cpu)
-        # Ensure symmetry (numerical noise can break exact symmetry)
-        K = (K + K.T) / 2.0
-        return K
-
-    # ── Standard block decomposition ──
     n_blocks = (n + block_size - 1) // block_size
     block_ranges = [(i * block_size, min((i + 1) * block_size, n))
                     for i in range(n_blocks)]
@@ -509,114 +367,23 @@ def _kernel_matrix_chunked(X: np.ndarray,
     print(f"        Blocks: {n_tasks}/{n_all} computed (symmetry saves {n_all - n_tasks}/{n_all} = {(1-n_tasks/n_all)*100:.0f}%)")
 
     if n_jobs == 1:
-        results = [_compute_block_task(i0, i1, j0, j1, X, n_qubits, n_repeats, prefer_cpu=prefer_cpu)
+        results = [_compute_block_task(i0, i1, j0, j1, X, n_qubits, n_repeats)
                    for i0, i1, j0, j1 in tasks]
     else:
         from joblib import Parallel, delayed
         results = Parallel(n_jobs=n_jobs)(
-            delayed(_compute_block_task)(i0, i1, j0, j1, X, n_qubits, n_repeats, prefer_cpu=prefer_cpu)
+            delayed(_compute_block_task)(i0, i1, j0, j1, X, n_qubits, n_repeats)
             for i0, i1, j0, j1 in tasks
         )
 
     # Assemble full matrix (upper triangle computed, lower mirrored)
-    K = np.zeros((n, n), dtype=dtype)
+    K = np.zeros((n, n), dtype=np.float64)
     for (ib, jb), block in zip(task_idx, results):
         i0, i1 = block_ranges[ib]
         j0, j1 = block_ranges[jb]
         K[i0:i1, j0:j1] = block
         if ib != jb:
             K[j0:j1, i0:i1] = block.T
-
-    return K
-
-
-# ---------------------------------------------------------------------------
-# Rectangular chunked kernel matrix (for test projection)
-# ---------------------------------------------------------------------------
-
-def _compute_block_task_xy(i0: int, i1: int, j0: int, j1: int,
-                            X: np.ndarray, Y: np.ndarray,
-                            n_qubits: int, n_repeats: int,
-                            prefer_cpu: bool = False) -> np.ndarray:
-    """Compute one rectangular block of the kernel matrix K(X, Y)."""
-    _kfn = _get_kernel_fn(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-    return kernel_matrix(X[i0:i1], Y[j0:j1], _kfn)
-
-
-def _kernel_matrix_chunked_xy(X: np.ndarray, Y: np.ndarray,
-                                block_size: int = 200,
-                                n_jobs: int = 1,
-                                n_qubits: int = 8,
-                                n_repeats: int = 1,
-                                prefer_cpu: bool = False,
-                                use_jax: bool = False,
-                                dtype: type = np.float64) -> np.ndarray:
-    """Chunked kernel matrix for rectangular inputs (e.g., test x train).
-
-    When use_jax=True and JAX is available, the matrix is computed in a
-    single batched jax.vmap call.
-
-    Otherwise, uses joblib Parallel over (block_size x block_size) sub-matrices.
-    No symmetry assumption; every block is computed explicitly.
-    """
-    n_x, n_y = len(X), len(Y)
-
-    # ── JAX fast-path: single batched call ──
-    if use_jax and _HAS_JAX:
-        print(f"        JAX rectangular kernel: {n_x}x{n_y}, {n_qubits}q, {n_repeats}rep")
-        # For rectangular, compute K(X, Y) by stacking [X; Y] for the
-        # square kernel, then extract the rectangular submatrix.
-        # More efficient: vmap over rows of X and vmap over rows of Y.
-        if not _HAS_JAX:
-            raise RuntimeError("JAX required for rectangular fast-path")
-        _mat_fn = _get_kernel_fn_jax(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-        X_jax = jnp.array(X, dtype=jnp.float32)
-        Y_jax = jnp.array(Y, dtype=jnp.float32)
-
-        # vmap over rows of X, each evaluating kernel with all rows of Y
-        @jax.jit
-        def _rect_mat():
-            return jax.vmap(
-                lambda x: jax.vmap(
-                    lambda y: _mat_fn(jnp.expand_dims(x, 0))[0, jnp.arange(n_y)]
-                )(Y_jax)
-            )(X_jax)
-
-        K_jax = _rect_mat()
-        if _HAS_CUPY and _CUPY_AVAILABLE and _JAX_BACKEND == "gpu":
-            return cp.asnumpy(cp.array(K_jax, dtype=dtype))
-        return np.array(K_jax, dtype=dtype)
-
-    # ── Standard block decomposition ──
-    x_ranges = [(i * block_size, min((i + 1) * block_size, n_x))
-                for i in range((n_x + block_size - 1) // block_size)]
-    y_ranges = [(j * block_size, min((j + 1) * block_size, n_y))
-                for j in range((n_y + block_size - 1) // block_size)]
-
-    tasks = []
-    task_idx = []
-    for ib, (i0, i1) in enumerate(x_ranges):
-        for jb, (j0, j1) in enumerate(y_ranges):
-            tasks.append((i0, i1, j0, j1))
-            task_idx.append((ib, jb))
-
-    print(f"        Rectangular QK matrix: {n_x}x{n_y}, block_size={block_size}, n_jobs={n_jobs}, n_repeats={n_repeats}")
-
-    if n_jobs == 1:
-        results = [_compute_block_task_xy(i0, i1, j0, j1, X, Y, n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-                   for i0, i1, j0, j1 in tasks]
-    else:
-        from joblib import Parallel, delayed
-        results = Parallel(n_jobs=n_jobs)(
-            delayed(_compute_block_task_xy)(i0, i1, j0, j1, X, Y, n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-            for i0, i1, j0, j1 in tasks
-        )
-
-    K = np.zeros((n_x, n_y), dtype=dtype)
-    for (ib, jb), block in zip(task_idx, results):
-        i0, i1 = x_ranges[ib]
-        j0, j1 = y_ranges[jb]
-        K[i0:i1, j0:j1] = block
 
     return K
 
@@ -630,28 +397,20 @@ def _qk_features_fold(X_ecfp_tr: np.ndarray, X_ecfp_te: np.ndarray,
                        n_kpca: int = 10,
                        n_repeats: int = 1,
                        block_size: int | None = None,
-                       n_jobs: int = 1,
-                       use_jax: bool = False,
-                       prefer_cpu: bool = False,
-                       dtype: type = np.float64) -> tuple[np.ndarray, np.ndarray]:
+                       n_jobs: int = 1) -> tuple[np.ndarray, np.ndarray]:
     """
-    Compute QK features for one CV fold — NO data leakage.
+    Compute QK features for one CV fold — NO data leakage (lightning.qubit).
 
     UMAP is fitted on training data only, then applied to test.
     Kernel matrix is built on training data only, then test points
     are projected via kernel PCA.
 
-    When use_jax=True and JAX is available, the kernel matrix is computed
-    via JAX JIT + vmap (10-100x faster than per-pair evaluation).
-    On GPU (--device lightning.gpu), the entire matrix is computed in a
-    single batched tensor operation.
+    For large n, uses chunked kernel computation with process-level
+    parallelism (loky backend) to avoid PennyLane QueuingManager issues.
 
     Args:
         block_size: Block size for chunked kernel (None = auto, direct)
         n_jobs: Parallel workers for chunked mode
-        use_jax: Use JAX JIT + vmap for kernel matrix (10-100x speedup)
-        prefer_cpu: Prefer CPU device (skip lightning.gpu)
-        dtype: Output dtype for kernel matrix (float32 or float64)
 
     Returns:
         qk_tr: (n_train, n_kpca) array
@@ -674,37 +433,25 @@ def _qk_features_fold(X_ecfp_tr: np.ndarray, X_ecfp_te: np.ndarray,
 
     n_train = len(X_q_tr)
 
-    # Decide device name for logging
-    _dev_name = _DEVICE_OVERRIDE or best_device(n_qubits, prefer_cpu=prefer_cpu)
-
-    # Step 3-4: Training kernel matrix + PSD fix
+    # Step 3-4: Training kernel matrix (chunked if large) + PSD fix
     # ── Adaptive block_size (R12) ────────────────────────────────
     _bs = block_size
-    if _bs is None and n_train > 500 and not (use_jax and _HAS_JAX):
+    if _bs is None and n_train > 500:
+        # Heuristic: target ~2 blocks per job for efficient load balancing
         _target_blocks = max(n_jobs * 2, 4)
         _bs = max(50, min(500, n_train // _target_blocks))
         print(f"        Adaptive block_size: n_train={n_train}, n_jobs={n_jobs} → block_size={_bs}")
 
-    if use_jax and _HAS_JAX:
-        # ── JAX JIT fast-path ──
-        print(f"        JAX QK matrix: {n_train}x{n_train}, {n_qubits}q, {n_repeats}rep, device={_dev_name}")
-        K_tr = _kernel_matrix_jax(X_q_tr, n_qubits, n_repeats, dtype=dtype, prefer_cpu=prefer_cpu)
-        # Symmetrize (numerical noise from JIT)
-        K_tr = (K_tr + K_tr.T) / 2.0
-    elif _bs is not None and n_train > _bs:
-        # ── Standard chunked ──
+    if _bs is not None and n_train > _bs:
         print(f"        Chunked QK matrix: {n_train}x{n_train}, block_size={_bs}, n_jobs={n_jobs}, n_repeats={n_repeats}")
         K_tr = _kernel_matrix_chunked(X_q_tr,
                                        block_size=_bs,
                                        n_jobs=n_jobs,
                                        n_qubits=n_qubits,
-                                       n_repeats=n_repeats,
-                                       prefer_cpu=prefer_cpu,
-                                       dtype=dtype)
+                                       n_repeats=n_repeats)
     else:
-        # ── Direct computation for small matrices ──
-        print(f"        Direct QK matrix: {n_train}x{n_train}, {n_qubits}q, {n_repeats}rep, device={_dev_name}")
-        dev = qml.device(_dev_name, wires=n_qubits)
+        # Direct computation for small matrices
+        dev = qml.device("lightning.qubit", wires=n_qubits)
 
         @qml.qnode(dev)
         def _kernel(x1, x2):
@@ -727,41 +474,19 @@ def _qk_features_fold(X_ecfp_tr: np.ndarray, X_ecfp_te: np.ndarray,
     qk_tr = kpca.fit_transform(K_tr_psd)
 
     # Step 6: Transform test via kernel + KPCA projection
-    n_te, n_tr = X_q_te.shape[0], X_q_tr.shape[0]
-    if use_jax and _HAS_JAX:
-        # ── JAX rectangular fast-path ──
-        # Compute square kernel on stacked [X_te; X_tr] then extract K(X_te, X_tr).
-        # This wastes computing (n_te+n_tr)^2 instead of n_te*n_tr, but with JAX
-        # JIT on GPU the marginal cost is negligible (ms vs the full n_train^2).
-        print(f"        JAX test kernel: {n_te}x{n_tr} (via {n_te+n_tr}x{n_te+n_tr} stacked)")
-        X_all = np.vstack([X_q_te, X_q_tr])
-        K_all = _kernel_matrix_jax(X_all, n_qubits, n_repeats, dtype=dtype, prefer_cpu=prefer_cpu)
-        K_te = K_all[:n_te, n_te:]  # K(X_te, X_tr) as upper-right block
-    elif _bs is not None and (n_te > _bs or n_tr > _bs):
-        print("        Computing test kernel matrix (chunked)...")
-        K_te = _kernel_matrix_chunked_xy(
-            X_q_te, X_q_tr,
-            block_size=_bs,
-            n_jobs=n_jobs,
-            n_qubits=n_qubits,
-            n_repeats=n_repeats,
-            prefer_cpu=prefer_cpu,
-            dtype=dtype,
-        )
-    else:
-        # Test matrix is small, use direct computation
-        dev_te = qml.device(_dev_name, wires=n_qubits)
+    # Test matrix is usually smaller, use direct computation
+    dev_te = qml.device("lightning.qubit", wires=n_qubits)
 
-        @qml.qnode(dev_te)
-        def _kernel_te(x1, x2):
-            qml.IQPEmbedding(x1, wires=range(n_qubits), n_repeats=n_repeats)
-            qml.adjoint(qml.IQPEmbedding)(x2, wires=range(n_qubits), n_repeats=n_repeats)
-            return qml.probs(wires=range(n_qubits))
+    @qml.qnode(dev_te)
+    def _kernel_te(x1, x2):
+        qml.IQPEmbedding(x1, wires=range(n_qubits), n_repeats=n_repeats)
+        qml.adjoint(qml.IQPEmbedding)(x2, wires=range(n_qubits), n_repeats=n_repeats)
+        return qml.probs(wires=range(n_qubits))
 
-        def kernel_fn_te(a, b):
-            return float(_kernel_te(a, b)[0])
+    def kernel_fn_te(a, b):
+        return float(_kernel_te(a, b)[0])
 
-        K_te = kernel_matrix(X_q_te, X_q_tr, kernel_fn_te)
+    K_te = kernel_matrix(X_q_te, X_q_tr, kernel_fn_te)
     qk_te = kpca.transform(K_te)
 
     # Normalise to unit variance (for stable weighting across folds)
@@ -781,138 +506,6 @@ def _qk_features_fold(X_ecfp_tr: np.ndarray, X_ecfp_te: np.ndarray,
 
 
 # ---------------------------------------------------------------------------
-# Precomputed kernel (compute ONCE, extract per-fold — ~5x speedup)
-# ---------------------------------------------------------------------------
-
-def _precompute_qk_all(X_ecfp: np.ndarray,
-                        n_qubits: int = 6,
-                        n_repeats: int = 1,
-                        block_size: int | None = None,
-                        n_jobs: int = 1,
-                        prefer_cpu: bool = False,
-                        use_jax: bool = False,
-                        dtype: type = np.float64) -> dict:
-    """
-    Precompute UMAP + kernel matrix ONCE on all molecules.
-
-    The kernel matrix is unsupervised (depends only on molecular features,
-    not on labels), so computing it on ALL data does NOT cause data leakage.
-    KPCA is still applied per-fold on extracted submatrices, which is the
-    correct no-leakage approach.
-
-    UMAP is fitted on all data as well. This is a minor approximation since
-    UMAP is unsupervised; the alternative (per-fold UMAP) would require
-    5x kernel recomputation, negating the speedup benefit.
-
-    Returns dict with:
-        - 'K_psd': closest-PSD kernel matrix (N x N)
-        - 'time_s': total kernel computation time
-    """
-    from umap import UMAP
-
-    print(f"    Precomputing kernel on all {len(X_ecfp)} molecules...")
-
-    # --- UMAP on all data (unsupervised, minimal leakage) ---
-    t0 = time.perf_counter()
-    reducer = UMAP(n_components=n_qubits, metric="jaccard",
-                   random_state=42, n_neighbors=15, min_dist=0.1)
-    X_8d = reducer.fit_transform(X_ecfp)
-    lo, hi = X_8d.min(axis=0), X_8d.max(axis=0)
-    rng = np.where(hi - lo > 0, hi - lo, 1.0)
-    X_q = 2.0 * (X_8d - lo) / rng - 1.0
-    print(f"      UMAP ({n_qubits}d): {time.perf_counter() - t0:.1f}s")
-
-    n = len(X_q)
-    n_pairs = n * (n + 1) // 2
-    print(f"      Kernel: {n}x{n} ({n_pairs:,} upper-triangle pairs)")
-
-    # --- Kernel matrix (ONE call, not 5x) ---
-    t1 = time.perf_counter()
-    dev_name = _DEVICE_OVERRIDE or best_device(n_qubits, prefer_cpu=prefer_cpu)
-    print(f"      Computing kernel on device: {dev_name}")
-
-    # Heuristic: use JAX fast-path for n > 500 on CPU (lightning.qubit)
-    _use_jax_eff = use_jax and _HAS_JAX and n > 500
-
-    if _use_jax_eff:
-        print(f"      JAX JIT kernel: {n}x{n}, {n_qubits}q, {n_repeats}rep")
-        K = _kernel_matrix_jax(X_q, n_qubits, n_repeats, dtype=dtype, prefer_cpu=prefer_cpu)
-        K = (K + K.T) / 2.0  # symmetrize
-    elif block_size is not None and n > block_size:
-        K = _kernel_matrix_chunked(X_q,
-                                    block_size=block_size,
-                                    n_jobs=n_jobs,
-                                    n_qubits=n_qubits,
-                                    n_repeats=n_repeats,
-                                    prefer_cpu=prefer_cpu,
-                                    use_jax=False,
-                                    dtype=dtype)
-    else:
-        _kfn = _get_kernel_fn(n_qubits, n_repeats, prefer_cpu=prefer_cpu)
-        K = kernel_matrix(X_q, X_q, _kfn)
-
-    kernel_time = time.perf_counter() - t1
-    rate = n_pairs / kernel_time if kernel_time > 0 else 0
-    print(f"      Kernel matrix: {kernel_time:.1f}s ({rate:.0f} pairs/s)")
-
-    # --- closest-PSD ---
-    t2 = time.perf_counter()
-    K_psd = closest_psd_matrix(K)
-    print(f"      closest_PSD: {time.perf_counter() - t2:.1f}s")
-
-    elapsed = time.perf_counter() - t0
-    print(f"      Total precompute: {elapsed:.1f}s — {elapsed/60:.1f} min")
-
-    # Memory cleanup
-    del X_8d, X_q, K
-    gc.collect()
-
-    return {"K_psd": K_psd, "time_s": elapsed}
-
-
-def _qk_features_fold_precomputed(QK_data: dict,
-                                    tr_idx: np.ndarray,
-                                    te_idx: np.ndarray,
-                                    n_kpca: int = 10) -> tuple[np.ndarray, np.ndarray]:
-    """Extract fold QK features from precomputed kernel matrix.
-
-    This is the fast path: instead of computing a new kernel matrix for
-    each fold, we extract submatrices from the precomputed full kernel.
-    KPCA is fit on the training submatrix (no data leakage).
-
-    Args:
-        QK_data: Dict with 'K_psd' key (N x N closest-PSD kernel matrix)
-        tr_idx: Training indices
-        te_idx: Test indices
-        n_kpca: Number of KPCA components
-
-    Returns:
-        qk_tr, qk_te: (n_train, n_kpca) and (n_test, n_kpca) arrays
-    """
-    from sklearn.decomposition import KernelPCA
-
-    K_all_psd = QK_data["K_psd"]
-    n_train = len(tr_idx)
-    n_kpca_actual = min(n_kpca, n_train - 1)
-
-    # Extract submatrices from precomputed kernel (O(1) indexing, no recomputation)
-    K_tr = K_all_psd[np.ix_(tr_idx, tr_idx)]
-    K_te = K_all_psd[np.ix_(te_idx, tr_idx)]
-
-    # Fit KPCA on training only (no data leakage)
-    kpca = KernelPCA(n_components=n_kpca_actual,
-                     kernel="precomputed", copy_X=True, random_state=42)
-    qk_tr = kpca.fit_transform(K_tr)
-    qk_te = kpca.transform(K_te)
-
-    # Normalise to unit variance
-    qk_tr = qk_tr / (qk_tr.std(axis=0, keepdims=True) + 1e-10)
-    qk_te = qk_te / (qk_te.std(axis=0, keepdims=True) + 1e-10)
-
-    return qk_tr.astype(np.float32), qk_te.astype(np.float32)
-
-
-# ---------------------------------------------------------------------------
 # CV score for hybrid (fold-specific QK features)
 # ---------------------------------------------------------------------------
 
@@ -926,32 +519,21 @@ def _cv_score_hybrid(X_ecfp: np.ndarray,
                       block_size: int | None = None,
                       n_jobs: int = 1,
                       checkpoint_path: str | None = None,
-                      completed_folds: set | None = None,
-                      use_jax: bool = False,
-                      prefer_cpu: bool = False,
-                      dtype: type = np.float64,
-                      precompute_kernel: bool = False,
-                      QK_data: dict | None = None) -> list[dict]:
+                      completed_folds: set | None = None) -> list[dict]:
     """
-    5-fold CV for hybrid descriptor.
-
-    Two modes:
-      - precompute_kernel=False (default): UMAP + kernel matrix per fold
-        (strict no-leakage, but 5x QK computation — ~5x slower)
-      - precompute_kernel=True (optimised): UMAP + kernel ONCE on all data,
-        then extract per-fold submatrices for KPCA. UMAP on all data is
-        a minor unsupervised approximation; the kernel itself is label-free
-        so there is NO leakage from the kernel precomputation.
-        (~5x faster for the kernel computation)
+    5-fold CV for hybrid descriptor (lightning.qubit).
 
     For each fold:
-      1. Compute QK features on training only
-         - precompute mode: extract from precomputed kernel (O(1))
-         - standard mode: compute UMAP+kernel per fold (O(n²))
+      1. Compute QK features on training only (_qk_features_fold)
+         - Uses chunked kernel computation for large n (block_size, n_jobs)
       2. Concatenate [TFP_tr, TNE_tr, QK_tr] → train RF
       3. Evaluate on [TFP_te, TNE_te, QK_te]
 
+    No data leakage: UMAP + kernel matrix + KPCA are fit on training only.
+
     Supports checkpoint resume: saves fold results to JSON after each fold.
+    Pass ``checkpoint_path`` to enable, ``completed_folds`` to skip already-done
+    folds on resume.
     """
     if completed_folds is None:
         completed_folds = set()
@@ -969,21 +551,6 @@ def _cv_score_hybrid(X_ecfp: np.ndarray,
         ("clf", SVC(kernel="rbf", probability=True, C=1.0, random_state=42)),
     ])
 
-    # ── Precompute kernel ONCE if requested (~5x speedup) ─────────
-    # QK_data may be precomputed by caller (main) and shared with ablation
-    if precompute_kernel and QK_data is None:
-        print(f"    Precomputing kernel on all data ({len(X_ecfp)} molecules)...")
-        QK_data = _precompute_qk_all(
-            X_ecfp,
-            n_qubits=n_qubits,
-            n_repeats=n_repeats,
-            block_size=block_size,
-            n_jobs=n_jobs,
-            prefer_cpu=prefer_cpu,
-            use_jax=use_jax,
-            dtype=dtype,
-        )
-
     for fold, (tr_idx, te_idx) in enumerate(skf.split(X_ecfp, y), start=1):
         if fold in completed_folds:
             print(f"    Hybrid fold {fold}/{N_FOLDS} — skipped (checkpoint)")
@@ -991,25 +558,15 @@ def _cv_score_hybrid(X_ecfp: np.ndarray,
 
         print(f"    Hybrid fold {fold}/{N_FOLDS}...")
 
-        # Compute QK features (fast path: extract or full compute)
-        if precompute_kernel and QK_data is not None:
-            # Fast path: O(1) extraction from precomputed kernel
-            qk_tr, qk_te = _qk_features_fold_precomputed(
-                QK_data, tr_idx, te_idx, n_kpca=n_kpca,
-            )
-        else:
-            # Standard path: per-fold UMAP + kernel (no leakage)
-            qk_tr, qk_te = _qk_features_fold(
-                X_ecfp[tr_idx], X_ecfp[te_idx],
-                n_qubits=n_qubits,
-                n_kpca=n_kpca,
-                n_repeats=n_repeats,
-                block_size=block_size,
-                n_jobs=n_jobs,
-                use_jax=use_jax,
-                prefer_cpu=prefer_cpu,
-                dtype=dtype,
-            )
+        # Compute QK features within this fold (no leakage)
+        qk_tr, qk_te = _qk_features_fold(
+            X_ecfp[tr_idx], X_ecfp[te_idx],
+            n_qubits=n_qubits,
+            n_kpca=n_kpca,
+            n_repeats=n_repeats,
+            block_size=block_size,
+            n_jobs=n_jobs,
+        )
 
         # Build fold-specific feature matrices
         components_tr, components_te = [], []
@@ -1074,21 +631,15 @@ def _cv_score_ablation_hybrid(X_ecfp: np.ndarray,
                                block_size: int | None = None,
                                n_jobs: int = 1,
                                checkpoint_path: str | None = None,
-                               completed_folds: set | None = None,
-                               use_jax: bool = False,
-                               prefer_cpu: bool = False,
-                               dtype: type = np.float64,
-                               precompute_kernel: bool = False,
-                               QK_data: dict | None = None) -> list[dict]:
+                               completed_folds: set | None = None) -> list[dict]:
     """
-    5-fold CV ablation: remove one component from the hybrid.
+    5-fold CV ablation: remove one component from the hybrid (lightning.qubit).
 
     remove ∈ {"TFP", "TNE", "QK"}
     QK is still computed per-fold (no leakage) when it is included.
-    Uses JAX or chunked kernel for large n.
+    Uses chunked kernel for large n (block_size, n_jobs).
 
     Supports checkpoint resume (same pattern as _cv_score_hybrid).
-    When precompute_kernel=True, accepts QK_data dict to reuse precomputed kernel.
     """
     if completed_folds is None:
         completed_folds = set()
@@ -1108,24 +659,14 @@ def _cv_score_ablation_hybrid(X_ecfp: np.ndarray,
 
         # Compute QK within this fold if QK is NOT being removed
         if remove != "QK":
-            if precompute_kernel and QK_data is not None:
-                # Fast path: extract from precomputed kernel
-                qk_tr, qk_te = _qk_features_fold_precomputed(
-                    QK_data, tr_idx, te_idx, n_kpca=n_kpca,
-                )
-            else:
-                # Standard path: per-fold compute
-                qk_tr, qk_te = _qk_features_fold(
-                    X_ecfp[tr_idx], X_ecfp[te_idx],
-                    n_qubits=n_qubits,
-                    n_kpca=n_kpca,
-                    n_repeats=n_repeats,
-                    block_size=block_size,
-                    n_jobs=n_jobs,
-                    use_jax=use_jax,
-                    prefer_cpu=prefer_cpu,
-                    dtype=dtype,
-                )
+            qk_tr, qk_te = _qk_features_fold(
+            X_ecfp[tr_idx], X_ecfp[te_idx],
+            n_qubits=n_qubits,
+            n_kpca=n_kpca,
+            n_repeats=n_repeats,
+            block_size=block_size,
+            n_jobs=n_jobs,
+        )
 
         # Build components (skip the removed one)
         components_tr, components_te = [], []
@@ -1190,52 +731,9 @@ def main():
                         help="Use only base H features for TFP (no pers_img or betti curves)")
     parser.add_argument("--checkpoint", type=str, default=None,
                         help="Path to JSON checkpoint for fold-by-fold resume (default: None)")
-    parser.add_argument("--skip-ablation", action="store_true",
-                        help="Skip the ablation study (useful for the expensive full-library run)")
-    parser.add_argument("--device", type=str, default="auto",
-                        choices=["auto", "lightning.qubit", "lightning.gpu", "default.qubit"],
-                        help="PennyLane device: auto (lightning.qubit CPU, recommended), "
-                             "lightning.qubit (CPU, optimal for 6-8 qubit circuits), "
-                             "lightning.gpu (GPU, experimental — 3-4x SLOWER than CPU "
-                             "for small circuits), default.qubit (fallback). "
-                             "Note: GPU is slower than CPU for IQPEmbedding 6-8 qubit "
-                             "kernels due to per-call launch overhead.")
-    parser.add_argument("--jax", action="store_true",
-                        help="Use JAX JIT + vmap for the quantum kernel matrix "
-                             "(experimental — JAX is 3-4x SLOWER than standard "
-                             "lightning.qubit for small circuits). Not recommended.")
-    parser.add_argument("--dtype", type=str, default="float64",
-                        choices=["float32", "float64"],
-                        help="Kernel matrix precision (default: float64). Use float32 "
-                             "for 2x memory savings on GPU.")
-    parser.add_argument("--n-qubits", type=int, default=8,
-                        help="Number of qubits / UMAP components (default: 8; "
-                             "use 6 for optimal speed-accuracy tradeoff)")
-    parser.add_argument("--precompute-kernel", action="store_true",
-                        help="Precompute kernel ONCE on all data, then extract "
-                             "per-fold submatrices for KPCA. Avoids 4/5 of QK "
-                             "computation. UMAP is applied on all data (minor "
-                             "unsupervised approximation). Recommended for n > 1000.")
     args = parser.parse_args()
 
-    # ── Device selection ─────────────────────────────────────────────
-    if args.device != "auto":
-        global _DEVICE_OVERRIDE
-        _DEVICE_OVERRIDE = args.device
-    # Default: prefer CPU (lightning.qubit) even when GPU is available.
-    # Benchmark results show GPU is 3-4x SLOWER than CPU for 6-8 qubit
-    # IQPEmbedding circuits due to per-call GPU launch overhead.
-    # Only use GPU when user explicitly specifies --device lightning.gpu.
-    _prefer_cpu = (args.device != "lightning.gpu")
-    _use_jax = args.jax and _HAS_JAX
-    _dtype = np.float32 if args.dtype == "float32" else np.float64
-    _n_qubits = args.n_qubits
-
-    _dev_name = _DEVICE_OVERRIDE or best_device(_n_qubits, prefer_cpu=_prefer_cpu)
-    if _dev_name == "lightning.gpu":
-        print(f"  NOTE: GPU ({_dev_name}) selected. Our benchmarks show GPU is 3-4x "
-              f"slower than CPU for 6-8 qubit quantum kernels. "
-              f"Use --device lightning.qubit for faster execution.")
+    DEVICE = "lightning.qubit"  # system-wide PennyLane device
 
     # HPC mode: overrides block_size and n_jobs for maximum throughput
     if args.hpc:
@@ -1251,16 +749,8 @@ def main():
         print(f"  HPC mode: block_size={args.block_size}, n_jobs={args.n_jobs}")
 
     print("=" * 60)
-    jax_tag = " + JAX JIT" if _use_jax else ""
-    dev_tag = _dev_name + jax_tag
-    print(f"Paper 3 — Hybrid Framework + Activity Benchmark  ({dev_tag})")
+    print("Paper 3 — Hybrid Framework + Activity Benchmark  (lightning.qubit)")
     print("=" * 60)
-    print(f"  Device: {_dev_name}")
-    if _use_jax:
-        print(f"  JAX:    enabled (backend={_JAX_BACKEND}, {_dtype.__name__})")
-    elif args.jax and not _HAS_JAX:
-        print(f"  JAX:    requested but not available — falling back to standard mode")
-    print(f"  dtype:  {_dtype.__name__}")
 
     t0_total = time.perf_counter()
 
@@ -1351,37 +841,16 @@ def main():
             all_records.extend(cv_score(X_desc, y, clf, desc_name))
 
     # Hybrid descriptor: uses per-fold QK computation (no data leakage)
-    qk_mode = "precomputed" if args.precompute_kernel else "per-fold"
-    print(f"    Hybrid ({qk_mode} QK)...")
-
-    # Precompute kernel once if requested (reused for ablation too)
-    _shared_QK_data = None
-    if args.precompute_kernel:
-        _shared_QK_data = _precompute_qk_all(
-            X_ecfp,
-            n_qubits=_n_qubits,
-            n_repeats=args.n_repeats,
-            block_size=args.block_size,
-            n_jobs=args.n_jobs,
-            prefer_cpu=_prefer_cpu,
-            use_jax=_use_jax,
-            dtype=_dtype,
-        )
-
+    print(f"    Hybrid (per-fold QK)...")
     all_records.extend(_cv_score_hybrid(
         X_ecfp, X_tfp, X_tne, y,
-        n_qubits=_n_qubits,
+        n_qubits=N_QUBITS,
         n_kpca=args.n_kpca,
         n_repeats=args.n_repeats,
         block_size=args.block_size,
         n_jobs=args.n_jobs,
         checkpoint_path=args.checkpoint,
         completed_folds=completed_hybrid,
-        use_jax=_use_jax,
-        prefer_cpu=_prefer_cpu,
-        dtype=_dtype,
-        precompute_kernel=args.precompute_kernel,
-        QK_data=_shared_QK_data,
     ))
 
     # Save intermediate checkpoint after hybrid benchmark
@@ -1405,36 +874,30 @@ def main():
     gc.collect()
 
     # Ablation study (per-fold QK, no data leakage)
-    ablation_records: list[dict] = []
-    if not args.skip_ablation:
-        print("\n  Running ablation study...")
-        for removed in ["TFP", "TNE", "QK"]:
-            ablation_records.extend(_cv_score_ablation_hybrid(
-                X_ecfp, X_tfp, X_tne, y,
-                remove=removed,
-                n_qubits=_n_qubits,
-                n_kpca=args.n_kpca,
-                n_repeats=args.n_repeats,
-                block_size=args.block_size,
-                n_jobs=args.n_jobs,
-                checkpoint_path=args.checkpoint,
-                completed_folds=ablation_done.get(removed, set()),
-                use_jax=_use_jax,
-                prefer_cpu=_prefer_cpu,
-                dtype=_dtype,
-                precompute_kernel=args.precompute_kernel,
-                QK_data=_shared_QK_data,
-            ))
+    print("\n  Running ablation study...")
+    ablation_records = []
+    for removed in ["TFP", "TNE", "QK"]:
+        ablation_records.extend(_cv_score_ablation_hybrid(
+            X_ecfp, X_tfp, X_tne, y,
+            remove=removed,
+            n_qubits=N_QUBITS,
+            n_kpca=args.n_kpca,
+            n_repeats=args.n_repeats,
+            block_size=args.block_size,
+            n_jobs=args.n_jobs,
+            checkpoint_path=args.checkpoint,
+            completed_folds=ablation_done.get(removed, set()),
+        ))
 
-        abl_df = pd.DataFrame(ablation_records)
-        # ── gzip-compressed ablation output (R14) ────────────────────
-        abl_out = RESULTS_DIR / "p3_ablation.csv.gz"
-        abl_df.to_csv(abl_out, index=False, compression="gzip")
-        abl_out_uncomp = RESULTS_DIR / "p3_ablation.csv"
-        abl_df.to_csv(abl_out_uncomp, index=False)
-        print(f"  Saved: {abl_out} (compressed), {abl_out_uncomp} (plain)")
-        del abl_df
-        gc.collect()
+    abl_df = pd.DataFrame(ablation_records)
+    # ── gzip-compressed ablation output (R14) ────────────────────
+    abl_out = RESULTS_DIR / "p3_ablation.csv.gz"
+    abl_df.to_csv(abl_out, index=False, compression="gzip")
+    abl_out_uncomp = RESULTS_DIR / "p3_ablation.csv"
+    abl_df.to_csv(abl_out_uncomp, index=False)
+    print(f"  Saved: {abl_out} (compressed), {abl_out_uncomp} (plain)")
+    del abl_df
+    gc.collect()
 
     # Summary
     lines = ["Hybrid: per-fold QK (no data leakage); RF is scale-invariant (no weights)", ""]
