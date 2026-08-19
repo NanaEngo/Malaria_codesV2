@@ -365,3 +365,11 @@ Updated scientific classification (18 Aug): `GEOMETRY_REPAIR_WITNESS_ONLY` +
 processable under the P2 policy. This remains a **technical** validation:
 no production MD on the repaired PfCRT, no binding/affinity/RRS, no Set-C
 promotion from the reconstruction.
+
+**Long equilibration (19 Aug)**: job `15387` ran 1 ns NPT (Parrinello-Rahman,
+310.15 K) from the 100 ps witness checkpoint but hit the 3 h walltime at step
+392240 (~784 ps, 6.28 ns/day on 8 CPU threads) and checkpointed cleanly.
+Job `15388` resumed from that checkpoint (`mdrun -cpi`) to complete the full
+1 ns. Convergence manifest: `results/md_systems/pfcrt_eq1ns_20260818/
+equilibration_convergence_manifest.json`. Still a technical stability witness
+— no production, no binding/affinity/RRS claim.

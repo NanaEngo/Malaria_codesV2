@@ -99,6 +99,29 @@ test whether pressure/density converge beyond the 100 ps window (which showed
 P mean -7.24 bar and TIP3P-typical density ~1021 kg/m^3). Still a technical
 stability witness: no production MD, no binding/affinity/RRS, no Set-C.
 
+**Walltime event (19 Aug 2026)**: job `15387` hit the 3 h SLURM walltime at
+step 392240 (~784 ps, 6.28 ns/day, 8 CPU threads) and checkpointed cleanly
+(TERM signal, `npt1ns.cpt`). The 1 ns target was not reached in one shot.
+**Resume**: job `15388` (`scripts/p2_pfcrt_long_equilibration_resume.sbatch`)
+continues from that checkpoint with `mdrun -cpi` to the tpr nsteps (500000 =
+1 ns) and appends to the same output files.
+
+**Result (19 Aug 2026) — `CONVERGED`**: 1 ns NPT completed (500000 steps),
+manifest `results/md_systems/pfcrt_eq1ns_20260818/
+equilibration_convergence_manifest.json` (jobs 15387+15388):
+
+| Quantity | Value | Verdict |
+|---|---|---|
+| Temperature | mean 310.17 K (target 310.15), drift 0.03%, range [307.0, 313.2] | within ±5 K |
+| Density | mean 1021.12 kg/m^3 (TIP3P-typical), drift -0.017% | stable |
+| Pressure | mean -3.95 bar; **first half -7.52 bar -> second half -0.38 bar** | converging toward 0 bar |
+| Error markers | none | clean |
+
+The 100 ps witness (P mean -7.24 bar) under-estimated equilibration: by 1 ns
+the pressure half-window mean has converged to ~0 bar while T and density are
+flat. Still a single-replicate technical stability witness; no production,
+no binding/affinity/RRS claim.
+
 ## Discriminative MD-RRS (multi-threshold) - 18 Aug 2026
 
 See `results/set_c_md/setc_md_rrs_execution_runbook.md` (section
@@ -135,5 +158,5 @@ ColabFold ensemble (W7FI62, 16 models, COLABFOLD_ENSEMBLE_COMPLETED)
       → junction_repair_ensemble_manifest.json (selected: model_03_seed_001)
         → GROMACS canonical check (PASS)
           → canonical MD witness (PASS)
-            → long equilibration job 15387 (running)
+            → long equilibration job 15387 (walltime at ~784 ps) → 15388 resume (completing 1 ns)
 ```
