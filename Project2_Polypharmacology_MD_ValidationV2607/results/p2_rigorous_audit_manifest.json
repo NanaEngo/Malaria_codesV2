@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "script": "scripts/p2_rigorous_audit.py",
+  "seed": 42,
+  "candidate_count": 17,
+  "docking_rows": 136,
+  "eligible_target_counts": {
+    "2": 12,
+    "1": 5
+  },
+  "available_mutant_counts": {
+    "6": 12,
+    "2": 5
+  },
+  "complete_two_target_count": 12,
+  "available_class_counts": {
+    "A*": 5,
+    "C": 5,
+    "B": 5,
+    "D": 1,
+    "A": 1
+  },
+  "complete_class_counts": {
+    "C": 5,
+    "B": 4,
+    "A*": 1,
+    "D": 1,
+    "A": 1
+  },
+  "class_definition": "A*/A/B/C/D mutually exclusive; D means no available mutant RRS reaches 80%; A* and A use the minimum eligible WT score magnitude; complete-two-target status reported separately.",
+  "acsi_normalization": "cohort min-max over the raw component columns in c_acsi_scores.csv",
+  "permutation_count": 100000,
+  "bootstrap_count": 10000,
+  "outputs": [
+    "results/c_rrs_classification.csv",
+    "results/c_rrs_sensitivity.csv",
+    "results/cross_metric_statistical_audit.csv",
+    "results/cross_metric_statistical_audit.json",
+    "results/pns_imputation_sensitivity.csv",
+    "results/pns_imputation_sensitivity.json",
+    "results/c_acsi_scores.csv"
+  ]
+}

@@ -1,40 +1,63 @@
-# Submission Manifest — P2
+# Submission Manifest — Project2
 
-**Journal:** Journal of Chemical Information and Modeling (JCIM, ACS)
-**Pages:** main 26 p. / SM 5 p. / cover 1 p. (scientific prose revision, recompiled 13/08/2026)
-**Status:** SUBMISSION-READY (main) — Set-C MD-RRS pending; production `15320` active after exact `16/16` gate `15319`; no incomplete or witness-only MD-RRS claim is promoted
-**Updated:** 2026-08-13 (scientific-prose revision)
+**Journal:** *Journal of Chemical Information and Modeling* (ACS)
+**Package status:** source, supporting information, and cover letter compile successfully; target-balanced RRS audit and coverage-sensitive sensitivity analysis are reconciled with the manuscript.
+**Updated:** 19 August 2026
 
-## File inventory (SHA-256)
+## Canonical evidence status
+
+- Set-C docking cohort: 17 candidates, 136 WT/mutant systems.
+- Target-balanced RRS panel: 12 candidates with eligible PfDHFR and PfCRT WT scores; six mutant-state ratios per candidate.
+- Coverage-limited sensitivity panel: 5 PfCRT-only candidates; not equivalent to the complete panel.
+- Parent-study MD: 4 WT complexes × 10 ns; 2 retained bound ligands, but only PfCRT--214 yielded an interpretable MM-GBSA endpoint.
+- Set-C MD pilot: 16 systems (PP-01/PP-02), all trajectory-QC PASS; secondary single-replicate MD-RRS and MM-GBSA only.
+- RRS classes are mutually exclusive. A*/A use the minimum eligible WT docking-score magnitude; D means no available mutant RRS reaches 80%.
+- Cross-metric uncertainty: 100,000 seeded permutations, 10,000 bootstrap resamples, and Bonferroni adjustment for H1--H3. These are descriptive after candidate selection, not independent validation.
+
+## Source and compiled-file checksums
 
 | File | Size (B) | SHA-256 |
-|---|---|---|
-| Polypharmacology_MD_Validation_V2607.tex | 90757 | `55958f141af3ac6b94c1a18e40cf96037dbe1e95f17c059cddbe61962f38fec8` |
-| Polypharmacology_MD_Validation_V2607.pdf | 1525019 | `0149507617e3facb6bd99b31fce5e39e4552a9063b5b8c00ed28c9fd1296fd6c` |
-| Polypharmacology_MD_Validation_V2607.aux | 27508 | `e25c4c2dbc9694fdf68743a05e2ac17bfa0390371edd71c1b0929c3e92baa8f5` |
-| Polypharmacology_MD_Validation_SM_V2607.tex | 8820 | `2b750757a1f78d8fe7f67233b551f711dc3f0afdf790e25ea185b819cc2c5db4` |
-| Polypharmacology_MD_Validation_SM_V2607.pdf | 390047 | `ce49c81dd15f32494fa23d00febbaf2e760f518ee469dc55df31720c0fed9f6e` |
-| Polypharmacology_MD_Validation_SM_V2607.aux | 9310 | `17ede361cabd2daf3f0c7ce428d32b60d421160c1a447a6fc11af750a98f0f6b` |
-| Cover_Letter.tex | 3097 | `80b34aab4e46d0937eca962e74d44b0fbc29678e510ee6d413877093e54b5a48` |
-| Cover_Letter.pdf | 59500 | `416c99e7ba24657a4bff151fd42faa9eac208d6bb7a6a141e0c6d15e786ae1bd` |
-| Table_S0_Docking_Validation.tex | 2105 | `4b8757d8d679a32c526fb1c3668ffa322d63d68cbe7b2f9d3bfb93b6ef586379` |
-| Table_S5_ADMET_CrossValidation.tex | 2057 | `81cbdde7be52207bf96ceace6be3f0fb50f3c50b5feb510a0e2b5f18ae35f6a3` |
-| Table_S6_ACSI_Weight_Sensitivity.tex | 1134 | `784588b815afb49db13754c41425f0635d8c2a5deb384e6fadddd1860cd007b3` |
-| Table_S8_Cohort_Estimands.tex | 1407 | `9d9f0f3492cb98e5c1fa499a24e5b9fdb99dad26e7f826477a84f23d87111d61` |
-| Bibliography_Polypharmacology_MD_Validation.bib | 26655 | `3dd2e61dc10036986ea02d01d491583121f79fb43e22b916985d3a8f1d79172f` |
+|---|---:|---|
+| `Polypharmacology_MD_Validation_V2607.tex` | 96723 | `dd568bd53a4b9cf842a3296392957c8a11a9c1bd0a4c495503c3a798e75ce322` |
+| `Polypharmacology_MD_Validation_V2607.pdf` | 1530546 | `f6e8add8bad2d4cb03b504337db3af571980ec200c843803b33e9a16d1d5af7e` |
+| `Polypharmacology_MD_Validation_V2607.aux` | 30919 | `beac8fd9e237a02788ea3a4b56cb99e501b393afdb95525a45e3a1d4b4099f59` |
+| `Polypharmacology_MD_Validation_SM_V2607.tex` | 12935 | `88a4c6c2e49b9f458106558f1e8eadbd036a9497e11c2a0f433c73a9e0f53ae0` |
+| `Polypharmacology_MD_Validation_SM_V2607.pdf` | 462346 | `5a27191fe739c9d72585009b90887764dbcb6aa020a13a00f605d6deb01d8300` |
+| `Polypharmacology_MD_Validation_SM_V2607.aux` | 14848 | `3f8aeebdd402102f55eb777d6626976faef0da27a88fa32e63d0dd356f1e0844` |
+| `Cover_Letter.tex` | 3359 | `2b54a365c9e02ff368b7cd3dd3f5884e24ea81e450b4d76649df4e37140684b4` |
+| `Cover_Letter.pdf` | 99026 | `b866fe65dedb5ed4b93ea62a52c30d2ffcd5aca1066a75c5831a10f35dff414d` |
+| `Table_S0_Docking_Validation.tex` | 2105 | `b6042ab5f393cf870452c94d436efa75f60bd70b7bc51dab95ee3ff1dc4da52a` |
+| `Table_S5_ADMET_CrossValidation.tex` | 2057 | `794eedc9ba760cf22f5627a0a4a4b4afa3c0f8f90112dbf75d6e9e671183dc62` |
+| `Table_S6_ACSI_Weight_Sensitivity.tex` | 1986 | `f1d762654213eb17c8192bd29e689c388aaecf3857997918086131738c2b0166` |
+| `Table_S8_Cohort_Estimands.tex` | 1767 | `bb27d4fde60505739c0ff3d94ba19f10f8709bf6e59ef021ff7171479c102dae` |
+| `Table_S9_PNS_Imputation_Sensitivity.tex` | 1296 | `865acffb146cbcd3e698fc04d375accc7abb87051991812daaef550b133bdf1e` |
+| `Bibliography_Polypharmacology_MD_Validation.bib` | 30801 | `15483db6a34ad3203b626ea95f050b3ec2b9e68e0c52e619e25d13d6d125488c` |
 
-## Graphics
+The hashes above were computed after the final cover-letter compile. The remaining files are copied from the post-compile checksum audit.
 
-| File | SHA-256 |
-|---|---|
-| TOC_graphic.pdf | `6afb25584173ff7f3ced87d8f25fb03f623135e093e119af17aad009fc925c96` |
-| TOC_graphic.png | `8f11490f5ecc691a8c7808d5c3381c4225aad31d7806854cca18fc20d1e5d5ac` |
-| p2_cohort_workflow.pdf | `d6ea05ee14374e0bbb36ff831edec38f89c79090df4f87de639c22f335afbca0` |
+## Machine-readable audit outputs
 
-## Notes
+- `results/c_rrs_classification.csv`
+- `results/c_rrs_sensitivity.csv`
+- `results/cross_metric_statistical_audit.csv`
+- `results/cross_metric_statistical_audit.json`
+- `results/pns_imputation_sensitivity.csv`
+- `results/pns_imputation_sensitivity.json`
+- `results/c_acsi_scores.csv`
+- `results/p2_rigorous_audit_manifest.json`
 
-- TOC graphic present.
-- Use of AI declaration added (main + SM).
-- Table S5 ADMET completed with real values (R11 resolved).
-- RRS table 17 rows verified against c_rrs_classification.csv.
-- MD-RRS remains `NOT_COMPUTED` for the submitted analysis; production `15320` is operational but no trajectory-derived claim is promoted before complete QC.
+These outputs are regenerated by `scripts/p2_rigorous_audit.py` and include
+cohort hashes and relative provenance paths. Large trajectories are not needed
+to reproduce the docking, ACSI, PNS, or statistical-audit tables.
+
+## Verification record
+
+```bash
+mamba run -n qom python scripts/p2_rigorous_audit.py
+mamba run -n qom python -m pytest tests -q
+latexmk -pdf -interaction=nonstopmode -halt-on-error Polypharmacology_MD_Validation_V2607.tex
+latexmk -pdf -interaction=nonstopmode -halt-on-error Polypharmacology_MD_Validation_SM_V2607.tex
+```
+
+The LaTeX logs contain no undefined citations or cross-references. Non-fatal
+underfull-box diagnostics remain in dense tables and bibliography entries.

@@ -49,7 +49,7 @@ def generate_vae_latent_space() -> None:
     """Plot P1 VAE latent space with high-MPO regions highlighted.
 
     Caption: "Position of the top-20 candidates in the Paper 1 VAE latent
-    space. High-ACSI compounds cluster in distinct regions."
+    space, coloured by predicted MPO score."
     """
     mcmc_path = P1_ROOT / "p1_mcmc_generated.csv"
     if not mcmc_path.exists():
@@ -125,10 +125,13 @@ def generate_vae_latent_space() -> None:
 # ============================================================================
 
 def generate_rrs_radar_profiles() -> None:
-    """Radar plots of per-compound RRS across 6 resistance mutations.
+    """Radar plots of per-compound RRS across six resistance mutations.
 
-    Caption: "Per-compound RRS profiles across all six resistance mutations,
-    shown as radar plots for the 14 polypharmacological leads."
+    Missing axes denote an ineligible target under the target-specific
+    wild-type docking threshold; they are not imputed as zero.
+
+    Caption: "Per-compound RRS profiles across six resistance mutations for
+    the 17 Set-C candidates."
     """
     rrs_path = P2_RESULTS / "c_rrs_classification.csv"
     if not rrs_path.exists():
@@ -138,10 +141,11 @@ def generate_rrs_radar_profiles() -> None:
     rrs = pd.read_csv(rrs_path)
     print(f"Loaded {len(rrs)} compounds with RRS classifications")
 
-    # Mutation columns (exclude mean + class)
-    mut_cols = ["RRS_WT", "RRS_N51I", "RRS_C59R", "RRS_S108N",
-                 "RRS_I164L", "RRS_K76T", "RRS_K76A"]
-    mut_labels = ["WT", "N51I", "C59R", "S108N", "I164L", "K76T", "K76A"]
+    # Six mutant-state columns; WT is a denominator, not a resistance state.
+    # Missing values indicate an ineligible target and remain as gaps.
+    mut_cols = ["RRS_N51I", "RRS_C59R", "RRS_S108N", "RRS_I164L",
+                "RRS_K76T", "RRS_K76A"]
+    mut_labels = ["N51I", "C59R", "S108N", "I164L", "K76T", "K76A"]
 
     # Verify columns exist
     missing = [c for c in mut_cols if c not in rrs.columns]
@@ -201,7 +205,7 @@ def generate_rrs_radar_profiles() -> None:
 
     fig.suptitle(
         "RRS radar profiles across six resistance mutations\n"
-        "(14 polypharmacological leads)",
+        "(17 Set-C candidates; unavailable targets shown as gaps)",
         fontsize=11, fontweight="bold", y=1.02,
     )
 

@@ -4,7 +4,7 @@ Paper 2 — Steps 3–5: Calculate RRS, ACSI, and PNS metrics.
 Resistance Resilience Score (RRS)
     RRS_m = (|ΔG_mutant_m| / |ΔG_WT|) × 100
     RRS   = mean(RRS_m) over all mutants
-    Classes: A (≥80% all), B (≥70% for 4-5), C (mutant-specific), D (<60% any)
+    Classes: A*/A (all available mutants ≥80%, split by WT potency), B (all ≥70% but not all ≥80%), C (at least one ≥80% but not all ≥70%), D (no available mutant ≥80%).
 
 African Chemical Space Index (ACSI)
     ACSI = 0.40×D_DrugBank + 0.25×D_ANPDB + 0.20×fsp3 + 0.15×NPL
@@ -77,8 +77,8 @@ def classify_rrs(rrs_values: dict, dg_wt: float = None) -> str:
       Class A*: |ΔG_WT| >= 7.0 kcal/mol  AND  RRS >= 80% all mutants
       Class A:  RRS >= 80% all mutants  (|ΔG_WT| >= 5.0 by pre-filter)
       Class B:  RRS >= 70% all mutants but not all >= 80%
-      Class C:  RRS >= 80% for 1-2 mutants only
-      Class D:  RRS < 60% for any mutant
+      Class C:  at least one available mutant reaches 80%, but not all reach 70%
+      Class D:  no available mutant reaches 80%
     """
     mutant_rrs = {k: v for k, v in rrs_values.items() if k != "WT"}
     if not mutant_rrs:
@@ -92,6 +92,8 @@ def classify_rrs(rrs_values: dict, dg_wt: float = None) -> str:
         return "B"
     if any(v >= 80 for v in vals):
         return "C"
+    # D is the residual non-resilient tier under the mutually exclusive rule;
+    # it is not defined by an unsupported <60% cutoff.
     return "D"
 
 
@@ -117,7 +119,9 @@ def calculate_rrs(docking_df: pd.DataFrame) -> pd.DataFrame:
         binding_targets = {t: d for t, d in wt_by_target.items() if abs(d) >= 5.0}
         if not binding_targets:
             continue
-        dg_wt_anchor = max(binding_targets.values(), key=abs)
+        # Use the weakest eligible target for the potency discriminator so
+        # that one strong target cannot promote an imbalanced compound.
+        dg_wt_anchor = min(binding_targets.values(), key=lambda value: abs(value))
 
         rrs_vals = {"WT": 100.0}
         for mut in [m for m in MUTATIONS if m != "WT"]:
@@ -442,15 +446,24 @@ def main():
         if docking_file.exists():
             print("\nCalculating RRS...")
             docking_df = pd.read_csv(docking_file)
-            rrs_df = calculate_rrs(docking_df)
+            if cohort_id == "P2_SET_C_POLYPHARM_17":
+                # The rigorous audit is the single canonical implementation of
+                # target-balanced RRS, coverage accounting, and class labels.
+                # Keep this production entry point synchronized with it.
+                import sys
+                sys.path.insert(0, str(Path(__file__).resolve().parent))
+                from p2_rigorous_audit import build_rrs, candidate_ids as rigorous_candidate_ids
+                rrs_df = build_rrs(docking_df, rigorous_candidate_ids(candidates))
+            else:
+                rrs_df = calculate_rrs(docking_df)
             rrs_df = add_output_provenance(rrs_df, cohort_id, candidate_rel, candidate_hash)
             out = RESULTS_DIR / "c_rrs_classification.csv"
             rrs_df.to_csv(out, index=False)
             print(f"  Saved: {out}")
-            print(f"  Class A (pan-resilient): {(rrs_df['RRS_class']=='A').sum()}")
-            print(f"  Class B (partially):     {(rrs_df['RRS_class']=='B').sum()}")
-            print(f"  Class C (specific):      {(rrs_df['RRS_class']=='C').sum()}")
-            print(f"  Class D (vulnerable):    {(rrs_df['RRS_class']=='D').sum()}")
+            class_column = "RRS_class_complete_two_target" if "RRS_class_complete_two_target" in rrs_df else "RRS_class"
+            print(f"  Primary classes: {rrs_df[class_column].value_counts(dropna=False).to_dict()}")
+            if "RRS_class_available" in rrs_df:
+                print(f"  Available-target classes: {rrs_df['RRS_class_available'].value_counts(dropna=False).to_dict()}")
         else:
             print(f"\n  Skipping RRS: {docking_file.name} not found")
             print("  Run mutant docking first (AutoDock Vina vs 6 mutants + WT)")

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generates RRS radar plots for the 14 polypharmacological leads.
+Generates RRS radar plots for the 17 Set-C candidates.
 Saves to Project2_Polypharmacology_MD_ValidationV2607/manuscript/Graphics/rrs_radar_profiles.pdf
 """
 
@@ -19,7 +19,9 @@ os.makedirs(os.path.dirname(OUT_PDF), exist_ok=True)
 
 # Load data
 df = pd.read_csv(CSV_PATH)
-# Exclude rows where RRS_class is missing/NaN (the InChI/unsimulated ones)
+# The rigorous audit exposes the available-target estimand through the
+# compatibility aliases RRS_mean/RRS_class. Missing mutation values indicate
+# an ineligible target and are intentionally left as gaps in the radar.
 df = df.dropna(subset=['RRS_class']).copy()
 
 # Mutants to plot
@@ -35,7 +37,7 @@ angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
 angles += angles[:1]
 
 # Set up matplotlib figure
-fig, axes = plt.subplots(3, 5, figsize=(15, 10), subplot_kw=dict(polar=True))
+fig, axes = plt.subplots(4, 5, figsize=(15, 13), subplot_kw=dict(polar=True))
 axes = axes.flatten()
 
 # Colors for classes
@@ -49,8 +51,8 @@ class_colors = {
 
 # Plot each compound
 for i, (idx, row) in enumerate(df.iterrows()):
-    if i >= 15:
-        break
+    if i >= len(axes):
+        raise RuntimeError(f"Radar layout has only {len(axes)} axes for {len(df)} candidates")
     ax = axes[i]
     
     # Get values and close the loop
@@ -75,7 +77,7 @@ for i, (idx, row) in enumerate(df.iterrows()):
     ax.set_ylim(0, 180)
     
     # Title
-    ax.set_title(f"Lead {i+1} (Class {row['RRS_class']})\nRRS={row['RRS_mean']:.1f}%", 
+    ax.set_title(f"{row.get('candidate_id', f'PP-{i+1:02d}')} (Class {row['RRS_class']})\nRRS={row['RRS_mean']:.1f}%",
                  fontsize=9, fontweight='bold', pad=10)
 
 # Hide unused axes
