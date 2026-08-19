@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "scope": "canonical_17_candidate_cohort",
+  "input": "results/c_acsi_scores.csv",
+  "n_candidates": 17,
+  "baseline_weights": {
+    "D_DrugBank": 0.4,
+    "D_ANPDB": 0.25,
+    "fsp3": 0.2,
+    "NPL": 0.15
+  },
+  "perturbations": 8,
+  "minimum_spearman": 0.9166666666666667,
+  "minimum_top5_jaccard": 0.6666666666666666,
+  "all_top5_jaccard_ge_0_60": true,
+  "records": [
+    {
+      "weight_varied": "D_DrugBank",
+      "variation_percent": -20,
+      "new_weight": 0.32000000000000006,
+      "remaining_weight_scale": 1.1333333333333333,
+      "mean_acsi": 0.5118930280140345,
+      "sd_acsi": 0.14916092652661295,
+      "spearman_vs_baseline": 0.9779411764705883,
+      "top5_jaccard_vs_baseline": 0.6666666666666666,
+      "n_candidates": 17,
+      "scope": "canonical_17_candidate_cohort"
+    },
+    {
+      "weight_varied": "D_DrugBank",
+      "variation_percent": 20,
+      "new_weight": 0.48,
+      "remaining_weight_scale": 0.8666666666666667,
+      "mean_acsi": 0.5743995160952516,
+      "sd_acsi": 0.15891149148020126,
+      "spearman_vs_baseline": 0.9338235294117647,
+      "top5_jaccard_vs_baseline": 0.6666666666666666,
+      "n_candidates": 17,
+      "scope": "canonical_17_candidate_cohort"
+    },
+    {
+      "weight_varied": "D_ANPDB",
+      "variation_percent": -20,
+      "new_weight": 0.2,
+      "remaining_weight_scale": 1.0666666666666667,
+      "mean_acsi": 0.5678395945592651,
+      "sd_acsi": 0.14923470117970483,
+      "spearman_vs_baseline": 0.9166666666666667,
+      "top5_jaccard_vs_baseline": 0.6666666666666666,
+      "n_candidates": 17,
+      "scope": "canonical_17_candidate_cohort"
+    },
+    {
+      "weight_varied": "D_ANPDB",
+      "variation_percent": 20,
+      "new_weight": 0.3,
+      "remaining_weight_scale": 0.9333333333333332,
+      "mean_acsi": 0.5184529495500211,
+      "sd_acsi": 0.15784939468541637,
+      "spearman_vs_baseline": 0.9803921568627453,
+      "top5_jaccard_vs_baseline": 0.6666666666666666,
+      "n_candidates": 17,
+      "scope": "canonical_17_candidate_cohort"
+    },
+    {
+      "weight_varied": "fsp3",
+      "variation_percent": -20,
+      "new_weight": 0.16000000000000003,
+      "remaining_weight_scale": 1.0499999999999998,
+      "mean_acsi": 0.5522160179482676,
+      "sd_acsi": 0.15246466816340276,
+      "spearman_vs_baseline": 0.9509803921568628,
+      "top5_jaccard_vs_baseline": 0.6666666666666666,
+      "n_candidates": 17,
+      "scope": "canonical_17_candidate_cohort"
+    },
+    {
+      "weight_varied": "fsp3",
+      "variation_percent": 20,
+      "new_weight": 0.24,
+      "remaining_weight_scale": 0.95,
+      "mean_acsi": 0.5340765261610184,
+      "sd_acsi": 0.15306600838192133,
+      "spearman_vs_baseline": 0.9583333333333335,
+      "top5_jaccard_vs_baseline": 0.6666666666666666,
+      "n_candidates": 17,
+      "scope": "canonical_17_candidate_cohort"
+    },
+    {
+      "weight_varied": "NPL",
+      "variation_percent": -20,
+      "new_weight": 0.12,
+      "remaining_weight_scale": 1.035294117647059,
+      "mean_acsi": 0.5348829283264065,
+      "sd_acsi": 0.1602506529153853,
+      "spearman_vs_baseline": 0.9632352941176472,
+      "top5_jaccard_vs_baseline": 0.6666666666666666,
+      "n_candidates": 17,
+      "scope": "canonical_17_candidate_cohort"
+    },
+    {
+      "weight_varied": "NPL",
+      "variation_percent": 20,
+      "new_weight": 0.18,
+      "remaining_weight_scale": 0.9647058823529413,
+      "mean_acsi": 0.5514096157828797,
+      "sd_acsi": 0.14509568482138943,
+      "spearman_vs_baseline": 0.9803921568627453,
+      "top5_jaccard_vs_baseline": 1.0,
+      "n_candidates": 17,
+      "scope": "canonical_17_candidate_cohort"
+    }
+  ]
+}

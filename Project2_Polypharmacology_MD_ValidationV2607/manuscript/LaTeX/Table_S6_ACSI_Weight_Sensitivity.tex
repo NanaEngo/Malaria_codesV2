@@ -1,19 +1,26 @@
 %% ============================================================================
-%% Table S6: ACSI Weight Sensitivity Analysis
-%% Target: JCIM Supplementary Information
-%% Note: Data to be populated after ACSI computation.
-%% Columns: Weight varied, Variation, Mean ACSI (top-20), SD, Jaccard vs baseline
+%% Table S4: ACSI Weight Sensitivity Analysis
+%% Source: results/c_acsi_weight_sensitivity.csv
+%% Scope: canonical 17-candidate Set-C cohort (not the full 65,856-molecule library)
 %% ============================================================================
 
 \begin{table}[htbp]
 \centering
-\caption{ACSI weight sensitivity analysis. Each of the four ACSI weights ($w_{\mathrm{DrugBank}}$, $w_{\mathrm{ANPDB}}$, $w_{\mathrm{fsp}^3}$, $w_{\mathrm{NPL}}$) was varied by $\pm\qty{20}{\percent}$ while keeping the remaining weights proportional. The Jaccard index measures overlap of the resulting top-20 ACSI-ranked list with the baseline ranking. A Jaccard $\geq 0.70$ (14/20 compounds stable) indicates robustness.}
+\caption{Candidate-cohort ACSI weight sensitivity. One ACSI component weight was varied by $\pm\qty{20}{\percent}$ and the remaining weights were rescaled proportionally to preserve a unit sum. Mean and standard deviation refer to the resulting ACSI values across the \num{17} candidates. Rank stability is reported as Spearman correlation over all candidates and Jaccard overlap of the top five candidates with the baseline ranking. Because the full-library component matrix was not part of the committed source-data record, this table is a local sensitivity analysis of the canonical Set-C cohort and does not establish robustness of a full-library top-20 ranking.}
 \label{tab:s4_acsi_sensitivity}
-\begin{tabular}{l c c c c}
+\scriptsize
+\begin{tabular}{l r S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] S[table-format=1.4] S[table-format=1.4]}
 \toprule
-Weight varied & Variation (\si{\percent}) & Mean ACSI (top-20) & Std.\,dev. & Jaccard vs. baseline \\
+Weight varied & Variation (\si{\percent}) & {New weight} & {Mean ACSI} & {SD} & {Spearman $\rho$} & {Top-5 Jaccard} \\
 \midrule
-\multicolumn{5}{l}{\textit{Data to be populated after ACSI computation.}} \\
+$D_{\mathrm{DrugBank}}$ & -20 & 0.320 & 0.512 & 0.149 & 0.9779 & 0.6667 \\
+$D_{\mathrm{DrugBank}}$ & +20 & 0.480 & 0.574 & 0.159 & 0.9338 & 0.6667 \\
+$D_{\mathrm{ANPDB}}$    & -20 & 0.200 & 0.568 & 0.149 & 0.9167 & 0.6667 \\
+$D_{\mathrm{ANPDB}}$    & +20 & 0.300 & 0.518 & 0.158 & 0.9804 & 0.6667 \\
+$f_{\mathrm{sp}^3}$      & -20 & 0.160 & 0.552 & 0.152 & 0.9510 & 0.6667 \\
+$f_{\mathrm{sp}^3}$      & +20 & 0.240 & 0.534 & 0.153 & 0.9583 & 0.6667 \\
+$\mathrm{NPL}$            & -20 & 0.120 & 0.535 & 0.160 & 0.9632 & 0.6667 \\
+$\mathrm{NPL}$            & +20 & 0.180 & 0.551 & 0.145 & 0.9804 & 1.0000 \\
 \bottomrule
 \end{tabular}
 \end{table}
