@@ -1,0 +1,54 @@
+{
+  "dataset": "MoleculeNet malaria",
+  "n": 22267,
+  "positives": 19160,
+  "negatives": 3107,
+  "device": "cuda",
+  "splits": {
+    "scaffold": {
+      "ecfp4_rf_mean_auc": 0.9189709267229638,
+      "ecfp4_rf_std": 0.00038744414241287514,
+      "gin_mean_auc": 0.8843356382457095,
+      "gin_std": 0.002051306776202625,
+      "delta_ecfp_minus_gin": 0.0346,
+      "paired_t_pvalue": 0.0,
+      "ecfp4_per_seed": [
+        0.91905,
+        0.9186,
+        0.91954,
+        0.91848,
+        0.91919
+      ],
+      "gin_per_seed": [
+        0.88592,
+        0.88389,
+        0.88343,
+        0.88127,
+        0.88718
+      ]
+    },
+    "random": {
+      "ecfp4_rf_mean_auc": 0.9546670974638906,
+      "ecfp4_rf_std": 0.0032913691497676455,
+      "gin_mean_auc": 0.9236662998425238,
+      "gin_std": 0.003998446116704735,
+      "delta_ecfp_minus_gin": 0.031,
+      "paired_t_pvalue": 6e-05,
+      "ecfp4_per_seed": [
+        0.95095,
+        0.95891,
+        0.95122,
+        0.95789,
+        0.95437
+      ],
+      "gin_per_seed": [
+        0.92648,
+        0.92776,
+        0.91838,
+        0.92646,
+        0.91925
+      ]
+    }
+  },
+  "note": "Random values recovered from job 12848 log (the runner overwrote the JSON with only the last split)."
+}
