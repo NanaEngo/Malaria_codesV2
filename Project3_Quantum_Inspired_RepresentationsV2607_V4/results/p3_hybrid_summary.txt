@@ -1,0 +1,14 @@
+Hybrid: per-fold QK (no data leakage); RF is scale-invariant (no weights)
+
+ECFP4        RF  AUC=0.9600±0.0894
+FCFP4        RF  AUC=0.9513±0.0656
+MACCS        RF  AUC=0.9053±0.0743
+AP           RF  AUC=0.9520±0.0716
+PHCO         RF  AUC=0.9430±0.0671
+BPF          RF  AUC=0.9600±0.0693
+TFP          RF  AUC=0.6300±0.1121
+TNE          RF  AUC=0.6300±0.1121
+Hybrid       RF  AUC=0.8937±0.0941
+
+Paired t-test Hybrid vs ECFP4: t=-1.714, p=0.1616
+Not significant
