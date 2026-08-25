@@ -1,0 +1,123 @@
+{
+  "seed": 42,
+  "permutations": 10000,
+  "note": "paired permutation of per-seed mean AUC deltas vs ECFP4-RF; fold-level pairing unavailable (fold-wise AUCs archived separately)",
+  "paired_tests": {
+    "GIN_random": {
+      "n": 5,
+      "mean_delta": -0.0335,
+      "ci95": [
+        -0.0356,
+        -0.0314
+      ],
+      "p_two_sided": 0.009
+    },
+    "GIN-TFP_random": {
+      "n": 5,
+      "mean_delta": -0.0349,
+      "ci95": [
+        -0.0361,
+        -0.0342
+      ],
+      "p_two_sided": 0.009
+    },
+    "GIN-TNE_random": {
+      "n": 5,
+      "mean_delta": -0.0516,
+      "ci95": [
+        -0.053,
+        -0.0502
+      ],
+      "p_two_sided": 0.009
+    },
+    "ChemBERTa_random": {
+      "n": 5,
+      "mean_delta": -0.0312,
+      "ci95": [
+        -0.0321,
+        -0.0305
+      ],
+      "p_two_sided": 0.009
+    },
+    "GIN_scaffold": {
+      "n": 5,
+      "mean_delta": -0.0253,
+      "ci95": [
+        -0.0364,
+        -0.0138
+      ],
+      "p_two_sided": 0.009
+    },
+    "GIN-TFP_scaffold": {
+      "n": 5,
+      "mean_delta": -0.0162,
+      "ci95": [
+        -0.0254,
+        -0.0099
+      ],
+      "p_two_sided": 0.009
+    },
+    "GIN-TNE_scaffold": {
+      "n": 5,
+      "mean_delta": -0.021,
+      "ci95": [
+        -0.0351,
+        -0.0125
+      ],
+      "p_two_sided": 0.009
+    },
+    "ChemBERTa_scaffold": {
+      "n": 5,
+      "mean_delta": -0.0433,
+      "ci95": [
+        -0.0475,
+        -0.0392
+      ],
+      "p_two_sided": 0.009
+    }
+  },
+  "chembl": {
+    "provenance": {
+      "source": "ChEMBL REST API",
+      "target_chembl_id": "CHEMBL364",
+      "target_name": "Plasmodium falciparum",
+      "standard_types": [
+        "IC50",
+        "EC50"
+      ],
+      "active_min_pchembl": 6.0,
+      "inactive_max_pchembl": 5.0,
+      "raw_activities": 64279,
+      "skipped_no_smiles_or_invalid": 106,
+      "unique_canonical_compounds": 31649,
+      "rows": 22447,
+      "n_active": 19321,
+      "n_inactive": 3126,
+      "download_date": "2026-08-08",
+      "note": "MoleculeNet malaria.csv not directly downloadable (S3 403, TDC no loader); built from ChEMBL primary source.",
+      "p5_panel_overlap": {
+        "n_overlap": 180,
+        "pct_of_p5": 0.907,
+        "pct_of_chembl": 0.802,
+        "note": "Canonical-SMILES overlap between P5 panel (Ersilia labels) and ChEMBL public set; excluded in p5_public_chembl_malaria_disjoint.csv (22267 rows) so the public benchmark is an independent generalization test."
+      }
+    },
+    "p5_public_chembl_malaria.csv": {
+      "rows": 22447,
+      "columns": [
+        "smiles",
+        "activity",
+        "pchembl"
+      ]
+    },
+    "p5_public_chembl_malaria_disjoint.csv": {
+      "rows": 22267,
+      "columns": [
+        "smiles",
+        "activity",
+        "pchembl"
+      ]
+    }
+  },
+  "rf_minigrid": "DEFERRED_NO_FEATURE_MATRIX"
+}

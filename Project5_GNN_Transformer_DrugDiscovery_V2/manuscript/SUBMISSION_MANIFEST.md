@@ -12,10 +12,10 @@ artifacts present at the Generated timestamp above.
 
 | File | Size (B) | SHA-256 |
 |---|---|---|
-| P5_manuscript_V2608.tex | 40450 | `548e4f54c27c2d26a4dd4d62793d2ba242a6fec129bf3fe43ce76654dedd651c` |
-| P5_manuscript_V2608.pdf | 782558 | `bbc13c7d05e9ec2bdad1d2817f6662d79d613c0b54b9ae741dcf51ecc4696690` |
-| Cover_Letter_P5_JoC.tex | 3775 | `d642d2b730784f0325d11383f9668d361a6eb09ff87998caf6f93fa871dc036e` |
-| Cover_Letter_P5_JoC.pdf | 88930 | `b604300189b183a4d592bcf9b340315d488045fc5d771c83c2a6e02b17928e0e` |
+| P5_manuscript_V2608.tex | 41354 | `4c5156edc8423ea7c07427a5a8711f2ad8e680ec35c2c66483d131a6205e2887` |
+| P5_manuscript_V2608.pdf | 853653 | `04121d1fbafce354eac9558452e6a99f4fe0ee1372bb54f078fd8f3b127025ee` |
+| Cover_Letter_P5_JoC.tex | 3831 | `48dcfcdada4d4f03dd29080019ac637d479161cb9ab7848a9c72b9d9286d6bc2` |
+| Cover_Letter_P5_JoC.pdf | 90120 | `43d4f37bb1c1a3f280e9ada4643a146adb4268d7047cd30dec06d7d75746026e` |
 | Bibliography_P5.bib | 11038 | `1902045dcb7fc53203430bab4598263bb1c9176dc0bc4e03acc302af078f4f50` |
 
 A PDF row only means something if the PDF postdates its sources, so that was checked rather
@@ -61,3 +61,5 @@ The previous manifest listed `Cover_Letter_P5_JoC.tex` at 4561 B with hash `d642
 That hash is the file's *current* hash, which the current 3775 B file also has — one byte
 string cannot have two sizes, so that row was edited by hand rather than generated. Every
 row above was produced by command in one pass to remove that class of error.
+
+— **Verified 25 August 2026** (checksums recomputed after R-P5 refinements).
