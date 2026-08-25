@@ -2,7 +2,7 @@
 
 **Purpose:** Every quantitative statement in the manuscript traces to an entry here.  
 **Created:** 2026-08-19  
-**Updated:** 2026-08-19 18:00 UTC — last content change (LED-014); header stamp corrected 21:00 UTC, no entry touched  
+**Updated:** 2026-08-25 UTC — title/abstract, reference set, artifact labels, split metadata, bounded external p-value representation, and scientific audit synchronized; canonical numerical entries unchanged
 **Protocol:** No number enters the manuscript except through a written, interpreted entry in this ledger.
 
 ---
@@ -112,11 +112,11 @@ a different region of chemical space.
 ## LED-002: GIN Scaffold Split Performance
 
 **Method:**
-- Molecular representation: Graph Isomorphism Network (GIN), 3 layers, hidden dim 128
+- Molecular representation: Graph Isomorphism Network (GIN), 3 layers, hidden dim 128, dropout p=0.1 during training
 - Node features: Atomic number, degree, formal charge, hybridization, aromaticity (10-dim one-hot encoding)
 - Edge features: Bond type (4-dim one-hot)
 - Global pooling: Mean aggregation over nodes
-- Training: 100 epochs, Adam optimizer (lr=0.001), BCE loss, early stopping patience 15
+- Training: 50 epochs maximum, AdamW (lr=0.001, weight decay=1e-4), BCE loss, dropout p=0.1 during training, early stopping patience 10
 - Evaluation: Same 5-fold × 5-seed scaffold protocol as ECFP4-RF
 - Metric: ROC AUC on held-out test folds
 
@@ -160,7 +160,7 @@ Base GIN without topological fusion underperforms ECFP4-RF by 0.025 AUC points u
   - Statistical descriptors (entropy, lifespans, birth/death distributions)
   - Concatenated to GIN graph embedding before final classification head
 - Fusion: Early concatenation (graph embedding + TFP vector → dense head)
-- Training: Same protocol as base GIN
+- Training: Same protocol as base GIN, including dropout p=0.1 during training
 
 **Numbers:**
 - Mean ROC AUC = **0.8138** (mean of 5 per-seed means)
@@ -203,7 +203,7 @@ Topological fusion with persistent-homology features improves over base GIN by ~
   - Derived from Tucker decomposition of molecular adjacency/feature tensors
   - Compressed latent representation retaining scaffold-relevant substructure
 - Fusion: Early concatenation (graph embedding + TNE vector → dense head)
-- Training: Same protocol as base GIN
+- Training: Same protocol as base GIN, including dropout p=0.1 during training
 
 **Numbers:**
 - Mean ROC AUC = **0.8090** (mean of 5 per-seed means)
@@ -416,7 +416,7 @@ well-separated panel, not evidence that fingerprints win on hard, ambiguous chem
 - 86% positive rate: AUPRC would complement AUC
 - **Untraced p-value:** `results/p5_public_malaria_report.json` stores `paired_t_pvalue` rounded to 5 decimals, giving `0.0` for the scaffold split. A tree-wide grep for `3.35e-6` in `*.json|*.csv|*.log|*.out|*.err|*.txt` returns nothing. Only `p < 1e-5` is defensible; the manuscript's `p<0.0001` is unaffected, but the exact figure must not be quoted
 - **Random-split provenance is weaker than the scaffold split:** the same report JSON notes that random values were "recovered from job 12848 log (the runner overwrote the JSON with only the last split)"
-- **Stale artifact label:** `results/p5_public_malaria_report.json` still reads `"dataset": "MoleculeNet malaria"`, a leftover from an aborted MoleculeNet download (S3 403, no TDC loader — see the provenance note). `scripts/p5_public_benchmark.py` was corrected 2026-08-19; the JSON was not regenerated and needs an author decision
+- **Historical stale-artifact label (resolved 2026-08-25):** an earlier version of `results/p5_public_malaria_report.json` carried `"dataset": "MoleculeNet malaria"`; the current JSON identifies ChEMBL CHEMBL364, and the abandoned MoleculeNet download contributes no reported result
 - Transfer test, not prospective validation
 
 **Claim links:**
@@ -427,8 +427,26 @@ well-separated panel, not evidence that fingerprints win on hard, ambiguous chem
 - `results/p5_public_chembl_malaria_provenance.json` (authoritative provenance: accession, thresholds, row counts, overlap)
 - `results/p5_public_chembl_malaria.csv` (22,447 rows, pre-overlap-removal)
 - `results/p5_public_chembl_malaria_disjoint.csv` (22,267 evaluation rows; fields `smiles,activity,pchembl`)
-- `results/p5_public_malaria_report.json` (metrics; `dataset` field stale)
+- `results/p5_public_malaria_report.json` (metrics; ChEMBL dataset identity and bounded p-value fields synchronized 2026-08-25)
+- `results/scientific_audit_20260825.json` (frozen-split, scaffold, prevalence, bounded Tanimoto, result, and aggregate-salience audit; split files read from the official V1 artifact directory)
+- `results/lightweight_robustness/p5_knn_ecfp4_k5_random_baseline.json` and `_scaffold_baseline.json` (distance-weighted kNN ECFP4 controls)
+- `results/lightweight_robustness/p5_logistic_ecfp4_C1_random_baseline.json` and `_scaffold_baseline.json` (logistic ECFP4 controls)
+- `results/lightweight_robustness/p5_replication_stats_rederived.json` (independent re-derivation from canonical CSVs)
 - `scripts/p5_public_malaria_chembl.py` (panel construction), `scripts/p5_public_benchmark.py` (benchmark)
+
+---
+
+## LED-015: Lightweight ECFP4 controls and frozen-split chemical audit
+
+**Status:** COMPUTED 2026-08-25; secondary robustness evidence; no canonical result overwritten.
+
+**Frozen split audit:** The official V1 split files were read by explicit path and their SHA-256 values match `results/SHA256SUMS`. Under scaffold, train--test scaffold overlap is 0 for all 25 fold--seed records. Test active prevalence ranges from 0.586 to 0.862. A bounded sample of 500 training and 100 test molecules per fold gave mean maximum ECFP4 Tanimoto ranges of 0.292--0.388 under scaffold versus 0.477--0.568 under random. These are descriptive bounded audits, not new performance estimates.
+
+**Baselines:** On the same frozen splits, distance-weighted kNN on ECFP4 (k=5) achieved mean ROC AUC 0.9166 random and 0.7110 scaffold; mean AUPRC values were 0.9562 and 0.8467. Logistic regression on ECFP4 (C=1, sparse scaling, liblinear) achieved mean ROC AUC 0.8790 random and 0.7063 scaffold; mean AUPRC values were 0.9456 and 0.8542. These controls are below ECFP4-RF under scaffold, so the RF headline must not be generalized to every ECFP4 learner.
+
+**Salience boundary:** The historical aggregate vectors account for 17.7% of TFP and 18.0% of TNE salience in the top 10%. The extended campaign archived individual vectors for 20 fusion configurations (25 runs each); native TFP top-10% Jaccard stability was 0.374–0.399 across the canonical scaffold and three novel partitions, and native TNE stability was 0.274–0.326. These remain descriptive weight-stability diagnostics, not causal attributions.
+
+**Sources:** `scripts/p5_scientific_audit.py`, `scripts/p5_knn_ecfp4.py`, `scripts/p5_logistic_ecfp4.py`, `scripts/p5_replicate_stats.py`, `scripts/p5_extended_campaign.py`, `scripts/p5_extended_train.sbatch`, `scripts/p5_extended_analysis.py`, and `results/lightweight_robustness/` plus `results/extended_campaign_20260825/`.
 
 ---
 

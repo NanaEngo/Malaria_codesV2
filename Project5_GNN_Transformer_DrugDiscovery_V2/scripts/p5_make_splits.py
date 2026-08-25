@@ -7,8 +7,8 @@ Writes results/p5_splits_{random,scaffold}_5fold_seed{0..4}.npy — nested lists
 results/p5_canonical_panel.csv order. + p5_splits_info.json (protocol summary).
 
 Random:   stratified 5-fold, repeated 5 seeds (0..4).
-Scaffold: Bemis-Murcko scaffold grouping (RDKit MurckoDecompose),
-          GroupKFold-style assignment with per-seed random scaffold tie-break.
+Scaffold: Bemis-Murcko scaffold grouping (RDKit MurckoScaffold),
+          greedy size-balanced assignment with per-seed random scaffold order.
 
 Splits are computed ONCE and frozen — never regenerated per run (AGENTS.md rule).
 Usage:
@@ -115,8 +115,8 @@ def main() -> None:
         "n_molecules": len(panel),
         "n_folds": N_FOLDS,
         "seeds": SEEDS,
-        "random": "stratified 5-fold, shuffle, per-seed, val = last 20% of train",
-        "scaffold": "Bemis-Murcko scaffold groups, greedy min-max assignment, per-seed tie-break, val = last 20% of train",
+        "random": "stratified 5-fold, shuffle, per-seed, val = first 20% of the shuffled training remainder",
+        "scaffold": "Bemis-Murcko scaffold groups, greedy min-max assignment, per-seed tie-break, val = first 20% of the shuffled non-test remainder",
         "generated": time.strftime("%Y-%m-%d %H:%M:%S"),
     }
     with open(OUT_DIR / "p5_splits_info.json", "w") as f:

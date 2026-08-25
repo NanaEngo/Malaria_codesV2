@@ -54,6 +54,48 @@ Before any model run, produce a versioned mapping report containing:
 
 Recommended interpretation: ≥90% coverage may support a primary mapped analysis if missingness is reported; lower coverage is exploratory unless representativeness is demonstrated.
 
+Update 2026-08-25: the drug_id hex identifiers are not publicly resolvable (see `docs/P6_RESEARCH_DOSSIER.md`); coverage must therefore be measured empirically after signature-based matching against CMap2020. The audit above gains two mandatory fields: per-drug match score and margin to second-best match, with the ambiguity threshold frozen before any model run.
+
+### 4.1 Mapping audit — EXECUTED 2026-08-25 (strategy B, PRISM viability)
+
+Verified outputs of `scripts/p6_phase1_prism.py` (HPC run, env qom):
+
+| Audit item | Value |
+|---|---|
+| Mapped rows / unique drug_id | 3289 / 3289 |
+| Coverage of the 3,289 drug-level rows | **100 %** (`drugid_to_smiles_v2.csv`) |
+| Match method | Pearson r, max-pooled over PRISM compounds, 100 shared cell lines, dose-collapsed by median |
+| Frozen threshold | null q=0.9999 → 0.4993 (cell-line permutation, seed 42) |
+| Score distribution | median 0.358, max 0.831 |
+| Matches above threshold | 248/3289 (7.5 %) |
+| Ambiguous margin (<0.01) | 705 rows |
+| Canonical-SMILES collisions | 1566 rows — resolve before split (§5) |
+| Functional gate (HDAC) | 9/18 kaggle `hdac_inhibitor` drugs matched a PRISM compound with 'hdac' MoA (~50 % vs ~1–2 % random) |
+| SMILES source | PRISM treatment-info column; multi-component entries (comma-separated) must be split before RDKit validation |
+| Invalid/unparseable SMILES | not yet computed (RDKit pass deferred to Phase 2 prep) |
+
+Provenance hashes:
+`drugid_to_smiles_v2.csv` SHA-256 `b6abe4d1a4f81cfb9870a644327cd7a3e2ee1a8bf2f4930312f4f10d099696c9`;
+`prism_threshold.json` SHA-256 `2a0b3416577a9734db84cdf4980add629ca96efbfcd4e9e1076a892b63df33e5`.
+Negative result retained for provenance: L1000 expression matching (`drugid_to_pert_v1.csv`) gave 0/3289 above its own null threshold — cross-campaign expression ceiling ≈ noise floor (dossier §5.1).
+
+### 4.2 Validation pass — EXECUTED 2026-08-25 (`scripts/p6_phase1_validate.py`, RDKit 2026.03.5)
+
+Multi-component SMILES entries are split (',' and '.'), the largest fragment by heavy-atom count is kept, re-canonicalized with RDKit, and collision groups are assigned over identical canonical SMILES.
+
+| Audit item | Value |
+|---|---|
+| Rows / source coverage | 3289 / 100 % |
+| Valid fraction after salt-stripping | **100 %** |
+| Unique molecules | 1722 |
+| Collision groups (>1 drug) | 794 |
+| Multi-component raw entries | 1622 (max 7 components) |
+
+Frozen data contract: `data/mappings/drugid_to_smiles_contract.json`
+(SHA-256 `565a6e1b1a630e53d793b66368725cd13e3549846a486292cc73d9f3d0618b03`),
+artifact `drugid_to_smiles_v2_validated.csv`. Collision groups must not cross
+train/test folds (§5). Phase 1 is closed; Phase 2 may start on the exact mapped cohort.
+
 ## 5. Leakage and statistics gates
 
 Aggregation occurs before splitting. Canonical-SMILES collisions are resolved before splitting. No assay replicate, duplicated structure, or collision group may cross train/test. The primary split is drug-grouped; scaffold-held-out performance is sensitivity analysis. All arms use the same seeds and folds. Pairwise comparisons use seed/fold-paired statistics and BH-FDR or a predeclared family-wise correction.

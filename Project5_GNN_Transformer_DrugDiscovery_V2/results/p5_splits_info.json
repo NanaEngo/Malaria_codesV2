@@ -9,7 +9,7 @@
     3,
     4
   ],
-  "random": "stratified 5-fold, shuffle, per-seed, val = last 20% of train",
-  "scaffold": "Bemis-Murcko scaffold groups, greedy min-max assignment, per-seed tie-break, val = last 20% of train",
+  "random": "stratified 5-fold, shuffle, per-seed, val = first 20% of the shuffled training remainder",
+  "scaffold": "Bemis-Murcko scaffold groups, greedy min-max assignment, per-seed tie-break, val = first 20% of the shuffled non-test remainder",
   "generated": "2026-08-01 09:17:18"
 }
