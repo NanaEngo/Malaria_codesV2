@@ -2,7 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{geometry}
-\geometry{margin=1in, bottom=0.9in}
+\geometry{a4paper, margin=2cm}
 \usepackage{hyperref}
 \usepackage{setspace}
 \usepackage{siunitx}
@@ -20,7 +20,7 @@ Department of Physics, Faculty of Science \\
 University of Yaound\'{e} I \\
 P.O. Box 812, Yaound\'{e}, Cameroon \\
 \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[1.5em]
-August 19, 2026
+August 24, 2026
 \end{flushleft}
 
 \begin{flushleft}
@@ -35,9 +35,11 @@ American Chemical Society
 
 We submit our manuscript \textbf{``Resistance-Aware Computational Prioritization of Antimalarial Leads from African Natural Products: Docking, Chemical-Space Descriptors, and Exploratory Molecular Dynamics''} for consideration as an Article in \textit{JCIM}.
 
-This work tests a layered, resistance-aware prioritisation strategy rather than assigning a systems-level mechanism of action from docking alone. The 17 Set-C candidates were evaluated by docking-derived RRS across six resistance states, with ACSI and PNS providing complementary chemical-space and network-ranking dimensions; four separate parent-study complexes underwent targeted wild-type MD (\SI{10}{\nano\second} each; \SI{40}{\nano\second} total). The target-balanced primary panel contained one Class~A*, one Class~A, four Class~B, five Class~C, and one Class~D candidate; the five PfCRT-only records are reported separately as a coverage-limited sensitivity analysis. Only PfCRT--214 yielded an interpretable MM-GBSA estimate; the other parent-study systems were dissociated or conversion-excluded. Tartarus analysis provided no evidence of a composite MPO--affinity association, and this null result is interpreted as separation of ranking dimensions rather than proof of statistical independence.
+This work tests a layered, resistance-aware prioritization strategy rather than assigning a systems-level mechanism of action from docking alone. The 17 Set-C candidates were evaluated by docking-derived RRS across six resistance states, with ACSI and PNS providing complementary chemical-space and network-ranking dimensions; four separate parent-study complexes underwent targeted wild-type MD (\qty{10}{\nano\second} each; \qty{40}{\nano\second} total). The target-balanced primary panel contained one Class~A*, one Class~A, four Class~B, five Class~C, and one Class~D candidate; the five PfCRT-only records are reported separately as a coverage-limited sensitivity analysis. Only PfCRT--214 yielded an interpretable MM-GBSA estimate; the other parent-study systems were dissociated or conversion-excluded. Tartarus analysis provided no evidence of a composite MPO--affinity association, and this null result is interpreted as separation of ranking dimensions rather than proof of statistical independence.
 
-The code, compact scoring outputs, and source-data manifests are available in the GitHub repository under an open-source licence. Large parent-study trajectories are identified with their analysis boundaries and are not used beyond the systems and checksums that can be verified. Statistical interpretation is bounded by effect sizes, seeded permutation $p$-values, bootstrap intervals, and pre-specified Bonferroni correction. The 16-system Set-C MD pilot is reported only as a secondary, single-replicate analysis and is not merged into the primary docking-RRS estimand.
+A secondary 16-system Set-C MD pilot is reported only to quantify the extent to which trajectory-derived geometric and MM-GBSA summaries agree with docking-derived RRS. It is a single-replicate, 10-ns-per-system analysis of two candidates, is not merged into the primary docking-RRS estimand, and is not used as validation; mutant-to-wild-type ratios are interpreted strictly as retention within scoring noise rather than as gains.
+
+The code, compact scoring outputs, and source-data manifests are available in the GitHub repository under an open-source licence. Large parent-study trajectories are identified with their analysis boundaries and are not used beyond the systems and checksums that can be verified. Statistical interpretation is bounded by effect sizes, seeded permutation $p$-values, bootstrap intervals, and pre-specified Bonferroni correction.
 
 \noindent\textbf{Suggested reviewers.}
 \begin{enumerate}

@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-25T04:47:44.595056+00:00",
+  "cohort_id": "P2_SET_C_POLYPHARM_17",
+  "array_index": -1,
+  "array_system": null,
+  "selected_ids": [
+    "PP-01",
+    "PP-02"
+  ],
+  "targets": [
+    "PfDHFR",
+    "PfCRT"
+  ],
+  "required_system_count": 16,
+  "ready_system_count": 16,
+  "blocked_system_count": 0,
+  "target_ns": 2.0,
+  "replicates": 3,
+  "backend": "gpu",
+  "gpu_id": "auto",
+  "execution_requested": false,
+  "gromacs_launched": false,
+  "md_rrs_status": "NOT_COMPUTED",
+  "metric_boundary": "RRS, ACSI, and PNS in the status table are docking/cheminformatics-derived; no MD-RRS is inferred.",
+  "status_table": "results/lightweight_robustness/md_preflight_final/set_c_md_status.csv",
+  "parent_md_excluded": [
+    "164_ClpP",
+    "201_DHFR",
+    "214_CRT",
+    "438_ATP4"
+  ],
+  "gate_job_id": null,
+  "equilibration_job_id": null,
+  "preflight_manifest": null,
+  "status": "READY_FOR_AUTHORIZED_EXECUTION"
+}

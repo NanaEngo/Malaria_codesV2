@@ -23,10 +23,15 @@ for the potency discriminator; Class D means no available mutant reaches 80%.
 
 ## Active analysis and figure scripts
 
-- `md_calculate_rrs_acsi_pns.py` — production entry point for canonical RRS,
-  ACSI, and PNS outputs; the canonical Set-C path delegates RRS generation to
-  `p2_rigorous_audit.py`.
+- `md_calculate_rrs_acsi_pns.py` — compatibility entry point for RRS, ACSI,
+  and PNS. For the canonical Set-C manuscript outputs, use
+  `p2_rigorous_audit.py` directly; the Set-C branch delegates its RRS
+  generation to that audit. Explicit custom cohorts use the legacy-compatible
+  calculation path and must not be substituted for the manuscript estimand.
 - `p2_acsi_weight_sensitivity.py` — candidate-cohort ACSI perturbation audit.
+- `p2_lightweight_robustness.py` — local RRS threshold, leave-one-mutant-out, and bounded score-perturbation analyses; never launches docking or MD.
+- `p2_targeted_redock_multiseed.sh` — authorized, manifest-driven multi-seed Vina launcher; refuses missing/ambiguous inputs and preserves canonical outputs.
+- `p2_short_md_replicates.sbatch` — authorized 2-ns exploratory replicate launcher with recursive topology staging; does not compute MD-RRS.
 - `generate_radar_plots.py` — target-specific RRS radar figure.
 - `generate_sm_figures.py` — supplementary figure generation.
 - `generate_md_dock_rrs_scatter.py` — secondary Set-C MD-RRS versus docking-RRS
@@ -53,8 +58,7 @@ for manuscript provenance.
 
 ## Environment and external computation
 
-The metric audit requires the project environment with Python, pandas, NumPy,
-SciPy, and RDKit. Molecular dynamics additionally requires the documented
+The metric audit and lightweight robustness script require the project environment with Python, pandas, NumPy, and SciPy. RDKit is required by selected chemical-space utilities. Molecular dynamics additionally requires the documented
 GROMACS/gmx_MMPBSA environment and is not part of the fast audit command.
 Large trajectories are not required to reproduce the summary tables included
 in the manuscript.

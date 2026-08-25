@@ -1,20 +1,23 @@
 {
   "schema_version": 1,
-  "created_utc": "2026-08-10T05:44:48.884863+00:00",
+  "created_utc": "2026-08-25T06:24:48.775240+00:00",
   "cohort_id": "P2_SET_C_POLYPHARM_17",
+  "array_index": -1,
+  "array_system": null,
   "selected_ids": [
-    "PP-01",
-    "PP-02"
+    "PP-01"
   ],
   "targets": [
     "PfCRT",
     "PfDHFR"
   ],
-  "required_system_count": 16,
-  "ready_system_count": 0,
-  "blocked_system_count": 16,
+  "required_system_count": 8,
+  "ready_system_count": 8,
+  "blocked_system_count": 0,
   "target_ns": 10.0,
   "replicates": 1,
+  "backend": "cpu",
+  "gpu_id": null,
   "execution_requested": false,
   "gromacs_launched": false,
   "md_rrs_status": "NOT_COMPUTED",
@@ -26,15 +29,8 @@
     "214_CRT",
     "438_ATP4"
   ],
-  "status": "FAIL_CLOSED_MISSING_OR_INVALID_SET_C_INPUTS",
-  "blocking_examples": [
-    "missing/empty md.mdp; missing/empty npt.gro; missing/empty npt.cpt",
-    "missing/empty md.mdp; missing/empty npt.gro; missing/empty npt.cpt",
-    "missing/empty md.mdp; missing/empty npt.gro; missing/empty npt.cpt",
-    "missing/empty md.mdp; missing/empty npt.gro; missing/empty npt.cpt",
-    "missing/empty md.mdp; missing/empty npt.gro; missing/empty npt.cpt",
-    "missing/empty md.mdp; missing/empty npt.gro; missing/empty npt.cpt",
-    "missing/empty md.mdp; missing/empty npt.gro; missing/empty npt.cpt",
-    "missing/empty md.mdp; missing/empty npt.gro; missing/empty npt.cpt"
-  ]
+  "gate_job_id": null,
+  "equilibration_job_id": null,
+  "preflight_manifest": null,
+  "status": "READY_FOR_AUTHORIZED_EXECUTION"
 }

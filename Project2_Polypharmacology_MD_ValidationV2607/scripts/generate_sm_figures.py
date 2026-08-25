@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Generate two missing P2 Supplementary Material figures:
-    1. VAE_latent_space.pdf — top-20 candidates in Paper 1 VAE latent space
-    2. rrs_radar_profiles.pdf — per-compound RRS radar plots across 6 mutations
+"""Generate the retained P2 Supplementary Material figure:
+    rrs_radar_profiles.pdf — per-compound RRS radar plots across six mutations.
+
+The historical VAE latent-space generator is retained below for provenance but
+is not called by the default entry point because that display belongs to Paper 1.
 
 Data sources:
     - P1 MCMC latent coordinates: Project1_Chem_space_antimalarial_V2_CorrectedGrid/p1_mcmc_generated.csv
@@ -233,7 +235,8 @@ def main() -> None:
     print("Generating P2 Supplementary Material figures")
     print("=" * 60)
 
-    generate_vae_latent_space()
+    # The VAE display belongs to Paper 1 and is intentionally not generated
+    # for the P2 submission package.
     generate_rrs_radar_profiles()
 
     print("\nDone. Output directory:", GRAPHICS_DIR)
