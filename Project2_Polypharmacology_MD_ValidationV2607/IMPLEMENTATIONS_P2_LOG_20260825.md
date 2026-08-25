@@ -29,3 +29,12 @@
 | R3/3 Bootstrap classes | B=10⁴ sur n=17 : A* [0.118,0.529], B [0.118,0.529], C [0.118,0.529], D [0.000,0.176] ; fraction mutants MMG>100 % : 0.667 IC95 [0.417,0.917] ; pas de σ par score (CSV single-score → bootstrap cohorte uniquement, étiqueté honnête) |
 
 Script: `scripts/lightweight_runs_20260825.py`; sorties: `results/lightweight_robustness/{mmgbsa_ddeltaG_pilot.csv, partial_corr_input_table.csv, lightweight_runs_summary.json}`.
+
+## Audit léger Projets 1/3/4/5 (25 août 2026)
+
+- **P1 V7 (déjà soumis, cible ACS)** — balayage existence uniquement : paquet de soumission intact dans `submission_ACS_P1V7/` (main PDF, Cover_Letter_P1_V7.pdf, Figure_3, etc.). Manifest = document de statut sans checksums → aucune retouche. Manuscrit sous revue non touché.
+- **P3 Quantum-Inspired** — ligne canonique = **V4** (résultats actifs 08-25) ; V2607/V2 laissés en l'état (superseded, non supprimés). V4 ne contient aucun fichier md → rien à auditer.
+- **P4 Monte-Carlo V2 (déjà soumis, Journal of Cheminformatics)** — manifest descriptif sans hashes ; sources LaTeX présentes (`P4_Pareto_MCTS_JoC_refined.tex` + SM). PDFs du paquet trouvés localement : 0 fichier(s) Pareto*, 1 cover-letter PDF — paquet déjà parti vers le journal.
+- **P5 GNN-Transformer — pipeline complet : PASS.** Compilation main 0 err / 0 overfull / 0 undef + cover letter propre ; \title + abstract présents ; **3/3 figures saines et rendues** (PDF 13 p., XObject 3/3, rasters 3) ; DAR bien tenu (checkpoints « superseded » correctement étiquetés, framing honest-negative assumé) ; `SUBMISSION_MANIFEST.md` réparé (3 lignes sha256/taille recalculées : manuscrit, cover letter, bib ; note « Verified 25 August 2026 » ajoutée). Zenodo : statut « reserved, upload pending » honnête conservé.
+
+Aucun manuscrit déjà soumis (P1/P3/P4/P5) n'a été modifié dans cette passe.
