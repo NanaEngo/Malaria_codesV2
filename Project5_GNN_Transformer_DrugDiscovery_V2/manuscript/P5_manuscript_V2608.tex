@@ -115,13 +115,15 @@ The result was obtained with a fixed, repeated training protocol (AdamW, validat
 
 ChemBERTa, fine-tuned with per-fold weight reset (see Methods), reaches \num{0.7867} $\pm$ \num{0.0054} under the scaffold split (SD across five per-seed means; five folds repeated over five seeds; fold-level range \numrange{0.724}{0.836}, LED-005). Against the \num{0.8300} fingerprint baseline (LED-001-R1) this is a significant deficit ($\Delta = -\num{0.043}$, paired $t(\num{4}) = \num{-18.35}$, $p < \num{0.0001}$, LED-005 and LED-006). Under the random split it reaches \num{0.9121} $\pm$ \num{0.0012} (LED-013), narrowly ahead of GIN (\num{0.9098}, LED-013) but still \num{0.031} below ECFP4--RF (\num{0.9433}, LED-012). The final scaffold hierarchy is thus:
 
-\begin{equation}
+{\small\begin{equation}
 \begin{aligned}
 \text{ECFP4--RF (\num{0.8300}, LED-001-R1)} &> \text{GIN--TFP (\num{0.8138}, LED-003)} > \text{GIN--TNE (\num{0.8090}, LED-004)} \\
 &> \text{GIN (\num{0.8047}, LED-002)} > \text{ChemBERTa (\num{0.7867}, LED-005)}.
 \end{aligned}
 \label{eq:hierarchy}
-\end{equation}
+\end{equation}}
+
+The $\pm$ values reported throughout are population standard deviations across per-seed mean AUCs under the fixed five-fold protocol; fold-level dispersions are correspondingly larger, and the raw per-fold statistics are archived in the replication table of the project record.
 
 \begin{figure}[t]
 \centering
