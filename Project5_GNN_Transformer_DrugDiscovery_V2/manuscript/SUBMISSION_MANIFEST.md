@@ -14,8 +14,8 @@ artifacts present at the Generated timestamp above.
 |---|---|---|
 | P5_manuscript_V2608.tex | 41354 | `4c5156edc8423ea7c07427a5a8711f2ad8e680ec35c2c66483d131a6205e2887` |
 | P5_manuscript_V2608.pdf | 853653 | `04121d1fbafce354eac9558452e6a99f4fe0ee1372bb54f078fd8f3b127025ee` |
-| Cover_Letter_P5_JoC.tex | 3831 | `48dcfcdada4d4f03dd29080019ac637d479161cb9ab7848a9c72b9d9286d6bc2` |
-| Cover_Letter_P5_JoC.pdf | 90120 | `43d4f37bb1c1a3f280e9ada4643a146adb4268d7047cd30dec06d7d75746026e` |
+| Cover_Letter_P5_JCAMD.tex | 3838 | `b60f092dbebd75e5b2abb4c5745877e9869a77660e8a76e5b899b4e3cbeb82d9` |
+| Cover_Letter_P5_JCAMD.pdf | 90120 | `d08fa6df99987dec3137312439bc76805cce15569bd77672a952a1b47dd797fe` |
 | Bibliography_P5.bib | 11038 | `1902045dcb7fc53203430bab4598263bb1c9176dc0bc4e03acc302af078f4f50` |
 
 A PDF row only means something if the PDF postdates its sources, so that was checked rather
@@ -23,7 +23,7 @@ than assumed. `P5_manuscript_V2608.pdf` is newer than both `P5_manuscript_V2608.
 `Bibliography_P5.bib` (`test -nt`, both true at the Generated timestamp), so the compiled
 artifact reflects the current source and the current bibliography — including the
 Bemis--Murcko scaffold definition and its reference, added after the previous manifest.
-The two `Cover_Letter_P5_JoC.*` rows are unchanged from the previous manifest; the other
+Cover-letter rows renamed to `_P5_JCAMD.*` and refreshed; the other
 three moved.
 
 ## Notes
@@ -33,7 +33,7 @@ three moved.
   and abandoned (S3 403, no working TDC loader) and contributes nothing to any reported
   result; earlier revisions of this manifest named it in error.
 - Independent replication verification PASS (Δmean −0.00014).
-- JoC Declarations complete (Availability, Funding, Ethics, Use of AI).
+- JCAMD Declarations complete (Availability, Funding, Ethics, Use of AI).
 - No SM file needed — no supplementary references in main.
 - Manuscript compile verified at the Generated timestamp: `latexmk -g -pdf
   -interaction=nonstopmode -halt-on-error` exit 0, no `^!` lines, 0 undefined references,
