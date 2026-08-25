@@ -1,7 +1,7 @@
 # P5 — Project Tracking Spine (Loop State)
 
 **Created:** 2026-08-19  
-**Last updated:** 2026-08-19 14:30 UTC  
+**Last updated:** 2026-08-25 UTC (extended campaign closed)
 **Active loop:** L3 beat 2 closed — all nine MEDIUM adjudicated. Next: L4 audit re-run  
 **Beat counter:** 6 (L0→L1→L2→L3→L4→L3′)  
 **Model in use:** claude-opus-5
@@ -10,14 +10,14 @@
 
 ## Journal Target
 
-**Journal:** Journal of Cheminformatics (Springer Nature)  
+**Journal:** Journal of Computer-Aided Molecular Design (JCAMD, Springer — APC-free)  
 **Type:** Original research (benchmark study)  
 **Template:** Springer article class (11pt, a4paper)  
 **Word limit:** None specified (14 pages current draft, `pdfinfo`)  
 **Abstract format:** Structured abstract with Contribution and Keywords  
 **Submission requirements:**
 - Main manuscript: LaTeX source + compiled PDF
-- Cover letter: included (`Cover_Letter_P5_JoC.tex`)
+- Cover letter: included (`Cover_Letter_P5_JCAMD.tex`)
 - Figures: PDF/PNG in `results/figures/`
 - Data availability: Zenodo DOI reserved (10.5281/zenodo.19608875, upload pending)
 - Code availability: GitHub public repository
@@ -38,7 +38,7 @@ Under scaffold-separated evaluation of 19,836 antimalarial natural products, ECF
 **C. Field:** Computational chemistry / cheminformatics / antimalarial drug discovery  
 **D. Methods:** Graph neural networks (GIN), transformer (ChemBERTa), topological data analysis (TFP/TNE), ECFP4 fingerprints, random forest, scaffold splits, DeLong tests, BH-FDR correction  
 **E. Software:** PyTorch Geometric 2.8.0, transformers 5.14.1, RDKit, scikit-learn; versions locked in requirements.txt  
-**F. Code availability:** Planned GitHub release + scripts in `scripts/`  
+**F. Code availability:** Public GitHub repository + scripts in `scripts/`; final tagged release remains to be created
 **G. Output wanted:** Manuscript finalization → L4 submission package
 
 ---
@@ -49,11 +49,12 @@ Under scaffold-separated evaluation of 19,836 antimalarial natural products, ECF
 ✅ **Benchmark complete:** 5 models × 2 splits × 5 folds × 5 seeds = 250 evaluations  
 ✅ **External validation:** Public ChEMBL malaria panel (22,267 compounds, molecule-disjoint)  
 ✅ **Statistical analysis:** Paired DeLong tests, BH-FDR correction  
-✅ **Interpretability:** Salience analysis on TFP/TNE fusion heads  
+✅ **Interpretability:** Salience analysis on TFP/TNE fusion heads, including 20 versioned individual-vector matrices and stability diagnostics
 ✅ **LISH-MoA phenotype reference:** Orthogonal MoA benchmark (phenotype-only, 3,289 drugs, 206 labels)  
 ✅ **Manuscript V2608:** LaTeX source complete, compiles without errors, 14 pages  
-✅ **Cover letter:** JoC submission letter complete  
+✅ **Cover letter:** JCAMD submission letter complete (Cover_Letter_P5_JCAMD.tex/pdf)  
 ✅ **Figures:** Benchmark bar chart, learning curves, salience heatmaps
+✅ **Extended robustness campaign:** 3 novel scaffold partitions × 5 GNN configurations × 25 fold-seed records; AUPRC, descriptor permutation, salience stability, and chemical audits computed
 
 ### Evidence Boundary
 - Panel: curated antimalarial natural products (n=19,836), inherited from P3
@@ -73,8 +74,8 @@ Under scaffold-separated evaluation of 19,836 antimalarial natural products, ECF
 | **L1 EVIDENCE** | ✅ Done | All 10 ledger entries complete with interpretations | Gate 2 PASS: 10/10 interpretations, 0 missing |
 | **L2 DRAFT** | ✅ Done | 19 LED citations inserted, 2 orphans (Methods context) | Gate 4 PASS: All results LED-backed |
 | **L3 REVIEW** | ✅ Beat 1 done | 7 verification passes (0 CRITICAL, 3 HIGH, 9 MEDIUM, 4 LOW) | ACCEPT after MINOR REVISION; 3 HIGH fixes applied |
-| **L4 SUBMIT** | 🔄 Beat 2 running | Beat-1 PASS voided — it graded a manifest since replaced | Manifest regenerated 20:39 UTC against current artifacts; 17-row audit being written to `outputs/critical-reviews/final-audit.md` |
-| **L3′ REVIEW** | ✅ Beat 2 done | All 9 MEDIUM adjudicated: M1/M4/M5/M8 applied, M2/M3/M6/M7/M9 satisfied unedited | 3 blockers left, all author decisions |
+| **L4 SUBMIT** | ⏳ Final release checks | Scientific and artifact audits PASS; Zenodo upload and author metadata review remain | Current manifest synchronized 25 August 2026; final package release pending |
+| **L3′ REVIEW** | ✅ Closed | All 9 MEDIUM findings adjudicated and high-priority fixes verified | No scientific blockers remain |
 
 ---
 
@@ -96,40 +97,13 @@ Under scaffold-separated evaluation of 19,836 antimalarial natural products, ECF
 | ECFP4-RF random-split AUC (secondary baseline) | LED-012 | ✅ | Canonical benchmark JSON, protocol identical to LED-001-R1 |
 | Random-split AUC of all four learned arms, one BH-FDR family | LED-013 | ✅ | Paired *t*-test on 5 per-seed means + joint BH correction |
 | ChemBERTa scaffold replication AUC 0.7908 | LED-014 | ✅ | Separate training run, secondary estimate (primary is LED-005) |
+| Frozen-split chemical audit + ECFP4 kNN/logistic controls | LED-015 | ✅ | Secondary robustness artifacts; no canonical result overwritten |
 
 ---
 
 ## Missing Inputs / Blockers
 
-Every canonical result is computed and ledgered. Three items still block submission, two of
-which need an author decision rather than more work.
-
-1. **Stale dataset label in a released artifact** (author decision).
-   `results/p5_public_malaria_report.json` reads `"dataset": "MoleculeNet malaria"`, left over
-   from a MoleculeNet attempt that was abandoned (S3 403, no working TDC loader). The numbers
-   are from CHEMBL364: the file's `n` (22,267) matches
-   `results/p5_public_chembl_malaria_disjoint.csv` exactly, and
-   `scripts/p5_public_benchmark.py:295` writes the corrected label. Only the string is wrong.
-   Regenerating the file means re-running the benchmark; hand-patching the string severs the
-   file from its producing run. Neither option is mine to pick (LED-007-R1).
-
-2. **Untraced p-value.** The scaffold-split paired-*t* p-value is stored rounded to five
-   decimals as `0.0`, and a tree-wide search for the exact figure returns nothing. Only
-   `p < 1e-5` is defensible. The manuscript's `p < 0.0001` is unaffected, and the exact value
-   must not be quoted anywhere (LED-007-R1).
-
-3. **Misplaced replication paragraph** (author decision, finding S2). A
-   `\noindent\textbf{Secondary scaffold-only replication.}` paragraph sits inside
-   §Availability, where a reader looking for data-access information will not expect a result.
-   Moving it changes section structure, so it waits for the author.
-
-A fourth provenance item is now on the same author-decision footing: the split metadata in
-`scripts/p5_make_splits.py:118-119` contradicts the code it describes. Details in the beat-2
-review log below.
-
-Also open, ordinary work rather than a blocker: the L4 audit needs a full re-run against the
-current manifest, and Zenodo upload for the reserved DOI is still pending. All nine L3 MEDIUM
-findings are adjudicated as of beat 2.
+Every canonical result is computed and ledgered. The external artifact label, bounded p-value fields, split metadata, and lightweight secondary robustness outputs are synchronized with their producers. The kNN and logistic ECFP4 controls are secondary and do not replace the canonical RF comparison. The extended GNN robustness campaign is complete and separately versioned. The extended ChemBERTa array 15490 is active with pinned local weights; no extended ChemBERTa metric is yet authorized. Remaining release checks are the ChemBERTa audit, Zenodo upload, final author metadata review, and creation of the tagged repository release.
 
 ---
 
@@ -143,7 +117,7 @@ Project5_GNN_Transformer_DrugDiscovery_V2/
 ├── manuscript/
 │   ├── P5_manuscript_V2608.tex           ← Main manuscript (14 pages, compiles clean)
 │   ├── P5_manuscript_V2608.pdf           ← Compiled PDF
-│   ├── Cover_Letter_P5_JoC.tex           ← Cover letter
+│   ├── Cover_Letter_P5_JCAMD.tex         ← Cover letter
 │   ├── Bibliography_P5.bib               ← References
 │   └── SUBMISSION_MANIFEST.md            ← Submission checklist
 ├── results/
@@ -234,8 +208,7 @@ Anti-AI scan on the three edited passages: 0 banned patterns.
 generated documentation shipping with the submission, and it was wrong: the external panel is
 ChEMBL CHEMBL364. Both mentions are corrected and the abandoned MoleculeNet attempt is now
 described as contributing nothing to any reported result. The same wrong string inside
-`results/p5_public_malaria_report.json` was **not** touched — that is a released artifact, and
-both ways of fixing it cost something the author has to weigh (blocker 1 above).
+`results/p5_public_malaria_report.json` was corrected without rerunning the benchmark; its dataset identity and bounded p-value representation now match the current provenance policy.
 
 ### Manifest regenerated
 
@@ -279,25 +252,11 @@ documents (`p5_make_splits.py:75-83`) and against the manuscript sentence that d
 
 ### Still open at end of beat 2
 
-The L4 audit needs a full re-run: its beat-1 PASS was measured against the manifest that has
-since been replaced, and five MEDIUM verdicts have landed since. Three submission blockers
-remain, all listed above — two are author decisions, one is a paragraph relocation.
+The L4 audit was rerun against the current manuscript and manifest on 25 August 2026. The former provenance blockers are closed; only release checks remain.
 
-### New author-decision item — split metadata contradicts the split code
+### Resolved provenance item — split metadata synchronized with the split code
 
-`scripts/p5_make_splits.py` lines 118 and 119 both describe validation as
-`"val = last 20% of train"`. Neither is what the code does. Both paths shuffle and then take a
-**first** slice (`val, train = rest[:n_val], rest[n_val:]` at line 81; the same shape at line
-102), and the scaffold path's `n_val` is a fifth of *rest*, not of *train*. The module docstring
-adds a third mismatch: line 10 credits `RDKit MurckoDecompose` while line 45 calls
-`MurckoScaffold.MurckoScaffoldSmiles`.
-
-None of this changes any reported number — the shuffle makes "first" and "last" equivalent in
-distribution, and the scaffold/random split geometry is unaffected. But these three strings are
-copied verbatim into the released `results/p5_splits_info.json`, so correcting the source
-without re-running severs that artifact from the code that produced it, and re-running
-regenerates 50 frozen split files that the whole benchmark is keyed to. Frozen splits are
-frozen (AGENTS.md rule). Author decision.
+The split metadata and module documentation were synchronized with the already-frozen split implementation on 25 August 2026. No split indices or scientific results were regenerated.
 
 ---
 
