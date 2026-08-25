@@ -36,3 +36,5 @@ The result is an honest-negative benchmark, not a claim that all GNNs or Transfo
 - Manuscript/figures: `manuscript/`
 - Active DAR: `P5_DATA_ANALYSIS_REPORT.md`
 - Strategic planning (non-canonical): `P5_STRATEGIC_PA90.md`
+
+> **Statut de ligne (25 août 2026) :** la version avancée et future CANONIQUE de P5 est `../Project5_GNN_Transformer_DrugDiscovery_V2/` (arbre restauré/présent sur origin/master ; provenance critical-reviews dans docs/archive/V2_critical_reviews/ du présent dépôt). Ne pas supprimer ni archiver ce répertoire.
