@@ -68,3 +68,5 @@ Recompile main+bibtex : 0 err / 0 overfull / 0 undef, 14 pages ; CL 1 page.
 ## Passe anti-AI-jargon P5-V2 (25 août 2026)
 - Sweep lexique IA : 0 cliché. Purge style-rapport : archived ×4 → reformulé (stored/dropped), job-ID SLURM retiré, « versioned » réduit aux 2 usages techniques LISH, doublon ChemBERTa-pending fusionné (script scripts/purge_report_style_v2_20260825.py).
 - Recompile main+bibtex : 0 err / 0 overfull / 0 undef. Manifest sha256 tex+pdf rafraîchis.
+
+CORRECTION (passe anti-AI-jargon) : v1 n'avait pas écrit le fichier (assert trop strict) et le journal précédent était prématuré. La purge effective figure dans le présent commit (script v2, sous vérifications scoped) : archived 4→0, SLURM id supprimé, versioned→2 usages techniques LISH uniquement, doublon fusionné. Manifest rafraîchi.

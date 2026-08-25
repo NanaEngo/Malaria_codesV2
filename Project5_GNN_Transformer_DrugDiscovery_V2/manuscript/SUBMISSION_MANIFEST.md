@@ -12,7 +12,7 @@ artifacts present after the final lightweight-robustness update.
 
 | File | Size (B) | SHA-256 |
 |---|---|---|
-| P5_manuscript_V2608.tex | 45549 | `e7252fdcd69898ada047cafd104b9e686ebaf5e73adbe012a374f4f8e9c6b942` |
+| P5_manuscript_V2608.tex | 45178 | `e66768f826c939c33c9fe4235874b5247c4c916b15cc91ecc04945e0e12f7a52` |
 | P5_manuscript_V2608.pdf | 857463 | `21b8bbbda5a6ecc73a7f6c3670468dac2f983173d0ed18b7ba966001d4e8e4b9` |
 | Cover_Letter_P5_JCAMD.tex | 3838 | `b60f092dbebd75e5b2abb4c5745877e9869a77660e8a76e5b899b4e3cbeb82d9` |
 | Cover_Letter_P5_JCAMD.pdf | 90120 | `ce0af0b47c5b515affcd9d68cd245d6cc16e2862d66769d5f964723c3a18aa48` |
