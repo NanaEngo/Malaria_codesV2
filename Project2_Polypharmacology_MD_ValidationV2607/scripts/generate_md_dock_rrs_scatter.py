@@ -17,7 +17,7 @@ solid vertical/horizontal reference marks WT = 100.
 
 Outputs:
   manuscript/LaTeX/Graphics/p2_setc_rrs_scatter.pdf   (main-manuscript copy)
-  manuscript/Graphics/p2_setc_rrs_scatter.pdf         (SI copy)
+  manuscript/LaTeX/Graphics/p2_setc_rrs_scatter.pdf   (SI copy; same canonical graphics directory)
 """
 
 from __future__ import annotations
@@ -48,7 +48,7 @@ BASE = Path(__file__).resolve().parent.parent
 MD_DOCK_CSV = BASE / 'results' / 'set_c_md' / 'md_vs_docking_comparison_pilot.csv'
 MMGBSA_CSV = BASE / 'results' / 'set_c_md' / 'mmgbsa_summary_pilot.csv'
 OUT_MAIN = BASE / 'manuscript' / 'LaTeX' / 'Graphics' / 'p2_setc_rrs_scatter.pdf'
-OUT_SI = BASE / 'manuscript' / 'Graphics' / 'p2_setc_rrs_scatter.pdf'
+OUT_SI = BASE / 'manuscript' / 'LaTeX' / 'Graphics' / 'p2_setc_rrs_scatter.pdf'
 
 
 def load_md_dock() -> pd.DataFrame:

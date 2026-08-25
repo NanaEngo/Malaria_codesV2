@@ -2,7 +2,7 @@
 
 ## Historical protocol — superseded for active P2 claims
 
-> This file is retained as a historical methods note. Its 300 K, 200 ns, 20-system, and three-replicate examples are not the canonical P2 results. Active claims are defined by `scripts/md_simulation_protocol.md` and the canonical manuscript: four parent-study complexes, 10 ns each at 310.15 K; no set-C production MD.
+> This file is retained as a historical methods note. Its 300 K, 200 ns, 20-system, and three-replicate examples are not the canonical P2 results. Active claims are defined by `scripts/md_simulation_protocol.md` and the canonical manuscript: four parent-study complexes, 10 ns each at 310.15 K, plus the separate 16-system Set-C pilot (PP-01/PP-02, 10 ns each). The Set-C pilot is secondary, single-replicate, and must not be treated as converged validation.
 
 ## Version 1.0 - April 8, 2026
 

@@ -15,15 +15,13 @@
 \usepackage[authoryear,round]{natbib}
 \usepackage[hypertexnames=false,colorlinks=true]{hyperref}
 \usepackage{cleveref}
-\usepackage{xr}
-\externaldocument[MAIN-]{Polypharmacology_MD_Validation_V2607}
 \usepackage[
   retain-explicit-plus = true,
 ]{siunitx}
 \DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
 \DeclareSIUnit\angstrom{\text{\AA}}
 
-\graphicspath{{../Graphics/}}
+\graphicspath{{Graphics/}{../Graphics/}}
 
 % Number supplementary tables/figures sequentially as Table S1, S2, ... (ACS convention)
 \renewcommand{\thetable}{S\arabic{table}}
@@ -58,21 +56,11 @@ Wilfred Fon Mbacham}
 \end{figure}
 
 % ============================================================================
-% Figure S2: VAE Latent Space
-% ============================================================================
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.75\textwidth]{VAE_latent_space.pdf}
-\caption{Position of the top-20 candidates in the Paper~1 VAE latent space. Molecules are coloured by predicted MPO score; top-20 by MPO are highlighted in red.}
-\label{fig:s2_vae_latent}
-\end{figure}
-
-% ============================================================================
 % Table S2: MM-GBSA WT results and mutant interpretation
 % ============================================================================
 \begin{table}[htbp]
 \centering
-\caption{Endpoint-analysis interpretation for the four parent-study consensus complexes used for production MD. These systems are distinct from the 17 set-C polypharmacology candidates. Mean $\pm$ standard deviation is shown only for the single interpretable MM-GBSA result from 101 snapshots; dissociated or conversion-corrupted systems are reported as N/A. Mutant RRS is a docking-based analysis of set C and is not assigned to these MD systems.}
+\caption{Endpoint-analysis interpretation for the four parent-study consensus complexes used for production MD. These systems are distinct from the 17 set-C polypharmacology candidates. Mean $\pm$ standard deviation is shown only for the single interpretable MM-GBSA result from \num{101} snapshots; dissociated or conversion-corrupted systems are reported as N/A. Mutant RRS is a docking-based analysis of set C and is not assigned to these MD systems.}
 \label{tab:s2_mmgbsa_mutants}
 \scriptsize
 \begin{tabular}{l l S[table-format=-2.2] S[table-format=1.2] l}
@@ -101,24 +89,24 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Interpretation \\
 \input{Table_S6_ACSI_Weight_Sensitivity.tex}
 
 % ============================================================================
-% Figure S3: RRS Radar Plots
+% Figure S2: RRS Radar Plots
 % ============================================================================
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{rrs_radar_profiles.pdf}
-\caption{Per-compound, docking-derived RRS profiles across six resistance mutations for the 17 Set-C candidates. Missing axes denote an ineligible target under the $\SI{5.0}{\kcalmol}$ wild-type docking-score threshold and are not treated as zero. Concentric rings indicate \qty{50}{\percent}, \qty{100}{\percent}, and \qty{150}{\percent} RRS; the plot does not encode absolute binding potency.}
-\label{fig:s3_rrs_radar}
+\caption{Per-compound, docking-derived RRS profiles across six resistance mutations for the 17 Set-C candidates. Missing axes denote an ineligible target under the $\qty{5.0}{\kcalmol}$ wild-type docking-score threshold and are not treated as zero. Concentric rings indicate \qty{50}{\percent}, \qty{100}{\percent}, and \qty{150}{\percent} RRS; the plot does not encode absolute binding potency.}
+\label{fig:s2_rrs_radar}
 \end{figure}
 
-\noindent\textit{Scope of the MD evidence.} The parent-study trajectories provide a targeted, non-membrane explicit-solvent check on four wild-type complexes; they do not constitute candidate-specific Set-C production MD or a physiologically complete model for the membrane targets. A 16-system Set-C MD pilot (PP-01 and PP-02 against the six-mutant panel, \SI{10}{\nano\second} each) passed the prespecified trajectory-QC gate and is reported as a secondary analysis; its trajectory-derived MD-RRS and mutant-state MM-GBSA estimates are summarised in \cref{tab:s8_setc_mmgbsa} and compared with docking RRS in \cref{fig:s4_setc_rrs_scatter}.
+\noindent\textit{Scope of the MD evidence.} The parent-study trajectories provide a targeted, non-membrane explicit-solvent check on four wild-type complexes; they are distinct from the separate Set-C production pilot and do not constitute a physiologically complete model for the membrane targets. The authoritative post-production chain is the completed QC output recorded in the pilot manifest; all 16 pilot systems passed the declared gate. A 16-system Set-C MD pilot (PP-01 and PP-02 against the six-mutant panel, \qty{10}{\nano\second} each) passed the declared trajectory-QC gate and is reported as a secondary analysis; its trajectory-derived MD-RRS and mutant-state MM-GBSA estimates are summarized in Table S8 and compared with docking RRS in Figure S3.
 
 % ============================================================================
-% Figure S4: Set-C pilot MD-RRS / MM-GBSA RRS vs docking RRS scatter
+% Figure S3: Set-C pilot MD-RRS / MM-GBSA RRS vs docking RRS scatter
 % ============================================================================
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{p2_setc_rrs_scatter.pdf}
-\caption{Set-C MD pilot trajectory-derived RRS estimates versus docking RRS (WT-normalised, WT = \num{100}). Panel (a): MD-RRS (mean-minimum-distance geometry) versus docking RRS for the eight mutant systems with both estimates; panel (b): MM-GBSA RRS versus docking RRS, with the four PP-02 PfDHFR systems (no docking WT reference in the pilot) shown on the MM-GBSA axis only. Points are coloured by target (PfCRT, blue; PfDHFR, orange) and shaped by candidate (PP-01, circle; PP-02, square). Docking predicted looser mutant binding for all systems (RRS $< \num{100}$); the trajectory-derived estimates do not reproduce this pattern. Secondary, exploratory analysis; no primary claim is based on it.}\label{fig:s4_setc_rrs_scatter}
+\caption{Set-C MD pilot trajectory-derived RRS estimates versus docking RRS (WT-normalized, WT = \num{100}). Panel (a): MD-RRS (mean-minimum-distance geometry) versus docking RRS for the eight mutant systems with both estimates; panel (b): MM-GBSA RRS versus docking RRS, with the four PP-02 PfDHFR systems (no docking WT reference in the pilot) shown on the MM-GBSA axis only. Points are coloured by target (PfCRT, blue; PfDHFR, orange) and shaped by candidate (PP-01, circle; PP-02, square). For the eight mutant systems with a docking WT reference, docking predicted looser mutant binding (RRS $< \num{100}$); the trajectory-derived estimates do not reproduce this pattern among the comparable systems. Secondary, exploratory analysis; no primary claim is based on it.}\label{fig:s3_setc_rrs_scatter}
 \end{figure}
 
 % ============================================================================
@@ -141,7 +129,7 @@ PfClpR & \texttt{PF3D7\_1436800} & 4GM2, PfClpR(P61--E244) & 4GM2 is PfClpR, not
 \end{tabularx}
 \end{table}
 
-The stable identifiers were retrieved from PlasmoDB/VEuPathDB annotations on 12 August 2026 \citep{plasmodb_2026}; record-level permalinks and the retrieval date are preserved in the machine-readable CSV. The exact database release/build was not captured in the source snapshot and is therefore not treated as an inferred annotation version. Because the present study does not provide an independent multi-gene targetome or a prespecified parasite-proteome background, no GO or pathway-enrichment test was performed. This table therefore supplies biological identity and mutation provenance without converting docking scores into pathway-level evidence \citep{Trapotsi2022MoA}.
+The stable identifiers were retrieved from PlasmoDB/VEuPathDB annotations on 12 August 2026 \citep{plasmodb_2026}; record-level permalinks and the retrieval date are preserved in the machine-readable CSV. The exact database release/build was not captured in the source snapshot and is therefore not treated as an inferred annotation version. The existing PfCRT pH 5.2 redocking sensitivity (100/100 library ligands; $\rho = 0.270$, $p = 0.006551$) is documented separately in the project audit and is not merged into the Set-C docking-RRS cohort. Because the present study does not provide an independent multi-gene targetome or a prespecified parasite-proteome background, no GO or pathway-enrichment test was performed. This table therefore supplies biological identity and mutation provenance without converting docking scores into pathway-level evidence \citep{Trapotsi2022MoA}.
 
 % ============================================================================
 % Table S6: Cohort and estimand separation
@@ -152,13 +140,14 @@ The stable identifiers were retrieved from PlasmoDB/VEuPathDB annotations on 12 
 % Table S7: PNS imputation sensitivity
 % ============================================================================
 \input{Table_S9_PNS_Imputation_Sensitivity.tex}
+\input{Secondary_Analyses_SI.tex}
 
 % ============================================================================
 % Table S8: Set-C MD pilot MM-GBSA (16 systems)
 % ============================================================================
 \begin{table}[htbp]
 \centering
-\caption{Set-C MD pilot endpoint estimates (secondary, exploratory analysis). All \num{16} systems passed the prespecified trajectory-QC gate; $\Delta G_{\mathrm{bind}}$ is an MM-GBSA endpoint estimate averaged over \num{100} snapshots with within-trajectory standard deviation, not a replicate uncertainty or a thermodynamic confidence interval. MMG-RRS is the ratio of absolute endpoint magnitudes relative to the corresponding WT system (WT = \num{100}); it is not a free-energy resilience measurement. n/a = no WT docking reference for PP-02 PfDHFR. The two systems flagged with $^\ast$ failed the first MM-GBSA pass (BOND/UB overflow from a protein split across the periodic boundary) and were re-run on PBC-whole trajectories.}\label{tab:s8_setc_mmgbsa}
+\caption{Set-C MD pilot endpoint estimates (secondary, exploratory analysis). All \num{16} systems passed the declared trajectory-QC gate; $\Delta G_{\mathrm{bind}}$ is an MM-GBSA endpoint estimate averaged over \num{100} snapshots with within-trajectory standard deviation, not a replicate uncertainty or a thermodynamic confidence interval. MMG-RRS is the ratio of absolute endpoint magnitudes relative to the corresponding WT system (WT = \num{100}); it is not a free-energy resilience measurement. n/a = no WT docking reference for PP-02 PfDHFR. The two systems flagged with $^\ast$ failed the first MM-GBSA pass (BOND/UB overflow from a protein split across the periodic boundary) and were re-run on PBC-whole trajectories. MMG-RRS values above \num{100}\,\% carry the same interpretation as their docking counterparts: within endpoint noise they indicate retention of wild-type binding, not a gain; eight of the twelve mutant systems lie above this threshold.}\label{tab:s8_setc_mmgbsa}
 \scriptsize
 \begin{tabularx}{\textwidth}{l l l S[table-format=-2.2] S[table-format=1.2] S[table-format=3.1] S[table-format=3.1] S[table-format=3.2]}
 \toprule

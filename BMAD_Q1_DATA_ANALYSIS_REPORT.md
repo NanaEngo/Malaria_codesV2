@@ -1,7 +1,7 @@
 # BMAD Q1 Data Analysis Report — active summary
 
 **Scope:** P1–P3 only. P4 and P5 have dedicated DARs.
-**Updated:** 17 August 2026
+**Updated:** 25 August 2026
 **Long-form history:** `docs/archive/md_full_20260812/BMAD_Q1_DATA_ANALYSIS_REPORT.md`
 
 ## 1. Executive status
@@ -9,7 +9,7 @@
 | Project | Current status | Submission-relevant conclusion |
 |---|---|---|
 | **P1** | V7 is the submission-oriented workspace (JCIM); V6/V4/V5 provide corrected evidence and remediation layers | Chemical-space novelty, target-wise docking, and computational RRS/polypharmacology are reportable only within their stated provenance boundaries |
-| **P2** | Canonical 17-member Set-C cohort and docking-RRS/ACSI/PNS analysis complete; Set-C MD 13/16 production trajectories complete | Docking-RRS is canonical; Set-C MD-RRS not yet computed (pending 3 remaining trajectories + QC) |
+| **P2** | Canonical 17-member Set-C cohort and docking-RRS/ACSI/PNS analysis complete; Set-C MD pilot 16/16 complete with QC, MD-RRS and MM-GBSA secondary outputs | Docking-RRS is canonical; the PP-01/PP-02 Set-C MD pilot is complete as a secondary analysis; full 17-candidate MD-RRS remains NOT_COMPUTED by design |
 | **P3** | Canonical classical, hybrid, QKS, TNE/TDA, and external-validation analyses complete | Quantum-inspired descriptors are complementary; no quantum advantage over RBF or ECFP4 is claimed |
 
 ## 2. P1 — chemical space, docking, and RRS/polypharmacology
@@ -31,36 +31,43 @@
 
 ## 3. P2 — canonical RRS/polypharmacology source layer
 
+**25 August reconciliation:** the P2 results-unlock audit confirms that PfCRT pH 5.2 redocking is already complete for 100/100 library ligands (`data/proteins/pH_correction/redock_results/`), PNS-imputation sensitivity is complete for 17 candidates, and the Set-C pilot post-production chain is complete. These results are distinct estimands and are not merged into the primary Set-C docking-RRS table. The full STRING 400/900 threshold sensitivity and PP-01/PP-15 dedicated multi-seed redocking have no complete source records and remain explicitly NOT_COMPUTED/PENDING_INPUTS.
+
+
 The canonical Set-C cohort contains **17 polypharmacology-oriented candidates** and **136 WT/mutant docking systems**. Per-target RRS classification is:
 
-| Class | Count |
-|---|---:|
-| A* | 6 |
-| B | 5 |
-| C | 5 |
-| D | 1 |
+| Analysis | A* | A | B | C | D |
+|---|---:|---:|---:|---:|---:|
+| Target-balanced primary (12 complete panels) | 1 | 1 | 4 | 5 | 1 |
+| Available-target sensitivity (17 candidates) | 5 | 1 | 5 | 5 | 1 |
 
-Canonical cross-metric results (n=17) are: PNS–RRS ρ=−0.559, p=0.020 (not significant after Bonferroni α=0.017); ACSI–RRS ρ=−0.132, p=0.613; RRS–ΔG_WT ρ=−0.433, p=0.082. ACSI mean is **0.543**, with **2/17 (11.8%)** above 0.70. These are docking-derived computational relationships.
+Canonical cross-metric results are reported by analysis set: target-balanced primary (n=12) PNS–RRS ρ=−0.2098, permutation p=0.5144; coverage-sensitive all-candidate analysis (n=17) PNS–RRS ρ=−0.5588, permutation p=0.0222, Bonferroni-adjusted p=0.0667. The target-balanced ACSI–RRS association is ρ=−0.4056, p=0.1922; ACSI mean is 0.543, with 2/17 (11.8%) above 0.70. These are docking-derived computational relationships and are not independent validation.
 
 Historical parent-lead MD remains separate: only PfCRT–214 has an interpretable MM-GBSA estimate (−18.25 ± 0.40 kcal mol⁻¹); dissociated systems and the 4GM2/PfClpR-labelled system are not promoted as PfClpP validation.
 
-### Live Set-C execution checkpoint — 17 August 2026
+### Set-C pilot completion & post-production chain — CANONICAL (updated 25 August 2026)
 
-The bounded **16-system pilot** (PP-01/PP-02 × PfDHFR/PfCRT mutation states) is prepared under the PI-approved OpenFF 2.2.0 AM1-BCC + CHARMM36m/TIP3P policy deviation. Production array **15320** (`%1` throttle on single A4000 GPU) has completed **13/16 systems** with valid production trajectories (production.xtc, production.cpt, production.log):
+The bounded **16-system pilot** (PP-01/PP-02 × PfDHFR/PfCRT mutation states) is prepared under the PI-approved OpenFF 2.2.0 AM1-BCC + CHARMM36m/TIP3P policy deviation. **Production array `15320` completed all 16/16 systems** with valid production trajectories (`production.xtc`, `production.cpt`, `production.log`):
 
-| Batch | Tasks | Systems | Status | Trajectory size |
-|---|---|---|---|---:|
-| PP-01 DhFR × 5 | 0–4 | PP-01_PfDHFR_{WT,N51I,C59R,S108N,I164L} | ✅ COMPLETED | ~1.2 GB each |
-| PP-01 CRT × 3 | 5–7 | PP-01_PfCRT_{WT,K76T,K76A} | ✅ COMPLETED | ~854 MB each |
-| PP-02 DhFR × 4 | 8–11 | PP-02_PfDHFR_{WT,N51I,C59R,S108N} | ✅ COMPLETED | ~1.2 GB each |
-| PP-02 DhFR I164L | 12 | PP-02_PfDHFR_I164L | 🟢 RUNNING (ETA ~22:55 UTC) | writing |
-| PP-02 CRT × 3 | 13–15 | PP-02_PfCRT_{WT,K76T,K76A} | ⏳ PENDING (queue) | — |
+| Batch | Tasks | Systems | Status |
+|---|---|---|---|
+| PP-01 DhFR × 5 | 0–4 | PP-01_PfDHFR_{WT,N51I,C59R,S108N,I164L} | ✅ COMPLETED |
+| PP-01 CRT × 3 | 5–7 | PP-01_PfCRT_{WT,K76T,K76A} | ✅ COMPLETED |
+| PP-02 DhFR × 5 | 8–12 | PP-02_PfDHFR_{WT,N51I,C59R,S108N,I164L} | ✅ COMPLETED |
+| PP-02 CRT × 3 | 13–15 | PP-02_PfCRT_{WT,K76T,K76A} | ✅ COMPLETED |
 
-All 13 completed systems have `PRODUCTION_COMPLETED_REQUIRES_TRAJECTORY_QC` status. GROMACS runs at 310.15 K with GPU flags `-nb gpu -pme gpu -bonded cpu -update cpu`. No fatal, LINCS, or NaN indicators in any completed log. Tasks 13–15 will launch sequentially after task 12 finishes; estimated full completion: **~Aug 18, 17:00 UTC**. MD-RRS remains **`NOT_COMPUTED`** pending completion of all 16 QC passes. Historical 15106/15111/15117/15254/15259/15260/15270/15274 identifiers are superseded.
+GROMACS ran at 310.15 K with GPU flags `-nb gpu -pme gpu -bonded cpu -update cpu`; no fatal, LINCS, or NaN indicators in any production log. Equilibration array `15288` completed 16/16 with `rc=0` in the canonical preparation root `results/md_systems/set_c_preparation_20260812_v1/`.
+
+**Post-production chain COMPLETE (20260818T212954Z)** — manifest `results/set_c_md/post_production_manifest_pilot.json` (schema v3, created 20260818T212251Z):
+- Trajectory QC: `qc_exit_code=0` → `results/set_c_md/set_c_trajectory_qc_pilot.csv` (**PASS for all accepted rows**).
+- MD-RRS: `md_rrs_exit_code=0` → `results/set_c_md/md_rrs_pilot_PP01_PP02.csv`, status **`COMPUTED_WITH_COHORT_CONTRACT`**, rule `setc_p2_minheavy_5A_ge10percent_v1`; both pilots classified **class A** across PfCRT+PfDHFR (`trajectory_count=8` per candidate); provenance in `md_rrs_pilot_PP01_PP02_provenance.json`.
+- MM-GBSA Set-C (20260819): `results/set_c_md/mmgbsa_summary_pilot.csv` — **16 system rows** (PP-01/PP-02 × {PfCRT WT/K76T/K76A; PfDHFR WT/N51I/C59R/S108N/I164L}), 100 frames each, per-target `mmgbsa_rrs`; cross-metric comparison in `md_vs_docking_comparison_pilot.csv`; manifest `mmgbsa_manifest.json` (directory `mmgbsa_20260819/`).
+
+Superseded / non-canonical: intermediate failed arrays `15308`, `15313`, `15317`; historical identifiers 15106/15111/15117/15254/15259/15260/15270/15274; the failed wrapper attempts logged in `logs/p2_setc_qc_rrs_15384.log` / `p2_setc_qc_rrs_15385.log` (MDAnalysis `XTCReader.timespan` incompatibility) are non-canonical — the authoritative QC/MD-RRS outputs are those of completed wrapper 15386 / the chain manifest above.
 
 ### Set-C production history — superseded gates (13 August 2026)
 
-The 16-system equilibration array `15288` completed all tasks with `rc=0` in the **canonical preparation root** `results/md_systems/set_c_preparation_20260812_v1/` — all 16 systems produced `npt.gro` and `npt.cpt` there (verified: 16/16 present). The legacy root `results/md_systems/set_c/` contains only 1 `npt.gro` (PP-01_PfDHFR_I164L) and is non-canonical; the production workflow reads equilibrated inputs exclusively from the preparation root. Multiple intermediate production attempts (`15308`, `15313`, `15317`) were stopped due to workflow defects (missing topology staging, `continuation`/`gen_vel` conflict, `mdrun -seed` rejection, ns-to-step conversion error). All defects were corrected and validated. The final production array `15320` passed the `15319` gate with 16/16 preflight and is now **13/16 complete** (see checkpoint above). Historical gate identifiers are retained as non-canonical scheduler provenance.
+The 16-system equilibration array `15288` completed all tasks with `rc=0` in the **canonical preparation root** `results/md_systems/set_c_preparation_20260812_v1/` — all 16 systems produced `npt.gro` and `npt.cpt` there (verified: 16/16 present). The legacy root `results/md_systems/set_c/` contains only 1 `npt.gro` (PP-01_PfDHFR_I164L) and is non-canonical; the production workflow reads equilibrated inputs exclusively from the preparation root. Multiple intermediate production attempts (`15308`, `15313`, `15317`) were stopped due to workflow defects (missing topology staging, `continuation`/`gen_vel` conflict, `mdrun -seed` rejection, ns-to-step conversion error). All defects were corrected and validated. The final production array `15320` passed the `15319` gate with 16/16 preflight and completed 16/16; the authoritative post-production chain and QC/MD-RRS outputs are documented above. Historical gate identifiers are retained as non-canonical scheduler provenance.
 
 ### P2 storage and provenance cleanup audit — 13 August 2026
 
@@ -112,7 +119,7 @@ The P3 external arm will compare ECFP4, TFP, TNE, and an explicitly labelled opt
 |---|---|---|
 | P1 V5 target-wise Vina | `Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/` | finite raw records; exploratory where labelled |
 | P2 canonical RRS/ACSI/PNS | `Project2_Polypharmacology_MD_ValidationV2607/results/c_rrs_classification.csv`, `c_acsi_scores.csv`, `c_pns_ranking.csv` | canonical docking-derived |
-| P2 Set-C production | `Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c_preparation_20260812_v1/` | 13/16 production trajectories completed; MD-RRS NOT_COMPUTED |
+| P2 Set-C production | `Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c_preparation_20260812_v1/` | 16/16 production trajectories completed; post-production chain COMPLETE; MD-RRS COMPUTED_WITH_COHORT_CONTRACT; MM-GBSA Set-C 16/16 |
 | P3 external validation | `Project3_Quantum_Inspired_RepresentationsV2607/results/` | canonical/external sensitivity outputs |
 
 ## 6. Cross-project rules
@@ -126,6 +133,14 @@ The P3 external arm will compare ECFP4, TFP, TNE, and an explicitly labelled opt
 ## 7. Next actions
 
 - **P1 (V7):** complete funding items and final author read-through for V7; package `submission_ACS_P1V7/` verified auto-contained (main 25 p. / SM 17 p. / cover 1 p., 0 undefined refs, 12/08/2026).
-- **P2:** production `15320` is 13/16 complete (all PP-01 × 8 + PP-02 DhFR × 5 finished; PP-02_PfDHFR_I164L running; PP-02_PfCRT × 3 queued). ETA for full completion: ~Aug 18, 17:00 UTC. Next: run trajectory QC + MD-RRS wrapper only after all 16 trajectories pass declared QC contract. No MD-RRS claim permitted before complete PASS QC.
+- **P2:** production `15320` and the post-production chain are complete: 16/16 trajectory QC PASS, pilot MD-RRS and Set-C MM-GBSA are available as secondary outputs. Full 17-candidate MD-RRS remains NOT_COMPUTED by design. Existing PfCRT pH 5.2 redocking (100/100) and PNS-imputation sensitivity are indexed in the P2 unlock audit. The main manuscript has been streamlined; detailed secondary ACSI/PNS/Tartarus/ADMET tables are retained in the SI.
 - **P3:** preserve the honest-negative external validation framing and complete repository deposit preparation.
 - **All:** keep this summary short; place detailed job narratives and superseded decisions in the archive.
+
+## Lightweight robustness runs (25 August 2026)
+
+Post-processing only (no new MD). Script: `Project2_Polypharmacology_MD_ValidationV2607/scripts/lightweight_runs_20260825.py` (numpy seed 42, self-check asserts); env `mamba run -n malaria_md`. Outputs: `results/lightweight_robustness/{mmgbsa_ddeltaG_pilot.csv, partial_corr_input_table.csv, lightweight_runs_summary.json}`.
+
+- **RUN1 — MM-GBSA ΔΔG ± SD (R8).** Mutant-minus-wild-type ΔG per compound+target with propagated SD (√ΣSD²): 12 mutants; **0** show significantly weaker binding at 95% CI; **1** significantly tighter; max |ΔΔG| = 5.37 kcal/mol. Machine-readable table: `mmgbsa_ddeltaG_pilot.csv`. Confirms the retention-not-gain reading of the >100% ratios.
+- **RUN2 — Partial Spearman PNS–RRS controlling MW + Murcko-scaffold prevalence (R9).** n = 12 complete-two-target set: raw ρ(PNS,RRS) = −0.2098 → **partial ρ = −0.6154** after conditioning on molecular weight and scaffold prevalence. The association strengthens under controls ⇒ it is not a size/scaffold artifact. Honest label: companion-study TDA topology values are not available locally; this uses the manuscript's own docking RRS (complete-two-target mean).
+- **RUN3 — Cohort-level bootstrap, B = 10⁴ (R3).** Class-fraction CI95 over n = 17: A* [0.118, 0.529], A [0.118, 0.529], B [0.118, 0.529], C [0.118, 0.529], D [0.000, 0.176]. Fraction of the 12 MMG mutant ratios above 100%: point 0.667, CI95 [0.417, 0.917]. The docking CSV carries a single Vina score per system (no replicate dimension), so no score-level σ exists; only cohort-level resampling is reported, explicitly labeled.

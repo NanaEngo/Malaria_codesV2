@@ -1,0 +1,46 @@
+{
+  "run1": {
+    "n_mutants": 12,
+    "weaker_binding_CI95": 0,
+    "tighter_binding_CI95": 1,
+    "max_abs_dDeltaG": 5.37,
+    "n_significant_at_95": 1
+  },
+  "run2": {
+    "note": "PNS\u2013RRS conditioning on MW+Murcko prevalence; TDA topology values NOT available locally",
+    "rrs_column": "RRS_mean_complete_two_target",
+    "n": 12,
+    "raw_spearman": -0.2098,
+    "partial_spearman_given_MW_scaffold": -0.6154
+  },
+  "run3": {
+    "note": "cohort-level bootstrap; docking CSV has single score/system \u2192 no score-level sigma",
+    "class_fraction_CI95": {
+      "A": [
+        0.0,
+        0.176
+      ],
+      "A*": [
+        0.118,
+        0.529
+      ],
+      "B": [
+        0.118,
+        0.529
+      ],
+      "C": [
+        0.118,
+        0.529
+      ],
+      "D": [
+        0.0,
+        0.176
+      ]
+    },
+    "frac_mutant_ratio_gt100_point": 0.667,
+    "frac_mutant_ratio_gt100_CI95": [
+      0.417,
+      0.917
+    ]
+  }
+}

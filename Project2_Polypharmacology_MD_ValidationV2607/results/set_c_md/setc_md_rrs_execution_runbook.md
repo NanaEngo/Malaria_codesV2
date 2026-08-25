@@ -1,6 +1,6 @@
 # Set-C MD → MD-RRS execution runbook
 
-**Updated:** 18 August 2026
+**Updated:** 25 August 2026
 **Scope:** candidate-specific Set-C trajectories only; parent-study MD systems are excluded.
 **Current status:** **Pilot contract COMPLETE (18 Aug 2026).** Production `15320` finished 16/16 (10 ns each, GPU A4000 `%1` throttle). Post-production wrapper `15386` ran trajectory QC → MD-RRS in pilot mode: **16/16 QC PASS** (rule `setc_p2_minheavy_5A_ge10percent_v1`), `md_rrs_status=COMPUTED_WITH_COHORT_CONTRACT`, manifest `post_production_manifest_pilot.json` (schema v3). Outputs: `set_c_trajectory_qc_pilot.csv`, `md_rrs_pilot_PP01_PP02.csv`. MD-RRS = 100.0 (class A) for PP-01 and PP-02 — saturated because `bound_fraction=1.000` for all 16 systems including mutants; the 10-ns window cannot resolve partial affinity loss, so class A is a ceiling, not an affinity-equality proof. Full-cohort (`full` mode, 17 candidates/136 systems) remains `NOT_COMPUTED` by design: that production contract has not been prepared. GPU witness `15270` and benchmark `15262` are stability evidence only. Wrong-root equilibration `15275`, gates `15293`/`15307`, stopped production arrays `15308`/`15313`/`15317`, and failed wrapper attempts `15384`/`15385` are retained as non-canonical provenance.
 
@@ -34,12 +34,12 @@ Preparation job `15274` is retained as terminal provenance; its versioned root `
 
 The first equilibration attempt `15275` used the wrong legacy root and was cancelled; its 69-file hash inventory is retained at `results/set_c_md/noncanonical_eq_root_snapshot_20260812T194605Z.json`. It is non-canonical and must not enter QC or manuscript analysis. Corrected equilibration **15288** completed with explicit `P2_SETC_ROOT=results/md_systems/set_c_preparation_20260812_v1`: all 16 tasks finalized `npt.gro`/`npt.cpt` with `rc=0`.
 
-Gate **15312** passed the exact `16/16` `READY_FOR_AUTHORIZED_EXECUTION` preflight. Production `15313` was stopped after `grompp` passed but GROMACS 2025.4 rejected the unsupported `mdrun -seed` option. The launcher has been corrected; production `15317` was also stopped after a 1000-fold ns-to-step conversion error was detected. The final MDP now requests exactly 5,000,000 steps for 10 ns, and a 10-step GPU smoke test passes. Final gate `15319` passed 16/16 and production `15320` is active with `%1` serialization; task 0 confirms the exact 10-ns protocol and GPU offload without fatal/LINCS errors. `md_rrs_status=NOT_COMPUTED` until all 16 trajectories pass QC. *(Historical 13-Aug status: since superseded — production `15320` finished 16/16, QC 16/16 PASS and pilot MD-RRS `COMPUTED_WITH_COHORT_CONTRACT` on 18 Aug; see Current status above.)*
+Gate **15312** passed the exact `16/16` `READY_FOR_AUTHORIZED_EXECUTION` preflight. Production `15313` was stopped after `grompp` passed but GROMACS 2025.4 rejected the unsupported `mdrun -seed` option. The launcher has been corrected; production `15317` was also stopped after a 1000-fold ns-to-step conversion error was detected. The final MDP now requests exactly 5,000,000 steps for 10 ns, and a 10-step GPU smoke test passes. Final gate `15319` passed 16/16 and production `15320` completed 16/16. The post-production chain completed with 16/16 QC PASS and pilot MD-RRS `COMPUTED_WITH_COHORT_CONTRACT` on 18 August; see the current status and closing section above. Historical `NOT_COMPUTED` wording in this paragraph is superseded and retained only as execution history.
 
 ## Preconditions
 
 1. Candidate-specific `system_manifest.json` and `forcefield_manifest.json` are present and identity/hashes pass in the new versioned root. The historical 0/16 read-only preflight applies only to the incomplete canonical root `results/md_systems/set_c`; the active versioned root contains the completed 16/16 equilibration outputs, while production `15320` remains in progress.
-2. The actual equilibration and production SLURM IDs are recorded at submission time; no historical ID is copied into a reusable script.
+2. The actual equilibration and production SLURM IDs are recorded at submission time; the canonical completed chain is 15288 → 15319 → 15320 → 15386. Historical IDs are retained only as non-canonical scheduler provenance.
 3. Production trajectories contain non-empty `production.xtc` and `production.tpr` files.
 4. The selected contract is declared explicitly through `P2_SETC_COHORT_MODE`.
 5. No manuscript claim is updated from an incomplete, witness-only, or failed chain.

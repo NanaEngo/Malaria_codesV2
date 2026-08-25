@@ -1,28 +1,29 @@
 {
   "schema_version": 1,
-  "created_utc": "2026-08-25T06:24:48.775240+00:00",
+  "created_utc": "2026-08-25T04:47:05.272933+00:00",
   "cohort_id": "P2_SET_C_POLYPHARM_17",
   "array_index": -1,
   "array_system": null,
   "selected_ids": [
-    "PP-01"
+    "PP-01",
+    "PP-02"
   ],
   "targets": [
-    "PfCRT",
-    "PfDHFR"
+    "PfDHFR",
+    "PfCRT"
   ],
-  "required_system_count": 8,
-  "ready_system_count": 8,
+  "required_system_count": 16,
+  "ready_system_count": 16,
   "blocked_system_count": 0,
-  "target_ns": 10.0,
-  "replicates": 1,
-  "backend": "cpu",
-  "gpu_id": null,
+  "target_ns": 1.0,
+  "replicates": 3,
+  "backend": "gpu",
+  "gpu_id": "auto",
   "execution_requested": false,
   "gromacs_launched": false,
   "md_rrs_status": "NOT_COMPUTED",
   "metric_boundary": "RRS, ACSI, and PNS in the status table are docking/cheminformatics-derived; no MD-RRS is inferred.",
-  "status_table": "results/set_c_md/set_c_md_status.csv",
+  "status_table": "results/lightweight_robustness/md_preflight/set_c_md_status.csv",
   "parent_md_excluded": [
     "164_ClpP",
     "201_DHFR",

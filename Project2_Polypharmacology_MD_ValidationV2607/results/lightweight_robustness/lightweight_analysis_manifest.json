@@ -1,0 +1,55 @@
+{
+  "schema_version": 2,
+  "scope": "P2_SET_C_POLYPHARM_17",
+  "script": "scripts/p2_lightweight_robustness.py",
+  "input": "results/docking_mutants.csv",
+  "input_sha256": "d3d55f5ef6d72c2c206cba626e0cf366ae4859eb7734bec35a8ab6e612e6a621",
+  "wt_thresholds_kcal_mol": [
+    4.0,
+    5.0,
+    6.0,
+    7.0
+  ],
+  "retention_rules_low_high_percent": [
+    [
+      70.0,
+      80.0
+    ],
+    [
+      75.0,
+      85.0
+    ],
+    [
+      80.0,
+      90.0
+    ]
+  ],
+  "leave_one_mutant_out": [
+    "none",
+    "N51I",
+    "C59R",
+    "S108N",
+    "I164L",
+    "K76T",
+    "K76A"
+  ],
+  "score_perturbations_percent": [
+    -20,
+    -10,
+    10,
+    20
+  ],
+  "string_thresholds_requested": [
+    400,
+    700,
+    900
+  ],
+  "string_threshold_sensitivity_status": "NOT_COMPUTED_MISSING_THRESHOLD_SPECIFIC_STRING_MATRICES",
+  "string_matrix_files": [],
+  "outputs": [
+    "results/lightweight_robustness/rrs_threshold_sensitivity.csv",
+    "results/lightweight_robustness/rrs_leave_one_mutant_out.csv",
+    "results/lightweight_robustness/docking_score_perturbation.csv"
+  ],
+  "interpretation": "Descriptive robustness of operational docking-RRS rules; not independent validation and not biochemical affinity."
+}

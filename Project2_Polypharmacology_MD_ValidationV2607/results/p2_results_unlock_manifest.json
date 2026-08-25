@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-08-25",
+  "scope": "P2_RESULTS_UNLOCK_AUDIT",
+  "existing_completed_results": {
+    "pns_imputation_sensitivity": {
+      "status": "COMPUTED",
+      "n_candidates": 17,
+      "scenarios": 5,
+      "minimum_rank_spearman": 0.96323529
+    },
+    "pfcrt_ph5_2_redocking": {
+      "status": "COMPUTED",
+      "n_total": 100,
+      "n_success": 100,
+      "spearman_vs_original": 0.270,
+      "p_value": 0.006551
+    },
+    "set_c_md_pilot": {
+      "status": "COMPUTED_WITH_QC",
+      "n_systems": 16,
+      "duration_ns": 10,
+      "candidates": ["PP-01", "PP-02"]
+    },
+    "acsi_weight_sensitivity": {
+      "status": "COMPUTED",
+      "n_perturbations": 8,
+      "scope": "canonical_17_candidate_cohort"
+    },
+    "rrs_local_robustness": {
+      "status": "COMPUTED",
+      "threshold_rows": 204,
+      "leave_one_out_rows": 119,
+      "score_perturbation_rows": 68
+    }
+  },
+  "not_available_or_not_reportable": {
+    "string_400_700_900_network_sensitivity": "NOT_COMPUTED_MISSING_THRESHOLD_SPECIFIC_STRING_MATRICES",
+    "pp01_pp15_multiseed_redocking": "PENDING_REVIEWED_INPUTS",
+    "new_short_md_replicates": "BLOCKED_ENVIRONMENT_FORCEFIELD_AND_GPU"
+  },
+  "failed_controlled_jobs": [15389, 15401, 15413, 15424, 15425, 15426, 15427],
+  "documentation": "docs/P2_RESULTS_UNLOCK_AUDIT_20260825.md"
+}

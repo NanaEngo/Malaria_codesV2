@@ -1,285 +1,80 @@
-# Results Directory
+# Project2 — résultats canoniques et reproduction
 
-## 📁 Directory Structure
+**Dernière mise à jour : 25 août 2026**
+**Statut :** docking/RRS/ACSI/PNS terminé ; cohorte parentale MD séparée ; pilote Set-C MD secondaire terminé ; full-panel MD-RRS non calculé par conception.
 
-```
-results/
-├── analysis/              # Analysis outputs and computed metrics
-├── candidate_selection/   # Selected compounds for MD validation
-├── figures/              # Generated plots and visualizations
-├── md_systems/           # MD system setups and configurations
-├── metrics/              # Calculated metrics (RRS, ACSI, PNS)
-├── mutant_structures/    # Generated resistance mutant structures
-├── tables/               # Data tables for manuscript
-└── trajectories/         # MD trajectory files (LARGE - git-ignored)
-```
+## Périmètre scientifique canonique
 
-## 📊 Result Categories
+- **Set-C :** 17 candidats sélectionnés, 136 systèmes de docking PfDHFR/PfCRT.
+- **Analyse RRS primaire :** 12 candidats avec scores WT éligibles pour PfDHFR et PfCRT.
+- **Analyse de sensibilité :** 5 candidats PfCRT-only, non équivalents à l’analyse primaire.
+- **Classes primaires :** A*:1, A:1, B:4, C:5, D:1.
+- **Classes sur cibles disponibles :** A*:5, A:1, B:5, C:5, D:1.
+- **Cohorte parentale MD :** 4 complexes WT indépendants, 10 ns chacun ; seul PfCRT–214 fournit un endpoint MM-GBSA interprétable.
+- **Pilote Set-C MD :** 16 systèmes PP-01/PP-02, 10 ns chacun, résultats secondaires et exploratoires ; non fusionnés avec le RRS primaire.
+- **Full-panel MD-RRS 17 × 8 :** `NOT_COMPUTED`.
 
-### 🎯 Candidate Selection (`candidate_selection/`)
-**Purpose**: Selected compounds for MD validation studies
+Les scores Vina, RRS, ACSI, PNS, MD-RRS et MM-GBSA représentent des estimands distincts. Aucun résultat ne constitue une preuve expérimentale d’affinité, d’engagement de cible, de mécanisme d’action ou de contournement de la résistance.
 
-**Current Files**:
-- `md_top20_candidates.csv`: Top 20 candidates with comprehensive scoring
-- `md_top20_smiles.smi`: SMILES strings for structure generation
-- `mpo_sensitivity_analysis.csv`: JCIM R2 compliance analysis
+## Sorties reproductibles principales
 
-**Key Metrics**:
-- **Success Rate**: 18.3% (17/93 molecules pass all filters)
-- **MPO Score Range**: 0.514 - 0.550 (primary leads)
-- **Synthesizability**: All candidates SYBA > 0
-- **Selectivity**: Mean SI = 90.6
+| Sortie | Rôle |
+|---|---|
+| `c_rrs_classification.csv` | Couverture et classes RRS par candidat |
+| `c_rrs_sensitivity.csv` | Vue de sensibilité de la classification |
+| `c_acsi_scores.csv` | Composantes brutes, normalisées et ACSI |
+| `c_pns_ranking.csv` | Classement PNS avec imputation PfCRT documentée |
+| `cross_metric_statistical_audit.csv` | Corrélations et p-values par ensemble d’analyse |
+| `cross_metric_statistical_audit.json` | Paramètres statistiques et provenance |
+| `pns_imputation_sensitivity.csv` | Sensibilité de rang à l’imputation PfCRT |
+| `pns_imputation_sensitivity.json` | Métadonnées de sensibilité PNS |
+| `p2_rigorous_audit_manifest.json` | Manifest de régénération des sorties |
+| `lightweight_robustness/` | Sensibilités locales RRS : seuils WT, leave-one-mutant-out et perturbation bornée des scores |
 
-### 🧬 MD Systems (`md_systems/`)
-**Purpose**: Prepared molecular dynamics systems
+## Audit de déblocage des résultats existants
 
-**Structure**:
-```
-md_systems/
-├── system_001_compound001_4gm2_wt/
-├── system_002_compound001_4gm2_mut/
-├── system_003_compound001_6ukj_wt/
-└── ... (160 total systems)
-```
+L’audit `docs/P2_RESULTS_UNLOCK_AUDIT_20260825.md` et le manifeste
+`results/p2_results_unlock_manifest.json` confirment que la sensibilité PfCRT
+pH 5.2 (100/100) et la sensibilité PNS par imputation étaient déjà calculées.
+Elles sont distinctes du redocking multi-seed PP-01/PP-15 et des matrices STRING
+400/900, qui restent respectivement sans entrées dédiées et sans données source.
 
-**System Naming**: `system_{ID}_{compound}_{target}_{variant}`
-- **ID**: Sequential system identifier
-- **compound**: Compound identifier (001-020)
-- **target**: Protein target (4gm2, 6ukj, 7f3y, 9n10)
-- **variant**: Wild-type (wt) or mutant (mut)
+## Pilote Set-C MD
 
-### 📈 Analysis (`analysis/`)
-**Purpose**: Computed analysis results and derived data
+Les résultats du pilote sont conservés sous `results/set_c_md/` :
 
-**Expected Contents**:
-- Binding affinity calculations
-- Structural analysis results
-- Statistical comparisons
-- Cross-validation results
+- `post_production_manifest_pilot.json` ;
+- `set_c_trajectory_qc_pilot.csv` ;
+- `md_rrs_pilot_PP01_PP02.csv` ;
+- `md_rrs_discriminative_manifest.json` ;
+- `mmgbsa_manifest.json` ;
+- `mmgbsa_summary_pilot.csv` ;
+- `md_vs_docking_comparison_pilot.csv`.
 
-### 📊 Metrics (`metrics/`)
-**Purpose**: Novel metrics for polypharmacology assessment
+Le pilote utilise OpenFF 2.2.0 AM1-BCC avec une déviation de politique déclarée et approuvée par le PI. Il est limité à deux candidats, à une réplique et à 10 ns par système. Il ne doit pas être présenté comme une validation convergée du docking-RRS.
 
-**Key Metrics**:
-- **RRS (Resistance Resilience Score)**: Activity retention against mutants
-- **ACSI (Activity Conservation Score Index)**: Multi-target activity preservation
-- **PNS (Polypharmacology Network Score)**: Network-based polypharmacology assessment
+## Reproduction rapide
 
-### 🧪 Mutant Structures (`mutant_structures/`)
-**Purpose**: Generated resistance mutant protein structures
+Depuis le répertoire `Project2_Polypharmacology_MD_ValidationV2607/` :
 
-**Targets and Mutations**:
-- **4GM2 (PfClpR; not PfClpP)**: no PfClpP-specific mutation analysis is accepted from this entry
-- **6UKJ (PfCRT)**: K76T, N75E, M74I, A220S
-- **7F3Y (PfDHFR)**: S108N, N51I, C59R, I164L
-- **9N10 (PfATP4)**: [Specific mutations to be determined]
-
-### 📋 Tables (`tables/`)
-**Purpose**: Formatted data tables for manuscript
-
-**Expected Tables**:
-- Candidate selection summary
-- MD simulation parameters
-- Binding affinity comparisons
-- Statistical analysis results
-
-### 📊 Figures (`figures/`)
-**Purpose**: Generated plots and visualizations
-
-**Figure Categories**:
-- Candidate selection flowcharts
-- MD trajectory analysis plots
-- Binding mode comparisons
-- Statistical distribution plots
-
-### 🎬 Trajectories (`trajectories/`)
-**Purpose**: MD simulation trajectory files
-
-**⚠️ Important Notes**:
-- **Git-ignored**: Files are too large for version control
-- **Storage**: Use local/HPC storage or cloud solutions
-- **Backup**: Implement separate backup strategy
-- **Access**: Document location for collaborators
-
-**Expected Size**: ~30 TB total (160 systems × ~187 GB each)
-
-## 📋 File Naming Conventions
-
-### Candidate Selection
-```
-candidate_selection/
-├── md_top{N}_candidates.csv      # N = number of candidates
-├── md_top{N}_smiles.smi          # SMILES for structure generation
-└── mpo_sensitivity_analysis.csv  # Sensitivity analysis results
-```
-
-### MD Systems
-```
-md_systems/
-└── system_{ID}_{compound}_{target}_{variant}/
-    ├── system.gro                # Initial coordinates
-    ├── system.top                # Topology file
-    ├── md_params.mdp             # MD parameters
-    └── analysis/                 # System-specific analysis
-```
-
-### Analysis Results
-```
-analysis/
-├── binding_affinities_{date}.csv
-├── structural_analysis_{date}.csv
-└── statistical_comparisons_{date}.csv
-```
-
-### Figures
-```
-figures/
-├── candidate_selection_flowchart.png
-├── md_trajectory_analysis.png
-├── binding_mode_comparison.png
-└── manuscript_figures/
-    ├── figure_1_candidate_selection.png
-    ├── figure_2_md_overview.png
-    └── figure_3_results_summary.png
-```
-
-## 📊 Data Management
-
-### Size Guidelines
-| Directory | Typical Size | Max Size | Git Tracked |
-|-----------|-------------|----------|-------------|
-| analysis/ | 10-100 MB | 1 GB | Yes |
-| candidate_selection/ | 1-10 MB | 50 MB | Yes |
-| figures/ | 10-100 MB | 500 MB | Yes (selective) |
-| md_systems/ | 100 MB - 1 GB | 10 GB | Yes |
-| metrics/ | 1-10 MB | 100 MB | Yes |
-| mutant_structures/ | 10-50 MB | 200 MB | Yes |
-| tables/ | 1-10 MB | 50 MB | Yes |
-| trajectories/ | **10-30 TB** | **50 TB** | **NO** |
-
-### Backup Strategy
-- **Small files** (<1 GB): Git version control
-- **Medium files** (1-10 GB): Cloud storage (Google Drive, Dropbox)
-- **Large files** (>10 GB): HPC storage with backup policy
-- **Critical results**: Multiple backup locations
-
-## 🔄 Result Generation Workflow
-
-### Phase 1: Candidate Selection
 ```bash
-# Generate candidates
-python scripts/revision/md_select_top20_refined.py --n 20 --sensitivity
-
-# Results → candidate_selection/
+python scripts/p2_rigorous_audit.py
+python -m pytest tests -q
 ```
 
-### Phase 2: System Preparation
-```bash
-# Prepare MD systems
-python scripts/md/md_prepare_ligands.py
-python scripts/md/md_prepare_proteins.py
-python scripts/md/md_build_complexes.py
+Cet audit rapide ne lance ni docking, ni GROMACS, ni MM-GBSA. Il régénère les sorties compactes et vérifie les définitions RRS, la couverture, l’ACSI, le PNS et les statistiques descriptives. L’analyse locale supplémentaire peut être régénérée avec `python scripts/p2_lightweight_robustness.py`; ses sorties sont décrites dans `results/lightweight_robustness/README.md`.
 
-# Results → md_systems/
-```
+La reproduction MD complète nécessite l’environnement et les fichiers de paramètres documentés dans les manifestes Set-C. Les trajectoires volumineuses ne sont pas incluses dans le dépôt de soumission ; les conclusions du manuscrit sont limitées aux résumés et endpoints explicitement archivés.
 
-### Phase 3: MD Simulations
-```bash
-# Run simulations (HPC)
-bash scripts/md/md_full_pipeline.sh
+## Provenance et versions
 
-# Results → trajectories/ (git-ignored)
-```
+Les sources canoniques du manuscrit sont :
 
-### Phase 4: Analysis
-```bash
-# Calculate metrics
-python scripts/md/md_calculate_rrs_acsi_pns.py
+- `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` ;
+- `manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2607.tex` ;
+- `manuscript/LaTeX/Cover_Letter.tex` ;
+- `manuscript/LaTeX/Bibliography_Polypharmacology_MD_Validation.bib`.
 
-# Results → analysis/, metrics/
-```
+Les analyses historiques et scripts non canoniques sont conservés pour la provenance, mais ne doivent pas être utilisés pour régénérer les claims du manuscrit. Les fichiers contenant des statuts historiques doivent être interprétés avec les manifestes canoniques datés.
 
-### Phase 5: Visualization
-```bash
-# Generate figures
-python scripts/analysis/generate_2d_interaction_diagrams.py
-
-# Results → figures/
-```
-
-## 📋 Quality Control
-
-### Data Validation
-- **Completeness**: All expected files present
-- **Format consistency**: Standardized file formats
-- **Size validation**: Files within expected size ranges
-- **Content validation**: Data integrity checks
-
-### Validation Scripts
-```bash
-# Check result completeness
-python scripts/maintenance/consistency_audit.py
-
-# Validate specific results
-python scripts/maintenance/final_consistency_audit.py --results-only
-```
-
-## 📊 Current Status
-
-### ✅ Completed
-- **Candidate Selection**: 17+5 compounds (MPO-ranked + named consensus hits 201,214,87,438,164)
-- **Sensitivity Analysis**: JCIM R2 compliance demonstrated
-- **RRS Classification**: 14 polypharm scaffolds classified (A*:1, A:3, B:2, C:7, D:1) — see `c_rrs_classification.csv`
-- **PP-11 C59R Investigation**: Complete mechanistic analysis in `analysis/PP11_C59R_investigation.md`
-- **Named Ligand Docking**: 5 ligands × 6 mutants pending (job 7948)
-- **Mutant Structures**: All 6 homology models generated (QMEAN -0.15 to -1.52, GMQE 0.78–0.98)
-
-### 🔄 In Progress
-- **MD System Preparation**: Setting up 160 simulation systems
-- **P3 QI Optimization**: 5K molecules, n_repeats=2, n_kpca=20 (job 7943, running)
-- **TNE bond_dim=16**: 768 features (job 7945, pending)
-
-### 📅 Planned
-- **MD Simulations**: 30,000 ns total simulation time
-- **RRS/ACSI/PNS Integration**: Cross-metric correlation analysis
-- **Manuscript Figures**: Publication-ready visualizations
-
-## 🔗 Integration with Manuscript
-
-### Table References
-- **Table 1**: Candidate selection summary → `tables/candidate_summary.csv`
-- **Table 2**: MD simulation parameters → `tables/md_parameters.csv`
-- **Table 3**: Binding affinity results → `tables/binding_affinities.csv`
-
-### Figure References
-- **Figure 1**: Candidate selection workflow → `figures/candidate_selection_flowchart.png`
-- **Figure 2**: MD simulation overview → `figures/md_overview.png`
-- **Figure 3**: Results summary → `figures/results_summary.png`
-
-## 🛠️ Maintenance
-
-### Regular Tasks
-- **Weekly**: Check disk usage, especially trajectories/
-- **Monthly**: Validate result integrity
-- **Before submission**: Run final consistency audit
-
-### Cleanup Commands
-```bash
-# Clean temporary files
-find results/ -name "*.tmp" -delete
-find results/ -name "*.log" -delete
-
-# Compress old results
-tar -czf results_backup_$(date +%Y%m%d).tar.gz results/analysis/
-```
-
-## 🔗 Related Documentation
-
-- [Project Overview](../docs/project_overview.md)
-- [MD Simulation Protocol](../docs/md_simulation_protocol.md)
-- [JCIM Roadmap](../JCIM_COMPLIANT_ROADMAP.md)
-- [Script Documentation](../scripts/README.md)
-
----
-
-**Note**: The trajectories/ directory contains very large files (>10 TB total) and is git-ignored. Implement appropriate backup and sharing strategies for these critical simulation results.
+Une archive permanente versionnée doit être associée à la version effectivement soumise. Tant que le DOI n’est pas enregistré, aucune phrase ne doit laisser entendre qu’un dépôt Zenodo public est déjà disponible.

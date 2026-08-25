@@ -2,7 +2,7 @@
 
 > **READ BEFORE EXECUTION:** This document contains historical command examples. **Do not execute legacy 15106/15111/15119/15254/15259/15260 commands.** The canonical production chain is equilibration `15288` → gate `15319` → production `15320` → QC/MD-RRS wrapper `15386` (pilot, **COMPLETE 18 Aug 2026**). See the closing section at the end of this file.
 
-**Date:** 12 August 2026
+**Date:** 25 August 2026 (historical runbook reconciled)
 **Live status (18 Aug 2026):** production `15320` **16/16 complete**; trajectory QC **16/16 PASS** (job `15386`); pilot MD-RRS **`COMPUTED_WITH_COHORT_CONTRACT`** — manifest `post_production_manifest_pilot.json` (`schema v3`), outputs `set_c_trajectory_qc_pilot.csv` + `md_rrs_pilot_PP01_PP02.csv`. Older 15106/15111/15119/15254/15259/15260 references are historical and non-canonical. Full-panel (17-candidate/136-system) MD-RRS remains `NOT_COMPUTED` by design: the full-cohort production contract has not been prepared.
 **Scripts verified:**
 - `p2_setc_trajectory_qc.py` — ✅ compile OK (malaria_md, py3.11)
@@ -13,7 +13,7 @@
 
 ## ⚠️ Pre-condition: equilibration must complete for all 16 systems
 
-The production array (`15111`, `dependency=afterok:15106`) only runs for systems with `npt.gro`.
+Historical execution note: the superseded production array (`15111`, `dependency=afterok:15106`) only ran for systems with `npt.gro`; do not execute this legacy command. The canonical chain is documented in the opening status and closing section.
 The MD-RRS script (`p2_setc_md_rrs.py`) is **fail-closed**: it requires **exactly 136 rows** (17 candidates × 8 states) **all with `qc_status=PASS`**, identical `analysis_rule_id`, `duration_ns`, and `n_frames`.
 
 **Current equilibration state (10 Aug, ~3h30 from start):**
@@ -181,7 +181,7 @@ print('Agreement rate:', merged['MD_vs_dock'].mean())
 
 ## ⚠️ Known issue (10 Aug 2026): equilibration stalled/failed
 
-**Problem:** 13/16 systems show no NPT progress. Task `PP-01_PfDHFR_N51I` crashed with a `libgomp` threading error. The remaining 12 are stalled with tiny log files (99–105 bytes) and no NPT output after 8–11 hours running time.
+**Historical problem (10 August):** 13/16 systems showed no NPT progress. Task `PP-01_PfDHFR_N51I` crashed with a `libgomp` threading error. The remaining 12 are stalled with tiny log files (99–105 bytes) and no NPT output after 8–11 hours running time.
 
 **Symptoms:**
 - `npt.gro`: only 3/16
