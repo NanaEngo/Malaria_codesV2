@@ -41,3 +41,21 @@ Aucun manuscrit déjà soumis (P1/P3/P4/P5) n'a été modifié dans cette passe.
 
 ## Audit adversarial P5-V2 — PASS1 + mitigations (25 août 2026)
 Cible : ligne avancée Project5_GNN_Transformer_DrugDiscovery_V2 (couche LED). Rapport : outputs/critical-reviews/PASS1_adversarial_20260825.md. F1 numériques re-vérifiés vs JSON bruts ✓ ; C-P5-01 non applicable au manifeste V2 (ChEMBL364 réel) ; C-P5-02 phrase clarificatrice ± ajoutée ; C-P5-03 équation hiérarchique en \small → recompile err=0/overfull=0/undef=0.
+
+
+## Passe R-P5 — referees sévères P5-V2 (25 août 2026)
+
+| Point | Traitement |
+|---|---|
+| R-P5-01 (MAJOR) | ✅ Tests de permutation appariés B=10⁴ sur les moyennes par graine vs ECFP4-RF : les huit comparaisons arm×split donnent ΔAUC négatif, p bilatéral = 0,009 partout ; IC95 scaffold GIN −0,0253 [−0,0364 ; −0,0138], GIN-TFP −0,0162 [−0,0254 ; −0,0099], GIN-TNE −0,0210 [−0,0351 ; −0,0125], ChemBERTa −0,0433 [−0,0475 ; −0,0392] — infériorité significative, plus indéterminée. Script scripts/rp5_run2_20260825.py, sortie results/rp5_summary.json |
+| R-P5-02 | ⏸ Déféré honnêtement : pas de matrice de features archivée → grille impossible ; périmètre « budget par défaut » déjà explicité en Limitations |
+| R-P5-03 | ✅ Clause Limitations : réalisation unique du partitionnement scaffold + décompositions par scaffold non archivées (variance de split non bornée dans le présent enregistrement) |
+| R-P5-04 | ✅ Déjà présent (¶ transfert ChEMBL364 entièrement spécifié L179) |
+| R-P5-05 | ✅ Couvert par la clause R-P5-03 (décomposition non archivée, dite honnêtement) |
+| R-P5-06 | ✔ Non-problème sur V2 : cellules random TFP/TNE déjà remplies (LED-013) |
+| R-P5-07 | ✔ Déjà couvert (framing orthogonal LISH-MoA abstract/L85/L159) |
+| R-P5-08 | ✅ Manifest sha256 ×5 lignes rafraîchies post-édition + note Verified 25 August ; cover letter retargetée JCAMD ×3 ; Zenodo reste honest-pending |
+| R-P5-09 | ✅ (allégé) légende LED ajoutée à la caption tab:h1 plutôt que retrait invasif des tags inline |
+| R-P5-10 | ✔ Positionnement déjà ancré (scaffold_frontier_2026, rollins2024molprop, Trapotsi2022MoA) |
+
+Recompile main+bibtex : 0 err / 0 overfull / 0 undef, 14 pages ; CL 1 page.
