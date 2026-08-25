@@ -12,8 +12,8 @@ artifacts present at the Generated timestamp above.
 
 | File | Size (B) | SHA-256 |
 |---|---|---|
-| P5_manuscript_V2608.tex | 41558 | `f9f0c4753159bf246cfaa4aaf78753b52fd933f329c1dc96076b04f9e07db332` |
-| P5_manuscript_V2608.pdf | 853852 | `b459397a65dcfbf3020751aa7f3b70cf469cb1d9f03a958941f1b117612618c8` |
+| P5_manuscript_V2608.tex | 40663 | `40f79b24cb10ad70997855d0ca2372102e0c8e7fd9f1f66ee813e1109d9a4e23` |
+| P5_manuscript_V2608.pdf | 852244 | `61bb3c3deec033a67068e6544e6d559117e6180fa61630a734937e0cd90095c5` |
 | Cover_Letter_P5_JCAMD.tex | 3838 | `b60f092dbebd75e5b2abb4c5745877e9869a77660e8a76e5b899b4e3cbeb82d9` |
 | Cover_Letter_P5_JCAMD.pdf | 90120 | `d08fa6df99987dec3137312439bc76805cce15569bd77672a952a1b47dd797fe` |
 | Bibliography_P5.bib | 11038 | `1902045dcb7fc53203430bab4598263bb1c9176dc0bc4e03acc302af078f4f50` |
