@@ -64,3 +64,7 @@ Recompile main+bibtex : 0 err / 0 overfull / 0 undef, 14 pages ; CL 1 page.
 - Skill scientific-writing consulté ; 78 tokens LED inline retirés de abstract/highlights/corps (0 restant) ; légende orpheline de tab:h1 supprimée.
 - Traçabilité conservée par la sentence Availability (ledger versionné livré avec le code).
 - Recompile main ×2 : e=0 o=0 u=0, pages=14. Manifest sha256 tex+pdf rafraîchis.
+
+## Passe anti-AI-jargon P5-V2 (25 août 2026)
+- Sweep lexique IA : 0 cliché. Purge style-rapport : archived ×4 → reformulé (stored/dropped), job-ID SLURM retiré, « versioned » réduit aux 2 usages techniques LISH, doublon ChemBERTa-pending fusionné (script scripts/purge_report_style_v2_20260825.py).
+- Recompile main+bibtex : 0 err / 0 overfull / 0 undef. Manifest sha256 tex+pdf rafraîchis.

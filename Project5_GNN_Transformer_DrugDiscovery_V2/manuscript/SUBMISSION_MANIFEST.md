@@ -1,22 +1,23 @@
 # Submission Manifest — P5
 
 **Journal:** Journal of Cheminformatics (Springer)
-**Pages:** main 14 p. / cover 1 p. — no SM (none referenced), both counts from `pdfinfo` (verified 19/08/2026)
-**Status:** Manuscript compiles clean; external ChEMBL CHEMBL364 validation and leak audit complete. Two provenance items open — see Open items below.
-**Generated:** 2026-08-19 20:39 UTC
+**Pages:** main 14 p. / cover 1 p. — no SM (none referenced), main count from `pdfinfo` (verified 25/08/2026)
+**Status:** Manuscript compiles clean; canonical and extended GNN analyses, external ChEMBL CHEMBL364 validation, fold-level AUPRC, descriptor ablations/permutations, salience-stability audit, split metadata, and chemical-standardization audit are synchronized. Extended ChemBERTa rerun is active under SLURM array 15490 and is not yet integrated. Remaining release checks: ChemBERTa audit, Zenodo deposit, and final author metadata review.
+**Generated:** 2026-08-25 UTC (extended campaign integrated)
 
 ## File inventory (SHA-256)
 
-All five rows recomputed in a single pass with `stat -c%s` and `sha256sum` against the
-artifacts present at the Generated timestamp above.
+The six submission-file rows were recomputed in a single pass with `stat -c%s` and `sha256sum` against the
+artifacts present after the final lightweight-robustness update.
 
 | File | Size (B) | SHA-256 |
 |---|---|---|
-| P5_manuscript_V2608.tex | 40663 | `40f79b24cb10ad70997855d0ca2372102e0c8e7fd9f1f66ee813e1109d9a4e23` |
-| P5_manuscript_V2608.pdf | 852244 | `61bb3c3deec033a67068e6544e6d559117e6180fa61630a734937e0cd90095c5` |
+| P5_manuscript_V2608.tex | 45549 | `e7252fdcd69898ada047cafd104b9e686ebaf5e73adbe012a374f4f8e9c6b942` |
+| P5_manuscript_V2608.pdf | 857463 | `21b8bbbda5a6ecc73a7f6c3670468dac2f983173d0ed18b7ba966001d4e8e4b9` |
 | Cover_Letter_P5_JCAMD.tex | 3838 | `b60f092dbebd75e5b2abb4c5745877e9869a77660e8a76e5b899b4e3cbeb82d9` |
-| Cover_Letter_P5_JCAMD.pdf | 90120 | `d08fa6df99987dec3137312439bc76805cce15569bd77672a952a1b47dd797fe` |
-| Bibliography_P5.bib | 11038 | `1902045dcb7fc53203430bab4598263bb1c9176dc0bc4e03acc302af078f4f50` |
+| Cover_Letter_P5_JCAMD.pdf | 90120 | `ce0af0b47c5b515affcd9d68cd245d6cc16e2862d66769d5f964723c3a18aa48` |
+| Bibliography_P5.bib | 10640 | `ed095e4661616d1d4a1d9e9e6839446646844dc516526140b194256488459b72` |
+| scientific_audit_20260825.json | 77204 | `61d9869aedf76b0bda0017b3a4a6dba9f676bd3349f948cecb9fd5e50fa18b70` |
 
 A PDF row only means something if the PDF postdates its sources, so that was checked rather
 than assumed. `P5_manuscript_V2608.pdf` is newer than both `P5_manuscript_V2608.tex` and
@@ -34,26 +35,29 @@ three moved.
   result; earlier revisions of this manifest named it in error.
 - Independent replication verification PASS (Δmean −0.00014).
 - JCAMD Declarations complete (Availability, Funding, Ethics, Use of AI).
+- References: 26 distinct cited references and 26 BibTeX entries; 0 orphan and 0 missing citations.
+- Secondary robustness artifacts are documented in `results/lightweight_robustness/README.md` and `results/extended_campaign_20260825/README.md`; they are not substituted for the canonical primary benchmark estimates.
 - No SM file needed — no supplementary references in main.
 - Manuscript compile verified at the Generated timestamp: `latexmk -g -pdf
   -interaction=nonstopmode -halt-on-error` exit 0, no `^!` lines, 0 undefined references,
   14 pages. `pdftotext | grep -c 'Bemis'` returns 4, so the scaffold reference resolved in
   the compiled output rather than only in the source.
 
+## Extended campaign status
+
+- `results/extended_campaign_20260825/robustness/extended_analysis_summary.json`: `COMPUTED`.
+- 25/25 configurations complete; 625 fold--seed records validated; all records have finite AUC/AUPRC.
+- Three independent scaffold partitions, GNN descriptor permutations, fold-level AUPRC, and individual salience stability are now computed as secondary robustness analyses.
+- ChEMBL threshold sensitivity is `COMPUTED_RF_ONLY` for four prespecified specifications; no full GIN or ChemBERTa threshold rerun is claimed.
+- Extended ChemBERTa rerun: SLURM array `15490` submitted with pinned snapshot revision `761d6a18cf99db371e0b43baf3e2d21b3e865a20`; task 0 `RUNNING`, tasks 1–4 `PENDING`, no completed metric yet. No extended ChemBERTa result is authorized for manuscript interpretation until all five partitions pass the 25-record audit.
+
 ## Open items (must close before submission)
 
-1. **Stale label in a released artifact.** `results/p5_public_malaria_report.json` still
-   carries `"dataset": "MoleculeNet malaria"`, a leftover from the abandoned MoleculeNet
-   attempt. The numbers in that file are from CHEMBL364 — its `n` (22,267) matches
-   `results/p5_public_chembl_malaria_disjoint.csv` exactly (22,268 lines less header), and
-   `scripts/p5_public_benchmark.py:295` writes the corrected label. Only the on-disk string
-   is wrong. Regenerating it means re-running the benchmark; hand-patching the string
-   breaks the file's correspondence to its producing run. Author decision required
-   (LED-007-R1).
-2. **Untraced p-value.** The scaffold-split paired-*t* p-value is stored rounded to five
-   decimals as `0.0`. A tree-wide search for the exact figure returns nothing, so only
-   `p < 1e-5` is defensible. The manuscript's `p < 0.0001` is unaffected and the exact
-   value must not be quoted (LED-007-R1).
+1. **Zenodo release:** upload the frozen package and verify the reserved DOI.
+2. **Author metadata:** confirm ORCID identifiers, affiliations, and final author approval.
+3. **External p-value:** the JSON preserves the rounded computational value in
+   `paired_t_pvalue_rounded` and the reportable bound in `paired_t_pvalue_reporting`; the
+   manuscript reports only the bounded form.
 
 ## Prior-revision defect (recorded, not carried forward)
 
@@ -62,4 +66,21 @@ That hash is the file's *current* hash, which the current 3775 B file also has �
 string cannot have two sizes, so that row was edited by hand rather than generated. Every
 row above was produced by command in one pass to remove that class of error.
 
-— **Verified 25 August 2026** (checksums recomputed after R-P5 refinements).
+## Secondary robustness inventory
+
+The following versioned artifacts are part of the scientific audit record and are not replacements for the canonical benchmark:
+
+- `results/lightweight_robustness/README.md`
+- `results/lightweight_robustness/p5_lightweight_summary_20260825.json`
+- `results/lightweight_robustness/p5_knn_ecfp4_k5_random_baseline.json`
+- `results/lightweight_robustness/p5_knn_ecfp4_k5_random_results.csv`
+- `results/lightweight_robustness/p5_knn_ecfp4_k5_scaffold_baseline.json`
+- `results/lightweight_robustness/p5_knn_ecfp4_k5_scaffold_results.csv`
+- `results/lightweight_robustness/p5_logistic_ecfp4_C1_random_baseline.json`
+- `results/lightweight_robustness/p5_logistic_ecfp4_C1_random_results.csv`
+- `results/lightweight_robustness/p5_logistic_ecfp4_C1_scaffold_baseline.json`
+- `results/lightweight_robustness/p5_logistic_ecfp4_C1_scaffold_results.csv`
+- `results/lightweight_robustness/p5_replication_stats_rederived.csv`
+- `results/lightweight_robustness/p5_replication_stats_rederived.json`
+
+— **Verified 25 August 2026** (checksums recomputed after scientific refinement and lightweight robustness analyses; extended ChemBERTa remains pending).
