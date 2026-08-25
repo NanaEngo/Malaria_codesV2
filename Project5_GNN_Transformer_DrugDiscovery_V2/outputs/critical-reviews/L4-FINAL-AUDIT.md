@@ -133,8 +133,8 @@ Exit status: 0
 | Item | Status | Notes |
 |------|--------|-------|
 | **Main manuscript LaTeX** | ✅ Ready | `P5_manuscript_V2608.tex` |
-| **Compiled PDF** | ✅ Ready | `P5_manuscript_V2608.pdf` (13 pages) |
-| **Cover letter** | ✅ Ready | `Cover_Letter_P5_JoC.tex` + PDF |
+| **Compiled PDF** | ✅ Ready | `P5_manuscript_V2608.pdf` (14 pages; rebuilt 25/08/2026) |
+| **Cover letter** | ✅ Ready | `Cover_Letter_P5_JCAMD.tex` + PDF |
 | **Bibliography** | ✅ Ready | `Bibliography_P5.bib` (26 entries) |
 | **Figures** | ✅ Ready | `results/figures/` (benchmark, learning_curves, salience) |
 | **Supplementary data** | ⏳ Verify | Panel CSV, splits, results JSON (in `results/`) |
@@ -180,7 +180,7 @@ Exit status: 0
 
 ## FINAL VERDICT
 
-**STATUS:** ✅ **READY FOR SUBMISSION**
+**STATUS:** ✅ **SCIENTIFICALLY READY; FINAL RELEASE CHECKS PENDING**
 
 **Evidence:**
 - All 5 L4 audit gates PASS
@@ -191,8 +191,8 @@ Exit status: 0
 - LED traceability complete
 
 **Remaining work:**
-- Author actions: Zenodo upload, GitHub release, ORCID verification
-- Optional: 9 MEDIUM + 4 LOW polish items (not blocking)
+- Author/release actions: Zenodo upload, tagged GitHub release, ORCID and metadata verification
+- No unresolved scientific or provenance blocker identified in the current audit
 
 **Confidence:** HIGH
 

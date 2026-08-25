@@ -31,6 +31,7 @@ from scipy import stats
 
 P5_ROOT = Path(__file__).resolve().parent.parent
 PANEL = P5_ROOT / "results" / "p5_canonical_panel.csv"
+DEFAULT_SPLIT_DIR = P5_ROOT / "results"
 SEEDS = [0, 1, 2, 3, 4]
 K_DEFAULT = 5
 
@@ -48,7 +49,7 @@ def ecfp4_matrix(smiles_list: list[str]) -> np.ndarray:
     return np.array(rows)
 
 
-def run_split(split_type: str, k: int) -> dict:
+def run_split(split_type: str, k: int, split_dir: Path, output_dir: Path) -> dict:
     panel = pd.read_csv(PANEL)
     smiles = panel["smiles"].tolist()
     y = panel["activity"].values
@@ -61,7 +62,7 @@ def run_split(split_type: str, k: int) -> dict:
     per_seed_means, per_seed_ap, per_seed_f1, per_seed_bacc = [], [], [], []
     all_rows = []
     for seed in SEEDS:
-        folds = np.load(P5_ROOT / "results" / f"p5_splits_{split_type}_5fold_seed{seed}.npy", allow_pickle=True)
+        folds = np.load(split_dir / f"p5_splits_{split_type}_5fold_seed{seed}.npy", allow_pickle=True)
         aucs, aps, f1s, baccs = [], [], [], []
         for i, f in enumerate(folds):
             tr, te = f["train"], f["test"]
@@ -84,7 +85,10 @@ def run_split(split_type: str, k: int) -> dict:
               f"F1 {per_seed_f1[-1]:.4f} bACC {per_seed_bacc[-1]:.4f}")
 
     result = {
+        "status": "COMPUTED",
+        "training_deep_models": False,
         "model": f"kNN-ECFP4-k{k}", "split": split_type,
+        "k": k,
         "seed_means": per_seed_means, "seed_aps": per_seed_ap,
         "seed_f1s": per_seed_f1, "seed_baccs": per_seed_bacc,
         "mean_auc": float(np.mean(per_seed_means)),
@@ -93,10 +97,13 @@ def run_split(split_type: str, k: int) -> dict:
         "mean_f1": float(np.mean(per_seed_f1)),
         "mean_bacc": float(np.mean(per_seed_bacc)),
         "n": len(all_rows),
+        "n_fold_seed": len(all_rows),
+        "protocol": "ECFP4 Morgan radius=2, 2048 bits; distance-weighted kNN; Jaccard metric; official frozen splits",
     }
-    out_json = P5_ROOT / "results" / f"p5_knn_ecfp4_k{k}_{split_type}_baseline.json"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    out_json = output_dir / f"p5_knn_ecfp4_k{k}_{split_type}_baseline.json"
     json.dump(result, open(out_json, "w"), indent=2)
-    out_csv = P5_ROOT / "results" / f"p5_knn_ecfp4_k{k}_{split_type}_results.csv"
+    out_csv = output_dir / f"p5_knn_ecfp4_k{k}_{split_type}_results.csv"
     pd.DataFrame(all_rows).to_csv(out_csv, index=False)
     print(f"Saved {out_json} and {out_csv}")
     return result
@@ -106,10 +113,12 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--split", choices=["random", "scaffold"], default="scaffold")
     ap.add_argument("--k", type=int, default=K_DEFAULT)
+    ap.add_argument("--split-dir", default=str(DEFAULT_SPLIT_DIR))
+    ap.add_argument("--output-dir", default=str(P5_ROOT / "results" / "lightweight_robustness"))
     args = ap.parse_args()
 
     t0 = time.perf_counter()
-    r = run_split(args.split, args.k)
+    r = run_split(args.split, args.k, Path(args.split_dir), Path(args.output_dir))
     print(f"\nkNN-ECFP4 k={args.k} {args.split}: mean AUC = {r['mean_auc']:.4f} ± {r['std_auc']:.4f} "
           f"(AP {r['mean_ap']:.4f}, F1 {r['mean_f1']:.4f}, bACC {r['mean_bacc']:.4f})")
     print(f"Elapsed: {time.perf_counter()-t0:.1f}s")

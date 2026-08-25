@@ -1,7 +1,7 @@
 # P5 Data Analysis Report — active summary
 
 **Scope:** GNN/Transformer drug-discovery benchmark on the canonical P3-derived antimalarial panel.
-**Updated:** 17 August 2026
+**Updated:** 25 August 2026
 **Long-form history:** `docs/archive/md_full_20260812/P5_DATA_ANALYSIS_REPORT.md`
 
 ## 1. Central question
@@ -34,14 +34,57 @@ The public ChEMBL-derived panel contains **22,447** unique canonical compounds a
 
 Salience analysis identifies persistent-homology/TFP dimensions as interpretable contributors, but salience is model-specific and is not mechanistic evidence. The study supports a practical conclusion: larger learned models do not provide a free predictive advantage over a strong fingerprint baseline at this panel size, while topological fusion can add complementary signal.
 
-## 5. Limitations
+## 5. Extended robustness campaign — completed 25 August 2026
+
+A separate, versioned campaign was executed after the canonical benchmark was frozen. It does not overwrite or silently replace the canonical estimates in Section 3.
+
+### 5.1 Design and provenance
+
+- Campaign directory: `Project5_GNN_Transformer_DrugDiscovery_V2/results/extended_campaign_20260825/`.
+- Configuration: `campaign_config.json`; producer: `scripts/p5_extended_campaign.py`.
+- Post-processing/audit: `scripts/p5_extended_analysis.py`.
+- Panel: the frozen 19,836-molecule P5 panel; graph cache read from the V1 artifact and not modified.
+- Seeds: 0–4; five folds per seed; 50 epochs maximum; early stopping patience 10; hidden dimension 128; dropout 0.1; AdamW learning rate 1e-3 and weight decay 1e-4; batch size 512.
+- Partitions: `canonical_random`, `canonical_scaffold`, and three independent scaffold assignments (`novel_101`, `novel_202`, `novel_303`).
+- Configurations: GIN; GIN-TFP native/permuted; GIN-TNE native/permuted.
+- Completeness gate: exactly 25 unique fold–seed records per configuration, finite AUC/AUPRC values, and archived fold-level predictions.
+
+The campaign passed the gate: **25/25 configurations**, **625/625 fold–seed records**, and 625 fold-level prediction files. It was executed through SLURM jobs 15463/15464 after a nounset-safe environment correction; the initial failed initialization jobs 15437/15438 produced no scientific results and are retained only as scheduler provenance.
+
+### 5.2 Secondary performance results
+
+On the three novel scaffold partitions, native models produced the following mean ROC-AUC ranges across 25 fold–seed records:
+
+| Configuration | Novel-partition AUC range | Novel-partition AUPRC range |
+|---|---:|---:|
+| GIN | 0.7886–0.7967 | 0.9025–0.9101 |
+| GIN-TFP | 0.8013–0.8105 | 0.9115–0.9160 |
+| GIN-TNE | 0.7976–0.8008 | 0.9105–0.9125 |
+
+The three novel partitions preserve the broad scaffold-shift behavior observed in the canonical benchmark. These are robustness estimates under independently generated partitions, not replacements for the primary canonical table and not evidence that any architecture is universally superior.
+
+### 5.3 Descriptor permutation and salience stability
+
+Native-minus-permuted AUC differences were computed as paired contrasts on five per-seed means. GIN-TFP showed positive differences on all three novel partitions (0.0054–0.0139). GIN-TNE showed positive differences on `novel_101` and `novel_303` (0.0092 and 0.0053) and essentially no difference on `novel_202` (-0.0002). Exact sign-flip tests on five paired means were not significant for the novel partitions; the small computational unit is therefore retained as an explicit limitation.
+
+Individual projection-weight vectors were archived for all 20 fusion configurations. For native models across the canonical scaffold and novel partitions, mean pairwise Spearman correlation was 0.755–0.829 for TFP and 0.789–0.835 for TNE; mean top-10% Jaccard overlap was 0.374–0.399 and 0.274–0.326, respectively. These are descriptive stability measures, not causal attributions.
+
+### 5.4 Chemical and ChEMBL robustness audits
+
+The chemical standardization audit found 19,836 valid SMILES, zero exact duplicate rows, zero parent-fragment duplicate rows, and 306 tautomer-collision rows. Labels were not changed. The four prespecified ChEMBL threshold specifications were recomputed with ECFP4-RF only; scaffold AUC ranged from 0.9271 to 0.9608. No full GIN threshold rerun was performed.
+
+### 5.5 Evidence boundary
+
+The extended results provide completed AUPRC, scaffold-partition, descriptor-permutation, salience-stability, and chemical-audit evidence. They remain secondary because the original canonical manuscript estimates were produced under a prior frozen run. A separate extended ChemBERTa rerun was submitted as SLURM array 15490 after the pinned pretrained snapshot became available; at this DAR update it is `RUNNING/PENDING`, with no completed fold result and no metric authorized for interpretation. Per-scaffold error decomposition and prospective experimental validation remain unavailable. All campaign results must be reported with their versioned directory and explicit status.
+
+## 6. Limitations
 
 - The panel is curated and activity labels are inherited; it is not a prospective clinical dataset.
 - Scaffold split is a chemical extrapolation test, not a temporal or prospective validation.
 - GNN/Transformer performance is architecture- and training-budget-dependent.
 - External validation does not replace experimental activity measurements.
 
-## 6. LISH-MoA external mechanism benchmark — completed phenotype-only reference (12 August 2026)
+## 7. LISH-MoA external mechanism benchmark — completed phenotype-only reference (12 August 2026)
 
 A separate external benchmark is approved for development under the identifier `P5_LISH_MOA_EXTERNAL_V1`. It is an orthogonal multi-label pharmacology task, not a replacement for the molecule-disjoint ChEMBL malaria activity validation and not a direct validation of antimalarial target engagement.
 
@@ -84,11 +127,11 @@ A future structure-based LISH arm may be opened only after all of the following 
 
 A predicted MoA-associated profile is not proof of direct target engagement or causality. LISH-MoA results may support biological representation transfer in P5, but cannot be used to claim antimalarial activity, resistance resilience, or PfDHFR/PfCRT/PfATP4/PfClpP engagement.
 
-## 7. Current manuscript status
+## 8. Current manuscript status
 
 The canonical P5 V2608 manuscript now reports the audited LISH phenotype-only reference as a separate public benchmark, with explicit non-comparability to the molecular ROC-AUC results and an explicit boundary against causal target-engagement claims. The active narrative remains the honest-negative molecular benchmark plus interpretable topological complementarity; no claim that GNNs or Transformers universally underperform is made.
 
-## 7. Next actions
+## 9. Next actions
 
 1. Preserve the fixed panel/splits and the leak-audited benchmark outputs.
 2. Finalise the deposit manifest and Zenodo/GitHub release.
