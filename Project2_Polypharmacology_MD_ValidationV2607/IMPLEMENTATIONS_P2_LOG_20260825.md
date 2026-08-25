@@ -38,3 +38,6 @@ Script: `scripts/lightweight_runs_20260825.py`; sorties: `results/lightweight_ro
 - **P5 GNN-Transformer — pipeline complet : PASS.** Compilation main 0 err / 0 overfull / 0 undef + cover letter propre ; \title + abstract présents ; **3/3 figures saines et rendues** (PDF 13 p., XObject 3/3, rasters 3) ; DAR bien tenu (checkpoints « superseded » correctement étiquetés, framing honest-negative assumé) ; `SUBMISSION_MANIFEST.md` réparé (3 lignes sha256/taille recalculées : manuscrit, cover letter, bib ; note « Verified 25 August 2026 » ajoutée). Zenodo : statut « reserved, upload pending » honnête conservé.
 
 Aucun manuscrit déjà soumis (P1/P3/P4/P5) n'a été modifié dans cette passe.
+
+## Audit adversarial P5-V2 — PASS1 + mitigations (25 août 2026)
+Cible : ligne avancée Project5_GNN_Transformer_DrugDiscovery_V2 (couche LED). Rapport : outputs/critical-reviews/PASS1_adversarial_20260825.md. F1 numériques re-vérifiés vs JSON bruts ✓ ; C-P5-01 non applicable au manifeste V2 (ChEMBL364 réel) ; C-P5-02 phrase clarificatrice ± ajoutée ; C-P5-03 équation hiérarchique en \small → recompile err=0/overfull=0/undef=0.
