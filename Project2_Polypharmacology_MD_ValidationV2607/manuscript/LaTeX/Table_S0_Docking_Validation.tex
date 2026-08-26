@@ -7,7 +7,7 @@
 
 \begin{table}[htbp]
 \centering
-\caption{Docking protocol validation: enrichment metrics and re-docking accuracy. Values reproduce the corrected benchmarks from the parent study (V2-corrected grids; AutoDock Vina + DiffDock consensus). MMV Malaria Box values are consensus-score ROC-AUCs for the three targets with MMV docking data (PfDHFR, PfCRT, PfATP4); DEKOIS 2.0 validation used AutoDock Vina only for PfDHFR. BEDROC values use $\alpha = 20$ (MMV). Re-docking RMSD is the heavy-atom RMSD between the top-scoring docked pose and the co-crystallised ligand; MTX redocking failed (RMSD~$\approx$~30~\si{\angstrom}).}
+\caption{Docking enrichment and re-docking accuracy. Values are from corrected parent-study benchmarks using V2 grids. MMV Malaria Box values are consensus-score ROC-AUCs for PfDHFR, PfCRT, and PfATP4; DEKOIS 2.0 used AutoDock Vina for PfDHFR. BEDROC values use $\alpha=\num{20}$. Re-docking RMSD is the heavy-atom RMSD between the top-scoring pose and the co-crystallized ligand; the MTX RMSD was approximately \qty{30}{\angstrom}.}
 \label{tab:s1_docking_validation}
 \scriptsize
 \setlength{\tabcolsep}{2pt}
@@ -28,5 +28,5 @@ PfClpR (4GM2; not PfClpP) & MMV enrichment & {not evaluated} & {--} & {--} & {--
 \end{tabularx}
 
 \vspace{0.25em}
-\noindent\footnotesize\textbf{Identity note.} PDB 4GM2 is PfClpR rather than PfClpP; it is not used as PfClpP validation.
+\noindent\footnotesize\textbf{Target identity.} PDB 4GM2 is PfClpR rather than PfClpP; it is not used as PfClpP validation.
 \end{table}

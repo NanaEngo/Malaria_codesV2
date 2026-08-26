@@ -32,7 +32,7 @@
 \affil[2]{Department of Medical Imaging and Radiation Sciences, Universit\'e de Sherbrooke, Sherbrooke, QC, Canada}
 \affil[3]{Department of Biochemistry, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}
 
-\date{\today}
+\date{}
 
 \begin{document}
 
@@ -42,13 +42,13 @@
 We evaluated whether graph, transformer, and topological molecular representations improve antimalarial activity prediction beyond an ECFP4--random-forest baseline when chemical scaffolds are held out. ECFP4--RF, a graph isomorphism network (GIN), two topological fusion models (GIN--TFP and GIN--TNE), and a fine-tuned ChemBERTa transformer were compared on \num{19836} African antimalarial natural products using random and Bemis--Murcko scaffold five-fold cross-validation, with \num{25} fold--seed replicates per split. Under scaffold separation, ECFP4--RF achieved a ROC AUC of \num{0.8300}; all four learned arms performed significantly worse after Benjamini--Hochberg correction (GIN--TFP \num{0.8138}, GIN--TNE \num{0.8090}, GIN \num{0.8047}, and ChemBERTa \num{0.7867}). Persistent-image dimensions had the largest descriptive projection-weight salience in the topological fusion head, but this representation-level pattern did not translate into improved ranking. The results define a panel-specific, controlled negative benchmark for assessing learned molecular representations under scaffold shift.
 \end{abstract}
 
-\textbf{Contribution:} This study quantifies the predictive and descriptive contributions of graph, sequence, and topological representations under scaffold separation, with ECFP4--RF serving as a reproducible reference. It also specifies fold-independent initialization for the pretrained transformer, a necessary condition for valid cross-validation.
+\textbf{Contribution:} We provide a controlled comparison of graph, sequence, and topological molecular representations under scaffold separation, using ECFP4--RF as a reference model. The evaluation also makes the treatment of pretrained weights explicit, because fold-independent initialization is required for valid cross-validation.
 
 \noindent\textbf{Keywords:} graph neural networks; molecular fingerprints; antimalarial natural products; scaffold split; benchmark; interpretability; persistent homology
 
 \noindent\textbf{Highlights:}
 \begin{itemize}
-\item Under the scaffold split, ECFP4--RF (AUC \num{0.8300}) outperforms every GNN/transformer arm; all arms are significantly worse (BH-adjusted $p \le \num{0.0378}$)
+\item Under the scaffold split, ECFP4--RF achieved the highest AUC (\num{0.8300}); each learned arm was lower after BH correction (adjusted $p \le \num{0.0378}$)
 \item Fold-independent transformer initialization changes the apparent ranking of sequence models and is required for valid cross-validation
 \item Persistent-image dimensions have the largest descriptive projection-weight salience in the topological fusion head
 \item Repeated evaluation across five seeds and five folds quantifies uncertainty under both split regimes
@@ -60,7 +60,7 @@ Malaria remains a leading infectious disease burden in sub-Saharan Africa, with 
 
 Recent controlled benchmarks instead indicate that representation scale does not guarantee improved molecular prediction. In a \num{156}-comparison benchmark across \num{26} endpoints, Guo and Ding found that classical machine learning on fingerprints wins \qty{47.4}{\percent} of task--metric entries, ahead of pretrained sequence models (\qty{28.8}{\percent}) and GNNs (\qty{21.8}{\percent}), with the classical advantage largest under random splits and shrinking, but not vanishing, under scaffold-separated protocols \citep{guo_ding_2026}. An independent comparison of \num{25} pretrained embedding models across \num{25} datasets found that \emph{almost no neural embedding statistically improves over the ECFP fingerprint baseline} \citep{benchmark_pretrained_2025}. And for natural products specifically, a \num{20}-fingerprint benchmark over \num{100000}+ NPs showed that no single encoding dominates, and that ECFP is frequently matched or exceeded by alternative fingerprints on NP bioactivity tasks \citep{boldini2024}.
 
-We therefore tested three linked hypotheses: whether learned models improve on ECFP4 for this chemically complex panel, whether persistent-homology and tensor-network descriptors reduce the scaffold-generalization gap when fused with GIN, and whether fold-independent initialization changes the apparent performance of a pretrained transformer.
+We tested whether learned models improve on ECFP4 for this chemically complex panel, whether persistent-homology and tensor-network descriptors reduce the scaffold-generalization gap when fused with GIN, and whether fold-independent initialization changes the apparent performance of a pretrained transformer.
 
 \subsection{Related work}
 
@@ -68,7 +68,7 @@ The tension between classical cheminformatics and neural molecular learning has 
 
 Topological data analysis (TDA) has been applied to molecular representation through persistent homology, producing descriptors that capture ring systems, molecular cavities, and higher-order connectivity \citep{tda_review_2025}. Recent work has fused TDA features with GNN architectures, reporting modest improvements on specific tasks \citep{topology_molecular_representations_2025}. Multimodal fusion of graph and sequence representations---for example, concatenating GCN embeddings with ChemBERTa latent vectors---has shown promise on small datasets \citep{rollins2024molprop}. More broadly, computational MoA analyses emphasize that chemical, phenotypic, and network data capture complementary biological levels; target prediction alone is therefore not equivalent to a complete mechanism assignment \citep{Trapotsi2022MoA}. Tensor-network embeddings, derived from Tucker decomposition of molecular tensors, provide compressed representations that retain scaffold-relevant information \citep{tn_efficient_2026}. However, neither TDA nor tensor-network features have been systematically tested inside GNN fusion architectures under rigorous scaffold-split protocols on antimalarial panels.
 
-We therefore benchmark GIN, GIN--TFP, GIN--TNE, and ChemBERTa against ECFP4--RF under both random and scaffold splits. We test three linked questions: whether learned models exceed ECFP4, whether topological fusion narrows the scaffold gap, and whether projection-weight salience identifies a reproducible geometric signal even when ranking does not improve. The comparison is designed to distinguish predictive performance from interpretability and to quantify the effect of fold-independent transformer initialization.
+We benchmarked GIN, GIN--TFP, GIN--TNE, and ChemBERTa against ECFP4--RF under random and scaffold splits. The analysis separates predictive performance from projection-weight salience and evaluates the effect of fold-independent transformer initialization.
 
 \section{Results}
 
@@ -105,7 +105,7 @@ ChemBERTa & \num{0.9121} $\pm$ \num{0.0012} & \num{0.7867} $\pm$ \num{0.0054} & 
 
 \cref{tab:h1} reports the mean test ROC AUC and the SD across five per-seed means for each model and split; each per-seed mean aggregates the five fold-level test AUCs. Under the scaffold split, the fingerprint baseline reaches \num{0.8300}. Every graph-based and transformer arm is significantly \emph{worse}: the best GNN arm, GIN--TFP, reaches \num{0.8138} ($\Delta = -\num{0.016}$, raw paired $p = \num{0.025}$; BH-adjusted $p = \num{0.0330}$); GIN--TNE reaches \num{0.8090} ($\Delta = -\num{0.021}$, raw $p = \num{0.038}$; BH-adjusted $p = \num{0.0378}$); plain GIN reaches \num{0.8047} ($\Delta = -\num{0.025}$, raw $p = \num{0.018}$; BH-adjusted $p = \num{0.0330}$); ChemBERTa reaches \num{0.7867} ($\Delta = -\num{0.043}$, raw $p < \num{0.0001}$; BH-adjusted $p = \num{0.0002}$). All four comparisons survive Benjamini--Hochberg correction. Under the random split the same verdict holds: ChemBERTa reaches \num{0.9121} ($\Delta = -\num{0.031}$, raw $p < \num{0.0001}$), GIN \num{0.9098} ($\Delta = -\num{0.034}$, raw $p < \num{0.0001}$), GIN--TFP \num{0.9084} ($\Delta = -\num{0.035}$, raw $p < \num{0.0001}$), and GIN--TNE \num{0.8918} ($\Delta = -\num{0.052}$, raw $p < \num{0.0001}$), each significantly below ECFP4--RF (\num{0.9433}); all four comparisons survive Benjamini--Hochberg correction. \emph{No graph-based arm outperforms the fingerprint baseline under either split.}
 
-The result was obtained with a fixed, repeated training protocol (AdamW, validation-based early stopping, selection of the validation-optimal epoch, and \num{25} fold--seed replicates). It is consistent with reports across ADMET/Tox21 endpoints \citep{guo_ding_2026} and pretrained-embedding benchmarks \citep{benchmark_pretrained_2025}, in which local substructure encodings captured by ECFP4 and exploited by tree ensembles remain highly data-efficient.
+This comparison used a fixed training protocol with AdamW, validation-based early stopping, selection of the validation-optimal epoch, and \num{25} fold--seed replicates. The result is consistent with reports across ADMET/Tox21 endpoints \citep{guo_ding_2026} and pretrained-embedding benchmarks \citep{benchmark_pretrained_2025}, in which local substructure encodings captured by ECFP4 and exploited by tree ensembles remain highly data-efficient.
 
 \subsection{ChemBERTa does not close the scaffold-generalization gap}
 
@@ -150,11 +150,11 @@ This pattern indicates that topological descriptors are used by the fusion head,
 
 \section{Discussion}
 
-Across the three hypotheses, learned representations did not exceed ECFP4 under either split; topological fusion narrowed the scaffold gap modestly but did not close it; and persistent-image dimensions remained salient in the fusion head without yielding a ranking advantage. Predictive utility and representation-level visibility are therefore separable properties. The separate LISH phenotype-only benchmark adds a complementary reference point: phenotype features support audited MoA-associated prediction, but the absence of a structure mapping prevents any claim that the molecular representations tested here improve MoA prediction. Its metrics are not numerically comparable to the molecular ROC-AUC results.
+Across the three hypotheses, learned representations did not exceed ECFP4 under either split; topological fusion narrowed the scaffold gap modestly but did not close it; and persistent-image dimensions remained salient in the fusion head without yielding a ranking advantage. Predictive utility and representation-level visibility are therefore separable properties. The separate LISH phenotype-only benchmark provides complementary pharmacological context, but the absence of a structure mapping prevents assessment of the molecular representations studied here. Its metrics are not numerically comparable to the molecular ROC-AUC results.
 
 \subsection{Performance depends on representation--task alignment}
 
-The primary result is that the tested pretrained and graph-based models did not improve ROC AUC over ECFP4--RF on this panel, including under scaffold-held-out testing. This conclusion is supported by repeated evaluation, paired comparisons on the five per-seed means, and correction for multiplicity. The transformer result depends critically on fold-independent weight initialization: pretrained weights were reset at the beginning of every fold so that fine-tuning could not transfer between test folds. Future molecular-benchmark studies should state explicitly whether pretrained weights are reset for every fold.
+The tested pretrained and graph-based models did not improve ROC AUC over ECFP4--RF on this panel, including under scaffold-held-out testing. This conclusion is supported by repeated evaluation, paired comparisons on the five per-seed means, and correction for multiplicity. The transformer result depends critically on fold-independent weight initialization: pretrained weights were reset at the beginning of every fold so that fine-tuning could not transfer between test folds. This result underscores the need to state whether pretrained weights are reset for every fold in molecular benchmarks.
 
 \subsection{Why fingerprints hold: representation--task alignment}
 
@@ -166,7 +166,7 @@ The molecular collection and fingerprint implementation were previously characte
 
 \subsection{Implications for molecular-model selection}
 
-For comparable antimalarial NP panels, ECFP4--RF is a strong first-line baseline: it is computationally inexpensive and outperformed every tested neural arm. Graph and sequence models should be evaluated against this baseline under scaffold-held-out testing rather than assumed to improve from model scale alone. Transformer studies should reset pretrained weights for every fold and record the initialization protocol. Topological or tensor-network descriptors can be examined as complementary descriptive features, but their inclusion should not be interpreted as evidence of improved ranking without a paired comparison.
+For comparable antimalarial natural-product panels, ECFP4--RF is a strong reference model: it is computationally inexpensive and outperformed every tested learned arm here. Graph and sequence models should be evaluated against this baseline under scaffold-held-out testing rather than assumed to improve from model scale alone. Transformer studies should reset pretrained weights for every fold and record the initialization protocol. Topological or tensor-network descriptors can be examined as complementary descriptive features, but their inclusion should not be interpreted as evidence of improved ranking without a paired comparison.
 
 \subsection{Limitations}
 
