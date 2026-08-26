@@ -3,7 +3,7 @@
 **Journal:** Journal of Cheminformatics (Springer)
 **Pages:** main 14 p. / cover 1 p. — no SM (none referenced), main count from `pdfinfo` (verified 25/08/2026)
 **Status:** Manuscript compiles clean; canonical and extended GNN analyses, external ChEMBL CHEMBL364 validation, fold-level AUPRC, descriptor ablations/permutations, salience-stability audit, split metadata, and chemical-standardization audit are synchronized. Extended ChemBERTa rerun is active under SLURM array 15490 and is not yet integrated. Remaining release checks: ChemBERTa audit, Zenodo deposit, and final author metadata review.
-**Generated:** 2026-08-25 UTC (extended campaign integrated)
+**Generated:** 2026-08-26 UTC (manuscript refinement and compilation)
 
 ## File inventory (SHA-256)
 
@@ -84,3 +84,14 @@ The following versioned artifacts are part of the scientific audit record and ar
 - `results/lightweight_robustness/p5_replication_stats_rederived.json`
 
 — **Verified 25 August 2026** (checksums recomputed after scientific refinement and lightweight robustness analyses; extended ChemBERTa remains pending).
+
+
+## Current package hashes
+
+- `P5_manuscript_V2608.tex` — `2b51211aff648c28a2a8993c573dd15fdcc33e01962cb985149028043df96aa2`
+- `P5_manuscript_V2608.pdf` — `5b411a3c65d77b5a5fa7d8407c335945d2a6efdb2b6065f0650c24d1f03a8300`
+- `Cover_Letter_P5_JCAMD.tex` — `35ab1fed1e4c43ee4b2921cde84ef4f918b5a9dcfe31fa88e5a49e5b02199abd`
+- `Cover_Letter_P5_JCAMD.pdf` — `f999508ccda900ae9c94bae1262fcacc8ae9caa681ee8a63e0eadf6f5c3102b1`
+- `Bibliography_P5.bib` — `d774573e285cd79bf309385f92820cf0f81207676c118f57f119a7386cfae3b8`
+- `Table_P5_Study_Design.tex` — `c5e1a80986476b5f27ed4ad40794b0cabe103cfabe0a59d25557683c4d5c834f`
+- `Table_P5_Effect_Summary.tex` — `c20ce8e50ed90349fada871bea9924bcc98a8be0cc1afd36e9a515bbf76482b3`

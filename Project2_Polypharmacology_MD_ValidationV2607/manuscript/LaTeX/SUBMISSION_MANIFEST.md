@@ -1,7 +1,7 @@
 # Submission Manifest — Project2
 
 **Journal:** *Journal of Chemical Information and Modeling* (ACS)
-**Updated:** 25 August 2026 (post-DAR reconciliation)
+**Updated:** 26 August 2026 (post-manuscript refinement and compilation)
 **Package status:** canonical source files, Supporting Information and cover letter compile without fatal LaTeX errors after the graphics-path correction and final figure audit. DAR/manuscript reconciliation is recorded in `docs/P2_FINAL_RECONCILIATION_ETA_20260825.md`. The compact metric audit regenerates successfully. The full pytest suite passes in the `qom` environment. No Zenodo DOI is recorded yet; the archival deposit remains pending.
 
 ## Canonical evidence status
@@ -34,6 +34,8 @@ Hash values below were recalculated after the latest source edits, metric-audit 
 | `manuscript/LaTeX/Table_S6_ACSI_Weight_Sensitivity.tex` | `f1d762654213eb17c8192bd29e689c388aaecf3857997918086131738c2b0166` |
 | `manuscript/LaTeX/Table_S8_Cohort_Estimands.tex` | `cfb9aa5f9f01a779e220de528de3752abe8a63a8c9f089f8fd73b6dafe9bf1e7` |
 | `manuscript/LaTeX/Table_S9_PNS_Imputation_Sensitivity.tex` | `865acffb146cbcd3e698fc04d375accc7abb87051991812daaef550b133bdf1e` |
+| `manuscript/LaTeX/Table_S12_RRS_By_Target.tex` | `PLACEHOLDER` |
+| `manuscript/LaTeX/Table_S11_RRS_Threshold_Sensitivity.tex` | `PLACEHOLDER` |
 | `manuscript/LaTeX/Bibliography_Polypharmacology_MD_Validation.bib` | `633e085bbb731fbab4f4362c6b4f31593edf744700911a976aea3084edd5f2b9` |
 | `results/c_rrs_classification.csv` | `9ef22d0cf8c4ae920c5aa2330cef42f7e44d7e88a3a60783ca876be3ef2e089c` |
 | `results/c_rrs_sensitivity.csv` | `1b9479bd922ffbda685f2dc28134d60bcdb4e0712f8083f81a8b76827c5e2f2d` |
@@ -116,3 +118,13 @@ Observed validation:
 ## Submission boundary
 
 The manuscript reports computational prioritization only. It does not establish biological polypharmacology, target engagement, clinical efficacy, resistance circumvention, or converged mutant-state free energies. The Set-C pilot is secondary, single-replicate and limited to two candidates. The parent-study and Set-C pilot ligand parameterizations differ and must not be compared quantitatively across cohorts.
+
+
+## Current package hashes
+
+- `Polypharmacology_MD_Validation_V2607.tex` — `b79b2aa1a98e980df9b3ee6582ec4c5afc739467b93dad8ca2aec063c0745cb8`
+- `Polypharmacology_MD_Validation_V2607.pdf` — `0fdc779b0ca0e46a9bbf9bae173c91f6cccd43cfd2e4cfc23cafc558cc0d483f`
+- `Polypharmacology_MD_Validation_SM_V2607.tex` — `e0826bd443ba9e0f80cde5c300034c55c14a28088f3aa40036e6369c953009c0`
+- `Polypharmacology_MD_Validation_SM_V2607.pdf` — `51235e022fa1a3229482572760a54b1b550169b49f5eb84cad714eba749ccf6e`
+- `Table_S11_RRS_Threshold_Sensitivity.tex` — `ee374838b421a214c40e3d661f3770f9150231faeeb5660e7b25013cdd0a075a`
+- `Table_S12_RRS_By_Target.tex` — `2d29c29d05f59fc06839ac37c11be9293066e29807a0d27f35e0ef7c47ccc40e`
