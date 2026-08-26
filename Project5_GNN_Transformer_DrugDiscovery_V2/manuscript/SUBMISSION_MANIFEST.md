@@ -3,7 +3,7 @@
 **Journal:** Journal of Cheminformatics (Springer)
 **Pages:** main 14 p. / cover 1 p. — no SM (none referenced), main count from `pdfinfo` (verified 25/08/2026)
 **Status:** Manuscript compiles clean; canonical and extended GNN analyses, external ChEMBL CHEMBL364 validation, fold-level AUPRC, descriptor ablations/permutations, salience-stability audit, split metadata, and chemical-standardization audit are synchronized. Extended ChemBERTa rerun is active under SLURM array 15490 and is not yet integrated. Remaining release checks: ChemBERTa audit, Zenodo deposit, and final author metadata review.
-**Generated:** 2026-08-26 UTC (manuscript refinement and compilation)
+**Generated:** 2026-08-26 UTC (title, abstract, introduction and cover-letter refinement; hashes pending refresh)
 
 ## File inventory (SHA-256)
 
@@ -87,6 +87,8 @@ The following versioned artifacts are part of the scientific audit record and ar
 
 
 ## Current package hashes
+
+The source was subsequently refined to present the molecular benchmark as primary, the LISH analysis as orthogonal, and robustness analyses separately from limitations. The final compilation and hashes must be regenerated after any further source edit.
 
 - `P5_manuscript_V2608.tex` — `2b51211aff648c28a2a8993c573dd15fdcc33e01962cb985149028043df96aa2`
 - `P5_manuscript_V2608.pdf` — `5b411a3c65d77b5a5fa7d8407c335945d2a6efdb2b6065f0650c24d1f03a8300`

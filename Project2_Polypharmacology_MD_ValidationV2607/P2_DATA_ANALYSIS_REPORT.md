@@ -1,7 +1,7 @@
 # P2 Data Analysis Report — active summary
 
 **Scope:** Resistance-aware polypharmacology of antimalarial leads (docking-RRS, PNS, ACSI, targeted MD, MM-GBSA, Set-C MD pilot).
-**Updated:** 25 August 2026
+**Updated:** 26 August 2026 (title, abstract, introduction and cover-letter refinement)
 **Root:** `Project2_Polypharmacology_MD_ValidationV2607/`
 
 ## 1. Central question
@@ -125,10 +125,11 @@ Summary: `results/set_c_md/mmgbsa_summary_pilot.csv` + `mmgbsa_manifest.json` �
 - PfCRT reconstruction is a technical/stability witness: no production on the repaired model beyond 1 ns equilibration, no binding/affinity/RRS.
 - The study is computational; experimental activity and resistance claims are not made.
 
-## 8. Manuscript status (25 Aug)
+## 8. Manuscript status (26 Aug)
 
 - **Manuscript**: `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` (main) + `_SM_V2607.tex` (SI). Target: JCIM (ACS).
-- 25 Aug revision: Set-C MD pilot remains explicitly secondary, with discriminative MD-RRS and 16-system MM-GBSA; the main manuscript was streamlined by moving detailed ACSI, PNS, Tartarus, ADMET, and secondary ranking tables into the SI while retaining concise summaries and the primary RRS/MD evidence. The transferred material is included through `Secondary_Analyses_SI.tex` and the dedicated SI table sources. The current rigor pass separates target-balanced and coverage-sensitive RRS estimands, corrects the weakest-WT potency discriminator, and adds permutation/bootstrap uncertainty and PNS-imputation sensitivity.
+- **Scientific-article refinement:** the title, abstract and Introduction now foreground docking-derived RRS as the primary estimand; ACSI/PNS and MD are presented as secondary analyses. The Discussion separates primary inference, robustness and limitations. This is an editorial refinement only; no numerical result or analysis population was changed.
+- 26 Aug revision: the main manuscript now foregrounds the primary docking-RRS estimand, presents ACSI/PNS and MD as secondary analyses, and keeps detailed tables in the SI. The Discussion separates primary inference, robustness, and limitations while retaining the primary RRS/MD evidence. The transferred material is included through `Secondary_Analyses_SI.tex` and the dedicated SI table sources. The current rigor pass separates target-balanced and coverage-sensitive RRS estimands, corrects the weakest-WT potency discriminator, and adds permutation/bootstrap uncertainty and PNS-imputation sensitivity.
 - All numbers in text/tables trace to JSON/CSV data files (manifests listed above).
 - Unit tests: `tests/` — 19 passed, 1 skipped in the current `qom` environment, including MD manifests, MM-GBSA aggregation, RRS class definitions, target coverage, regenerated statistical outputs, and lightweight robustness outputs.
 
@@ -186,3 +187,36 @@ Post-processing only (no new MD). Script: `Project2_Polypharmacology_MD_Validati
 - **RUN1 — MM-GBSA ΔΔG ± SD (R8).** Mutant-minus-wild-type ΔG per compound+target with propagated SD (√ΣSD²): 12 mutants; **0** show significantly weaker binding at 95% CI; **1** significantly tighter; max |ΔΔG| = 5.37 kcal/mol. Machine-readable table: `mmgbsa_ddeltaG_pilot.csv`. Confirms the retention-not-gain reading of the >100% ratios.
 - **RUN2 — Partial Spearman PNS–RRS controlling MW + Murcko-scaffold prevalence (R9).** n = 12 complete-two-target set: raw ρ(PNS,RRS) = −0.2098 → **partial ρ = −0.6154** after conditioning on molecular weight and scaffold prevalence. The association strengthens under controls ⇒ it is not a size/scaffold artifact. Honest label: companion-study TDA topology values are not available locally; this uses the manuscript's own docking RRS (complete-two-target mean).
 - **RUN3 — Cohort-level bootstrap, B = 10⁴ (R3).** Class-fraction CI95 over n = 17: A* [0.118, 0.529], A [0.118, 0.529], B [0.118, 0.529], C [0.118, 0.529], D [0.000, 0.176]. Fraction of the 12 MMG mutant ratios above 100%: point 0.667, CI95 [0.417, 0.917]. The docking CSV carries a single Vina score per system (no replicate dimension), so no score-level σ exists; only cohort-level resampling is reported, explicitly labeled.
+
+## Single-system GPU rerun — PP-01_PfCRT_WT replicate_1 (COMPLETE; QC PASS + MM-GBSA, 26 August 2026)
+
+Discovered 26 Aug: the 25 Aug local GPU batch (`--n-candidates 1` launches both PP-01 systems) also produced an R2 **wild-type** pillar run. This addresses the replicate-consistency expectation previously listed under manuscript Limitations (author decision to revise the text remains).
+
+- **Run directory:** `results/md_systems/set_c_preparation_20260812_v1/PP-01_PfCRT_WT/runs/20260825T063226Z/replicate_1/` — production 10 ns COMPLETE (« Finished mdrun » 2026-08-25T13:08:24Z, 5,000,000 steps, 36.9 ns/day); identical MDP/provenance schema as §5bis canonical runs. Canonical R1 remains run 15320 (`runs/20260815T052351Z`).
+- **Trajectory QC: PASS** (`p2_setc_trajectory_qc.py --system PP-01_PfCRT_WT`, env `P2_SETC_ROOT` + `P2_SETC_QC_OUTPUT` versionné). CSV: `results/set_c_md/single_rerun_20260825/set_c_trajectory_qc_single_rerun.csv` (n_frames=1001, bound_fraction=1.000, mean min dist 3.20 Å, 10.0 ns).
+- **MM-GBSA R2** (helper `scripts/p2_setc_mmgbsa_single.py`, protocole batch verbatim : gmx_MMPBSA v1.5, GB OBC2 igb=5, saltcon 0.15 M, frames 1–1000 interval 10 ; SLURM job **15502**, exit 0 à 2026-08-26T07:57Z) : ΔG = **−28.60** kcal/mol (SEM 0.43 ; SD intra-trajectoire 4.35). Sorties : `results/set_c_md/single_rerun_20260825/mmgbsa/PP-01_PfCRT_WT/`.
+- **Réplicats R1 vs R2 (endpoint level, convention unifiée 26/08 = ± SEM sur 100 snapshots):** R1 = −30.61 ± 0.41 vs R2 = −28.60 ± 0.43 ; offset |R1−R2| = 2.01 kcal/mol (< 1 SD intra-trajectoire de chaque run : 4.12 / 4.35) ; moyenne des moyennes ± SD d'échantillon (n=2) = −29.61 ± 1.42. Lecture rigoureuse : sous hypothèse i.i.d.-frames l'offset dépasserait le SEM combiné naïf (0.59), mais l'autocorrélation temporelle invalide cette lecture → offset adopté comme **plancher de bruit empirique inter-réplicats ≈ 2 kcal/mol** pour l'interprétation des contrastes mutant-vs-WT en réplicas simples ; cohérence endpoint supportée, résidence long-timescale et convergence restent ouvertes.
+- **Artefact de cohérence + table SM (26/08):** `scripts/p2_wt_replicate_consistency.py` parse les deux FINAL_RESULTS_MMPBSA.dat (sources de vérité) → `results/set_c_md/single_rerun_20260825/wt_replicate_consistency.{json,md}` + table générée `manuscript/LaTeX/Table_S10_WT_Replicate_Consistency.tex` insérée dans le SM (rendue « Table S12 », référencée depuis Limitations/H3 du main via xr).
+- **Audit des conventions d'incertitude (26/08, corrections manuscrites):** découverte d'un mélange préexistant — main tab:mmgbsa citait le SEM sous le libellé « Std. dev. » ; SM tab:s8 affichait SD(Prop.) sous « SD » avec légende « within-trajectory standard deviation » (fausse). Unifié : ± cité = SEM ; colonnes secondaires relabellisées (`SEM` dans tab:mmgbsa ; `SD_prop` dans tab:s8 + légendes corrigées) ; phrase Methods ajoutée. NB : les premiers comptes-rendus de session citaient R2 « ± 3.07 » (SD Prop) vs R1 « ± 4.12 » (SD) — mélange désormais corrigé partout.
+- **Artefacts d'analyse associés:** résumé endpoints + gate SEM<1 (17/17 systèmes PASS) dans `results/set_c_md/mmgbsa_convergence_20260826/` ; audit terminologique manuscrit dans `docs/P2_TERMINOLOGY_AUDIT_20260826.md`.
+- **Mise à jour manuscrite (décision auteur 26/08):** phrase Limitations du main révisée — l'exigence « replicated simulations of at least one pillar system » est remplacée par le constat du réplicat WT indépendant (offset 2.01 kcal/mol < 1 SD, adopté comme plancher de bruit ; résidence long-timescale et convergence laissées ouvertes) + clause H3 (pilier WT = 2 productions cohérentes, mutants toujours single-replicate). Relecture de cohérence complète : refs croisées SM réparées via `xr` + `\externaldocument[SM-]{…}` (12 « ?? » préexistants), bib `largermodels2026` alignée v3 ; rebuild final main 41 pp. / SM 8 pp., 0 erreur / 0 undefined / 0 `??`.
+
+## Single-system GPU rerun — PP-01_PfCRT_K76A replicate_1 (COMPLETE; QC PASS + MM-GBSA BOND overflow, 26 August 2026)
+
+Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run does not modify any canonical artifact of §5bis.
+
+- **Launcher / provenance:** `mamba run -n malaria_md python scripts/p2_setc_md_workflow.py --n-candidates 1 --target-ns 10 --execute --backend gpu` — executed on the local workstation GPU (not SLURM), started 2026-08-25T06:32:26Z. **Production COMPLETE:** « Finished mdrun » 2026-08-26T09:18:55Z, 5,000,000 steps, provenance flip → `PRODUCTION_COMPLETED_REQUIRES_TRAJECTORY_QC`.
+- **Run directory:** `results/md_systems/set_c_preparation_20260812_v1/PP-01_PfCRT_K76A/runs/20260825T063226Z/replicate_1/`.
+- **Trajectory QC: PASS** (watcher-initiated chain, job 15503 → `chain_log.jsonl` : QC PASS 09:22:10Z). CSV: `results/set_c_md/single_rerun_20260825/qc_PP-01_PfCRT_K76A.csv` (n_frames=1001, bound_fraction=1.000, mean_min_dist=2.91 Å, 10.0 ns).
+- **MM-GBSA: FAILED — BOND overflow (two attempts):**
+  - Attempt 1 (job 15503, chain QC→MMGBSA, 09:22–09:42 UTC): `ValueError: could not convert string to float: '*************'` — BOND overflow in `amber_outputs.py` during parsing of receptor minimization output.
+  - Attempt 2 (patched `p2_setc_mmgbsa_single.py` with PBC-whole retry: `gmx trjconv -pbc whole -mol` → rebuild with `-ct production_pbc.xtc`, job 15505, launched 15:44 UTC): **same BOND overflow.**
+  - **Diagnosis:** the overflow occurs in 2/100 frames (~frames 89–90) during sander minimization of the **receptor alone** (without ligand/solvent). Atoms affected: ND2 #7041 (GMAX=2.53×10⁵, UB=7.99×10⁶) and N #7076 (GMAX=1.74×10⁵, UB=3.59×10⁶). The complex and ligand calculations are clean (100/100). The `trjconv -pbc whole -mol` correction resolves the periodic image of the full complex but does not prevent intra-receptor clashes when the receptor is extracted and minimized in isolation — a known limitation of single-trajectory MM-GBSA for membrane proteins with PBC-spanning conformations.
+  - **No FINAL_RESULTS_MMPBSA.dat produced.** Intermediate files retained in run dir (`_GMXMMPBSA_*.mdout.0`, `_GMXMMPBSA_restrt.0`).
+- **Scope note (honest):** the system is the PP-01 PfCRT **K76A mutant**, not the R2 pillar PP-01 wild type. Even if MM-GBSA succeeded, a single-replicate mutant endpoint is not a validated resilience claim. The WT pillar expectation is separately addressed by the PP-01_PfCRT_WT rerun section above.
+- **Possible resolutions (author decision required):**
+  1. Exclude the 2 problematic frames: relaunch with `startframe=1 endframe=880 interval=10` (88 frames; impact on mean < 0.5 kcal/mol).
+  2. Add positional restraints on non-active-site residues during receptor minimization (`ntr=1` in sander input).
+  3. Accept K76A without MM-GBSA in this iteration (single-replicate, non-reportable endpoint).
+
+**Resolution checkpoint (26 August 2026):** option 1 was tested as SLURM job `15506` with `endframe=880` in the versioned output `results/set_c_md/k76a_frame880_20260826/`. The scheduler/process returned `exit=0` and `gmx_MMPBSA` wrote a final file, but the numerical QC failed: 11/88 sampled frames (`771, 781, ..., 871`, corresponding to 7.71–8.71 ns) retained receptor/complex BOND values up to `8.95e7` kcal mol⁻¹ and UB values up to `4.52e6` kcal mol⁻¹. The resulting `ΔTOTAL = -27.46` kcal mol⁻¹ is therefore an artificial complex-minus-receptor cancellation and is **not reportable**. The output manifest records `status=FAILED_NUMERICAL_QC`, `reportable=false`; no third K76A MM-GBSA relaunch is authorized without a corrected frame-selection or geometry-handling method.
