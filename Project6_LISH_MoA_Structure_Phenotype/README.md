@@ -1,7 +1,7 @@
 # Project 6 — Structure–phenotype prediction of mechanism-of-action profiles
 
-**Status:** `PLANNED — NO STRUCTURE ARM COMPUTED`  
-**Date established:** 12 August 2026  
+**Status:** `PHASE 1 MAPPING VALIDATED — PHASE 2 BENCHMARK IN PROGRESS`
+**Date established:** 12 August 2026; mapping validated 25 August 2026
 **Relationship to P5:** independent follow-up study building on P5; not a revision or continuation of the canonical P5 manuscript.
 
 ## Scientific question
@@ -25,7 +25,7 @@ These metrics describe MoA-associated phenotype prediction. They do not establis
 
 ## Blocked structure arm
 
-The current LISH package has no versioned, auditable structure mapping. Therefore Project 6 has **not** run ECFP4, GNN, ChemBERTa, TFP, TNE, or QKS on LISH-MoA. No gain claim is authorized.
+A versioned, auditable structure mapping is now available: 3,289/3,289 drug-level rows are covered, all mapped structures pass validation after salt stripping, and the frozen contract records 1,722 unique molecules and 794 collision groups. Phase 2 has therefore opened under collision-group primary splits. No gain claim is authorized for incomplete arms.
 
 The P5 scripts remain the preparation reference:
 
@@ -34,9 +34,9 @@ The P5 scripts remain the preparation reference:
 
 Raw competition files and credentials remain outside Git.
 
-## Reopening gates
+## Reopening gates and current benchmark status
 
-The structure arm can open only when all gates pass:
+The following gates have passed for the current Phase 2 benchmark:
 
 1. versioned mapping with exactly one row per `drug_id`;
 2. archive hash, source provenance, coverage, invalid-SMILES, and canonical-collision report;
@@ -46,6 +46,8 @@ The structure arm can open only when all gates pass:
 6. ECFP4-RF baseline on the exact same folds;
 7. paired seed/fold comparisons with multiplicity correction;
 8. complete failure accounting for TFP/TNE and bounded, separately labelled QKS computation.
+
+Completed Phase 2 results currently include phenotype-only baselines on k-fold, collision-group, and scaffold splits; ECFP4-linear and ECFP4-RF structure baselines; and a phenotype+ECFP4 fusion arm. The remaining GNN, descriptor-fusion, and ChemBERTa arms are pending and must not be interpreted before their report JSONs pass audit.
 
 ## Manuscript boundary
 

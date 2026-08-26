@@ -1,17 +1,15 @@
 %% ============================================================================
 %% Table S4: ACSI Weight Sensitivity Analysis
-%% Source: results/c_acsi_weight_sensitivity.csv
-%% Scope: canonical 17-candidate Set-C cohort (not the full 65,856-molecule library)
 %% ============================================================================
 
 \begin{table}[htbp]
 \centering
-\caption{Candidate-cohort ACSI weight sensitivity. One ACSI component weight was varied by $\pm\qty{20}{\percent}$ and the remaining weights were rescaled proportionally to preserve a unit sum. Mean and standard deviation refer to the resulting ACSI values across the \num{17} candidates. Rank stability is reported as Spearman correlation over all candidates and Jaccard overlap of the top five candidates with the baseline ranking. Because the full-library component matrix was not part of the committed source-data record, this table is a local sensitivity analysis of the canonical Set-C cohort and does not establish robustness of a full-library top-20 ranking.}
+\caption{Candidate-cohort ACSI weight sensitivity. One ACSI component weight was varied by \qty{\pm 20}{\percent} and the remaining weights were rescaled proportionally to preserve a unit sum. Mean and standard deviation refer to the resulting ACSI values across the \num{17} candidates. Rank stability is measured by Spearman correlation over all candidates and Jaccard overlap of the top five candidates with the baseline ranking. Because the full-library component matrix was unavailable, this analysis applies only to the 17-candidate Set-C cohort; it does not assess the full-library top-20 ranking.}
 \label{tab:s4_acsi_sensitivity}
 \scriptsize
 \begin{tabular}{l r S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] S[table-format=1.4] S[table-format=1.4]}
 \toprule
-Weight varied & Variation (\si{\percent}) & {New weight} & {Mean ACSI} & {SD} & {Spearman $\rho$} & {Top-5 Jaccard} \\
+Weight varied & Variation (\%) & {New weight} & {Mean ACSI} & {SD} & {Spearman $\rho$} & {Top-5 Jaccard} \\
 \midrule
 $D_{\mathrm{DrugBank}}$ & -20 & 0.320 & 0.512 & 0.149 & 0.9779 & 0.6667 \\
 $D_{\mathrm{DrugBank}}$ & +20 & 0.480 & 0.574 & 0.159 & 0.9338 & 0.6667 \\

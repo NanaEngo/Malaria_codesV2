@@ -1,0 +1,21 @@
+{
+  "artifact": "drugid_to_smiles_v2_validated.csv",
+  "artifact_sha256": "7df5b4ced6c97e9fb96ae89606533f87b8082a1e5db81c794cf3fee4b0cb6aa3",
+  "source": "drugid_to_smiles_v2.csv",
+  "source_sha256": "b6abe4d1a4f81cfb9870a644327cd7a3e2ee1a8bf2f4930312f4f10d099696c9",
+  "script": "p6_phase1_validate.py",
+  "rdkit_version": "2026.03.5",
+  "seed": 42,
+  "salt_strategy": "largest fragment by heavy atoms",
+  "collision_policy": "group id over identical canonical SMILES; groups must not cross train/test",
+  "audit": {
+    "rows": 3289,
+    "coverage_source": 1.0,
+    "valid_fraction": 1.0,
+    "unique_molecules": 1722,
+    "collision_groups_gt1": 794,
+    "multi_component_rows": 1622,
+    "max_components": 7
+  },
+  "frozen": true
+}

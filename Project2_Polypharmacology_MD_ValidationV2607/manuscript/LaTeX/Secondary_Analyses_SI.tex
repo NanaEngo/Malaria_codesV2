@@ -1,14 +1,14 @@
 \section*{Secondary calibration and ranking analyses}
 
-\subsection*{Tartarus docking calibration}
+\subsection*{Tartarus docking calibration}\label{tab:secondary_tartarus_calibration_section}
 
-The Tartarus analysis used QuickVina on \num{19913} primary leads against 1SYH, 6Y2F, and 4LDE. The composite MPO comparison used up to \num{17211} complete observations. The composite association was $\rho=\num{0.0129}$, $p=\num{0.0913}$; target-specific associations were small and are interpreted as exploratory rather than as evidence of independence or score equivalence.
+The Tartarus analysis used QuickVina, an AutoDock Vina derivative, on \num{19913} primary leads against PDB entries 1SYH, 6Y2F, and 4LDE. The composite MPO comparison included up to \num{17211} complete observations. The composite association was $\rho=\num{0.0129}$ ($p=\num{0.0913}$); target-specific associations were small and do not imply score equivalence or independence.
 
 \begin{table}[htbp]
 \centering
 \caption{Tartarus docking calibration: Spearman correlations between QuickVina scores and weighted MPO scores.}
 \label{tab:secondary_tartarus_calibration}
-\begin{tabular}{l S[table-format=-1.4] S[table-format=1.2e2] S[table-format=5.0] l}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X S[table-format=-1.4] S[table-format=1.2e2] S[table-format=5.0] >{\raggedright\arraybackslash}X}
 \toprule
 Score & {Spearman $\rho$} & {$p$-value} & {$n$} & {Interpretation} \\
 \midrule
@@ -17,18 +17,18 @@ Composite (mean of 3 targets) & 0.0129 & 9.13e-02 & 17211 & No meaningful associ
 6Y2F (PfCRT) & -0.0040 & 6.04e-01 & 17211 & Null \\
 4LDE (A2A receptor) & -0.1415 & 1.17e-77 & 17211 & Small effect \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
-\subsection*{Tartarus cross-docking correlation}
+\subsection*{Tartarus cross-docking correlation}\label{tab:secondary_tartarus_correlation_section}
 
-Only \num{24} molecules overlapped between the Tartarus and project docking records. The structure-mismatched comparison is exploratory and cannot establish experimental calibration.
+Only \num{24} molecules overlapped between the Tartarus and project docking records. Because the structures were not matched, this comparison cannot calibrate the docking scores experimentally.
 
 \begin{table}[htbp]
 \centering
 \caption{Tartarus independent-tool comparison for the \num{24}-molecule overlap.}
 \label{tab:secondary_tartarus_correlation}
-\begin{tabular}{l l S[table-format=2.0] S[table-format=-1.3] S[table-format=1.2e2] l}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X S[table-format=2.0] S[table-format=-1.3] S[table-format=1.2e2] >{\raggedright\arraybackslash}X}
 \toprule
 Tartarus & Project metric & {$n$} & {$\rho$} & {$p$} & {Interpretation} \\
 \midrule
@@ -38,7 +38,7 @@ Composite & 7F3Y/PfDHFR & 24 & -0.110 & 6.10e-01 & No \\
 Composite & 9N10/PfATP4 & 24 & 0.118 & 5.83e-01 & No \\
 1SYH/DHFR & 7F3Y/PfDHFR & 24 & -0.442 & 3.04e-02 & Exploratory \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \subsection*{Complete ACSI components}
@@ -47,11 +47,11 @@ ACSI was calculated as
 \[
 \mathrm{ACSI}=0.40D_{\mathrm{DrugBank}}+0.25D_{\mathrm{ANPDB}}+0.20f_{sp^3}+0.15\mathrm{NPL}.
 \]
-Components were min--max normalized over the selected 17-candidate cohort. Two candidates exceeded 0.70, the cohort mean was 0.543, and the complete component values are retained in the machine-readable source table. The eight one-at-a-time $\pm20\%$ perturbations gave Spearman rank correlations of 0.9167--0.9804 and top-five Jaccard overlaps of 0.6667--1.0000.
+Components were min--max normalized over the 17-candidate cohort. Two candidates exceeded ACSI $>\num{0.70}$, and the cohort mean was \num{0.543}. Varying one weight at a time by $\pm\qty{20}{\percent}$ gave Spearman correlations of \numrange{0.9167}{0.9804} and top-five Jaccard overlaps of \numrange{0.6667}{1.0000}.
 
 \subsection*{PNS ranking and imputation}
 
-The STRING network used confidence threshold 700. PfCRT centrality was imputed with the network mean, 0.151. The complete 17-candidate ranking is retained in the source table. Imputation sensitivity over zero, half, canonical, one-and-a-half, and double canonical centrality yielded rank correlations of 0.9632--1.0000. This is sensitivity to a network-data choice, not biological validation.
+The STRING network used confidence threshold \num{700}; PfCRT centrality was imputed with the network mean, \num{0.151}. The full ranking is listed in the table. Replacing the imputed value with zero, one-half, one-and-a-half, or twice the reference value gave rank correlations of \numrange{0.9632}{1.0000}. This result reflects sensitivity to a network-data choice, not biological target importance.
 
 \begin{table}[htbp]
 \centering
@@ -84,4 +84,8 @@ Rank 17 & 1.04 & 0.589 & PfCRT-only \\
 
 \subsection*{Predicted ADMET}
 
-The complete ADMET-AI endpoint table for all 17 candidates is provided in \cref{tab:s3_admet}. These are single-source machine-learning predictions without experimental validation or inferred inter-tool concordance.
+\subsection*{DiffDock--Vina and activity-model comparisons}
+
+In the 65\,856-molecule library, Vina scores and DiffDock confidence were only weakly related overall. A Benjamini--Hochberg analysis of \num{18} pairwise activity comparisons across compound groups using three Ersilia models found no adjusted-significant differences; all rank-biserial effect sizes were negligible. These analyses provide no evidence of biological activity.
+
+The ADMET-AI endpoint table for all 17 candidates is given in \cref{tab:s3_admet}. These predictions were not experimentally validated or compared across tools.
