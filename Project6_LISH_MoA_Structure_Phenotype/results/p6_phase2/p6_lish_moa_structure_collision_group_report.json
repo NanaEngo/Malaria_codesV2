@@ -1,0 +1,18 @@
+{
+  "input": "/home/nanaengo/Malaria_codesV2/Project6_LISH_MoA_Structure_Phenotype/results/lish_moa/lish_moa_drug_level.csv",
+  "mapping": "/home/nanaengo/Malaria_codesV2/Project6_LISH_MoA_Structure_Phenotype/data/mappings/drugid_to_smiles_v2_validated.csv",
+  "features": "structure",
+  "split": "collision_group",
+  "n_drugs": 3289,
+  "n_labels": 206,
+  "n_collision_groups": 1722,
+  "mean_metrics": {
+    "mean_columnwise_log_loss": 0.025978626783647082,
+    "macro_auprc": 0.022227620333306365,
+    "macro_auroc": 0.5348091705636476,
+    "mean_brier": 0.004014332330012303,
+    "mean_ece": 0.0037295897194993
+  },
+  "protocol": "5 seeds x 5 folds; drug-level aggregation; unweighted per-label logistic baseline",
+  "interpretation": "MoA-associated prediction; not causal target engagement"
+}

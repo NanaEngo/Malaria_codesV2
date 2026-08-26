@@ -1,15 +1,15 @@
 # Project 6 Data Analysis Report — LISH-MoA structure–phenotype follow-up
 
-**Version:** 0.1  
-**Updated:** 12 August 2026  
-**Status:** planning / structure mapping required  
+**Version:** 0.2
+**Updated:** 26 August 2026
+**Status:** Phase 1 mapping validated; Phase 2 benchmark in progress
 **Scope:** Project 6 only; it does not modify P5 canonical results.
 
 ## 1. Decision record
 
-`NO_STRUCTURE_MODEL_RUN_20260812`
+`PHASE1_MAPPING_VALIDATED_20260825_PHASE2_BOUNDED_20260826`
 
-The available LISH-MoA artifact is phenotype-only. It contains drug-level aggregation and MoA-associated labels but no versioned `drug_id → SMILES` mapping. Consequently, the molecular arms are blocked and no structure-based gain is claimed.
+The initial LISH-MoA artifact was phenotype-only. A versioned `drug_id → SMILES` mapping has now been constructed from PRISM-aligned records, validated with RDKit, and frozen before Phase 2 modelling. Molecular results are reported only for completed arms and under the collision-group primary split; incomplete GNN/transformer arms remain pending.
 
 ## 2. Locked phenotype reference
 
@@ -95,6 +95,43 @@ Frozen data contract: `data/mappings/drugid_to_smiles_contract.json`
 (SHA-256 `565a6e1b1a630e53d793b66368725cd13e3549846a486292cc73d9f3d0618b03`),
 artifact `drugid_to_smiles_v2_validated.csv`. Collision groups must not cross
 train/test folds (§5). Phase 1 is closed; Phase 2 may start on the exact mapped cohort.
+
+### 4.3 Phase 2 benchmark — first arms EXECUTED 2026-08-26 (SLURM job 15492, env `malaria_md`)
+
+Protocol: verbatim locked P5 estimator (per-label unweighted logistic,
+liblinear, 5 seeds × 5 folds), 3289 drugs × 206 labels. Splits: `kfold`
+(= P5 protocol reproduction), `collision_group` (primary honest split),
+`scaffold` (sensitivity). Outputs: `results/p6_phase2/p6_lish_moa_*.{csv,json}`.
+
+| Arm | Split | Log loss (primary) | Macro-AUROC | Macro-AUPRC |
+|---|---|---|---|---|
+| phenotype | kfold | **0.023783** (= locked 0.02378) | **0.64345** (= 0.6435) | **0.14276** (= 0.1428) |
+| phenotype | collision_group | 0.024282 | 0.63619 | 0.13137 |
+| phenotype | scaffold | 0.024176 | 0.64023 | 0.13308 |
+| structure ECFP4-linear | collision_group | 0.025979 | 0.53481 | 0.02223 |
+| structure ECFP4-RF | collision_group | 0.035820 | 0.53562 | 0.02590 |
+| structure ECFP4-RF | scaffold | 0.035240 | 0.53817 | 0.02501 |
+| fusion phenotype+ECFP4 (RF) | collision_group | 0.030516 | 0.58323 | 0.08216 |
+
+Findings so far:
+1. The kfold arm reproduces the locked baseline to the fourth decimal → pipeline faithful.
+2. Leakage-corrected splits cost ~2 % relative log loss for the phenotype arm; the honest-split numbers become the reference for all structure comparisons.
+3. Structure-only linear arm is near chance under the honest split — consistent with the literature expectation that linear ECFP4 carries little MoA signal.
+4. Structure-only **RF** arms remain near chance under both honest splits (AUROC 0.5356 collision_group / 0.5382 scaffold; job 15496 tasks 0–1, completed 26 Aug).
+5. The **fusion arm does not beat the phenotype baseline**: AUROC 0.58323 < 0.63619 and log loss 0.030516 worse than either single-block arm (job 15496 task 2, completed 26 Aug). No structure gain is demonstrated at Phase 2; this is recorded as an interim honest-negative, pending the remaining molecular arms.
+6. Environment check (26 Aug): torch stack already present in `malaria_md` — torch 2.13.0+cu130 (CUDA available), torch-geometric 2.8.0.post1, transformers 5.14.1, i.e. exactly the locked P5 versions; the earlier "pending torch install" blocker is lifted without any installation.
+
+### 4.4 Remaining molecular arms — GNN / GIN-TFP / GIN-TNE / ChemBERTa (SUBMITTED 2026-08-26)
+
+SLURM job **15500** (`scripts/p6_phase2_gnn_chemberta.sbatch`, partition production, 1 GPU, chained): TFP/TNE descriptor computation → GIN → GIN-TFP → GIN-TNE → ChemBERTa, all on `collision_group` (primary honest split). Status at submission: `PENDING (Priority)`; **no metric from these arms is authorized until the corresponding report JSONs exist on disk.**
+
+Protocol adaptations (predeclared here, before any result):
+
+- **Descriptors:** TFP (78-D) and TNE (192-D) computed once per unique validated SMILES by reusing the frozen P3 pipelines verbatim (`p3_tda_pipeline.process_molecule`, n_conf=1; `p3_tne_pipeline.smiles_to_tensor` + `tucker_compress`, bond_dim=8, CPU). ITT failures → zero-vector rows, counted in `results/p6_phase2/p6_tfp_tne_descriptors_report.json`.
+- **Models:** locked P5 architectures (`p5_models.build_model`) with a multi-label head (`out_dim = 206`); optimizer constants verbatim from P5 (AdamW lr 1e-3 / wd 1e-4, batch 512, ≤50 epochs, patience 10). ChemBERTa: `seyonec/ChemBERTa-zinc-base-v1`, `problem_type="multi_label_classification"`, max_length 128, batch 32, AdamW lr 2e-5 / wd 0.01, ≤10 epochs, patience 3.
+- **Validation carve (leakage-safe model selection):** within each seed's train set, train *groups* are dealt round-robin into six parts; part 0 is validation. No test group ever enters model selection.
+- **Early stopping criterion:** validation mean column-wise log loss (the primary estimand), not AUC.
+- Outputs will land as `results/p6_phase2/p6_lish_moa_{gin,gin-tfp,gin-tne,chemberta}_collision_group_{folds.csv,report.json}`.
 
 ## 5. Leakage and statistics gates
 
