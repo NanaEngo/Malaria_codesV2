@@ -54,6 +54,26 @@ three moved.
 - Extended ChemBERTa rerun: SLURM array `15490` with pinned snapshot revision `761d6a18cf99db371e0b43baf3e2d21b3e865a20`; all five partitions pass the 25-record audit (125/125 records and prediction files). Results remain separately versioned secondary evidence and do not replace canonical estimates.
 - Optional calibration/OOD analyses and new architecture or cluster-split experiments remain `NOT_COMPUTED` and outside the current submission scope.
 
+## Zenodo package status (refreshed 27 August 2026)
+
+The package is built by `scripts/build_zenodo_package.py` into `zenodo_package_20260827/`
+(+ `zenodo_package_20260827.tar.gz`) with a machine-readable manifest
+`ZENODO_PACKAGE_MANIFEST.json` (schema v2).
+
+- **27 files staged now** (25 base + `p5_benchmark.py` + `p5_sensitivity_gnn.sbatch`), status
+  **`PENDING_SENSITIVITY_15617_NOT_UPLOADED`**: the 8 Levier-3 GNN sensitivity outputs
+  (`results/p5_GIN_scaffold_*_sens_h64_d02.*` and `_sens_h256_d01.*`) are auto-included as
+  soon as SLURM job **15617** produces them (35 files expected at completion).
+- **Finalization procedure:** once job 15617 has finished and the fold-level gates are
+  clean (25 records per config, finite metrics), re-run
+  `python scripts/build_zenodo_package.py` — the manifest flips to
+  `READY_FOR_UPLOAD_NOT_UPLOADED` with `sensitivity_files_pending: []`; then refresh the
+  tarball, verify the reserved DOI `10.5281/zenodo.19608875`, and upload.
+  An automated watcher `scripts/p5_zenodo_finalize.sh` (launched 27/08/2026) performs
+  the wait-for-15617 + fold audit + rebuild + tarball refresh chain fail-closed and
+  logs to `/tmp/p5_zenodo_finalize.log`; it stages and verifies but never uploads.
+- Boundary unchanged: local staging only; no upload or DOI publication performed.
+
 ## Open items (must close before submission)
 
 1. **Zenodo release:** upload the frozen package and verify the reserved DOI.

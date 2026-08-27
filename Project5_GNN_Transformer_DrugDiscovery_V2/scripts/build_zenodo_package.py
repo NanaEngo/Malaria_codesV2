@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 STAMP = "20260827"
 OUT = ROOT / f"zenodo_package_{STAMP}"
 
+# Files that must be present for the package to be submission-ready.
 FILES = [
     "manuscript/P5_manuscript_V2608.tex",
     "manuscript/P5_manuscript_V2608.pdf",
@@ -35,6 +36,26 @@ FILES = [
     "scripts/p5_calibration_posthoc.py",
 ]
 
+# Levier-3 light GNN sensitivity outputs (job 15617). Included automatically
+# once the fold-level gates have produced them; the package stays buildable
+# (status PENDING_SENSITIVITY) while job 15617 is still queued/running.
+SENSITIVITY_FILES = [
+    "results/p5_GIN_scaffold_results_sens_h64_d02.csv",
+    "results/p5_GIN_scaffold_curves_sens_h64_d02.json",
+    "results/p5_GIN_scaffold_salience_sens_h64_d02.json",
+    "results/p5_GIN_scaffold_ckpt_sens_h64_d02.json",
+    "results/p5_GIN_scaffold_results_sens_h256_d01.csv",
+    "results/p5_GIN_scaffold_curves_sens_h256_d01.json",
+    "results/p5_GIN_scaffold_salience_sens_h256_d01.json",
+    "results/p5_GIN_scaffold_ckpt_sens_h256_d01.json",
+]
+
+# p5_benchmark.py itself is part of the code deposit (canonical + sensitivity CLI).
+CODE_FILES = [
+    "scripts/p5_benchmark.py",
+    "scripts/p5_sensitivity_gnn.sbatch",
+]
+
 def sha256(path: Path) -> str:
     h = hashlib.sha256()
     with path.open("rb") as f:
@@ -42,36 +63,54 @@ def sha256(path: Path) -> str:
             h.update(block)
     return h.hexdigest()
 
+def stage(records: list, missing: list, rel: str) -> None:
+    src = ROOT / rel
+    if not src.is_file():
+        missing.append(rel)
+        return
+    dst = OUT / rel
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dst)
+    records.append({"path": rel, "bytes": dst.stat().st_size, "sha256": sha256(dst)})
+
 def main() -> None:
     if OUT.exists():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
-    records = []
-    missing = []
-    for rel in FILES:
-        src = ROOT / rel
-        if not src.is_file():
-            missing.append(rel)
-            continue
-        dst = OUT / rel
-        dst.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(src, dst)
-        records.append({"path": rel, "bytes": dst.stat().st_size, "sha256": sha256(dst)})
+    records: list = []
+    missing: list = []
+    for rel in FILES + CODE_FILES:
+        stage(records, missing, rel)
+    # Sensitivity files: staged only if present; otherwise recorded as pending.
+    sensitivity_present: list = []
+    sensitivity_pending: list = []
+    for rel in SENSITIVITY_FILES:
+        if (ROOT / rel).is_file():
+            stage(records, sensitivity_present, rel)
+        else:
+            sensitivity_pending.append(rel)
+    status = (
+        "READY_FOR_UPLOAD_NOT_UPLOADED"
+        if not sensitivity_pending
+        else "PENDING_SENSITIVITY_15617_NOT_UPLOADED"
+    )
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "created_utc": "2026-08-27",
-        "status": "READY_FOR_AUTHOR_REVIEW_NOT_UPLOADED",
+        "status": status,
         "project": "P5_GNN_Transformer_DrugDiscovery_V2",
         "reserved_doi": "10.5281/zenodo.19608875",
-        "files_expected": len(FILES),
+        "files_expected": len(FILES) + len(CODE_FILES) + len(SENSITIVITY_FILES),
         "files_staged": len(records),
         "missing": missing,
+        "sensitivity_files_present": sensitivity_present,
+        "sensitivity_files_pending": sensitivity_pending,
         "files": records,
         "exclusions": ["Slurm logs", "LaTeX auxiliary files", "Python caches", "model caches", "temporary files", "credentials"],
         "boundary": "Local staging only. No Zenodo upload or DOI publication was performed.",
     }
     (OUT / "ZENODO_PACKAGE_MANIFEST.json").write_text(json.dumps(manifest, indent=2) + "\n")
-    print(json.dumps({k: manifest[k] for k in ("status", "files_expected", "files_staged", "missing")}, indent=2))
+    print(json.dumps({k: manifest[k] for k in ("status", "files_expected", "files_staged", "missing", "sensitivity_files_pending")}, indent=2))
 
 if __name__ == "__main__":
     main()
