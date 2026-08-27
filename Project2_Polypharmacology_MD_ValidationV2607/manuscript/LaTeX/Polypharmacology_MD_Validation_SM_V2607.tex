@@ -78,12 +78,12 @@ from African Natural Products: Docking, Chemical-Space Descriptors, and Explorat
 % ============================================================================
 \begin{table}[htbp]
 \centering
-\caption{MM-GBSA results for the four parent-study complexes. These systems are distinct from the 17 Set-C candidates. The interpretable PfCRT--214 result is reported as mean $\pm$ standard deviation from \num{101} snapshots; dissociated or conversion-invalid systems are listed as N/A. Mutant RRS was calculated only for Set-C docking systems.}
+\caption{MM-GBSA results for the four parent-study complexes. These systems are distinct from the 17 Set-C candidates. The interpretable PfCRT--214 result is reported as mean $\pm$ standard error of the mean (SEM) from \num{101} snapshots; dissociated or conversion-invalid systems are listed as N/A. Mutant RRS was calculated only for Set-C docking systems.}
 \label{tab:s2_mmgbsa_mutants}
 \scriptsize
 \begin{tabular}{l l S[table-format=-2.2] S[table-format=1.2] l}
 \toprule
-Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Interpretation \\
+Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {SEM} & Interpretation \\
 \midrule
 164 & PfClpR-labelled cohort$^\ast$-WT & {--} & {--} & N/A; ligand dissociated$^\ddagger$ \\
 201 & PfDHFR-WT & {--} & {--} & N/A; ligand dissociated$^\ddagger$ \\
@@ -116,7 +116,7 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Interpretation \\
 \label{fig:s2_rrs_radar}
 \end{figure}
 
-\noindent\textit{MD scope.} The parent-study trajectories comprise a targeted, non-membrane explicit-solvent check of four wild-type complexes. A separate 16-system Set-C pilot evaluated PP-01 and PP-02 against the six-mutant panel for \qty{10}{\nano\second} per system. Its MD-RRS and MM-GBSA estimates are summarized in \cref{tab:s8_setc_mmgbsa} and compared with docking RRS in \cref{fig:s3_setc_rrs_scatter}.
+\noindent\textit{MD scope.} The parent-study trajectories comprise a targeted, non-membrane explicit-solvent structural follow-up of four wild-type complexes. A separate 16-system Set-C pilot evaluated PP-01 and PP-02 against the six-mutant panel for \qty{10}{\nano\second} per system. Its MD-RRS and MM-GBSA estimates are summarized in \cref{tab:s8_setc_mmgbsa} and compared with docking RRS in \cref{fig:s3_setc_rrs_scatter}. Neither design estimates long-timescale residence or replicate-level uncertainty; the evidence boundary is summarized in \cref{tab:s13_evidence_scope,tab:s14_panel_scope}.
 
 % ============================================================================
 % Figure S3: Set-C pilot MD-RRS / MM-GBSA RRS vs docking RRS scatter
@@ -125,6 +125,16 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {Std. dev.} & Interpretation \\
 \centering
 \includegraphics[width=\textwidth]{p2_setc_rrs_scatter.pdf}
 \caption{Trajectory-derived and docking-derived RRS values for the Set-C pilot, normalized to the corresponding WT value of \num{100}. Panel (a) compares mean minimum-distance ratios with docking RRS for eight mutant systems; panel (b) compares MM-GBSA RRS with docking RRS. Four PP-02 PfDHFR systems lack a docking WT reference. Docking predicted lower mutant scores in the comparable systems, whereas the trajectory-derived estimates did not reproduce that pattern. Neither estimate measures biological resistance or thermodynamic affinity.}\label{fig:s3_setc_rrs_scatter}
+\end{figure}
+
+% ============================================================================
+% Figure S4: Independent P2Rank pocket audit vs Vina box centers
+% ============================================================================
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figure_p2rank_boxes.pdf}
+\caption{Independent P2Rank pocket prediction versus the fixed Vina grid boxes used for docking. Panel (a) reports the distance between the top-three P2Rank pocket centers and the Vina box center for the three receptors with a P2 grid (PfDHFR 7F3Y, PfCRT 6UKJ, PfATP4 9N10); the dashed line marks the \qty{12.5}{\angstrom} box half-edge. Panel (b) shows the same centers in 3D (star: Vina box; markers: top-three P2Rank pockets, same frame pairs). For PfCRT (6UKJ), the top P2Rank pocket (score \num{162.7}, probability \num{0.999}, by far the most ligandable site) lies \qty{5.7}{\angstrom} from the Vina box center, corroborating the docking box. The larger separations for PfDHFR and PfATP4 carry a receptor-frame caveat (the P1 grid configuration may derive from a different preparation than the MD receptor used here) and are recorded as provenance flags rather than docking-quality verdicts. P2Rank 2.5.1; exploratory boundary audit only --- no canonical score or RRS value is modified.}
+\label{fig:s4_p2rank_boxes}
 \end{figure}
 
 % ============================================================================
@@ -179,6 +189,10 @@ Stable identifiers were retrieved from PlasmoDB/VEuPathDB on 12 August 2026 \cit
 \input{Table_S10_WT_Replicate_Consistency.tex}
 \input{Table_S11_RRS_Threshold_Sensitivity.tex}
 \input{Table_S12_RRS_By_Target.tex}
+\input{Table_S13_Evidence_Scope.tex}
+\input{Table_S14_Panel_Scope.tex}
+\input{Table_S15_Robustness_Transfer.tex}
+\input{Table_S16_P1_Context.tex}
 
 \noindent\textit{RRS threshold sensitivity.} Across the prespecified threshold grid, the baseline available-target class counts were unchanged when the WT eligibility threshold was varied from \qty{4.0}{\kcalmol} to \qty{5.0}{\kcalmol}. Tightening the retention thresholds from \qty{70}{\percent}/\qty{80}{\percent} to \qty{80}{\percent}/\qty{90}{\percent} increased the number of Class~D candidates from 1 to 9. This sensitivity reflects the operational nature of the docking-based classes and does not calibrate them against experimental resistance measurements.
 
@@ -189,7 +203,7 @@ Stable identifiers were retrieved from PlasmoDB/VEuPathDB on 12 August 2026 \cit
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
-\caption{MM-GBSA endpoint estimates for the Set-C pilot. $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots with the propagated within-trajectory standard deviation; it is not a replicate uncertainty. MMG-RRS is the ratio of absolute mutant and WT endpoint magnitudes, with WT = \qty{100}{\percent}. It is not a free-energy resilience measure. n/a denotes the absence of a docking WT reference for PP-02 PfDHFR. Two systems required trajectory reconstruction before endpoint analysis because of periodic-boundary discontinuities. Values above \qty{100}{\percent} indicate retention within endpoint uncertainty, not increased affinity; eight of the twelve mutant systems exceed this value.}\label{tab:s8_setc_mmgbsa}
+\caption{MM-GBSA endpoint estimates for the Set-C pilot. $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots; the reported $\mathrm{SD}_{\mathrm{prop}}$ is the propagated within-trajectory standard deviation, not a SEM or replicate uncertainty. MMG-RRS is the ratio of absolute mutant and WT endpoint magnitudes, with WT = \qty{100}{\percent}. It is not a free-energy resilience measure. n/a denotes the absence of a docking WT reference for PP-02 PfDHFR. Two systems required trajectory reconstruction before endpoint analysis because of periodic-boundary discontinuities. Values above \qty{100}{\percent} indicate retention within endpoint uncertainty, not increased affinity; eight of the twelve mutant systems exceed this value.}\label{tab:s8_setc_mmgbsa}
 \scriptsize
 \begin{tabularx}{\textwidth}{l l l S[table-format=-2.2] S[table-format=1.2] S[table-format=3.1] S[table-format=3.1] S[table-format=3.2]}
 \toprule

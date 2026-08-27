@@ -94,9 +94,9 @@
 % GRAPHICAL TABLE OF CONTENTS (mandatory for ACS/JCIM submission)
 % ============================================================================
 \begin{tocentry}
-% TOC graphic placeholder; replace before submission.
-% (ACS specification: 3.25 in x 1.75 in / 8.25 cm x 4.45 cm, TIFF/EPS/PDF).
-% \includegraphics[width=0.95\linewidth]{Graphics/TOC_graphic}
+% The graphical abstract asset is intentionally omitted from this source because
+% the canonical TOC file is not present in the audited workspace. Add the
+% author-approved ACS-compliant asset before submission; do not use a placeholder.
 \end{tocentry}
 
 % ============================================================================
@@ -141,6 +141,8 @@ The study prespecified one primary estimand and three secondary analyses. The pr
 \end{figure}
 
 \subsection{Candidate selection and filtering}
+
+The Set-C cohort is a filtered prioritization cohort rather than a representative sample of the parent library. Class frequencies are therefore conditional on the stated MPO, SYBA, selectivity, multi-target, and scaffold-diversity filters and are not estimates for the full \num{65856}-molecule library.
 
 Seventeen candidates were selected from the Set-C candidate panel generated from the library of \num{65856} molecules described previously \citep{temgoua2026antimalarial}. The candidate-selection panel is distinct from the production-MD cohort. Three sequential filters were applied: (1) MPO score $\geq$ \num{0.70} (primary leads); (2) SYBA score $>$ \num{0} (synthesisable); (3) selectivity index SI $>$ \num{10} (selectively antiparasitic). The selection additionally required multi-target engagement of at least two of the four docking targets and scaffold diversity of no more than three compounds per Bemis--Murcko scaffold. The selection includes one of the previously named consensus leads (Ligand 87, PfDHFR). The four additional parent-study consensus leads (Ligands 201, 214, 438, 164) were not part of the 17-candidate docking set but were used to construct the wild-type complexes for the production MD check. The 164 system is identified as the 164-labelled PfClpR cohort; PDB 4GM2 is PfClpR rather than PfClpP, so this system is not structural validation of PfClpP. Five approved antimalarial drugs (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) were included as reference controls for the docking analysis (\cref{tab:system_breakdown}).
 
@@ -188,9 +190,9 @@ PfCRT & K76A & PfCRT resistance/comparator state & Not a prevalence estimate \\
 
 Crystal structures of mutant targets were not available in the PDB. Homology models were generated with SWISS-MODEL using the wild-type structures as templates: PfDHFR (7F3Y) and PfCRT (6UKJ). PfATP4 and the 164-labelled parent-MD system were not part of the six-mutant homology-model panel; moreover, PDB 4GM2 is PfClpR rather than PfClpP. Model quality was assessed by QMEAN score, Global Model Quality Estimation, Ramachandran analysis (MolProbity), and C$\alpha$ RMSD to the wild-type template. Models were retained only when QMEAN exceeded \num{-4.0}, GMQE exceeded \num{0.7}, Ramachandran favored residues exceeded \qty{95}{\percent}, and backbone RMSD was below \qty{1.5}{\angstrom}. The retained models served as receptor models for docking. Their quality scores do not establish experimental accuracy, and the absence of experimental structures or replicate model ensembles leaves structural uncertainty in the docking results.
 
-\subsection{Docking protocol validation}
+\subsection{Docking protocol assessment}
 
-The docking protocol and V2-corrected grid parameters used here are identical to those established in the parent study \citep{temgoua2026antimalarial}: AutoDock Vina 1.2.7~\citep{vina_2021} with exhaustiveness \num{64} against grids centered on the corrected V2 binding-site coordinates of PfDHFR (7F3Y), PfCRT (6UKJ~\citep{Kim2019PfCRT}), PfATP4 (9N10), and the historically labelled PfClpR/4GM2 entry (not PfClpP). Redocking was considered accurate when RMSD was $<$ \qty{2.0}{\angstrom} relative to the crystal pose. Results are given separately for the five alignable ligands and for all attempts, including MTX. External enrichment and redocking benchmarks, including the negative DEKOIS 2.0 result, are given in the Supporting Information (\cref{SM-tab:s1_docking_validation}). AutoDock Vina was used for the reported scores; GNINA yielded no usable score.
+The docking protocol and V2-corrected grid parameters used here are identical to those established in the parent study \citep{temgoua2026antimalarial}: AutoDock Vina 1.2.7~\citep{vina_2021} with exhaustiveness \num{64} against grids centered on the corrected V2 binding-site coordinates of PfDHFR (7F3Y), PfCRT (6UKJ~\citep{Kim2019PfCRT}), PfATP4 (9N10), and the historically labelled PfClpR/4GM2 entry (not PfClpP). As an independent boundary audit of these fixed boxes, P2Rank~\citep{Krivak2018P2Rank} pocket predictions were compared with the grid centers; the concordant PfCRT result and the frame caveats for the other receptors are presented in the Supporting Information (\cref{SM-fig:s4_p2rank_boxes}). Redocking was considered accurate when RMSD was $<$ \qty{2.0}{\angstrom} relative to the crystal pose. Results are given separately for the five alignable ligands and for all attempts, including MTX. External enrichment and redocking benchmarks, including the negative DEKOIS 2.0 result, are given in the Supporting Information (\cref{SM-tab:s1_docking_validation}). AutoDock Vina was used for the reported scores; GNINA yielded no usable score.
 
 \subsection{Secondary docking calibration}
 
@@ -203,7 +205,7 @@ MPO-weight sensitivity and single-source ADMET-AI predictions were used descript
 \subsection{Docking and resistance resilience score}\label{sec:rrs_formula}
 \input{Table_RRS_Primary.tex}
 
-All 17 candidates were docked against each wild-type and mutant structure using AutoDock Vina 1.2.7 with exhaustiveness \num{64}. The 136 systems were ranked with empirical Vina scores rather than calibrated binding free energies. GNINA did not yield a score for this panel. Grid boxes were centered on the co-crystallized ligand position with \qty{20}{\angstrom}\ dimensions.
+All 17 candidates were docked against each wild-type and mutant structure using AutoDock Vina 1.2.7 with exhaustiveness \num{64}. The 136 systems were ranked with empirical Vina scores rather than calibrated binding free energies. GNINA did not yield a score for this panel. Grid boxes were centered on the co-crystallized ligand position with \qty{25}{\angstrom}\ dimensions, matching the audited V2 configuration files.
 
 For target $t$, let $s_{\mathrm{Vina},i,\mathrm{WT},t}$ and $s_{\mathrm{Vina},i,m,t}$ denote the signed Vina scores. Candidates with $|s_{\mathrm{Vina},i,\mathrm{WT},t}| < \qty{5.0}{\kcalmol}$ are excluded from that target's score-retention analysis. The target-specific Resistance Resilience Score (RRS) is
 \begin{equation}
@@ -299,13 +301,7 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$ (\si{\kcalmol})} & {SEM} & Interpr
 
 \subsection{Correlation between methods}
 
-The four parent-study MD systems were not members of the 17-candidate Set-C cohort; consequently, no Vina--MM-GBSA correlation is estimated across these cohorts. Vina--DiffDock comparisons and the exploratory Ersilia activity-model analysis are reported in the Supporting Information. They were used only to contextualize complementary ranking dimensions and did not establish score equivalence, independent measurement, or biological activity.
-
-\iffalse
-
-The four parent-study MD systems were not members of the 17-candidate Set-C cohort; consequently, no Vina--MM-GBSA correlation is estimated across these cohorts. Vina--DiffDock comparisons and the exploratory Ersilia activity-model analysis are reported in the Supporting Information. They were used only to contextualize complementary ranking dimensions and did not establish score equivalence, independent measurement, or biological activity.
-
-\fi
+The four parent-study MD systems were not members of the 17-candidate Set-C cohort; consequently, no Vina--MM-GBSA correlation is estimated across cohorts. Vina--DiffDock comparisons and the exploratory Ersilia activity-model analysis are reported in the Supporting Information as contextual analyses of complementary ranking dimensions.
 
 \subsection{Consensus leads}
 
@@ -353,12 +349,12 @@ A secondary 16-system Set-C MD pilot was used to test whether trajectory-derived
 
 \begin{table}[htbp]
 \centering
-\caption{Set-C MD pilot mutant-state MM-GBSA estimates (secondary, exploratory analysis; not merged into the primary docking-RRS classification). $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots $\pm$ standard deviation; MMG-RRS is the mutant/WT $\Delta G_{\mathrm{bind}}$ ratio ($\times \num{100}$, same convention as docking RRS; WT = \num{100}); docking RRS is shown for comparison (n/a = no WT docking reference in the pilot for PP-02 PfDHFR).}\label{tab:mmmgbsa_setc}
+\caption{Set-C MD pilot mutant-state MM-GBSA estimates (secondary, exploratory analysis; not merged into the primary docking-RRS classification). $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots $\pm$ SEM; the corresponding propagated within-trajectory standard deviations are reported in the Supporting Information. MMG-RRS is the mutant/WT $\Delta G_{\mathrm{bind}}$ ratio ($\times \num{100}$, same convention as docking RRS; WT = \num{100}); docking RRS is shown for comparison (n/a = no WT docking reference in the pilot for PP-02 PfDHFR).}\label{tab:mmmgbsa_setc}
 \scriptsize
 \setlength{\tabcolsep}{3pt}
 \begin{tabularx}{\textwidth}{l l l S[table-format=-2.2] S[table-format=1.2] S[table-format=3.1] S[table-format=3.2]}
 \toprule
-Candidate & Target & State & {$\Delta G_{\mathrm{bind}}$ (\si{\kcalmol})} & {SD} & {MMG-RRS} & {Docking RRS} \\
+Candidate & Target & State & {$\Delta G_{\mathrm{bind}}$ (\si{\kcalmol})} & {SEM} & {MMG-RRS} & {Docking RRS} \\
 \midrule
 PP-01 & PfCRT & K76A & -35.29 & 1.17 & 115.3 & 90.86 \\
 PP-01 & PfCRT & K76T & -29.51 & 2.65 & 96.4 & 92.47 \\
@@ -400,9 +396,9 @@ The relationship between RRS and molecular topology remains unresolved. The comp
 
 ACSI positions candidates relative to approved-drug and African-natural-product reference spaces. The mean ACSI was \num{0.543}, and two of \num{17} candidates (\qty{11.8}{\percent}) exceeded \num{0.70}. PNS supplies a network-weighted ranking heuristic; in the target-balanced cohort, its association with RRS was weak and uncertain ($\rho=\num{-0.2098}$, adjusted $p=\num{1.0000}$). The ACSI, PNS, and RRS measures therefore provide complementary ranking dimensions rather than independent biological measurements. Their interpretation remains conditional on the reference spaces, network construction, and target coverage \citep{anpdb_2026,value_addition_african_np_2025,Sentinel2025Offtarget}.
 
-\subsection{Value of MD validation}
+\subsection{Role of structural follow-up}
 
-The targeted MD analysis illustrates the value of structural follow-up. Two of four parent-study systems retained bound ligands, whereas the 164-labelled PfClpR and PfDHFR--201 systems dissociated; only PfCRT--214 passed the bound-state and topology checks for MM-GBSA. Its $\qty{-18.25 \pm 0.40}{\kcalmol}$ value is a system-specific endpoint estimate and cannot calibrate the Set-C candidates. Consistent with the endpoint-method literature, MM-GBSA is interpreted here as a within-protocol guide rather than converged thermodynamics \citep{wang2019_mmgbsa,gmx_mmpbsa_2021}. In the Set-C pilot, mutant MM-GBSA did not reproduce the docking-predicted weakening; whether docking RRS predicts mutant free-energy resilience therefore remains unresolved.
+The targeted MD analysis illustrates the role of structural follow-up. Two of four parent-study systems retained bound ligands, whereas the 164-labelled PfClpR and PfDHFR--201 systems dissociated; only PfCRT--214 passed the bound-state and topology checks for MM-GBSA. Its $\qty{-18.25 \pm 0.40}{\kcalmol}$ value is a system-specific endpoint estimate and cannot calibrate the Set-C candidates. Consistent with the endpoint-method literature, MM-GBSA is interpreted here as a within-protocol guide rather than converged thermodynamics \citep{wang2019_mmgbsa,gmx_mmpbsa_2021}. In the Set-C pilot, mutant MM-GBSA did not reproduce the docking-predicted weakening; whether docking RRS predicts mutant free-energy resilience therefore remains unresolved.
 
 \textbf{Toward experimental validation.}
 None of the computational estimands constitutes biochemical or biophysical evidence. The next step is matched biochemical testing of the highest-priority candidates against wild-type and mutant PfDHFR, together with orthogonal PfCRT binding or transport assays under experimentally relevant conditions. Concordant or discordant results would identify which computational layer is useful for each target class.
@@ -431,7 +427,7 @@ Five candidates lacked an eligible PfDHFR WT denominator and were included only 
 
 \section{Conclusion}
 
-This study prioritizes antimalarial candidates from African natural-product chemical space using several computational estimands. Resistance and binding claims are limited to those estimands. Among the \num{17} Set-C candidates, the target-balanced docking-RRS classification was A*:~\num{1}, A:~\num{1}, B:~\num{4}, C:~\num{5}, and D:~\num{1}; the coverage-sensitive available-target analysis yielded A*:~\num{5}, A:~\num{1}, B:~\num{5}, C:~\num{5}, and D:~\num{1}. The ACSI mean was \num{0.543}. The target-balanced PNS--RRS association was weak and uncertain; the more negative 17-candidate association was coverage-sensitive and did not survive Bonferroni adjustment. These results support resistance-aware target-level ranking; they do not demonstrate biological polypharmacology or a systems-level MoA. The four-complex MD check also showed the value of structural follow-up: two systems retained bound ligands, but only PfCRT--214 produced an interpretable MM-GBSA estimate. The study keeps potency, network context, chemical-space positioning, mutant sensitivity, and trajectory stability as separate estimands. Experimental target engagement, phenotypic MoA, mutant-state MD, and prospective validation remain necessary next steps.
+This study prioritizes antimalarial candidates from African natural-product chemical space using several computational estimands. Resistance and binding claims are limited to those estimands. Among the \num{17} Set-C candidates, the target-balanced docking-RRS classification was A*:~\num{1}, A:~\num{1}, B:~\num{4}, C:~\num{5}, and D:~\num{1}; the coverage-sensitive available-target analysis yielded A*:~\num{5}, A:~\num{1}, B:~\num{5}, C:~\num{5}, and D:~\num{1}. The ACSI mean was \num{0.543}. The target-balanced PNS--RRS association was weak and uncertain; the more negative 17-candidate association was coverage-sensitive and did not survive Bonferroni adjustment. These results support resistance-aware target-level ranking within the selected computational panel; they do not demonstrate biological polypharmacology or a systems-level MoA. Lightweight sensitivity analyses further show that the cross-metric associations and operational RRS classes are conditional on cohort composition and score perturbation. The four-complex MD check also showed the value of structural follow-up: two systems retained bound ligands, but only PfCRT--214 produced an interpretable MM-GBSA estimate. The study keeps potency, network context, chemical-space positioning, mutant sensitivity, and trajectory stability as separate estimands. Experimental target engagement, phenotypic MoA, mutant-state MD, and prospective validation remain necessary next steps.
 
 % ============================================================================
 % ACKNOWLEDGMENTS

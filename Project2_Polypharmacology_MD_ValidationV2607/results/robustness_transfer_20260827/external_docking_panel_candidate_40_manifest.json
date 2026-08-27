@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "status": "CANDIDATE_PANEL_AUDITED_PENDING_AUTHOR_FREEZE",
+  "source": "Project5_GNN_Transformer_DrugDiscovery/results/p5_public_chembl_malaria_disjoint.csv",
+  "source_sha256": "204e6417ac9731b2e892c097c366f04cd3fb45460fd081e161c47b8580c75957",
+  "source_rows": 22267,
+  "source_unique_smiles": 22267,
+  "p2_reference": "Project2_Polypharmacology_MD_ValidationV2607/results/candidate_selection/md_top20_candidates_polypharm.csv",
+  "p2_reference_sha256": "5fe90a6b7047626822e378cd0bcb5c41f7458b93a4ee63af3af3ead58ae45c36",
+  "p2_candidate_count": 17,
+  "exact_overlap_before_dedup": 0,
+  "duplicates_removed": 0,
+  "eligible_after_overlap_and_dedup": 22267,
+  "candidate_panel_rows": 40,
+  "candidate_panel_sha256": "3e722600829e7ac854e4707cd6c8b832bdfc3593e7807cdbcc64d07dd29b7b80",
+  "selection": "stable sort by pchembl then canonical SMILES, 40 evenly spaced rows; no RRS, docking score, or P2 class used",
+  "activity_distribution": {
+    "min": 3.96,
+    "median": 6.74,
+    "max": 11.0,
+    "n_active": 34,
+    "n_inactive": 6
+  },
+  "status_boundary": "Ligand panel only. No receptor-state validation, docking, RRS, or biological replication has been performed."
+}

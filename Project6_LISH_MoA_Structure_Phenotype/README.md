@@ -47,7 +47,7 @@ The following gates have passed for the current Phase 2 benchmark:
 7. paired seed/fold comparisons with multiplicity correction;
 8. complete failure accounting for TFP/TNE and bounded, separately labelled QKS computation.
 
-Completed Phase 2 results currently include phenotype-only baselines on k-fold, collision-group, and scaffold splits; ECFP4-linear and ECFP4-RF structure baselines; and a phenotype+ECFP4 fusion arm. The remaining GNN, descriptor-fusion, and ChemBERTa arms are pending and must not be interpreted before their report JSONs pass audit.
+Completed Phase 2 results currently include phenotype-only baselines on k-fold, collision-group, and scaffold splits; ECFP4-linear and ECFP4-RF structure baselines; and a phenotype+ECFP4 fusion arm. The remaining GNN, descriptor-fusion, and ChemBERTa arms are pending in the current phase-2 artifact directory and must not be interpreted before their report JSONs pass audit.
 
 ## Manuscript boundary
 

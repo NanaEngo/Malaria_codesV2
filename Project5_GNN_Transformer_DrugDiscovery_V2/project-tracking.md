@@ -103,7 +103,7 @@ Under scaffold-separated evaluation of 19,836 antimalarial natural products, ECF
 
 ## Missing Inputs / Blockers
 
-Every canonical result is computed and ledgered. The external artifact label, bounded p-value fields, split metadata, and lightweight secondary robustness outputs are synchronized with their producers. The kNN and logistic ECFP4 controls are secondary and do not replace the canonical RF comparison. The extended GNN robustness campaign is complete and separately versioned. The extended ChemBERTa array 15490 is active with pinned local weights; no extended ChemBERTa metric is yet authorized. Remaining release checks are the ChemBERTa audit, Zenodo upload, final author metadata review, and creation of the tagged repository release.
+Every canonical result is computed and ledgered. The external artifact label, bounded p-value fields, split metadata, and lightweight secondary robustness outputs are synchronized with their producers. The kNN and logistic ECFP4 controls are secondary and do not replace the canonical RF comparison. The extended GNN robustness campaign is complete and separately versioned. The extended ChemBERTa array 15490 is complete as separately versioned secondary evidence: 125/125 records and prediction files passed the completion audit. Remaining release checks are Zenodo upload, final author metadata review, and creation of the tagged repository release.
 
 ---
 

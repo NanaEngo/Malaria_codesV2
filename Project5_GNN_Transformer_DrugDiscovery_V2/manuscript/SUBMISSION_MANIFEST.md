@@ -1,9 +1,10 @@
 # Submission Manifest — P5
 
-**Journal:** Journal of Cheminformatics (Springer)
-**Pages:** main 14 p. / cover 1 p. — no SM (none referenced), main count from `pdfinfo` (verified 25/08/2026)
-**Status:** Manuscript compiles clean; canonical and extended GNN analyses, external ChEMBL CHEMBL364 validation, fold-level AUPRC, descriptor ablations/permutations, salience-stability audit, split metadata, and chemical-standardization audit are synchronized. Extended ChemBERTa rerun is active under SLURM array 15490 and is not yet integrated. Remaining release checks: ChemBERTa audit, Zenodo deposit, and final author metadata review.
-**Generated:** 2026-08-26 UTC (title, abstract, introduction and cover-letter refinement; hashes pending refresh)
+**Journal:** Journal of Computer-Aided Molecular Design (JCAMD, Springer Nature)
+**Implementation audit:** `docs/P5V2_SUGGESTIONS_IMPLEMENTATION_MATRIX_20260827.md`; **JCAMD guideline audit:** `docs/JCIM_GUIDELINE_AUDIT_20260827.md`
+**Pages:** main 16 p. / SI 3 p. / cover 1 p. — main count from `pdfinfo` (verified 27/08/2026); SI holds the full LISH protocol, complete metric set, and control-sensitivity table (Section S1) plus the post-hoc calibration metrics table (Section S2: ECE/MCE/Brier, 30 configurations), both referenced from the main text
+**Status:** JCIM guideline audit completed locally; manuscript compiles clean; canonical and extended GNN analyses, molecule-disjoint ChEMBL CHEMBL364 transfer analysis, fold-level AUPRC, descriptor ablations/permutations, salience-stability audit, split metadata, chemical-standardization audit, and the extended ChemBERTa completion audit are synchronized. ChemBERTa is a separately versioned secondary analysis. Remaining release checks: final provenance/statistical review, Zenodo deposit, and final author metadata review. Acceptance-probability estimate (55 %, range 45–65 %) documented in `docs/P5V2_ACCEPTANCE_PROBABILITY_20260827.md`.
+**Generated:** 2026-08-27 UTC (title, abstract, introduction, cover-letter, and secondary-campaign audit synchronization; final hashes regenerated after compilation).
 
 ## File inventory (SHA-256)
 
@@ -12,10 +13,10 @@ artifacts present after the final lightweight-robustness update.
 
 | File | Size (B) | SHA-256 |
 |---|---|---|
-| P5_manuscript_V2608.tex | 45178 | `e66768f826c939c33c9fe4235874b5247c4c916b15cc91ecc04945e0e12f7a52` |
-| P5_manuscript_V2608.pdf | 857463 | `21b8bbbda5a6ecc73a7f6c3670468dac2f983173d0ed18b7ba966001d4e8e4b9` |
-| Cover_Letter_P5_JCAMD.tex | 3838 | `b60f092dbebd75e5b2abb4c5745877e9869a77660e8a76e5b899b4e3cbeb82d9` |
-| Cover_Letter_P5_JCAMD.pdf | 90120 | `ce0af0b47c5b515affcd9d68cd245d6cc16e2862d66769d5f964723c3a18aa48` |
+| P5_manuscript_V2608.tex | 44786 | `0a5744f2fa0fe8d0bf6bc3a79aba5347e20364396f0d80882bfa873058b4bf6f` |
+| P5_manuscript_V2608.pdf | 888704 | `e04ab59b10e9d7b1271d125a0688e2b0d7fb50e32a4124d2af5ed022f811d4f6` |
+| Cover_Letter_P5_JCAMD.tex | 4028 | `442310617707c16198addc8013e4411cb1739bf3b53deabfedbcf88e1b4d8a89` |
+| Cover_Letter_P5_JCAMD.pdf | 90084 | `98c43cf50c8123dcb6302b3be03cd6896c194e644c811cd8683419670b80fb39` |
 | Bibliography_P5.bib | 10640 | `ed095e4661616d1d4a1d9e9e6839446646844dc516526140b194256488459b72` |
 | scientific_audit_20260825.json | 77204 | `61d9869aedf76b0bda0017b3a4a6dba9f676bd3349f948cecb9fd5e50fa18b70` |
 
@@ -29,18 +30,19 @@ three moved.
 
 ## Notes
 
-- External transfer benchmark is the ChEMBL target CHEMBL364 (*P. falciparum*) IC50/EC50
+- External transfer analysis is the ChEMBL target CHEMBL364 (*P. falciparum*) IC50/EC50
   panel, molecule-disjoint from the canonical panel (n = 22,267). MoleculeNet was attempted
   and abandoned (S3 403, no working TDC loader) and contributes nothing to any reported
   result; earlier revisions of this manifest named it in error.
-- Independent replication verification PASS (Δmean −0.00014).
+- Independent ChemBERTa scaffold replication verification PASS (Δmean −0.00014); this is secondary evidence and not a new primary estimate.
 - JCAMD Declarations complete (Availability, Funding, Ethics, Use of AI).
 - References: 26 distinct cited references and 26 BibTeX entries; 0 orphan and 0 missing citations.
 - Secondary robustness artifacts are documented in `results/lightweight_robustness/README.md` and `results/extended_campaign_20260825/README.md`; they are not substituted for the canonical primary benchmark estimates.
-- No SM file needed — no supplementary references in main.
+- Supporting Information added 27/08/2026: `P5_SI_V2608.tex/.pdf` (3 pages) contains the full LISH phenotype-only protocol and results (Section S1) and the post-hoc calibration metrics (Section S2, Table S2: ECE/MCE/Brier for 25 GNN + 5 ChemBERTa configurations, pooled over 25 fold-seed records); the main text summarizes LISH and points to it (7 Section~S1 references) and cites the calibration table in the extensions paragraph (Section~S2).
+- 27/08/2026 refinement: new Discussion subsection "Position relative to recent representation benchmarks" isolates the fold-independent-initialization, topological-fusion, and external-corroboration contributions against Guo & Ding 2026, the 25-embedding benchmark, and Boldini 2024; abstract, contribution statement, and highlights now lead with the fold-independent transformer-initialization protocol.
 - Manuscript compile verified at the Generated timestamp: `latexmk -g -pdf
   -interaction=nonstopmode -halt-on-error` exit 0, no `^!` lines, 0 undefined references,
-  14 pages. `pdftotext | grep -c 'Bemis'` returns 4, so the scaffold reference resolved in
+  16 pages (main) + 2 pages (SI) after the 27/08/2026 LISH-to-SI refactor. `pdftotext | grep -c 'Bemis'` returns 4, so the scaffold reference resolved in
   the compiled output rather than only in the source.
 
 ## Extended campaign status
@@ -49,13 +51,15 @@ three moved.
 - 25/25 configurations complete; 625 fold--seed records validated; all records have finite AUC/AUPRC.
 - Three independent scaffold partitions, GNN descriptor permutations, fold-level AUPRC, and individual salience stability are now computed as secondary robustness analyses.
 - ChEMBL threshold sensitivity is `COMPUTED_RF_ONLY` for four prespecified specifications; no full GIN or ChemBERTa threshold rerun is claimed.
-- Extended ChemBERTa rerun: SLURM array `15490` submitted with pinned snapshot revision `761d6a18cf99db371e0b43baf3e2d21b3e865a20`; task 0 `RUNNING`, tasks 1–4 `PENDING`, no completed metric yet. No extended ChemBERTa result is authorized for manuscript interpretation until all five partitions pass the 25-record audit.
+- Extended ChemBERTa rerun: SLURM array `15490` with pinned snapshot revision `761d6a18cf99db371e0b43baf3e2d21b3e865a20`; all five partitions pass the 25-record audit (125/125 records and prediction files). Results remain separately versioned secondary evidence and do not replace canonical estimates.
+- Optional calibration/OOD analyses and new architecture or cluster-split experiments remain `NOT_COMPUTED` and outside the current submission scope.
 
 ## Open items (must close before submission)
 
 1. **Zenodo release:** upload the frozen package and verify the reserved DOI.
 2. **Author metadata:** confirm ORCID identifiers, affiliations, and final author approval.
-3. **External p-value:** the JSON preserves the rounded computational value in
+3. **JCIM portal checks:** confirm article type, required supplementary/graphical elements, and portal-specific formatting fields at submission.
+4. **External p-value:** the JSON preserves the rounded computational value in
    `paired_t_pvalue_rounded` and the reportable bound in `paired_t_pvalue_reporting`; the
    manuscript reports only the bounded form.
 
@@ -83,12 +87,12 @@ The following versioned artifacts are part of the scientific audit record and ar
 - `results/lightweight_robustness/p5_replication_stats_rederived.csv`
 - `results/lightweight_robustness/p5_replication_stats_rederived.json`
 
-— **Verified 25 August 2026** (checksums recomputed after scientific refinement and lightweight robustness analyses; extended ChemBERTa remains pending).
+— **Refreshed 27 August 2026** (checksums and completion audit refreshed after scientific refinement and lightweight robustness analyses; extended ChemBERTa complete as secondary evidence).
 
 
 ## Current package hashes
 
-The source was subsequently refined to present the molecular benchmark as primary, the LISH analysis as orthogonal, and robustness analyses separately from limitations. The final compilation and hashes must be regenerated after any further source edit.
+The source was subsequently refined to present the molecular benchmark as primary, the LISH analysis as orthogonal, and robustness analyses separately from limitations. The final compilation and hashes below were regenerated after the severe editorial review.
 
 - `P5_manuscript_V2608.tex` — `2b51211aff648c28a2a8993c573dd15fdcc33e01962cb985149028043df96aa2`
 - `P5_manuscript_V2608.pdf` — `5b411a3c65d77b5a5fa7d8407c335945d2a6efdb2b6065f0650c24d1f03a8300`

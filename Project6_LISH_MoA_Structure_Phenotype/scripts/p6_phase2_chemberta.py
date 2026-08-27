@@ -26,6 +26,8 @@ PROJ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJ / "scripts"))
 from p6_phase2_benchmark import DRUG_LEVEL, MAPPING, OUT_DIR, SEEDS, make_folds, metrics, scaffold_groups
 
+NUM_WORKERS = int(__import__('os').environ.get('P6_NUM_WORKERS', '2'))
+
 MODEL_NAME = "seyonec/ChemBERTa-zinc-base-v1"
 MAX_LENGTH = 128
 BATCH_SIZE = 32
@@ -102,13 +104,19 @@ def main(argv: list[str] | None = None) -> int:
                 problem_type="multi_label_classification",
             ).to(device)
             opt = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
+            amp_enabled = device.type == 'cuda'
+            scaler = torch.amp.GradScaler('cuda', enabled=amp_enabled)
 
             def predict(idx):
-                loader = DataLoader(SmilesDataset(idx), batch_size=BATCH_SIZE)
+                loader_kwargs = {'batch_size': BATCH_SIZE, 'num_workers': NUM_WORKERS,
+                                 'pin_memory': device.type == 'cuda'}
+                if NUM_WORKERS > 0:
+                    loader_kwargs.update(persistent_workers=True, prefetch_factor=2)
+                loader = DataLoader(SmilesDataset(idx), **loader_kwargs)
                 model.eval(); ps, ys = [], []
                 with torch.no_grad():
                     for b in loader:
-                        b = {k: v.to(device) for k, v in b.items()}
+                        b = {k: v.to(device, non_blocking=True) for k, v in b.items()}
                         logits = model(input_ids=b["input_ids"],
                                        attention_mask=b["attention_mask"]).logits
                         ps.append(torch.sigmoid(logits).cpu().numpy())
@@ -116,15 +124,22 @@ def main(argv: list[str] | None = None) -> int:
                 return np.concatenate(ps), np.concatenate(ys)
 
             best_ll, best_state, wait = float("inf"), None, 0
-            tr_loader = DataLoader(SmilesDataset(tr_i), batch_size=BATCH_SIZE, shuffle=True)
+            train_loader_kwargs = {'batch_size': BATCH_SIZE, 'shuffle': True,
+                                   'num_workers': NUM_WORKERS,
+                                   'pin_memory': device.type == 'cuda'}
+            if NUM_WORKERS > 0:
+                train_loader_kwargs.update(persistent_workers=True, prefetch_factor=2)
+            tr_loader = DataLoader(SmilesDataset(tr_i), **train_loader_kwargs)
             for _epoch in range(EPOCHS):
                 model.train()
                 for b in tr_loader:
-                    b = {k: v.to(device) for k, v in b.items()}
-                    opt.zero_grad()
-                    out = model(**b)
-                    out.loss.backward()
-                    opt.step()
+                    b = {k: v.to(device, non_blocking=True) for k, v in b.items()}
+                    opt.zero_grad(set_to_none=True)
+                    with torch.autocast(device_type='cuda', dtype=torch.float16, enabled=amp_enabled):
+                        out = model(**b)
+                    scaler.scale(out.loss).backward()
+                    scaler.step(opt)
+                    scaler.update()
                 vp, vy = predict(va_i)
                 va_ll = float(metrics(vy.astype(int), np.clip(vp, 1e-7, 1 - 1e-7))["mean_columnwise_log_loss"])
                 if va_ll < best_ll:

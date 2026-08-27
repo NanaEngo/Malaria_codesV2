@@ -29,6 +29,8 @@ PROJ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJ / "scripts"))
 from p6_phase2_benchmark import DRUG_LEVEL, MAPPING, OUT_DIR, SEEDS, make_folds, metrics, scaffold_groups
 
+NUM_WORKERS = int(__import__('os').environ.get('P6_NUM_WORKERS', '2'))
+
 P5_SCRIPTS = PROJ.parent / "Project5_GNN_Transformer_DrugDiscovery_V2" / "scripts"
 DESC_NPZ = OUT_DIR / "p6_tfp_tne_descriptors.npz"
 
@@ -93,8 +95,11 @@ def main(argv: list[str] | None = None) -> int:
         desc[bad] = 0.0
 
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
-    in_dim = int(next(g for g in graphs_u if g is not None)["x"].shape[1])
-    edge_dim = int(next(g for g in graphs_u if g is not None)["edge_attr"].shape[1])
+    # p5_data.mol_to_graph returns a 4-tuple (x, edge_index, edge_attr, num_atoms);
+    # unpack rather than dict-index it.
+    _x0, _ei0, _ea0, _ = next(g for g in graphs_u if g is not None)
+    in_dim = int(_x0.shape[1])
+    edge_dim = int(_ea0.shape[1])
 
     records = []
     for seed in SEEDS:
@@ -108,17 +113,20 @@ def main(argv: list[str] | None = None) -> int:
             def make(idx):
                 out = []
                 for i in idx:
-                    g = graphs_u[row2u[i]]
-                    d = Data(x=g["x"], edge_index=g["edge_index"], edge_attr=g["edge_attr"],
+                    x, edge_index, edge_attr, _ = graphs_u[row2u[i]]
+                    d = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
                              y=Y[i])
                     if desc is not None:
                         d.desc = torch.tensor(desc[i])
                     out.append(d)
                 return out
 
-            tr_loader = DataLoader(make(tr_i), batch_size=512, shuffle=True)
-            va_loader = DataLoader(make(va_i), batch_size=512)
-            te_loader = DataLoader(make(te_i), batch_size=512)
+            loader_kwargs = {'num_workers': NUM_WORKERS, 'pin_memory': device.type == 'cuda'}
+            if NUM_WORKERS > 0:
+                loader_kwargs.update(persistent_workers=True, prefetch_factor=2)
+            tr_loader = DataLoader(make(tr_i), batch_size=512, shuffle=True, **loader_kwargs)
+            va_loader = DataLoader(make(va_i), batch_size=512, **loader_kwargs)
+            te_loader = DataLoader(make(te_i), batch_size=512, **loader_kwargs)
 
             model = p5_models.build_model(
                 args.model, in_dim, hidden=128, out_dim=len(labels),
@@ -146,10 +154,11 @@ def main(argv: list[str] | None = None) -> int:
                 for b in tr_loader:
                     if b.num_graphs < 2:
                         continue
-                    b = b.to(device); opt.zero_grad()
-                    logits = model(b.x, b.edge_index, b.batch,
-                                   edge_attr=b.edge_attr, desc=getattr(b, "desc", None))
-                    loss = criterion(logits, b.y.view(b.num_graphs, -1))
+                    b = b.to(device, non_blocking=True); opt.zero_grad(set_to_none=True)
+                    with torch.autocast(device_type='cuda', dtype=torch.float16, enabled=device.type == 'cuda'):
+                        logits = model(b.x, b.edge_index, b.batch,
+                                       edge_attr=b.edge_attr, desc=getattr(b, "desc", None))
+                        loss = criterion(logits, b.y.view(b.num_graphs, -1))
                     loss.backward(); opt.step()
                 vp, vy = predict(va_loader)
                 va_ll = float(metrics(vy.astype(int), np.clip(vp, 1e-7, 1 - 1e-7))["mean_columnwise_log_loss"])

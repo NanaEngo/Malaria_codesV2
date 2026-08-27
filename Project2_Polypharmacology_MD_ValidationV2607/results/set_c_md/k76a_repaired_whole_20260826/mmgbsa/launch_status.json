@@ -1,0 +1,26 @@
+{
+  "system": "PP-01_PfCRT_K76A",
+  "status": "COMPUTED",
+  "trajectory": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/set_c_md/k76a_repaired_whole_20260826/production_whole_centered.xtc",
+  "trajectory_sha256": "c1182644f9f2a3d064d6ad000ee9c9b1659bd35345ef9e7f9ab4a331664a8747",
+  "topology_sha256": "ea0a574c6eb9ce9ce3f1ee0ecd60efd8f2de9a6cbd417960738150973edf9200",
+  "frames": "1-1000 interval 10",
+  "index_groups": {
+    "receptor": 1,
+    "ligand": 13
+  },
+  "method": "gmx_MMPBSA v1.5.0.3, GB OBC2 igb=5, saltcon=0.150",
+  "numerical_qc": {
+    "status": "PASS",
+    "reportable": true,
+    "threshold_kcal_mol": 100000.0,
+    "checked_rows": {
+      "complex": 100,
+      "receptor": 100,
+      "ligand": 100,
+      "delta": 100
+    },
+    "anomalous_sections": {}
+  },
+  "reportable": true
+}
