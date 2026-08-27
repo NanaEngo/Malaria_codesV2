@@ -63,3 +63,29 @@ Stop if any of these conditions fails. In particular, activity labels must not b
 The preparation phase is light CPU work. Docking is a moderate CPU/HPC task, approximately 140–350 ligand-state runs for 20–50 ligands across seven states, before failed or ineligible cases. MD is not required.
 
 No scheduler submission has been made. The plan requires an explicit author authorization after the panel and structure gates pass.
+
+## Execution and finalization (updated 27 August 2026)
+
+Array `15605` (40 tasks, `p2_external_docking_replication_production.sbatch`) is the
+authorized run. Two ligand-preparation failures are recorded: **EXT-008** (RDKit 3D
+embedding failed at seed 42) and **EXT-019** (SMILES carries a `.Cl` counterion → 2
+fragments rejected by Meeko). Neither is a docking failure; both are repaired under a
+declared-repair ledger (`p2_external_docking_repair.sh` →
+`external_docking_repair_ledger.json`), leaving the frozen panel CSV untouched.
+
+**Finalization chain (fail-closed, `p2_external_docking_finalize.sh`):**
+
+1. Wait for array `15605` to leave the queue.
+2. `p2_external_docking_repair.sh` — re-dock the 16 repaired states (EXT-008/EXT-019)
+   and write the provenance ledger.
+3. `p2_external_docking_integrity_audit.py` — 320/320 records with finite Vina
+   scores → `PASS_READY_FOR_AGGREGATION`, else abort (no aggregation).
+4. `p2_external_docking_aggregate.py` — `external_docking_scores.csv`
+   (320 records + sha256) → `READY_FOR_RRS_POSTPROCESSING`.
+5. `p2_external_docking_rrs.py` — frozen RRS estimand
+   (|S_mutant,t|/|S_WT,t| × 100; WT non-binders < 5.0 kcal/mol excluded per target;
+   per-mutant mean across binding targets; canonical dual-criterion classes) →
+   `external_docking_rrs_20260827.csv/.json`.
+
+Outputs are docking-derived replication evidence only; they are not experimental
+validation and not an MD estimate.
