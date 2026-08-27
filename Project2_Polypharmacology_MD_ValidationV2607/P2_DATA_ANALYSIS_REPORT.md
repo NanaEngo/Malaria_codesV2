@@ -1,7 +1,7 @@
 # P2 Data Analysis Report — active summary
 
 **Scope:** Resistance-aware polypharmacology of antimalarial leads (docking-RRS, PNS, ACSI, targeted MD, MM-GBSA, Set-C MD pilot).
-**Updated:** 26 August 2026 (title, abstract, introduction and cover-letter refinement)
+**Updated:** 27 August 2026 (P2Rank box audit + ProLIF interaction-fingerprint analysis)
 **Root:** `Project2_Polypharmacology_MD_ValidationV2607/`
 
 ## 1. Central question
@@ -125,7 +125,49 @@ Summary: `results/set_c_md/mmgbsa_summary_pilot.csv` + `mmgbsa_manifest.json` �
 - PfCRT reconstruction is a technical/stability witness: no production on the repaired model beyond 1 ns equilibration, no binding/affinity/RRS.
 - The study is computational; experimental activity and resistance claims are not made.
 
-## 8. Manuscript status (26 Aug)
+## 8. Lightweight robustness and transfer audit (27 Aug 2026)
+
+### Companion P1 context
+
+P1 V7 was audited as an upstream companion source. Its redocking, DEKOIS/MMV enrichment, physicochemical, chemical-space, scaffold, and MPO-sensitivity outputs are usable in P2 only as methodological or chemical-space context. A cohort audit confirmed exact identity for all 17 PP-01--PP-17 SMILES; the overlap and shared workflow provenance preclude independent-replication claims. The source files, hashes, and permitted-use boundary are recorded in `results/robustness_transfer_20260827/external_transfer_audit.json` and `p1_p2_cohort_audit.json`; the boundary is summarized in SI Table S16.
+
+
+A bounded post-processing audit was completed without new docking, MD, MM-GBSA, network extraction, or external data retrieval. Script: `scripts/p2_robustness_transfer_audit.py`; seed `20260827`; outputs: `results/robustness_transfer_20260827/`.
+
+- Leave-one-candidate-out analysis on the complete two-target set (`n=12`) produced 12 records. PNS--RRS Spearman $\rho$ ranged from $-0.3182$ to $0.0273; ACSI--RRS ranged from $-0.7636$ to $-0.3182$; RRS versus weakest eligible WT anchor ranged from $-0.2805$ to $0.0876$. These are post-selection sensitivity diagnostics, not confirmatory tests.
+- Target-stratified correlations were PfDHFR PNS--RRS $\rho=-0.3497$ (`n=12`) and PfCRT PNS--RRS $\rho=-0.0417$ (`n=17`), demonstrating that target-specific patterns should not be substituted for the pooled estimand.
+- Bounded $\pm\qty{1}{\kcalmol}$ perturbations of individual docking scores generated 272 candidate--score records; the RRS class was unchanged in 212/272 (`\qty{77.9}{\percent}`). Stability was higher for a negative perturbation (`\qty{88.2}{\percent}`) than for a positive perturbation (`\qty{67.6}{\percent}`), and WT-score perturbation was more influential than most mutant-score perturbations. This documents operational threshold sensitivity rather than score uncertainty or biological resilience.
+- The existing threshold-sensitivity output was copied into the versioned audit directory without recomputation. The related P5 ChEMBL artifacts were hash-audited as `RELATED_PROJECT_EXTERNAL_ARTIFACT`. A feasibility audit found that the local ChEMBL panel contains general *P. falciparum* activity labels but no paired PfDHFR/PfCRT WT--mutant scores or measurements; therefore an independent external P2-RRS replication is `NOT_COMPUTED` and cannot be derived from these artifacts. The panel remains usable only as related-project activity-transfer evidence, not as validation of P2 RRS or experimental biology. Details: `results/robustness_transfer_20260827/step1_external_rRS_feasibility.md`. A conditional targeted docking replication plan is frozen in `results/robustness_transfer_20260827/targeted_external_docking_replication_plan.md` and `.json`; no run has been submitted.
+
+## 8bis. Independent pocket and interaction audits (27 Aug 2026) — post-processing only
+
+Two post-processing audits were run without new MD or docking; both are exploratory boundary evidence and change no canonical score, RRS classification, or manuscript claim.
+
+### P2Rank binding-pocket audit — `results/p2rank_boxes_20260827/`
+
+P2Rank 2.5.1 (JDK 17 via `conda env jdk17`; Java 8 system JRE is too old for class-61 bytecode) predicted ligandable pockets on the four P2 receptors. Grid boxes came from `data/from_project1/docking/Docking_*/config.txt`.
+
+- **PfCRT (6UKJ):** the top P2Rank pocket (score 162.7, probability 0.999 — far the most ligandable site, >5x the runner-up) lies **5.7 Å** from the Vina box center: independent corroboration of the docking box.
+- **PfDHFR (7F3Y):** top pockets 25–40 Å from the box center; a receptor-frame caveat applies (the P1 `config.txt` may derive from a different preparation than `receptor_fixed.pdb`), so this is a provenance flag, not a refutation.
+- **PfATP4 (9N10):** top pockets 23–46 Å from the box center; the input frame matches the docking PDBQT, so the separation warrants a manual recheck of the 9N10 pocket definition.
+- **PfClpP (2F6I):** low scores (5–6) and probabilities (0.23–0.30); no P2 Vina grid exists for 2F6I (ClpP docking ran in P1 V4/V7), so this is a frame-independent report only.
+
+Status: `COMPUTED_EXPLORATORY_BOUNDARY_AUDIT`. Details: `results/p2rank_boxes_20260827/README.md`.
+
+### ProLIF interaction-fingerprint occupancy — `results/prolif_ifp_20260827/` (COMPLETE 16/16)
+
+ProLIF 2.2.1 (`pip install prolif` in `malaria_md`; v2 API: `generate()` on the current trajectory frame, interaction names `HBDonor`/`HBAcceptor`/`VdWContact`, `ResidueId.name/.number/.chain`) computes ligand-protein interaction occupancy on the 16 QC-PASS pilot trajectories (100-frame subsample, ~10 min/system).
+
+- Script: `scripts/p2_prolif_ifp_pilot.py`; per-system `ifp_<system>.csv` + `prolif_summary.json` + `README.md`.
+- **All 16/16 systems computed**, each with 4–11 contacts at ≥ 50 % occupancy, most at 100 %; no system shows contact loss. Descriptive highlights: PfCRT TYR16 at 100 % occupancy in 5/6 PfCRT systems (conserved aromatic site residue); PfDHFR LEU46/MET55 recur across PP-01 states, LEU40/ILE14 across PP-02 states.
+
+Status: `COMPUTED_SECONDARY_POST_PROCESSING`. These are descriptive trajectory-interaction occupancies that corroborate the retention-not-gain reading of the MD-RRS/MM-GBSA pilot (ligand stays in contact with conserved binding-site residues); they are not binding affinities, free energies, or biological resistance evidence, and no canonical value or manuscript claim is modified.
+
+## 9. Manuscript status (26 Aug)
+
+**Current release status:** `READING_FINAL_AUTHOR`. The primary Set-C docking analysis, the separate parent-study MD cohort, and the bounded Set-C MD pilot have completed their declared production and QC gates. The optional witness job `15507_[0]` is not a prerequisite for the manuscript and remains non-blocking. K76A MM-GBSA remains `FAILED_NUMERICAL_QC` and is excluded from reportable endpoint claims.
+
+**K76A MM-GBSA diagnostic note (26 August 2026):** The K76A trajectory passed the MD trajectory-QC gate, but the MM-GBSA calculation failed during receptor minimization with a `BOND overflow` on 2 of 100 analyzed frames. A retry using PBC-whole handling did not resolve the failure. No partial endpoint, mean, or comparative K76A MM-GBSA claim is reportable. This is recorded as a numerical-analysis failure, not as evidence of physical instability or biological resistance. A diagnostic investigation is planned for 27 August 2026; possible remediation paths will be evaluated against the frozen QC contract and any new output will require independent re-audit before promotion.
 
 - **Manuscript**: `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` (main) + `_SM_V2607.tex` (SI). Target: JCIM (ACS).
 - **Scientific-article refinement:** the title, abstract and Introduction now foreground docking-derived RRS as the primary estimand; ACSI/PNS and MD are presented as secondary analyses. The Discussion separates primary inference, robustness and limitations. This is an editorial refinement only; no numerical result or analysis population was changed.
@@ -159,9 +201,9 @@ Summary: `results/set_c_md/mmgbsa_summary_pilot.csv` + `mmgbsa_manifest.json` �
 
 - **All 16 production runs complete** (job array 15320); post-production chain COMPLETE at 2026-08-18T21:29:54Z (`results/set_c_md/post_production_manifest_pilot.json`, schema v3; QC exit code 0, MD-RRS exit code 0).
 - **MD-RRS status:** `COMPUTED_WITH_COHORT_CONTRACT` (`md_rrs_pilot_PP01_PP02.csv` + provenance.json; rule `setc_p2_minheavy_5A_ge10percent_v1`, trajectory_count = 8).
-- **MM-GBSA Set-C:** `MMGBSA_COMPUTED` 16/16 (`mmgbsa_summary_pilot.csv`, regenerated 2026-08-19 after PBC-fixed reruns; manifest `mmgbsa_manifest.json`).
+- **MM-GBSA Set-C:** the historical summary contains 16/16 finite endpoint rows (`mmgbsa_summary_pilot.csv`, regenerated 2026-08-19; manifest `mmgbsa_manifest.json`), but this does not make every row reportable. The later PP-01 PfCRT K76A replicate-1 diagnostic failed numerical QC (`BOND overflow`), and the K76A endpoint is excluded from reportable claims pending a corrected analysis.
 - **Pilot MD-RRS coverage:** the pilot MD-RRS covers **PP-01 and PP-02 only**, both classified **Class A over PfCRT;PfDHFR** under rule `setc_p2_minheavy_5A_ge10percent_v1` (`trajectory_count = 8`, i.e. both compounds × four mutant trajectories each). The full-panel 17 × 8 = 136-row MD-RRS remains `NOT_COMPUTED` by design.
-- **MM-GBSA table composition:** the 16 rows comprise **12 mutant systems plus 4 WT baselines**; **eight of the twelve mutant ratios exceed 100 %** (PP-01 PfCRT K76A 115.3, PfDHFR C59R 105.0 / I164L 103.3 / N51I 118.0 / S108N 119.5; PP-02 PfCRT K76T 121.4, PfDHFR I164L 103.0 / N51I 112.8). Within the ±1 kcal/mol endpoint-method noise floor these are interpreted as **retention of binding, not gain** (same convention as the docking RRS caveat).
+- **MM-GBSA table composition:** the historical 16-row summary comprises **12 mutant systems plus 4 WT baselines**; finite output is not equivalent to numerical validity. The PP-01 PfCRT K76A row is specifically excluded from current reportable endpoint claims because the independent replicate-1 diagnostic failed numerical QC. The remaining historical rows are interpreted, where retained, within the endpoint-method noise floor as **retention of binding, not gain** (same convention as the docking RRS caveat).
 - **R2 traceability (replicate expectation):** the single-replicate pilot cannot establish replicate consistency or convergence; manuscript Limitations now require *replicated simulations of at least one pillar system (the PP-01 wild type)* before MM-GBSA-derived resilience statements enter routine use (pass 4bis, 24 Aug 2026).
 
 ### Traçabilité des mitigations R1–R10 (audit adversarial du 24 août 2026)

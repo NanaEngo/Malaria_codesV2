@@ -1,0 +1,113 @@
+% P5 Supporting Information — target: Journal of Computer-Aided Molecular Design (JCAMD) (Springer Nature)
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{siunitx}
+\sisetup{
+ detect-all          = true,
+ group-minimum-digits = 4,
+ range-phrase        = {--},
+ range-units         = single,
+ separate-uncertainty = true,
+}
+
+\title{Supporting Information}
+
+\author{Myke Vital Sao Temgoua \and Jean-Pierre Tchapet Njafa \and Serge Guy Nana Engo \and Penabei Samafou \and Wilfred Fon Mbacham}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Orthogonal LISH mechanism-of-action benchmark}
+
+\label{sec:lish_si}
+
+This section provides the complete protocol and results of the phenotype-only LISH benchmark that is summarized in the main text. It is an orthogonal pharmacological reference, not a validation of the molecular representations studied in the main benchmark.
+
+\subsection{Data and preparation}
+
+We used the public LISH MoA training release as a separate, phenotype-only benchmark; the public challenge repository is available at \url{https://github.com/LISHarvard/moa_challenge} (accessed 12 August 2026). The preparation retained \num{772} gene-expression features, \num{100} cell-viability features, and \num{3} experimental-condition summary columns (exposure time, high-dose fraction, treatment-type fraction), and aggregated repeated assay observations to the drug level.
+
+The scored endpoint comprised \num{206} MoA labels for \num{3289} drugs; labels were defined at the drug level from observed MoA-associated annotations. Because the public release used here did not contain a versioned drug--SMILES mapping, the benchmark was not used to train or evaluate molecular fingerprints, GNNs, or transformers. A prespecified sensitivity analysis excluded vehicle-control samples, yielding \num{3288} drugs. All fold records were audited for missing or non-finite metrics before interpretation. The endpoint is described as MoA-associated prediction because it does not establish causal target engagement \citep{Trapotsi2022MoA}.
+
+\subsection{Protocol}
+
+We fitted an unweighted per-label logistic model independently for each of the \num{206} labels, evaluated with five random seeds and five drug-grouped folds, and reported mean column-wise log loss as the primary metric with macro-AUPRC, macro-AUROC, mean Brier score, and expected calibration error as secondary metrics.
+
+\subsection{Results}
+
+\label{sec:lish_si_results}
+
+With vehicle controls retained, the phenotype-only baseline achieved the metrics reported in Table~\ref{tab:lish_metrics} across \num{25} fold--seed evaluations. Removing vehicle controls changed macro-AUROC by only $-\num{0.0018}$, and the other metrics moved by less than \num{0.002} in absolute value, indicating that the phenotype-driven baseline is robust to control exclusion.
+
+\begin{table}[h]
+\centering
+\caption{Phenotype-only LISH baseline metrics, mean across \num{25} fold--seed evaluations (five seeds $\times$ five drug-grouped folds).}
+\label{tab:lish_metrics}
+\begin{tabular}{lccc}
+\toprule
+Metric & With controls & Without controls & $\Delta$ \\
+\midrule
+Mean column-wise log loss & \num{0.02378} & \num{0.02389} & $+\num{0.00011}$ \\
+Macro-AUROC & \num{0.6435} & \num{0.6417} & $-\num{0.00177}$ \\
+Macro-AUPRC & \num{0.1428} & \num{0.1412} & $-\num{0.00152}$ \\
+Mean Brier score & \num{0.00374} & \num{0.00375} & $+\num{0.00001}$ \\
+Expected calibration error & \num{0.00376} & \num{0.00381} & $+\num{0.00005}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Interpretation boundary}
+
+These metrics summarize the phenotype-only reference; they are \textbf{not numerically comparable} with the molecular ROC-AUC results of the main manuscript because the task, labels, features, aggregation unit, and primary metric differ. The labels indicate MoA-associated prediction rather than causal target engagement. The LISH analysis therefore serves as an orthogonal pharmacological reference and control-sensitivity analysis, not as a molecular-model validation or evidence of causal mechanism.
+
+\section{Post-hoc calibration metrics for the molecular benchmark}
+\label{sec:calibration_si}
+
+Calibration metrics were computed post-hoc from the archived fold-level test predictions of the extended campaign (five seeds $\times$ five folds per configuration; \num{99180} pooled test records per configuration). No model was retrained; the estimates therefore describe the calibration of the deployed checkpoints, pooled over seeds and folds, and are reported as a pooled-calibration estimand. Expected calibration error (ECE) and maximum calibration error (MCE) use \num{10} equal-width bins; the Brier score is the mean squared error between predicted probability and label.
+
+\begin{table}[h]
+\centering
+\caption{Post-hoc calibration metrics (pooled over \num{25} fold--seed evaluations per configuration). ECE and MCE rise from the random split to the scaffold and novel-partition splits for every model family, indicating that confidence degrades under scaffold shift even when ranking (ROC-AUC) is only moderately affected.}
+\label{tab:s2_calibration}
+\small
+\begin{tabular}{l l S[table-format=1.4] S[table-format=1.4] S[table-format=1.5]}
+\toprule
+Split & Model & {ECE} & {MCE} & {Brier} \\
+\midrule
+\multirow{4}{*}{Canonical random} & GIN & 0.0290 & 0.0699 & 0.10255 \\
+ & GIN-TFP (native) & 0.0344 & 0.0716 & 0.10524 \\
+ & GIN-TNE (native) & 0.0367 & 0.0936 & 0.11286 \\
+ & ChemBERTa & 0.0578 & 0.1440 & 0.10466 \\
+\midrule
+\multirow{4}{*}{Canonical scaffold} & GIN & 0.0654 & 0.1623 & 0.14859 \\
+ & GIN-TFP (native) & 0.0741 & 0.1754 & 0.14769 \\
+ & GIN-TNE (native) & 0.0807 & 0.1946 & 0.15108 \\
+ & ChemBERTa & 0.1225 & 0.2546 & 0.16909 \\
+\midrule
+\multirow{4}{*}{Novel partitions (range)} & GIN & {0.0777--0.0888} & {0.1814--0.1854} & {0.15359--0.15919} \\
+ & GIN-TFP (native) & {0.0741--0.0895} & {0.1737--0.1890} & {0.14922--0.15564} \\
+ & GIN-TNE (native) & {0.0798--0.0820} & {0.1813--0.2078} & {0.15305--0.15539} \\
+ & ChemBERTa & {0.1172--0.1320} & {0.2401--0.2715} & {0.16699--0.17508} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The degradation is consistent across families: ECE roughly doubles from the random split to the scaffold split and widens further on the novel partitions, and ChemBERTa --- the arm with the largest ROC-AUC fold-level spread --- also shows the largest calibration error under scaffold shift. These estimates are secondary robustness evidence; they do not alter the canonical ROC-AUC results and are not presented as calibrated probabilities for prospective use. Reliability-diagram JSON per configuration and the machine-readable summary are archived in \texttt{results/calibration\_20260827/}.
+
+\bibliographystyle{unsrtnat}
+\bibliography{Bibliography_P5}
+
+\end{document}

@@ -130,14 +130,20 @@ class P5Benchmark:
     def __init__(self, model_name: str, split_type: str = "random",
                  device: str = "auto", dry_run: bool = False,
                  ckpt_path: Path | None = None, curves_only: bool = False,
-                 epochs: int = EPOCHS, tag: str = ""):
+                 epochs: int = EPOCHS, tag: str = "",
+                 hidden: int = HIDDEN, dropout: float = DROPOUT):
         self.model_name = model_name
         self.split_type = split_type
         self.device = get_device(device)
         self.dry_run = dry_run
-        # ``tag`` (e.g. "_replic") suffixes every output file so replication
-        # runs never overwrite canonical results.
+        # ``tag`` (e.g. "_replic", "_sens_h64_d02") suffixes every output file
+        # so replication/sensitivity runs never overwrite canonical results.
         self.tag = tag
+        # Sensitivity knobs (Levier 3): hidden width and dropout are surfaced
+        # as CLI options so hyperparameter sensitivity runs stay comparable
+        # with the canonical HIDDEN=128/DROPOUT=0.1 benchmark.
+        self.hidden = hidden
+        self.dropout = dropout
         self.ckpt_path = ckpt_path or (P5_ROOT / "results" / f"p5_{model_name}_{split_type}_ckpt{tag}.json")
         self.curves_only = curves_only
         if epochs < 1:
@@ -240,8 +246,8 @@ class P5Benchmark:
         te_loader = DataLoader(te_data, batch_size=BATCH_SIZE)
 
         model = p5_models.build_model(
-            self.model_name, self.in_dim, hidden=HIDDEN, edge_dim=self.edge_dim,
-            n_descriptor_features=self.n_desc, dropout=DROPOUT
+            self.model_name, self.in_dim, hidden=self.hidden, edge_dim=self.edge_dim,
+            n_descriptor_features=self.n_desc, dropout=self.dropout
         ).to(self.device)
 
         opt = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
@@ -312,7 +318,7 @@ class P5Benchmark:
         salience = None
         if self.desc is not None:
             w = best_state["head.0.weight"]  # [hidden, hidden+n_desc]
-            salience = w[:, HIDDEN:].abs().mean(dim=0).numpy()  # [n_desc]
+            salience = w[:, self.hidden:].abs().mean(dim=0).numpy()  # [n_desc]
         return float(te_auc), float(te_ap), float(te_f1), float(te_bacc), salience, curve
 
     def run(self) -> list[dict]:
@@ -378,6 +384,10 @@ def main():
     ap.add_argument("--curves-only", action="store_true")
     ap.add_argument("--tag", default="",
                     help="Output suffix (e.g. '_replic'); canonical files untouched when empty")
+    ap.add_argument("--hidden", type=int, default=HIDDEN,
+                    help="Hidden width for sensitivity runs (canonical: 128)")
+    ap.add_argument("--dropout", type=float, default=DROPOUT,
+                    help="Dropout for sensitivity runs (canonical: 0.1)")
     args = ap.parse_args()
 
     bench = P5Benchmark(
@@ -388,6 +398,8 @@ def main():
         curves_only=args.curves_only,
         epochs=args.epochs,
         tag=args.tag,
+        hidden=args.hidden,
+        dropout=args.dropout,
     )
     results = bench.run()
 

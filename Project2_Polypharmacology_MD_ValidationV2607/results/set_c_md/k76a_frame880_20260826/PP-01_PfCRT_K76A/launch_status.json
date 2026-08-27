@@ -1,0 +1,27 @@
+{
+  "system": "PP-01_PfCRT_K76A",
+  "launched_utc": "2026-08-26T18:11:21.365736+00:00",
+  "out_dir": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/set_c_md/k76a_frame880_20260826/PP-01_PfCRT_K76A",
+  "replicate": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c_preparation_20260812_v1/PP-01_PfCRT_K76A/runs/20260825T063226Z/replicate_1",
+  "index_groups": {
+    "receptor": 1,
+    "ligand": 13
+  },
+  "input": "&general\n  sys_name=\"PP-01_PfCRT_K76A\"\n  startframe=1\n  endframe=880\n  interval=10\n  keep_files=0\n/\n&gb\n  igb=5\n  saltcon=0.150\n/\n",
+  "protocol": "identical to scripts/p2_setc_mmgbsa_batch.py (gmx_MMPBSA v1.5, GB OBC2 igb=5, saltcon 0.15 M, frames 1-880 interval 10); declared additive deviation: -eo per-frame energy CSV for convergence analysis",
+  "exit_code": 0,
+  "validation_exit_code": 1,
+  "finished_utc": "2026-08-26T18:29:12.976191+00:00",
+  "status": "FAILED_NUMERICAL_QC",
+  "reportable": false,
+  "numerical_qc": {
+    "status": "FAILED_NUMERICAL_QC",
+    "reportable": false,
+    "threshold_kcal_mol": 100000.0,
+    "checked_rows": {"complex": 88, "receptor": 88, "ligand": 88, "delta": 88},
+    "anomalous_sections": {
+      "complex": {"count": 11, "frames": [771, 781, 791, 801, 811, 821, 831, 841, 851, 861, 871], "max_abs_bond": 89500932.11, "max_abs_ub": 4519006.76},
+      "receptor": {"count": 11, "frames": [771, 781, 791, 801, 811, 821, 831, 841, 851, 861, 871], "max_abs_bond": 89500922.34, "max_abs_ub": 4519006.76}
+    }
+  }
+}

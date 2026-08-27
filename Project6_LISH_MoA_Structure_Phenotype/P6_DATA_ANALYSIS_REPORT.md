@@ -1,7 +1,7 @@
 # Project 6 Data Analysis Report — LISH-MoA structure–phenotype follow-up
 
 **Version:** 0.2
-**Updated:** 26 August 2026
+**Updated:** 27 August 2026
 **Status:** Phase 1 mapping validated; Phase 2 benchmark in progress
 **Scope:** Project 6 only; it does not modify P5 canonical results.
 
@@ -9,7 +9,7 @@
 
 `PHASE1_MAPPING_VALIDATED_20260825_PHASE2_BOUNDED_20260826`
 
-The initial LISH-MoA artifact was phenotype-only. A versioned `drug_id → SMILES` mapping has now been constructed from PRISM-aligned records, validated with RDKit, and frozen before Phase 2 modelling. Molecular results are reported only for completed arms and under the collision-group primary split; incomplete GNN/transformer arms remain pending.
+The initial LISH-MoA artifact was phenotype-only. A versioned `drug_id → SMILES` mapping has now been constructed from PRISM-aligned records, validated with RDKit, and frozen before Phase 2 modelling. Molecular results are reported only for completed arms and under the collision-group primary split; incomplete GNN/transformer arms remain pending. The implementation coverage audit (`docs/IMPLEMENTATION_COVERAGE_AUDIT_20260827.md`) confirms that mapping, collision handling, fold metrics, and calibration-ready summary metrics are implemented; dedicated per-label calibration plots remain `NOT_COMPUTED`.
 
 ## 2. Locked phenotype reference
 
@@ -118,7 +118,7 @@ Findings so far:
 2. Leakage-corrected splits cost ~2 % relative log loss for the phenotype arm; the honest-split numbers become the reference for all structure comparisons.
 3. Structure-only linear arm is near chance under the honest split — consistent with the literature expectation that linear ECFP4 carries little MoA signal.
 4. Structure-only **RF** arms remain near chance under both honest splits (AUROC 0.5356 collision_group / 0.5382 scaffold; job 15496 tasks 0–1, completed 26 Aug).
-5. The **fusion arm does not beat the phenotype baseline**: AUROC 0.58323 < 0.63619 and log loss 0.030516 worse than either single-block arm (job 15496 task 2, completed 26 Aug). No structure gain is demonstrated at Phase 2; this is recorded as an interim honest-negative, pending the remaining molecular arms.
+5. The **fusion arm does not beat the phenotype baseline**: AUROC 0.58323 < 0.63619 and log loss 0.030516 worse than either single-block arm (job 15496 task 2, completed 26 Aug). No structure gain is demonstrated by the currently audited Phase 2 arms; this is recorded as an interim honest-negative while the remaining molecular-arm outputs are independently audited.
 6. Environment check (26 Aug): torch stack already present in `malaria_md` — torch 2.13.0+cu130 (CUDA available), torch-geometric 2.8.0.post1, transformers 5.14.1, i.e. exactly the locked P5 versions; the earlier "pending torch install" blocker is lifted without any installation.
 
 ### 4.4 Remaining molecular arms — GNN / GIN-TFP / GIN-TNE / ChemBERTa (SUBMITTED 2026-08-26)

@@ -124,5 +124,9 @@ SEED=$((12345 + SLURM_ARRAY_TASK_ID * 1000))
 printf '%s\n' "system=$SYS" "seed=$SEED" "target_ns=2" "status=STARTED_REQUIRES_QC" > "$RUN/launch_context.txt"
 cd "$RUN"
 gmx_mpi grompp -f short.mdp -c npt.gro -r npt.gro -t npt.cpt -p topol.top -o short.tpr
+if [[ "${P2_SHORT_MD_WITNESS_ONLY:-0}" == "1" ]]; then
+  printf '%s\n' "status=WITNESS_GROMPP_PASS" "md_rrs_status=NOT_COMPUTED" >> launch_context.txt
+  exit 0
+fi
 gmx_mpi mdrun -deffnm short -ntomp 8 -nb gpu -pme gpu -bonded cpu -update cpu
 printf '%s\n' "status=COMPLETED_REQUIRES_TRAJECTORY_QC" "md_rrs_status=NOT_COMPUTED" >> launch_context.txt

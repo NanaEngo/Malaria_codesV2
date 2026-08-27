@@ -1,0 +1,18 @@
+% Table S15: Robustness and transfer audit
+\begin{table}[htbp]
+\centering
+\scriptsize
+\caption{Lightweight robustness and transfer audits for the selected Set-C cohort. These post-selection diagnostics assess sensitivity of the computational ranking and class definitions; they do not establish biochemical affinity, biological resistance, target engagement, or mechanism of action.}
+\label{tab:s15_robustness_transfer}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.23\textwidth} >{\raggedright\arraybackslash}p{0.27\textwidth} X}
+\toprule
+Audit & Result & Interpretation boundary \\
+\midrule
+Leave-one-candidate-out & Complete two-target $n=12$; PNS--RRS $\rho$ ranged from $-0.3182$ to $0.0273$; ACSI--RRS $\rho$ ranged from $-0.7636$ to $-0.3182$ & Rank associations are sensitive to candidate removal and remain exploratory \\
+Target-stratified correlations & PfDHFR: PNS--RRS $\rho=-0.3497$; PfCRT: $\rho=-0.0417$ & Target-specific patterns are not interchangeable with the pooled estimand \\
+Score perturbation & $\pm\qty{1}{\kcalmol}$ perturbations generated 272 candidate--score records; class unchanged in 212/272 ($\qty{77.9}{\percent}$) & Operational RRS classes show threshold sensitivity, especially to WT-score perturbation \\
+Threshold sensitivity & Existing prespecified threshold-grid artifact retained and hashed in the audit manifest & Thresholds are triage rules, not experimentally calibrated categories \\
+Related ChEMBL transfer & P5 public ChEMBL artifacts were hash-audited; no P2-specific external panel was available & Related-project transfer evidence is not an independent P2 replication or experimental validation \\
+\bottomrule
+\end{tabularx}
+\end{table}

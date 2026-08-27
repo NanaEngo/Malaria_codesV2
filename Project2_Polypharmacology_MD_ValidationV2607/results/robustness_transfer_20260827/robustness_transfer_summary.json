@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "status": "COMPUTED_SECONDARY_ROBUSTNESS",
+  "seed": 20260827,
+  "inputs": {
+    "c_rrs_classification.csv": {
+      "path": "results/c_rrs_classification.csv",
+      "sha256": "9ef22d0cf8c4ae920c5aa2330cef42f7e44d7e88a3a60783ca876be3ef2e089c"
+    },
+    "c_pns_ranking.csv": {
+      "path": "results/c_pns_ranking.csv",
+      "sha256": "70fe7da581c16e05ce3ac47c95f77936ee5e4d499fdf5a6c1af6e0f241d6a18d"
+    },
+    "c_acsi_scores.csv": {
+      "path": "results/c_acsi_scores.csv",
+      "sha256": "32f42a2ca60e20739a5577a2db01e918d429bba7c11795d3a37de1f3d9504261"
+    }
+  },
+  "analyses": {
+    "leave_one_candidate_out": {
+      "n_candidates": 12,
+      "records": 12
+    },
+    "score_perturbation": {
+      "deltas_kcal_mol": [
+        -1.0,
+        1.0
+      ],
+      "records": 272
+    },
+    "target_stratified": {
+      "targets": [
+        "PfDHFR",
+        "PfCRT"
+      ]
+    },
+    "rrs_threshold_sensitivity": "COMPUTED_EXISTING_ARTIFACT",
+    "external_transfer": "COMPUTED_EXTERNAL_TRANSFER_AUDIT"
+  },
+  "boundary": "All outputs are secondary, post-selection diagnostics. No output establishes biochemical affinity, biological resistance, target engagement, or mechanism of action."
+}

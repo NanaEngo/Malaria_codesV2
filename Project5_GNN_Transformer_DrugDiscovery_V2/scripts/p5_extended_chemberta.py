@@ -35,6 +35,7 @@ SEEDS = [0, 1, 2, 3, 4]
 N_FOLDS = 5
 MAX_LENGTH = 128
 BATCH_SIZE = 32
+NUM_WORKERS = int(os.environ.get("P5_NUM_WORKERS", "2"))
 EPOCHS = 10
 LR = 2e-5
 WEIGHT_DECAY = 0.01
@@ -65,16 +66,38 @@ def set_seed(seed: int) -> None:
 
 class SmileDataset(Dataset):
     def __init__(self, smiles, labels, tokenizer):
-        self.smiles = list(smiles)
-        self.labels = np.asarray(labels, dtype=np.int64)
-        self.tokenizer = tokenizer
+        # Tokenize once per fold instead of invoking the tokenizer for every
+        # sample access. This preserves the frozen tokenizer and max length.
+        enc = tokenizer(list(smiles), truncation=True, padding="max_length",
+                        max_length=MAX_LENGTH, return_tensors="pt")
+        self.input_ids = enc["input_ids"]
+        self.attention_mask = enc["attention_mask"]
+        self.labels = torch.as_tensor(np.asarray(labels, dtype=np.int64), dtype=torch.long)
 
     def __len__(self):
-        return len(self.smiles)
+        return len(self.labels)
 
     def __getitem__(self, i):
-        enc = self.tokenizer(self.smiles[i], truncation=True, padding="max_length", max_length=MAX_LENGTH, return_tensors="pt")
-        return {"input_ids": enc["input_ids"].flatten(), "attention_mask": enc["attention_mask"].flatten(), "labels": torch.tensor(self.labels[i], dtype=torch.long)}
+        return {"input_ids": self.input_ids[i],
+                "attention_mask": self.attention_mask[i],
+                "labels": self.labels[i]}
+
+
+def make_loader(dataset, *, shuffle=False):
+    kwargs = {"batch_size": BATCH_SIZE, "shuffle": shuffle,
+              "num_workers": NUM_WORKERS, "pin_memory": torch.cuda.is_available()}
+    if NUM_WORKERS > 0:
+        kwargs["persistent_workers"] = True
+        kwargs["prefetch_factor"] = 2
+    return DataLoader(dataset, **kwargs)
+
+
+class NullScaler:
+    """Small interface-compatible fallback when AMP is unavailable."""
+    def scale(self, loss): return loss
+    def step(self, optimizer): optimizer.step()
+    def update(self): pass
+    def unscale_(self, optimizer): pass
 
 
 def load_partition_folds(partition: str) -> dict[int, list[dict]]:
@@ -98,7 +121,7 @@ def predict(model, loader, device):
     model.eval(); pred, truth = [], []
     with torch.no_grad():
         for batch in loader:
-            batch = {k: v.to(device) for k, v in batch.items()}
+            batch = {k: v.to(device, non_blocking=True) for k, v in batch.items()}
             pred.append(torch.softmax(model(**batch).logits, dim=1)[:, 1].cpu().numpy())
             truth.append(batch["labels"].cpu().numpy())
     return np.concatenate(pred), np.concatenate(truth)
@@ -123,21 +146,32 @@ def run_partition(partition: str, device_name: str, max_new_records: int | None 
             set_seed(seed)
             model = AutoModelForSequenceClassification.from_config(base_model.config).to(device)
             model.load_state_dict(pretrained); model.to(device)
-            tr = DataLoader(SmileDataset(panel.smiles.iloc[rec["train"]], panel.activity.iloc[rec["train"]], tokenizer), batch_size=BATCH_SIZE, shuffle=True)
-            va = DataLoader(SmileDataset(panel.smiles.iloc[rec["val"]], panel.activity.iloc[rec["val"]], tokenizer), batch_size=BATCH_SIZE)
-            te = DataLoader(SmileDataset(panel.smiles.iloc[rec["test"]], panel.activity.iloc[rec["test"]], tokenizer), batch_size=BATCH_SIZE)
+            tr = make_loader(SmileDataset(panel.smiles.iloc[rec["train"]], panel.activity.iloc[rec["train"]], tokenizer), shuffle=True)
+            va = make_loader(SmileDataset(panel.smiles.iloc[rec["val"]], panel.activity.iloc[rec["val"]], tokenizer))
+            te = make_loader(SmileDataset(panel.smiles.iloc[rec["test"]], panel.activity.iloc[rec["test"]], tokenizer))
             opt = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY); criterion = nn.CrossEntropyLoss()
+            amp_enabled = device.type == "cuda"
+            scaler = torch.amp.GradScaler("cuda", enabled=amp_enabled) if amp_enabled else NullScaler()
             best, best_state, wait = -1.0, None, 0
             for _epoch in range(EPOCHS):
                 model.train()
                 for batch in tr:
-                    batch = {k: v.to(device) for k, v in batch.items()}; opt.zero_grad(); loss = criterion(model(**batch).logits, batch["labels"]); loss.backward(); opt.step()
+                    batch = {k: v.to(device, non_blocking=True) for k, v in batch.items()}
+                    opt.zero_grad(set_to_none=True)
+                    with torch.autocast(device_type="cuda", dtype=torch.float16, enabled=amp_enabled):
+                        loss = criterion(model(**batch).logits, batch["labels"])
+                    scaler.scale(loss).backward(); scaler.step(opt); scaler.update()
                 vp, vy = predict(model, va, device); val_auc = roc_auc_score(vy, vp)
                 if val_auc > best: best, best_state, wait = val_auc, {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}, 0
                 else:
                     wait += 1
-                    if wait >= PATIENCE: break
-            model.load_state_dict(best_state); p, y = predict(model, te, device); b = (p >= 0.5).astype(int)
+                    if wait >= PATIENCE:
+                        break
+            if best_state is None:
+                raise RuntimeError(f"No validation checkpoint produced for {partition} seed={seed} fold={fold}")
+            model.load_state_dict(best_state)
+            p, y = predict(model, te, device)
+            b = (p >= 0.5).astype(int)
             row = {"partition": partition, "model": "ChemBERTa", "seed": seed, "fold": fold, "best_val_auc": best, "test_auc": roc_auc_score(y, p), "test_ap": average_precision_score(y, p), "test_f1": f1_score(y, b), "test_bacc": balanced_accuracy_score(y, b), "n_test": len(y)}
             rows.append(row); done.add((seed, fold)); new += 1
             pd.DataFrame(rows).sort_values(["seed", "fold"]).to_csv(csv_path, index=False)

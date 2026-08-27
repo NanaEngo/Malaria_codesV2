@@ -1,0 +1,27 @@
+{
+  "status": "COMPUTED_EXTERNAL_TRANSFER_AUDIT",
+  "interpretation": "Existing ChEMBL transfer outputs are provenance-audited only; they are not treated as an independent biological replication or experimental validation of P2.",
+  "artifacts": [
+    {
+      "path": "Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery/results/p5_public_chembl_malaria.csv",
+      "sha256": "308a3662e415ab17c0d758a4c2c392e6b8c6a3165b153d33822f29582306ad46",
+      "status": "RELATED_PROJECT_EXTERNAL_ARTIFACT",
+      "independent_replication": false,
+      "boundary": "P5 transfer artifact; not a P2 replication"
+    },
+    {
+      "path": "Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery/results/p5_public_chembl_malaria_disjoint.csv",
+      "sha256": "204e6417ac9731b2e892c097c366f04cd3fb45460fd081e161c47b8580c75957",
+      "status": "RELATED_PROJECT_EXTERNAL_ARTIFACT",
+      "independent_replication": false,
+      "boundary": "P5 transfer artifact; not a P2 replication"
+    },
+    {
+      "path": "Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery/results/p5_public_malaria_report.json",
+      "sha256": "a3bb99df219f893b9bd9bb089d26ce808d5ccf61f5ba944a4e77732525160e2c",
+      "status": "RELATED_PROJECT_EXTERNAL_ARTIFACT",
+      "independent_replication": false,
+      "boundary": "P5 transfer artifact; not a P2 replication"
+    }
+  ]
+}

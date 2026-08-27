@@ -1,130 +1,148 @@
-# Submission Manifest — Project2
+# Submission Manifest — Project 2
 
 **Journal:** *Journal of Chemical Information and Modeling* (ACS)
-**Updated:** 26 August 2026 (post-manuscript refinement and compilation)
-**Package status:** canonical source files, Supporting Information and cover letter compile without fatal LaTeX errors after the graphics-path correction and final figure audit. DAR/manuscript reconciliation is recorded in `docs/P2_FINAL_RECONCILIATION_ETA_20260825.md`. The compact metric audit regenerates successfully. The full pytest suite passes in the `qom` environment. No Zenodo DOI is recorded yet; the archival deposit remains pending.
+**Updated:** 27 August 2026 (final robustness and companion-context consolidation; P2Rank box audit + ProLIF interaction fingerprints + Figure S4)
+**Package status:** The canonical P2 main manuscript, Supporting Information, and cover letter compile without fatal LaTeX errors or unresolved references. The manuscript is suitable for final author reading. No Zenodo DOI is recorded; archival deposit remains pending.
 
 ## Canonical evidence status
 
-- Set-C docking cohort: 17 candidates, 136 WT/mutant systems.
-- Target-balanced RRS panel: 12 candidates with eligible PfDHFR and PfCRT WT scores; six mutant-state ratios per candidate.
+- Set-C docking cohort: 17 filtered candidates and 136 WT/mutant docking systems.
+- Target-balanced primary RRS panel: 12 candidates with eligible PfDHFR and PfCRT WT scores.
 - Coverage-limited sensitivity panel: 5 PfCRT-only candidates; not equivalent to the complete panel.
-- Parent-study MD: 4 WT complexes × 10 ns; 2 retained bound ligands, but only PfCRT--214 yielded an interpretable MM-GBSA endpoint estimate.
-- Set-C MD pilot: 16 systems (PP-01/PP-02), all trajectory-QC PASS; secondary single-replicate MD-RRS and MM-GBSA only.
-- RRS classes are mutually exclusive. A*/A use the minimum eligible WT docking-score magnitude; D means no available mutant RRS reaches 80%.
-- Cross-metric uncertainty: 100,000 seeded permutations, 10,000 bootstrap resamples, and Bonferroni adjustment for H1--H3. These are descriptive after candidate selection, not independent validation.
-- Full-panel 17-candidate MD-RRS: `NOT_COMPUTED` by design.
+- Parent-study MD: 4 non-overlapping WT complexes × 10 ns; only PfCRT–214 yielded an interpretable MM-GBSA endpoint.
+- Set-C MD pilot: 16 systems covering PP-01/PP-02; trajectory QC PASS, single replicate per system; secondary only.
+- K76A replicate-1 MM-GBSA: `FAILED_NUMERICAL_QC` after receptor-minimization `BOND overflow`; endpoint excluded from reportable claims.
+- Full-panel Set-C MD-RRS: `NOT_COMPUTED` by design.
+
+## Lightweight robustness and transfer audit
+
+Script:
+
+```text
+scripts/p2_robustness_transfer_audit.py
+```
+
+Versioned outputs:
+
+```text
+results/robustness_transfer_20260827/
+```
+
+Included analyses:
+
+- leave-one-candidate-out correlations on the complete two-target set;
+- target-stratified PfDHFR/PfCRT correlations;
+- individual docking-score perturbations of ±1 kcal mol⁻¹;
+- existing RRS threshold-sensitivity artifact;
+- P1/P2 cohort identity audit;
+- related-project ChEMBL transfer provenance audit;
+
+Interpretation boundary: all outputs are post-selection diagnostics. They do not establish biochemical affinity, biological resistance, target engagement, or mechanism of action.
+
+## Independent pocket and interaction audits (27 August 2026) — post-processing only
+
+### P2Rank pocket audit
+
+```text
+results/p2rank_boxes_20260827/     # predictions/residues CSVs + README
+```
+
+- P2Rank 2.5.1 (JDK 17 via `conda env jdk17`; the system Java 8 cannot run class-61 bytecode).
+- **PfCRT (6UKJ):** top pocket (score 162.7, prob 0.999) lies 5.7 Å from the Vina box center — independent corroboration.
+- PfDHFR (7F3Y) and PfATP4 (9N10): 23–46 Å separations with documented receptor-frame caveats (provenance flags, not refutations).
+- PfClpP (2F6I): weak P2Rank signals; frame-independent report only (ClpP docking ran in P1).
+- Integrated as **Figure S4** in the Supporting Information; cited in the main text Methods (grid-box paragraph) with the P2Rank citation (Krivák & Hoksza 2018).
+
+### ProLIF interaction-fingerprint occupancy
+
+```text
+results/prolif_ifp_20260827/       # 16 ifp_<system>.csv + prolif_summary.json + README
+scripts/p2_prolif_ifp_pilot.py
+```
+
+- ProLIF 2.2.1 on the 16 QC-PASS pilot trajectories (100 frames each); **16/16 computed**.
+- Every system retains 4–11 contacts at ≥ 50 % occupancy (most at 100 %); no contact loss. Descriptive highlights: PfCRT TYR16 at 100 % in 5/6 PfCRT systems; PfDHFR LEU46/MET55 (PP-01) and LEU40/ILE14 (PP-02).
+- Descriptive trajectory-interaction evidence corroborating the retention-not-gain pilot reading; not binding affinities or resistance evidence.
+
+Key results:
+
+- PNS–RRS leave-one-out ρ: −0.3182 to +0.0273.
+- ACSI–RRS leave-one-out ρ: −0.7636 to −0.3182.
+- RRS class unchanged in 212/272 perturbation records (77.9%).
+- PfDHFR PNS–RRS ρ: −0.3497; PfCRT PNS–RRS ρ: −0.0417.
+
+## Companion P1 context
+
+The P1 V7 artefacts are used only as upstream methodological and chemical-space context. The P1/P2 audit found 17/17 exact canonical-SMILES matches and shared provenance. P1 therefore is not an independent replication of P2 and does not validate P2 RRS, mutant affinity, biological resistance, or polypharmacology.
+
+Relevant record:
+
+```text
+results/robustness_transfer_20260827/p1_p2_cohort_audit.json
+results/robustness_transfer_20260827/step1_external_rRS_feasibility.md
+results/robustness_transfer_20260827/external_transfer_audit.json
+```
+
+The permitted use is summarized in SI Table S16. The local ChEMBL feasibility audit found no paired target-state WT/mutant fields; an independent external P2-RRS replication therefore remains `NOT_COMPUTED`.
+
+## SI tables added or updated
+
+- `Table_S8_Cohort_Estimands.tex` — filtered cohort and estimand separation.
+- `Table_S13_Evidence_Scope.tex` — supported interpretation and required next validation.
+- `Table_S14_Panel_Scope.tex` — covered and uncovered biological dimensions.
+- `Table_S15_Robustness_Transfer.tex` — 3A/3B audit summary.
+- `Table_S16_P1_Context.tex` — permitted use and limits of P1 evidence.
 
 ## Source and compiled-file checksums
 
-Hash values below were recalculated after the latest source edits, metric-audit regeneration and LaTeX compilation.
-
 | File | SHA-256 |
 |---|---|
-| `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` | `45273602e12e984db06f22198d75b696b0eee58a8116276d57f9729a2d6a6a2d` |
-| `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.pdf` | `2e29aa65681d1d4d556f89cfd1e22dd92d01f6a32805e037c41a1160d4b68ce2` |
-| `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.aux` | `dfe4a2cd709bfef58b14579ecbe7ddf5ea2568b7a4c6f8b39e7ad99e02e86507` |
-| `manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2607.tex` | `faea0af748c1ec255122e3269cf7978cfd0f8a3700e075e91988a7f2d3440ea1` |
-| `manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2607.pdf` | `6914d9d622be48fb12174261a64770616030a10e78bcdb13f337ae0f6f725c8c` |
-| `manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2607.aux` | `956f3b8d3ebdc9396d678584cd40ebb1b96d8b6f6b8911ad534b08657dee3553` |
-| `manuscript/LaTeX/Cover_Letter.tex` | `8519d648124a45555cec868684336b4337593ddd1adcd83fd3ad280488052702` |
-| `manuscript/LaTeX/Cover_Letter.pdf` | `548e85b113d53c8993c794ae5253dab9c7169ba7bb31b5ba1d0dc870ea6142d0` |
-| `manuscript/LaTeX/Table_S0_Docking_Validation.tex` | `b6042ab5f393cf870452c94d436efa75f60bd70b7bc51dab95ee3ff1dc4da52a` |
-| `manuscript/LaTeX/Table_S5_ADMET_CrossValidation.tex` | `794eedc9ba760cf22f5627a0a4a4b4afa3c0f8f90112dbf75d6e9e671183dc62` |
-| `manuscript/LaTeX/Table_S6_ACSI_Weight_Sensitivity.tex` | `f1d762654213eb17c8192bd29e689c388aaecf3857997918086131738c2b0166` |
-| `manuscript/LaTeX/Table_S8_Cohort_Estimands.tex` | `cfb9aa5f9f01a779e220de528de3752abe8a63a8c9f089f8fd73b6dafe9bf1e7` |
-| `manuscript/LaTeX/Table_S9_PNS_Imputation_Sensitivity.tex` | `865acffb146cbcd3e698fc04d375accc7abb87051991812daaef550b133bdf1e` |
-| `manuscript/LaTeX/Table_S12_RRS_By_Target.tex` | `PLACEHOLDER` |
-| `manuscript/LaTeX/Table_S11_RRS_Threshold_Sensitivity.tex` | `PLACEHOLDER` |
-| `manuscript/LaTeX/Bibliography_Polypharmacology_MD_Validation.bib` | `633e085bbb731fbab4f4362c6b4f31593edf744700911a976aea3084edd5f2b9` |
-| `results/c_rrs_classification.csv` | `9ef22d0cf8c4ae920c5aa2330cef42f7e44d7e88a3a60783ca876be3ef2e089c` |
-| `results/c_rrs_sensitivity.csv` | `1b9479bd922ffbda685f2dc28134d60bcdb4e0712f8083f81a8b76827c5e2f2d` |
-| `results/cross_metric_statistical_audit.csv` | `0968f3c5fc30de9746b652d47cdacaf0bb2166e2b36c728a1d5c7efe2b436240` |
-| `results/cross_metric_statistical_audit.json` | `17e654e53e35e5a55e9218562c1f334077b35dc344480199946ba2b71c2662f2` |
-| `results/pns_imputation_sensitivity.csv` | `62a726f76eec05f077a9ff8d3e133a8a0dc7642d86191a8e462451524da61439` |
-| `results/pns_imputation_sensitivity.json` | `decabf0a197a6eef20e231314816bc14b6a42beac58fd457280db55cac0a90e0` |
-| `results/c_acsi_scores.csv` | `32f42a2ca60e20739a5577a2db01e918d429bba7c11795d3a37de1f3d9504261` |
-| `results/p2_results_unlock_manifest.json` | `d68aa2ca0a2284f6a19c082f90429eddbfd33f2a6d650d3c8bfbc86a054e81b8` |
+| `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` | `0c8a4d197874069baf009d0d429c99b1c17e9ecaa2444a97ab78430fb845630d` |
+| `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.pdf` | `dfd51eec49f8fe7045760e6011f039560b7665492dde8f77110262397b6593e5` |
+| `manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2607.tex` | `4579a9d1a446ab4837ca36a54ee95a410f02b3ce3135c05164ce1b64f9619e71` |
+| `manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2607.pdf` | `a635abdeb2fe657be940e8127d7d0c7d667f2d54468d3c67b68384d4cf1241fb` |
+| `manuscript/LaTeX/Table_S8_Cohort_Estimands.tex` | `5457d0a8daa95938ed617cbf6894683f78cd9a7d644e64778d167253c1d0aa90` |
+| `manuscript/LaTeX/Table_S10_WT_Replicate_Consistency.tex` | `976fe5eaac72cde398be7699663f7572a80733923181a6dc44e7a246d8ce42e2` |
+| `manuscript/LaTeX/Table_S11_RRS_Threshold_Sensitivity.tex` | `ee374838b421a214c40e3d661f3770f9150231faeeb5660e7b25013cdd0a075a` |
+| `manuscript/LaTeX/Table_S12_RRS_By_Target.tex` | `2d29c29d05f59fc06839ac37c11be9293066e29807a0d27f35e0ef7c47ccc40e` |
+| `manuscript/LaTeX/Table_S13_Evidence_Scope.tex` | `63562e6ceb28e017ee1e5108fe2c7c6f2de02bd45826722dc60407e1224fdd58` |
+| `manuscript/LaTeX/Table_S14_Panel_Scope.tex` | `11a4495bb914c9e55dadc6958fe7b6165b4d535accf194490488e02323638d2a` |
+| `manuscript/LaTeX/Table_S15_Robustness_Transfer.tex` | `7dbb3c283db2e2109cd690333c02cf2659e97e9a5744e89807b2411c1744f543` |
+| `manuscript/LaTeX/Table_S16_P1_Context.tex` | `de33d0e66da4c2748a4bdf6fd8b045f29ef71c6c909e754d04ec6999af45dcb2` |
+| `results/robustness_transfer_20260827/robustness_transfer_summary.json` | `6f10e75e23b67c2e11612198107643085ea91cb069b624ab0df34cb70650193d` |
+| `results/robustness_transfer_20260827/external_transfer_audit.json` | `702e85877f4998ac0da510a6389672530e9435f3b00a473ad18cf71099d58865` |
+| `results/robustness_transfer_20260827/p1_p2_cohort_audit.json
+results/robustness_transfer_20260827/step1_external_rRS_feasibility.md` | `cab1dc367a7a3201ea6f48825e2adc43a21232d3ab3553397d32bddd186ff0a6` |
 
-> The cover-letter PDF is now present and has been compiled successfully. The permanent Zenodo DOI remains pending.
+## Frozen future replication plan
 
-## Existing-results unlock audit
+The targeted external docking replication remains conditional and has not been executed. Its frozen plan and go/no-go gates are recorded in:
 
-The dated audit `docs/P2_RESULTS_UNLOCK_AUDIT_20260825.md` and
-`results/p2_results_unlock_manifest.json` reconcile previously completed
-results. The PfCRT pH 5.2 redocking is complete for 100/100 library ligands,
-and the PNS imputation sensitivity is complete for 17 candidates. These are
-separate from PP-01/PP-15 multi-seed redocking and STRING 400/900 network
-matrices, which remain unavailable as dedicated source records.
-
-## Lightweight robustness outputs
-
-The local robustness extension is recorded separately from the canonical
-manuscript estimand:
-
-- `results/lightweight_robustness/rrs_threshold_sensitivity.csv`;
-- `results/lightweight_robustness/rrs_leave_one_mutant_out.csv`;
-- `results/lightweight_robustness/docking_score_perturbation.csv`;
-- `results/lightweight_robustness/lightweight_analysis_manifest.json`.
-
-Figure audit correction: duplicate/incorrect PPI and RMSD displays were removed from the main manuscript; the SI VAE figure was removed because it belongs to the separate Paper 1 chemical-space analysis. The retained figure set is now limited to the cohort workflow, PfCRT--214 RMSD/contact diagnostics, the cross-metric matrix, and the Set-C pilot scatter, plus the SI MPO and RRS displays.
-
-These are descriptive, cohort-selected sensitivity analyses. They were not
-used to replace the canonical RRS table and do not establish biological
-validation. Multi-seed redocking and alternative PfCRT protonation remain
-available only as fail-closed launcher/templates; no reviewed PP-01/PP-15
-receptor, ligand and configuration triplet is present, so no additional score
-is promoted. Short MD replicate execution is implemented as
-an authorized SLURM launcher; the 16-system, three-replicate preflight passed,
-but the authorized HPC witness attempts were stopped fail-closed because the execution node lacked the referenced `charmm36-jul2022.ff` installation and exposed GROMACS 2023.3 without GPU support; no valid new trajectory is reportable. The full diagnosis is recorded in `docs/P2_LIGHTWEIGHT_EXECUTION_STATUS_20260825.md` and the actual authorized submission failure is recorded in `docs/P2_SHORT_MD_EXECUTION_STATUS_20260825.md`.
-
-## Machine-readable audit outputs
-
-- `results/c_rrs_classification.csv`
-- `results/c_rrs_sensitivity.csv`
-- `results/cross_metric_statistical_audit.csv`
-- `results/cross_metric_statistical_audit.json`
-- `results/pns_imputation_sensitivity.csv`
-- `results/pns_imputation_sensitivity.json`
-- `results/c_acsi_scores.csv`
-- `results/p2_rigorous_audit_manifest.json`
-
-These outputs are regenerated by `scripts/p2_rigorous_audit.py` and include cohort hashes and relative provenance paths. Large trajectories are not needed to reproduce the compact docking, ACSI, PNS and statistical-audit tables.
+results/robustness_transfer_20260827/targeted_external_docking_replication_plan.md
+results/robustness_transfer_20260827/targeted_external_docking_replication_plan.json
 
 ## Verification record
 
 ```bash
-python scripts/p2_rigorous_audit.py
-mamba run -n qom python -m pytest tests -q
-
-# From manuscript/LaTeX/
-latexmk -pdf -interaction=nonstopmode -halt-on-error Polypharmacology_MD_Validation_SM_V2607.tex
+python3 scripts/p2_robustness_transfer_audit.py
 latexmk -pdf -interaction=nonstopmode -halt-on-error Polypharmacology_MD_Validation_V2607.tex
+latexmk -pdf -interaction=nonstopmode -halt-on-error Polypharmacology_MD_Validation_SM_V2607.tex
 latexmk -pdf -interaction=nonstopmode -halt-on-error Cover_Letter.tex
-
 git diff --check
 ```
 
-Observed validation:
+Observed:
 
-- rigorous audit: PASS;
-- pytest: **19 passed, 1 skipped** in the `qom` environment;
-- main manuscript: compiled successfully after the graphics-path correction and figure de-duplication;
-- Supporting Information: compiled successfully after SI figure renumbering and removal of the Paper 1 VAE display;
+- robustness/transfer audit: PASS;
+- main manuscript: compiled successfully;
+- Supporting Information: compiled successfully;
 - cover letter: compiled successfully;
-- non-fatal underfull boxes remain in dense tables/bibliography and require the final visual review;
-- permanent Zenodo DOI: pending.
+- fatal LaTeX errors: none;
+- undefined references/citations: none;
+- `Overfull \\hbox`: none;
+- minor `Underfull \\hbox` warnings remain in dense paragraphs/tables;
+- Zenodo DOI: pending.
 
 ## Submission boundary
 
-The manuscript reports computational prioritization only. It does not establish biological polypharmacology, target engagement, clinical efficacy, resistance circumvention, or converged mutant-state free energies. The Set-C pilot is secondary, single-replicate and limited to two candidates. The parent-study and Set-C pilot ligand parameterizations differ and must not be compared quantitatively across cohorts.
-
-
-## Current package hashes
-
-- `Polypharmacology_MD_Validation_V2607.tex` — `b79b2aa1a98e980df9b3ee6582ec4c5afc739467b93dad8ca2aec063c0745cb8`
-- `Polypharmacology_MD_Validation_V2607.pdf` — `0fdc779b0ca0e46a9bbf9bae173c91f6cccd43cfd2e4cfc23cafc558cc0d483f`
-- `Polypharmacology_MD_Validation_SM_V2607.tex` — `e0826bd443ba9e0f80cde5c300034c55c14a28088f3aa40036e6369c953009c0`
-- `Polypharmacology_MD_Validation_SM_V2607.pdf` — `51235e022fa1a3229482572760a54b1b550169b49f5eb84cad714eba749ccf6e`
-- `Table_S11_RRS_Threshold_Sensitivity.tex` — `ee374838b421a214c40e3d661f3770f9150231faeeb5660e7b25013cdd0a075a`
-- `Table_S12_RRS_By_Target.tex` — `2d29c29d05f59fc06839ac37c11be9293066e29807a0d27f35e0ef7c47ccc40e`
+The manuscript reports computational prioritization and targeted structural follow-up. It does not establish biological polypharmacology, target engagement, clinical efficacy, resistance circumvention, or converged mutant-state free energies. The Set-C cohort is filtered, the MD pilot is single-replicate, K76A MM-GBSA is non-reportable, and P1 evidence is contextual rather than independent validation.

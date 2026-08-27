@@ -1,0 +1,37 @@
+{
+  "generated": "2026-08-26",
+  "system": "PP-01_PfCRT_WT",
+  "protocol": "gmx_MMPBSA v1.5 GB-OBC2 igb=5 salt 0.15 M, frames 1-1000 interval 10",
+  "quoting_convention": "mean +/- within-trajectory SD over 100 snapshots (manuscript-wide); SEM informational",
+  "replicates": [
+    {
+      "tag": "R1_canonical_15320_20260819",
+      "mean_kcal_mol": -30.61,
+      "sd_within_traj_kcal_mol": 4.12,
+      "sd_propagated_kcal_mol": 1.65,
+      "sem_kcal_mol": 0.41,
+      "n_snapshots": 100
+    },
+    {
+      "tag": "R2_rerun_15502_single_rerun",
+      "mean_kcal_mol": -28.6,
+      "sd_within_traj_kcal_mol": 4.35,
+      "sd_propagated_kcal_mol": 3.07,
+      "sem_kcal_mol": 0.43,
+      "n_snapshots": 100
+    }
+  ],
+  "inter_replicate": {
+    "offset_abs_kcal_mol": 2.01,
+    "mean_of_means_kcal_mol": -29.61,
+    "sample_sd_of_means_kcal_mol": 1.42,
+    "iid_frame_sem_diff_kcal_mol": 0.594,
+    "caveat": "Under an i.i.d.-frame assumption the offset would exceed the naive combined SEM (2.01 vs 0.59); MD snapshots are strongly autocorrelated, so i.i.d. SEMs understate the true uncertainty and two replicates cannot resolve the offset as significant at the replicate level. Conservative reading: endpoint-level reproducibility supported at ~2.0 kcal/mol resolution.",
+    "recommended_noise_floor_kcal_mol": 2.01,
+    "noise_floor_usage": "Empirical floor for interpreting single-replicate mutant-vs-WT endpoint contrasts; contrasts smaller than this scale are not resolvable without additional replicates."
+  },
+  "sources": {
+    "r1": "results/set_c_md/mmgbsa_20260819/PP-01_PfCRT_WT/FINAL_RESULTS_MMPBSA.dat",
+    "r2": "results/set_c_md/single_rerun_20260825/mmgbsa/PP-01_PfCRT_WT/FINAL_RESULTS_MMPBSA.dat"
+  }
+}

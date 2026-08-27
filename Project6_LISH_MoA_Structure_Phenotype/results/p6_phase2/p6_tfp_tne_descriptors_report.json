@@ -1,0 +1,20 @@
+{
+  "mapping": "/home/nanaengo/Malaria_codesV2/Project6_LISH_MoA_Structure_Phenotype/data/mappings/drugid_to_smiles_v2_validated.csv",
+  "mapping_sha256": "7df5b4ced6c97e9fb96ae89606533f87b8082a1e5db81c794cf3fee4b0cb6aa3",
+  "n_unique_molecules": 1722,
+  "n_tfp_failures_zero_vector_itt": 0,
+  "n_tne_failures_zero_vector_itt": 4,
+  "failure_indices": {
+    "TFP": [],
+    "TNE": [
+      811,
+      834,
+      1203,
+      1461
+    ]
+  },
+  "tfp_source": "p3_tda_pipeline.process_molecule(n_conf=1)",
+  "tne_source": "p3_tne_pipeline.smiles_to_tensor + tucker_compress(bond_dim=8, cpu)",
+  "artifact_sha256": "23e1c52a0dc84f9a0653ec35cb3c9812d2a0e22d87c5414a614e6601e36521fc",
+  "status": "COMPUTED"
+}

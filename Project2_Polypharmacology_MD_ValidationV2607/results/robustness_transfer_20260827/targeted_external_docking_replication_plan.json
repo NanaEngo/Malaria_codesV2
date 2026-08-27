@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-27",
+  "project": "P2",
+  "status": "PLAN_FROZEN_PENDING_PANEL_AND_STRUCTURE_GATE",
+  "objective": "Test transfer of docking-derived WT/mutant RRS on a genuinely non-overlapping external ligand panel.",
+  "not_started": [
+    "external data retrieval",
+    "ligand docking",
+    "RRS calculation",
+    "biological validation"
+  ],
+  "panel": {
+    "source_candidate": "ChEMBL-derived P. falciparum activity panel already audited in P5",
+    "target_size": "20-50 ligands",
+    "selection": [
+      "valid canonical SMILES",
+      "exact canonical-SMILES exclusion against all 17 P2 PP candidates",
+      "remove exact duplicate structures",
+      "retain source activity provenance",
+      "prefer broad pchembl distribution rather than selecting by predicted P2 RRS",
+      "freeze selection before docking"
+    ],
+    "critical_gate": "The current local ChEMBL artifact has no mutation-resolved PfDHFR/PfCRT labels; it can supply external ligands but does not independently validate RRS biology."
+  },
+  "targets_and_states": {
+    "PfDHFR": [
+      "WT",
+      "N51I",
+      "C59R",
+      "S108N",
+      "I164L"
+    ],
+    "PfCRT": [
+      "WT",
+      "K76T",
+      "K76A"
+    ],
+    "estimand": "per-target RRS = abs(mutant Vina score) / abs(WT Vina score) * 100",
+    "eligibility": "exclude target-specific WT denominators with abs(WT score) < 5.0 kcal mol^-1; report missing target coverage explicitly"
+  },
+  "protocol_lock": {
+    "software": "same pinned P2 docking implementation and version",
+    "receptors": "reuse only audited P2 WT/mutant receptor structures after independent preparation audit",
+    "grids": "reuse exact P2 target/state grid centers and dimensions; no grid optimization after panel selection",
+    "protonation": "same declared P2 preparation rules",
+    "exhaustiveness": "same P2 value",
+    "seed_policy": "fixed and recorded per ligand/state",
+    "failure_policy": "failed preparation or docking is retained as FAILED and excluded from ratios; never silently repaired",
+    "grid_box_angstrom": [
+      25,
+      25,
+      25
+    ],
+    "basis": "Audited V2 configuration files and DAR execution record; corrected manuscript sentence"
+  },
+  "analysis": {
+    "primary": [
+      "coverage per target and state",
+      "distribution of WT and mutant scores",
+      "per-target RRS for eligible pairs",
+      "comparison of RRS class frequencies with P2 using descriptive summaries only"
+    ],
+    "secondary": [
+      "rank correlation with external activity label, if scientifically justified",
+      "score and pose failure audit",
+      "sensitivity to the predeclared +/-1 kcal mol^-1 score perturbation"
+    ],
+    "prohibited_claims": [
+      "experimental validation",
+      "biological resistance prediction",
+      "target engagement",
+      "mechanistic confirmation",
+      "generalisation beyond the selected external panel"
+    ]
+  },
+  "go_no_go_gates": {
+    "GO": [
+      "at least 20 valid external ligands after exact overlap exclusion",
+      "all source SMILES and activity provenance hashed",
+      "all seven receptor-state structures pass structural audit",
+      "grid and parameter manifest complete",
+      "panel selection frozen before docking"
+    ],
+    "NO_GO": [
+      "fewer than 20 eligible non-overlapping ligands",
+      "missing or unauditable mutant receptor states",
+      "inability to reproduce P2 grids or software settings",
+      "selection based on P2 outcomes after unblinding",
+      "any need to substitute activity labels for mutation-resolved RRS"
+    ]
+  },
+  "resource_estimate": {
+    "preparation": "light CPU task",
+    "docking": "moderate CPU/HPC task; approximately 140-350 ligand-state runs before failures",
+    "md": "not required",
+    "conditional_execution": "Do not submit a scheduler job until all GO gates pass and the author explicitly authorizes execution."
+  },
+  "provenance": {
+    "related_external_artifact": "Project5_GNN_Transformer_DrugDiscovery/results/p5_public_chembl_malaria_disjoint.csv",
+    "interpretation": "External ligand source only; not yet an independent P2-RRS replication dataset.",
+    "p1_boundary": "P1 shares the 17 P2 candidate identities and cannot serve as an independent panel."
+  },
+  "historical_parameter_conflict": "Some historical redocking scripts used exhaustiveness=128, but the audited V2 configuration and DAR establish exhaustiveness=64 with 25 \u00c5 boxes for this replication."
+}

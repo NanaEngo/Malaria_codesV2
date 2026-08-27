@@ -1,7 +1,7 @@
 # P5 — GNN/Transformer drug-discovery benchmark
 
-**Status:** benchmark and public-panel validation complete; manuscript package requires final author/deposit checks.
-**DAR:** `P5_DATA_ANALYSIS_REPORT.md`
+**Status:** benchmark and public-panel validation complete; manuscript package requires final author/deposit checks. This tree is the historical V1 archive; the active V2 tree is `../Project5_GNN_Transformer_DrugDiscovery_V2/`.
+**DAR:** `../Project5_GNN_Transformer_DrugDiscovery_V2/P5_DATA_ANALYSIS_REPORT.md`
 
 ## Scientific question
 
@@ -34,7 +34,5 @@ The result is an honest-negative benchmark, not a claim that all GNNs or Transfo
 - Panel/splits/results: `results/`
 - Scripts: `scripts/`
 - Manuscript/figures: `manuscript/`
-- Active DAR: `P5_DATA_ANALYSIS_REPORT.md`
-- Strategic planning (non-canonical): `P5_STRATEGIC_PA90.md`
 
-> **Statut de ligne (25 août 2026) :** la version avancée et future CANONIQUE de P5 est `../Project5_GNN_Transformer_DrugDiscovery_V2/` (arbre restauré/présent sur origin/master ; provenance critical-reviews dans docs/archive/V2_critical_reviews/ du présent dépôt). Ne pas supprimer ni archiver ce répertoire.
+> **Statut de ligne (25 août 2026) :** la version avancée et future CANONIQUE de P5 est `../Project5_GNN_Transformer_DrugDiscovery_V2/` (arbre restauré/présent sur origin/master ; provenance critical-reviews dans docs/archive/V2_critical_reviews/ du présent dépôt). Ne pas supprimer ni archiver ce répertoire. Le DAR actif (`P5_DATA_ANALYSIS_REPORT.md`) et le plan stratégique (`P5_STRATEGIC_PA90.md`) de la version V2 ont été déplacés vers `../Project5_GNN_Transformer_DrugDiscovery_V2/` le 27 août 2026 pour regrouper les documents actifs avec l'arbre V2.

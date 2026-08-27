@@ -26,11 +26,11 @@ Read the relevant DAR before changing code, parameters, protocols, or manuscript
 | Project | Status | Essential result or boundary |
 |---|---|---|
 | P1 | **V7 technically submission-ready (JCIM)** | V7 enhanced + validated (DEKOIS/MMV/redocking), 25 p. main / 17 p. SM / 1 p. cover, package refreshed; final author/metadata review and independent structural review remain |
-| P2 | Docking-RRS complete; Set-C MD pilot in production | 17 Set-C candidates; A*:6/B:5/C:5/D:1; 16-system equilibration PASS; gate 15319 PASS; production 15320 task 0 RUNNING with exact 10-ns MDP; no Set-C MD-RRS yet |
+| P2 | Set-C MD pilot CANONICAL; audit adversarial = MINOR REVISION, GO JCIM | Production 15320 COMPLETE 16/16 (2026-08-18); QC=0; MD-RRS `COMPUTED_WITH_COHORT_CONTRACT` (PP-01/PP-02 Class A, rule `setc_p2_minheavy_5A_ge10percent_v1`); MM-GBSA 16/16 (8 mutants >100 % = rétention-pas-gain); full-panel MD-RRS reste `NOT_COMPUTED` |
 | P3 | Benchmarks complete | ECFP4 0.9475; hybrid 0.8876; QKS ≈ RBF; no quantum advantage claimed |
 | P4 | v12 benchmark complete | Random 0.6724 > MCTS 0.6649; Pareto front is a separate pre-activity artifact |
 | P5 | Benchmark complete | ECFP4-RF dominates under scaffold split; topological fusion is modestly complementary; phenotype-only LISH-MoA baseline is complete and separate |
-| P6 | Planned follow-up | LISH-MoA structure–phenotype study; no molecular arm until a versioned drug_id→SMILES mapping passes audit |
+| P6 | Phase 2 benchmark running | Mapping audit PASSED 25/08 (100 % coverage 3289/3289, contrat gelé, 1722 molécules uniques); baseline phénotype reproduite au 4e décimal sur splits honnêtes; bras structure ≈ hasard, fusion RF < baseline (AUROC 0.583 < 0.636); arms GIN/GIN-TFP/GIN-TNE/ChemBERTa soumis (job 15500) |
 
 ## 3. Live P2 jobs
 
@@ -44,11 +44,11 @@ The bounded Set-C pilot has 16 prepared and equilibrated systems (PP-01/PP-02 ×
 - **15312:** corrected gate passed `16/16` after the dependency-staging and continuation fixes, submitting production `15313`.
 - **15313:** stopped fail-closed after GROMACS 2025.4 rejected the unsupported `mdrun -seed` option; no trajectory is reportable.
 - **15317:** stopped fail-closed after detecting an ns-to-step conversion error (`5,000,000,000` instead of `5,000,000` for 10 ns); no trajectory is reportable. The corrected MDP passed exact-step and 10-step GPU smoke tests.
-- **15319/15320:** final gate passed `16/16`; production array `15320` is active with `%1`, task 0 confirms `5,000,000` steps / `10,000 ps` and GPU PP/PME offload. No MD-RRS result exists yet.
-- Historical 15106/15111/15117/15254/15259/15260 identifiers are superseded by the GPU witness chain.
-- Post-QC chain (`set_c_trajectory_qc.py`, `p2_setc_md_rrs.py`) remains blocked for aggregate MD-RRS until all 16 production trajectories finish and pass QC.
+- **15319/15320:** final gate passed `16/16`; production array `15320` COMPLETED 2026-08-18T21:29:54Z (manifest v3: QC exit 0, MD-RRS exit 0). Post-QC chain COMPLETE — MD-RRS pilot `COMPUTED_WITH_COHORT_CONTRACT` (PP-01/PP-02, trajectory_count=8), MM-GBSA 16/16. Full-panel (17×8=136) MD-RRS remains `NOT_COMPUTED` by design.
+- **25 Aug local GPU rerun:** PP-01_PfCRT_WT replicate_1 COMPLETE — QC PASS + MM-GBSA R2 (−28.60 ± 0.43 SEM vs R1 −30.61 ± 0.41; offset 2.01 <1 SD; SM Table S12) via job 15502; PP-01_PfCRT_K76A COMPLETE — QC PASS (2.91 Å) + MM-GBSA FAILED (BOND overflow 2/100 receptor-minimization frames, PBC-whole retry insufficient; author decision pending); PP-01_PfDHFR_WT RUNNING on local GPU (~48 % at 26 Aug check). SLURM: 15490_2 ChemBERTa RUNNING; 15490_[3-4] + 15500 P6 GNN PENDING. See P2 DAR "Single-system GPU rerun".
+- Historical 15106/15111/15117/15254/15259/15260 identifiers are superseded by the GPU witness chain; failed QC-log wrappers are 15384/15385, authoritative wrapper = 15386.
 - **Cleanup audit (13 Aug):** six failed production run directories and 1,087 autosave/backup files (~13.7 GB), plus ten untracked Antechamber/SQM/energy temporary files, were removed after reference-safety checks. The 428 exact diagnostic duplicates (~3.93 GB) and legacy `results/md_systems/set_c` root (~16 GB) were retained because historical scripts still reference them. The active `15320` run, logs, manifests, DARs, and unique historical evidence are protected. Twelve empty orphan directories outside the active preparation root were removed; active `runs/` placeholders were preserved.
-- **Full Set-C MD-RRS:** `NOT_COMPUTED`; no witness-only result may be promoted.
+- **Full Set-C MD-RRS:** `NOT_COMPUTED` (pilot scope = PP-01/PP-02 only, `COMPUTED_WITH_COHORT_CONTRACT`); no witness-only or partial-panel result may be promoted to full-panel claims.
 
 ## 4. Provenance rules
 

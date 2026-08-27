@@ -1,0 +1,97 @@
+{
+  "schema_version": 2,
+  "status": "PASS_PREPARATION_ONLY_NOT_AUTHORIZED_TO_DOCK",
+  "purpose": "Preflight only; no docking executed",
+  "checks": {
+    "panel_rows": 40,
+    "panel_unique_raw_smiles": 40,
+    "panel_unique_canonical_smiles": 40,
+    "invalid_smiles": 0,
+    "standardized_p2_overlap": 0,
+    "activity_counts": {
+      "1": 34,
+      "0": 6
+    }
+  },
+  "receptor_state_artifacts": {
+    "PfDHFR_WT": {
+      "path": "results/md_systems/set_c_preparation_20260812_v1/PP-01_PfDHFR_WT/receptor_fixed.pdb",
+      "exists": true,
+      "sha256": "4313235be163688c176363a82b0243fb404ba7fd20f519366350228379b4947e"
+    },
+    "PfDHFR_N51I": {
+      "path": "results/md_systems/set_c_preparation_20260812_v1/PP-01_PfDHFR_N51I/receptor_fixed.pdb",
+      "exists": true,
+      "sha256": "a53b0b8dfc5412f5ee18d8bd6dc821cd5304365a65b8c03043fae849375e0270"
+    },
+    "PfDHFR_C59R": {
+      "path": "results/md_systems/set_c_preparation_20260812_v1/PP-01_PfDHFR_C59R/receptor_fixed.pdb",
+      "exists": true,
+      "sha256": "521bff24ef42efb295d39ab06e2962df41ad50275c02a86b173dcbf7b58c11a3"
+    },
+    "PfDHFR_S108N": {
+      "path": "results/md_systems/set_c_preparation_20260812_v1/PP-01_PfDHFR_S108N/receptor_fixed.pdb",
+      "exists": true,
+      "sha256": "7eda51513d44255a1f4dbac4069866f9e9190bb3c5714101751a3dcf17f9520d"
+    },
+    "PfDHFR_I164L": {
+      "path": "results/md_systems/set_c_preparation_20260812_v1/PP-01_PfDHFR_I164L/receptor_fixed.pdb",
+      "exists": true,
+      "sha256": "a30acb90e1df033c9baa5f43c2f2faf561c0947051d02d40150e40bed264ea00"
+    },
+    "PfCRT_WT": {
+      "path": "results/md_systems/set_c_preparation_20260812_v1/PP-01_PfCRT_WT/receptor_fixed.pdb",
+      "exists": true,
+      "sha256": "6dba54ec076745fa2f677acf8fdde504534ba77f90fff09a93c3a0384d94afcf"
+    },
+    "PfCRT_K76T": {
+      "path": "results/md_systems/set_c_preparation_20260812_v1/PP-01_PfCRT_K76T/receptor_fixed.pdb",
+      "exists": true,
+      "sha256": "e00f60e995c96a4f3343d5f373cebdcc4a3c6edd1da06264539b6d54f63ebca3"
+    },
+    "PfCRT_K76A": {
+      "path": "results/md_systems/set_c_preparation_20260812_v1/PP-01_PfCRT_K76A/receptor_fixed.pdb",
+      "exists": true,
+      "sha256": "6ffd54c1cb8184db7269198df36b8eb5f1a171bda5bf50663682fdcec45f10b8"
+    }
+  },
+  "grid_artifacts": {
+    "PfDHFR": {
+      "path": "data/from_project1/docking/Docking_7F3Y/config.txt",
+      "exists": true,
+      "sha256": "b262bbb26012392f8c8e03e1193f3c1737de0554a12d0058ffd3338f28f4d03b",
+      "content": "receptor = /media/taamangtchu/MYDATA/Github/Malaria_codes/data/proteins/7F3Y.pdbqt\n\ncenter_x = 1.33  \ncenter_y = -1.733\ncenter_z = -23.842\n\nsize_x = 25\nsize_y = 25\nsize_z = 25\n\nexhaustiveness = 64\n\ncpu = 16\n\nspacing = 1.0\n"
+    },
+    "PfCRT": {
+      "path": "data/from_project1/docking/Docking_6UKJ/config.txt",
+      "exists": true,
+      "sha256": "8b147f7e37f0ab35eedd97d0268a99baebbc1ea0a4f0f933db71b4afcac3250c",
+      "content": "receptor = /media/taamangtchu/MYDATA/Github/Malaria_codes/data/proteins/6UKJ.pdbqt\n\ncenter_x = 152.99 \ncenter_y = 151.042\ncenter_z = 159.379\n\nsize_x = 25\nsize_y = 25\nsize_z = 25\n\nexhaustiveness = 64\n\ncpu = 16\n\nspacing = 1.0\n"
+    }
+  },
+  "protocol_frozen_for_external_replication": {
+    "software": "AutoDock Vina 1.2.7",
+    "exhaustiveness": 64,
+    "box_size_angstrom": [
+      25,
+      25,
+      25
+    ],
+    "rrs_wt_floor_kcal_mol": 5.0,
+    "basis": "audited V2 configuration files and DAR execution record"
+  },
+  "historical_parameter_conflict": "An outdated Set-C Methods sentence stated 20 \u00c5; the DAR and audited V2 grid files establish 25 \u00c5 with exhaustiveness=64. The sentence has been corrected before any external docking execution.",
+  "blockers": [],
+  "boundary": "No receptor preparation, PDBQT generation, docking, RRS calculation, or canonical-output modification was performed.",
+  "execution": {
+    "job_id": "15512",
+    "submitted_utc": "2026-08-27",
+    "status": "PENDING",
+    "reason": "PartitionTimeLimit",
+    "array": "0-39%8",
+    "runner": "scripts/p2_external_docking_replication.sbatch",
+    "output_dir": "results/robustness_transfer_20260827/external_docking_run_20260827",
+    "results_written_at_check": false
+  },
+  "execution_authorization": "AUTHOR_AUTHORIZED"
+}

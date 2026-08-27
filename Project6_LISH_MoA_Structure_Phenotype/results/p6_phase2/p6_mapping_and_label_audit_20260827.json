@@ -1,0 +1,28 @@
+{
+  "date": "2026-08-27",
+  "status": "COMPUTED_FROM_FROZEN_MAPPING_AND_EXISTING_FOLD_ARTIFACTS",
+  "mapping_contract": {
+    "artifact": "data/mappings/drugid_to_smiles_v2_validated.csv",
+    "contract": "data/mappings/drugid_to_smiles_contract.json",
+    "frozen": true,
+    "rows": 3289,
+    "unique_molecules": 1722,
+    "collision_groups_gt1": 794,
+    "multi_component_rows": 1622,
+    "max_components": 7,
+    "coverage_source": 1.0,
+    "valid_fraction": 1.0,
+    "collision_policy": "group id over identical canonical SMILES; groups must not cross train/test"
+  },
+  "label_space": {
+    "n_labels": 206,
+    "n_labels_with_test_variation_mean_across_25_folds": 146.16,
+    "interpretation": "Labels without test variation are not silently treated as informative discrimination tasks. Their metric availability must be reported per fold."
+  },
+  "existing_arms": {
+    "phenotype_collision_group": {"folds": 25, "macro_auroc": 0.6361936951017618, "macro_auprc": 0.13136592478532244, "mean_columnwise_log_loss": 0.02428155803777754, "mean_brier": 0.00381085347609185, "mean_ece": 0.003873270648078722},
+    "structure_collision_group": {"folds": 25, "macro_auroc": 0.5356189146691867, "macro_auprc": 0.02590177377504984, "mean_columnwise_log_loss": 0.035819216047476704, "mean_brier": 0.0034428635289750886, "mean_ece": 0.0023238560442525565},
+    "both_collision_group": {"folds": 25, "macro_auroc": 0.5832256818045007, "macro_auprc": 0.08216177892501203, "mean_columnwise_log_loss": 0.030515726630891436, "mean_brier": 0.0033458862308590655, "mean_ece": 0.0028331133744250213}
+  },
+  "boundary": "Descriptive audit only; no causal MoA or target-engagement claim; pending molecular-arm jobs remain excluded."
+}
