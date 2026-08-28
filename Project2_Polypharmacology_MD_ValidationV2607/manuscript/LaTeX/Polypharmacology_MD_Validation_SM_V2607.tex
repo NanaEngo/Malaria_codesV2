@@ -1,13 +1,12 @@
 %% ============================================================================
-%% Supplementary Material: Paper 2 — Resistance-Informed MD Validation
-%% Target: JCIM Supplementary Information
+%% Supporting Information: Resistance-Aware Docking Prioritization of Antimalarial Leads
+%% Target: JCIM / ACS Supporting Information
+%% Aligned with main manuscript Polypharmacology_MD_Validation_V2607.tex
 %% ============================================================================
 
 \documentclass[journal=jcisd8,manuscript=suppinfo,layout=traditional]{achemso}
-% manuscript=suppinfo activates ACS Supporting Information conventions
-% automatically: S-prefixed table/figure/page numbers (Table S1, Figure S1,
-% page S-1) and an independently S-numbered reference list (S1, S2, ...).
-% Do not add manual \renewcommand{\thetable}/\thefigure overrides.
+% manuscript=suppinfo: S-prefixed table/figure/page numbers and an independent
+% S-numbered reference list. Do not override \thetable/\thefigure manually.
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -40,12 +39,11 @@
 \usepackage{xr}
 \externaldocument[MAIN-]{Polypharmacology_MD_Validation_V2607}
 % Build order: pdflatex main; pdflatex SM; pdflatex main; pdflatex SM
-% (two full round trips so MAIN-/SM- cross-references converge).
 
 \graphicspath{{Graphics/}{../Graphics/}}
 
-\title{Supporting Information for \\ ``Resistance-Aware Computational Prioritization of Antimalarial Leads \\
-from African Natural Products: Docking, Chemical-Space Descriptors, and Exploratory Molecular Dynamics''}
+\title{Supporting Information for \\ ``Resistance-Aware Docking Prioritization of Antimalarial Leads \\
+from African Natural Products''}
 \author{Myke Vital Sao Temgoua}
 \affiliation[UY1Phys]{Department of Physics, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}
 \email{myke-vital.sao@facsciences-uy1.cm}
@@ -63,26 +61,100 @@ from African Natural Products: Docking, Chemical-Space Descriptors, and Explorat
 \maketitle
 
 % ============================================================================
-% Table S0: Docking Validation
+% 1. Docking validation and receptor models
 % ============================================================================
+
 \input{Table_S0_Docking_Validation.tex}
 
-% ============================================================================
-% Figure S1: MPO Sensitivity Heatmap
-% ============================================================================
+\input{Table_S_Homology_QC.tex}
+
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.85\textwidth]{Figure_S1_MPO_sensitivity.pdf}
-\caption{MPO sensitivity analysis. Each cell shows the Jaccard similarity of the top-20 list after varying one MPO weight by \qty{\pm 20}{\percent}. Green ($1.00$) indicates no change; red ($0.50$) indicates substantial reordering.}
-\label{fig:s1_mpo_sensitivity}
+\includegraphics[width=\textwidth]{figure_p2rank_boxes.pdf}
+\caption{P2Rank\citep{Krivak2018P2Rank} pocket centres versus the fixed Vina\citep{vina_2021} grid boxes. (a)~Distance from the top three P2Rank pockets to the Vina box centre for PfDHFR (7F3Y), PfCRT (6UKJ), and PfATP4 (9N10); the dashed line is the \qty{12.5}{\angstrom} box half-edge. (b)~Same centres in 3D (star: Vina box). For PfCRT the top pocket (score \num{162.7}, probability \num{0.999}) lies \qty{5.7}{\angstrom} from the box centre. Larger separations for PfDHFR and PfATP4 may reflect a different receptor frame in the parent-study grid files and are noted as provenance caveats, not as docking failures. P2Rank 2.5.1; exploratory check only.}
+\label{fig:s4_p2rank_boxes}
 \end{figure}
 
 % ============================================================================
-% Table S2: MM-GBSA WT results and mutant interpretation
+% 2. Selection, chemical space, ADMET
 % ============================================================================
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{Figure_S1_MPO_sensitivity.pdf}
+\caption{MPO weight sensitivity. Each cell is the Jaccard similarity of the top-20 list after changing one MPO weight by \qty{\pm 20}{\percent}. Green ($1.00$) means no change; red ($0.50$) means substantial reordering.}
+\label{fig:s1_mpo_sensitivity}
+\end{figure}
+
+\input{Table_S5_ADMET_CrossValidation.tex}
+
+\input{Table_S6_ACSI_Weight_Sensitivity.tex}
+
+% ============================================================================
+% 3. RRS profiles and sensitivity
+% ============================================================================
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{rrs_radar_profiles.pdf}
+\caption{Docking-derived RRS profiles for the 17 Set-C candidates across six resistance mutations. Missing axes mark an ineligible target under the $\qty{5.0}{\kcalmol}$ wild-type score threshold and are not treated as zero. Rings mark RRS of \qty{50}{\percent}, \qty{100}{\percent}, and \qty{150}{\percent}; the plot does not encode absolute binding strength.}
+\label{fig:s2_rrs_radar}
+\end{figure}
+
+\input{Table_S12_RRS_By_Target.tex}
+
+\input{Table_S11_RRS_Threshold_Sensitivity.tex}
+
+\noindent Varying the wild-type eligibility threshold from \qty{4.0}{\kcalmol} to \qty{5.0}{\kcalmol} left class counts unchanged. Raising retention thresholds from \qty{70}{\percent}/\qty{80}{\percent} to \qty{80}{\percent}/\qty{90}{\percent} increased Class~D from 1 to 9. These cut-offs are operational triage rules for this panel, not calibrated resistance categories.
+
+% ============================================================================
+% 4. Network, cohort scope, secondary calibration
+% ============================================================================
+
+\input{Table_S9_PNS_Imputation_Sensitivity.tex}
+
+\input{Secondary_Analyses_SI.tex}
+
+\input{Table_S8_Cohort_Estimands.tex}
+
+\input{Table_S13_Evidence_Scope.tex}
+
+\input{Table_S14_Panel_Scope.tex}
+
+% ============================================================================
+% 5. Target identifiers
+% ============================================================================
+
 \begin{table}[htbp]
 \centering
-\caption{MM-GBSA results for the four parent-study complexes. These systems are distinct from the 17 Set-C candidates. The interpretable PfCRT--214 result is reported as mean $\pm$ standard error of the mean (SEM) from \num{101} snapshots; dissociated or conversion-invalid systems are listed as N/A. Mutant RRS was calculated only for Set-C docking systems.}
+\scriptsize
+\setlength{\tabcolsep}{0pt}
+\caption{Stable \textit{Plasmodium falciparum} target identifiers and mutation contexts. The identifiers define targets and states; they are not pathway-level or experimental evidence.}
+\label{tab:s5_plasmodb}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.07\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}p{0.14\textwidth} X}
+\toprule
+Target & ID & Context & Mutation / boundary \\
+\midrule
+PfDHFR & \scriptsize\texttt{PF3D7\_0417200}\normalsize & 7F3Y WT template & N51I/C59R/S108N/I164L; antifolate states \\
+PfCRT & \scriptsize\texttt{PF3D7\_0709000}\normalsize & 6UKJ WT template & K76T/K76A resistance states \\
+PfATP4 & \scriptsize\texttt{PF3D7\_1211900}\normalsize & 9N10 parent-study structure & Annotation only; outside Set-C docking panel \\
+PfClpP & \scriptsize\texttt{PF3D7\_0307400}\normalsize & Proteolytic Clp subunit & Not assigned to 4GM2; no PfClpP claim \\
+PfClpR & \scriptsize\texttt{PF3D7\_1436800}\normalsize & 4GM2 & 4GM2 is PfClpR, not PfClpP \\
+\bottomrule
+\end{tabularx}
+\normalsize
+\setlength{\tabcolsep}{6pt}
+\end{table}
+
+Identifiers were taken from PlasmoDB/VEuPathDB (accessed 12 August 2026) \citep{plasmodb_2026}; the release/build string was not recorded. A parent-study PfCRT redocking check at pH~5.2 (100/100 library ligands; $\rho = 0.270$, $p = 0.006551$) was not merged into the Set-C RRS cohort. No GO or pathway enrichment was run, because a defined multi-gene targetome and parasite-proteome background were not available \citep{Trapotsi2022MoA}.
+
+% ============================================================================
+% 6. Parent-study MD (non-overlapping cohort)
+% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\caption{MM-GBSA for the four parent-study complexes. These systems are not among the 17 Set-C candidates. PfCRT--214 is reported as mean $\pm$ SEM over \num{101} snapshots; dissociated or conversion-invalid systems are N/A.}
 \label{tab:s2_mmgbsa_mutants}
 \scriptsize
 \begin{tabular}{l l S[table-format=-2.2] S[table-format=1.2] l}
@@ -94,120 +166,38 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {SEM} & Interpretation \\
 214 & PfCRT-WT & -18.25 & 0.40 & Interpretable (gmx\_MMPBSA~\citep{gmx_mmpbsa_2021}) \\
 438 & PfATP4-WT & {--} & {--} & N/A; conversion corrupted$^\S$ \\
 \bottomrule
-\multicolumn{5}{p{0.90\linewidth}}{$^\ast$PDB 4GM2 is PfClpR rather than PfClpP; the 164-labelled system is therefore not structural validation of PfClpP.} \\
-\multicolumn{5}{p{0.90\linewidth}}{$^\ddagger$Ligand dissociated during production; no binding free energy is inferred.} \\
-\multicolumn{5}{p{0.90\linewidth}}{$^\S$Excluded due to two-chain topology incompatibility with CHARMM36\citep{charmm36m_2017}-to-AMBER conversion.} \\
+\multicolumn{5}{p{0.90\linewidth}}{$^\ast$PDB 4GM2 is PfClpR, not PfClpP.} \\
+\multicolumn{5}{p{0.90\linewidth}}{$^\ddagger$Ligand left the site during production; no binding free energy is inferred.} \\
+\multicolumn{5}{p{0.90\linewidth}}{$^\S$Two-chain topology incompatible with CHARMM36\citep{charmm36m_2017}-to-AMBER conversion.} \\
 \end{tabular}
 \end{table}
-
-% ============================================================================
-% Table S3: Predicted ADMET profile (ADMET-AI, parent-library screening)
-% ============================================================================
-\input{Table_S5_ADMET_CrossValidation.tex}
-
-% ============================================================================
-% Table S4: ACSI Weight Sensitivity
-% ============================================================================
-\input{Table_S6_ACSI_Weight_Sensitivity.tex}
-
-% ============================================================================
-% Figure S2: RRS Radar Plots
-% ============================================================================
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{rrs_radar_profiles.pdf}
-\caption{Per-compound, docking-derived RRS profiles across six resistance mutations for the 17 Set-C candidates. Missing axes denote an ineligible target under the $\qty{5.0}{\kcalmol}$ wild-type docking-score threshold and are not treated as zero. Concentric rings indicate RRS values of \qty{50}{\percent}, \qty{100}{\percent}, and \qty{150}{\percent}; the plot does not encode absolute binding potency.}
-\label{fig:s2_rrs_radar}
-\end{figure}
-
-\noindent\textit{MD scope.} The parent-study trajectories comprise a targeted, non-membrane explicit-solvent structural follow-up of four wild-type complexes. A separate 16-system Set-C pilot evaluated PP-01 and PP-02 against the six-mutant panel for \qty{10}{\nano\second} per system. Its MD-RRS and MM-GBSA estimates are summarized in \cref{tab:s8_setc_mmgbsa} and compared with docking RRS in \cref{fig:s3_setc_rrs_scatter}. Neither design estimates long-timescale residence or replicate-level uncertainty; the evidence boundary is summarized in \cref{tab:s13_evidence_scope,tab:s14_panel_scope}.
-
-% ============================================================================
-% Figure S3: Set-C pilot MD-RRS / MM-GBSA RRS vs docking RRS scatter
-% ============================================================================
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{p2_setc_rrs_scatter.pdf}
-\caption{Trajectory-derived and docking-derived RRS values for the Set-C pilot, normalized to the corresponding WT value of \num{100}. Panel (a) compares mean minimum-distance ratios with docking RRS for eight mutant systems; panel (b) compares MM-GBSA RRS with docking RRS. Four PP-02 PfDHFR systems lack a docking WT reference. Docking predicted lower mutant scores in the comparable systems, whereas the trajectory-derived estimates did not reproduce that pattern. Neither estimate measures biological resistance or thermodynamic affinity.}\label{fig:s3_setc_rrs_scatter}
-\end{figure}
-
-% ============================================================================
-% Figure S4: Independent P2Rank pocket audit vs Vina box centers
-% ============================================================================
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{figure_p2rank_boxes.pdf}
-\caption{Independent P2Rank\citep{Krivak2018P2Rank} pocket prediction versus the fixed Vina\citep{vina_2021} grid boxes used for docking. Panel (a) reports the distance between the top-three P2Rank pocket centers and the Vina box center for the three receptors with a P2 grid (PfDHFR 7F3Y, PfCRT 6UKJ, PfATP4 9N10); the dashed line marks the \qty{12.5}{\angstrom} box half-edge. Panel (b) shows the same centers in 3D (star: Vina box; markers: top-three P2Rank pockets, same frame pairs). For PfCRT (6UKJ), the top P2Rank pocket (score \num{162.7}, probability \num{0.999}, by far the most ligandable site) lies \qty{5.7}{\angstrom} from the Vina box center, corroborating the docking box. The larger separations for PfDHFR and PfATP4 carry a receptor-frame caveat (the P1 grid configuration may derive from a different preparation than the MD receptor used here) and are recorded as provenance flags rather than docking-quality verdicts. P2Rank 2.5.1; exploratory boundary audit only --- no canonical score or RRS value is modified.}
-\label{fig:s4_p2rank_boxes}
-\end{figure}
-
-% ============================================================================
-% Table S5: PlasmoDB target annotation and mutation provenance
-% ============================================================================
-\begin{table}[htbp]
-\centering
-\scriptsize
-\setlength{\tabcolsep}{0pt}
-\caption{Stable \textit{Plasmodium falciparum} target identifiers and mutation contexts used in this study. The identifiers define the targets and mutation states; they do not provide pathway-level or experimental evidence.}
-\label{tab:s5_plasmodb}
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.07\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}p{0.14\textwidth} X}
-\toprule
-Target & ID & Context & Mutation/evidence boundary \\
-\midrule
-PfDHFR & \scriptsize\texttt{PF3D7\_0417200}\normalsize & 7F3Y WT template & N51I/C59R/S108N/I164L; antifolate states \\
-PfCRT & \scriptsize\texttt{PF3D7\_0709000}\normalsize & 6UKJ WT template & K76T/K76A resistance states \\
-PfATP4 & \scriptsize\texttt{PF3D7\_1211900}\normalsize & 9N10 parent-study structure & Annotation only; outside Set-C panel \\
-PfClpP & \scriptsize\texttt{PF3D7\_0307400}\normalsize & Proteolytic Clp subunit & Not assigned to 4GM2; no PfClpP claim \\
-PfClpR & \scriptsize\texttt{PF3D7\_1436800}\normalsize & 4GM2, PfClpR & 4GM2 is PfClpR, not PfClpP \\
-\bottomrule
-\end{tabularx}
-\normalsize
-\setlength{\tabcolsep}{6pt}
-\end{table}
-
-Stable identifiers were retrieved from PlasmoDB/VEuPathDB on 12 August 2026 \citep{plasmodb_2026}. The database release/build was not available. The existing PfCRT pH 5.2 redocking sensitivity (100/100 library ligands; $\rho = 0.270$, $p = 0.006551$) was not merged into the Set-C docking-RRS cohort. No GO or pathway-enrichment test was performed because an independent multi-gene targetome and prespecified parasite-proteome background were unavailable \citep{Trapotsi2022MoA}.
-
-% ============================================================================
-% Table S6: Cohort and estimand separation
-% ============================================================================
-\input{Table_S8_Cohort_Estimands.tex}
-
-% ============================================================================
-% Table S7: PNS imputation sensitivity
-% ============================================================================
-\input{Table_S9_PNS_Imputation_Sensitivity.tex}
-\input{Secondary_Analyses_SI.tex}
-
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{214_PfCRT_rmsf_contacts.png}
-\caption{Per-residue flexibility and binding-contact persistence for the PfCRT--Ligand 214 complex. LYS34 is the main contact anchor; contact persistence is an aggregate count, not a fractional occupancy.}
+\caption{Per-residue flexibility and contact persistence for the parent-study PfCRT--Ligand 214 complex. Lys34 is the main contact anchor; contact counts are aggregate, not fractional occupancy.}
 \label{fig:s_md_contacts}
 \end{figure}
 
+% ============================================================================
+% 7. Set-C MD pilot
+% ============================================================================
 
-% ============================================================================
-% Table S10: PP-01 WT replicate consistency
-% ============================================================================
-\input{Table_S10_WT_Replicate_Consistency.tex}
-\input{Table_S11_RRS_Threshold_Sensitivity.tex}
-\input{Table_S12_RRS_By_Target.tex}
-\input{Table_S13_Evidence_Scope.tex}
-\input{Table_S14_Panel_Scope.tex}
-\input{Table_S15_Robustness_Transfer.tex}
-\input{Table_S16_P1_Context.tex}
+\noindent The parent-study trajectories are a short, non-membrane explicit-solvent check on four wild-type complexes outside the Set-C list. Separately, a 16-system pilot ran PP-01 and PP-02 against the six-mutant panel for \qty{10}{\nano\second} each. Trajectory-derived ratios and MM-GBSA are compared with docking RRS below. Neither design estimates long residence times or replicate uncertainty; scope boundaries are summarized in \cref{tab:s13_evidence_scope,tab:s14_panel_scope}.
 
-\noindent\textit{RRS threshold sensitivity.} Across the prespecified threshold grid, the baseline available-target class counts were unchanged when the WT eligibility threshold was varied from \qty{4.0}{\kcalmol} to \qty{5.0}{\kcalmol}. Tightening the retention thresholds from \qty{70}{\percent}/\qty{80}{\percent} to \qty{80}{\percent}/\qty{90}{\percent} increased the number of Class~D candidates from 1 to 9. This sensitivity reflects the operational nature of the docking-based classes and does not calibrate them against experimental resistance measurements.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{p2_setc_rrs_scatter.pdf}
+\caption{Set-C pilot: trajectory-derived ratios versus docking RRS (wild type $= \num{100}$). (a)~Mean minimum-distance ratios for eight mutants with a docking wild-type reference. (b)~MM-GBSA ratios versus docking RRS. Four PP-02 PfDHFR states lack a docking wild-type reference. Docking predicted weaker mutant scores in the comparable systems; trajectory metrics did not recover that pattern. Neither quantity is a free-energy or experimental resistance measure.}
+\label{fig:s3_setc_rrs_scatter}
+\end{figure}
 
-% ============================================================================
-% Table S8: Set-C MD pilot MM-GBSA (16 systems)
-% ============================================================================
 \begin{table}[htbp]
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
-\caption{MM-GBSA endpoint estimates for the Set-C pilot. $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots; the reported $\mathrm{SD}_{\mathrm{prop}}$ is the propagated within-trajectory standard deviation, not a SEM or replicate uncertainty. MMG-RRS is the ratio of absolute mutant and WT endpoint magnitudes, with WT = \qty{100}{\percent}. It is not a free-energy resilience measure. n/a denotes the absence of a docking WT reference for PP-02 PfDHFR. Two systems required trajectory reconstruction before endpoint analysis because of periodic-boundary discontinuities. Values above \qty{100}{\percent} indicate retention within endpoint uncertainty, not increased affinity; eight of the twelve mutant systems exceed this value.}\label{tab:s8_setc_mmgbsa}
+\caption{Set-C pilot MM-GBSA estimates. $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots; $\mathrm{SD}_{\mathrm{prop}}$ is the propagated within-trajectory standard deviation, not a SEM or replicate uncertainty. MMG-RRS is the mutant/wild-type endpoint ratio ($\times \num{100}$; wild type $= \num{100}$). MD-RRS is the corresponding mean minimum-distance ratio. n/a: no docking wild-type reference for PP-02 PfDHFR. Two systems needed periodic-boundary reconstruction before endpoint analysis. Ratios above \qty{100}{\percent} indicate retention within endpoint noise, not increased affinity.}
+\label{tab:s8_setc_mmgbsa}
 \scriptsize
 \begin{tabularx}{\textwidth}{l l l S[table-format=-2.2] S[table-format=1.2] S[table-format=3.1] S[table-format=3.1] S[table-format=3.2]}
 \toprule
@@ -234,9 +224,23 @@ PP-02 & PfDHFR & WT$^\ast$ & -30.16 & 2.06 & 100.0 & 100.0 & {--} \\
 \setlength{\tabcolsep}{6pt}
 \end{table}
 
+\input{Table_S10_WT_Replicate_Consistency.tex}
+
+% ============================================================================
+% 8. Robustness and companion context
+% ============================================================================
+
+\input{Table_S15_Robustness_Transfer.tex}
+
+\input{Table_S16_P1_Context.tex}
+
+% ============================================================================
+% Back matter
+% ============================================================================
+
 \section*{Use of Artificial Intelligence}
 
-During the preparation of this work the authors used AI assistants to support code development and data analysis scripting. The authors reviewed and edited all AI-assisted output and take full responsibility for the content of this article. No generative AI tool is listed as an author. All computational results, statistical analyses, and quantitative claims were generated and verified by the authors.
+AI assistants were used to help with code and analysis scripts. All AI-assisted text and code were reviewed and edited by the authors, who take full responsibility for this Supporting Information. No generative AI tool is an author. Computational results, statistics, and quantitative claims were produced and checked by the authors.
 
 \bibliography{Bibliography_P2}
 
