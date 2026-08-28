@@ -26,7 +26,7 @@ Read the relevant DAR before changing code, parameters, protocols, or manuscript
 | Project | Status | Essential result or boundary |
 |---|---|---|
 | P1 | **V7 technically submission-ready (JCIM)** | V7 enhanced + validated (DEKOIS/MMV/redocking), 25 p. main / 17 p. SM / 1 p. cover, package refreshed; final author/metadata review and independent structural review remain |
-| P2 | Set-C MD pilot CANONICAL; audit adversarial = MINOR REVISION, GO JCIM | Production 15320 COMPLETE 16/16 (2026-08-18); QC=0; MD-RRS `COMPUTED_WITH_COHORT_CONTRACT` (PP-01/PP-02 Class A, rule `setc_p2_minheavy_5A_ge10percent_v1`); MM-GBSA 16/16 (8 mutants >100 % = rétention-pas-gain); full-panel MD-RRS reste `NOT_COMPUTED` |
+| P2 | Set-C MD pilot CANONICAL; audit adversarial = MINOR REVISION, GO JCIM | Production 15320 COMPLETE 16/16 (2026-08-18); QC=0; MD-RRS `COMPUTED_WITH_COHORT_CONTRACT` (PP-01/PP-02 Class A, rule `setc_p2_minheavy_5A_ge10percent_v1`); MM-GBSA 16/16 (8 mutants >100 % = rétention-pas-gain); full-panel MD-RRS reste `NOT_COMPUTED`. **28/08 robustesse intégrée au manuscrit** : gate MD-filter pilot-scope (7/12 rows, PP-01 promu 2 cibles, PP-02 non), bootstrap CI95 (A* 0.294 [0.118, 0.529]), consensus GNINA CNN (38/38 classe A, ρ=0.558) — recompile propre main 30 p. / SM 16 p., 0 erreurs ; Vina-only reste canonique |
 | P3 | Benchmarks complete | ECFP4 0.9475; hybrid 0.8876; QKS ≈ RBF; no quantum advantage claimed |
 | P4 | v12 benchmark complete | Random 0.6724 > MCTS 0.6649; Pareto front is a separate pre-activity artifact |
 | P5 | Benchmark complete | ECFP4-RF dominates under scaffold split; topological fusion is modestly complementary; phenotype-only LISH-MoA baseline is complete and separate |
