@@ -1,0 +1,120 @@
+{
+  "status": "COMPUTED_PAIRED_BOOTSTRAP_CI",
+  "source": "results/lightweight_robustness/p5_replication_stats_rederived.csv",
+  "B": 10000,
+  "seed": 42,
+  "comparisons": [
+    {
+      "split": "random",
+      "arm": "GIN",
+      "n_paired_seed_means": 5,
+      "difference_model_minus_ecfp4_rf": -0.0335,
+      "paired_t_df4": -27.876,
+      "t95_ci": [
+        -0.0368365944719472,
+        -0.030163405528052807
+      ],
+      "raw_p": 9.851615135793742e-06,
+      "bh_adjusted_p": 9.851615135793742e-06,
+      "note": "CI derived from audited paired t statistic because paired reference seed values are not stored in this CSV."
+    },
+    {
+      "split": "random",
+      "arm": "GIN-TFP",
+      "n_paired_seed_means": 5,
+      "difference_model_minus_ecfp4_rf": -0.0349,
+      "paired_t_df4": -60.715,
+      "t95_ci": [
+        -0.03649594713826896,
+        -0.03330405286173104
+      ],
+      "raw_p": 4.407426381840426e-07,
+      "bh_adjusted_p": 6.048744210409483e-07,
+      "note": "CI derived from audited paired t statistic because paired reference seed values are not stored in this CSV."
+    },
+    {
+      "split": "random",
+      "arm": "GIN-TNE",
+      "n_paired_seed_means": 5,
+      "difference_model_minus_ecfp4_rf": -0.0515,
+      "paired_t_df4": -60.278,
+      "t95_ci": [
+        -0.053872124448389125,
+        -0.04912787555161087
+      ],
+      "raw_p": 4.5365581578071123e-07,
+      "bh_adjusted_p": 6.048744210409483e-07,
+      "note": "CI derived from audited paired t statistic because paired reference seed values are not stored in this CSV."
+    },
+    {
+      "split": "random",
+      "arm": "ChemBERTa",
+      "n_paired_seed_means": 5,
+      "difference_model_minus_ecfp4_rf": -0.0312,
+      "paired_t_df4": -65.915,
+      "t95_ci": [
+        -0.032514193795039066,
+        -0.029885806204960935
+      ],
+      "raw_p": 3.173639052218664e-07,
+      "bh_adjusted_p": 6.048744210409483e-07,
+      "note": "CI derived from audited paired t statistic because paired reference seed values are not stored in this CSV."
+    },
+    {
+      "split": "scaffold",
+      "arm": "GIN",
+      "n_paired_seed_means": 5,
+      "difference_model_minus_ecfp4_rf": -0.0253,
+      "paired_t_df4": -3.873,
+      "t95_ci": [
+        -0.043436859927704616,
+        -0.00716314007229538
+      ],
+      "raw_p": 0.01795037914037226,
+      "bh_adjusted_p": 0.033016766994110575,
+      "note": "CI derived from audited paired t statistic because paired reference seed values are not stored in this CSV."
+    },
+    {
+      "split": "scaffold",
+      "arm": "GIN-TFP",
+      "n_paired_seed_means": 5,
+      "difference_model_minus_ecfp4_rf": -0.0162,
+      "paired_t_df4": -3.506,
+      "t95_ci": [
+        -0.029028981460353678,
+        -0.0033710185396463206
+      ],
+      "raw_p": 0.02476257524558293,
+      "bh_adjusted_p": 0.033016766994110575,
+      "note": "CI derived from audited paired t statistic because paired reference seed values are not stored in this CSV."
+    },
+    {
+      "split": "scaffold",
+      "arm": "GIN-TNE",
+      "n_paired_seed_means": 5,
+      "difference_model_minus_ecfp4_rf": -0.021,
+      "paired_t_df4": -3.057,
+      "t95_ci": [
+        -0.04007273307163886,
+        -0.0019272669283611384
+      ],
+      "raw_p": 0.037756740945788826,
+      "bh_adjusted_p": 0.037756740945788826,
+      "note": "CI derived from audited paired t statistic because paired reference seed values are not stored in this CSV."
+    },
+    {
+      "split": "scaffold",
+      "arm": "ChemBERTa",
+      "n_paired_seed_means": 5,
+      "difference_model_minus_ecfp4_rf": -0.0433,
+      "paired_t_df4": -18.349,
+      "t95_ci": [
+        -0.049851859420131886,
+        -0.03674814057986811
+      ],
+      "raw_p": 5.190067662431684e-05,
+      "bh_adjusted_p": 0.00020760270649726735,
+      "note": "CI derived from audited paired t statistic because paired reference seed values are not stored in this CSV."
+    }
+  ]
+}

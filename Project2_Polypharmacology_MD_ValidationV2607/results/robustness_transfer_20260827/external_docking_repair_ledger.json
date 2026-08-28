@@ -1,0 +1,23 @@
+{
+  "schema_version": 3,
+  "status": "DECLARED_REPAIR_COMPLETED_WITH_EMBED_FAILURE_EXCLUSION",
+  "declared_on": "2026-08-28T04:55:46Z",
+  "boundary": "Panel CSV frozen and unmodified; repairs and the EXT-039 exclusion recorded. Aggregate/RRS chain integrates repaired outputs only after the integrity audit reaches 312/312 valid with the declared EXT-039 exclusion.",
+  "cause_A_salt_strip": {
+    "description": "Frozen SMILES carried counterions (.Cl, .2Cl, .oxalate) yielding 2-3 fragments rejected by Meeko; largest-fragment free base taken.",
+    "ligands": ["EXT-019", "EXT-021", "EXT-032", "EXT-033", "EXT-036", "EXT-037"]
+  },
+  "cause_B_obabel_gen3d": {
+    "description": "RDKit distance geometry failed at seed 42 on flexible/ring-rich systems; Open Babel --gen3d (force-field 3D) used instead, then SDF -> Meeko PDBQT.",
+    "ligands": ["EXT-008", "EXT-038"]
+  },
+  "cause_C_time_limit_partial": {
+    "description": "EXT-007 killed by SLURM time-limit at 3/8; prep was valid. Only the 5 missing states re-docked; existing poses retained.",
+    "ligands": ["EXT-007"]
+  },
+  "cause_D_embed_failure_exclusion": {
+    "description": "EXT-039 cannot generate 3D coordinates under RDKit DG, RDKit random-coords, or OBabel --gen3d within reasonable compute (folded cyclic macrocycle). Declared EMBED_FAILURE and excluded; NOT silently dropped. Panel target becomes 39 ligands x 8 states = 312 records.",
+    "ligand": "EXT-039",
+    "attempts": ["RDKit ETKDGv2 seed42", "RDKit random-coords seeds (42,2026,7,12345)", "OBabel --gen3d (280s timeout)"]
+  }
+}

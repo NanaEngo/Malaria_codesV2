@@ -155,7 +155,7 @@ topology change was required — the prepared systems and manifests are intact.
 
 ### Current honest statement
 
-Set-C MD preparation for the 16-system pilot is **in progress**; the pipeline
+Historical checkpoint: Set-C MD preparation for the 16-system pilot was **in progress** at the time; the pipeline
 was validated end-to-end on `PP-01_PfDHFR_WT` (EM restrained + EM free + NVT + NPT, all rc=0, final EM potential −5.21e6 kJ/mol, NPT 310.15 K / 1 bar).  The first full array `15054` partially failed on resource oversubscription (12/16, fixed by concurrency-limited retry `15070`); the 4 unaffected systems continue.
 `md_rrs_status=NOT_COMPUTED` until production trajectories pass QC.  Docking-RRS
 and MD-RRS remain in separate provenance records.

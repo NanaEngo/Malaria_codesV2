@@ -1,8 +1,8 @@
 # Submission Manifest — P5
 
 **Journal:** Journal of Computer-Aided Molecular Design (JCAMD, Springer Nature)
-**Implementation audit:** `docs/P5V2_SUGGESTIONS_IMPLEMENTATION_MATRIX_20260827.md`; **JCAMD guideline audit:** `docs/JCIM_GUIDELINE_AUDIT_20260827.md`
-**Pages:** main 16 p. / SI 3 p. / cover 1 p. — main count from `pdfinfo` (verified 27/08/2026); SI holds the full LISH protocol, complete metric set, and control-sensitivity table (Section S1) plus the post-hoc calibration metrics table (Section S2: ECE/MCE/Brier, 30 configurations), both referenced from the main text
+**Implementation audit:** `docs/P5V2_SUGGESTIONS_IMPLEMENTATION_MATRIX_20260827.md`; **JCAMD guideline audit:** `docs/JCAMD_GUIDELINE_AUDIT_20260827.md`
+**Pages:** main 16 p. / SI 4 p. / cover 1 p. — main count from `pdfinfo`; SI holds the full LISH protocol, complete metric set, and control-sensitivity table (Section S1), the post-hoc calibration metrics table (Section S2: ECE/MCE/Brier, 30 configurations), the light GNN hyperparameter-sensitivity table (Section S3, job 15617: hidden 64/dropout 0.2 and hidden 256/dropout 0.1 vs canonical 128/0.1), and the paired model-minus-ECFP4-RF contrast table with 95% intervals (Section S4, `p5_paired_bootstrap_ci_20260828.json`), all referenced from the main text
 **Status:** JCIM guideline audit completed locally; manuscript compiles clean; canonical and extended GNN analyses, molecule-disjoint ChEMBL CHEMBL364 transfer analysis, fold-level AUPRC, descriptor ablations/permutations, salience-stability audit, split metadata, chemical-standardization audit, and the extended ChemBERTa completion audit are synchronized. ChemBERTa is a separately versioned secondary analysis. Remaining release checks: final provenance/statistical review, Zenodo deposit, and final author metadata review. Acceptance-probability estimate (55 %, range 45–65 %) documented in `docs/P5V2_ACCEPTANCE_PROBABILITY_20260827.md`.
 **Generated:** 2026-08-27 UTC (title, abstract, introduction, cover-letter, and secondary-campaign audit synchronization; final hashes regenerated after compilation).
 
@@ -38,7 +38,7 @@ three moved.
 - JCAMD Declarations complete (Availability, Funding, Ethics, Use of AI).
 - References: 26 distinct cited references and 26 BibTeX entries; 0 orphan and 0 missing citations.
 - Secondary robustness artifacts are documented in `results/lightweight_robustness/README.md` and `results/extended_campaign_20260825/README.md`; they are not substituted for the canonical primary benchmark estimates.
-- Supporting Information added 27/08/2026: `P5_SI_V2608.tex/.pdf` (3 pages) contains the full LISH phenotype-only protocol and results (Section S1) and the post-hoc calibration metrics (Section S2, Table S2: ECE/MCE/Brier for 25 GNN + 5 ChemBERTa configurations, pooled over 25 fold-seed records); the main text summarizes LISH and points to it (7 Section~S1 references) and cites the calibration table in the extensions paragraph (Section~S2).
+- Supporting Information added 27/08/2026 and extended 28/08/2026: `P5_SI_V2608.tex/.pdf` (4 pages) contains the full LISH phenotype-only protocol and results (Section S1), the post-hoc calibration metrics (Section S2), the light GNN hyperparameter sensitivity from job 15617 (Section S3), and the paired contrast table with 95% intervals (Section S4); the main text summarizes LISH and points to S1, cites the calibration table (S2), the sensitivity table (S3), and the paired-contrast archive (S4).
 - 27/08/2026 refinement: new Discussion subsection "Position relative to recent representation benchmarks" isolates the fold-independent-initialization, topological-fusion, and external-corroboration contributions against Guo & Ding 2026, the 25-embedding benchmark, and Boldini 2024; abstract, contribution statement, and highlights now lead with the fold-independent transformer-initialization protocol.
 - Manuscript compile verified at the Generated timestamp: `latexmk -g -pdf
   -interaction=nonstopmode -halt-on-error` exit 0, no `^!` lines, 0 undefined references,
@@ -60,18 +60,20 @@ The package is built by `scripts/build_zenodo_package.py` into `zenodo_package_2
 (+ `zenodo_package_20260827.tar.gz`) with a machine-readable manifest
 `ZENODO_PACKAGE_MANIFEST.json` (schema v2).
 
-- **27 files staged now** (25 base + `p5_benchmark.py` + `p5_sensitivity_gnn.sbatch`), status
-  **`PENDING_SENSITIVITY_15617_NOT_UPLOADED`**: the 8 Levier-3 GNN sensitivity outputs
-  (`results/p5_GIN_scaffold_*_sens_h64_d02.*` and `_sens_h256_d01.*`) are auto-included as
-  soon as SLURM job **15617** produces them (35 files expected at completion).
-- **Finalization procedure:** once job 15617 has finished and the fold-level gates are
-  clean (25 records per config, finite metrics), re-run
-  `python scripts/build_zenodo_package.py` — the manifest flips to
-  `READY_FOR_UPLOAD_NOT_UPLOADED` with `sensitivity_files_pending: []`; then refresh the
-  tarball, verify the reserved DOI `10.5281/zenodo.19608875`, and upload.
-  An automated watcher `scripts/p5_zenodo_finalize.sh` (launched 27/08/2026) performs
-  the wait-for-15617 + fold audit + rebuild + tarball refresh chain fail-closed and
-  logs to `/tmp/p5_zenodo_finalize.log`; it stages and verifies but never uploads.
+- **31 files staged now** (25 base + `p5_benchmark.py` + `p5_sensitivity_gnn.sbatch` +
+  4 Levier-3 GNN sensitivity outputs), status **`READY_FOR_UPLOAD_NOT_UPLOADED`**.
+  The sensitivity run (job **15617**) emits only **two files per config** — the results
+  CSV and the ckpt JSON (which carries the per-fold `curve` key inline). A separate
+  `curves` JSON is written only in `--curves-only` runs, and `salience` only for fusion
+  models; neither applies to the base-GIN sensitivity runs, so neither is staged or
+  expected. `sensitivity_output_contract` in the manifest records this explicitly.
+- **Refresh/deposit:** re-run `python scripts/build_zenodo_package.py` to rebuild, then
+  refresh `zenodo_package_20260827.tar.gz`, verify the reserved DOI
+  `10.5281/zenodo.19608875`, and upload. The automated watcher
+  `scripts/p5_zenodo_finalize.sh` (launched 27/08/2026) performs the
+  wait-for-15617 + fold audit (2 configs × 25 finite-AUC records + embedded-curve
+  check) + rebuild + tarball refresh chain fail-closed and logs to
+  `/tmp/p5_zenodo_finalize.log`; it stages and verifies but never uploads.
 - Boundary unchanged: local staging only; no upload or DOI publication performed.
 
 ## Open items (must close before submission)

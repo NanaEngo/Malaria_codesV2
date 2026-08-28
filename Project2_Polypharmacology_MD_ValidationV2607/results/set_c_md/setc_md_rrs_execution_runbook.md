@@ -38,7 +38,7 @@ Gate **15312** passed the exact `16/16` `READY_FOR_AUTHORIZED_EXECUTION` preflig
 
 ## Preconditions
 
-1. Candidate-specific `system_manifest.json` and `forcefield_manifest.json` are present and identity/hashes pass in the new versioned root. The historical 0/16 read-only preflight applies only to the incomplete canonical root `results/md_systems/set_c`; the active versioned root contains the completed 16/16 equilibration outputs, while production `15320` remains in progress.
+1. Candidate-specific `system_manifest.json` and `forcefield_manifest.json` are present and identity/hashes pass in the new versioned root. The historical 0/16 read-only preflight applies only to the incomplete canonical root `results/md_systems/set_c`; the active versioned root contains the completed 16/16 equilibration outputs, while production `15320` was still in progress at the historical checkpoint; it subsequently completed 16/16 and the post-production chain is canonical.
 2. The actual equilibration and production SLURM IDs are recorded at submission time; the canonical completed chain is 15288 → 15319 → 15320 → 15386. Historical IDs are retained only as non-canonical scheduler provenance.
 3. Production trajectories contain non-empty `production.xtc` and `production.tpr` files.
 4. The selected contract is declared explicitly through `P2_SETC_COHORT_MODE`.

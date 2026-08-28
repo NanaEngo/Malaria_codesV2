@@ -36,17 +36,20 @@ FILES = [
     "scripts/p5_calibration_posthoc.py",
 ]
 
-# Levier-3 light GNN sensitivity outputs (job 15617). Included automatically
-# once the fold-level gates have produced them; the package stays buildable
-# (status PENDING_SENSITIVITY) while job 15617 is still queued/running.
+# Levier-3 light GNN sensitivity outputs (job 15617). A normal-mode run of
+# p5_benchmark.py on the BASE GIN model emits exactly two files per config:
+#   - *_results_*_sens_<cfg>.csv  (25 fold x seed records with finite AUC)
+#   - *_ckpt_*_sens_<cfg>.json     (carries the per-fold `curve` key inline)
+# A separate *_curves_*.json is only written in `--curves-only` runs, and a
+# *_salience_*.json only for fusion models (GIN-TFP/TNE/FP): base GIN has no
+# descriptor projection, hence no salience. Both are therefore NOT expected
+# here and must not gate the package. Included automatically once the fold-
+# level gates produce them; the package stays buildable (status
+# PENDING_SENSITIVITY) while job 15617 is still queued/running.
 SENSITIVITY_FILES = [
     "results/p5_GIN_scaffold_results_sens_h64_d02.csv",
-    "results/p5_GIN_scaffold_curves_sens_h64_d02.json",
-    "results/p5_GIN_scaffold_salience_sens_h64_d02.json",
     "results/p5_GIN_scaffold_ckpt_sens_h64_d02.json",
     "results/p5_GIN_scaffold_results_sens_h256_d01.csv",
-    "results/p5_GIN_scaffold_curves_sens_h256_d01.json",
-    "results/p5_GIN_scaffold_salience_sens_h256_d01.json",
     "results/p5_GIN_scaffold_ckpt_sens_h256_d01.json",
 ]
 
@@ -105,6 +108,7 @@ def main() -> None:
         "missing": missing,
         "sensitivity_files_present": sensitivity_present,
         "sensitivity_files_pending": sensitivity_pending,
+        "sensitivity_output_contract": "Base-GIN normal-mode sensitivity runs (job 15617) emit two files per config (results CSV + ckpt JSON; curves embedded in ckpt, salience n/a for base GIN); no separate curves/salience JSON is expected",
         "files": records,
         "exclusions": ["Slurm logs", "LaTeX auxiliary files", "Python caches", "model caches", "temporary files", "credentials"],
         "boundary": "Local staging only. No Zenodo upload or DOI publication was performed.",

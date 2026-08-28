@@ -1,6 +1,6 @@
 # Project 6 — Structure–phenotype prediction of mechanism-of-action profiles
 
-**Status:** `PHASE 1 MAPPING VALIDATED — PHASE 2 BENCHMARK IN PROGRESS`
+**Status:** `PHASE 1 MAPPING VALIDATED — PHASE 2 COLLISION-GROUP BENCHMARK COMPLETE`
 **Date established:** 12 August 2026; mapping validated 25 August 2026
 **Relationship to P5:** independent follow-up study building on P5; not a revision or continuation of the canonical P5 manuscript.
 
@@ -25,7 +25,7 @@ These metrics describe MoA-associated phenotype prediction. They do not establis
 
 ## Blocked structure arm
 
-A versioned, auditable structure mapping is now available: 3,289/3,289 drug-level rows are covered, all mapped structures pass validation after salt stripping, and the frozen contract records 1,722 unique molecules and 794 collision groups. Phase 2 has therefore opened under collision-group primary splits. No gain claim is authorized for incomplete arms.
+A versioned, auditable structure mapping is now available: 3,289/3,289 drug-level rows are covered, all mapped structures pass validation after salt stripping, and the frozen contract records 1,722 unique molecules and 794 collision groups. Phase 2 was therefore executed under collision-group primary splits and is now complete for the audited molecular matrix. No gain claim is authorized: the audited molecular arms do not establish a structure-based performance advantage.
 
 The P5 scripts remain the preparation reference:
 
@@ -47,7 +47,7 @@ The following gates have passed for the current Phase 2 benchmark:
 7. paired seed/fold comparisons with multiplicity correction;
 8. complete failure accounting for TFP/TNE and bounded, separately labelled QKS computation.
 
-Completed Phase 2 results currently include phenotype-only baselines on k-fold, collision-group, and scaffold splits; ECFP4-linear and ECFP4-RF structure baselines; and a phenotype+ECFP4 fusion arm. The remaining GNN, descriptor-fusion, and ChemBERTa arms are pending in the current phase-2 artifact directory and must not be interpreted before their report JSONs pass audit.
+Completed Phase 2 results include phenotype-only baselines on k-fold, collision-group, and scaffold splits; ECFP4-linear and ECFP4-RF structure baselines; phenotype+ECFP4 fusion; and the complete collision-group molecular matrix (GIN, GIN-TFP, GIN-TNE, and ChemBERTa). Dedicated per-label calibration plots and the bounded QKS sensitivity remain `NOT_COMPUTED`.
 
 ## Manuscript boundary
 

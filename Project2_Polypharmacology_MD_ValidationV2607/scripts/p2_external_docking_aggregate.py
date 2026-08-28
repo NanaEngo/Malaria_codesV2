@@ -11,6 +11,10 @@ PANEL = BASE / "external_docking_panel_candidate_40.csv"
 OUT = BASE / "external_docking_aggregate_20260827"
 STATES = ["PfDHFR_WT", "PfDHFR_N51I", "PfDHFR_C59R", "PfDHFR_S108N", "PfDHFR_I164L", "PfCRT_WT", "PfCRT_K76T", "PfCRT_K76A"]
 
+# Declared EMBED_FAILURE (see frozen replication plan + repair ledger); its
+# states are NOT part of the expected-valid aggregate.
+DECLARED_EMBED_FAILURES = {"EXT-039"}
+
 
 def score(path: Path) -> float | None:
     text = path.read_text(errors="replace")
@@ -20,7 +24,8 @@ def score(path: Path) -> float | None:
 
 def main() -> int:
     rows = list(csv.DictReader(PANEL.open(newline="")))
-    expected = [(r["external_panel_id"], s) for r in rows for s in STATES]
+    eligible = [r for r in rows if r["external_panel_id"] not in DECLARED_EMBED_FAILURES]
+    expected = [(r["external_panel_id"], s) for r in eligible for s in STATES]
     records, missing, invalid = [], [], []
     for ligand, state in expected:
         p = RUN / f"{ligand}_{state}.pdbqt"
@@ -34,7 +39,7 @@ def main() -> int:
         records.append({"external_panel_id": ligand, "state": state, "vina_score_kcal_mol": value, "sha256": hashlib.sha256(p.read_bytes()).hexdigest()})
     status = "READY_FOR_RRS_POSTPROCESSING" if not missing and not invalid and len(records) == len(expected) else "BLOCKED_INCOMPLETE_OR_INVALID_DOCKING"
     OUT.mkdir(parents=True, exist_ok=True)
-    manifest = {"schema_version": 1, "status": status, "expected_records": len(expected), "valid_records": len(records), "missing_records": missing, "invalid_records": invalid, "states": STATES, "panel_sha256": hashlib.sha256(PANEL.read_bytes()).hexdigest()}
+    manifest = {"schema_version": 1, "status": status, "expected_records": len(expected), "valid_records": len(records), "missing_records": missing, "invalid_records": invalid, "states": STATES, "panel_sha256": hashlib.sha256(PANEL.read_bytes()).hexdigest(), "declared_embed_failures": sorted(DECLARED_EMBED_FAILURES)}
     (OUT / "aggregate_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     if status != "READY_FOR_RRS_POSTPROCESSING":
         print(json.dumps(manifest, indent=2))

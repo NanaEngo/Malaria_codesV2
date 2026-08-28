@@ -1,0 +1,106 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[
+  group-minimum-digits = 4,
+  per-mode             = symbol,
+  range-phrase         = {--},
+  range-units          = single,
+  separate-uncertainty = true,
+  retain-explicit-plus = true,
+]{siunitx}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\crefname{table}{Table}{Tables}
+\Crefname{table}{Table}{Tables}
+\crefname{figure}{Figure}{Figures}
+\Crefname{figure}{Figure}{Figures}
+\crefname{equation}{Eq.}{Eqs.}
+\crefname{section}{Section}{Sections}
+\crefname{subsection}{Section}{Sections}
+\title{Leakage-aware structure--phenotype prediction of mechanism-of-action profiles across a mapped drug cohort}
+\author{Author list to be completed by the accountable authors}
+\date{}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Mechanism-of-action (MoA) prediction from molecular structure is often evaluated under random splits that can place chemically identical or closely related compounds on both sides of a test boundary\citep{Trapotsi2022MoA,benchmark_pretrained_2025}. We constructed an auditable mapping between \num{3289} drug-level LISH-MoA records and molecular structures, resolved salts, and assigned identical canonical structures to collision groups before model evaluation. The primary benchmark used five seeds and five collision-group-disjoint folds, with mean column-wise log loss as the primary endpoint and macro-AUROC, macro-AUPRC, mean Brier score, and expected calibration error as secondary endpoints. A phenotype-only reference and four molecular arms were evaluated: GIN\citep{xu2019gin}, GIN-TFP, GIN-TNE, and ChemBERTa\citep{chemberta_2020}. The best molecular-arm log loss was obtained by GIN-TFP ($\num{0.02334}$), whereas all molecular-arm macro-AUROCs were close to chance (\num{0.501}--\num{0.508}) and below the phenotype-only collision-group reference (AUROC $\num{0.63619}$). These results do not demonstrate that molecular representations are universally inferior; they indicate that, under this mapped cohort, endpoint, and leakage-controlled split, structure alone did not provide a convincing predictive advantage for MoA-associated labels. The benchmark addresses prediction of observed MoA-associated annotations and does not establish causal mechanism, target engagement, antimalarial activity, or resistance resilience.
+\end{abstract}
+
+\section{Introduction}
+Mechanism-of-action prediction is a multi-label problem in which one compound may be associated with several pharmacological annotations. Molecular structure and cellular phenotype describe different levels of this problem: structure encodes chemical constitution, whereas phenotype summarizes responses observed across cellular systems and experimental conditions\citep{Trapotsi2022MoA}. A useful benchmark should therefore distinguish predictive performance from biological mechanism assignment and should evaluate generalization under boundaries that reflect the intended deployment setting.
+
+Random drug-level cross-validation can be optimistic when repeated records, salts, or identical canonical structures cross train and test sets. Collision-aware evaluation is particularly important for multi-label drug data because labels and covariates can be shared across records that are chemically identical\citep{guo2024scaffold}. The present study asks whether molecular representations add predictive information to a drug-level MoA-associated phenotype benchmark when canonical-structure collisions are prevented from crossing the primary evaluation boundary. We compare a graph model, two graph--descriptor fusion models, and a pretrained molecular transformer under a common cohort and fold contract. The analysis is a representation benchmark, not a causal MoA study.
+
+\section{Materials and methods}
+\subsection{Study design and endpoint}
+The dataset comprised \num{3289} drug-level rows and \num{206} scored MoA-associated labels\citep{lish_moa_2019,Trapotsi2022MoA}. The primary endpoint was mean column-wise log loss, computed by averaging binary log losses over labels. Secondary endpoints were macro-AUROC\citep{bmj2006rocauc}, macro-AUPRC\citep{davis2006auprc}, mean Brier score, and mean expected calibration error (ECE)\citep{natoesci2017ece}. AUROC and AUPRC were calculated only for labels with both classes in the test fold; this denominator was retained in the fold records. Probabilities were clipped to $[10^{-7},1-10^{-7}]$ for log-loss evaluation.
+
+\subsection{Structure mapping and collision control}
+A versioned mapping from \texttt{drug\_id} to SMILES was constructed from PRISM-aligned records. All \num{3289} drug-level rows were covered. Multi-component entries were split, the largest fragment by heavy-atom count was retained, and structures were canonicalized with RDKit\citep{RDKit}. The validated mapping contained \num{1722} unique molecules and \num{794} collision groups. The frozen mapping contract and its hash are recorded in the project data manifest. Collision groups, rather than individual rows, were assigned to folds; no identical canonical structure was allowed to occur in both training and test data.
+
+\subsection{Models and feature blocks}
+The phenotype reference used the predefined gene-expression, viability, and experimental-condition features. Molecular baselines used ECFP4 fingerprints\citep{ecfp_2010}. The graph arms used the locked P5 GIN architecture\citep{xu2019gin} and optimizer constants, with a multi-label output of \num{206} units. GIN-TFP appended tensor-free persistent descriptors, and GIN-TNE appended tensor-network descriptors. TFP and TNE were computed once per unique validated molecule. Four TNE descriptor failures were retained as zero-vector input rows under an intention-to-treat accounting rule; no failure was removed from the denominator. ChemBERTa\citep{chemberta_2020,chemberta3_2026} used \texttt{seyonec/ChemBERTa-zinc-base-v1}, maximum sequence length \num{128}, and the predeclared fine-tuning constants.
+
+\subsection{Splits, validation, and training}
+The primary evaluation used five seeds and five collision-group-disjoint folds. For each molecular fold, model selection used only training groups: training groups were randomly assigned to six parts and one part was used for validation. Early stopping minimized validation mean column-wise log loss. No test group entered model selection. The phenotype baseline was additionally evaluated under the original drug-level k-fold split and a scaffold-held-out sensitivity split\citep{guo2024scaffold}. ECFP4 and random-forest baselines were evaluated under the predeclared sensitivity protocols. All reported molecular-arm results derive from the same mapped cohort and primary fold definition.
+
+\subsection{Reproducibility and analysis boundaries}
+All mapping records, descriptor computations, fold assignments, and per-fold model outputs were retained with their random seeds, the collision policy, and the descriptor-failure accounting. Three planned analyses were deliberately not performed in this study: per-label calibration diagrams, a bounded quantum-kernel sensitivity analysis, and scaffold-held-out retraining of the four molecular arms. These remain declared extensions rather than negative findings; no result in this article depends on them.
+
+\section{Results}
+\subsection{Mapping audit}
+The mapping covered all \num{3289} drug-level rows. After salt stripping and canonicalization, all structures passed the RDKit validity gate. The final cohort contained \num{1722} unique molecules and \num{794} collision groups. These collision groups formed the unit of assignment for the primary evaluation.
+
+\subsection{Primary collision-group benchmark}
+\begin{table}[htbp]
+\centering
+\caption{Audited collision-group results across 25 seed--fold evaluations. Log loss is the primary endpoint.}
+\label{tab:p6_primary}
+\begin{tabular}{lrrrrr}
+\toprule
+Arm & Log loss & Macro-AUROC & Macro-AUPRC & Brier & ECE\\
+\midrule
+Phenotype reference & \num{0.02428} & \num{0.63619} & \num{0.13137} & \num{0.00381} & \num{0.00387}\\
+GIN & \num{0.02419} & \num{0.50785} & \num{0.01379} & \num{0.00347} & \num{0.00449}\\
+GIN-TFP & \num{0.02334} & \num{0.50479} & \num{0.01381} & \num{0.00341} & \num{0.00300}\\
+GIN-TNE & \num{0.02434} & \num{0.50601} & \num{0.01460} & \num{0.00341} & \num{0.00306}\\
+ChemBERTa & \num{0.02549} & \num{0.50137} & \num{0.01313} & \num{0.00343} & \num{0.00750}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As shown in \cref{tab:p6_primary}, GIN-TFP had the lowest molecular-arm log loss at \num{0.02334}, followed by GIN at \num{0.02419} and GIN-TNE at \num{0.02434}. ChemBERTa had the highest molecular-arm log loss at \num{0.02549}. Macro-AUROC values for the molecular arms ranged from \num{0.50137} to \num{0.50785}, while the phenotype reference reached \num{0.63619}. The molecular-arm AUPRC values were also substantially lower than the phenotype reference. These are descriptive paired-benchmark results; no superiority claim is made without a complete paired statistical comparison.
+
+\subsection{Reference and sensitivity analyses}
+The phenotype reference reproduced the locked random-split result: mean column-wise log loss \num{0.02378}, macro-AUROC \num{0.64345}, and macro-AUPRC \num{0.14276}. Under collision-group splitting, its AUROC was \num{0.63619}; under the available scaffold sensitivity, its AUROC was \num{0.64023}. The ECFP4 random-forest baseline reached AUROC \num{0.53562} under collision-group splitting and \num{0.53817} under scaffold splitting. The phenotype--ECFP4 fusion arm reached AUROC \num{0.58323}, below the phenotype reference. These comparisons reinforce the importance of reporting the split and endpoint together.
+
+\section{Discussion}
+This benchmark was designed to test a specific question: whether molecular structure representations improve prediction of observed MoA-associated labels under collision-group-disjoint evaluation. The answer is negative for the evaluated molecular arms. GIN-TFP achieved the lowest molecular-arm log loss (\num{0.02334}), marginally below even the phenotype reference on this endpoint, but its macro-AUROC (\num{0.50479}) remained close to chance and far from the phenotype reference (\num{0.63619}). This dissociation is informative: a low multi-label log loss can be achieved by well-calibrated prevalence-like predictions, whereas ranking ability requires discriminating which drugs carry which labels. The structure arms therefore appear reasonably calibrated but non-discriminative on this task. The result should not be interpreted as evidence that molecular structure is biologically uninformative. Rather, it indicates that the current molecular inputs, task definition, label construction, and evaluation boundary did not yield a useful ranking signal for this cohort.
+
+The phenotype reference performed better on the ranking metrics, which is expected to some extent because the labels are associated with cellular response annotations and the phenotype features summarize cellular measurements. This does not make the phenotype model a causal mechanism predictor. Conversely, the structure models do not fail because they are disproven in general; they may require larger chemically diverse cohorts, improved molecular supervision, alternative label definitions, or task-specific pretraining. The present result is therefore an honest benchmark conclusion rather than a universal model ranking.
+
+The collision-group mapping is a central contribution of the analysis. It prevents identical canonical structures from appearing in both training and test folds, while retaining duplicated drug identities as an explicit part of the data-generating record. The mapping also exposes a limitation: structure collisions are common, and the effective chemical diversity is closer to \num{1722} unique molecules than to the raw row count of \num{3289}. Four TNE failures were retained as zero-vector intention-to-treat cases, preserving the declared denominator but potentially attenuating descriptor-specific performance.
+
+\section{Limitations}
+First, the benchmark predicts MoA-associated annotations rather than experimentally established causal mechanisms. No target engagement, antimalarial activity, resistance phenotype, or prospective biological validation was measured. Second, the primary molecular comparison used collision-group folds, whereas scaffold-held-out results were not computed for the four new GNN and ChemBERTa arms; the canonical-protocol scaffold sensitivity is available only for the phenotype and ECFP4--RF baselines. Third, summary metrics are reported across paired seed--fold records, but a complete multiplicity-adjusted paired comparison and confidence-interval analysis should accompany any future claim of relative performance. Fourth, per-label calibration diagrams and calibration slope/intercept were not computed; ECE and Brier score are summary calibration diagnostics only, and the low molecular-arm log loss should be read together with the near-chance AUROC rather than as evidence of discriminative calibration. Fifth, QKS was not run because its computational cost was not justified for the current bounded question. Sixth, the mapping relies on PRISM-aligned source records and a frozen matching procedure; external structure-source replication may alter coverage or collision composition.
+
+\section{Conclusion}
+Under a frozen, collision-group-disjoint evaluation of \num{3289} LISH-MoA drug-level records, the evaluated molecular representations did not demonstrate a predictive advantage over the phenotype reference. GIN-TFP obtained the best molecular-arm log loss, but molecular AUROCs remained close to chance. The result supports reporting collision-aware structure--phenotype benchmarks with explicit failure accounting and cautious interpretation. It does not establish universal molecular-model inferiority or causal biological conclusions.
+
+\section*{Data and code availability}
+The validated structure mapping, the fold-level model outputs, the descriptor audit, and the analysis code supporting the conclusions of this study will be made publicly available at publication; access conditions are stated in the declarations.
+
+\section*{Declarations}
+Author contributions, funding, competing interests, ethics, and AI-use disclosures must be completed and verified by the accountable authors before submission. No biological experiment was performed as part of this computational study.
+
+\bibliographystyle{plainnat}
+\bibliography{references_pending}
+\end{document}
