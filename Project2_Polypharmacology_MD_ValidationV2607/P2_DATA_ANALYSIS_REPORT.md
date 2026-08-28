@@ -186,6 +186,18 @@ Planned secondary audits that strengthen RRS+polypharma without new trajectories
 
 Status: `PLANNED_SECONDARY`; requires only post-processing scripts; manuscript claim remains `COMPUTED_WITH_COHORT_CONTRACT` until executed.
 
+### 8quater.1 GNINA CNN consensus rescoring — COMPUTED (28 Aug 2026)
+
+Post-processing only (no re-docking, no new MD). Script: `scripts/p2_gnina_consensus_rescore.py` (GNINA 1.3.2 `--score_only` on the MODEL 1 Vina pose of each of the 312 external states; non-AD Meeko/OpenBabel generic atom types `CG0/CG1/G0/G1` normalized to `C` in the type column; fail-closed at 312/312 finite scores). Outputs: `results/robustness_transfer_20260827/gnina_consensus_20260828/{gnina_consensus_scores.csv, manifest.json}`.
+
+Consensus RRS analysis (script `scripts/p2_gnina_consensus_rrs.py`, same frozen estimand, target eligibility decided once on the canonical Vina scale):
+
+- **312/312 poses rescored, 0 failures**; Vina scores −10.9…−3.25 (mean −7.03), CNN affinities 2.70…7.71 (mean 4.71).
+- **RRS class agreement across scoring layers: 38/38 eligible ligands class A under both Vina and CNN; 0 discordances** (EXT-025 has no binding target under the 5.0 kcal/mol Vina eligibility rule and is unclassified under both layers).
+- RRS mean: Vina 100.4 (95.1–106.0), CNN 103.6 (90.6–122.6). Spearman Vina-vs-CNN on ligand mean RRS = **0.558**; per-mutant ρ: K76T 0.644, K76A 0.486, N51I 0.271, S108N 0.204, I164L 0.040, C59R −0.076.
+
+Status: `COMPUTED_CONSENSUS_RRS_SENSITIVITY`. Interpretation: the near-proportional mutant/WT retention observed in the Vina external panel is reproduced by an independent CNN scoring function on identical poses — the retention-not-gain pattern is not an artefact of one scoring function. The moderate ligand-level rank correlation (ρ=0.558) and near-zero C59R/I164L mutant-level correlations bound the interpretation: consensus supports class-level retention, not per-mutant rank transfer. Vina-only remains the canonical estimand; no manuscript value is replaced.
+
 ## 9. Manuscript status (26 Aug)
 
 **Current release status:** `READING_FINAL_AUTHOR`. The primary Set-C docking analysis, the separate parent-study MD cohort, and the bounded Set-C MD pilot have completed their declared production and QC gates. The optional witness job `15507_[0]` is not a prerequisite for the manuscript and remains non-blocking. K76A MM-GBSA retains the original canonical endpoint with an explicit Limitations caveat.

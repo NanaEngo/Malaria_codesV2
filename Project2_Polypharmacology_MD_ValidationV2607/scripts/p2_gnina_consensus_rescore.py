@@ -34,10 +34,44 @@ GNINA = Path("/home/nanaengo/gnina/gnina")
 EXPECTED_STATES = 8
 EXPECTED_LIGANDS = 40
 EXPECTED_TOTAL = EXPECTED_STATES * EXPECTED_LIGANDS
+# EXT-039 declared EMBED_FAILURE (folded cyclic ether macrocycle, no 3D coordinates
+# under RDKit DG / random-coords / OBabel gen3d) — panel target = 39 ligands x 8 = 312.
+DECLARED_EMBED_FAILURES = {"EXT-039"}
+ACTUAL_TOTAL = EXPECTED_TOTAL - len(DECLARED_EMBED_FAILURES) * EXPECTED_STATES
 
 VINA_RE = re.compile(r"REMARK VINA RESULT:\s+(-?[0-9.]+)")
 GNINA_AFFINITY_RE = re.compile(r"affinity:\s+(-?[0-9.]+)")
 GNINA_CNN_RE = re.compile(r"CNNaffinity:\s+(-?[0-9.]+)")
+
+# Meeko/OpenBabel may emit non-AutoDock atom types (G0/G1/CG0/CG1, generic atoms)
+# that GNINA score_only rejects. Map them to valid AD types by element, keeping
+# coordinates and all other columns untouched (post-processing only, no re-docking).
+ELEMENT_TO_ADTYPE = {
+    "C": "C", "N": "N", "O": "OA", "S": "S", "H": "HD",
+    "P": "P", "F": "F", "Cl": "Cl", "Br": "Br", "I": "I",
+}
+VALID_AD_TYPES = set(ELEMENT_TO_ADTYPE.values()) | {"A", "NA", "SA"}
+INVALID_AD_TYPE_RE = re.compile(r"^(?:G0|G1|CG0|CG1)$")
+
+
+def normalize_ad_types(line: str) -> str:
+    """Rewrite a non-AD atom type in an ATOM/HETATM line to a valid AD type.
+
+    Meeko/OpenBabel generic-atom types (CG0/CG1/G0/G1) are all carbon atoms
+    written across the element/type columns (76--80). They are replaced by the
+    element ``C`` with an empty type column, exactly as valid Vina lines are
+    formatted (e.g. ``... 0.104 A ``). Coordinates and charges are untouched.
+    """
+    parts = line.split()
+    if len(parts) < 12:
+        return line
+    adtype = parts[-1]
+    if adtype in VALID_AD_TYPES or not INVALID_AD_TYPE_RE.match(adtype):
+        return line
+    # Keep cols 0..75 (through the charge), write element 'C' + empty type.
+    # Preserve the trailing newline that the original line carries.
+    newline = "\n" if line.endswith("\n") else ""
+    return line[:76] + " C " + newline
 
 
 def parse_pose_metadata(path: Path):
@@ -73,7 +107,7 @@ def extract_model1(path: Path, out_path: Path):
             if in_model1:
                 if line.startswith("ENDMDL"):
                     break
-                lines.append(line)
+                lines.append(normalize_ad_types(line) if line.startswith(("ATOM", "HETATM")) else line)
     if not lines:
         return False
     out_path.write_text("".join(lines), encoding="utf-8")
@@ -122,12 +156,21 @@ def main():
         sys.exit(2)
 
     poses = sorted(args.poses.glob("EXT-*.pdbqt"))
-    if len(poses) != EXPECTED_TOTAL:
+    if len(poses) != ACTUAL_TOTAL:
         print(
-            f"BLOCKED_INCOMPLETE: expected {EXPECTED_TOTAL} pose files, "
-            f"found {len(poses)}", file=sys.stderr
+            f"BLOCKED_INCOMPLETE: expected {ACTUAL_TOTAL} pose files "
+            f"({EXPECTED_LIGANDS} ligands x {EXPECTED_STATES} states minus declared "
+            f"EMBED_FAILURES {sorted(DECLARED_EMBED_FAILURES)}), found {len(poses)}",
+            file=sys.stderr,
         )
         sys.exit(3)
+    for lig in DECLARED_EMBED_FAILURES:
+        if any(p.name.startswith(lig + "_") for p in poses):
+            print(
+                f"FATAL: declared EMBED_FAILURE {lig} unexpectedly has poses present",
+                file=sys.stderr,
+            )
+            sys.exit(3)
 
     rows = []
     failures = []
@@ -165,8 +208,8 @@ def main():
         )
         sys.exit(4)
 
-    if len(rows) != EXPECTED_TOTAL:
-        print(f"BLOCKED_INCOMPLETE: expected {EXPECTED_TOTAL} scored rows, got {len(rows)}", file=sys.stderr)
+    if len(rows) != ACTUAL_TOTAL:
+        print(f"BLOCKED_INCOMPLETE: expected {ACTUAL_TOTAL} scored rows, got {len(rows)}", file=sys.stderr)
         sys.exit(5)
 
     csv_path = args.out / "gnina_consensus_scores.csv"
@@ -193,7 +236,9 @@ def main():
             [str(args.gnina), "--version"], capture_output=True, text=True
         ).stdout.strip().splitlines()[0] if args.gnina.exists() else "n/a",
         "input_poses_hash_sha256": h.hexdigest(),
-        "expected_total": EXPECTED_TOTAL,
+        "expected_total": ACTUAL_TOTAL,
+        "declared_embed_failures": sorted(DECLARED_EMBED_FAILURES),
+        "panel_note": "EXT-039 declared EMBED_FAILURE (no 3D coordinates); panel = 39 ligands x 8 states = 312 records",
     }
     (args.out / "manifest.json").write_text(json.dumps(manifest, indent=2))
     print(f"COMPUTED: {len(rows)} poses rescored -> {csv_path}")
