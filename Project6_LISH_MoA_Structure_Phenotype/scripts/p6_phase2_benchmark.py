@@ -233,7 +233,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--model", choices=["logistic", "rf"], default="logistic",
                     help="Per-label classifier (default: locked P5 logistic)")
     ap.add_argument("--jobs", type=int, default=8,
-                    help="RandomForest n_jobs (default: 8)")
+                     help="RandomForest n_jobs (default: 8)")
+    ap.add_argument("--dump-predictions", action="store_true",
+                     help="Write per-drug per-label test predictions under results/p6_phase2/predictions/<stem>/")
     args = ap.parse_args(argv)
 
     df = pd.read_csv(DRUG_LEVEL)
@@ -260,6 +262,11 @@ def main(argv: list[str] | None = None) -> int:
     Y = df[labels].astype(np.int8).to_numpy()
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    suffix = "" if args.model == "logistic" else f"_{args.model}"
+    stem = f"p6_lish_moa_{args.features}_{args.split}{suffix}"
+    pred_dir = OUT_DIR / "predictions" / stem if args.dump_predictions else None
+    if pred_dir is not None:
+        pred_dir.mkdir(parents=True, exist_ok=True)
     records = []
     for seed in SEEDS:
         for fold, (tr, te) in enumerate(make_folds(args.split, seed, len(df), cgroups, scaffolds)):
@@ -271,13 +278,18 @@ def main(argv: list[str] | None = None) -> int:
                 Xtr = scaler.fit_transform(X[tr])
                 Xte = scaler.transform(X[te])
             pred = fit_predict(Xtr, Y[tr], Xte, args.model, seed, args.jobs)
+            if pred_dir is not None:
+                # ponytail: per-drug per-label dump for calibration/QKS (fail-closed audit needs this)
+                out = pd.DataFrame({"drug_id": df.iloc[te]["drug_id"].values})
+                for j, lbl in enumerate(labels):
+                    out[f"{lbl}_true"] = Y[te, j]
+                    out[f"{lbl}_pred"] = pred[:, j]
+                out.to_csv(pred_dir / f"seed{seed}_fold{fold}.csv", index=False)
             rec = {"features": args.features, "split": args.split, "seed": seed,
-                   "fold": fold, "n_train": len(tr), "n_test": len(te)}
+                    "fold": fold, "n_train": len(tr), "n_test": len(te)}
             rec.update(metrics(Y[te], pred))
             records.append(rec)
     result = pd.DataFrame(records)
-    suffix = "" if args.model == "logistic" else f"_{args.model}"
-    stem = f"p6_lish_moa_{args.features}_{args.split}{suffix}"
     result.to_csv(OUT_DIR / f"{stem}_folds.csv", index=False)
     summary = {"input": str(DRUG_LEVEL), "mapping": str(MAPPING),
                "features": args.features, "split": args.split,
