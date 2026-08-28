@@ -1,7 +1,7 @@
 # P2 Data Analysis Report — active summary
 
 **Scope:** Resistance-aware polypharmacology of antimalarial leads (docking-RRS, PNS, ACSI, targeted MD, MM-GBSA, Set-C MD pilot).
-**Updated:** 28 August 2026 (external docking 312/312 PASS + repair ledger + PP-15 docking/MD pilot + P2Rank/ProLIF)
+**Updated:** 28 August 2026 17:47Z (external 312/312 + PP-15 pilot + P2Rank/ProLIF + PP-01 I164L QC PASS/MM-GBSA RUNNING)
 **Root:** `Project2_Polypharmacology_MD_ValidationV2607/`
 
 ## 1. Central question
@@ -289,3 +289,12 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
 **Repaired whole-center run (26 August 2026, `k76a_repaired_whole_20260826`):** A fourth attempt using `production_whole_centered.xtc` (PBC-whole applied to the full trajectory) with 100 frames (interval 10) succeeded: `ΔTOTAL = -27.54 ± 1.89` kcal/mol, `numerical_qc.status = PASS`, `reportable = true`. This provides a second-replicate estimate for K76A PP-01 (different trajectory from the canonical 19-Aug run).
 
 **Final author decision (28 August 2026):** Option A — retain the original canonical endpoint (−35.29 ± 1.17 kcal/mol, 19 Aug, rep1, 100 frames) in the manuscript tables. The repaired whole-center value (−27.54 ± 1.89 kcal/mol, rep2, 100 frames) is documented as inter-replicate sensitivity. The manuscript Limitations section includes an explicit caveat noting the 7.75 kcal/mol difference between replicates. The Submission Manifest and this DAR are updated to reflect the resolution. No further K76A relaunch is authorized for this submission cycle.
+
+## Single-system GPU rerun — PP-01_PfDHFR_I164L replicate_1 (COMPLETE production + QC PASS; MM-GBSA RUNNING, 28 Aug 2026)
+
+- **Production COMPLETE:** `results/md_systems/set_c_preparation_20260812_v1/PP-01_PfDHFR_I164L/runs/20260825T063226Z/replicate_1/` — `Finished mdrun Fri Aug 28 17:25:47` (5,000,000 steps, 10 ns, 27.3 ns/day, GPU A4000) ; `production_provenance.json:3` `PRODUCTION_COMPLETED_REQUIRES_TRAJECTORY_QC` → `1.18 GB xtc`.
+- **Trajectory QC: PASS** (`P2_SETC_ROOT` + `conda run -n malaria_md p2_setc_trajectory_qc.py --system PP-01_PfDHFR_I164L` 28 Aug 17:37Z): `n_frames=1001 bound_fraction=1.000 mean_min=2.86 Å 10.0 ns` (`setc_p2_minheavy_5A_ge10percent_v1`), CSV `results/set_c_md/set_c_trajectory_qc.csv`.
+- **MM-GBSA: RUNNING** (`scripts/p2_setc_mmgbsa_single.py PP-01_PfDHFR_I164L <run_dir>` PID 312119, `results/set_c_md/single_rerun_20260825/mmgbsa/PP-01_PfDHFR_I164L/` ; protocol batch verbatim `gmx_MMPBSA v1.5 GB OBC2 igb=5 saltcon 0.15 M frames 1-1000 interval 10` + `mmgbsa_timeseries.csv` pour convergence ; ETA ~30-60 min, auto retry `PBC whole` si BOND overflow).
+- **Scope:** single-system rerun, ne modifie pas le canon §5bis (16/16 pilot) tant que MM-GBSA non `PASS` ; à intégrer via `p2_setc_mmgbsa_aggregate.py` + `wt_replicate_consistency` si `numerical_qc PASS`.
+
+**Updated:** 28 August 2026 17:47Z.
