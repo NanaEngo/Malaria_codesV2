@@ -146,7 +146,7 @@ The best molecular-arm log loss is GIN-TFP (0.02334), while all molecular-arm ma
 
 ### 4.6 Phase 2 completion checkpoint (28 August 2026)
 
-Array 15613 completed all four molecular arms: GIN, GIN-TFP, GIN-TNE, and ChemBERTa. Their report JSONs and fold CSVs are present under `results/p6_phase2/`, with 25 seed/fold records and finite summary metrics. No scheduler job remains active. Dedicated per-label calibration plots and QKS sensitivity remain `NOT_COMPUTED` and are excluded from interpretation; status artifacts are recorded in `results/p6_phase2/p6_calibration_status.json` and `p6_qks_status.json`. Scaffold-held-out runs for the four new molecular arms are also not yet computed; `p6_scaffold_molecular_arm_manifest.json` records this explicitly. Biological validation is outside the computational scope and was not performed.
+Array 15613 completed all four molecular arms: GIN, GIN-TFP, GIN-TNE, and ChemBERTa (collision_group, 25/25 each). Scaffold `--dump-predictions` rerun 28 Aug 16:19Z: `phenotype_scaffold` COMPLETED 18:11Z 25/25 (`predictions/p6_lish_moa_phenotype_scaffold/`), `structure_scaffold` RUNNING 14/25, `both_scaffold` RUNNING 7/25 (jobs 154431/154551, 01:58 elapsed). Per-label calibration/QKS remain `NOT_COMPUTED` until dumps land (`p6_calibration_status.json`/`p6_qks_status.json`); `phenotype_scaffold` is now calibration-ready.
 
 ### 4.7 RRS/polypharma impactful extensions — secondary, pending --dump-predictions (28 Aug 2026)
 
