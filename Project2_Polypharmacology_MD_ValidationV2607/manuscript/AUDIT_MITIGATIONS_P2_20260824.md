@@ -1,1 +1,0 @@
-- **Répertoire canonique unifié (25 août)** : `manuscript/LaTeX/Graphics` = dossier unique des figures ; contenu de `manuscript/Graphics` transféré (radar/VAE ajoutés, PNG cross-metric rafraîchi), doublons et stubs 317 o supprimés ; les 12 cibles `\includegraphics` résolvent toutes depuis ce dossier ; recompile main+SM 0 err/o/u.
