@@ -369,6 +369,8 @@ A 16-system pilot on PP-01 and PP-02 asked whether short trajectories and MM-GBS
 
 As a bounded consistency check, we intersected the docking-RRS retention criterion (class-A, RRS $\geq$ \qty{80}{\percent}) with pilot MD-RRS retention parity (mean minimum-distance ratio $<$ \num{100}) at pilot scope. Seven of twelve gate-eligible rows passed both gates: PP-01 satisfied the two-target gate (PfCRT via K76A, PfDHFR in four of four mutants), whereas PP-02 did not, because its PfDHFR states lack a docking wild-type anchor under the \qty{5.0}{\kcalmol} eligibility rule and only one target was gate-eligible. The single row above parity (PP-01 PfCRT K76T, \num{102.7}) lies within the \qty{2.0}{\kcalmol} endpoint noise floor and is read as retention, not gain (\cref{SM-tab:s15_robustness_transfer}).
 
+A single-ligand feasibility probe (PP-15, outside the Set-C cohort) extended the same OpenFF protocol to wild-type PfDHFR and PfCRT: Vina best poses were \qty{-8.62}{\kcalmol} and \qty{-7.81}{\kcalmol}, respectively, and PfDHFR completed equilibration, but no production trajectory, RRS, or MM-GBSA estimate is reported for this probe (\cref{SM-tab:s_pp15}).
+
 \begin{table}[htbp]
 \centering
 \caption{Set-C pilot MM-GBSA estimates (exploratory; not used to assign RRS classes). $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots $\pm$ SEM; within-trajectory standard deviations are in the Supporting Information. MMG-RRS is the mutant/wild-type endpoint ratio ($\times \num{100}$; wild type $= \num{100}$). Docking RRS is shown for comparison (n/a: no wild-type docking reference for PP-02 PfDHFR). Single-replicate endpoints should be read only as within-protocol contrasts.}\label{tab:mmmgbsa_setc}
