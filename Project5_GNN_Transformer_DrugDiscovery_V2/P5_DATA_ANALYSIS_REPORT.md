@@ -1,7 +1,7 @@
 # P5 Data Analysis Report — active summary
 
 **Scope:** GNN/Transformer drug-discovery benchmark on the canonical P3-derived antimalarial panel.
-**Updated:** 28 August 2026 (completed-arm integration; ChemBERTa 125/125 + calibration 30 configs + GNN sensitivity 15617; no new training)
+**Updated:** 28 August 2026 19:17Z (completed-arm integration; ChemBERTa 125/125 + calibration 30 configs + GNN sensitivity 15617 + RRS/polypharma calibration extensions COMPUTED_SECONDARY; no new training)
 **Long-form history:** `docs/archive/md_full_20260812/P5_DATA_ANALYSIS_REPORT.md`
 
 ## 1. Central question
@@ -90,14 +90,14 @@ The completed GNN robustness campaign, lightweight ECFP4 controls, chemical-stan
 - GNN/Transformer performance is architecture- and training-budget-dependent.
 - External validation does not replace experimental activity measurements.
 
-### 7.1 RRS/polypharma calibration extensions — impactful secondary (28 Aug 2026)
+### 7.1 RRS/polypharma calibration extensions — COMPUTED_SECONDARY (28 Aug 2026)
 
-Secondary, no retraining, reuses `results/calibration_20260827/` + `c_rrs_classification.csv` (P1/P2 RRS) pending `P1_P5_RRS_POLYPHARMA_ROADMAP:1` polypharma join:
+Secondary, no retraining, reuses `results/calibration_20260827/` + `c_rrs_classification.csv` (P1/P2 RRS) via SMILES join on P5 canonical panel (17/19,836 matched):
 
-- **Calibration per RRS class** — stratify pooled ECE/MCE/Brier by RRS class (A*/A/B/C/D, n=12 complete + n=17 sensitivity) under scaffold/novel partitions; test if high-RRS (A*/A) candidates retain calibration (ECE ≈0.03→0.07) better than low-RRS under shift. Script: extend `p5_calibration_posthoc.py` with `--by-rrs` join.
-- **Polypharma high-RRS subset** — evaluate ROC-AUC/AP on the ≥2-target polypharma subset (RRS ≥80% on ≥2 of PfDHFR/PfCRT/PfATP4/PfClpP per roadmap threshold) vs single-target subset; report ΔAUC with paired bootstrap CI95. No new training.
+- **Calibration per RRS class** — `results/calibration_20260827/calibration_by_rrs_class.csv` (300 records): ECE/MCE/Brier per config (30) × RRS class (A*/A/B/C/D/UNMATCHED) × type (complete/available) across 5 partitions. Key finding: ECE rises from ≈0.03 (random) to ≈0.07–0.13 (scaffold/novel) for ALL classes; no evidence that high-RRS (A*/A) candidates retain better calibration — calibration degradation under shift is universal. Per-class sample sizes small (B: ~20, C: ~25, A: ~10 per config).
+- **Polypharma high-RRS subset** — `results/calibration_20260827/polypharma_subset_auc.csv` (60 rows): ROC-AUC/AP on complete two-target polypharma (A*/A, n=2 candidates=PP-01/PP-15, 10 test samples/config) vs single-target (n=99,170). Polypharma AUC ranges 0.00–0.84 (mean ~0.43) vs single-target 0.78–0.91; ΔAUC negative for most configs (polypharma harder). ChemBERTa scaffold: polypharma AUC 0.76 vs single 0.79 (Δ=-0.03). Novel partitions show higher variance. Low polypharma n precludes bootstrap CI95; reported as descriptive.
 
-Status: `PLANNED_SECONDARY`; honest-negative scaffold result unchanged until executed.
+Status: `COMPUTED_SECONDARY`; honest-negative scaffold result unchanged. Low polypharma sample size (2 candidates) limits inference; extensions are descriptive post-hoc analyses.
 
 ## 8. LISH-MoA external mechanism benchmark — completed phenotype-only reference (12 August 2026)
 
