@@ -1,15 +1,15 @@
 # Project 6 Data Analysis Report — LISH-MoA structure–phenotype follow-up
 
-**Version:** 0.2
-**Updated:** 27 August 2026
-**Status:** Phase 1 mapping validated; Phase 2 benchmark in progress
+**Version:** 0.3
+**Updated:** 28 August 2026
+**Status:** Phase 1 mapping validated; Phase 2 collision-group benchmark complete for the audited model matrix
 **Scope:** Project 6 only; it does not modify P5 canonical results.
 
 ## 1. Decision record
 
 `PHASE1_MAPPING_VALIDATED_20260825_PHASE2_BOUNDED_20260826`
 
-The initial LISH-MoA artifact was phenotype-only. A versioned `drug_id → SMILES` mapping has now been constructed from PRISM-aligned records, validated with RDKit, and frozen before Phase 2 modelling. Molecular results are reported only for completed arms and under the collision-group primary split; incomplete GNN/transformer arms remain pending. The implementation coverage audit (`docs/IMPLEMENTATION_COVERAGE_AUDIT_20260827.md`) confirms that mapping, collision handling, fold metrics, and calibration-ready summary metrics are implemented; dedicated per-label calibration plots remain `NOT_COMPUTED`.
+The initial LISH-MoA artifact was phenotype-only. A versioned `drug_id → SMILES` mapping was constructed from PRISM-aligned records, validated with RDKit, and frozen before Phase 2 modelling. The collision-group primary benchmark is now complete for all four molecular arms (GIN, GIN-TFP, GIN-TNE, and ChemBERTa); dedicated per-label calibration plots remain `NOT_COMPUTED`. The implementation coverage audit (`docs/IMPLEMENTATION_COVERAGE_AUDIT_20260827.md`) records the mapping, collision handling, fold metrics, and calibration-ready summary metrics.
 
 ## 2. Locked phenotype reference
 
@@ -118,12 +118,12 @@ Findings so far:
 2. Leakage-corrected splits cost ~2 % relative log loss for the phenotype arm; the honest-split numbers become the reference for all structure comparisons.
 3. Structure-only linear arm is near chance under the honest split — consistent with the literature expectation that linear ECFP4 carries little MoA signal.
 4. Structure-only **RF** arms remain near chance under both honest splits (AUROC 0.5356 collision_group / 0.5382 scaffold; job 15496 tasks 0–1, completed 26 Aug).
-5. The **fusion arm does not beat the phenotype baseline**: AUROC 0.58323 < 0.63619 and log loss 0.030516 worse than either single-block arm (job 15496 task 2, completed 26 Aug). No structure gain is demonstrated by the currently audited Phase 2 arms; this is recorded as an interim honest-negative while the remaining molecular-arm outputs are independently audited.
+5. The **fusion arm does not beat the phenotype baseline**: AUROC 0.58323 < 0.63619 and log loss 0.030516 worse than either single-block arm (job 15496 task 2, completed 26 Aug). No structure gain is demonstrated by the audited Phase 2 arms; this is recorded as an honest-negative result for the evaluated molecular representations, without claiming universal model inferiority.
 6. Environment check (26 Aug): torch stack already present in `malaria_md` — torch 2.13.0+cu130 (CUDA available), torch-geometric 2.8.0.post1, transformers 5.14.1, i.e. exactly the locked P5 versions; the earlier "pending torch install" blocker is lifted without any installation.
 
-### 4.4 Remaining molecular arms — GNN / GIN-TFP / GIN-TNE / ChemBERTa (SUBMITTED 2026-08-26)
+### 4.4 Molecular arms — GNN / GIN-TFP / GIN-TNE / ChemBERTa (COMPLETED 2026-08-27)
 
-SLURM job **15500** (`scripts/p6_phase2_gnn_chemberta.sbatch`, partition production, 1 GPU, chained): TFP/TNE descriptor computation → GIN → GIN-TFP → GIN-TNE → ChemBERTa, all on `collision_group` (primary honest split). Status at submission: `PENDING (Priority)`; **no metric from these arms is authorized until the corresponding report JSONs exist on disk.**
+SLURM job **15613** (`scripts/p6_phase2_gnn_chemberta.sbatch`, partition production, 1 GPU, chained) completed the four collision-group molecular arms on 27 August 2026. All corresponding report JSONs and fold CSVs are present and pass the basic 25-row/finiteness contract; metrics are therefore eligible for audited reporting.
 
 Protocol adaptations (predeclared here, before any result):
 
@@ -132,6 +132,21 @@ Protocol adaptations (predeclared here, before any result):
 - **Validation carve (leakage-safe model selection):** within each seed's train set, train *groups* are dealt round-robin into six parts; part 0 is validation. No test group ever enters model selection.
 - **Early stopping criterion:** validation mean column-wise log loss (the primary estimand), not AUC.
 - Outputs will land as `results/p6_phase2/p6_lish_moa_{gin,gin-tfp,gin-tne,chemberta}_collision_group_{folds.csv,report.json}`.
+
+### 4.5 Completed molecular-arm results
+
+| Arm | Mean column-wise log loss | Macro-AUROC | Macro-AUPRC | Mean Brier | Mean ECE |
+|---|---:|---:|---:|---:|---:|
+| GIN | 0.02419 | 0.50785 | 0.01379 | 0.00347 | 0.00449 |
+| GIN-TFP | 0.02334 | 0.50479 | 0.01381 | 0.00341 | 0.00300 |
+| GIN-TNE | 0.02434 | 0.50601 | 0.01460 | 0.00341 | 0.00306 |
+| ChemBERTa | 0.02549 | 0.50137 | 0.01313 | 0.00343 | 0.00750 |
+
+The best molecular-arm log loss is GIN-TFP (0.02334), while all molecular-arm macro-AUROCs remain close to chance and below the phenotype collision-group baseline (0.63619). These results support a cautious negative conclusion for structure-only representation performance on this benchmark; they do not establish universal model inferiority or causal MoA limitations. Four TNE descriptor failures were retained as declared zero-vector ITT cases.
+
+### 4.6 Phase 2 completion checkpoint (28 August 2026)
+
+Array 15613 completed all four molecular arms: GIN, GIN-TFP, GIN-TNE, and ChemBERTa. Their report JSONs and fold CSVs are present under `results/p6_phase2/`, with 25 seed/fold records and finite summary metrics. No scheduler job remains active. Dedicated per-label calibration plots and QKS sensitivity remain `NOT_COMPUTED` and are excluded from interpretation; status artifacts are recorded in `results/p6_phase2/p6_calibration_status.json` and `p6_qks_status.json`. Scaffold-held-out runs for the four new molecular arms are also not yet computed; `p6_scaffold_molecular_arm_manifest.json` records this explicitly. Biological validation is outside the computational scope and was not performed.
 
 ## 5. Leakage and statistics gates
 

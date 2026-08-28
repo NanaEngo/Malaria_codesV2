@@ -27,39 +27,50 @@ while true; do
 done
 
 echo "=== [2/4] Fold-level audit of sensitivity outputs ==="
+# A normal-mode base-GIN run emits exactly TWO files per config: the results
+# CSV and the ckpt JSON (the latter carries the per-fold `curve` key). A
+# separate curves JSON is only written in --curves-only runs, and salience only
+# for fusion models; both are therefore NOT expected and NOT required here.
 declare -a MISSING
 for cfg in "${CONFIGS[@]}"; do
     csv="$RESULTS/p5_GIN_scaffold_results_sens_$cfg.csv"
-    curves="$RESULTS/p5_GIN_scaffold_curves_sens_$cfg.json"
-    salience="$RESULTS/p5_GIN_scaffold_salience_sens_$cfg.json"
     ckpt="$RESULTS/p5_GIN_scaffold_ckpt_sens_$cfg.json"
-    for f in "$csv" "$curves" "$salience" "$ckpt"; do
+    for f in "$csv" "$ckpt"; do
         if [[ ! -s "$f" ]]; then
             MISSING+=("$(basename "$f")")
         fi
     done
     if [[ -s "$csv" ]]; then
-        n=$(tail -n +2 "$csv" | wc -l)
+        nrec=$(tail -n +2 "$csv" | wc -l)
         nfinite=$(python3 -c "
 import csv, math
 rows = list(csv.DictReader(open('$csv')))
 vals = [float(r['test_auc']) for r in rows if r.get('test_auc') not in (None, '')]
-print(len(rows), sum(math.isfinite(v) for v in vals))
+print(sum(math.isfinite(v) for v in vals))
 ")
-        nrec=$(echo "$nfinite" | awk '{print $1}')
-        nfinite=$(echo "$nfinite" | awk '{print $2}')
         echo "  $cfg: $nrec rows, $nfinite finite AUC"
         if [[ "$nrec" -ne "$EXPECTED_RECORDS" || "$nfinite" -ne "$EXPECTED_RECORDS" ]]; then
             echo "FATAL: $cfg does not meet 25-record finite audit; aborting."
             exit 2
         fi
     fi
+    if [[ -s "$ckpt" ]]; then
+        # sanity: the ckpt must carry the embedded per-fold curve array
+        python3 - "$ckpt" <<'PY' >/dev/null
+import json, sys
+d = json.load(open(sys.argv[1]))
+res = d.get("results", [])
+if len(res) != 25 or any(not isinstance(r.get("curve"), list) for r in res):
+    raise SystemExit("ckpt must contain 25 fold x seed records each with a curve array")
+PY
+        echo "  $cfg: ckpt OK (25 records with embedded curves)"
+    fi
 done
 if [[ ${#MISSING[@]} -gt 0 ]]; then
     echo "FATAL: missing sensitivity files: ${MISSING[*]}; aborting."
     exit 2
 fi
-echo "Fold-level audit PASS (2 configs x 25 records, finite AUC)."
+echo "Fold-level audit PASS (2 configs x 25 finite AUC records + embedded curves)."
 
 echo "=== [3/4] Rebuild Zenodo package ==="
 python "$SCRIPTS/build_zenodo_package.py"
@@ -69,7 +80,7 @@ status=$(python3 -c "import json; print(json.load(open('$OUT/ZENODO_PACKAGE_MANI
 pending=$(python3 -c "import json; print(len(json.load(open('$OUT/ZENODO_PACKAGE_MANIFEST.json'))['sensitivity_files_pending']))")
 staged=$(python3 -c "import json; print(json.load(open('$OUT/ZENODO_PACKAGE_MANIFEST.json'))['files_staged'])")
 echo "Manifest status: $status | staged: $staged | sensitivity pending: $pending"
-if [[ "$status" != "READY_FOR_UPLOAD_NOT_UPLOADED" || "$pending" != "0" || "$staged" != "35" ]]; then
+if [[ "$status" != "READY_FOR_UPLOAD_NOT_UPLOADED" || "$pending" != "0" || "$staged" != "31" ]]; then
     echo "FATAL: package not READY_FOR_UPLOAD; aborting (no tarball refresh)."
     exit 2
 fi

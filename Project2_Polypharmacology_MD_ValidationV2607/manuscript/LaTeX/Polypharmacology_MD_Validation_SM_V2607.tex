@@ -17,6 +17,7 @@
 \usepackage[table]{xcolor}
 \captionsetup{labelfont=bf,font={footnotesize,it}}
 \usepackage[
+  group-minimum-digits = 4,
   per-mode             = symbol,
   range-phrase         = {--},
   range-units          = single,
@@ -32,6 +33,9 @@
 \Crefname{table}{Table}{Tables}
 \crefname{figure}{Figure}{Figures}
 \Crefname{figure}{Figure}{Figures}
+\crefname{equation}{Eq.}{Eqs.}
+\crefname{section}{Section}{Sections}
+\crefname{subsection}{Section}{Sections}
 
 \usepackage{xr}
 \externaldocument[MAIN-]{Polypharmacology_MD_Validation_V2607}
@@ -92,7 +96,7 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {SEM} & Interpretation \\
 \bottomrule
 \multicolumn{5}{p{0.90\linewidth}}{$^\ast$PDB 4GM2 is PfClpR rather than PfClpP; the 164-labelled system is therefore not structural validation of PfClpP.} \\
 \multicolumn{5}{p{0.90\linewidth}}{$^\ddagger$Ligand dissociated during production; no binding free energy is inferred.} \\
-\multicolumn{5}{p{0.90\linewidth}}{$^\S$Excluded due to two-chain topology incompatibility with CHARMM36-to-AMBER conversion.} \\
+\multicolumn{5}{p{0.90\linewidth}}{$^\S$Excluded due to two-chain topology incompatibility with CHARMM36\citep{charmm36m_2017}-to-AMBER conversion.} \\
 \end{tabular}
 \end{table}
 
@@ -133,7 +137,7 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {SEM} & Interpretation \\
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{figure_p2rank_boxes.pdf}
-\caption{Independent P2Rank pocket prediction versus the fixed Vina grid boxes used for docking. Panel (a) reports the distance between the top-three P2Rank pocket centers and the Vina box center for the three receptors with a P2 grid (PfDHFR 7F3Y, PfCRT 6UKJ, PfATP4 9N10); the dashed line marks the \qty{12.5}{\angstrom} box half-edge. Panel (b) shows the same centers in 3D (star: Vina box; markers: top-three P2Rank pockets, same frame pairs). For PfCRT (6UKJ), the top P2Rank pocket (score \num{162.7}, probability \num{0.999}, by far the most ligandable site) lies \qty{5.7}{\angstrom} from the Vina box center, corroborating the docking box. The larger separations for PfDHFR and PfATP4 carry a receptor-frame caveat (the P1 grid configuration may derive from a different preparation than the MD receptor used here) and are recorded as provenance flags rather than docking-quality verdicts. P2Rank 2.5.1; exploratory boundary audit only --- no canonical score or RRS value is modified.}
+\caption{Independent P2Rank\citep{Krivak2018P2Rank} pocket prediction versus the fixed Vina\citep{vina_2021} grid boxes used for docking. Panel (a) reports the distance between the top-three P2Rank pocket centers and the Vina box center for the three receptors with a P2 grid (PfDHFR 7F3Y, PfCRT 6UKJ, PfATP4 9N10); the dashed line marks the \qty{12.5}{\angstrom} box half-edge. Panel (b) shows the same centers in 3D (star: Vina box; markers: top-three P2Rank pockets, same frame pairs). For PfCRT (6UKJ), the top P2Rank pocket (score \num{162.7}, probability \num{0.999}, by far the most ligandable site) lies \qty{5.7}{\angstrom} from the Vina box center, corroborating the docking box. The larger separations for PfDHFR and PfATP4 carry a receptor-frame caveat (the P1 grid configuration may derive from a different preparation than the MD receptor used here) and are recorded as provenance flags rather than docking-quality verdicts. P2Rank 2.5.1; exploratory boundary audit only --- no canonical score or RRS value is modified.}
 \label{fig:s4_p2rank_boxes}
 \end{figure}
 

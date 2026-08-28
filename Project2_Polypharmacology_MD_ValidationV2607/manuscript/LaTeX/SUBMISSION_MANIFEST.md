@@ -83,7 +83,7 @@ results/robustness_transfer_20260827/step1_external_rRS_feasibility.md
 results/robustness_transfer_20260827/external_transfer_audit.json
 ```
 
-The permitted use is summarized in SI Table S16. The local ChEMBL feasibility audit found no paired target-state WT/mutant fields; an independent external P2-RRS replication therefore remains `NOT_COMPUTED`.
+The permitted use is summarized in SI Table S16. The local ChEMBL feasibility audit found no paired target-state WT/mutant fields; ChEMBL itself is not an independent P2-RRS replication; the separate targeted docking replication is documented below as a bounded computational sensitivity analysis.
 
 ## SI tables added or updated
 
@@ -114,9 +114,13 @@ The permitted use is summarized in SI Table S16. The local ChEMBL feasibility au
 | `results/robustness_transfer_20260827/p1_p2_cohort_audit.json
 results/robustness_transfer_20260827/step1_external_rRS_feasibility.md` | `cab1dc367a7a3201ea6f48825e2adc43a21232d3ab3553397d32bddd186ff0a6` |
 
+## External docking replication status
+
+The targeted external docking replication is complete and audited at 312/312 records after the declared exclusion of EXT-039 (`EMBED_FAILURE`). It is computational sensitivity evidence only, not experimental validation or an MD estimate. See `results/robustness_transfer_20260827/external_docking_rrs_20260827.{csv,json}`.
+
 ## Frozen future replication plan
 
-The targeted external docking replication remains conditional and has not been executed. Its frozen plan and go/no-go gates are recorded in:
+The targeted external docking replication has been executed and audited at 312/312 records after the declared EXT-039 embedding exclusion. Its frozen protocol, repair ledger, and go/no-go gates are recorded in:
 
 results/robustness_transfer_20260827/targeted_external_docking_replication_plan.md
 results/robustness_transfer_20260827/targeted_external_docking_replication_plan.json

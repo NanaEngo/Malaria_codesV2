@@ -2,7 +2,7 @@
 
 \subsection*{Tartarus docking calibration}\label{tab:secondary_tartarus_calibration_section}
 
-The Tartarus analysis used QuickVina, an AutoDock Vina derivative, on \num{19913} primary leads against PDB entries 1SYH, 6Y2F, and 4LDE. The composite MPO comparison included up to \num{17211} complete observations. The composite association was $\rho=\num{0.0129}$ ($p=\num{0.0913}$); target-specific associations were small and do not imply score equivalence or independence.
+The Tartarus analysis used QuickVina\citep{quickvina_2019}, an AutoDock Vina\citep{vina_2021} derivative, on \num{19913} primary leads against PDB entries 1SYH, 6Y2F, and 4LDE. The composite MPO comparison included up to \num{17211} complete observations. The composite association was $\rho=\num{0.0129}$ ($p=\num{0.0913}$); target-specific associations were small and do not imply score equivalence or independence.
 
 \begin{table}[htbp]
 \centering
@@ -51,7 +51,7 @@ Components were min--max normalized over the 17-candidate cohort. Two candidates
 
 \subsection*{PNS ranking and imputation}
 
-The STRING network used confidence threshold \num{700}; PfCRT centrality was imputed with the network mean, \num{0.151}. The full ranking is listed in the table. Replacing the imputed value with zero, one-half, one-and-a-half, or twice the reference value gave rank correlations of \numrange{0.9632}{1.0000}. This result reflects sensitivity to a network-data choice, not biological target importance.
+The STRING\citep{string_2023} network used confidence threshold \num{700}; PfCRT centrality was imputed with the network mean, \num{0.151}. The full ranking is listed in the table. Replacing the imputed value with zero, one-half, one-and-a-half, or twice the reference value gave rank correlations of \numrange{0.9632}{1.0000}. This result reflects sensitivity to a network-data choice, not biological target importance.
 
 \begin{table}[htbp]
 \centering
@@ -86,6 +86,6 @@ Rank 17 & 1.04 & 0.589 & PfCRT-only \\
 
 \subsection*{DiffDock--Vina and activity-model comparisons}
 
-In the 65\,856-molecule library, Vina scores and DiffDock confidence were only weakly related overall. A Benjamini--Hochberg analysis of \num{18} pairwise activity comparisons across compound groups using three Ersilia models found no adjusted-significant differences; all rank-biserial effect sizes were negligible. These analyses provide no evidence of biological activity.
+In the 65\,856-molecule library, Vina\citep{vina_2021} scores and DiffDock\citep{diffdock_2023} confidence were only weakly related overall. A Benjamini--Hochberg analysis of \num{18} pairwise activity comparisons across compound groups using three Ersilia\citep{ersilia_2023} models found no adjusted-significant differences; all rank-biserial effect sizes were negligible. These analyses provide no evidence of biological activity.
 
-The ADMET-AI endpoint table for all 17 candidates is given in \cref{tab:s3_admet}. These predictions were not experimentally validated or compared across tools.
+The ADMET-AI\citep{admetai_2023} endpoint table for all 17 candidates is given in \cref{tab:s3_admet}. These predictions were not experimentally validated or compared across tools.

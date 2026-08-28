@@ -78,17 +78,31 @@ def main():
 
     fig, axes = plt.subplots(1, 2, figsize=(13, 5))
     for ax, split in zip(axes, ["random", "scaffold"]):
+        # Collect the [(x, mean, std)] actually plotted for this subplot so the
+        # y-limits are derived from the real data (the curves occupy a narrow
+        # band ~0.74-0.93; a fixed 0.4-1.0 range flattened them toward the top).
+        plotted = []
         for model, splits in curves.items():
             if split not in splits:
                 continue
             x, mean, std, n = splits[split]
             ax.plot(x, mean, marker=".", label=f"{model} (n={n})")
             ax.fill_between(x, mean - std, mean + std, alpha=0.15)
+            plotted.append((x, mean, std))
         ax.set_title(f"{split.title()} split — val AUC per epoch (mean ± 1σ)")
         ax.set_xlabel("epoch")
         ax.set_ylabel("val ROC AUC")
         ax.legend()
-        ax.set_ylim(0.4, 1.0)
+        if plotted:
+            lo = min(np.nanmin(m - s) for _, m, s in plotted)
+            hi = max(np.nanmax(m + s) for _, m, s in plotted)
+            # Room for the mean +/- 1 sigma band, plus ~8% headroom, but never
+            # force the floor below 0.5 (AUC chance level context is retained).
+            y_lo = max(0.5, min(0.60, lo) - 0.02)
+            y_hi = min(1.0, hi + 0.01)
+            ax.set_ylim(y_lo, y_hi)
+        else:
+            ax.set_ylim(0.4, 1.0)
     plt.tight_layout()
     out.parent.mkdir(parents=True, exist_ok=True)
     plt.savefig(out, dpi=300, bbox_inches="tight")

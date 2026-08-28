@@ -27,6 +27,11 @@ OUT_CSV = BASE / "external_docking_rrs_20260827.csv"
 OUT_JSON = BASE / "external_docking_rrs_20260827.json"
 WT_THRESHOLD = 5.0  # kcal/mol; WT below this => non-binder, target excluded
 
+# Declared EMBED_FAILURE (frozen plan + repair ledger): no ligand PDBQT exists,
+# so its states are absent from the aggregate. The RRS panel is therefore
+# 39 ligands x 8 states = 312 records (was 320 before the declared exclusion).
+DECLARED_EMBED_FAILURES = {"EXT-039"}
+
 MUTATIONS = ["N51I", "C59R", "S108N", "I164L", "K76T", "K76A"]
 TARGETS = ["PfDHFR", "PfCRT"]
 
@@ -63,7 +68,11 @@ def main() -> int:
         return 2
 
     rows = list(csv.DictReader(SCORES.open(newline="")))
-    expected = 320
+    # 39 ligands x 8 states = 312 (EXT-) which is declared EMBED_FAILURE, so its
+    #   states are intentionally absent from the aggregate.
+    eligible_ids = {r["external_panel_id"]
+                    for r in rows} | DECLARED_EMBED_FAILURES
+    expected = (len({r["external_panel_id"] for r in rows}) * 8)
     if len(rows) != expected:
         print(f"ERROR: expected {expected} aggregate records, found {len(rows)}; aborting fail-closed")
         return 2
@@ -138,6 +147,8 @@ def main() -> int:
         "boundary": "Docking-derived replication on a non-overlapping external panel; NOT experimental validation, NOT an MD estimate",
         "n_compounds": len(records),
         "n_records": len(rows),
+        "declared_embed_failures": sorted(DECLARED_EMBED_FAILURES),
+        "panel_exclusion_note": "EXT-039 declared EMBED_FAILURE (no 3D coordinates under RDKit DG / random-coords / OBabel gen3d); its 8 states are intentionally absent, panel target = 39 ligands x 8 states = 312 records",
         "class_counts": classes,
         "n_with_binding_target": n_binders,
         "aggregate_sha256": hashlib.sha256(SCORES.read_bytes()).hexdigest(),
