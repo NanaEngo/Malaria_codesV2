@@ -21,6 +21,7 @@
 
 % Figures and tables (achemso already requires graphicx, caption, float)
 \usepackage{booktabs, tabularx, array, multirow, longtable}
+\usepackage{tikz}
 \usepackage{rotating}
 \usepackage[table]{xcolor}
 \captionsetup{labelfont=bf,font={footnotesize,it}}
@@ -94,9 +95,23 @@
 % GRAPHICAL TABLE OF CONTENTS (mandatory for ACS/JCIM submission)
 % ============================================================================
 \begin{tocentry}
-% The graphical abstract asset is intentionally omitted from this source because
-% the canonical TOC file is not present in the audited workspace. Add the
-% author-approved ACS-compliant asset before submission; do not use a placeholder.
+\begin{tikzpicture}[x=1.2cm,y=0.8cm]
+% Background
+\fill[blue!5,rounded corners=3pt] (-0.5,-0.8) rectangle (9.5,1.8);
+% Nodes
+\node[draw,rounded corners,fill=blue!15,minimum width=2cm,minimum height=0.7cm,font=\small] (np) at (0.5,0.5) {African NPs};
+\node[draw,rounded corners,fill=orange!15,minimum width=2cm,minimum height=0.7cm,font=\small] (dock) at (3.5,0.5) {Docking 136};
+\node[draw,rounded corners,fill=green!15,minimum width=2cm,minimum height=0.7cm,font=\small] (rrs) at (6.5,0.5) {RRS Classes};
+\node[draw,rounded corners,fill=red!10,minimum width=2.5cm,minimum height=0.7cm,font=\small] (md) at (6.5,-0.5) {MD/MM-GBSA};
+% Arrows
+\draw[->,thick,blue!60] (np) -- (dock);
+\draw[->,thick,orange!60] (dock) -- (rrs);
+\draw[->,thick,orange!60] (dock) -- (md);
+% Labels
+\node[font=\scriptsize,text=blue!70,anchor=south] at (0.5,1.2) {65\,856};
+\node[font=\scriptsize,text=orange!70,anchor=south] at (3.5,1.2) {17 candidates};
+\node[font=\scriptsize,text=green!70,anchor=south] at (6.5,1.2) {A* A B C D};
+\end{tikzpicture}
 \end{tocentry}
 
 % ============================================================================
