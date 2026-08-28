@@ -9,7 +9,7 @@
 
 `PHASE1_MAPPING_VALIDATED_20260825_PHASE2_BOUNDED_20260826`
 
-The initial LISH-MoA artifact was phenotype-only. A versioned `drug_id → SMILES` mapping was constructed from PRISM-aligned records, validated with RDKit, and frozen before Phase 2 modelling. The collision-group primary benchmark is now complete for all four molecular arms (GIN, GIN-TFP, GIN-TNE, and ChemBERTa); dedicated per-label calibration plots remain `NOT_COMPUTED`. The implementation coverage audit (`docs/IMPLEMENTATION_COVERAGE_AUDIT_20260827.md`) records the mapping, collision handling, fold metrics, and calibration-ready summary metrics.
+The initial LISH-MoA artifact was phenotype-only. A versioned `drug_id → SMILES` mapping was constructed from PRISM-aligned records, validated with RDKit, and frozen before Phase 2 modelling. The collision-group primary benchmark is now complete for all four molecular arms (GIN, GIN-TFP, GIN-TNE, and ChemBERTa); dedicated per-label calibration plots remain `NOT_COMPUTED`. The mapping, collision handling, fold metrics, and calibration-ready summary metrics are documented in this DAR (Sections 3--5) and in the manuscript.
 
 ## 2. Locked phenotype reference
 
