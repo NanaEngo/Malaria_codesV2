@@ -6,7 +6,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage{amsmath,amssymb}
-\usepackage{authblk}
+
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{graphicx}
@@ -35,20 +35,23 @@
 
 \title{Leakage-Aware Structure--Phenotype Prediction of Mechanism-of-Action Profiles Across a Mapped Drug Cohort}
 
-\author[1]{Myke Vital Sao Temgoua\thanks{Corresponding author: myke-vital.sao@facsciences-uy1.cm}}
-\author[1]{Jean-Pierre Tchapet Njafa}
-\author[1]{Serge Guy Nana Engo}
-\author[2]{Penabei Samafou}
-\author[3]{Wilfred Fon Mbacham}
 
-\affil[1]{Department of Physics, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}
-\affil[2]{Department of Medical Imaging and Radiation Sciences, Universit\'e de Sherbrooke, Sherbrooke, QC, Canada}
-\affil[3]{Department of Biochemistry, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}
 
 \date{}
 
 \begin{document}
-\maketitle
+
+{\centering\Large\bfseries Leakage-Aware Structure--Phenotype Prediction of Mechanism-of-Action Profiles Across a Mapped Drug Cohort\par}
+\vspace{1em}
+{\centering
+Myke Vital Sao Temgoua\thanks{Corresponding author: \texttt{myke-vital.sao@facsciences-uy1.cm}}$^{1}$,
+Jean-Pierre Tchapet Njafa$^{1}$,
+Penabei Samafou$^{2}$,
+Wilfred Fon Mbacham$^{3}$,
+Serge Guy Nana Engo$^{1}$\\[0.5em]
+{\small $^{1}$Department of Physics, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}\\
+{\small $^{2}$Department of Medical Imaging and Radiation Sciences, Universit\'e de Sherbrooke, Sherbrooke, QC, Canada}\\
+{\small $^{3}$Department of Biochemistry, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}\par}
 
 \begin{abstract}
 Mechanism-of-action (MoA) prediction from molecular structure is often evaluated under random splits that can place chemically identical or closely related compounds on both sides of a test boundary. We constructed an auditable mapping between \num{3289} drug-level LISH-MoA records and molecular structures, resolved salts, assigned identical canonical structures to collision groups, and evaluated a graph neural network, two graph--descriptor fusion models, and a pretrained molecular transformer under collision-group-disjoint cross-validation. Under this leakage-controlled protocol, all molecular-arm macro-AUROCs remained close to chance (\num{0.501}--\num{0.508}) and well below the phenotype-only reference (AUROC \num{0.63619}). The best molecular-arm log loss was obtained by GIN-TFP (\num{0.02334}), but low log loss accompanied near-chance ranking, indicating calibrated but non-discriminative predictions. These results do not demonstrate that molecular representations are universally inferior; they indicate that, under this mapped cohort, endpoint, and evaluation boundary, structure alone did not provide a convincing predictive advantage for MoA-associated labels. The benchmark addresses prediction of observed MoA-associated annotations and does not establish causal mechanism, target engagement, or biological activity.
