@@ -95,22 +95,24 @@
 % GRAPHICAL TABLE OF CONTENTS (mandatory for ACS/JCIM submission)
 % ============================================================================
 \begin{tocentry}
-\begin{tikzpicture}[x=1.2cm,y=0.8cm]
+\begin{tikzpicture}[x=1.0cm,y=0.7cm]
 % Background
-\fill[blue!5,rounded corners=3pt] (-0.5,-0.8) rectangle (9.5,1.8);
-% Nodes
-\node[draw,rounded corners,fill=blue!15,minimum width=2cm,minimum height=0.7cm,font=\small] (np) at (0.5,0.5) {African NPs};
-\node[draw,rounded corners,fill=orange!15,minimum width=2cm,minimum height=0.7cm,font=\small] (dock) at (3.5,0.5) {Docking 136};
-\node[draw,rounded corners,fill=green!15,minimum width=2cm,minimum height=0.7cm,font=\small] (rrs) at (6.5,0.5) {RRS Classes};
-\node[draw,rounded corners,fill=red!10,minimum width=2.5cm,minimum height=0.7cm,font=\small] (md) at (6.5,-0.5) {MD/MM-GBSA};
+\fill[blue!3,rounded corners=4pt] (-0.8,-1.2) rectangle (8.8,2.2);
+% Pipeline boxes
+\node[draw,thick,rounded corners=3pt,fill=blue!12,minimum width=1.8cm,minimum height=0.8cm,font=\footnotesize\bfseries,align=center] (np) at (0,0.5) {African\\NPs};
+\node[draw,thick,rounded corners=3pt,fill=orange!12,minimum width=1.8cm,minimum height=0.8cm,font=\footnotesize\bfseries,align=center] (dock) at (3,0.5) {Docking\\136 systems};
+\node[draw,thick,rounded corners=3pt,fill=green!12,minimum width=1.8cm,minimum height=0.8cm,font=\footnotesize\bfseries,align=center] (rrs) at (6,0.5) {RRS\\Classes};
+% MD branch
+\node[draw,thick,rounded corners=3pt,fill=red!8,minimum width=1.8cm,minimum height=0.6cm,font=\footnotesize\bfseries,align=center] (md) at (4.5,-0.7) {MD/MM-GBSA};
 % Arrows
-\draw[->,thick,blue!60] (np) -- (dock);
-\draw[->,thick,orange!60] (dock) -- (rrs);
-\draw[->,thick,orange!60] (dock) -- (md);
-% Labels
-\node[font=\scriptsize,text=blue!70,anchor=south] at (0.5,1.2) {65\,856};
-\node[font=\scriptsize,text=orange!70,anchor=south] at (3.5,1.2) {17 candidates};
-\node[font=\scriptsize,text=green!70,anchor=south] at (6.5,1.2) {A* A B C D};
+\draw[->,thick,blue!50] (np) -- (dock);
+\draw[->,thick,orange!50] (dock) -- (rrs);
+\draw[->,thick,red!40] (dock.south) -- (md);
+% Numbers
+\node[font=\tiny,text=blue!60,anchor=south] at (0,1.3) {65,856};
+\node[font=\tiny,text=orange!60,anchor=south] at (3,1.3) {17 candidates};
+\node[font=\tiny,text=green!60,anchor=south] at (6,1.3) {A*,A,B,C,D};
+\node[font=\tiny,text=red!50,anchor=north] at (4.5,-1.1) {4 WT + 16-system pilot};
 \end{tikzpicture}
 \end{tocentry}
 
@@ -320,7 +322,7 @@ The four parent-study MD systems were not members of the 17-candidate Set-C coho
 
 \subsection{Consensus leads}
 
-The intersection of high-RRS (Class~A or B), high-ACSI ($>$\num{0.5}), and high-PNS compounds defines a computational prioritization set for future experimental testing. These compounds combine resistance-resilience, African-NP-character, and network-weighted docking signals; the intersection is not itself experimental validation.
+The intersection of high-RRS (Class~A or A*), high-ACSI ($>$\num{0.5}), and high-PNS ($>$ mean) defines a computational prioritization set for future experimental testing. In the target-balanced panel, only \num{1} candidate (PP-\num{15}) satisfies all three criteria simultaneously, reflecting the conservative nature of combining resistance-resilience, African-NP-character, and network-weighted signals. This intersection is not experimental validation; it identifies candidates warranting matched biochemical testing against wild-type and mutant targets.
 
 \subsection{Cross-metric correlation: PNS, ACSI, RRS, and docking scores}
 
