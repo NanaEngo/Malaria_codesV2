@@ -225,10 +225,6 @@ In this scaffold-controlled benchmark of \num{19836} African antimalarial natura
 
 For panels comparable to the evaluated antimalarial natural-product collection, ECFP4--RF is an appropriate reference model: it is inexpensive and retained the highest ranking performance in these experiments. This recommendation is conditional on the panel, label construction, split protocol, and implementation tested here. Claims of neural improvement should be tested under scaffold-held-out evaluation with paired uncertainty estimates. Topological and tensor-network descriptors may provide complementary descriptive information, but their inclusion should not be interpreted as a predictive gain without a direct paired comparison. Finally, pretrained transformer weights should be reset independently for every fold to prevent cross-fold information transfer. The separate LISH benchmark provides phenotype-only pharmacological context, but its lack of molecular identifiers prevents a direct structure-to-MoA comparison; its metrics are not numerically comparable to the molecular ROC-AUC results (Supporting Information (\cref{SM-sec:lish_si}). Experimental validation on prospectively synthesized candidates remains necessary to test whether the computational ranking predicts biological activity.
 
-\section{List of Abbreviations}
-
-\textbf{ECFP4:} extended-connectivity fingerprint, radius \num{2}; \textbf{RF:} random forest; \textbf{GNN:} graph neural network; \textbf{GIN:} graph isomorphism network; \textbf{TFP:} topological fingerprint; \textbf{TNE:} tensor-network embedding; \textbf{MoA:} mechanism of action; \textbf{LISH:} public MoA benchmark; \textbf{ROC AUC:} receiver-operating-characteristic area under the curve; \textbf{CV:} cross-validation; \textbf{NP:} natural product; \textbf{ADMET:} absorption, distribution, metabolism, excretion, toxicity.
-
 \section{Methods}
 
 \subsection{Data and panel}
