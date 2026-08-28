@@ -148,6 +148,15 @@ The best molecular-arm log loss is GIN-TFP (0.02334), while all molecular-arm ma
 
 Array 15613 completed all four molecular arms: GIN, GIN-TFP, GIN-TNE, and ChemBERTa. Their report JSONs and fold CSVs are present under `results/p6_phase2/`, with 25 seed/fold records and finite summary metrics. No scheduler job remains active. Dedicated per-label calibration plots and QKS sensitivity remain `NOT_COMPUTED` and are excluded from interpretation; status artifacts are recorded in `results/p6_phase2/p6_calibration_status.json` and `p6_qks_status.json`. Scaffold-held-out runs for the four new molecular arms are also not yet computed; `p6_scaffold_molecular_arm_manifest.json` records this explicitly. Biological validation is outside the computational scope and was not performed.
 
+### 4.7 RRS/polypharma impactful extensions — secondary, pending --dump-predictions (28 Aug 2026)
+
+No new modelling beyond the `--dump-predictions` patch (`p6_phase2_benchmark.py:273`, 4 parallel scaffold jobs 154648/431/459/551):
+
+- **Per-label QKS + calibration** — after `predictions/*/*.csv` (25 files/arm, ~300-500MB) lands, run `p6_qks_sensitivity.py` + `p6_calibration_audit.py` to get per-label QKS rank stability and per-label ECE/Brier (206 labels); stratify QKS/ECE by RRS class from `c_rrs_classification.csv` join to test if high-RRS MoA labels are more stable.
+- **Attention fusion vs polypharma** — add intermediate cross-modal attention fusion (not late concat RF) for structure+phenotype; evaluate on polypharma-relevant MoA subset (≥2-target labels per network pharmacology Bethi 2025) with collision_group + scaffold splits; report ΔAUROC vs phenotype baseline 0.63619.
+
+Status: `PLANNED_SECONDARY_BLOCKED_ON_DUMP`; honest-negative `fusion < baseline` unchanged; executes within existing `--dump` rerun.
+
 ## 5. Leakage and statistics gates
 
 Aggregation occurs before splitting. Canonical-SMILES collisions are resolved before splitting. No assay replicate, duplicated structure, or collision group may cross train/test. The primary split is drug-grouped; scaffold-held-out performance is sensitivity analysis. All arms use the same seeds and folds. Pairwise comparisons use seed/fold-paired statistics and BH-FDR or a predeclared family-wise correction.

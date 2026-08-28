@@ -90,6 +90,15 @@ The completed GNN robustness campaign, lightweight ECFP4 controls, chemical-stan
 - GNN/Transformer performance is architecture- and training-budget-dependent.
 - External validation does not replace experimental activity measurements.
 
+### 7.1 RRS/polypharma calibration extensions — impactful secondary (28 Aug 2026)
+
+Secondary, no retraining, reuses `results/calibration_20260827/` + `c_rrs_classification.csv` (P1/P2 RRS) pending `P1_P5_RRS_POLYPHARMA_ROADMAP:1` polypharma join:
+
+- **Calibration per RRS class** — stratify pooled ECE/MCE/Brier by RRS class (A*/A/B/C/D, n=12 complete + n=17 sensitivity) under scaffold/novel partitions; test if high-RRS (A*/A) candidates retain calibration (ECE ≈0.03→0.07) better than low-RRS under shift. Script: extend `p5_calibration_posthoc.py` with `--by-rrs` join.
+- **Polypharma high-RRS subset** — evaluate ROC-AUC/AP on the ≥2-target polypharma subset (RRS ≥80% on ≥2 of PfDHFR/PfCRT/PfATP4/PfClpP per roadmap threshold) vs single-target subset; report ΔAUC with paired bootstrap CI95. No new training.
+
+Status: `PLANNED_SECONDARY`; honest-negative scaffold result unchanged until executed.
+
 ## 8. LISH-MoA external mechanism benchmark — completed phenotype-only reference (12 August 2026)
 
 A separate external benchmark is approved for development under the identifier `P5_LISH_MOA_EXTERNAL_V1`. It is an orthogonal multi-label pharmacology task, not a replacement for the molecule-disjoint ChEMBL malaria activity validation and not a direct validation of antimalarial target engagement.

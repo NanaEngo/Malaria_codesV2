@@ -1,0 +1,30 @@
+{
+  "status": "COMPUTED_CONSENSUS_RRS_SENSITIVITY",
+  "estimand": "RRS = |S_mut,t|/|S_WT,t| x 100 per target; WT non-binder < 5.0 kcal/mol excluded",
+  "estimand_note": "Target eligibility decided once on the canonical Vina scale; the CNN layer is scored on the same eligible targets (5.0 kcal/mol is Vina-calibrated and not re-applied to the CNN scale)",
+  "boundary": "Consensus sensitivity on the non-overlapping external panel; Vina-only remains canonical; not experimental validation",
+  "n_ligands": 39,
+  "n_rows": 312,
+  "n_discordant_classes": 0,
+  "class_counts_Vina": {
+    "A": 38,
+    "B": 0,
+    "C": 0,
+    "D": 0
+  },
+  "class_counts_CNN": {
+    "A": 38,
+    "B": 0,
+    "C": 0,
+    "D": 0
+  },
+  "spearman_meanRRS_Vina_vs_CNN": 0.5581,
+  "per_mutant_spearman_Vina_vs_CNN": {
+    "N51I": 0.271,
+    "C59R": -0.076,
+    "S108N": 0.204,
+    "I164L": 0.04,
+    "K76T": 0.644,
+    "K76A": 0.486
+  }
+}
