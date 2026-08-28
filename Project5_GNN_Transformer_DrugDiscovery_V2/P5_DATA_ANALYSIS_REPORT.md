@@ -95,14 +95,16 @@ The completed GNN robustness campaign, lightweight ECFP4 controls, chemical-stan
 Secondary, no retraining, reuses `results/calibration_20260827/` + `c_rrs_classification.csv` (P1/P2 RRS) via SMILES join on P5 canonical panel (17/19,836 matched):
 
 - **Calibration per RRS class** — `results/calibration_20260827/calibration_by_rrs_class.csv` (300 records): ECE/MCE/Brier per config (30) × RRS class (A*/A/B/C/D/UNMATCHED) × type (complete/available) across 5 partitions. Key finding: ECE rises from ≈0.03 (random) to ≈0.07–0.13 (scaffold/novel) for ALL classes; no evidence that high-RRS (A*/A) candidates retain better calibration — calibration degradation under shift is universal. Per-class sample sizes small (B: ~20, C: ~25, A: ~10 per config).
-- **Polypharma high-RRS subset** — `results/calibration_20260827/polypharma_subset_auc.csv` (60 rows): ROC-AUC/AP on complete two-target polypharma (A*/A, n=2 candidates=PP-01/PP-15, 10 test samples/config) vs single-target (n=99,170). Polypharma AUC ranges 0.00–0.84 (mean ~0.43) vs single-target 0.78–0.91; ΔAUC negative for most configs (polypharma harder). ChemBERTa scaffold: polypharma AUC 0.76 vs single 0.79 (Δ=-0.03). Novel partitions show higher variance. Low polypharma n precludes bootstrap CI95; reported as descriptive.
+- **Polypharma high-RRS subset** — `results/calibration_20260827/polypharma_subset_auc.csv` (120 rows): 
+  - **Complete two-target** (60 rows): A*/A n=2 candidates (PP-01/PP-15), 10 test samples/config. AUC 0.00–0.84 vs single 0.78–0.91, Δ negative most configs. ChemBERTa scaffold Δ=-0.03.
+  - **Available-target** (60 rows, added 28 Aug 19:22Z): A*/A n=6 candidates (PP-02/05/06/11/13/15), 30 test samples/config. AUC 0.14–0.88 vs single 0.77–0.91, Δ negative (ChemBERTa scaffold Δ=-0.17). Novel partitions higher variance. Low n precludes bootstrap CI95; reported as descriptive.
 
 Status: `COMPUTED_SECONDARY`; honest-negative scaffold result unchanged. Low polypharma sample size (2 candidates) limits inference; extensions are descriptive post-hoc analyses.
 
 **Future work for bootstrap CI95 + available-target polypharma** — to achieve ≥30 polypharma candidates for valid bootstrap:
 - **Option A**: Sample 500-1,000 diverse ChEMBL molecules (MaxMin/Butina on ECFP4) from `p5_public_chembl_malaria_disjoint.csv` (22,267), run Vina docking 8 states (PfDHFR WT/N51I/C59R/S108N/I164L, PfCRT WT/K76T/K76A) → ~4-8K runs, 1-2 days SLURM `%20`.
 - **Option B**: Run full P5 panel (19,836) docking 6 states → ~119K runs, 1-2 months cluster (not recommended for V2).
-- **Available-target polypharma (n=6)**: re-run AUC analysis with `RRS_class_available` A*/A (PP-02/05/06/11/13/15); calibration_by_rrs_class.csv already contains `rrs_type: available` per-class ECE — extend polypharma AUC to available type.
+- **Available-target polypharma (n=6)**: **DONE 28 Aug 19:22Z** — AUC added to `polypharma_subset_auc.csv` (60 rows `rrs_type: available`). ChemBERTa scaffold Δ=-0.17 vs -0.03 complete.
 - Add to `P1_P6_RRS_POLYPHARMA_ROADMAP.md` if P5 expansion phase authorized.
 
 ## 8. LISH-MoA external mechanism benchmark — completed phenotype-only reference (12 August 2026)
