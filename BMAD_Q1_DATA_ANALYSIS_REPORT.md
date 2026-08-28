@@ -1,7 +1,7 @@
 # BMAD Q1 Data Analysis Report — active summary
 
-**Scope:** P1–P3 only. P4 and P5 have dedicated DARs.
-**Updated:** 25 August 2026
+**Scope:** P1–P6. Each project has a dedicated DAR where applicable.
+**Updated:** 28 August 2026
 **Long-form history:** `docs/archive/md_full_20260812/BMAD_Q1_DATA_ANALYSIS_REPORT.md`
 
 ## 1. Executive status
@@ -9,8 +9,10 @@
 | Project | Current status | Submission-relevant conclusion |
 |---|---|---|
 | **P1** | V7 is the submission-oriented workspace (JCIM); V6/V4/V5 provide corrected evidence and remediation layers | Chemical-space novelty, target-wise docking, and computational RRS/polypharmacology are reportable only within their stated provenance boundaries |
-| **P2** | Canonical 17-member Set-C cohort and docking-RRS/ACSI/PNS analysis complete; Set-C MD pilot 16/16 complete with QC, MD-RRS and MM-GBSA secondary outputs | Docking-RRS is canonical; the PP-01/PP-02 Set-C MD pilot is complete as a secondary analysis; full 17-candidate MD-RRS remains NOT_COMPUTED by design |
+| **P2** | Canonical 17-member Set-C cohort and docking-RRS/ACSI/PNS analysis complete; Set-C MD pilot 16/16 complete with QC, MD-RRS and MM-GBSA secondary outputs; external replication 312/312 complete | Docking-RRS is canonical; the PP-01/PP-02 Set-C MD pilot is complete as a secondary analysis; full 17-candidate MD-RRS remains NOT_COMPUTED by design; external panel provides computational sensitivity evidence |
 | **P3** | Canonical classical, hybrid, QKS, TNE/TDA, and external-validation analyses complete | Quantum-inspired descriptors are complementary; no quantum advantage over RBF or ECFP4 is claimed |
+| **P5** | Scaffold-controlled molecular-representation benchmark complete; manuscript 16 p. + SI 4 p. + cover 1 p., JCAMD target | ECFP4–RF dominates under scaffold split; topological fusion modestly complementary; honest-negative result with explicit limits |
+| **P6** | Leakage-aware structure–phenotype MoA benchmark complete; manuscript 8 p. + cover 1 p., JCAMD target | Molecular-arm AUROCs near chance (0.501–0.508) under collision-group-disjoint evaluation; phenotype reference AUROC 0.636 |
 
 ## 2. P1 — chemical space, docking, and RRS/polypharmacology
 
@@ -31,7 +33,9 @@
 
 ## 3. P2 — canonical RRS/polypharmacology source layer
 
-**25 August reconciliation:** the P2 results-unlock audit confirms that PfCRT pH 5.2 redocking is already complete for 100/100 library ligands (`data/proteins/pH_correction/redock_results/`), PNS-imputation sensitivity is complete for 17 candidates, and the Set-C pilot post-production chain is complete. These results are distinct estimands and are not merged into the primary Set-C docking-RRS table. The full STRING 400/900 threshold sensitivity and PP-01/PP-15 dedicated multi-seed redocking have no complete source records and remain explicitly NOT_COMPUTED/PENDING_INPUTS.
+**28 August reconciliation:** the P2 results-unlock audit confirms that PfCRT pH 5.2 redocking is already complete for 100/100 library ligands (`data/proteins/pH_correction/redock_results/`), PNS-imputation sensitivity is complete for 17 candidates, the Set-C pilot post-production chain is complete, and the external docking replication is complete at 312/312 records (39 ligands, 8 PfDHFR/PfCRT states; bootstrap mean RRS 100.45, Class-A fraction 0.974). These results are distinct estimands and are not merged into the primary Set-C docking-RRS table. The full STRING 400/900 threshold sensitivity and PP-01/PP-15 dedicated multi-seed redocking have no complete source records and remain explicitly NOT_COMPUTED/PENDING_INPUTS.
+
+**Manuscript status (28 August 2026):** main 28 p. + SM 16 p. + cover 1 p., target journal JCIM. 0 undefined references, 0 LaTeX errors. CRediT author contributions aligned with P3 canonical format. siunitx/cleveref/xr conventions aligned across P2/P5/P6. External replication referenced in Conclusion via `\cref{SM-tab:s15_robustness_transfer}`. Graphical abstract TikZ created. Bibliography standardized to `Bibliography_P2.bib`.
 
 
 The canonical Set-C cohort contains **17 polypharmacology-oriented candidates** and **136 WT/mutant docking systems**. Per-target RRS classification is:
@@ -106,23 +110,65 @@ Canonical full-library results:
 
 Removing QK reduces hybrid AUC by **0.040**; TFP contributes **0.014**; TNE is mildly negative in the ablation. QKS re-runs show quantum ≈ RBF at n=5,000 and n=19,849; no quantum advantage is claimed. External descriptor analyses retain the **351 TNE failures** as an explicit ITT/complete-case sensitivity issue rather than hiding them. The external QKS pilot (n=150) gives quantum **0.8385** versus RBF **0.8423**, p=0.374; this is an external replication of equivalence, not an advantage.
 
-## 5. P3 external MoA extension — planned, not yet a canonical result
+## 5. P5 V2 — scaffold-controlled molecular-representation benchmark
+
+### Canonical findings
+
+- ECFP4–RF achieved ROC AUC **0.8300** under scaffold split, exceeding GIN–TFP (0.8138), GIN–TNE (0.8090), GIN (0.8047), and ChemBERTa (0.7867); all four comparisons significant after BH correction.
+- Under random split, the same ordering held (ECFP4–RF 0.9433 > all learned arms).
+- Paired permutation tests (B=10,000) confirmed negative ΔAUC for every arm on both splits.
+- External ChEMBL transfer panel (22,267 molecule-disjoint compounds): ECFP4–RF 0.9190 vs GIN 0.8843 under scaffold; same ordering preserved.
+- GNN capacity sensitivity (hidden 64/dropout 0.2 and hidden 256/dropout 0.1): AUC 0.8000–0.8081, all below ECFP4–RF.
+- Post-hoc calibration metrics computed (ECE, MCE, Brier, reliability) but slope/intercept recalibration NOT_COMPUTED.
+- Cluster-based/Butina splits, VAE/Graphormer, contrastive pretraining, conditional generation, and experimental validation all NOT_COMPUTED.
+
+### Manuscript status
+
+- Main: 16 pages (`P5_manuscript_V2608.tex`), SI: 4 pages (`P5_SI_V2608.tex`), cover: 1 page.
+- Target journal: JCAMD (Springer Nature).
+- 0 undefined references, 0 LaTeX errors, siunitx/cleveref/xr aligned with P2 convention.
+- CRediT author contributions aligned with P3 canonical format.
+- Zenodo package: 31/31 files staged, `READY_FOR_UPLOAD_NOT_UPLOADED`.
+
+## 6. P6 — leakage-aware structure–phenotype MoA benchmark
+
+### Canonical findings
+
+- **3289** drug-level LISH-MoA records mapped to **1722** unique molecular structures via **794** collision groups.
+- Collision-group-disjoint evaluation: all molecular-arm macro-AUROCs near chance (0.501–0.508); phenotype-only reference AUROC 0.636.
+- Best molecular-arm log loss: GIN-TFP (0.02334), but low log loss accompanied near-chance ranking (calibrated but non-discriminative).
+- ECFP4–RF baseline: AUROC 0.536 under collision-group split, 0.538 under scaffold.
+- Scaffold sensitivity computed for phenotype and ECFP4–RF baselines only; GNN/ChemBERTa scaffold sensitivity NOT_COMPUTED.
+- Per-label calibration diagrams and calibration slope/intercept NOT_COMPUTED.
+
+### Manuscript status
+
+- Main: 8 pages (`P6_manuscript_V2608.tex`), cover: 1 page.
+- Target journal: JCAMD (Springer Nature).
+- 0 undefined references, 0 LaTeX errors.
+- CRediT author contributions aligned with P3 canonical format.
+- References: Bibliography_P6.bib, 12+ verified citations.
+
+## 7. P3 external MoA extension — planned, not yet a canonical result
 
 A separate P3/P5 extension is being implemented under `P5_LISH_MOA_EXTERNAL_V1`. LISH-MoA is a multi-label pharmacology benchmark (206 scored MoA labels), not an antimalarial activity panel. P3 may consume only the audited, structure-mapped drug-level artifact produced by the P5 preparation workflow; it must not alter the canonical P3 panel, splits, AUC tables, QKS conclusions, or manuscript headline.
 
 The P3 external arm will compare ECFP4, TFP, TNE, and an explicitly labelled optional QKS analysis on the same mapped compounds. Mean column-wise log loss is primary, with macro/micro AUPRC and macro AUROC as secondary metrics. Splits must be grouped by `drug_id`, with scaffold-held-out sensitivity when structures are available.QKS remains separately bounded because its kernel cost is quadratic; `p3_lish_moa_qks_bounded.py` is available for a selected-label/cohort sensitivity analysis, but no such result is yet computed.
  Any unresolved structure mapping or descriptor failure is reported explicitly; no complete-case filtering may silently change the estimand. A public annotated mirror is now available for the data-access step (`pablormier/kaggle-lish-moa-annotated`; official mapping provenance `LISHarvard/moa_challenge`). It remains a mirror of the competition data, not a new biological validation source. Until its archive hash, extracted training rows, structure mapping, and all gates are available, this extension remains **planned / not computed** and cannot be cited as a P3 result.
 
-## 6. Minimal provenance map
+## 8. Minimal provenance map
 
 | Result layer | Source evidence | Status |
 |---|---|---|
 | P1 V5 target-wise Vina | `Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/` | finite raw records; exploratory where labelled |
 | P2 canonical RRS/ACSI/PNS | `Project2_Polypharmacology_MD_ValidationV2607/results/c_rrs_classification.csv`, `c_acsi_scores.csv`, `c_pns_ranking.csv` | canonical docking-derived |
 | P2 Set-C production | `Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c_preparation_20260812_v1/` | 16/16 production trajectories completed; post-production chain COMPLETE; MD-RRS COMPUTED_WITH_COHORT_CONTRACT; MM-GBSA Set-C 16/16 |
+| P2 external replication | `Project2_Polypharmacology_MD_ValidationV2607/results/robustness_transfer_20260827/` | 312/312 finite records, 39 ligands, 8 PfDHFR/PfCRT states; bootstrap RRS 100.45 [99.59, 101.32] |
 | P3 external validation | `Project3_Quantum_Inspired_RepresentationsV2607/results/` | canonical/external sensitivity outputs |
+| P5 benchmark | `Project5_GNN_Transformer_DrugDiscovery_V2/results/` | ECFP4–RF 0.8300 (scaffold); 25 fold–seed replicates; ChEMBL transfer 22,267 compounds |
+| P6 benchmark | `Project6_LISH_MoA_Structure_Phenotype/results/p6_phase2/` | 4 molecular arms completed; collision-group AUROC 0.501–0.508; phenotype 0.636 |
 
-## 6. Cross-project rules
+## 9. Cross-project rules
 
 1. Preserve canonical input, script, parameter, and hash provenance for every result.
 2. Keep P1 Set A, P2 MD Set B, and P2 polypharm Set C disjoint.
@@ -130,11 +176,13 @@ The P3 external arm will compare ECFP4, TFP, TNE, and an explicitly labelled opt
 4. Keep failed, pending, exploratory, and historical outputs visible but clearly labelled.
 5. Do not update manuscript claims from an incomplete job.
 
-## 7. Next actions
+## 10. Next actions
 
 - **P1 (V7):** complete funding items and final author read-through for V7; package `submission_ACS_P1V7/` verified auto-contained (main 25 p. / SM 17 p. / cover 1 p., 0 undefined refs, 12/08/2026).
-- **P2:** production `15320` and the post-production chain are complete: 16/16 trajectory QC PASS, pilot MD-RRS and Set-C MM-GBSA are available as secondary outputs. Full 17-candidate MD-RRS remains NOT_COMPUTED by design. Existing PfCRT pH 5.2 redocking (100/100) and PNS-imputation sensitivity are indexed in the P2 unlock audit. The main manuscript has been streamlined; detailed secondary ACSI/PNS/Tartarus/ADMET tables are retained in the SI.
+- **P2:** manuscript submission-ready (JCIM, 28 p. main + 16 p. SM); external replication 312/312 complete; graphical abstract TikZ created. Author gates: metadata verification, Zenodo upload. Full 17-candidate MD-RRS remains NOT_COMPUTED by design.
 - **P3:** preserve the honest-negative external validation framing and complete repository deposit preparation.
+- **P5:** manuscript submission-ready (JCAMD, 16 p. main + 4 p. SI); Zenodo package 31/31 staged. Author gates: visual PDF review, metadata, Zenodo upload.
+- **P6:** manuscript submission-ready (JCAMD, 8 p. + cover); all molecular arms completed. Author gates: metadata, scaffold sensitivity for GNN arms (optional), Zenodo upload.
 - **All:** keep this summary short; place detailed job narratives and superseded decisions in the archive.
 
 ## Lightweight robustness runs (25 August 2026)
