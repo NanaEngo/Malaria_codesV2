@@ -1,7 +1,7 @@
 # P2 Data Analysis Report — active summary
 
 **Scope:** Resistance-aware polypharmacology of antimalarial leads (docking-RRS, PNS, ACSI, targeted MD, MM-GBSA, Set-C MD pilot).
-**Updated:** 27 August 2026 (P2Rank box audit + ProLIF interaction-fingerprint analysis)
+**Updated:** 28 August 2026 (external docking 312/312 PASS + repair ledger + PP-15 docking/MD pilot + P2Rank/ProLIF)
 **Root:** `Project2_Polypharmacology_MD_ValidationV2607/`
 
 ## 1. Central question
@@ -171,6 +171,10 @@ ProLIF 2.2.1 (`pip install prolif` in `malaria_md`; v2 API: `generate()` on the 
 - **All 16/16 systems computed**, each with 4–11 contacts at ≥ 50 % occupancy, most at 100 %; no system shows contact loss. Descriptive highlights: PfCRT TYR16 at 100 % occupancy in 5/6 PfCRT systems (conserved aromatic site residue); PfDHFR LEU46/MET55 recur across PP-01 states, LEU40/ILE14 across PP-02 states.
 
 Status: `COMPUTED_SECONDARY_POST_PROCESSING`. These are descriptive trajectory-interaction occupancies that corroborate the retention-not-gain reading of the MD-RRS/MM-GBSA pilot (ligand stays in contact with conserved binding-site residues); they are not binding affinities, free energies, or biological resistance evidence, and no canonical value or manuscript claim is modified.
+
+## 8ter. PP-15 single-ligand docking/MD — `results/pp15_docking_20260828/` + `results/pp15_md_20260828/` (28 Aug 2026)
+
+Single-candidate pilot for PP-15 (outside the 17-member Set-C estimand). Docking (Vina) produced `PP-15_PfCRT_WT` and `PP-15_PfDHFR_WT` poses (`vina/*.pdbqt` + `metadata.json`); MD preparation completed two WT systems (`PP-15_PfCRT_WT`, `PP-15_PfDHFR_WT`) through EM→NVT→NPT with `pre_equilibration_audit.json:PASS`, `forcefield_manifest.json`, and `system_manifest.json`. No mutant, no RRS, no MM-GBSA, no manuscript claim — retained as `EXPLORATORY_SINGLE_LIGAND_PILOT` pending QC/MD-RRS gates. Not merged into Set-C tables.
 
 ## 9. Manuscript status (26 Aug)
 
