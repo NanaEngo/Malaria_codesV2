@@ -1,0 +1,47 @@
+% Cover Letter — Paper 6 (JCAMD / Springer)
+% Target: Journal of Computer-Aided Molecular Design (JCAMD)
+\documentclass[11pt,a4paper]{letter}
+
+\usepackage[margin=1.9cm]{geometry}
+\setlength{\parskip}{0.25em}
+\usepackage{microtype}
+\usepackage{hyperref}
+
+\signature{Myke Vital Sao Temgoua \\ \small Corresponding Author}
+\address{%
+  University of Yaound\'{e} I \\
+  Department of Physics, Faculty of Science \\
+  P.O. Box 812, Yaound\'{e}, Cameroon \\
+  \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm}
+}
+
+\begin{document}
+
+\begin{letter}{%
+  The Editors \\
+  \textit{Journal of Computer-Aided Molecular Design} \\
+  Springer Nature
+}
+
+Dear Editors,
+
+We submit our manuscript ``Leakage-Aware Structure--Phenotype Prediction of Mechanism-of-Action Profiles Across a Mapped Drug Cohort'' for consideration in the \textit{Journal of Computer-Aided Molecular Design}.
+
+Mechanism-of-action prediction from molecular structure is a central challenge in computational drug discovery, yet benchmarks rarely control for data leakage through identical canonical structures crossing train and test boundaries. We constructed an auditable mapping between 3,289 drug-level LISH-MoA records and molecular structures, resolved salts, and assigned collision groups before model evaluation. Under this leakage-controlled protocol, all molecular representations (GIN, GIN-TFP, GIN-TNE, ChemBERTa) produced near-chance AUROCs (0.501--0.508), well below the phenotype-only reference (0.64).
+
+The key contributions are: (1) a collision-group-aware evaluation framework that prevents identical structures from contaminating test folds; (2) a systematic comparison showing that molecular structure alone does not improve MoA-associated label prediction on this drug-level cohort; and (3) an honest negative result demonstrating that calibrated log loss can accompany non-discriminative ranking.
+
+The manuscript is original, has not been published elsewhere, and is not under consideration by another journal. All authors have approved the manuscript and agree with its submission.
+
+We suggest the following potential reviewers with relevant expertise in molecular representation learning and benchmark design. No conflicts of interest exist with any suggested reviewer.
+
+Thank you for your consideration.
+
+Sincerely,
+
+Myke Vital Sao Temgoua
+Corresponding Author
+University of Yaound\'e I
+
+\end{letter}
+\end{document}
