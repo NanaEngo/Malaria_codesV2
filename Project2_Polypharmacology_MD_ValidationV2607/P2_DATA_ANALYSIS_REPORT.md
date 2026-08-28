@@ -174,7 +174,7 @@ Status: `COMPUTED_SECONDARY_POST_PROCESSING`. These are descriptive trajectory-i
 
 ## 8ter. PP-15 single-ligand docking/MD — `results/pp15_docking_20260828/` + `results/pp15_md_20260828/` (28 Aug 2026)
 
-Single-candidate pilot for PP-15 (outside the 17-member Set-C estimand). Docking (Vina) produced `PP-15_PfCRT_WT` and `PP-15_PfDHFR_WT` poses (`vina/*.pdbqt` + `metadata.json`); MD preparation completed two WT systems (`PP-15_PfCRT_WT`, `PP-15_PfDHFR_WT`) through EM→NVT→NPT with `pre_equilibration_audit.json:PASS`, `forcefield_manifest.json`, and `system_manifest.json`. No mutant, no RRS, no MM-GBSA, no manuscript claim — retained as `EXPLORATORY_SINGLE_LIGAND_PILOT` pending QC/MD-RRS gates. Not merged into Set-C tables.
+Single-candidate pilot for PP-15 (outside the 17-member Set-C estimand). Docking (Vina) produced `PP-15_PfCRT_WT` and `PP-15_PfDHFR_WT` poses (`vina/*.pdbqt` + `metadata.json`); MD preparation completed two WT systems (`PP-15_PfCRT_WT`, `PP-15_PfDHFR_WT`) with `pre_equilibration_audit.json:PASS`, `forcefield_manifest.json`, and `system_manifest.json`. **State (28 Aug):** PfDHFR EM→NVT→NPT COMPLETE with valid checkpoint (npt.gro/npt.cpt present); PfCRT prepared-pending (equilibration not launched). No mutant, no RRS, no MM-GBSA, no production — `EXPLORATORY_SINGLE_LIGAND_PILOT`. **Manuscript integration (28 Aug):** SM §7b updated with current state + new Table S (Vina scores PfDHFR −8.62 / PfCRT −7.81 kcal/mol, audit PASS, equilibration status) and a main-text sentence in the Set-C pilot subsection; explicitly outside the Set-C estimand. Not merged into Set-C tables.
 
 ## 8quater. RRS/polypharma impactful extensions — secondary, no new MD (28 Aug 2026)
 

@@ -231,7 +231,22 @@ All eighteen MM--GBSA endpoints (GB\textsuperscript{OBC2} igb=5, \qty{0.15}{\mol
 
 Interaction fingerprints (ProLIF 2.2.1, \num{100} frames per trajectory, sixteen systems) show a sparse set of persistent contacts: four to eleven contacts per system exceed \qty{50}{\percent} occupancy, most at \qty{100}{\percent}. Recurring anchors include PfCRT TYR16 (fully occupied in five of six PfCRT systems) and PfDHFR LEU46/MET55, consistent with the canonical binding pockets.
 
-As a feasibility probe independent of the primary cohort, the single ligand PP-15 was docked to the wild-type states of PfCRT and PfDHFR (Vina 1.2.7) and prepared under the identical OpenFF~2.2.0/CHARMM36m explicit-solvent protocol. Pre-equilibration checks passed for both systems and NVT/NPT equilibration is ongoing. No production trajectory, replicate, or RRS estimate is reported for this pilot.
+As a feasibility probe independent of the primary cohort, the single ligand PP-15 was docked to the wild-type states of PfCRT and PfDHFR (Vina 1.2.7) and prepared under the identical OpenFF~2.2.0/CHARMM36m explicit-solvent protocol used for the Set-C pilot. Both systems passed the pre-equilibration audits; PfDHFR completed EM--NVT--NPT with a validated checkpoint, whereas PfCRT remained prepared-pending at the time of analysis (\cref{tab:s_pp15}). The probe is outside the 17-candidate Set-C estimand: no mutant, RRS, production trajectory, or MM-GBSA estimate is reported for PP-15.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{PP-15 single-ligand feasibility probe (outside the Set-C estimand). Vina scores are best-pose affinities on wild-type receptors; the MD columns report the preparation status under the OpenFF~2.2.0/CHARMM36m protocol. Equilibration of PfCRT was not launched; neither system entered production, so no trajectory, RRS, or MM-GBSA value is reported.}
+\label{tab:s_pp15}
+\begin{tabular}{l S[table-format=-1.2] l l}
+\toprule
+Target & {Vina score (\si{\kcalmol})} & Preparation audit & Equilibration \\
+\midrule
+PfDHFR (7F3Y) & -8.62 & PASS & Complete (EM--NVT--NPT; checkpoint valid) \\
+PfCRT (6UKJ) & -7.81 & PASS & Prepared; not run \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 % ============================================================================
 % 8. Robustness and companion context
