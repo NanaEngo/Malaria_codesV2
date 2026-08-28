@@ -11,7 +11,7 @@
 - Coverage-limited sensitivity panel: 5 PfCRT-only candidates; not equivalent to the complete panel.
 - Parent-study MD: 4 non-overlapping WT complexes × 10 ns; only PfCRT–214 yielded an interpretable MM-GBSA endpoint.
 - Set-C MD pilot: 16 systems covering PP-01/PP-02; trajectory QC PASS, single replicate per system; secondary only.
-- K76A replicate-1 MM-GBSA: `FAILED_NUMERICAL_QC` after receptor-minimization `BOND overflow`; endpoint excluded from reportable claims.
+- K76A replicate-1 MM-GBSA (PP-01): original 19-Aug endpoint (\(\Delta G = -35.29 \pm 1.17\) kcal/mol, SEM 0.50) is retained in the manuscript with an explicit Limitations caveat noting inter-replicate sensitivity. A second replicate on an independent trajectory produced \(\Delta G = -27.54\) kcal/mol. The `FAILED_NUMERICAL_QC` status applies to the 25-Aug diagnostic run (BOND overflow in sander parsing), not the original canonical endpoint.
 - Full-panel Set-C MD-RRS: `NOT_COMPUTED` by design.
 
 ## Lightweight robustness and transfer audit
