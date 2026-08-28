@@ -1,7 +1,7 @@
 # P5 Data Analysis Report — active summary
 
 **Scope:** GNN/Transformer drug-discovery benchmark on the canonical P3-derived antimalarial panel.
-**Updated:** 27 August 2026 (completed-arm integration; ChemBERTa extension and exhaustive suggestion audit)
+**Updated:** 28 August 2026 (completed-arm integration; ChemBERTa 125/125 + calibration 30 configs + GNN sensitivity 15617; no new training)
 **Long-form history:** `docs/archive/md_full_20260812/P5_DATA_ANALYSIS_REPORT.md`
 
 ## 1. Central question
