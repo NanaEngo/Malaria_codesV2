@@ -176,6 +176,16 @@ Status: `COMPUTED_SECONDARY_POST_PROCESSING`. These are descriptive trajectory-i
 
 Single-candidate pilot for PP-15 (outside the 17-member Set-C estimand). Docking (Vina) produced `PP-15_PfCRT_WT` and `PP-15_PfDHFR_WT` poses (`vina/*.pdbqt` + `metadata.json`); MD preparation completed two WT systems (`PP-15_PfCRT_WT`, `PP-15_PfDHFR_WT`) through EM→NVT→NPT with `pre_equilibration_audit.json:PASS`, `forcefield_manifest.json`, and `system_manifest.json`. No mutant, no RRS, no MM-GBSA, no manuscript claim — retained as `EXPLORATORY_SINGLE_LIGAND_PILOT` pending QC/MD-RRS gates. Not merged into Set-C tables.
 
+## 8quater. RRS/polypharma impactful extensions — secondary, no new MD (28 Aug 2026)
+
+Planned secondary audits that strengthen RRS+polypharma without new trajectories (ponytail: reuse existing 312-record external docking + 16-system pilot):
+
+- **Per-target bootstrap RRS CI95** — bootstrap B=10k per-target on `c_rrs_classification.csv` (PfDHFR n=12, PfCRT n=17) and on `external_docking_rrs_20260827.csv` (39 ligands); report CI95 per RRS class (A*/A/B/C/D) and per-target retention fraction. Seed 42, same as `p2_robustness_transfer_audit.py`.
+- **MD-filter retention gate** — intersect docking RRS ≥80% (Class A) with pilot MD-RRS_d retention (<100 = tighter/looser parity) for PP-01/PP-02; candidates passing both gates are polypharma-promoted (≥2 targets, retention-not-gain). No full-panel claim; uses existing `md_rrs_discriminative_pilot.csv` + `mmgbsa_ddeltaG_pilot.csv`.
+- **Literature anchor** — Trends Parasitol 2026 SDMT MED6-189 (multi-target high barrier) + RSC Adv 2026 PfATP4/DHFR/DHODH/PfCRT mechanistic classes already in `docs/CENTRAL_QUESTIONS_PROJECTS.md:28`; cite in P2 Discussion to justify per-target WT denominator and polypharma ≥2-target threshold.
+
+Status: `PLANNED_SECONDARY`; requires only post-processing scripts; manuscript claim remains `COMPUTED_WITH_COHORT_CONTRACT` until executed.
+
 ## 9. Manuscript status (26 Aug)
 
 **Current release status:** `READING_FINAL_AUTHOR`. The primary Set-C docking analysis, the separate parent-study MD cohort, and the bounded Set-C MD pilot have completed their declared production and QC gates. The optional witness job `15507_[0]` is not a prerequisite for the manuscript and remains non-blocking. K76A MM-GBSA retains the original canonical endpoint with an explicit Limitations caveat.
