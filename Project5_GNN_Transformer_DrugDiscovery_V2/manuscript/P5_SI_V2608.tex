@@ -118,6 +118,31 @@ Split & Model & {ECE} & {MCE} & {Brier} \\
 
 The degradation is consistent across families: ECE roughly doubles from the random split to the scaffold split and widens further on the novel partitions, and ChemBERTa --- the arm with the largest ROC-AUC fold-level spread --- also shows the largest calibration error under scaffold shift. These estimates are secondary robustness evidence; they do not alter the canonical ROC-AUC results and are not presented as calibrated probabilities for prospective use. Per-configuration reliability summaries are provided in the released data package.
 
+\subsection{Polypharma high-RRS subset calibration and AUC (available-target)}
+\label{sec:polypharma_si}
+
+We further stratified the post-hoc calibration and ROC-AUC analyses by the resistance-relevant RRS classification from the P2 Set-C docking study (docking-RRS $\ge 80\%$ on available targets). Using the P2 docking-RRS classification\citep{temgoua2027md}, we identified 6 candidates with A*/A RRS class on available targets (PP-01, PP-02, PP-06, PP-11, PP-13, PP-15), corresponding to \num{30} test samples per configuration (out of \num{99180} pooled). This available-target definition includes candidates that may lack scores for one target but retain high RRS on the other, in contrast to the complete two-target definition (n=2 candidates: PP-01, PP-15). Calibration by RRS class (complete and available) is provided in the released data package.
+
+\begin{table}[h]
+\centering
+\caption{Available-target polypharma subset ROC-AUC on the scaffold split (secondary analysis; n=6 candidates A*/A available RRS class, 30 test samples/config vs 99,150 single-target). $\Delta$AUC = polypharma $-$ single-target. Low polypharma sample size precludes bootstrap CI95; values are descriptive.}
+\label{tab:s2_polypharma_available}
+\small
+\begin{tabular}{l S[table-format=1.3] S[table-format=1.3] S[table-format=-1.3]}
+\toprule
+Model & {Polypharma AUC} & {Single-target AUC} & {$\Delta$AUC} \\
+\midrule
+ECFP4--RF & 0.616 & 0.789 & -0.173 \\
+GIN & 0.144 & 0.812 & -0.668 \\
+GIN-TFP (native) & 0.296 & 0.817 & -0.521 \\
+GIN-TNE (native) & 0.224 & 0.815 & -0.591 \\
+ChemBERTa & 0.616 & 0.789 & -0.173 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+On the scaffold split, the available-target polypharma AUC is consistently below the single-target AUC for all models ($\Delta$AUC $= -0.173$ to $-0.668$). ChemBERTa and ECFP4--RF show the smallest deficit (-0.173), while GIN, GIN-TFP, and GIN-TNE show larger deficits (-0.52 to -0.67). The complete two-target polypharma subset (n=2 candidates) shows wider variance (AUC 0.00–0.84) and larger deficits for most models. These secondary analyses are descriptive; the honest-negative scaffold result remains unchanged.
+
 \section{Light GNN hyperparameter sensitivity on the scaffold split}
 \label{sec:gnn_sensitivity_si}
 
