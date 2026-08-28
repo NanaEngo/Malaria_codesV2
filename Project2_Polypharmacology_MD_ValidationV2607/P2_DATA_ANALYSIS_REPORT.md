@@ -184,7 +184,17 @@ Planned secondary audits that strengthen RRS+polypharma without new trajectories
 - **MD-filter retention gate** — intersect docking RRS ≥80% (Class A) with pilot MD-RRS_d retention (<100 = tighter/looser parity) for PP-01/PP-02; candidates passing both gates are polypharma-promoted (≥2 targets, retention-not-gain). No full-panel claim; uses existing `md_rrs_discriminative_pilot.csv` + `mmgbsa_ddeltaG_pilot.csv`.
 - **Literature anchor** — Trends Parasitol 2026 SDMT MED6-189 (multi-target high barrier) + RSC Adv 2026 PfATP4/DHFR/DHODH/PfCRT mechanistic classes already in `docs/CENTRAL_QUESTIONS_PROJECTS.md:28`; cite in P2 Discussion to justify per-target WT denominator and polypharma ≥2-target threshold.
 
-Status: `PLANNED_SECONDARY`; requires only post-processing scripts; manuscript claim remains `COMPUTED_WITH_COHORT_CONTRACT` until executed.
+### 8quater.0 Bootstrap RRS CI95 + MD-filter retention gate — COMPUTED (28 Aug 2026)
+
+Script: `scripts/p2_rrs_polypharma_secondary_20260828.py` (seed 42, B=10\u2074). Outputs: `results/rrs_polypharma_secondary_20260828/{secondary_summary.json, md_filter_gate.csv}`.
+
+**RUN1 — Set-C bootstrap CI95 (n=17):** class fractions A* 0.294 [0.118, 0.529], A 0.059 [0.000, 0.176], B 0.294 [0.118, 0.529], C 0.294 [0.118, 0.529], D 0.059 [0.000, 0.176]. Per-mutant retention (pooled, WT=100): PfDHFR N51I 74.7 [67.2, 85.2], C59R 73.7 [67.4, 82.1], S108N 75.3 [67.7, 85.8], I164L 76.8 [68.9, 88.2] (n=12); PfCRT K76T 85.4 [81.0, 90.4], K76A 87.0 [83.1, 90.9] (n=17). The PfCRT retention CIs exclude 100, consistent with the retention-not-gain reading; the PfDHFR CIs are wide and overlap 100 for I164L.
+
+**RUN1b — external panel bootstrap:** mean RRS 100.45 [99.59, 101.34], class-A fraction 0.974 [0.923, 1.000] (matches the value already reported in SM Table S15).
+
+**RUN2 — MD-filter retention gate (pilot scope PP-01/PP-02, 12 gate rows):** docking RRS \u2265 80 AND pilot MD-RRS < 100. 7/12 rows pass both gates. **PP-01 is polypharma-promoted at pilot scope** (PfCRT via K76A MD-RRS 97.8, PfDHFR 4/4 mutants 91.0\u201398.9; docking RRS 91.7 / 85.8). PP-02 is NOT promoted: its PfCRT rows pass (90.1/87.3) but PfDHFR has no eligible docking WT anchor under the 5.0 kcal/mol rule, so only one target is gate-eligible. K76T MD-RRS 102.7 for PP-01 PfCRT is the one >100 row and is read as within-noise retention, not gain.
+
+Status: `COMPUTED_SECONDARY`; pilot-scope promotion only; full-panel (17\u00d78=136) MD-RRS remains `NOT_COMPUTED`; no canonical value replaced.
 
 ### 8quater.1 GNINA CNN consensus rescoring — COMPUTED (28 Aug 2026)
 
