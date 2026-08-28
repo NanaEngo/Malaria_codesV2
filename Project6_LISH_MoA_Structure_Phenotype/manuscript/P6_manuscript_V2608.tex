@@ -89,7 +89,7 @@ The primary evaluation used five seeds and five collision-group-disjoint folds (
 
 \subsection{Training protocol}
 
-GIN-family models used a maximum of \num{50} epochs, batch size \num{512}, learning rate \num{1e-3}, weight decay \num{1e-4}, and AdamW optimizer. ChemBERTa used maximum sequence length \num{128}, batch size \num{32}, a maximum of \num{10} epochs, patience \num{3}, learning rate $2\times 10^{-5}$, and weight decay \num{0.01}. All deep models ran on a single NVIDIA RTX A4000 GPU. For each fold, the pretrained ChemBERTa state was restored before fine-tuning, ensuring no cross-fold weight transfer.
+All deep models were trained with binary cross-entropy loss over the \num{206} multi-label output units. GIN-family models used AdamW with learning rate \num{1e-3}, weight decay \num{1e-4}, batch size \num{512}, and a maximum of \num{50} epochs. Early stopping monitored validation mean column-wise log loss with a patience of \num{10} epochs; the validation-optimal epoch was selected before test evaluation. ChemBERTa used AdamW with learning rate $2\times 10^{-5}$, weight decay \num{0.01}, batch size \num{32}, maximum sequence length \num{128}, and a maximum of \num{10} epochs with patience \num{3}. For each fold, the pretrained ChemBERTa state was restored before fine-tuning, ensuring no cross-fold weight transfer. All deep models ran on a single NVIDIA RTX A4000 GPU. The ECFP4--RF baseline used scikit-learn's \texttt{RandomForestClassifier} with \num{500} trees and default hyperparameters. The phenotype logistic baseline was fitted independently for each label with L2 regularization.
 
 \subsection{Reproducibility and analysis boundaries}
 
