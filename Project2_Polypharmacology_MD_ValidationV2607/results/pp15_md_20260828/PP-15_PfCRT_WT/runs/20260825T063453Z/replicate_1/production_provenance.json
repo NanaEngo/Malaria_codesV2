@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "status": "GROMPP_READY",
+  "system_name": "PP-01_PfCRT_WT",
+  "run_dir": "results/md_systems/set_c_preparation_20260812_v1/PP-01_PfCRT_WT/runs/20260825T063453Z/replicate_1",
+  "md_rrs_status": "NOT_COMPUTED",
+  "input_sha256": {
+    "npt.gro": "4ed33d78f6b664606e47195153bc536b9fee17d0ee97a38eee8675b4388ab63f",
+    "npt.cpt": "31405b2cbed0c09ab51905051b85034befcc6500adf0f8199b36918d6102dec3",
+    "topol.top": "e324e11a530055a2a25efb9e17594cd5d9fe58e42412e29f383bd9ea3a36edbd",
+    "set_c_production.mdp": "56362eaf34a84f7592d24288f3f02def8622a41f9bcdff7008e4125878b0aa43"
+  },
+  "topology_dependency_sha256": {
+    "charmm36-jul2022.ff/forcefield.itp": "279b3011bf4ae0ec35d0327fb62355cedfb26b01faec32642ada8ad739d7811c",
+    "ligand_openff.itp": "f0f12d4a377d6f46cc874ac8fc31c58a9c48635c93f9c9296390441f806b9a24",
+    "topol_Protein_chain_A.itp": "c57e1cd0a42f3821addb26c4e126bb185f82487323f9c80aa8b60cf878e2a603",
+    "topol_Protein_chain_A2.itp": "f6fc9276faaabe58173a5ab5bc4c5a74f60f46d735dc8ed7e6fe3c4e1b428a9c",
+    "topol_Protein_chain_H.itp": "712980dea3db0471ce35dda5a7720632051f29ebd2dd631e96ba441f888ee3a7",
+    "topol_Protein_chain_L.itp": "788efbcb6da7e96764f5aa2003d6dfea2587615ba5872855bf075ce34a573ade",
+    "charmm36-jul2022.ff/tip3p.itp": "03edae6a67887742ecc52f48098508c0d86e2f268d2ad5115282eea595d4bf9d",
+    "charmm36-jul2022.ff/ions.itp": "1cbd7d7b2f7b5e2c7d442d4c6514902ecf037a59e948cbfe35f99f0293a96662",
+    "posre_Protein_chain_A_Protein_chain_L.itp": "e0e32c83552228183e6522ca6b31a4d4ebe737587b311868a09659bb47a05e66",
+    "posre_Protein_chain_A_Protein_chain_H.itp": "044710e53dae504713f292ca0832b5c10259c55ac47e3e37ddcce6227f0b24af",
+    "posre_Protein_chain_A_Protein_chain_A2.itp": "8da59ef93f59728c21949d3cebfd1f9e381093d8a71e5b0967417d1e51be46cf",
+    "posre_Protein_chain_A_Protein_chain_A.itp": "69ab2e0fec38cd367839f9b7d33749ee846c6d2e9349abbede51709d83e0dbb3",
+    "charmm36-jul2022.ff/ffnonbonded.itp": "898c0fa8fcdc8cd32da2fc53b1443a345676868ce8bf67867a708c8aa2a96f67",
+    "charmm36-jul2022.ff/ffbonded.itp": "57488a7656cb8cc83e7361a3a58e2fad99130e072baf2392f3674504d4dac7a4",
+    "charmm36-jul2022.ff/cmap.itp": "d5bf6f32ce9d185fbbd64b4fd1a0780080261e066eebd128697c6c213d88c25f",
+    "charmm36-jul2022.ff/nbfix.itp": "abbb2b64c8da07b01bdb631be8cbab64129da37e0bcb72b7dcfa1992493e3362",
+    "charmm36-jul2022.ff/ffmissingdihedrals.itp": "67e6fe88303c7b05a6f6c7a6b5b6f8c5bac361c58d298537766406c3469a3e93"
+  },
+  "backend": "gpu",
+  "gate_job_id": null,
+  "equilibration_job_id": null,
+  "preflight_manifest": null,
+  "preflight_manifest_sha256": null,
+  "production_tpr": "results/md_systems/set_c_preparation_20260812_v1/PP-01_PfCRT_WT/runs/20260825T063453Z/replicate_1/production.tpr",
+  "production_tpr_sha256": "18730f908a9c68be982c6f2debd0f5170bf5dc1481ab670ca80e6d2069efb49e"
+}
