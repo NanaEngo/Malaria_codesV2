@@ -58,7 +58,14 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--split", choices=["collision_group", "scaffold"], default="collision_group")
+    ap.add_argument("--dump-predictions", action="store_true",
+                     help="Write per-drug per-label test predictions under results/p6_phase2/predictions/<stem>/")
     args = ap.parse_args(argv)
+
+    stem = f"p6_lish_moa_chemberta_{args.split}"
+    pred_dir = OUT_DIR / "predictions" / stem if args.dump_predictions else None
+    if pred_dir is not None:
+        pred_dir.mkdir(parents=True, exist_ok=True)
 
     import torch
     from torch.utils.data import DataLoader, Dataset
@@ -151,6 +158,13 @@ def main(argv: list[str] | None = None) -> int:
                         break
             model.load_state_dict(best_state)
             pp, yy = predict(te_i)
+            if pred_dir is not None:
+                # ponytail: per-drug per-label dump for calibration/QKS (fail-closed audit needs this)
+                out = pd.DataFrame({"drug_id": df.iloc[te_i]["drug_id"].values})
+                for j, lbl in enumerate(labels):
+                    out[f"{lbl}_true"] = yy[:, j].astype(int)
+                    out[f"{lbl}_pred"] = pp[:, j]
+                out.to_csv(pred_dir / f"seed{seed}_fold{fold}.csv", index=False)
             rec = {"features": "chemberta", "split": args.split, "seed": seed,
                    "fold": fold, "n_train": len(tr_i), "n_val": len(va_i), "n_test": len(te_i),
                    "best_val_log_loss": best_ll}

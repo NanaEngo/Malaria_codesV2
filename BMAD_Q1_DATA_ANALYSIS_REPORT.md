@@ -12,7 +12,7 @@
 | **P2** | Canonical 17-member Set-C cohort and docking-RRS/ACSI/PNS analysis complete; Set-C MD pilot 16/16 complete with QC, MD-RRS and MM-GBSA secondary outputs; external replication 312/312 complete; PP-15 single-ligand feasibility probe with MM-GBSA PfCRT -27.79 ± 2.77 kcal/mol (endframe=800, 80 frames) and PP-01_PfDHFR_I164L rerun MM-GBSA -24.36 ± 1.77 kcal/mol (endframe=880, 88 frames) reportable | Docking-RRS is canonical; the PP-01/PP-02 Set-C MD pilot is complete as a secondary analysis; full 17-candidate MD-RRS remains NOT_COMPUTED by design; external panel provides computational sensitivity evidence; PP-15 probe is outside the Set-C estimand and serves as within-protocol feasibility contrast |
 | **P3** | Canonical classical, hybrid, QKS, TNE/TDA, and external-validation analyses complete | Quantum-inspired descriptors are complementary; no quantum advantage over RBF or ECFP4 is claimed |
 | **P5** | Scaffold-controlled molecular-representation benchmark complete; manuscript 16 p. + SI 4 p. + cover 1 p., JCAMD target | ECFP4–RF dominates under scaffold split; topological fusion modestly complementary; honest-negative result with explicit limits |
-| **P6** | Leakage-aware structure–phenotype MoA benchmark complete; manuscript 8 p. + cover 1 p., JCAMD target | Molecular-arm AUROCs near chance (0.501–0.508) under collision-group-disjoint evaluation; phenotype reference AUROC 0.636 |
+| **P6** | Leakage-aware structure–phenotype MoA benchmark complete (collision-group + scaffold); manuscript 8 p. + cover 1 p., JCAMD target | Molecular-arm AUROCs near chance (0.501–0.508) under collision-group-disjoint evaluation; scaffold 4/4 GNN arms AUROC 0.501–0.506; phenotype reference AUROC 0.636; pooled calibration ECE ≤0.0020, bounded QKS Spearman phenotype_vs_structure ≈0.007 |
 
 ## 2. P1 — chemical space, docking, and RRS/polypharmacology
 
@@ -138,8 +138,9 @@ Removing QK reduces hybrid AUC by **0.040**; TFP contributes **0.014**; TNE is m
 - Collision-group-disjoint evaluation: all molecular-arm macro-AUROCs near chance (0.501–0.508); phenotype-only reference AUROC 0.636.
 - Best molecular-arm log loss: GIN-TFP (0.02334), but low log loss accompanied near-chance ranking (calibrated but non-discriminative).
 - ECFP4–RF baseline: AUROC 0.536 under collision-group split, 0.538 under scaffold.
-- Scaffold sensitivity computed for phenotype and ECFP4–RF baselines only; GNN/ChemBERTa scaffold sensitivity NOT_COMPUTED.
-- Per-label calibration diagrams and calibration slope/intercept NOT_COMPUTED.
+- Scaffold sensitivity now computed for all 4 GNN/ChemBERTa arms (29 Aug 2026) — macro-AUROC 0.501–0.506, all below phenotype scaffold 0.64023.
+- Per-label pooled calibration COMPUTED (29 Aug 2026): ECE phenotype 0.0016 / structure 0.0012 / fusion 0.0020 (n=3,387,670 pooled samples, 206 MoA).
+- Bounded QKS separability COMPUTED (29 Aug 2026): phenotype vs structure τ=0.5 abs-diff 0.023, Spearman 0.007; phenotype vs fusion 0.052, 0.286.
 
 ### Manuscript status
 
@@ -182,7 +183,7 @@ The P3 external arm will compare ECFP4, TFP, TNE, and an explicitly labelled opt
 - **P2:** manuscript submission-ready (JCIM, 28 p. main + 16 p. SM); external replication 312/312 complete; graphical abstract TikZ created. Author gates: metadata verification, Zenodo upload. Full 17-candidate MD-RRS remains NOT_COMPUTED by design.
 - **P3:** preserve the honest-negative external validation framing and complete repository deposit preparation.
 - **P5:** manuscript submission-ready (JCAMD, 16 p. main + 4 p. SI); Zenodo package 31/31 staged. Author gates: visual PDF review, metadata, Zenodo upload.
-- **P6:** manuscript submission-ready (JCAMD, 8 p. + cover); all molecular arms completed. Author gates: metadata, scaffold sensitivity for GNN arms (optional), Zenodo upload.
+- **P6:** manuscript submission-ready (JCAMD, 8 p. + cover); all molecular arms completed under both collision-group and scaffold splits (29 Aug 2026); pooled calibration + bounded QKS computed. Remaining author gates: metadata, Zenodo upload.
 - **All:** keep this summary short; place detailed job narratives and superseded decisions in the archive.
 
 ## Lightweight robustness runs (25 August 2026)

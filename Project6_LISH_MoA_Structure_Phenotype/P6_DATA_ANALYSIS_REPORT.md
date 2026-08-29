@@ -1,8 +1,8 @@
 # Project 6 Data Analysis Report — LISH-MoA structure–phenotype follow-up
 
-**Version:** 0.3
-**Updated:** 28 August 2026
-**Status:** Phase 1 mapping validated; Phase 2 collision-group benchmark complete for the audited model matrix
+**Version:** 0.4
+**Updated:** 29 August 2026
+**Status:** Phase 1 mapping validated; Phase 2 collision-group + scaffold benchmark complete for the audited model matrix (4/4 GNN arms, 3/3 RF arms); pooled calibration and bounded QKS computed; RRS-class stratification and attention-fusion remain `PLANNED_SECONDARY`
 **Scope:** Project 6 only; it does not modify P5 canonical results.
 
 ## 1. Decision record
@@ -154,14 +154,27 @@ Array 15613 completed all four molecular arms: GIN, GIN-TFP, GIN-TNE, and ChemBE
 
 **Bounded QKS proxy (29 Aug 2026):** the previous `NOT_COMPUTED_BOUNDED_QKS_NOT_AUTHORIZED` stub was replaced by a bounded QKS protocol that loads per-drug max-pred-prob and per-drug positive-label count from two prediction directories, then reports quantiles at τ=0.25/0.5/0.75 and Spearman rank correlation across arms (bounded to `max_compounds=5000`). Two comparisons: phenotype vs structure (τ=0.5 abs-diff=0.0230, Spearman max-prob=0.0069 — near zero, confirming structure provides no new ranking information beyond phenotype), phenotype vs fusion (τ=0.5 abs-diff=0.0516, Spearman max-prob=0.2860 — moderate positive, fusion captures more signal than phenotype alone but less than what the ranking improvement would suggest). Outputs: `results/p6_phase2/p6_qks_scaffold_{phenotype_vs_structure,phenotype_vs_both}.json`.
 
-### 4.7 RRS/polypharma impactful extensions — secondary, pending --dump-predictions (28 Aug 2026)
+**GNN scaffold arms (29 Aug 2026):** the four molecular arms (GIN, GIN-TFP, GIN-TNE, ChemBERTa) were rerun under the scaffold split with `--dump-predictions` (28 Aug 16:19Z launcher, GIN CPU + GIN-TFP / GIN-TNE / ChemBERTa on the local RTX A4000 GPU; final 25/25 prediction CSVs per arm in `predictions/p6_lish_moa_{gin,gin-tfp,gin-tne,chemberta}_scaffold/seed*_fold*.csv`). Mean over 25 scaffold-disjoint folds (per-arm):
 
-No new modelling beyond the `--dump-predictions` patch (`p6_phase2_benchmark.py:273`, 4 parallel scaffold jobs 154648/431/459/551):
+| Arm | Mean column-wise log loss | Macro-AUROC | Macro-AUPRC | Mean Brier | Mean ECE |
+|---|---:|---:|---:|---:|---:|
+| GIN (scaffold) | 0.02622 | 0.50100 | 0.01350 | 0.00357 | 0.00687 |
+| GIN-TFP (scaffold) | 0.02361 | 0.50217 | 0.01326 | 0.00342 | 0.00331 |
+| GIN-TNE (scaffold) | 0.02431 | 0.50642 | 0.01412 | 0.00342 | 0.00329 |
+| ChemBERTa (scaffold) | 0.02559 | 0.50340 | 0.01315 | 0.00344 | 0.00761 |
 
-- **Per-label QKS + calibration** — after `predictions/*/*.csv` (25 files/arm, ~300-500MB) lands, run `p6_qks_sensitivity.py` + `p6_calibration_audit.py` to get per-label QKS rank stability and per-label ECE/Brier (206 labels); stratify QKS/ECE by RRS class from `c_rrs_classification.csv` join to test if high-RRS MoA labels are more stable.
-- **Attention fusion vs polypharma** — add intermediate cross-modal attention fusion (not late concat RF) for structure+phenotype; evaluate on polypharma-relevant MoA subset (≥2-target labels per network pharmacology Bethi 2025) with collision_group + scaffold splits; report ΔAUROC vs phenotype baseline 0.63619.
+All four GNN scaffold arms remain at chance macro-AUROC (0.501–0.506), below the scaffold phenotype collision-group baseline (0.64023). The honest-negative structure-arm result from §4.6 therefore extends to all four representation families under both collision-group and scaffold splits; no arm recovers the phenotype signal.
 
-Status: `PLANNED_SECONDARY_BLOCKED_ON_DUMP`; honest-negative `fusion < baseline` unchanged; executes within existing `--dump` rerun.
+The scaffold manifest now reports `COMPUTED_SCAFFOLD_ALL_ARMS` (3/3 RF + 4/4 GNN scaffold arms, 25/25 fold records each, schema valid).
+
+### 4.7 RRS/polypharma impactful extensions — secondary, status (29 Aug 2026)
+
+With the `--dump-predictions` rerun complete and per-fold CSVs in place, the secondary extensions can be attempted as bounded proxies. The unblocking items are the calibration and QKS bounded protocols (already implemented and reported in §4.6); the remaining items below remain future work.
+
+- **Per-label QKS rank stability + per-label ECE/Brier by RRS class** — the `p6_calibration_audit.py` per-label output and the bounded QKS protocol are available; an explicit RRS-class stratification by joining `c_rrs_classification.csv` is not yet implemented. This requires a stable `c_rrs_classification.csv` mapping for the 206 MoA labels; until that join is documented, the per-label-by-RRS-class tables remain `PLANNED_SECONDARY`. The pooled calibration numbers in §4.6 stand without this stratification.
+- **Attention fusion vs polypharma** — cross-modal attention fusion (replacing the late concat RF) is not implemented in the present launcher. The collision-group / scaffold fusion arm reported in §4.6 is the late-concat ECFP4-RF + phenotype baseline; a separate attention-fusion run would require a new sbatch and a separate manifest entry.
+
+Status: pooled calibration and bounded QKS are now `COMPUTED` (§4.6); all 4/4 GNN scaffold arms are now `COMPUTED` (§4.6); the RRS-class stratification and the attention-fusion arm remain `PLANNED_SECONDARY` and are not claimed.
 
 ## 5. Leakage and statistics gates
 

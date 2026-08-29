@@ -1,34 +1,71 @@
 {
-  "status": "NOT_COMPUTED_MISSING_SCAFFOLD_MOLECULAR_ARMS",
-  "models": [
+  "status": "COMPUTED_SCAFFOLD_ALL_ARMS",
+  "rf_scaffold": [
     {
-      "model": "gin",
-      "fold_csv": "results/p6_phase2/p6_lish_moa_gin_scaffold_folds.csv",
-      "report_json": "results/p6_phase2/p6_lish_moa_gin_scaffold_report.json",
-      "exists": false,
-      "fold_records": 0
+      "fold_csv": "results/p6_phase2/p6_lish_moa_phenotype_scaffold_folds.csv",
+      "report_json": "results/p6_phase2/p6_lish_moa_phenotype_scaffold_report.json",
+      "exists": true,
+      "fold_records": 25,
+      "expected_folds": 25,
+      "arm": "phenotype",
+      "family": "rf_scaffold"
     },
     {
-      "model": "gin-tfp",
-      "fold_csv": "results/p6_phase2/p6_lish_moa_gin-tfp_scaffold_folds.csv",
-      "report_json": "results/p6_phase2/p6_lish_moa_gin-tfp_scaffold_report.json",
-      "exists": false,
-      "fold_records": 0
+      "fold_csv": "results/p6_phase2/p6_lish_moa_structure_scaffold_folds.csv",
+      "report_json": "results/p6_phase2/p6_lish_moa_structure_scaffold_report.json",
+      "exists": true,
+      "fold_records": 25,
+      "expected_folds": 25,
+      "arm": "structure",
+      "family": "rf_scaffold"
     },
     {
-      "model": "gin-tne",
-      "fold_csv": "results/p6_phase2/p6_lish_moa_gin-tne_scaffold_folds.csv",
-      "report_json": "results/p6_phase2/p6_lish_moa_gin-tne_scaffold_report.json",
-      "exists": false,
-      "fold_records": 0
-    },
-    {
-      "model": "chemberta",
-      "fold_csv": "results/p6_phase2/p6_lish_moa_chemberta_scaffold_folds.csv",
-      "report_json": "results/p6_phase2/p6_lish_moa_chemberta_scaffold_report.json",
-      "exists": false,
-      "fold_records": 0
+      "fold_csv": "results/p6_phase2/p6_lish_moa_both_scaffold_folds.csv",
+      "report_json": "results/p6_phase2/p6_lish_moa_both_scaffold_report.json",
+      "exists": true,
+      "fold_records": 25,
+      "expected_folds": 25,
+      "arm": "both",
+      "family": "rf_scaffold"
     }
   ],
-  "contract": "5 seeds x 5 scaffold-disjoint folds; no result inferred from collision-group metrics"
+  "gnn_scaffold": [
+    {
+      "fold_csv": "results/p6_phase2/p6_lish_moa_gin_scaffold_folds.csv",
+      "report_json": "results/p6_phase2/p6_lish_moa_gin_scaffold_report.json",
+      "exists": true,
+      "fold_records": 25,
+      "expected_folds": 25,
+      "arm": "gin",
+      "family": "gnn_scaffold"
+    },
+    {
+      "fold_csv": "results/p6_phase2/p6_lish_moa_gin-tfp_scaffold_folds.csv",
+      "report_json": "results/p6_phase2/p6_lish_moa_gin-tfp_scaffold_report.json",
+      "exists": true,
+      "fold_records": 25,
+      "expected_folds": 25,
+      "arm": "gin-tfp",
+      "family": "gnn_scaffold"
+    },
+    {
+      "fold_csv": "results/p6_phase2/p6_lish_moa_gin-tne_scaffold_folds.csv",
+      "report_json": "results/p6_phase2/p6_lish_moa_gin-tne_scaffold_report.json",
+      "exists": true,
+      "fold_records": 25,
+      "expected_folds": 25,
+      "arm": "gin-tne",
+      "family": "gnn_scaffold"
+    },
+    {
+      "fold_csv": "results/p6_phase2/p6_lish_moa_chemberta_scaffold_folds.csv",
+      "report_json": "results/p6_phase2/p6_lish_moa_chemberta_scaffold_report.json",
+      "exists": true,
+      "fold_records": 25,
+      "expected_folds": 25,
+      "arm": "chemberta",
+      "family": "gnn_scaffold"
+    }
+  ],
+  "contract": "25 scaffold-disjoint folds per arm; no result inferred from collision-group metrics; gnn_scaffold arms are reported by presence only"
 }
