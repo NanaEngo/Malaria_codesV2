@@ -92,12 +92,13 @@ def load_splits(split_type: str = "random") -> list:
 
 class ChemBERTaTrainer:
     def __init__(self, split_type: str = "random", dry_run: bool = False, device: str = "auto",
-                 curves_only: bool = False, tag: str = ""):
+                 curves_only: bool = False, tag: str = "", masks_only: bool = False):
         self.split_type = split_type
         self.dry_run = dry_run
         self.device = get_device(device)
         self.curves_only = curves_only
         self.tag = tag
+        self.masks_only = masks_only
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
         self.model = AutoModelForSequenceClassification.from_pretrained(
             MODEL_NAME,
@@ -109,10 +110,10 @@ class ChemBERTaTrainer:
         self.panel = pd.read_csv(PANEL)
         self.smiles = self.panel["smiles"].tolist()
         self.y = self.panel["activity"].values.astype(np.int64)
-        self.folds = load_splits(split_type)
+        self.folds = load_splits(split_type) if not masks_only else []
         self.completed: set[tuple] = set()
         self.ckpt_path = P5_ROOT / "results" / f"p5_chemberta_{split_type}_ckpt{tag}.json"
-        if self.ckpt_path.exists():
+        if not masks_only and self.ckpt_path.exists():
             with open(self.ckpt_path) as f:
                 ckpt = json.load(f)
                 self.completed = set(tuple(r) for r in ckpt.get("completed", []))
@@ -123,11 +124,16 @@ class ChemBERTaTrainer:
                            self.y[indices], self.tokenizer, MAX_LENGTH)
         return DataLoader(ds, batch_size=BATCH_SIZE, shuffle=shuffle)
 
-    def train_fold(self, fold_idx: int, seed: int) -> float:
+    def _train_core(self, tr_idx, val_idx, te_idx, seed, set_index=None) -> tuple:
+        """Shared train/validate/test loop used by both canonical fold indices and
+        arbitrary index masks (e.g. Butina splits). Returns
+        (pred_scores, te_auc, te_ap, te_f1, te_bacc, curve)."""
         set_seed(seed)
-        self.model.load_state_dict(self.pretrained_state)  # independent folds (no cross-fold leak)
-        fold = self.folds[fold_idx][SEEDS.index(seed)]
-        tr_idx, val_idx, te_idx = fold["train"], fold["val"], fold["test"]
+        if set_index is not None:
+            self.model = set_index(tr_idx, te_idx)
+            self.model.load_state_dict(self.pretrained_state)
+        else:
+            self.model.load_state_dict(self.pretrained_state)  # independent folds (no cross-fold leak)
         tr_loader = self._make_loader(tr_idx, shuffle=True)
         val_loader = self._make_loader(val_idx)
         te_loader = self._make_loader(te_idx)
@@ -182,12 +188,46 @@ class ChemBERTaTrainer:
                 logits = self.model(**batch).logits
                 te_preds.append(torch.softmax(logits, dim=1)[:, 1].cpu().numpy())
                 te_true.append(batch["labels"].cpu().numpy())
-        te_auc = roc_auc_score(np.concatenate(te_true), np.concatenate(te_preds))
-        te_ap = average_precision_score(np.concatenate(te_true), np.concatenate(te_preds))
-        te_bin = (np.concatenate(te_preds) >= 0.5).astype(int)
-        te_f1 = f1_score(np.concatenate(te_true), te_bin)
-        te_bacc = balanced_accuracy_score(np.concatenate(te_true), te_bin)
-        return float(te_auc), float(te_ap), float(te_f1), float(te_bacc), curve
+        p = np.concatenate(te_preds)
+        t = np.concatenate(te_true)
+        te_auc = roc_auc_score(t, p)
+        te_ap = average_precision_score(t, p)
+        te_bin = (p >= 0.5).astype(int)
+        te_f1 = f1_score(t, te_bin)
+        te_bacc = balanced_accuracy_score(t, te_bin)
+        return p, float(te_auc), float(te_ap), float(te_f1), float(te_bacc), curve
+
+    def train_fold(self, fold_idx: int, seed: int) -> float:
+        set_seed(seed)
+        self.model.load_state_dict(self.pretrained_state)  # independent folds (no cross-fold leak)
+        fold = self.folds[fold_idx][SEEDS.index(seed)]
+        tr_idx, val_idx, te_idx = fold["train"], fold["val"], fold["test"]
+        _, te_auc, te_ap, te_f1, te_bacc, curve = self._train_core(
+            tr_idx, val_idx, te_idx, seed)
+        return te_auc, te_ap, te_f1, te_bacc, curve
+
+    def train_masks(self, train_idx, test_idx, seed: int, val_frac: float = 0.1) -> tuple:
+        """Train on an arbitrary index mask (e.g. Butina splits) without relying on
+        the canonical fold/seed splits. A validation fold is carved by stratified
+        holdout from train_idx so early-stopping does not touch test_idx.
+        Returns (pred_scores, auc, ap, f1, bacc)."""
+        train_idx = np.asarray(train_idx, dtype=np.int64)
+        test_idx = np.asarray(test_idx, dtype=np.int64)
+        y_tr = self.y[train_idx]
+        # stratified holdout: interleave positives/negatives every 10th row
+        rng = np.random.default_rng(seed)
+        pos = train_idx[y_tr == 1]
+        neg = train_idx[y_tr == 0]
+        def _holdout(g):
+            g = rng.permutation(g)
+            n = max(1, int(np.ceil(len(g) * val_frac)))
+            return np.sort(g[:n]), np.sort(g[n:])
+        val_pos, tr_pos = _holdout(pos)
+        val_neg, tr_neg = _holdout(neg)
+        val_idx = np.concatenate([val_pos, val_neg])
+        tr_idx2 = np.concatenate([tr_pos, tr_neg])
+        p, auc, ap, f1, bacc, _ = self._train_core(tr_idx2, val_idx, test_idx, seed)
+        return p, auc, ap, f1, bacc
 
     def run(self) -> list[dict]:
         results = []
@@ -245,6 +285,43 @@ def main():
 
     aucs = [r["test_auc"] for r in results]
     print(f"\nChemBERTa ({args.split}) mean AUC = {np.mean(aucs):.4f} ± {np.std(aucs):.4f}")
+
+
+# Module-level lru cache so repeated fold calls (e.g. Butina arms) reuse one
+# tokenizer + pretrained model instead of re-downloading per call.
+_trainer_cache: dict = {}
+
+
+def run_chemberta_fold(train_idx, test_idx, y, device):
+    """Train ChemBERTa on arbitrary index masks (Butina splits) and return
+    (pred_scores, auc, ap, balanced_acc).
+
+    Mirrors the canonical protocol (pretrained-weight reset per fold, AdamW
+    lr=2e-5, patience 3, max 10 epochs) with a stratified holdout validation
+    carved from train_idx. Reuses a cached trainer (tokenizer + model) so a
+    batch of calls does not re-download weights for every fold.
+    """
+    global _trainer_cache
+    # Butina passes a torch.device object and a y vector. get_device() matches on
+    # string names, so normalize: accept torch.device / str. The trainer re-loads
+    # panel/smiles/y itself (shared source of truth), so the caller's y is
+    # intentionally ignored (keeps one canonical label source).
+    dev_name = device.type if isinstance(device, torch.device) else str(device)
+    key = dev_name  # cache per device so a CPU/GPU mix cannot mismatch
+    if key not in _trainer_cache:
+        # masks_only=True: train_masks() uses caller-supplied index masks and
+        # does not need canonical split .npy files or a ckpt (Butina path).
+        _trainer_cache[key] = ChemBERTaTrainer(
+            split_type="random", device=dev_name, masks_only=True)
+    trainer = _trainer_cache[key]
+    # train_masks returns (p, auc, ap, f1, bacc); Butina's interface is a strict
+    # 4-tuple (p, auc, ap, bal). Keep bal = bacc to match the other arms.
+    p, auc, ap, f1, bacc = trainer.train_masks(
+        np.asarray(train_idx, dtype=np.int64),
+        np.asarray(test_idx, dtype=np.int64),
+        seed=int(os.environ.get("BUTINA_SEED", "0")),
+    )
+    return p, auc, ap, bacc
 
 
 if __name__ == "__main__":
