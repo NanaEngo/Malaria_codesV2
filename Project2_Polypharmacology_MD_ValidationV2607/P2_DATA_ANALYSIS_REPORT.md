@@ -351,15 +351,15 @@ Status: `COMPUTED_CONSENSUS_RRS_SENSITIVITY`. Interpretation: the near-proportio
 > | # | Item | Status | Blocker / reason |
 > |---|------|--------|------------------|
 > | 1 | Full-panel Set-C MD-RRS (17 cand., 136 sys) | `NOT_COMPUTED` **by design** | full-cohort production contract never prepared; pilot (PP-01/PP-02, 16 sys) is the only canonical MD-RRS |
-> | 2 | STRING 400/900 threshold sensitivity | `NOT_COMPUTED_MISSING_THRESHOLD_SPECIFIC_STRING_MATRICES` | matrices unavailable; must not be inferred from the 700 network |
-> | 3 | PP-01/PP-15 multi-seed redocking | `PENDING_INPUTS` | no dedicated receptor/ligand/config triplet in the repository |
+> | 2 | STRING 400/900 threshold sensitivity | **`COMPUTED` (29 Aug 2026)** | closed by `scripts/p2_string_threshold_sensitivity.py` — see §9 update below |
+> | 3 | PP-15 multi-seed redocking | **`READY_FOR_EXECUTION` (29 Aug 2026)** | PP-15 manifests prepared & validated (PfDHFR WT + PfCRT WT, seeds 101/202/303/404/505); PP-01 ligand PDBQT not yet prepared — see §9 update below |
 > | 4 | Zenodo deposit / DOI | `pending` | archive deposit not yet made (see SUBMISSION_MANIFEST.md) |
 
 - [x] Existing-results unlock audit: PfCRT pH 5.2 redocking verified 100/100; PNS imputation sensitivity verified 17/17; lightweight RRS thresholds, leave-one-mutant-out, and score perturbations regenerated.
 - [x] Provenance manifest added: `results/p2_results_unlock_manifest.json`.
 - [x] Short-MD execution was attempted under authorized array `15428`; tasks failed closed at `grompp` because the execution node lacked `charmm36-jul2022.ff/forcefield.itp`, and the remaining tasks were canceled. No new valid short-MD trajectory is promoted. Full details: `docs/P2_SHORT_MD_EXECUTION_STATUS_20260825.md`.
-- [ ] STRING 400/900 threshold sensitivity: `NOT_COMPUTED_MISSING_THRESHOLD_SPECIFIC_STRING_MATRICES`; do not infer from the 700 network.
-- [ ] PP-01/PP-15 multi-seed redocking: no dedicated receptor/ligand/config triplet is present in the repository.
+- [x] **STRING 400/900 threshold sensitivity — `COMPUTED` (29 Aug 2026).** `scripts/p2_string_threshold_sensitivity.py` recomputes the composite interactome centrality (degree/betweenness/closeness/eigenvector, 0.25 each, identical to the canonical `load_ppi_centrality()`) from `data/external/ppi_network.tsv` at thresholds 400/700/900, then re-derives the imputed PfCRT PNS on the canonical WT docking panel (`results/docking_mutants.csv`, 136 rows, 17 candidates). Outputs: `results/string_threshold_sensitivity_20260829/` (summary JSON + PNS ranking CSV + SI table `STRING_Threshold_Sensitivity.tex`). **Result:** PNS candidate ranking is threshold-robust — Spearman ρ = 0.9975 (400 vs 700, p<0.0001, top-5 Jaccard 1.0); ρ = 0.9681 (700 vs 900, top-5 Jaccard 0.67). The canonical 700 choice does not materially alter candidate ranking vs the neighbouring STRING confidence bands. Centrality-level ρ is lower (0.256 at 400 vs 700) because 400 admits 578 edges vs 145, but candidate-level PNS is dominated by the |ΔG| term.
+- [x] **PP-15 multi-seed redocking — inputs prepared (`READY_FOR_EXECUTION`, 29 Aug 2026).** `scripts/p2_targeted_redock_multiseed.sh` (fail-closed: requires `P2_REDOCK_CONFIRM=I_UNDERSTAND`, SHA-256-hashes inputs, refuses to overwrite outputs, provenance manifest RUNNING→COMPLETED_REQUIRES_POSE_QC) + two validated manifests for PP-15: `results/pp15_docking_20260828/manifest_pp15_multiseed_pfdhfr.json` and `..._pfcrt.json` (receptor/ligand/config all exist; seeds 101/202/303/404/505). Execution pending: GPU slot + explicit authorization. PP-01 remains `PENDING_INPUTS` (no ligand PDBQT prepared for PP-01 in this repository).
 
 
 - [x] MM-GBSA aggregation (16/16) → section 5.3 filled; manuscript `tab:mmmgbsa_setc` + Set-C pilot results subsection (`sec:setc_pilot`) added; abstract sentence already present (19 Aug revision).
