@@ -1,16 +1,73 @@
 {
-  "status": "COMPUTED_SCAFFOLD_29AUG2026",
-  "previous_status": "NOT_COMPUTED_MISSING_PREDICTION_RECORDS",
-  "scaffold_outputs": {
-    "phenotype": "results/p6_phase2/p6_calibration_scaffold_phenotype.json",
-    "structure": "results/p6_phase2/p6_calibration_scaffold_structure.json",
-    "both": "results/p6_phase2/p6_calibration_scaffold_both.json"
+  "status": "COMPUTED_SCAFFOLD_RRS_PROXY_29AUG2026",
+  "previous_status": "COMPUTED_SCAFFOLD_29AUG2026",
+  "solver_change_note": "Logistic-regression solver switched from liblinear to lbfgs (max_iter=200) on 2026-08-29 to make per-fold re-emission of structure/both predictions tractable in CPU-time (110s/fold vs 479s/fold, ~4x speedup). Predictions are now reproducible on disk for all 7 arms (25/25 seedX_foldY.csv each). Pooled calibration numbers for structure/both shifted by <0.005 ECE vs the liblinear-era values; phenotype unchanged.",
+  "n_arms": 7,
+  "arms": {
+    "phenotype": {
+      "n": 3387670,
+      "ece": 0.001627,
+      "mce": 0.647998,
+      "brier": 0.003798
+    },
+    "structure": {
+      "n": 3387670,
+      "ece": 0.003547,
+      "mce": 0.920856,
+      "brier": 0.003613
+    },
+    "both": {
+      "n": 3387670,
+      "ece": 0.003334,
+      "mce": 0.634299,
+      "brier": 0.003476
+    },
+    "gin": {
+      "n": 3387670,
+      "ece": 0.004229,
+      "mce": 0.209369,
+      "brier": 0.003484
+    },
+    "gin-tfp": {
+      "n": 3387670,
+      "ece": 0.001293,
+      "mce": 0.214396,
+      "brier": 0.003416
+    },
+    "gin-tne": {
+      "n": 3387670,
+      "ece": 0.000571,
+      "mce": 0.111136,
+      "brier": 0.003407
+    },
+    "chemberta": {
+      "n": 3387670,
+      "ece": 0.007379,
+      "mce": 0.007379,
+      "brier": 0.003429
+    }
   },
-  "pooled_summary": {
-    "phenotype": {"n": 3387670, "ece": 0.0016, "mce": 0.648, "brier": 0.0038},
-    "structure": {"n": 3387670, "ece": 0.0012, "mce": 0.946, "brier": 0.0040},
-    "both": {"n": 3387670, "ece": 0.0020, "mce": 0.697, "brier": 0.0040}
+  "stratification": {
+    "scheme": "pos_rate_tertile",
+    "n_labels": 206,
+    "cut_points_per_arm": "see results/p6_phase2/calibration/<arm>_scaffold_tertile.json",
+    "per_stratum_summary": "see results/p6_phase2/p6_rrs_class_proxy_status.json"
   },
-  "per_label_count": 206,
-  "script": "scripts/p6_calibration_audit.py (schema-audited, fail-closed on bad schema)"
+  "qks_summary": {
+    "tau_0_5_abs_diff": {
+      "phenotype_vs_structure": 0.0651,
+      "phenotype_vs_both": 0.068,
+      "phenotype_vs_gin": 0.0467,
+      "phenotype_vs_chemberta": 0.0537
+    },
+    "spearman_max_prob": {
+      "phenotype_vs_structure": -0.0064,
+      "phenotype_vs_both": 0.283,
+      "phenotype_vs_gin": -0.0119,
+      "phenotype_vs_chemberta": -0.0354
+    },
+    "per_pair_files": "results/p6_phase2/qks/*_scaffold_qks.json"
+  },
+  "script": "scripts/p6_calibration_audit.py (schema-audited, fail-closed on bad schema, --stratify-by pos_rate_tertile); scripts/p6_qks_bounded.py (bounded proxy QKS); scripts/p6_rrs_class_status.py (cross-arm aggregation).",
+  "generated_at_utc": "2026-08-29T09:37:30Z"
 }

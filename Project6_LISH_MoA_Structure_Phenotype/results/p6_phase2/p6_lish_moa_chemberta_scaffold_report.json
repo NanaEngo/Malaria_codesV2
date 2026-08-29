@@ -9,11 +9,11 @@
   "n_labels": 206,
   "n_collision_groups": 1722,
   "mean_metrics": {
-    "mean_columnwise_log_loss": 0.02559116865571552,
-    "macro_auprc": 0.013145853654836986,
-    "macro_auroc": 0.5034025912322755,
-    "mean_brier": 0.0034370556362710064,
-    "mean_ece": 0.007611613056770379
+    "mean_columnwise_log_loss": 0.02559112364480507,
+    "macro_auprc": 0.013270129434848317,
+    "macro_auroc": 0.5034447548924752,
+    "mean_brier": 0.0034370541802303868,
+    "mean_ece": 0.007611584279083664
   },
   "protocol": "5 seeds x 5 group-disjoint folds; multi-label ChemBERTa head (locked P5 fine-tuning constants); val carved from train groups only; early stop on val mean column-wise log loss",
   "interpretation": "MoA-associated prediction; not causal target engagement"

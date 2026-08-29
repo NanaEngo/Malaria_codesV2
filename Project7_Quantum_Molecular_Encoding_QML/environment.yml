@@ -1,0 +1,63 @@
+name: malaria_qml_hybrid
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  # Python
+  - python=3.10
+  
+  # Core scientific stack
+  - numpy>=1.24.0
+  - pandas>=2.0.0
+  - scipy>=1.10.0
+  - scikit-learn>=1.3.0
+  
+  # Chemistry
+  - rdkit>=2023.3.1
+  
+  # Deep learning (PyTorch)
+  - pytorch>=2.1.0
+  - torchvision>=0.16.0
+  - cpuonly  # or use cuda if GPU available
+  
+  # Visualization
+  - matplotlib>=3.7.0
+  - seaborn>=0.12.0
+  
+  # Utilities
+  - tqdm
+  - joblib
+  
+  # Testing
+  - pytest>=7.4
+  - pytest-cov
+  
+  # Pip dependencies
+  - pip
+  - pip:
+      # Quantum computing (Qiskit)
+      - qiskit>=1.0.0
+      - qiskit-aer>=0.13.0
+      - qiskit-ibm-runtime>=0.18.0
+      
+      # Hybrid QML (PennyLane)
+      - pennylane>=0.34.0
+      - pennylane-qiskit>=0.34.0
+      
+      # Graph neural networks (for Architecture 2)
+      - torch-geometric>=2.4.0
+      - torch-scatter>=2.1.0
+      - torch-sparse>=0.6.0
+
+# Installation:
+# 1. conda env create -f environment.yml
+# 2. conda activate malaria_qml_hybrid
+# 3. python -c "import pennylane as qml; import torch; print(f'PennyLane {qml.__version__}, PyTorch {torch.__version__}')"
+#
+# For GPU support, replace 'cpuonly' with:
+#   - pytorch-cuda=11.8  # or pytorch-cuda=12.1 for newer CUDA
+#
+# Optional: Install QMSE library
+# 4. cd scripts/qmse_lib && pip install -e .
+

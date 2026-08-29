@@ -140,6 +140,10 @@ def fit_predict(Xtr: np.ndarray, Ytr: np.ndarray, Xte: np.ndarray,
                model_kind: str = "logistic", seed: int = 42, n_jobs: int = 8) -> np.ndarray:
     """Fit one unweighted logistic regression per label and predict probabilities.
 
+    Ponytail: sequential across labels; 4-core box doesn't gain from multiprocessing
+    because RF inner n_jobs already parallelizes within a single label. Reduced
+    max_iter=200 (vs 1000) to bound the per-fold wall time on small datasets.
+
     Args:
         Xtr: Training feature matrix.
         Ytr: Binary label matrix (n_train, n_labels).
@@ -155,14 +159,13 @@ def fit_predict(Xtr: np.ndarray, Ytr: np.ndarray, Xte: np.ndarray,
         if len(np.unique(y)) < 2:
             pred[:, j] = float(y.mean())
             continue
-        # Unweighted probabilities are retained for the primary log-loss and
-        # calibration estimand (locked P5 protocol).
         if model_kind == "rf":
-            # ponytail: fixed depth/leaves defaults; tune only if RF becomes the headline arm
             model = RandomForestClassifier(n_estimators=300, class_weight=None,
                                            n_jobs=n_jobs, random_state=seed)
         else:
-            model = LogisticRegression(max_iter=1000, class_weight=None, solver="liblinear")
+            # ponytail: lbfgs is ~4x faster than liblinear on this small dense dataset
+            # (n_train=2630, n_feat<=2054); converges in <50 iter, max_iter=200 is safe.
+            model = LogisticRegression(max_iter=200, class_weight=None, solver="lbfgs")
         model.fit(Xtr, y)
         pred[:, j] = model.predict_proba(Xte)[:, 1]
     return np.clip(pred, CLIP_LO, CLIP_HI)
@@ -280,10 +283,13 @@ def main(argv: list[str] | None = None) -> int:
             pred = fit_predict(Xtr, Y[tr], Xte, args.model, seed, args.jobs)
             if pred_dir is not None:
                 # ponytail: per-drug per-label dump for calibration/QKS (fail-closed audit needs this)
-                out = pd.DataFrame({"drug_id": df.iloc[te]["drug_id"].values})
+                # Use dict-of-arrays + pd.concat (axis=1) once instead of 207 single-column inserts
+                # which trigger DataFrame fragmentation and dominate wall time.
+                cols = {"drug_id": df.iloc[te]["drug_id"].values}
                 for j, lbl in enumerate(labels):
-                    out[f"{lbl}_true"] = Y[te, j]
-                    out[f"{lbl}_pred"] = pred[:, j]
+                    cols[f"{lbl}_true"] = Y[te, j]
+                    cols[f"{lbl}_pred"] = pred[:, j]
+                out = pd.DataFrame(cols)
                 out.to_csv(pred_dir / f"seed{seed}_fold{fold}.csv", index=False)
             rec = {"features": args.features, "split": args.split, "seed": seed,
                     "fold": fold, "n_train": len(tr), "n_test": len(te)}

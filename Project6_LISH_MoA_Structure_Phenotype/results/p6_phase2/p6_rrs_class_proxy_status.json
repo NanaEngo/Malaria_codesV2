@@ -1,0 +1,199 @@
+{
+  "status": "COMPUTED_RRS_CLASS_PROXY_29AUG2026",
+  "scheme": "pos_rate_tertile",
+  "scheme_rationale": "No canonical per-MoA RRS-class ontology exists for the LISH-MoA 206-label set. Stratification uses a data-driven per-MoA pos_rate tertile partition (low/mid/high) computed from observed positive-rates across the 25 scaffold-disjoint folds. Cut-points are derived from per-MoA pos_rate quantiles, not external labels.",
+  "n_labels": 206,
+  "n_folds_per_arm": 25,
+  "arms": {
+    "both": {
+      "features": "both",
+      "n_pooled": 3387670,
+      "ece_pooled": 0.003334,
+      "mce_pooled": 0.634299,
+      "brier_pooled": 0.003476,
+      "strata": {
+        "low": {
+          "n_labels": 68,
+          "pos_rate_pooled": 0.000738,
+          "mean_pred_pooled": 0.00013,
+          "brier_pooled": 0.000748
+        },
+        "mid": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.002111,
+          "mean_pred_pooled": 0.000265,
+          "brier_pooled": 0.002158
+        },
+        "high": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.007293,
+          "mean_pred_pooled": 0.001894,
+          "brier_pooled": 0.007483
+        }
+      }
+    },
+    "chemberta": {
+      "features": "phenotype",
+      "n_pooled": 3387670,
+      "ece_pooled": 0.007379,
+      "mce_pooled": 0.007379,
+      "brier_pooled": 0.003429,
+      "strata": {
+        "low": {
+          "n_labels": 68,
+          "pos_rate_pooled": 0.000738,
+          "mean_pred_pooled": 0.009219,
+          "brier_pooled": 0.000815
+        },
+        "mid": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.002111,
+          "mean_pred_pooled": 0.010029,
+          "brier_pooled": 0.002174
+        },
+        "high": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.007293,
+          "mean_pred_pooled": 0.013046,
+          "brier_pooled": 0.007261
+        }
+      }
+    },
+    "gin-tfp": {
+      "features": "phenotype",
+      "n_pooled": 3387670,
+      "ece_pooled": 0.001293,
+      "mce_pooled": 0.214396,
+      "brier_pooled": 0.003416,
+      "strata": {
+        "low": {
+          "n_labels": 68,
+          "pos_rate_pooled": 0.000738,
+          "mean_pred_pooled": 0.003853,
+          "brier_pooled": 0.00078
+        },
+        "mid": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.002111,
+          "mean_pred_pooled": 0.004165,
+          "brier_pooled": 0.002147
+        },
+        "high": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.007293,
+          "mean_pred_pooled": 0.006027,
+          "brier_pooled": 0.007282
+        }
+      }
+    },
+    "gin-tne": {
+      "features": "phenotype",
+      "n_pooled": 3387670,
+      "ece_pooled": 0.000571,
+      "mce_pooled": 0.111136,
+      "brier_pooled": 0.003407,
+      "strata": {
+        "low": {
+          "n_labels": 68,
+          "pos_rate_pooled": 0.000738,
+          "mean_pred_pooled": 0.003477,
+          "brier_pooled": 0.00077
+        },
+        "mid": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.002111,
+          "mean_pred_pooled": 0.003781,
+          "brier_pooled": 0.002137
+        },
+        "high": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.007293,
+          "mean_pred_pooled": 0.004629,
+          "brier_pooled": 0.007276
+        }
+      }
+    },
+    "gin": {
+      "features": "phenotype",
+      "n_pooled": 3387670,
+      "ece_pooled": 0.004229,
+      "mce_pooled": 0.209369,
+      "brier_pooled": 0.003484,
+      "strata": {
+        "low": {
+          "n_labels": 68,
+          "pos_rate_pooled": 0.000738,
+          "mean_pred_pooled": 0.006303,
+          "brier_pooled": 0.000845
+        },
+        "mid": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.002111,
+          "mean_pred_pooled": 0.00687,
+          "brier_pooled": 0.002215
+        },
+        "high": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.007293,
+          "mean_pred_pooled": 0.009674,
+          "brier_pooled": 0.007355
+        }
+      }
+    },
+    "phenotype": {
+      "features": "phenotype",
+      "n_pooled": 3387670,
+      "ece_pooled": 0.001627,
+      "mce_pooled": 0.647998,
+      "brier_pooled": 0.003798,
+      "strata": {
+        "low": {
+          "n_labels": 68,
+          "pos_rate_pooled": 0.000738,
+          "mean_pred_pooled": 0.002492,
+          "brier_pooled": 0.000722
+        },
+        "mid": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.002111,
+          "mean_pred_pooled": 0.003536,
+          "brier_pooled": 0.002186
+        },
+        "high": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.007293,
+          "mean_pred_pooled": 0.008996,
+          "brier_pooled": 0.00844
+        }
+      }
+    },
+    "structure": {
+      "features": "structure",
+      "n_pooled": 3387670,
+      "ece_pooled": 0.003547,
+      "mce_pooled": 0.920856,
+      "brier_pooled": 0.003613,
+      "strata": {
+        "low": {
+          "n_labels": 68,
+          "pos_rate_pooled": 0.000738,
+          "mean_pred_pooled": 0.000115,
+          "brier_pooled": 0.000781
+        },
+        "mid": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.002111,
+          "mean_pred_pooled": 0.000271,
+          "brier_pooled": 0.00222
+        },
+        "high": {
+          "n_labels": 69,
+          "pos_rate_pooled": 0.007293,
+          "mean_pred_pooled": 0.001364,
+          "brier_pooled": 0.007796
+        }
+      }
+    }
+  },
+  "generated_at_utc": "2026-08-29T09:37:33+00:00"
+}

@@ -180,10 +180,13 @@ def main(argv: list[str] | None = None) -> int:
             pp, yy = predict(te_loader)
             if pred_dir is not None:
                 # ponytail: per-drug per-label dump for calibration/QKS (fail-closed audit needs this)
-                out = pd.DataFrame({"drug_id": df.iloc[te]["drug_id"].values})
+                # Use dict-of-arrays + pd.concat (axis=1) once instead of 207 single-column inserts
+                # which trigger DataFrame fragmentation and dominate wall time.
+                cols = {"drug_id": df.iloc[te]["drug_id"].values}
                 for j, lbl in enumerate(labels):
-                    out[f"{lbl}_true"] = yy[:, j].astype(int)
-                    out[f"{lbl}_pred"] = pp[:, j]
+                    cols[f"{lbl}_true"] = yy[:, j].astype(int)
+                    cols[f"{lbl}_pred"] = pp[:, j]
+                out = pd.DataFrame(cols)
                 out.to_csv(pred_dir / f"seed{seed}_fold{fold}.csv", index=False)
             rec = {"features": args.model.lower(), "split": args.split, "seed": seed,
                    "fold": fold, "n_train": len(tr_i), "n_val": len(va_i), "n_test": len(te_i),

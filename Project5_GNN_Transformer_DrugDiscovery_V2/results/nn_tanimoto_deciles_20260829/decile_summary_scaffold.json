@@ -1,0 +1,473 @@
+{
+  "split": "scaffold",
+  "deciles": 10,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "per_arm": {
+    "ECFP4-RF": [
+      {
+        "decile": 1,
+        "auc_mean": 0.7790247138449591,
+        "auc_sd": 0.020469994504974158,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 401.04,
+        "n_pos_mean_per_fold_seed": 227.12,
+        "nn_tanimoto_mean": 0.30554252982139585
+      },
+      {
+        "decile": 2,
+        "auc_mean": 0.7926396301774614,
+        "auc_sd": 0.007150943564254445,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 400.44,
+        "n_pos_mean_per_fold_seed": 268.92,
+        "nn_tanimoto_mean": 0.3482418775558472
+      },
+      {
+        "decile": 3,
+        "auc_mean": 0.8229218633106262,
+        "auc_sd": 0.008510643638854239,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 397.0,
+        "n_pos_mean_per_fold_seed": 281.08,
+        "nn_tanimoto_mean": 0.3732073616981506
+      },
+      {
+        "decile": 4,
+        "auc_mean": 0.8211773483846002,
+        "auc_sd": 0.011286686486103072,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 394.64,
+        "n_pos_mean_per_fold_seed": 293.64,
+        "nn_tanimoto_mean": 0.3949551856517792
+      },
+      {
+        "decile": 5,
+        "auc_mean": 0.8128001814143963,
+        "auc_sd": 0.013757351387929306,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 400.52,
+        "n_pos_mean_per_fold_seed": 307.56,
+        "nn_tanimoto_mean": 0.41602646589279174
+      },
+      {
+        "decile": 6,
+        "auc_mean": 0.809827018874727,
+        "auc_sd": 0.009809154096162188,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 395.92,
+        "n_pos_mean_per_fold_seed": 315.44,
+        "nn_tanimoto_mean": 0.4374446058273315
+      },
+      {
+        "decile": 7,
+        "auc_mean": 0.8001199100946572,
+        "auc_sd": 0.015202202128448333,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 398.52,
+        "n_pos_mean_per_fold_seed": 318.44,
+        "nn_tanimoto_mean": 0.4606346356868744
+      },
+      {
+        "decile": 8,
+        "auc_mean": 0.8096131048501801,
+        "auc_sd": 0.022900777412770853,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 398.68,
+        "n_pos_mean_per_fold_seed": 320.32,
+        "nn_tanimoto_mean": 0.4901360476016998
+      },
+      {
+        "decile": 9,
+        "auc_mean": 0.8466008253022675,
+        "auc_sd": 0.020866511645159208,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 386.88,
+        "n_pos_mean_per_fold_seed": 303.12,
+        "nn_tanimoto_mean": 0.5333315193653106
+      },
+      {
+        "decile": 10,
+        "auc_mean": 0.8900811244565663,
+        "auc_sd": 0.020293352809930394,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 393.56,
+        "n_pos_mean_per_fold_seed": 308.56,
+        "nn_tanimoto_mean": 0.6308315086364746
+      }
+    ],
+    "GIN": [
+      {
+        "decile": 1,
+        "auc_mean": 0.7259637022733758,
+        "auc_sd": 0.023985620919452326,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 401.04,
+        "n_pos_mean_per_fold_seed": 227.12,
+        "nn_tanimoto_mean": 0.30554252982139585
+      },
+      {
+        "decile": 2,
+        "auc_mean": 0.7646116987945175,
+        "auc_sd": 0.014567480400353319,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 400.44,
+        "n_pos_mean_per_fold_seed": 268.92,
+        "nn_tanimoto_mean": 0.3482418775558472
+      },
+      {
+        "decile": 3,
+        "auc_mean": 0.7955089733019471,
+        "auc_sd": 0.021148477083376405,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 397.0,
+        "n_pos_mean_per_fold_seed": 281.08,
+        "nn_tanimoto_mean": 0.3732073616981506
+      },
+      {
+        "decile": 4,
+        "auc_mean": 0.8000592879314731,
+        "auc_sd": 0.014482810868774246,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 394.64,
+        "n_pos_mean_per_fold_seed": 293.64,
+        "nn_tanimoto_mean": 0.3949551856517792
+      },
+      {
+        "decile": 5,
+        "auc_mean": 0.8035232512107587,
+        "auc_sd": 0.013371919298597145,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 400.52,
+        "n_pos_mean_per_fold_seed": 307.56,
+        "nn_tanimoto_mean": 0.41602646589279174
+      },
+      {
+        "decile": 6,
+        "auc_mean": 0.8041190236244422,
+        "auc_sd": 0.015216196675806218,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 395.92,
+        "n_pos_mean_per_fold_seed": 315.44,
+        "nn_tanimoto_mean": 0.4374446058273315
+      },
+      {
+        "decile": 7,
+        "auc_mean": 0.7925143713773729,
+        "auc_sd": 0.02435288314706717,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 398.52,
+        "n_pos_mean_per_fold_seed": 318.44,
+        "nn_tanimoto_mean": 0.4606346356868744
+      },
+      {
+        "decile": 8,
+        "auc_mean": 0.8037174954850078,
+        "auc_sd": 0.02091808371976277,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 398.68,
+        "n_pos_mean_per_fold_seed": 320.32,
+        "nn_tanimoto_mean": 0.4901360476016998
+      },
+      {
+        "decile": 9,
+        "auc_mean": 0.8140607101240598,
+        "auc_sd": 0.02919103632490587,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 386.88,
+        "n_pos_mean_per_fold_seed": 303.12,
+        "nn_tanimoto_mean": 0.5333315193653106
+      },
+      {
+        "decile": 10,
+        "auc_mean": 0.8804550754950254,
+        "auc_sd": 0.019096528157397485,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 393.56,
+        "n_pos_mean_per_fold_seed": 308.56,
+        "nn_tanimoto_mean": 0.6308315086364746
+      }
+    ],
+    "GIN-TFP": [
+      {
+        "decile": 1,
+        "auc_mean": 0.7518117088602269,
+        "auc_sd": 0.021672505551903268,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 401.04,
+        "n_pos_mean_per_fold_seed": 227.12,
+        "nn_tanimoto_mean": 0.30554252982139585
+      },
+      {
+        "decile": 2,
+        "auc_mean": 0.7750097802435378,
+        "auc_sd": 0.01189857525987976,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 400.44,
+        "n_pos_mean_per_fold_seed": 268.92,
+        "nn_tanimoto_mean": 0.3482418775558472
+      },
+      {
+        "decile": 3,
+        "auc_mean": 0.8050619091643497,
+        "auc_sd": 0.01901499914765839,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 397.0,
+        "n_pos_mean_per_fold_seed": 281.08,
+        "nn_tanimoto_mean": 0.3732073616981506
+      },
+      {
+        "decile": 4,
+        "auc_mean": 0.8048908801777899,
+        "auc_sd": 0.024870547796590797,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 394.64,
+        "n_pos_mean_per_fold_seed": 293.64,
+        "nn_tanimoto_mean": 0.3949551856517792
+      },
+      {
+        "decile": 5,
+        "auc_mean": 0.8095776026495184,
+        "auc_sd": 0.011561424322096735,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 400.52,
+        "n_pos_mean_per_fold_seed": 307.56,
+        "nn_tanimoto_mean": 0.41602646589279174
+      },
+      {
+        "decile": 6,
+        "auc_mean": 0.8084512793561462,
+        "auc_sd": 0.02415638049383554,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 395.92,
+        "n_pos_mean_per_fold_seed": 315.44,
+        "nn_tanimoto_mean": 0.4374446058273315
+      },
+      {
+        "decile": 7,
+        "auc_mean": 0.7959928891370022,
+        "auc_sd": 0.009240987114873598,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 398.52,
+        "n_pos_mean_per_fold_seed": 318.44,
+        "nn_tanimoto_mean": 0.4606346356868744
+      },
+      {
+        "decile": 8,
+        "auc_mean": 0.8025322832125579,
+        "auc_sd": 0.02336505647240666,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 398.68,
+        "n_pos_mean_per_fold_seed": 320.32,
+        "nn_tanimoto_mean": 0.4901360476016998
+      },
+      {
+        "decile": 9,
+        "auc_mean": 0.8297886694353007,
+        "auc_sd": 0.028368574937409345,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 386.88,
+        "n_pos_mean_per_fold_seed": 303.12,
+        "nn_tanimoto_mean": 0.5333315193653106
+      },
+      {
+        "decile": 10,
+        "auc_mean": 0.8829000078998612,
+        "auc_sd": 0.01417464078101012,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 393.56,
+        "n_pos_mean_per_fold_seed": 308.56,
+        "nn_tanimoto_mean": 0.6308315086364746
+      }
+    ],
+    "GIN-TNE": [
+      {
+        "decile": 1,
+        "auc_mean": 0.7434761055655039,
+        "auc_sd": 0.023447426304506695,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 401.04,
+        "n_pos_mean_per_fold_seed": 227.12,
+        "nn_tanimoto_mean": 0.30554252982139585
+      },
+      {
+        "decile": 2,
+        "auc_mean": 0.7762662666659561,
+        "auc_sd": 0.02007738246545089,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 400.44,
+        "n_pos_mean_per_fold_seed": 268.92,
+        "nn_tanimoto_mean": 0.3482418775558472
+      },
+      {
+        "decile": 3,
+        "auc_mean": 0.8003697526068294,
+        "auc_sd": 0.024752162587717674,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 397.0,
+        "n_pos_mean_per_fold_seed": 281.08,
+        "nn_tanimoto_mean": 0.3732073616981506
+      },
+      {
+        "decile": 4,
+        "auc_mean": 0.7940981933119702,
+        "auc_sd": 0.019351449188154,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 394.64,
+        "n_pos_mean_per_fold_seed": 293.64,
+        "nn_tanimoto_mean": 0.3949551856517792
+      },
+      {
+        "decile": 5,
+        "auc_mean": 0.7941217921565382,
+        "auc_sd": 0.013991323859805511,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 400.52,
+        "n_pos_mean_per_fold_seed": 307.56,
+        "nn_tanimoto_mean": 0.41602646589279174
+      },
+      {
+        "decile": 6,
+        "auc_mean": 0.8056391181317044,
+        "auc_sd": 0.025744692913676395,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 395.92,
+        "n_pos_mean_per_fold_seed": 315.44,
+        "nn_tanimoto_mean": 0.4374446058273315
+      },
+      {
+        "decile": 7,
+        "auc_mean": 0.7907251049610868,
+        "auc_sd": 0.027650175365757437,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 398.52,
+        "n_pos_mean_per_fold_seed": 318.44,
+        "nn_tanimoto_mean": 0.4606346356868744
+      },
+      {
+        "decile": 8,
+        "auc_mean": 0.7935498468403915,
+        "auc_sd": 0.03135840708077645,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 398.68,
+        "n_pos_mean_per_fold_seed": 320.32,
+        "nn_tanimoto_mean": 0.4901360476016998
+      },
+      {
+        "decile": 9,
+        "auc_mean": 0.8188970524086902,
+        "auc_sd": 0.03523619918611127,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 386.88,
+        "n_pos_mean_per_fold_seed": 303.12,
+        "nn_tanimoto_mean": 0.5333315193653106
+      },
+      {
+        "decile": 10,
+        "auc_mean": 0.8830388573027571,
+        "auc_sd": 0.021525202044765063,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 393.56,
+        "n_pos_mean_per_fold_seed": 308.56,
+        "nn_tanimoto_mean": 0.6308315086364746
+      }
+    ],
+    "ChemBERTa": [
+      {
+        "decile": 1,
+        "auc_mean": 0.7339115760564612,
+        "auc_sd": 0.018751499760570802,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 401.04,
+        "n_pos_mean_per_fold_seed": 227.12,
+        "nn_tanimoto_mean": 0.30554252982139585
+      },
+      {
+        "decile": 2,
+        "auc_mean": 0.7428168734372651,
+        "auc_sd": 0.007842360322125794,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 400.44,
+        "n_pos_mean_per_fold_seed": 268.92,
+        "nn_tanimoto_mean": 0.3482418775558472
+      },
+      {
+        "decile": 3,
+        "auc_mean": 0.7693449090500056,
+        "auc_sd": 0.014334953319110008,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 397.0,
+        "n_pos_mean_per_fold_seed": 281.08,
+        "nn_tanimoto_mean": 0.3732073616981506
+      },
+      {
+        "decile": 4,
+        "auc_mean": 0.7656960845722564,
+        "auc_sd": 0.016776010264140485,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 394.64,
+        "n_pos_mean_per_fold_seed": 293.64,
+        "nn_tanimoto_mean": 0.3949551856517792
+      },
+      {
+        "decile": 5,
+        "auc_mean": 0.7711665219517484,
+        "auc_sd": 0.018984818314670433,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 400.52,
+        "n_pos_mean_per_fold_seed": 307.56,
+        "nn_tanimoto_mean": 0.41602646589279174
+      },
+      {
+        "decile": 6,
+        "auc_mean": 0.7733836267855468,
+        "auc_sd": 0.0047406852362763974,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 395.92,
+        "n_pos_mean_per_fold_seed": 315.44,
+        "nn_tanimoto_mean": 0.4374446058273315
+      },
+      {
+        "decile": 7,
+        "auc_mean": 0.7720149483622587,
+        "auc_sd": 0.01175031936296974,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 398.52,
+        "n_pos_mean_per_fold_seed": 318.44,
+        "nn_tanimoto_mean": 0.4606346356868744
+      },
+      {
+        "decile": 8,
+        "auc_mean": 0.7883452001184995,
+        "auc_sd": 0.019786533913861818,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 398.68,
+        "n_pos_mean_per_fold_seed": 320.32,
+        "nn_tanimoto_mean": 0.4901360476016998
+      },
+      {
+        "decile": 9,
+        "auc_mean": 0.8117069947768041,
+        "auc_sd": 0.01127278329275451,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 386.88,
+        "n_pos_mean_per_fold_seed": 303.12,
+        "nn_tanimoto_mean": 0.5333315193653106
+      },
+      {
+        "decile": 10,
+        "auc_mean": 0.8803310338180402,
+        "auc_sd": 0.02741765291504347,
+        "n_seeds": 5,
+        "n_mean_per_fold_seed": 393.56,
+        "n_pos_mean_per_fold_seed": 308.56,
+        "nn_tanimoto_mean": 0.6308315086364746
+      }
+    ]
+  }
+}
