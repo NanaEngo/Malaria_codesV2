@@ -9,11 +9,11 @@
   "n_labels": 206,
   "n_collision_groups": 1722,
   "mean_metrics": {
-    "mean_columnwise_log_loss": 0.024313861567072697,
-    "macro_auprc": 0.014119176477003661,
-    "macro_auroc": 0.5064150071076794,
-    "mean_brier": 0.0034162937088975465,
-    "mean_ece": 0.00329328867273168
+    "mean_columnwise_log_loss": 0.024289483025972957,
+    "macro_auprc": 0.01399497469788695,
+    "macro_auroc": 0.5060905059586696,
+    "mean_brier": 0.0034168431208149524,
+    "mean_ece": 0.0031832090896273535
   },
   "protocol": "5 seeds x 5 group-disjoint folds; multi-label GIN head (locked P5 optimizer/epochs/patience); val carved from train groups only; early stop on val mean column-wise log loss; TFP/TNE zero-vector ITT failures",
   "interpretation": "MoA-associated prediction; not causal target engagement"

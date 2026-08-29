@@ -136,27 +136,13 @@ def make_folds(split: str, seed: int, n: int,
     raise ValueError(split)
 
 
-def _fit_one_label_mp(args):
-    j, Xtr_b, y, Xte_b, model_kind, seed = args
-    n_test = Xte_b.shape[0]
-    if len(np.unique(y)) < 2:
-        return j, np.full(n_test, float(y.mean()))
-    if model_kind == "rf":
-        model = RandomForestClassifier(n_estimators=300, class_weight=None,
-                                       n_jobs=1, random_state=seed)
-    else:
-        model = LogisticRegression(max_iter=1000, class_weight=None, solver="liblinear")
-    model.fit(Xtr_b, y)
-    return j, model.predict_proba(Xte_b)[:, 1]
-
-
 def fit_predict(Xtr: np.ndarray, Ytr: np.ndarray, Xte: np.ndarray,
                model_kind: str = "logistic", seed: int = 42, n_jobs: int = 8) -> np.ndarray:
     """Fit one unweighted logistic regression per label and predict probabilities.
 
-    Ponytail: parallel across labels via multiprocessing.Pool (4 workers).
-    Reduces per-fold wall time from ~7 min (sequential 206 liblinear fits) to
-    ~2 min on the 4-core box.
+    Ponytail: sequential across labels; 4-core box doesn't gain from multiprocessing
+    because RF inner n_jobs already parallelizes within a single label. Reduced
+    max_iter=200 (vs 1000) to bound the per-fold wall time on small datasets.
 
     Args:
         Xtr: Training feature matrix.
@@ -167,19 +153,21 @@ def fit_predict(Xtr: np.ndarray, Ytr: np.ndarray, Xte: np.ndarray,
         Clipped probability matrix (n_test, n_labels); labels absent from the
         training fold fall back to the constant training prevalence.
     """
-    import multiprocessing as mp
-    n_labels = Ytr.shape[1]
-    Xtr_b = np.ascontiguousarray(Xtr, dtype=np.float32)
-    Xte_b = np.ascontiguousarray(Xte, dtype=np.float32)
-    Ytr_i8 = np.ascontiguousarray(Ytr, dtype=np.int8)
-    args_list = [(j, Xtr_b, Ytr_i8[:, j].copy(), Xte_b, model_kind, seed)
-                 for j in range(n_labels)]
-    n_parallel = min(4, n_labels)
-    with mp.get_context("fork").Pool(n_parallel) as pool:
-        results = pool.map(_fit_one_label_mp, args_list)
-    pred = np.zeros((len(Xte), n_labels), dtype=np.float64)
-    for j, p in results:
-        pred[:, j] = p
+    pred = np.zeros((len(Xte), Ytr.shape[1]), dtype=np.float64)
+    for j in range(Ytr.shape[1]):
+        y = Ytr[:, j].astype(int)
+        if len(np.unique(y)) < 2:
+            pred[:, j] = float(y.mean())
+            continue
+        if model_kind == "rf":
+            model = RandomForestClassifier(n_estimators=300, class_weight=None,
+                                           n_jobs=n_jobs, random_state=seed)
+        else:
+            # ponytail: lbfgs is ~4x faster than liblinear on this small dense dataset
+            # (n_train=2630, n_feat<=2054); converges in <50 iter, max_iter=200 is safe.
+            model = LogisticRegression(max_iter=200, class_weight=None, solver="lbfgs")
+        model.fit(Xtr, y)
+        pred[:, j] = model.predict_proba(Xte)[:, 1]
     return np.clip(pred, CLIP_LO, CLIP_HI)
 
 
