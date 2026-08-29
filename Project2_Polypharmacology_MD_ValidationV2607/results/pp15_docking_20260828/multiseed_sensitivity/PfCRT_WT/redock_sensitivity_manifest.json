@@ -1,0 +1,33 @@
+{
+  "scope": "P2_TARGETED_REDOCK_SENSITIVITY",
+  "candidate_ids": [
+    "PP-15"
+  ],
+  "target": "PfCRT",
+  "receptor": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/pp15_docking_20260828/receptors/PfCRT_WT_receptor.pdbqt",
+  "ligand": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/pp15_docking_20260828/ligand/PP-15_ligand.pdbqt",
+  "config": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/pp15_docking_20260828/vina/PP-15_PfCRT_WT/vina_config.txt",
+  "seeds": [
+    101,
+    202,
+    303,
+    404,
+    505
+  ],
+  "output_dir": "results/pp15_docking_20260828/multiseed_sensitivity/PfCRT_WT",
+  "canonical_outputs_preserved": true,
+  "status": "COMPLETED_REQUIRES_POSE_QC",
+  "input_sha256": {
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/pp15_docking_20260828/receptors/PfCRT_WT_receptor.pdbqt": "e26f99a3ca9323e9578b7e73dfde05f06da0ae0bfd44285e6b0be508ab362a96",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/pp15_docking_20260828/ligand/PP-15_ligand.pdbqt": "f3b0f5a45acac680ce3d3832d0bbde91d67eb2d24955c882b6fc874c70527b55",
+    "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/pp15_docking_20260828/vina/PP-15_PfCRT_WT/vina_config.txt": "dcd811b0eec5e57a78b1fb99b47ab30457260693a051e0a0acfeec77a1579b00"
+  },
+  "manifest_sha256": "cc240e55fbc77893b30e6e16992b168fa6f1d830e15b1c0294e6975f8e0d8d28",
+  "outputs": [
+    "results/pp15_docking_20260828/multiseed_sensitivity/PfCRT_WT/seed_101.pdbqt",
+    "results/pp15_docking_20260828/multiseed_sensitivity/PfCRT_WT/seed_202.pdbqt",
+    "results/pp15_docking_20260828/multiseed_sensitivity/PfCRT_WT/seed_303.pdbqt",
+    "results/pp15_docking_20260828/multiseed_sensitivity/PfCRT_WT/seed_404.pdbqt",
+    "results/pp15_docking_20260828/multiseed_sensitivity/PfCRT_WT/seed_505.pdbqt"
+  ]
+}

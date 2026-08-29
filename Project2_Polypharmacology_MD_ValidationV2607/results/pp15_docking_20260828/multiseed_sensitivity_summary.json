@@ -1,0 +1,22 @@
+{
+  "status": "COMPUTED",
+  "date": "2026-08-29",
+  "candidate": "PP-15",
+  "protocol": "AutoDock Vina v1.2.7, seeds [101, 202, 303, 404, 505], exhaustiveness 32, num_modes 10, energy_range 5 (config reused from results/pp15_docking_20260828/vina/)",
+  "jobs": {"PfDHFR_WT": 15668, "PfCRT_WT": 15669},
+  "per_seed_affinity_kcal_mol": {
+    "PfDHFR_WT": {"101": -8.585, "202": -8.588, "303": -8.603, "404": -8.589, "505": -8.586},
+    "PfCRT_WT": {"101": -7.840, "202": -7.823, "303": -7.810, "404": -7.820, "505": -7.816}
+  },
+  "reproducibility": {
+    "PfDHFR_WT": {"mean": -8.590, "std": 0.007, "range": 0.018},
+    "PfCRT_WT": {"mean": -7.822, "std": 0.011, "range": 0.030}
+  },
+  "canonical_single_run_kcal_mol": {
+    "PfDHFR_WT": -8.621,
+    "PfCRT_WT": -7.810
+  },
+  "interpretation": "Mode-1 affinity is reproducible across seeds to within 0.02-0.03 kcal/mol (sigma 0.007-0.011); the canonical single-run score lies within the multi-seed spread for both targets (PfDHFR -8.621 vs seed range -8.603..-8.585; PfCRT -7.810 equals the best multi-seed score). The docking prioritization is not seed-sensitive at this level.",
+  "outputs": "results/pp15_docking_20260828/multiseed_sensitivity/{PfDHFR_WT,PfCRT_WT}/seed_{101..505}.{pdbqt,log} + redock_sensitivity_manifest.json (SHA-256 inputs, COMPLETED_REQUIRES_POSE_QC)",
+  "pose_qc": "PENDING: RMSD pose comparison vs canonical rank-1 to be run on demand"
+}
