@@ -15,7 +15,7 @@
 - **P6 DAR:** `Project6_LISH_MoA_Structure_Phenotype/P6_DATA_ANALYSIS_REPORT.md`
 - **P7 DAR:** `Project7_Quantum_Molecular_Encoding_QML/P7_DATA_ANALYSIS_REPORT.md`
 - **BMAD (Q1 cross-project synthesis):** `BMAD_Q1_DATA_ANALYSIS_REPORT.md` — pulls headline numbers from each per-project DAR
-- **Master roadmap:** `P1_P5_RRS_POLYPHARMA_ROADMAP.md`
+- **Integration roadmap:** `P1_P7_INTEGRATION_ROADMAP.md`
 - **Document index:** `docs/MD_DOCUMENT_INDEX.md`
 - **Canonical project directories:**
   - **P1 V7 (JCIM submission):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/`
