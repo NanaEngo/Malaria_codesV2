@@ -1,5 +1,7 @@
 # Project 6 Data Analysis Report — LISH-MoA structure–phenotype follow-up
 
+> **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P7) via leurs DAR respectifs et AGENTS.md.
+
 **Version:** 0.4
 **Updated:** 29 August 2026
 **Status:** Phase 1 mapping validated; Phase 2 collision-group + scaffold benchmark complete for the audited model matrix (4/4 GNN arms, 3/3 RF arms); pooled calibration and bounded QKS computed; RRS-class stratification and attention-fusion remain `PLANNED_SECONDARY`
