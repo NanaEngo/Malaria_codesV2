@@ -2,9 +2,9 @@
 
 > **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P7) via leurs DAR respectifs et AGENTS.md.
 
-**Version:** 0.4
+**Version:** 0.5
 **Updated:** 29 August 2026
-**Status:** Phase 1 mapping validated; Phase 2 collision-group + scaffold benchmark complete for the audited model matrix (4/4 GNN arms, 3/3 RF arms); pooled calibration and bounded QKS computed; RRS-class stratification and attention-fusion remain `PLANNED_SECONDARY`
+**Status:** Phase 1 mapping validated; Phase 2 collision-group + scaffold benchmark complete for the audited model matrix (4/4 GNN arms, 3/3 RF arms); pooled calibration + bounded QKS (4 pairs) + data-driven per-MoA pos_rate_tertile stratification (RRS-class proxy) all `COMPUTED`; attention-fusion cross-modal arm remains `PLANNED_SECONDARY`
 **Scope:** Project 6 only; it does not modify P5 canonical results.
 
 ## 1. Decision record
@@ -171,12 +171,13 @@ The scaffold manifest now reports `COMPUTED_SCAFFOLD_ALL_ARMS` (3/3 RF + 4/4 GNN
 
 ### 4.7 RRS/polypharma impactful extensions — secondary, status (29 Aug 2026)
 
-With the `--dump-predictions` rerun complete and per-fold CSVs in place, the secondary extensions can be attempted as bounded proxies. The unblocking items are the calibration and QKS bounded protocols (already implemented and reported in §4.6); the remaining items below remain future work.
+With the `--dump-predictions` rerun complete and per-fold CSVs in place, the secondary extensions can be attempted as bounded proxies.
 
-- **Per-label QKS rank stability + per-label ECE/Brier by RRS class** — the `p6_calibration_audit.py` per-label output and the bounded QKS protocol are available; an explicit RRS-class stratification by joining `c_rrs_classification.csv` is not yet implemented. This requires a stable `c_rrs_classification.csv` mapping for the 206 MoA labels; until that join is documented, the per-label-by-RRS-class tables remain `PLANNED_SECONDARY`. The pooled calibration numbers in §4.6 stand without this stratification.
+- **Per-MoA RRS-class stratification (data-driven proxy, `COMPUTED` 29 Aug 2026):** a canonical `c_rrs_classification.csv`-style drug→RRS-class mapping does not exist for the 206 LISH-MoA labels (P2's `c_rrs_classification.csv` is a 17-candidate pilot mapping and P5's `calibration_by_rrs_class.csv` is a calibration output, neither of which covers the 206-MoA MoA space). A data-driven proxy was therefore implemented: `p6_calibration_audit.py --stratify-by pos_rate_tertile` partitions the 206 MoAs by their per-label observed positive rate into three strata (`low` ≈ 0.0003–0.0012, `mid` ≈ 0.0012–0.0030, `high` ≈ 0.0030–0.0225), then reports Brier/ECE per stratum. The cut-points are computed from the data (not from an external ontology), so the result is a sensitivity stratification, not an RRS-class claim. Pooled + per-stratum metrics for all 7 arms are recorded in `results/p6_phase2/calibration/<arm>_scaffold_tertile.json`; the cross-arm aggregate is `results/p6_phase2/p6_rrs_class_proxy_status.json` (status `COMPUTED_RRS_CLASS_PROXY_29AUG2026`). Per-stratum Brier increases monotonically with stratum: ~0.0007 (low) → ~0.0022 (mid) → ~0.0075 (high) across all 7 arms, consistent with the well-known fact that sparser labels are harder to calibrate. This proxy is a stand-in for a true RRS-class stratification and is not promoted beyond its declared data-driven scope.
+- **Bounded QKS separability (extended, `COMPUTED` 29 Aug 2026):** the bounded QKS protocol from §4.6 has been extended to four arm pairs under the scaffold split: phenotype vs structure, phenotype vs both (fusion), phenotype vs GIN, phenotype vs ChemBERTa (`results/p6_phase2/qks/<a>_vs_<b>_scaffold_qks.json`, n=3,289 drugs each). Headline results at τ=0.5 (median): phenotype-vs-structure abs-diff 0.0651, Spearman max-prob −0.0064 (no structure signal beyond phenotype); phenotype-vs-both abs-diff 0.0680, Spearman 0.2830 (moderate positive — fusion captures rank information not in phenotype alone); phenotype-vs-GIN abs-diff 0.0467, Spearman −0.0119; phenotype-vs-ChemBERTa abs-diff 0.0537, Spearman −0.0354. The phenotype-vs-both Spearman 0.28 is the only pair that shows the fusion arm contributing ranking information, and it remains well below the structure-vs-phenotype near-zero baseline.
 - **Attention fusion vs polypharma** — cross-modal attention fusion (replacing the late concat RF) is not implemented in the present launcher. The collision-group / scaffold fusion arm reported in §4.6 is the late-concat ECFP4-RF + phenotype baseline; a separate attention-fusion run would require a new sbatch and a separate manifest entry.
 
-Status: pooled calibration and bounded QKS are now `COMPUTED` (§4.6); all 4/4 GNN scaffold arms are now `COMPUTED` (§4.6); the RRS-class stratification and the attention-fusion arm remain `PLANNED_SECONDARY` and are not claimed.
+Status: pooled calibration, bounded QKS (extended to 4 pairs), GNN scaffold arms (4/4), and the data-driven RRS-class proxy are now `COMPUTED`; the attention-fusion cross-modal arm remains `PLANNED_SECONDARY` and is not claimed.
 
 ## 5. Leakage and statistics gates
 
