@@ -1,0 +1,50 @@
+P3 Resistance Benchmark -- Size and ECFP4 Controls
+Compounds: 2051 (Class A: 961, non-A: 1090)
+Folds: 5, Classifier: RF(500, balanced)
+Size descriptors: MW, n_rings, heavy_atoms, Fsp3
+ECFP4: Morgan radius 2, 2048 bits
+
+Protocols: 'published' reproduces p3_resistance_benchmark.py (separate scaler fitted on the test fold);
+'corrected' fits the scaler on training folds only. Arms are only comparable within a protocol.
+
+=== published protocol ===
+ECFP4        AUC 0.9186 +/- 0.0123  (2048 feats)
+H1+H0+size   AUC 0.8858 +/- 0.0148  (26 feats)
+H1+H0        AUC 0.8755 +/- 0.0157  (22 feats)
+pers_img     AUC 0.8655 +/- 0.0071  (25 feats)
+H0_stats     AUC 0.8488 +/- 0.0186  (11 feats)
+size         AUC 0.8436 +/- 0.0224  (4 feats)
+H1_stats     AUC 0.8367 +/- 0.0117  (11 feats)
+betti        AUC 0.8183 +/- 0.0142  (20 feats)
+Fold-paired t-tests (5 folds, identical splits):
+  H1+H0        vs size   dAUC +0.0319  t = +5.595  p = 0.0050
+  H1+H0+size   vs size   dAUC +0.0422  t = +8.395  p = 0.0011
+  ECFP4        vs size   dAUC +0.0751  t = +7.946  p = 0.0014
+  H1+H0        vs ECFP4  dAUC -0.0432  t = -6.423  p = 0.0030
+  H1_stats     vs size   dAUC -0.0068  t = -0.789  p = 0.4741
+  H0_stats     vs size   dAUC +0.0052  t = +0.879  p = 0.4292
+  pers_img     vs size   dAUC +0.0219  t = +2.516  p = 0.0656
+  betti        vs size   dAUC -0.0253  t = -1.736  p = 0.1576
+  pers_img     vs H1+H0  dAUC -0.0100  t = -1.655  p = 0.1733
+  betti        vs H1+H0  dAUC -0.0572  t = -6.129  p = 0.0036
+
+=== corrected protocol ===
+ECFP4        AUC 0.9188 +/- 0.0121  (2048 feats)
+H1+H0+size   AUC 0.8989 +/- 0.0104  (26 feats)
+H1+H0        AUC 0.8937 +/- 0.0119  (22 feats)
+H0_stats     AUC 0.8855 +/- 0.0098  (11 feats)
+pers_img     AUC 0.8762 +/- 0.0122  (25 feats)
+size         AUC 0.8677 +/- 0.0184  (4 feats)
+H1_stats     AUC 0.8540 +/- 0.0104  (11 feats)
+betti        AUC 0.8478 +/- 0.0156  (20 feats)
+Fold-paired t-tests (5 folds, identical splits):
+  H1+H0        vs size   dAUC +0.0260  t = +6.429  p = 0.0030
+  H1+H0+size   vs size   dAUC +0.0313  t = +6.445  p = 0.0030
+  ECFP4        vs size   dAUC +0.0511  t = +6.572  p = 0.0028
+  H1+H0        vs ECFP4  dAUC -0.0251  t = -3.530  p = 0.0242
+  H1_stats     vs size   dAUC -0.0137  t = -1.692  p = 0.1658
+  H0_stats     vs size   dAUC +0.0179  t = +3.446  p = 0.0262
+  pers_img     vs size   dAUC +0.0085  t = +2.554  p = 0.0631
+  betti        vs size   dAUC -0.0199  t = -2.494  p = 0.0672
+  pers_img     vs H1+H0  dAUC -0.0174  t = -7.052  p = 0.0021
+  betti        vs H1+H0  dAUC -0.0459  t = -7.381  p = 0.0018

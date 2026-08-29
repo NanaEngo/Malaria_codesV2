@@ -1,0 +1,54 @@
+{
+  "input_csv": "results/pareto/merged_pareto_front.csv",
+  "n_input": 4,
+  "n_non_dominated": 4,
+  "hypervolume": 1.236644240418401,
+  "active_objectives": [
+    "mpo",
+    "syba",
+    "rrs",
+    "pns"
+  ],
+  "solutions": [
+    {
+      "smiles": "CNC(=O)c1ccc(OC(C)C(C)(C)C)c(OC)c1",
+      "mpo": "0.9103",
+      "syba": "1.0000",
+      "syba_raw": "78.669698",
+      "sa": "3.0000",
+      "rrs": "0.2105",
+      "pns": "1.0000",
+      "seed": "13"
+    },
+    {
+      "smiles": "COc1c(C)cc(-c2ccc(S(N)(=O)=O)cc2)cc1C",
+      "mpo": "0.9447",
+      "syba": "1.0000",
+      "syba_raw": "58.128293",
+      "sa": "3.0000",
+      "rrs": "0.1957",
+      "pns": "1.0000",
+      "seed": "18"
+    },
+    {
+      "smiles": "CC1CCC(n2cccn2)NC1(c1ccccc1)C1OCCO1",
+      "mpo": "0.9463",
+      "syba": "0.0208",
+      "syba_raw": "-19.250645",
+      "sa": "3.0000",
+      "rrs": "0.1410",
+      "pns": "0.0000",
+      "seed": "5"
+    },
+    {
+      "smiles": "COc1cc(CO)c(O)c(C)c1C",
+      "mpo": "0.7285",
+      "syba": "0.9944",
+      "syba_raw": "25.877384",
+      "sa": "3.0000",
+      "rrs": "0.2230",
+      "pns": "1.0000",
+      "seed": "6"
+    }
+  ]
+}

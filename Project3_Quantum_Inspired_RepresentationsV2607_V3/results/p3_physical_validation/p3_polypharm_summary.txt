@@ -1,0 +1,19 @@
+P3 Physical Validation — Quantum Kernel Polypharmacology Benchmark
+======================================================================
+Generated: 2026-07-29T01:44:57.983217
+Task: classify molecules binding >= 2 targets at ΔG <= -7.0 kcal/mol
+Subsample: n=50 (stratified), prevalence=12.0%
+CV: 2-fold stratified, IQPEmbedding n_repeats=1
+Circuit: 8-qubit IQPEmbedding on lightning.qubit
+
+     QKS:  AUC = 0.3561 ± 0.0750  (95% bootstrap CI [0.3030, 0.4091], n=2 folds)
+     RBF:  AUC = 0.3030 ± 0.1714  (95% bootstrap CI [0.1818, 0.4242], n=2 folds)
+          target alignment = 0.1601 ± 0.0399
+  Linear:  AUC = 0.5833 ± 0.1393  (95% bootstrap CI [0.4848, 0.6818], n=2 folds)
+
+Pairwise Wilcoxon signed-rank tests (Bonferroni-Holm corrected):
+  QKS vs RBF: insufficient paired data (n=2)
+  QKS vs Linear: insufficient paired data (n=2)
+  RBF vs Linear: insufficient paired data (n=2)
+
+Significance: * p<0.05, ** p<0.01, *** p<0.001 (Bonferroni-Holm corrected)

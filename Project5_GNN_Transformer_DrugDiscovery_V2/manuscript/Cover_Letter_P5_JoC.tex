@@ -1,0 +1,51 @@
+% ============================================================================
+% Cover Letter — Paper 5 (JoC / BMC)
+% Target: Journal of Computer-Aided Molecular Design (JCAMD)
+% ============================================================================
+\documentclass[11pt,a4paper]{letter}
+
+\usepackage[margin=1.9cm]{geometry}
+\setlength{\parskip}{0.25em}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\sisetup{
+  detect-all           = true,
+  group-minimum-digits = 4,
+}
+
+\signature{Myke Vital Sao Temgoua \\ \small Corresponding Author}
+\address{%
+  University of Yaound\'{e} I \\
+  Department of Physics, Faculty of Science \\
+  P.O. Box 812, Yaound\'{e}, Cameroon \\
+  \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm}
+}
+
+\begin{document}
+
+\begin{letter}{%
+  The Editors \\
+  \textit{Journal of Computer-Aided Molecular Design} \\
+  BioMed Central
+}
+
+\opening{Dear Editors,}
+
+We are pleased to submit our manuscript, \textbf{``Scaffold-controlled benchmarking of graph, transformer, and topological representations for antimalarial activity prediction''}, for consideration as a Research Article in the \textit{Journal of Computer-Aided Molecular Design}.
+
+The manuscript presents a scaffold-controlled comparison of graph, sequence, and topological molecular representations against an ECFP4--random-forest reference. We test this question on a frozen panel of \num{19836} African antimalarial natural products under random and Bemis--Murcko scaffold cross-validation (\num{25} fold--seed replicates), comparing GIN, GIN--TFP, GIN--TNE, and ChemBERTa with ECFP4--RF.
+
+Under the scaffold split, the practically relevant scaffold-held-out setting, \textbf{ECFP4--RF achieves the highest ROC AUC (\num{0.8300})}, ahead of GIN--TFP (\num{0.8138}), GIN--TNE (\num{0.8090}), GIN (\num{0.8047}) and ChemBERTa (\num{0.7867}); all four learned arms are significantly lower after multiplicity correction. Under the random split the ordering is unchanged: ECFP4--RF reaches \num{0.9433}, versus \num{0.9121} for ChemBERTa, \num{0.9098} for GIN, \num{0.9084} for GIN--TFP and \num{0.8918} for GIN--TNE (all paired $p < \num{0.0001}$ after Benjamini--Hochberg correction). The comparison shows that the fingerprint baseline remains strongest under scaffold-held-out testing. The topological fusion arm narrows the gap modestly, while projection-weight analysis identifies persistent-image dimensions as a salient block; this is presented as descriptive evidence about representation use, not causal attribution. The fold-independent initialization protocol is specified so that transformer performance is not inflated by cross-fold weight transfer.
+
+As an external transfer analysis, we repeated the ECFP4--RF versus GIN comparison on a molecule-disjoint ChEMBL-derived \textit{P. falciparum} activity panel ($n=\num{22267}$ after exclusion of \num{180} canonical-SMILES overlaps). ECFP4--RF again outperformed GIN under the random (\num{0.9547} versus \num{0.9237}) and scaffold (\num{0.9190} versus \num{0.8843}) splits. This supports, but does not universalise, the conclusion beyond the internal screening labels; the ChEMBL labels are thresholded IC$_{50}$/EC$_{50}$ records rather than prospective experiments. The study therefore offers a controlled, reproducible benchmark whose negative result is bounded to the evaluated panel, split protocols, and model configurations. Code, frozen splits and trained checkpoints are available in the public repository (\url{https://github.com/NanaEngo/Malaria_codesV2}).
+
+This work is original, is not under consideration elsewhere, all authors have approved the submission, and the authors declare no competing financial interests.
+
+\closing{We thank you for your consideration.}
+
+
+
+\end{letter}
+\end{document}

@@ -1,0 +1,43 @@
+{
+  "public_dataset": "/home/nanaengo/Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery/results/p5_public_chembl_malaria.csv",
+  "n_public_actives": 19321,
+  "n_public_inactives": 3126,
+  "n_baseline_fragments": 400,
+  "methods": {
+    "ga": {
+      "n": 19,
+      "mean_max_tan_actives": 0.25705905650791366,
+      "median_max_tan_actives": 0.25,
+      "mean_actives_over_inactives": 1.0873555915884021,
+      "mannwhitney_greater_vs_baseline_p": 2.250852088047163e-06
+    },
+    "greedy": {
+      "n": 1,
+      "mean_max_tan_actives": 0.3283582031726837,
+      "median_max_tan_actives": 0.3283582031726837,
+      "mean_actives_over_inactives": 0.9657594109378204,
+      "mannwhitney_greater_vs_baseline_p": 0.04315245481854156
+    },
+    "mcts": {
+      "n": 19,
+      "mean_max_tan_actives": 0.24853602287016416,
+      "median_max_tan_actives": 0.24637681245803833,
+      "mean_actives_over_inactives": 1.1237068573240732,
+      "mannwhitney_greater_vs_baseline_p": 5.16625043178706e-06
+    },
+    "random": {
+      "n": 20,
+      "mean_max_tan_actives": 0.24357229247689247,
+      "median_max_tan_actives": 0.24165739119052887,
+      "mean_actives_over_inactives": 1.1774288536649609,
+      "mannwhitney_greater_vs_baseline_p": 0.000792477977289107
+    },
+    "baseline_random_fragments": {
+      "n": 400,
+      "mean_max_tan_actives": 0.2150314157921821,
+      "median_max_tan_actives": 0.21739129722118378,
+      "mean_actives_over_inactives": 1.0356122843915352,
+      "mannwhitney_greater_vs_baseline_p": NaN
+    }
+  }
+}
