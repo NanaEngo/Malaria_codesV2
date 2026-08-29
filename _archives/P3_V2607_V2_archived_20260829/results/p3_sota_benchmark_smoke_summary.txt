@@ -1,0 +1,25 @@
+P3 SOTA Topological Benchmark Summary
+Date: 2026-07-24T09:53:43.444133
+Data: p3_tda_fingerprints.csv (500 molecules)
+Labels: 9858 active, 9991 inactive
+Folds: 3
+
+Strategy        Classifier      AUC   ±    Std    Acc     F1  Feat
+----------------------------------------------------------------------
+TFP-Enriched    rf         0.5656   ± 0.0028 0.5440 0.5642    32
+TFP-12          rf         0.5568   ± 0.0222 0.5440 0.5555    12
+BettiCurve      rf         0.5448   ± 0.0081 0.5300 0.5575    20
+PersImage       rf         0.5263   ± 0.0148 0.5100 0.4982    25
+PersImage       svm        0.5243   ± 0.0221 0.5160 0.5193    25
+PersStats       rf         0.5195   ± 0.0125 0.5120 0.5078    22
+TFP-Enriched    svm        0.5083   ± 0.0133 0.5040 0.5130    32
+TFP-12          svm        0.4978   ± 0.0385 0.5401 0.5393    12
+BettiCurve      svm        0.4945   ± 0.0410 0.4480 0.4831    20
+PersStats       svm        0.4931   ± 0.0604 0.5400 0.5434    22
+
+
+TFP-12 (RF) AUC: 0.5568 — reference
+  PersImage: ΔAUC = -0.0305 (worse)
+  BettiCurve: ΔAUC = -0.0119 (worse)
+  PersStats: ΔAUC = -0.0373 (worse)
+  TFP-Enriched: ΔAUC = +0.0088 (better)

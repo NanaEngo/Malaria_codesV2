@@ -1,0 +1,209 @@
+{
+  "dataset": "/home/nanaengo/Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery/results/p5_public_chembl_malaria.csv",
+  "n_raw": 22447,
+  "n_valid_panel": 22447,
+  "n_complete_case_panel": 22096,
+  "n_tne_failures": 351,
+  "evaluation_mode": "intention_to_evaluate_zero_vector_failure_penalty",
+  "n_active": 19321,
+  "n_inactive": 3126,
+  "bond_dim": 8,
+  "protocol": "5-fold StratifiedKFold(42), RF 200 trees, paired-t per fold",
+  "descriptor_mean_auc": {
+    "ECFP4": 0.9600659463818697,
+    "FCFP4": 0.9593213597065828,
+    "MACCS": 0.9555156368015274,
+    "AP": 0.9555335285276099,
+    "PHCO": 0.9529286735337437,
+    "BPF": 0.9531899615289969,
+    "TFP": 0.8644846015891462,
+    "TNE": 0.644777301228489,
+    "Hybrid": 0.8000391972709338
+  },
+  "comparisons_vs_ecfp4": [
+    {
+      "descriptor": "FCFP4",
+      "ecfp4_mean_auc": 0.9600659463818697,
+      "desc_mean_auc": 0.9593213597065828,
+      "delta_ecfp_minus_desc": 0.0007445866752868735,
+      "paired_t_pvalue": 0.5544157768539901,
+      "per_fold_ecfp4": [
+        0.95888,
+        0.96014,
+        0.95972,
+        0.95546,
+        0.96614
+      ],
+      "per_fold_desc": [
+        0.95654,
+        0.95599,
+        0.95922,
+        0.95788,
+        0.96697
+      ],
+      "bh_fdr_qvalue": 0.5544157768539901,
+      "significant_at_0.05": false
+    },
+    {
+      "descriptor": "MACCS",
+      "ecfp4_mean_auc": 0.9600659463818697,
+      "desc_mean_auc": 0.9555156368015274,
+      "delta_ecfp_minus_desc": 0.004550309580342304,
+      "paired_t_pvalue": 0.009024113179667939,
+      "per_fold_ecfp4": [
+        0.95888,
+        0.96014,
+        0.95972,
+        0.95546,
+        0.96614
+      ],
+      "per_fold_desc": [
+        0.95461,
+        0.95612,
+        0.9523,
+        0.9539,
+        0.96065
+      ],
+      "bh_fdr_qvalue": 0.01503545386457521,
+      "significant_at_0.05": true
+    },
+    {
+      "descriptor": "AP",
+      "ecfp4_mean_auc": 0.9600659463818697,
+      "desc_mean_auc": 0.9555335285276099,
+      "delta_ecfp_minus_desc": 0.00453241785425984,
+      "paired_t_pvalue": 0.053406371878039184,
+      "per_fold_ecfp4": [
+        0.95888,
+        0.96014,
+        0.95972,
+        0.95546,
+        0.96614
+      ],
+      "per_fold_desc": [
+        0.95049,
+        0.95912,
+        0.95391,
+        0.95532,
+        0.95883
+      ],
+      "bh_fdr_qvalue": 0.061035853574901926,
+      "significant_at_0.05": false
+    },
+    {
+      "descriptor": "PHCO",
+      "ecfp4_mean_auc": 0.9600659463818697,
+      "desc_mean_auc": 0.9529286735337437,
+      "delta_ecfp_minus_desc": 0.007137272848126042,
+      "paired_t_pvalue": 0.009397158665359506,
+      "per_fold_ecfp4": [
+        0.95888,
+        0.96014,
+        0.95972,
+        0.95546,
+        0.96614
+      ],
+      "per_fold_desc": [
+        0.94743,
+        0.95585,
+        0.94981,
+        0.95165,
+        0.95991
+      ],
+      "bh_fdr_qvalue": 0.01503545386457521,
+      "significant_at_0.05": true
+    },
+    {
+      "descriptor": "BPF",
+      "ecfp4_mean_auc": 0.9600659463818697,
+      "desc_mean_auc": 0.9531899615289969,
+      "delta_ecfp_minus_desc": 0.006875984852872774,
+      "paired_t_pvalue": 0.032847992575212134,
+      "per_fold_ecfp4": [
+        0.95888,
+        0.96014,
+        0.95972,
+        0.95546,
+        0.96614
+      ],
+      "per_fold_desc": [
+        0.94602,
+        0.95485,
+        0.9516,
+        0.95567,
+        0.9578
+      ],
+      "bh_fdr_qvalue": 0.04379732343361618,
+      "significant_at_0.05": true
+    },
+    {
+      "descriptor": "TFP",
+      "ecfp4_mean_auc": 0.9600659463818697,
+      "desc_mean_auc": 0.8644846015891462,
+      "delta_ecfp_minus_desc": 0.09558134479272351,
+      "paired_t_pvalue": 2.2245906380701302e-05,
+      "per_fold_ecfp4": [
+        0.95888,
+        0.96014,
+        0.95972,
+        0.95546,
+        0.96614
+      ],
+      "per_fold_desc": [
+        0.85576,
+        0.86287,
+        0.86446,
+        0.87561,
+        0.86372
+      ],
+      "bh_fdr_qvalue": 5.9322417015203475e-05,
+      "significant_at_0.05": true
+    },
+    {
+      "descriptor": "TNE",
+      "ecfp4_mean_auc": 0.9600659463818697,
+      "desc_mean_auc": 0.644777301228489,
+      "delta_ecfp_minus_desc": 0.31528864515338073,
+      "paired_t_pvalue": 8.062972567385131e-07,
+      "per_fold_ecfp4": [
+        0.95888,
+        0.96014,
+        0.95972,
+        0.95546,
+        0.96614
+      ],
+      "per_fold_desc": [
+        0.66145,
+        0.64357,
+        0.64906,
+        0.63858,
+        0.63122
+      ],
+      "bh_fdr_qvalue": 6.450378053908105e-06,
+      "significant_at_0.05": true
+    },
+    {
+      "descriptor": "Hybrid",
+      "ecfp4_mean_auc": 0.9600659463818697,
+      "desc_mean_auc": 0.8000391972709338,
+      "delta_ecfp_minus_desc": 0.16002674911093595,
+      "paired_t_pvalue": 2.831327269859539e-06,
+      "per_fold_ecfp4": [
+        0.95888,
+        0.96014,
+        0.95972,
+        0.95546,
+        0.96614
+      ],
+      "per_fold_desc": [
+        0.78991,
+        0.80239,
+        0.80118,
+        0.80924,
+        0.79748
+      ],
+      "bh_fdr_qvalue": 1.1325309079438156e-05,
+      "significant_at_0.05": true
+    }
+  ]
+}

@@ -1,10 +1,130 @@
-# P2 Data Analysis Report — active summary
+# P2 — Data Analysis Report (canonical)
 
-**Scope:** Resistance-aware polypharmacology of antimalarial leads (docking-RRS, PNS, ACSI, targeted MD, MM-GBSA, Set-C MD pilot).
-**Updated:** 29 August 2026 (PP-15 PBC-whole MM-GBSA FINAL both reportable; manuscript/SM reconciled)
-**Root:** `Project2_Polypharmacology_MD_ValidationV2607/`
+**Project**: Project 2 — Polypharmacology MD validation (Set-C + parent-study cohort)
+**Canonical directory**: `Project2_Polypharmacology_MD_ValidationV2607/`
+**Manuscript target**: *J. Chem. Inf. Model.* (JCIM, ACS)
+**Author**: Myke Vital Sao Temgoua
+**Last refreshed**: 2026-08-29
+**Status**: READING_FINAL_AUTHOR (28 Aug robustness integrated; PP-15 PBC-whole MM-GBSA FINAL both reportable)
 
 > **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P6) via leurs DAR respectifs et AGENTS.md.
+
+## 0. Canonical-scope note
+
+This is the only P2 DAR. The directory has no P2 V1/V2/.../Vn duplicates; P2 V2607 is the canonical release. Internal superseded artefacts (e.g. witness trajectories 15259/15260, failed QC wrappers 15384/15385) are referenced inline in §5bis. The `Project2_Polypharmacology_MD_ValidationV2607` directory at the root of the repo is the only P2 project.
+
+The legacy `.archive_P2_V2607_20260720/` at the repo root is an early-archive copy retained only for `git log` continuity; do not use as a source for new claims.
+
+## 0.1 Canonical directory inventory
+
+```
+Project2_Polypharmacology_MD_ValidationV2607/    ← canonical (this report)
+├── README.md
+├── P2_DATA_ANALYSIS_REPORT.md                    (this file, 335+ lines)
+├── Polypharmacology_MD_Validation_V2607.{aux,bbl,blg,log,out,pdf}    (compiled main, root copy)
+├── gmx_MMPBSA.log                                (root gmx_MMPBSA run, gitignored)
+├── RESULTS_gmx_MMPBSA.h5                         (root MM-GBSA H5, gitignored)
+├── analysis/                                     (PP-11 C59R investigation markdown)
+├── data/                                         (external + from_project1 + proteins + README)
+├── docs/                                         (P2-specific docs)
+├── environments/                                 (environment files)
+├── logs/                                         (job logs)
+├── manuscript/
+│   ├── README.md
+│   ├── LaTeX/                                    (canonical LaTeX)
+│   │   ├── Polypharmacology_MD_Validation_V2607.tex    (main, JCIM target)
+│   │   ├── Polypharmacology_MD_Validation_SM_V2607.tex (SI)
+│   │   ├── Secondary_Analyses_SI.tex
+│   │   ├── Cover_Letter.{tex,pdf}
+│   │   ├── Bibliography_P2.bib
+│   │   ├── acs-Polypharmacology_MD_Validation_V2607.bib
+│   │   ├── acs-Polypharmacology_MD_Validation_SM_V2607.bib
+│   │   ├── Graphics/                              (PDFs referenced by LaTeX)
+│   │   ├── Table_RRS_Primary.tex, Table_S*.tex   (12 SI tables)
+│   │   └── SUBMISSION_MANIFEST.md                (canonical, refreshed 27 Aug)
+├── MD_systems/                                   (6 receptor systems: 164_PfClpP, 201_DHFR, 201_PfDHFR, 214_PfCRT, 438_ATP4, 438_PfATP4)
+├── results/                                      (55 top-level entries; see §0.2 below)
+├── scripts/                                      (149 scripts; key entry points below)
+└── tests/                                        (3 test modules)
+    ├── test_lightweight_robustness.py
+    ├── test_pfcrt_pipeline.py
+    └── test_rigorous_audit.py
+```
+
+## 0.2 results/ layout (key entry points)
+
+| Path | Purpose | Status (29 Aug) |
+|---|---|---|
+| `results/c_rrs_classification.csv` | Set-C RRS classes (target-balanced + available-target) | `COMPUTED` |
+| `results/c_rrs_sensitivity.csv` | coverage / threshold sensitivity | `COMPUTED` |
+| `results/c_acsi_scores.csv` | ACSI per candidate | `COMPUTED` |
+| `results/c_acsi_weight_sensitivity.{csv,json}` | 8 perturbation weights | `COMPUTED` |
+| `results/c_pns_ranking.csv` | PNS scores | `COMPUTED` |
+| `results/cross_metric_statistical_audit.{csv,json}` | 100k perm + 10k boot | `COMPUTED` |
+| `results/pns_imputation_sensitivity.{csv,json}` | zero-to-double PfCRT centrality | `COMPUTED` |
+| `results/p2_rigorous_audit_manifest.json` | seed-42 manifest | `COMPUTED` |
+| `results/p2_results_unlock_manifest.json` | provenance unlock audit | `COMPUTED` |
+| `results/set_c_md/md_rrs_discriminative_manifest.json` | MD-RRS manifest (5Å gate lifted) | `COMPUTED` |
+| `results/set_c_md/md_rrs_discriminative_pilot.csv` | per-system MD-RRS_d | `COMPUTED` |
+| `results/set_c_md/md_vs_docking_comparison_pilot.csv` | MD-vs-docking direction | `COMPUTED` |
+| `results/set_c_md/mmgbsa_20260819/` | Set-C MM-GBSA outputs (16 sys) | `MMGBSA_COMPUTED` (16/16) |
+| `results/set_c_md/mmgbsa_summary_pilot.csv` | 16-row ΔG_bind summary | `COMPUTED` |
+| `results/set_c_md/mmgbsa_manifest.json` | Set-C MM-GBSA manifest | `COMPUTED` |
+| `results/set_c_md/md_systems/.../runs/20260815T185233Z/...` | canonical R1 (PP-01, PP-02) | production + QC + MM-GBSA COMPLETE |
+| `results/set_c_md/single_rerun_20260825/...` | R2 PP-01 PfCRT WT + K76A + DHFR I164L | COMPLETE / BOND-overflow resolved |
+| `results/pp15_docking_20260828/` | PP-15 Vina (2 WT poses) | `COMPLETE` |
+| `results/pp15_md_20260828/` | PP-15 MD (2 WT, prep PASS) | `COMPLETE`, MM-GBSA FINAL 29 Aug 06:58Z |
+| `results/robustness_transfer_20260827/` | LOO + perturbation + external replication | `COMPUTED` 27-28 Aug |
+| `results/p2rank_boxes_20260827/` | P2Rank 2.5.1 binding-pocket audit | `COMPUTED_EXPLORATORY_BOUNDARY_AUDIT` |
+| `results/prolif_ifp_20260827/` | ProLIF 2.2.1 IFP occupancy 16/16 | `COMPUTED_SECONDARY_POST_PROCESSING` |
+| `results/rrs_polypharma_secondary_20260828/` | Set-C bootstrap CI95 + MD-filter gate | `COMPUTED_SECONDARY` 28 Aug |
+| `results/lightweight_robustness/` | MM-GBSA ΔΔG + partial corr + bootstrap | `COMPUTED` 25 Aug |
+
+## 0.3 Reproducibility runbook
+
+```bash
+cd Project2_Polypharmacology_MD_ValidationV2607
+source /home/nanaengo/miniforge3/etc/profile.d/conda.sh
+conda activate malaria_md
+
+# 1. Rigorous audit (regenerates c_rrs_*.csv, cross_metric_statistical_audit.*, pns_imputation_sensitivity.*, manifest)
+python3 scripts/p2_rigorous_audit.py --seed 42
+
+# 2. ACSI weight sensitivity (8 ±20% perturbations)
+python3 scripts/p2_acsi_weight_sensitivity.py
+
+# 3. Lightweight robustness (MM-GBSA ΔΔG, partial corr, bootstrap)
+python3 scripts/lightweight_runs_20260825.py
+
+# 4. External docking replication audit (replay manifest, recompute aggregate)
+python3 scripts/p2_external_docking_aggregate_20260827.py
+
+# 5. RRS/polypharma secondary (Set-C bootstrap + MD-filter gate)
+python3 scripts/p2_rrs_polypharma_secondary_20260828.py
+
+# 6. P2Rank + ProLIF audits (no new MD)
+python3 scripts/p2_p2rank_audit_20260827.py
+python3 scripts/p2_prolif_ifp_pilot.py
+
+# 7. GNINA CNN consensus (rescoring, no new MD)
+python3 scripts/p2_gnina_consensus_rescore.py
+python3 scripts/p2_gnina_consensus_rrs.py
+
+# 8. Unit tests
+python3 -m pytest tests/ -q   # 19 passed, 1 skipped in malaria_md
+
+# 9. LaTeX compile
+cd manuscript/LaTeX
+pdflatex Polypharmacology_MD_Validation_V2607.tex
+pdflatex Polypharmacology_MD_Validation_SM_V2607.tex
+pdflatex Cover_Letter.tex
+```
+
+The current canonical Set-C pilot production was generated by the 15320 SLURM array (post-production manifest `results/set_c_md/post_production_manifest_pilot.json` v3, schema-fixed 2026-08-18T21:29:54Z). Trajectory QC rule: `setc_p2_minheavy_5A_ge10percent_v1`. The full-panel Set-C MD-RRS (17×8=136) is `NOT_COMPUTED` by design.
+
+## 0.4 Manuscript status (cross-ref)
+
+The 28-Aug manuscript recompile reports main 30 p. / SM 16 p. (or main 41 p. / SM 8 p. with SI cross-references via xr/`\externaldocument[SM-]{…}` after the 26 Aug pass; current build uses 30+16). All robustness outputs (GNINA CNN consensus, external docking replication, MD-filter gate, bootstrap CI95) are integrated; Vina-only remains the canonical docking estimand. The PBC-whole PP-15 MM-GBSA is the latest addition (29 Aug 06:58Z).
 
 ## 1. Central question
 

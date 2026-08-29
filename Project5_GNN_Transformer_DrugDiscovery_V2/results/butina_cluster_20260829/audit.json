@@ -1,0 +1,32 @@
+{
+  "arms": [
+    "ChemBERTa"
+  ],
+  "created_utc": "2026-08-29T09:59:09Z",
+  "cutoff": 0.55,
+  "device": "cuda",
+  "ecfp4_bits": 2048,
+  "ecfp4_radius": 2,
+  "gnn_train": {
+    "batch_size": 512,
+    "dropout": 0.1,
+    "epochs": 50,
+    "hidden": 128,
+    "lr": 0.001,
+    "patience": 10,
+    "weight_decay": 0.0001
+  },
+  "n_folds": 5,
+  "panel": "/home/nanaengo/Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery_V2/results/p5_canonical_panel.csv",
+  "panel_n": 19836,
+  "panel_sha256": "1823d54fc4a4408750cbbda2f7a010725e8a8344f920252fb3f26745a9e7ee75",
+  "rf_trees": 500,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "v1_graph_sha256": "118ff24050f8e446d34f5fb2329259cb93b5ebc49989791d6a5ca1380b72ff8e"
+}
