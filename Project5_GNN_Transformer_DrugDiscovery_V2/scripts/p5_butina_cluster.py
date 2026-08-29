@@ -433,6 +433,9 @@ def main() -> None:
     summary: Dict[str, Dict] = {arm: {} for arm in args.arms}
 
     for seed in seeds:
+        # ChemBERTa arm reads its RNG seed from env (run_chemberta_fold contract);
+        # propagate the current Butina seed so folds vary and stay reproducible.
+        os.environ["BUTINA_SEED"] = str(seed)
         log(f"=== seed {seed} ===")
         t0 = time.time()
         train_idxs, test_idxs, fold_members = build_butina_folds(smiles, seed)
