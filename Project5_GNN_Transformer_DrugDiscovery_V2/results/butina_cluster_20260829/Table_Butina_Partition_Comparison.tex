@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+  \centering
+  \caption{Partition-family comparison (mean ROC-AUC, 5 seeds $\times$ 5 folds).
+  Random and scaffold are the canonical splits (DAR \S3); Butina is a stricter
+  cluster-disjoint split (Murcko scaffolds, Tanimoto cutoff 0.55; DAR \S6, 29 Aug 2026).}
+  \label{tab:butina-partition}
+  \begin{tabular}{lccc}
+    \toprule
+    Arm & Random & Scaffold & Butina \\
+    \midrule
+    ECFP4-RF & 0.9433 & 0.8300 & 0.8331 \\
+    GIN & 0.9098 & 0.8047 & 0.8202 \\
+    GIN-TFP & 0.9084 & 0.8138 & 0.8232 \\
+    GIN-TNE & 0.8918 & 0.8090 & 0.8191 \\
+    ChemBERTa & 0.9121 & 0.7867 & -- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
