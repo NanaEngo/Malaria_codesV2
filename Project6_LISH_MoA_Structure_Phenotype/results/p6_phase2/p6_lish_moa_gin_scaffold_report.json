@@ -1,0 +1,20 @@
+{
+  "input": "/home/nanaengo/Malaria_codesV2/Project6_LISH_MoA_Structure_Phenotype/results/lish_moa/lish_moa_drug_level.csv",
+  "mapping": "/home/nanaengo/Malaria_codesV2/Project6_LISH_MoA_Structure_Phenotype/data/mappings/drugid_to_smiles_v2_validated.csv",
+  "mapping_sha256": "7df5b4ced6c97e9fb96ae89606533f87b8082a1e5db81c794cf3fee4b0cb6aa3",
+  "descriptors_sha256": "23e1c52a0dc84f9a0653ec35cb3c9812d2a0e22d87c5414a614e6601e36521fc",
+  "features": "GIN",
+  "split": "scaffold",
+  "n_drugs": 3289,
+  "n_labels": 206,
+  "n_collision_groups": 1722,
+  "mean_metrics": {
+    "mean_columnwise_log_loss": 0.026216169723752635,
+    "macro_auprc": 0.013496713877503404,
+    "macro_auroc": 0.5010033991532302,
+    "mean_brier": 0.0035723115105856683,
+    "mean_ece": 0.00686887939774393
+  },
+  "protocol": "5 seeds x 5 group-disjoint folds; multi-label GIN head (locked P5 optimizer/epochs/patience); val carved from train groups only; early stop on val mean column-wise log loss; TFP/TNE zero-vector ITT failures",
+  "interpretation": "MoA-associated prediction; not causal target engagement"
+}

@@ -1,7 +1,7 @@
 # P5 Data Analysis Report — active summary
 
 **Scope:** GNN/Transformer drug-discovery benchmark on the canonical P3-derived antimalarial panel.
-**Updated:** 28 August 2026 (completed-arm integration; ChemBERTa 125/125 + calibration 30 configs + GNN sensitivity 15617; no new training)
+**Updated:** 28 August 2026 19:17Z (completed-arm integration; ChemBERTa 125/125 + calibration 30 configs + GNN sensitivity 15617 + RRS/polypharma calibration extensions COMPUTED_SECONDARY; no new training)
 **Long-form history:** `docs/archive/md_full_20260812/P5_DATA_ANALYSIS_REPORT.md`
 
 ## 1. Central question
@@ -90,14 +90,22 @@ The completed GNN robustness campaign, lightweight ECFP4 controls, chemical-stan
 - GNN/Transformer performance is architecture- and training-budget-dependent.
 - External validation does not replace experimental activity measurements.
 
-### 7.1 RRS/polypharma calibration extensions — impactful secondary (28 Aug 2026)
+### 7.1 RRS/polypharma calibration extensions — COMPUTED_SECONDARY (28 Aug 2026)
 
-Secondary, no retraining, reuses `results/calibration_20260827/` + `c_rrs_classification.csv` (P1/P2 RRS) pending `P1_P5_RRS_POLYPHARMA_ROADMAP:1` polypharma join:
+Secondary, no retraining, reuses `results/calibration_20260827/` + `c_rrs_classification.csv` (P1/P2 RRS) via SMILES join on P5 canonical panel (17/19,836 matched):
 
-- **Calibration per RRS class** — stratify pooled ECE/MCE/Brier by RRS class (A*/A/B/C/D, n=12 complete + n=17 sensitivity) under scaffold/novel partitions; test if high-RRS (A*/A) candidates retain calibration (ECE ≈0.03→0.07) better than low-RRS under shift. Script: extend `p5_calibration_posthoc.py` with `--by-rrs` join.
-- **Polypharma high-RRS subset** — evaluate ROC-AUC/AP on the ≥2-target polypharma subset (RRS ≥80% on ≥2 of PfDHFR/PfCRT/PfATP4/PfClpP per roadmap threshold) vs single-target subset; report ΔAUC with paired bootstrap CI95. No new training.
+- **Calibration per RRS class** — `results/calibration_20260827/calibration_by_rrs_class.csv` (300 records): ECE/MCE/Brier per config (30) × RRS class (A*/A/B/C/D/UNMATCHED) × type (complete/available) across 5 partitions. Key finding: ECE rises from ≈0.03 (random) to ≈0.07–0.13 (scaffold/novel) for ALL classes; no evidence that high-RRS (A*/A) candidates retain better calibration — calibration degradation under shift is universal. Per-class sample sizes small (B: ~20, C: ~25, A: ~10 per config).
+- **Polypharma high-RRS subset** — `results/calibration_20260827/polypharma_subset_auc.csv` (120 rows): 
+  - **Complete two-target** (60 rows): A*/A n=2 candidates (PP-01/PP-15), 10 test samples/config. AUC 0.00–0.84 vs single 0.78–0.91, Δ negative most configs. ChemBERTa scaffold Δ=-0.03.
+  - **Available-target** (60 rows, added 28 Aug 19:22Z): A*/A n=6 candidates (PP-02/05/06/11/13/15), 30 test samples/config. AUC 0.14–0.88 vs single 0.77–0.91, Δ negative (ChemBERTa scaffold Δ=-0.17). Novel partitions higher variance. Low n precludes bootstrap CI95; reported as descriptive.
 
-Status: `PLANNED_SECONDARY`; honest-negative scaffold result unchanged until executed.
+Status: `COMPUTED_SECONDARY`; honest-negative scaffold result unchanged. Low polypharma sample size (2 candidates) limits inference; extensions are descriptive post-hoc analyses.
+
+**Future work for bootstrap CI95 + available-target polypharma** — to achieve ≥30 polypharma candidates for valid bootstrap:
+- **Option A**: Sample 500-1,000 diverse ChEMBL molecules (MaxMin/Butina on ECFP4) from `p5_public_chembl_malaria_disjoint.csv` (22,267), run Vina docking 8 states (PfDHFR WT/N51I/C59R/S108N/I164L, PfCRT WT/K76T/K76A) → ~4-8K runs, 1-2 days SLURM `%20`.
+- **Option B**: Run full P5 panel (19,836) docking 6 states → ~119K runs, 1-2 months cluster (not recommended for V2).
+- **Available-target polypharma (n=6)**: **DONE 28 Aug 19:22Z** — AUC added to `polypharma_subset_auc.csv` (60 rows `rrs_type: available`). ChemBERTa scaffold Δ=-0.17 vs -0.03 complete.
+- Add to `P1_P6_RRS_POLYPHARMA_ROADMAP.md` if P5 expansion phase authorized.
 
 ## 8. LISH-MoA external mechanism benchmark — completed phenotype-only reference (12 August 2026)
 
@@ -146,7 +154,7 @@ A predicted MoA-associated profile is not proof of direct target engagement or c
 
 **Release status:** `COMPUTED_PRIMARY_PLUS_AUDITED_SECONDARY; CHEMBERTA_EXTENSION_AUDITED_SECONDARY; MANUSCRIPT_READY_FOR_AUTHOR_REVIEW`. P5 V2 may proceed to final author reading using the canonical benchmark and audited secondary analyses; the ChemBERTa extension is reportable only as a separately versioned secondary analysis.
 
-**Final manuscript package (28 August 2026):** main text **16 pages** (`P5_manuscript_V2608.tex`), Supporting Information **4 pages** (`P5_SI_V2608.tex`: S1 LISH, S2 calibration, S3 GNN hyperparameter sensitivity from job 15617, S4 paired contrasts with 95% intervals), cover letter **1 page** (`Cover_Letter_P5_JCAMD.tex`). Zero LaTeX errors, zero undefined references, zero Overfull/Underfull warnings; `git diff --check` clean; Zenodo package rebuilt at **31/31 files staged** (`zenodo_package_20260827/` + tarball, status `READY_FOR_UPLOAD_NOT_UPLOADED`, `sensitivity_files_pending: []`). A base-GIN normal-mode sensitivity run emits only the results CSV + ckpt JSON per config (curves embedded in the ckpt; salience n/a for base GIN — see `sensitivity_output_contract` in the package manifest and `SUBMISSION_MANIFEST.md` § Zenodo package status). Target journal: **Journal of Computer-Aided Molecular Design (JCAMD, Springer Nature)**; guideline audit recorded in `docs/JCAMD_GUIDELINE_AUDIT_20260827.md`.
+**Final manuscript package (28 August 2026):** main text **16 pages** (`P5_manuscript_V2608.tex`), Supporting Information **5 pages** (`P5_SI_V2608.tex`: S1 LISH, S2 calibration, S2.4 polypharma available-target, S3 GNN hyperparameter sensitivity from job 15617, S4 paired contrasts with 95% intervals), cover letter **1 page** (`Cover_Letter_P5_JCAMD.tex`). Zero LaTeX errors, zero undefined references, zero Overfull/Underfull warnings; `git diff --check` clean; Zenodo package rebuilt at **31/31 files staged** (`zenodo_package_20260827/` + tarball, status `READY_FOR_UPLOAD_NOT_UPLOADED`, `sensitivity_files_pending: []`). A base-GIN normal-mode sensitivity run emits only the results CSV + ckpt JSON per config (curves embedded in the ckpt; salience n/a for base GIN — see `sensitivity_output_contract` in the package manifest and `SUBMISSION_MANIFEST.md` § Zenodo package status). Target journal: **Journal of Computer-Aided Molecular Design (JCAMD, Springer Nature)**; guideline audit recorded in `docs/JCAMD_GUIDELINE_AUDIT_20260827.md`.
 
 **Editorial leviers applied on 27 August 2026:**
 

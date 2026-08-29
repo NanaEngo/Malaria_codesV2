@@ -9,10 +9,10 @@
 | Project | Current status | Submission-relevant conclusion |
 |---|---|---|
 | **P1** | V7 is the submission-oriented workspace (JCIM); V6/V4/V5 provide corrected evidence and remediation layers | Chemical-space novelty, target-wise docking, and computational RRS/polypharmacology are reportable only within their stated provenance boundaries |
-| **P2** | Canonical 17-member Set-C cohort and docking-RRS/ACSI/PNS analysis complete; Set-C MD pilot 16/16 complete with QC, MD-RRS and MM-GBSA secondary outputs; external replication 312/312 complete | Docking-RRS is canonical; the PP-01/PP-02 Set-C MD pilot is complete as a secondary analysis; full 17-candidate MD-RRS remains NOT_COMPUTED by design; external panel provides computational sensitivity evidence |
+| **P2** | Canonical 17-member Set-C cohort and docking-RRS/ACSI/PNS analysis complete; Set-C MD pilot 16/16 complete with QC, MD-RRS and MM-GBSA secondary outputs; external replication 312/312 complete; PP-15 single-ligand feasibility probe with MM-GBSA PfCRT -27.79 ± 2.77 kcal/mol (endframe=800, 80 frames) and PP-01_PfDHFR_I164L rerun MM-GBSA -24.36 ± 1.77 kcal/mol (endframe=880, 88 frames) reportable | Docking-RRS is canonical; the PP-01/PP-02 Set-C MD pilot is complete as a secondary analysis; full 17-candidate MD-RRS remains NOT_COMPUTED by design; external panel provides computational sensitivity evidence; PP-15 probe is outside the Set-C estimand and serves as within-protocol feasibility contrast |
 | **P3** | Canonical classical, hybrid, QKS, TNE/TDA, and external-validation analyses complete | Quantum-inspired descriptors are complementary; no quantum advantage over RBF or ECFP4 is claimed |
 | **P5** | Scaffold-controlled molecular-representation benchmark complete; manuscript 16 p. + SI 4 p. + cover 1 p., JCAMD target | ECFP4–RF dominates under scaffold split; topological fusion modestly complementary; honest-negative result with explicit limits |
-| **P6** | Leakage-aware structure–phenotype MoA benchmark complete; manuscript 8 p. + cover 1 p., JCAMD target | Molecular-arm AUROCs near chance (0.501–0.508) under collision-group-disjoint evaluation; phenotype reference AUROC 0.636 |
+| **P6** | Leakage-aware structure–phenotype MoA benchmark complete (collision-group + scaffold); manuscript 8 p. + cover 1 p., JCAMD target | Molecular-arm AUROCs near chance (0.501–0.508) under collision-group-disjoint evaluation; scaffold 4/4 GNN arms AUROC 0.501–0.506; phenotype reference AUROC 0.636; pooled calibration ECE ≤0.0020, bounded QKS Spearman phenotype_vs_structure ≈0.007 |
 
 ## 2. P1 — chemical space, docking, and RRS/polypharmacology
 
@@ -33,7 +33,7 @@
 
 ## 3. P2 — canonical RRS/polypharmacology source layer
 
-**28 August reconciliation:** the P2 results-unlock audit confirms that PfCRT pH 5.2 redocking is already complete for 100/100 library ligands (`data/proteins/pH_correction/redock_results/`), PNS-imputation sensitivity is complete for 17 candidates, the Set-C pilot post-production chain is complete, and the external docking replication is complete at 312/312 records (39 ligands, 8 PfDHFR/PfCRT states; bootstrap mean RRS 100.45, Class-A fraction 0.974). These results are distinct estimands and are not merged into the primary Set-C docking-RRS table. The full STRING 400/900 threshold sensitivity and PP-01/PP-15 dedicated multi-seed redocking have no complete source records and remain explicitly NOT_COMPUTED/PENDING_INPUTS.
+**28 August reconciliation:** the P2 results-unlock audit confirms that PfCRT pH 5.2 redocking is already complete for 100/100 library ligands (`data/proteins/pH_correction/redock_results/`), PNS-imputation sensitivity is complete for 17 candidates, the Set-C pilot post-production chain is complete, and the external docking replication is complete at 312/312 records (39 ligands, 8 PfDHFR/PfCRT states; bootstrap mean RRS 100.45, Class-A fraction 0.974). These results are distinct estimands and are not merged into the primary Set-C docking-RRS table. The full STRING 400/900 threshold sensitivity and PP-01/PP-15 dedicated multi-seed redocking have no complete source records and remain explicitly NOT_COMPUTED/PENDING_INPUTS. **28 Aug 22:38Z additional single-system reruns:** PP-15 single-ligand feasibility probe (Vina PfDHFR −8.62 / PfCRT −7.81, 10 ns production COMPLETE for both, trajectory QC PASS) — MM-GBSA PfCRT_WT ΔTOTAL = −27.79 ± 2.77 kcal/mol (endframe=800, 80 frames, numerical_qc PASS, 28 Aug 22:33Z); MM-GBSA PfDHFR_WT initial endframe=880 run FAILED_NUMERICAL_QC (1 frame BOND overflow), retry endframe=800 in progress (PID 466164, ETA 20–30 min). PP-01_PfDHFR_I164L MM-GBSA ΔTOTAL = −24.36 ± 1.77 kcal/mol (endframe=880, 88 frames, numerical_qc PASS, 28 Aug 22:33Z) — all `endframe=880` values exclude the 7.7–9.9 ns BOND-overflow window identified in earlier single-trajectory sander minimizations. None of these single-system endpoints promote to the Set-C 16-system canonical table; the Set-C MD-RRS remains `trajectory_count=8` (PP-01/PP-02 only) per the original pilot contract.
 
 **Manuscript status (28 August 2026):** main 28 p. + SM 16 p. + cover 1 p., target journal JCIM. 0 undefined references, 0 LaTeX errors. CRediT author contributions aligned with P3 canonical format. siunitx/cleveref/xr conventions aligned across P2/P5/P6. External replication referenced in Conclusion via `\cref{SM-tab:s15_robustness_transfer}`. Graphical abstract TikZ created. Bibliography standardized to `Bibliography_P2.bib`.
 
@@ -138,8 +138,9 @@ Removing QK reduces hybrid AUC by **0.040**; TFP contributes **0.014**; TNE is m
 - Collision-group-disjoint evaluation: all molecular-arm macro-AUROCs near chance (0.501–0.508); phenotype-only reference AUROC 0.636.
 - Best molecular-arm log loss: GIN-TFP (0.02334), but low log loss accompanied near-chance ranking (calibrated but non-discriminative).
 - ECFP4–RF baseline: AUROC 0.536 under collision-group split, 0.538 under scaffold.
-- Scaffold sensitivity computed for phenotype and ECFP4–RF baselines only; GNN/ChemBERTa scaffold sensitivity NOT_COMPUTED.
-- Per-label calibration diagrams and calibration slope/intercept NOT_COMPUTED.
+- Scaffold sensitivity now computed for all 4 GNN/ChemBERTa arms (29 Aug 2026) — macro-AUROC 0.501–0.506, all below phenotype scaffold 0.64023.
+- Per-label pooled calibration COMPUTED (29 Aug 2026): ECE phenotype 0.0016 / structure 0.0012 / fusion 0.0020 (n=3,387,670 pooled samples, 206 MoA).
+- Bounded QKS separability COMPUTED (29 Aug 2026): phenotype vs structure τ=0.5 abs-diff 0.023, Spearman 0.007; phenotype vs fusion 0.052, 0.286.
 
 ### Manuscript status
 
@@ -182,7 +183,7 @@ The P3 external arm will compare ECFP4, TFP, TNE, and an explicitly labelled opt
 - **P2:** manuscript submission-ready (JCIM, 28 p. main + 16 p. SM); external replication 312/312 complete; graphical abstract TikZ created. Author gates: metadata verification, Zenodo upload. Full 17-candidate MD-RRS remains NOT_COMPUTED by design.
 - **P3:** preserve the honest-negative external validation framing and complete repository deposit preparation.
 - **P5:** manuscript submission-ready (JCAMD, 16 p. main + 4 p. SI); Zenodo package 31/31 staged. Author gates: visual PDF review, metadata, Zenodo upload.
-- **P6:** manuscript submission-ready (JCAMD, 8 p. + cover); all molecular arms completed. Author gates: metadata, scaffold sensitivity for GNN arms (optional), Zenodo upload.
+- **P6:** manuscript submission-ready (JCAMD, 8 p. + cover); all molecular arms completed under both collision-group and scaffold splits (29 Aug 2026); pooled calibration + bounded QKS computed. Remaining author gates: metadata, Zenodo upload.
 - **All:** keep this summary short; place detailed job narratives and superseded decisions in the archive.
 
 ## Lightweight robustness runs (25 August 2026)
