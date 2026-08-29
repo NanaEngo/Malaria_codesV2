@@ -1,0 +1,139 @@
+{
+  "status": "COMPUTED_SECONDARY",
+  "bootstrap": {
+    "B": 10000,
+    "seed": 42,
+    "ci": "95%"
+  },
+  "run1_setc_bootstrap": {
+    "n_candidates": 17,
+    "class_A*_fraction": {
+      "point": 0.2941,
+      "ci95": [
+        0.1176,
+        0.5294
+      ]
+    },
+    "class_A_fraction": {
+      "point": 0.0588,
+      "ci95": [
+        0.0,
+        0.1765
+      ]
+    },
+    "class_B_fraction": {
+      "point": 0.2941,
+      "ci95": [
+        0.1176,
+        0.5294
+      ]
+    },
+    "class_C_fraction": {
+      "point": 0.2941,
+      "ci95": [
+        0.1176,
+        0.5294
+      ]
+    },
+    "class_D_fraction": {
+      "point": 0.0588,
+      "ci95": [
+        0.0,
+        0.1765
+      ]
+    },
+    "retention_N51I": {
+      "point": 74.71,
+      "ci95": [
+        67.22,
+        85.16
+      ],
+      "n": 12
+    },
+    "retention_C59R": {
+      "point": 73.69,
+      "ci95": [
+        67.38,
+        82.09
+      ],
+      "n": 12
+    },
+    "retention_S108N": {
+      "point": 75.28,
+      "ci95": [
+        67.7,
+        85.8
+      ],
+      "n": 12
+    },
+    "retention_I164L": {
+      "point": 76.77,
+      "ci95": [
+        68.92,
+        88.15
+      ],
+      "n": 12
+    },
+    "retention_K76T": {
+      "point": 85.41,
+      "ci95": [
+        81.0,
+        90.35
+      ],
+      "n": 17
+    },
+    "retention_K76A": {
+      "point": 86.98,
+      "ci95": [
+        83.12,
+        90.9
+      ],
+      "n": 17
+    },
+    "mean_RRS_PfDHFR": {
+      "point": 75.11,
+      "ci95": [
+        68.0,
+        85.27
+      ],
+      "n": 12
+    },
+    "mean_RRS_PfCRT": {
+      "point": 86.19,
+      "ci95": [
+        82.43,
+        90.45
+      ],
+      "n": 17
+    }
+  },
+  "run1b_external_bootstrap": {
+    "n_ligands": 39,
+    "mean_RRS": {
+      "point": 100.45,
+      "ci95": [
+        99.59,
+        101.34
+      ]
+    },
+    "class_A_fraction": {
+      "point": 0.9744,
+      "ci95": [
+        0.9231,
+        1.0
+      ]
+    }
+  },
+  "run2_md_filter_gate": {
+    "scope": "PP-01/PP-02 pilot only; full-panel (17x8) MD-RRS remains NOT_COMPUTED",
+    "n_gate_rows": 12,
+    "n_passes_both": 7,
+    "polypharma_promoted_pilot": {
+      "PP-01": [
+        "PfCRT",
+        "PfDHFR"
+      ]
+    }
+  },
+  "boundary": "Secondary post-processing (28 Aug 2026); no canonical value replaced; MD gate is pilot-scope only."
+}

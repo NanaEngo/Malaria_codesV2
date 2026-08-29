@@ -1,7 +1,7 @@
 # P2 Data Analysis Report — active summary
 
 **Scope:** Resistance-aware polypharmacology of antimalarial leads (docking-RRS, PNS, ACSI, targeted MD, MM-GBSA, Set-C MD pilot).
-**Updated:** 28 August 2026 (external docking 312/312 PASS + repair ledger + PP-15 docking/MD pilot + P2Rank/ProLIF)
+**Updated:** 28 August 2026 17:47Z (external 312/312 + PP-15 pilot + P2Rank/ProLIF + PP-01 I164L QC PASS/MM-GBSA RUNNING)
 **Root:** `Project2_Polypharmacology_MD_ValidationV2607/`
 
 ## 1. Central question
@@ -174,11 +174,45 @@ Status: `COMPUTED_SECONDARY_POST_PROCESSING`. These are descriptive trajectory-i
 
 ## 8ter. PP-15 single-ligand docking/MD — `results/pp15_docking_20260828/` + `results/pp15_md_20260828/` (28 Aug 2026)
 
-Single-candidate pilot for PP-15 (outside the 17-member Set-C estimand). Docking (Vina) produced `PP-15_PfCRT_WT` and `PP-15_PfDHFR_WT` poses (`vina/*.pdbqt` + `metadata.json`); MD preparation completed two WT systems (`PP-15_PfCRT_WT`, `PP-15_PfDHFR_WT`) through EM→NVT→NPT with `pre_equilibration_audit.json:PASS`, `forcefield_manifest.json`, and `system_manifest.json`. No mutant, no RRS, no MM-GBSA, no manuscript claim — retained as `EXPLORATORY_SINGLE_LIGAND_PILOT` pending QC/MD-RRS gates. Not merged into Set-C tables.
+Single-candidate pilot for PP-15 (outside the 17-member Set-C estimand). Docking (Vina) produced `PP-15_PfCRT_WT` and `PP-15_PfDHFR_WT` poses (`vina/*.pdbqt` + `metadata.json`); MD preparation completed two WT systems (`PP-15_PfCRT_WT`, `PP-15_PfDHFR_WT`) with `pre_equilibration_audit.json:PASS`, `forcefield_manifest.json`, and `system_manifest.json`. **State (28 Aug 19:50Z, corrected):** contrary to the earlier ``prepared-pending / no production`` note, **both WT systems have completed 10 ns production trajectories** — PfDHFR runs `20260825T063226Z` (finished 27 Aug 02:55Z, 5,000,000 steps) and `20260813T083606Z`; PfCRT runs `20260825T063226Z` (finished 25 Aug 13:08Z, 5,000,000 steps) and `20260815T052351Z`. The self-contained run directories carry the original valid ligand ITP (28,139 B, OpenFF 2.2.0 AM1-BCC); a regeneration attempt on 28 Aug 14:45Z wrote an inconsistent 40-atom ITP to the base directory that broke `grompp` against the 42-atom `npt.gro` — **reverted** by restoring the run-consistent ITP (28 Aug 19:46Z, `grompp` revalidated PASS). Trajectory QC (job 15653, rule `setc_p2_minheavy_5A_ge10percent_v1`) on the canonical `20260825T063226Z` runs: **both PASS** — PfDHFR bound_fraction 1.000, mean_min 2.77 Å, 10.0 ns; PfCRT bound_fraction 1.000, mean_min 3.20 Å, 10.0 ns (`results/pp15_md_20260828/pp15_trajectory_qc.csv`). **MM-GBSA status (28 Aug 22:33Z):** PfCRT `endframe=800` (excludes frames 811/841 BOND overflow) — `PASS` qc, **ΔTOTAL = -27.79 ± 2.77 kcal/mol** (exit 0, 80 frames). PfDHFR `endframe=880` initial run `FAILED_NUMERICAL_QC` (1 frame BOND overflow); retry `endframe=800` launched 22:35Z, PID 466164, ETA ~20-30 min. PfCRT ΔG is reportable and within the pilot endpoint range; PfDHFR pending retry. No mutant, no RRS — `EXPLORATORY_SINGLE_LIGAND_PILOT`. **Manuscript integration (28 Aug):** SM §7b updated with current state + new Table S (Vina scores PfDHFR −8.62 / PfCRT −7.81 kcal/mol, audit PASS, equilibration status, MM-GBSA PfCRT −27.79); a main-text sentence in the Set-C pilot subsection; explicitly outside the Set-C estimand. Not merged into Set-C tables.
+
+## 8quater. RRS/polypharma impactful extensions — secondary, no new MD (28 Aug 2026)
+
+Planned secondary audits that strengthen RRS+polypharma without new trajectories (ponytail: reuse existing 312-record external docking + 16-system pilot):
+
+- **Per-target bootstrap RRS CI95** — bootstrap B=10k per-target on `c_rrs_classification.csv` (PfDHFR n=12, PfCRT n=17) and on `external_docking_rrs_20260827.csv` (39 ligands); report CI95 per RRS class (A*/A/B/C/D) and per-target retention fraction. Seed 42, same as `p2_robustness_transfer_audit.py`.
+- **MD-filter retention gate** — intersect docking RRS ≥80% (Class A) with pilot MD-RRS_d retention (<100 = tighter/looser parity) for PP-01/PP-02; candidates passing both gates are polypharma-promoted (≥2 targets, retention-not-gain). No full-panel claim; uses existing `md_rrs_discriminative_pilot.csv` + `mmgbsa_ddeltaG_pilot.csv`.
+- **Literature anchor** — Trends Parasitol 2026 SDMT MED6-189 (multi-target high barrier) + RSC Adv 2026 PfATP4/DHFR/DHODH/PfCRT mechanistic classes already in `docs/CENTRAL_QUESTIONS_PROJECTS.md:28`; cite in P2 Discussion to justify per-target WT denominator and polypharma ≥2-target threshold.
+
+### 8quater.0 Bootstrap RRS CI95 + MD-filter retention gate — COMPUTED (28 Aug 2026)
+
+Script: `scripts/p2_rrs_polypharma_secondary_20260828.py` (seed 42, B=10\u2074). Outputs: `results/rrs_polypharma_secondary_20260828/{secondary_summary.json, md_filter_gate.csv}`.
+
+**RUN1 — Set-C bootstrap CI95 (n=17):** class fractions A* 0.294 [0.118, 0.529], A 0.059 [0.000, 0.176], B 0.294 [0.118, 0.529], C 0.294 [0.118, 0.529], D 0.059 [0.000, 0.176]. Per-mutant retention (pooled, WT=100): PfDHFR N51I 74.7 [67.2, 85.2], C59R 73.7 [67.4, 82.1], S108N 75.3 [67.7, 85.8], I164L 76.8 [68.9, 88.2] (n=12); PfCRT K76T 85.4 [81.0, 90.4], K76A 87.0 [83.1, 90.9] (n=17). The PfCRT retention CIs exclude 100, consistent with the retention-not-gain reading; the PfDHFR CIs are wide and overlap 100 for I164L.
+
+**RUN1b — external panel bootstrap:** mean RRS 100.45 [99.59, 101.34], class-A fraction 0.974 [0.923, 1.000] (matches the value already reported in SM Table S15).
+
+**RUN2 — MD-filter retention gate (pilot scope PP-01/PP-02, 12 gate rows):** docking RRS \u2265 80 AND pilot MD-RRS < 100. 7/12 rows pass both gates. **PP-01 is polypharma-promoted at pilot scope** (PfCRT via K76A MD-RRS 97.8, PfDHFR 4/4 mutants 91.0\u201398.9; docking RRS 91.7 / 85.8). PP-02 is NOT promoted: its PfCRT rows pass (90.1/87.3) but PfDHFR has no eligible docking WT anchor under the 5.0 kcal/mol rule, so only one target is gate-eligible. K76T MD-RRS 102.7 for PP-01 PfCRT is the one >100 row and is read as within-noise retention, not gain.
+
+Status: `COMPUTED_SECONDARY`; pilot-scope promotion only; full-panel (17\u00d78=136) MD-RRS remains `NOT_COMPUTED`; no canonical value replaced.
+
+### 8quater.1 GNINA CNN consensus rescoring — COMPUTED (28 Aug 2026)
+
+Post-processing only (no re-docking, no new MD). Script: `scripts/p2_gnina_consensus_rescore.py` (GNINA 1.3.2 `--score_only` on the MODEL 1 Vina pose of each of the 312 external states; non-AD Meeko/OpenBabel generic atom types `CG0/CG1/G0/G1` normalized to `C` in the type column; fail-closed at 312/312 finite scores). Outputs: `results/robustness_transfer_20260827/gnina_consensus_20260828/{gnina_consensus_scores.csv, manifest.json}`.
+
+Consensus RRS analysis (script `scripts/p2_gnina_consensus_rrs.py`, same frozen estimand, target eligibility decided once on the canonical Vina scale):
+
+- **312/312 poses rescored, 0 failures**; Vina scores −10.9…−3.25 (mean −7.03), CNN affinities 2.70…7.71 (mean 4.71).
+- **RRS class agreement across scoring layers: 38/38 eligible ligands class A under both Vina and CNN; 0 discordances** (EXT-025 has no binding target under the 5.0 kcal/mol Vina eligibility rule and is unclassified under both layers).
+- RRS mean: Vina 100.4 (95.1–106.0), CNN 103.6 (90.6–122.6). Spearman Vina-vs-CNN on ligand mean RRS = **0.558**; per-mutant ρ: K76T 0.644, K76A 0.486, N51I 0.271, S108N 0.204, I164L 0.040, C59R −0.076.
+
+Status: `COMPUTED_CONSENSUS_RRS_SENSITIVITY`. Interpretation: the near-proportional mutant/WT retention observed in the Vina external panel is reproduced by an independent CNN scoring function on identical poses — the retention-not-gain pattern is not an artefact of one scoring function. The moderate ligand-level rank correlation (ρ=0.558) and near-zero C59R/I164L mutant-level correlations bound the interpretation: consensus supports class-level retention, not per-mutant rank transfer. Vina-only remains the canonical estimand; no manuscript value is replaced.
 
 ## 9. Manuscript status (26 Aug)
 
 **Current release status:** `READING_FINAL_AUTHOR`. The primary Set-C docking analysis, the separate parent-study MD cohort, and the bounded Set-C MD pilot have completed their declared production and QC gates. The optional witness job `15507_[0]` is not a prerequisite for the manuscript and remains non-blocking. K76A MM-GBSA retains the original canonical endpoint with an explicit Limitations caveat.
+
+**28 Aug — robustness analyses integrated in manuscript (v2607 recompile clean: main 30 p., SM 16 p., 0 errors, 0 undefined refs):** (1) the pilot-scope MD-filter retention gate (7/12 gate rows pass docking RRS $\geq$ 80 % AND pilot MD-RRS < 100; PP-01 satisfies the two-target gate, PP-02 does not) was added to the Set-C MD pilot Results subsection and Discussion (role of structural follow-up), bounded by the saturated bound fraction and the 2.0 kcal/mol noise floor; (2) the Set-C bootstrap CI95 (class fractions A* 0.294 [0.118, 0.529], PfCRT retention CIs excluding 100, PfDHFR intervals wide) was added to the Discussion and as a new row in SM Table S15; (3) SM Table S15 gained the MD-filter gate row. The GNINA CNN consensus (38/38 class A, 0 discordance, ρ=0.558) and external-docking replication were already integrated (Discussion + S15). No canonical value replaced; Vina-only remains the canonical estimand.
 
 **K76A MM-GBSA resolution (author decision, 28 August 2026):** The PP-01 PfCRT K76A endpoint uses the original 19-Aug value (−35.29 ± 1.17 kcal/mol, SD_prop, SEM 0.50) from the canonical trajectory (`20260815T185233Z/replicate_1`, 100 frames). An independent second replicate on a different trajectory (`20260825T063226Z/replicate_1`) produced −27.54 ± 1.89 kcal/mol after PBC-whole correction. The 7.75 kcal/mol inter-replicate difference is documented in the manuscript Limitations section and treated as evidence of inter-replicate sensitivity for this mutant state. The `FAILED_NUMERICAL_QC` status (BOND overflow in sander parsing) applies to the 25–26 Aug diagnostic runs on the second trajectory, not to the original canonical endpoint. The Submission Manifest has been updated to reflect this resolution.
 
@@ -279,3 +313,12 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
 **Repaired whole-center run (26 August 2026, `k76a_repaired_whole_20260826`):** A fourth attempt using `production_whole_centered.xtc` (PBC-whole applied to the full trajectory) with 100 frames (interval 10) succeeded: `ΔTOTAL = -27.54 ± 1.89` kcal/mol, `numerical_qc.status = PASS`, `reportable = true`. This provides a second-replicate estimate for K76A PP-01 (different trajectory from the canonical 19-Aug run).
 
 **Final author decision (28 August 2026):** Option A — retain the original canonical endpoint (−35.29 ± 1.17 kcal/mol, 19 Aug, rep1, 100 frames) in the manuscript tables. The repaired whole-center value (−27.54 ± 1.89 kcal/mol, rep2, 100 frames) is documented as inter-replicate sensitivity. The manuscript Limitations section includes an explicit caveat noting the 7.75 kcal/mol difference between replicates. The Submission Manifest and this DAR are updated to reflect the resolution. No further K76A relaunch is authorized for this submission cycle.
+
+## Single-system GPU rerun — PP-01_PfDHFR_I164L replicate_1 (COMPLETE production + QC PASS; MM-GBSA COMPLETE 22:33Z)
+
+- **Production COMPLETE:** `results/md_systems/set_c_preparation_20260812_v1/PP-01_PfDHFR_I164L/runs/20260825T063226Z/replicate_1/` — `Finished mdrun Fri Aug 28 17:25:47` (5,000,000 steps, 10 ns, 27.3 ns/day, GPU A4000) ; `production_provenance.json:3` `PRODUCTION_COMPLETED_REQUIRES_TRAJECTORY_QC` → `1.18 GB xtc`.
+- **Trajectory QC: PASS** (`P2_SETC_ROOT` + `conda run -n malaria_md p2_setc_trajectory_qc.py --system PP-01_PfDHFR_I164L` 28 Aug 17:37Z): `n_frames=1001 bound_fraction=1.000 mean_min=2.86 Å 10.0 ns` (`setc_p2_minheavy_5A_ge10percent_v1`), CSV `results/set_c_md/set_c_trajectory_qc.csv`.
+- **MM-GBSA: COMPLETE 28 Aug 22:33Z** (`scripts/p2_setc_mmgbsa_single.py PP-01_PfDHFR_I164L <run_dir>`, `P2_MMGBSA_ENDFRAME=880` to exclude BOND-overflow frames 851-991 from initial 18:55Z run): `endframe=880` (excludes frames 851, 881, 941, 971, 981, 991 BOND overflow), protocol batch verbatim `gmx_MMPBSA v1.5 GB OBC2 igb=5 saltcon 0.15 M frames 1-880 interval 10` + `mmgbsa_timeseries.csv` for convergence; exit 0, **numerical_qc PASS**, **ΔTOTAL = -24.36 ± 1.77 kcal/mol** (88 frames, 80% of original 100-frame range retained). Initial 100-frame run (PID 312119) failed with BOND overflow on 1 frame (frame 901, max 2.19e7 kcal/mol); `endframe=880` retry succeeded. Launch status: `results/set_c_md/single_rerun_20260825/mmgbsa/PP-01_PfDHFR_I164L/launch_status.json`.
+- **Scope:** single-system rerun, integrated with canonical §5bis (16/16 pilot) as a non-canonical pillar; do not promote to Set-C claim.
+
+**Updated:** 28 August 2026 22:35Z.

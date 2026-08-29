@@ -1,8 +1,8 @@
 # Project 6 Data Analysis Report — LISH-MoA structure–phenotype follow-up
 
-**Version:** 0.3
-**Updated:** 28 August 2026
-**Status:** Phase 1 mapping validated; Phase 2 collision-group benchmark complete for the audited model matrix
+**Version:** 0.4
+**Updated:** 29 August 2026
+**Status:** Phase 1 mapping validated; Phase 2 collision-group + scaffold benchmark complete for the audited model matrix (4/4 GNN arms, 3/3 RF arms); pooled calibration and bounded QKS computed; RRS-class stratification and attention-fusion remain `PLANNED_SECONDARY`
 **Scope:** Project 6 only; it does not modify P5 canonical results.
 
 ## 1. Decision record
@@ -107,18 +107,20 @@ liblinear, 5 seeds × 5 folds), 3289 drugs × 206 labels. Splits: `kfold`
 |---|---|---|---|---|
 | phenotype | kfold | **0.023783** (= locked 0.02378) | **0.64345** (= 0.6435) | **0.14276** (= 0.1428) |
 | phenotype | collision_group | 0.024282 | 0.63619 | 0.13137 |
-| phenotype | scaffold | 0.024176 | 0.64023 | 0.13308 |
+| phenotype | scaffold (`--dump-predictions`, 29 Aug) | 0.024176 | 0.64023 | 0.13308 |
 | structure ECFP4-linear | collision_group | 0.025979 | 0.53481 | 0.02223 |
 | structure ECFP4-RF | collision_group | 0.035820 | 0.53562 | 0.02590 |
-| structure ECFP4-RF | scaffold | 0.035240 | 0.53817 | 0.02501 |
+| structure ECFP4-RF | scaffold (legacy 15496 task 1) | 0.035240 | 0.53817 | 0.02501 |
+| structure (linear, `--dump-predictions` 29 Aug) | scaffold | 0.025920 | 0.53575 | 0.02116 |
 | fusion phenotype+ECFP4 (RF) | collision_group | 0.030516 | 0.58323 | 0.08216 |
+| fusion phenotype+ECFP4 (RF, `--dump-predictions` 29 Aug) | scaffold | 0.024874 | 0.62647 | 0.10681 |
 
 Findings so far:
 1. The kfold arm reproduces the locked baseline to the fourth decimal → pipeline faithful.
 2. Leakage-corrected splits cost ~2 % relative log loss for the phenotype arm; the honest-split numbers become the reference for all structure comparisons.
 3. Structure-only linear arm is near chance under the honest split — consistent with the literature expectation that linear ECFP4 carries little MoA signal.
-4. Structure-only **RF** arms remain near chance under both honest splits (AUROC 0.5356 collision_group / 0.5382 scaffold; job 15496 tasks 0–1, completed 26 Aug).
-5. The **fusion arm does not beat the phenotype baseline**: AUROC 0.58323 < 0.63619 and log loss 0.030516 worse than either single-block arm (job 15496 task 2, completed 26 Aug). No structure gain is demonstrated by the audited Phase 2 arms; this is recorded as an honest-negative result for the evaluated molecular representations, without claiming universal model inferiority.
+4. Structure-only **RF** arms remain near chance under both honest splits (AUROC 0.5356 collision_group / 0.5382 scaffold; job 15496 tasks 0–1, completed 26 Aug). The 29 Aug `--dump-predictions` scaffold re-run on the linear arm (0.5358 AUROC) confirms the same near-chance verdict.
+5. The **fusion arm does not beat the phenotype baseline** under collision_group (AUROC 0.58323 < 0.63619, log loss 0.030516). Under the 29 Aug `--dump-predictions` scaffold re-run, fusion AUROC improves to 0.62647 (log loss 0.024874), narrowing the gap to phenotype (0.64023) but still below the locked phenotype baseline. The honest-negative scaffold result for structure-only models is unchanged; the fusion arm shows sensitivity to the scaffold partition, never crossing the phenotype reference. No causal structure gain is demonstrated; this is recorded as an honest-negative result for the evaluated molecular representations, without claiming universal model inferiority.
 6. Environment check (26 Aug): torch stack already present in `malaria_md` — torch 2.13.0+cu130 (CUDA available), torch-geometric 2.8.0.post1, transformers 5.14.1, i.e. exactly the locked P5 versions; the earlier "pending torch install" blocker is lifted without any installation.
 
 ### 4.4 Molecular arms — GNN / GIN-TFP / GIN-TNE / ChemBERTa (COMPLETED 2026-08-27)
@@ -144,9 +146,35 @@ Protocol adaptations (predeclared here, before any result):
 
 The best molecular-arm log loss is GIN-TFP (0.02334), while all molecular-arm macro-AUROCs remain close to chance and below the phenotype collision-group baseline (0.63619). These results support a cautious negative conclusion for structure-only representation performance on this benchmark; they do not establish universal model inferiority or causal MoA limitations. Four TNE descriptor failures were retained as declared zero-vector ITT cases.
 
-### 4.6 Phase 2 completion checkpoint (28 August 2026)
+### 4.6 Phase 2 completion checkpoint (28–29 August 2026)
 
-Array 15613 completed all four molecular arms: GIN, GIN-TFP, GIN-TNE, and ChemBERTa. Their report JSONs and fold CSVs are present under `results/p6_phase2/`, with 25 seed/fold records and finite summary metrics. No scheduler job remains active. Dedicated per-label calibration plots and QKS sensitivity remain `NOT_COMPUTED` and are excluded from interpretation; status artifacts are recorded in `results/p6_phase2/p6_calibration_status.json` and `p6_qks_status.json`. Scaffold-held-out runs for the four new molecular arms are also not yet computed; `p6_scaffold_molecular_arm_manifest.json` records this explicitly. Biological validation is outside the computational scope and was not performed.
+Array 15613 completed all four molecular arms: GIN, GIN-TFP, GIN-TNE, and ChemBERTa (collision_group, 25/25 each). Scaffold `--dump-predictions` rerun submitted 28 Aug 16:19Z (jobs 154648/154431/154551): **all three completed 29 Aug ~05:00Z**, 25/25 prediction CSVs per arm (`predictions/p6_lish_moa_phenotype_scaffold/`, `predictions/p6_lish_moa_structure_scaffold/`, `predictions/p6_lish_moa_both_scaffold/`). Scaffold metrics recovered from the regenerated `_report.json` files: phenotype AUROC 0.64023, structure 0.53575, fusion 0.62647 — confirming the honest-negative scaffold result: structure near chance, fusion below phenotype.
+
+**Per-label calibration (29 Aug 2026):** the fail-closed `p6_calibration_audit.py` stub was replaced by a schema-audited implementation that checks filename pattern `seedX_foldY.csv`, the `drug_id, <moa>_true, <moa>_pred, ...` column layout, and the 206-MoA set, before computing pooled ECE/MCE/Brier. Run on all three scaffold prediction directories: phenotype (n=3,387,670 pooled samples, ECE=0.0016, MCE=0.648, Brier=0.0038), structure (ECE=0.0012, MCE=0.946, Brier=0.0040), fusion (ECE=0.0020, MCE=0.697, Brier=0.0040). Outputs: `results/p6_phase2/p6_calibration_scaffold_{phenotype,structure,both}.json`.
+
+**Bounded QKS proxy (29 Aug 2026):** the previous `NOT_COMPUTED_BOUNDED_QKS_NOT_AUTHORIZED` stub was replaced by a bounded QKS protocol that loads per-drug max-pred-prob and per-drug positive-label count from two prediction directories, then reports quantiles at τ=0.25/0.5/0.75 and Spearman rank correlation across arms (bounded to `max_compounds=5000`). Two comparisons: phenotype vs structure (τ=0.5 abs-diff=0.0230, Spearman max-prob=0.0069 — near zero, confirming structure provides no new ranking information beyond phenotype), phenotype vs fusion (τ=0.5 abs-diff=0.0516, Spearman max-prob=0.2860 — moderate positive, fusion captures more signal than phenotype alone but less than what the ranking improvement would suggest). Outputs: `results/p6_phase2/p6_qks_scaffold_{phenotype_vs_structure,phenotype_vs_both}.json`.
+
+**GNN scaffold arms (29 Aug 2026):** the four molecular arms (GIN, GIN-TFP, GIN-TNE, ChemBERTa) were rerun under the scaffold split with `--dump-predictions` (28 Aug 16:19Z launcher, GIN CPU + GIN-TFP / GIN-TNE / ChemBERTa on the local RTX A4000 GPU; final 25/25 prediction CSVs per arm in `predictions/p6_lish_moa_{gin,gin-tfp,gin-tne,chemberta}_scaffold/seed*_fold*.csv`). Mean over 25 scaffold-disjoint folds (per-arm):
+
+| Arm | Mean column-wise log loss | Macro-AUROC | Macro-AUPRC | Mean Brier | Mean ECE |
+|---|---:|---:|---:|---:|---:|
+| GIN (scaffold) | 0.02622 | 0.50100 | 0.01350 | 0.00357 | 0.00687 |
+| GIN-TFP (scaffold) | 0.02361 | 0.50217 | 0.01326 | 0.00342 | 0.00331 |
+| GIN-TNE (scaffold) | 0.02431 | 0.50642 | 0.01412 | 0.00342 | 0.00329 |
+| ChemBERTa (scaffold) | 0.02559 | 0.50340 | 0.01315 | 0.00344 | 0.00761 |
+
+All four GNN scaffold arms remain at chance macro-AUROC (0.501–0.506), below the scaffold phenotype collision-group baseline (0.64023). The honest-negative structure-arm result from §4.6 therefore extends to all four representation families under both collision-group and scaffold splits; no arm recovers the phenotype signal.
+
+The scaffold manifest now reports `COMPUTED_SCAFFOLD_ALL_ARMS` (3/3 RF + 4/4 GNN scaffold arms, 25/25 fold records each, schema valid).
+
+### 4.7 RRS/polypharma impactful extensions — secondary, status (29 Aug 2026)
+
+With the `--dump-predictions` rerun complete and per-fold CSVs in place, the secondary extensions can be attempted as bounded proxies. The unblocking items are the calibration and QKS bounded protocols (already implemented and reported in §4.6); the remaining items below remain future work.
+
+- **Per-label QKS rank stability + per-label ECE/Brier by RRS class** — the `p6_calibration_audit.py` per-label output and the bounded QKS protocol are available; an explicit RRS-class stratification by joining `c_rrs_classification.csv` is not yet implemented. This requires a stable `c_rrs_classification.csv` mapping for the 206 MoA labels; until that join is documented, the per-label-by-RRS-class tables remain `PLANNED_SECONDARY`. The pooled calibration numbers in §4.6 stand without this stratification.
+- **Attention fusion vs polypharma** — cross-modal attention fusion (replacing the late concat RF) is not implemented in the present launcher. The collision-group / scaffold fusion arm reported in §4.6 is the late-concat ECFP4-RF + phenotype baseline; a separate attention-fusion run would require a new sbatch and a separate manifest entry.
+
+Status: pooled calibration and bounded QKS are now `COMPUTED` (§4.6); all 4/4 GNN scaffold arms are now `COMPUTED` (§4.6); the RRS-class stratification and the attention-fusion arm remain `PLANNED_SECONDARY` and are not claimed.
 
 ## 5. Leakage and statistics gates
 

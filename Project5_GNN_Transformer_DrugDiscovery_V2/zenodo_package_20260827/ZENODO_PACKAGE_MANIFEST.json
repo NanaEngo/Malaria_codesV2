@@ -1,0 +1,179 @@
+{
+  "schema_version": 2,
+  "created_utc": "2026-08-27",
+  "status": "READY_FOR_UPLOAD_NOT_UPLOADED",
+  "project": "P5_GNN_Transformer_DrugDiscovery_V2",
+  "reserved_doi": "10.5281/zenodo.19608875",
+  "files_expected": 31,
+  "files_staged": 31,
+  "missing": [],
+  "sensitivity_files_present": [],
+  "sensitivity_files_pending": [],
+  "sensitivity_output_contract": "Base-GIN normal-mode sensitivity runs (job 15617) emit two files per config (results CSV + ckpt JSON; curves embedded in ckpt, salience n/a for base GIN); no separate curves/salience JSON is expected",
+  "files": [
+    {
+      "path": "manuscript/P5_manuscript_V2608.tex",
+      "bytes": 48672,
+      "sha256": "d50f910d888693f1fbb72d283736ad15853087c57689aacd474eff19f1f62e29"
+    },
+    {
+      "path": "manuscript/P5_manuscript_V2608.pdf",
+      "bytes": 941877,
+      "sha256": "6d8569720e87f0e8582006acc63c75e0643a3fc4457cef6ea291799a8461e7ae"
+    },
+    {
+      "path": "manuscript/Cover_Letter_P5_JCAMD.tex",
+      "bytes": 4442,
+      "sha256": "354a2015d8db01d2365ec080681785ad9a07cdbb9f5842089871958b75967803"
+    },
+    {
+      "path": "manuscript/Cover_Letter_P5_JCAMD.pdf",
+      "bytes": 90639,
+      "sha256": "b60de96d0ba0813529c82b9208d5a649e867f6e8c088c3c2972be2d8e949208b"
+    },
+    {
+      "path": "manuscript/Bibliography_P5.bib",
+      "bytes": 12662,
+      "sha256": "d774573e285cd79bf309385f92820cf0f81207676c118f57f119a7386cfae3b8"
+    },
+    {
+      "path": "manuscript/P5_SI_V2608.tex",
+      "bytes": 10906,
+      "sha256": "b9f3ab57f373f366970fdfe39491d71c96c93a3efab319030df8d1b5704274cd"
+    },
+    {
+      "path": "manuscript/P5_SI_V2608.pdf",
+      "bytes": 223501,
+      "sha256": "81ba026b414eb077bf021ff33ec4384bc72da32d09e922916001a6c40af694c0"
+    },
+    {
+      "path": "manuscript/Table_P5_Study_Design.tex",
+      "bytes": 757,
+      "sha256": "c5e1a80986476b5f27ed4ad40794b0cabe103cfabe0a59d25557683c4d5c834f"
+    },
+    {
+      "path": "manuscript/Table_P5_Effect_Summary.tex",
+      "bytes": 621,
+      "sha256": "c20ce8e50ed90349fada871bea9924bcc98a8be0cc1afd36e9a515bbf76482b3"
+    },
+    {
+      "path": "manuscript/SUBMISSION_MANIFEST.md",
+      "bytes": 10838,
+      "sha256": "b96bb3a99060a571f1e6e65221d3ae8cc810bfac40040ceab99b79b54fec6b81"
+    },
+    {
+      "path": "docs/P5V2_SUGGESTIONS_IMPLEMENTATION_MATRIX_20260827.md",
+      "bytes": 4909,
+      "sha256": "c8c7efaab9749ecc3bd1f4e208d130560982e58e3c4e94f45582e79da86132c9"
+    },
+    {
+      "path": "results/scientific_audit_20260825.json",
+      "bytes": 77204,
+      "sha256": "61d9869aedf76b0bda0017b3a4a6dba9f676bd3349f948cecb9fd5e50fa18b70"
+    },
+    {
+      "path": "results/extended_campaign_20260825/README.md",
+      "bytes": 3201,
+      "sha256": "95b369b81a8ef6bf9bda5b7528edbaa15059ba84e2da12df6e6091a3e1cb70c0"
+    },
+    {
+      "path": "results/extended_campaign_20260825/campaign_config.json",
+      "bytes": 1188,
+      "sha256": "7effb17c0dfd2adb171593851535fb127f6cc3f6fd47e67bbbd418df5aa3a066"
+    },
+    {
+      "path": "results/extended_campaign_20260825/robustness/extended_analysis_summary.json",
+      "bytes": 28482,
+      "sha256": "be37d46616636fa1b48ba44b70c10c4f57811a6ac3c63314fa4dea242451876e"
+    },
+    {
+      "path": "results/extended_campaign_20260825/robustness/extended_model_aggregates.csv",
+      "bytes": 10294,
+      "sha256": "c179f713ecc1f5b4aad99eb5407b4e3f4a470216359203edc2fccdd29c74494d"
+    },
+    {
+      "path": "results/extended_campaign_20260825/robustness/paired_ablation_contrasts.csv",
+      "bytes": 3338,
+      "sha256": "e271b8b842590c92a6ec9ebc425629347217cf9842f57910c1c5b07d2834b0d7"
+    },
+    {
+      "path": "results/extended_campaign_20260825/robustness/split_audit.json",
+      "bytes": 51466,
+      "sha256": "059e87226a5c47f63f963d2a26222e14146c92efe37a666752b50b26407cfce1"
+    },
+    {
+      "path": "results/extended_campaign_20260825/robustness/chemical_standardization_audit.json",
+      "bytes": 2613539,
+      "sha256": "9be5539d16c943977af8063f2cf8d65186cf03907601ce91c23d34c92cb6807c"
+    },
+    {
+      "path": "results/extended_campaign_20260825/robustness/chembl_threshold_sensitivity.json",
+      "bytes": 1656,
+      "sha256": "d2bede4ff45bdd13951819d6ce54838f6676a78d2cb21e90cde3404ca89143bb"
+    },
+    {
+      "path": "results/extended_campaign_20260825/robustness/salience_stability.csv",
+      "bytes": 7532,
+      "sha256": "ce80c5f1e72ae7aafdff8c4b88793577d2b7197dab0d3bde92b23ae026df6c77"
+    },
+    {
+      "path": "results/extended_campaign_20260825/chemberta/chemberta_completion_audit_20260827.json",
+      "bytes": 1370,
+      "sha256": "31a3597d0af167c8d79868fff58f92a958389fced067e630d4e260cb4acfd783"
+    },
+    {
+      "path": "results/calibration_20260827/calibration_summary.csv",
+      "bytes": 3095,
+      "sha256": "7bc93c209a81fc2c7a8fdffb546156e425c3861614720c8974df12a1a97b72de"
+    },
+    {
+      "path": "results/calibration_20260827/summary.json",
+      "bytes": 7011,
+      "sha256": "197897811f63aaf572f5999af3121be3b048c8ba71e5868c61493942591cd73c"
+    },
+    {
+      "path": "scripts/p5_calibration_posthoc.py",
+      "bytes": 5338,
+      "sha256": "e1cf887ba8aba97f536e40e5ad26743beb40bf940ccd5719f0b5364e46e8fd2f"
+    },
+    {
+      "path": "scripts/p5_benchmark.py",
+      "bytes": 17470,
+      "sha256": "b0fbac50d52f52df68867e69051b670eb460a93ba0bfa66f24dff4cec2fc78d8"
+    },
+    {
+      "path": "scripts/p5_sensitivity_gnn.sbatch",
+      "bytes": 1267,
+      "sha256": "3f56f3a007c95a50deb5ffe765bbdabb923bf525acfb2801ac8f152845346d66"
+    },
+    {
+      "path": "results/p5_GIN_scaffold_results_sens_h64_d02.csv",
+      "bytes": 25078,
+      "sha256": "84afe37895ea570ef6f01cd1d56c96d3f985dfd72d29b461f86910c4cac45d02"
+    },
+    {
+      "path": "results/p5_GIN_scaffold_ckpt_sens_h64_d02.json",
+      "bytes": 39278,
+      "sha256": "940f4caf80820f9808c52337206fb4438c45dd8562064955a007343057d3daaa"
+    },
+    {
+      "path": "results/p5_GIN_scaffold_results_sens_h256_d01.csv",
+      "bytes": 23500,
+      "sha256": "45c46309a4d5d455a2c00ad88dc554421a89d19522ccdfb0b42850c34ef3e124"
+    },
+    {
+      "path": "results/p5_GIN_scaffold_ckpt_sens_h256_d01.json",
+      "bytes": 37076,
+      "sha256": "b31aa3a334a75aa17ca59094e6be1bda7b41caf99a93024439e53f46e0d2059e"
+    }
+  ],
+  "exclusions": [
+    "Slurm logs",
+    "LaTeX auxiliary files",
+    "Python caches",
+    "model caches",
+    "temporary files",
+    "credentials"
+  ],
+  "boundary": "Local staging only. No Zenodo upload or DOI publication was performed."
+}

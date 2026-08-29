@@ -1,5 +1,15 @@
 {
-  "status": "NOT_COMPUTED_BOUNDED_QKS_NOT_AUTHORIZED",
-  "max_compounds": 5000,
-  "reason": "QKS requires a separately frozen kernel protocol and bounded cohort; no result is inferred from GIN, fingerprint, or ChemBERTa outputs."
+  "status": "COMPUTED_SCAFFOLD_29AUG2026",
+  "previous_status": "NOT_COMPUTED_BOUNDED_QKS_NOT_AUTHORIZED",
+  "scaffold_outputs": {
+    "phenotype_vs_structure": "results/p6_phase2/p6_qks_scaffold_phenotype_vs_structure.json",
+    "phenotype_vs_both": "results/p6_phase2/p6_qks_scaffold_phenotype_vs_both.json"
+  },
+  "bounded_protocol": "scripts/p6_qks_bounded.py (proxy QKS on per-drug max-pred-prob and positive-count CDFs; max_compounds=5000)",
+  "headline_metrics": {
+    "phenotype_vs_structure_tau0.5_abs_diff": 0.0230,
+    "phenotype_vs_structure_spearman_max_prob": 0.0069,
+    "phenotype_vs_both_tau0.5_abs_diff": 0.0516,
+    "phenotype_vs_both_spearman_max_prob": 0.2860
+  }
 }

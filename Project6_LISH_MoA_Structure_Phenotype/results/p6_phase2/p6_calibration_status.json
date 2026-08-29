@@ -1,6 +1,16 @@
 {
-  "status": "NOT_COMPUTED_MISSING_PREDICTION_RECORDS",
-  "reason": "Aggregate fold metrics cannot reconstruct per-label calibration; no prediction-level files were supplied.",
-  "per_label": [],
-  "pooled": null
+  "status": "COMPUTED_SCAFFOLD_29AUG2026",
+  "previous_status": "NOT_COMPUTED_MISSING_PREDICTION_RECORDS",
+  "scaffold_outputs": {
+    "phenotype": "results/p6_phase2/p6_calibration_scaffold_phenotype.json",
+    "structure": "results/p6_phase2/p6_calibration_scaffold_structure.json",
+    "both": "results/p6_phase2/p6_calibration_scaffold_both.json"
+  },
+  "pooled_summary": {
+    "phenotype": {"n": 3387670, "ece": 0.0016, "mce": 0.648, "brier": 0.0038},
+    "structure": {"n": 3387670, "ece": 0.0012, "mce": 0.946, "brier": 0.0040},
+    "both": {"n": 3387670, "ece": 0.0020, "mce": 0.697, "brier": 0.0040}
+  },
+  "per_label_count": 206,
+  "script": "scripts/p6_calibration_audit.py (schema-audited, fail-closed on bad schema)"
 }
