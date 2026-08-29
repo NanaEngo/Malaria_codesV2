@@ -187,12 +187,69 @@ def compute_calibration(files: list[Path]) -> dict:
     }
 
 
+def stratify_per_label(per_label: list[dict], scheme: str, n_bins: int) -> dict:
+    """Data-driven stratification of per-label metrics.
+
+    No external ontology is required: strata are defined from the empirical
+    distribution of `pos_rate` across the 206 LISH-MoA labels, so the join
+    remains auditable. Supported schemes:
+
+    - `pos_rate_tertile`: low / mid / high by 1/3 and 2/3 quantiles of pos_rate.
+    - `pos_rate_quartile`: four equal-frequency bins.
+    - `none`: no stratification.
+    """
+    if scheme == "none" or not per_label:
+        return {"scheme": scheme, "strata": []}
+    sorted_pl = sorted(per_label, key=lambda x: x["pos_rate"])
+    n = len(sorted_pl)
+    if scheme == "pos_rate_tertile":
+        cuts = [n // 3, 2 * n // 3]
+        names = ["low", "mid", "high"]
+    elif scheme == "pos_rate_quartile":
+        cuts = [n // 4, n // 2, 3 * n // 4]
+        names = ["q1_low", "q2", "q3", "q4_high"]
+    else:
+        return {"scheme": scheme, "strata": [], "error": f"unknown scheme {scheme!r}"}
+    edges = [0] + cuts + [n]
+    cut_points = [sorted_pl[i]["pos_rate"] for i in cuts]
+    strata = []
+    for i, name in enumerate(names):
+        lo, hi = edges[i], edges[i + 1]
+        members = sorted_pl[lo:hi]
+        if not members:
+            continue
+        n_total = sum(m["n"] for m in members)
+        if n_total == 0:
+            continue
+        brier_pooled = sum(m["brier"] * m["n"] for m in members) / n_total
+        mean_pred_pooled = sum(m["mean_pred"] * m["n"] for m in members) / n_total
+        pos_rate_pooled = sum(m["pos_rate"] * m["n"] for m in members) / n_total
+        strata.append({
+            "stratum": name,
+            "n_labels": len(members),
+            "pos_rate_min": min(m["pos_rate"] for m in members),
+            "pos_rate_max": max(m["pos_rate"] for m in members),
+            "pos_rate_pooled": pos_rate_pooled,
+            "mean_pred_pooled": mean_pred_pooled,
+            "brier_pooled": brier_pooled,
+        })
+    return {
+        "scheme": scheme,
+        "n_labels": n,
+        "cut_points_pos_rate": cut_points,
+        "strata": strata,
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--prediction-dir", type=Path, required=True)
     ap.add_argument("--output", type=Path, required=True)
     ap.add_argument("--features", type=str, default="unknown")
     ap.add_argument("--split", type=str, default="unknown")
+    ap.add_argument("--stratify-by", type=str, default="none",
+                    choices=["none", "pos_rate_tertile", "pos_rate_quartile"],
+                    help="Data-driven stratification of per-label metrics (no external ontology).")
     args = ap.parse_args()
     if not args.prediction_dir.exists():
         result = {
@@ -200,8 +257,9 @@ def main() -> int:
             "prediction_dir": str(args.prediction_dir),
             "features": args.features,
             "split": args.split,
+            "stratify_by": args.stratify_by,
             "audit": {},
-            "calibration": {"per_label": [], "pooled": None},
+            "calibration": {"per_label": [], "pooled": None, "stratification": None},
         }
     else:
         files = sorted(args.prediction_dir.glob("seed*_fold*.csv"))
@@ -212,18 +270,21 @@ def main() -> int:
                 "prediction_dir": str(args.prediction_dir),
                 "features": args.features,
                 "split": args.split,
+                "stratify_by": args.stratify_by,
                 "audit": audit,
-                "calibration": {"per_label": [], "pooled": None},
+                "calibration": {"per_label": [], "pooled": None, "stratification": None},
             }
         else:
             cal = compute_calibration(files)
+            strat = stratify_per_label(cal["per_label"], args.stratify_by, 3)
             result = {
                 "status": "COMPUTED",
                 "prediction_dir": str(args.prediction_dir),
                 "features": args.features,
                 "split": args.split,
+                "stratify_by": args.stratify_by,
                 "audit": audit,
-                "calibration": cal,
+                "calibration": {**cal, "stratification": strat},
             }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2) + "\n")
