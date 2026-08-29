@@ -85,7 +85,7 @@ submission_ACS_P2/
 | 5 | Figures séparées | `scaffold_paradox.pdf`, `applicability_domain.pdf`, `persistence_diagrams_v2.pdf` | ✅ |
 | 6 | .bib file | `Bibliography_Paper3.bib` | ✅ |
 | 7 | LaTeX source (zip) | Tous les .tex + Graphics/ | ✅ |
-| 8 | ORCID chaque auteur | MVST: 0009-0004-5170-2309, JPTN: 0000-0002-1936-8353, PS: sans ORCID, WFM: 0000-0002-3934-3233, SGNE: 0000-0002-3013-3029 | ✅ |
+| 8 | ORCID chaque auteur | MVST: 0009-0004-5170-2309, JPTN: 0000-0002-1936-8353, PS: sans ORCID, WFM: 0000-0002-3934-3233, SGNE: 0000-0002-7484-3508 | ✅ |
 | 9 | Keywords | persistent homology; tensor networks; quantum kernel methods; molecular fingerprints; scaffold paradox; antimalarial drug discovery; African natural products | ✅ |
 | 10 | Data availability | GitHub repo + Zenodo DOI | ✅ |
 | 11 | AI disclosure | "AI-assisted tools... authors take full responsibility" | ✅ |
@@ -126,7 +126,7 @@ submission_JoC/
 | 5 | Figures séparées | `Graphics/benchmark_reward_bar.png`, `Graphics/pareto_front.png`, `Graphics/rrs_pns_profile.pdf`, `Graphics/benchmark_efficiency.png`, `Graphics/p4_evidence_overview.pdf` | ✅ |
 | 6 | .bib file | `P4_Bibliography.bib` | ✅ |
 | 7 | LaTeX source (zip) | Tous les .tex + Graphics/ | ✅ |
-| 8 | ORCID chaque auteur | MVST: 0009-0004-5170-2309, JPTN: 0000-0002-1936-8353, PS: sans ORCID, WFM: 0000-0002-3934-3233, SGNE: 0000-0002-3013-3029 | ✅ |
+| 8 | ORCID chaque auteur | MVST: 0009-0004-5170-2309, JPTN: 0000-0002-1936-8353, PS: sans ORCID, WFM: 0000-0002-3934-3233, SGNE: 0000-0002-7484-3508 | ✅ |
 | 9 | Keywords | de novo design; Monte Carlo tree search; Pareto optimisation; antimalarial; multi-objective; synthetic accessibility; resistance resilience | ✅ |
 | 10 | Data availability | GitHub repo + Zenodo DOI | ✅ |
 | 11 | AI disclosure | "AI assistants... authors take full responsibility" | ✅ |
@@ -167,7 +167,7 @@ submission_JoC/
 | 5 | Figures séparées | `p5_auc_benchmark.png`, `p5_learning_curves.png`, `p5_salience.png` | ✅ |
 | 6 | .bib file | `Bibliography_P5.bib` | ✅ |
 | 7 | LaTeX source (zip) | Tous les .tex | ✅ |
-| 8 | ORCID chaque auteur | MVST: 0009-0004-5170-2309, JPTN: 0000-0002-1936-8353, PS: sans ORCID, WFM: 0000-0002-3934-3233, SGNE: 0000-0002-3013-3029 | ✅ |
+| 8 | ORCID chaque auteur | MVST: 0009-0004-5170-2309, JPTN: 0000-0002-1936-8353, PS: sans ORCID, WFM: 0000-0002-3934-3233, SGNE: 0000-0002-7484-3508 | ✅ |
 | 9 | Keywords | graph neural networks; molecular fingerprints; antimalarial natural products; scaffold split; benchmark; persistent homology | ✅ |
 | 10 | Data availability | GitHub repo + Zenodo DOI (pending) | ✅ |
 | 11 | AI disclosure | "AI-assisted tools... authors take full responsibility" | ✅ |

@@ -2,7 +2,7 @@
 
 **Updated:** 29 August 2026 16:00 UTC
 **Conda environment**: `malaria_md` (Python 3.11, RDKit 2025.03.6, PennyLane 0.45.1, PyTorch 2.13.0, Vina 1.2.7)
-**ORCID**: MVST: 0009-0004-5170-2309, JPTN: 0000-0002-1936-8353, PS: sans ORCID, WFM: 0000-0002-3934-3233, SGNE: 0000-0002-3013-3029
+**ORCID**: MVST: 0009-0004-5170-2309, JPTN: 0000-0002-1936-8353, PS: sans ORCID, WFM: 0000-0002-3934-3233, SGNE: 0000-0002-7484-3508
 **Long-form historical instructions:** `docs/archive/md_full_20260812/AGENTS.md`
 
 **P1 SOUMISSION JCIM = V7 (canonical):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/manuscript/P1_V7_Integrated_Polypharmacology_RRS.tex` (main 25 p.) + `_SM.tex` (17 p.) + cover letter; **package ACS auto-contenu `submission_ACS_P1V7/`** (PDF + .bbl/.aux pour xr + .bib). **V7 supersedes V6 (10/08/2026)** with comprehensive validation (DEKOIS 2.0 external benchmark, MMV enrichment, redocking RMSD — 3 tables + SM S11), physicochemical characterization (3 tables), enhanced narrative (Discussion +125%), methodological rigor (grid box specs, 99.3% cost reduction). **V4/V5/V6 = archives pré-soumission** (V4 : espace chimique + remédiation 2F6I 484 ; V5 : docking ciblé ; V6 : version 10/08/2026). V5 results-only was moved to `_archives/P1_V5_CorrectedGrid_archived_20260829/` on 2026-08-29 (the canonical V7 has all V5 inputs integrated; V5 had no scripts/manuscript). Compilation V7 : main 25 p., SM 17 p., cover 1 p., 0 erreur / 0 réf. indéfinie ✅ — package techniquement prêt; restent la vérification des métadonnées en ligne, la lecture auteur finale et la revue structurale indépendante avant toute promotion soumission.
