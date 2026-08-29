@@ -4,6 +4,8 @@
 **Updated:** 29 August 2026 (PP-15 PBC-whole MM-GBSA FINAL both reportable; manuscript/SM reconciled)
 **Root:** `Project2_Polypharmacology_MD_ValidationV2607/`
 
+> **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P6) via leurs DAR respectifs et AGENTS.md.
+
 ## 1. Central question
 
 Does a resistance-aware, target-level computational workflow (docking-derived RRS + PNS + ACSI + targeted MD) distinguish predicted potency from predicted resilience in a chemically diverse antimalarial library — and what does a targeted MD pilot add beyond docking?
