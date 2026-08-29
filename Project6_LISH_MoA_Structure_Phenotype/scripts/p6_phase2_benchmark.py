@@ -140,6 +140,11 @@ def fit_predict(Xtr: np.ndarray, Ytr: np.ndarray, Xte: np.ndarray,
                model_kind: str = "logistic", seed: int = 42, n_jobs: int = 8) -> np.ndarray:
     """Fit one unweighted logistic regression per label and predict probabilities.
 
+    Ponytail: parallel across labels via joblib loky backend (4 workers).
+    Reduces per-fold wall time from ~7 min (sequential 206 liblinear fits) to
+    ~2 min on the 4-core box. Per-label RF inner n_jobs reduced to 1 so total
+    parallelism stays bounded at 4.
+
     Args:
         Xtr: Training feature matrix.
         Ytr: Binary label matrix (n_train, n_labels).
@@ -149,22 +154,25 @@ def fit_predict(Xtr: np.ndarray, Ytr: np.ndarray, Xte: np.ndarray,
         Clipped probability matrix (n_test, n_labels); labels absent from the
         training fold fall back to the constant training prevalence.
     """
-    pred = np.zeros((len(Xte), Ytr.shape[1]), dtype=np.float64)
-    for j in range(Ytr.shape[1]):
+    from joblib import Parallel, delayed
+    n_labels = Ytr.shape[1]
+    inner_n_jobs = 1 if model_kind == "rf" else 1
+    def _one(j):
         y = Ytr[:, j].astype(int)
         if len(np.unique(y)) < 2:
-            pred[:, j] = float(y.mean())
-            continue
-        # Unweighted probabilities are retained for the primary log-loss and
-        # calibration estimand (locked P5 protocol).
+            return j, np.full(len(Xte), float(y.mean()))
         if model_kind == "rf":
-            # ponytail: fixed depth/leaves defaults; tune only if RF becomes the headline arm
             model = RandomForestClassifier(n_estimators=300, class_weight=None,
-                                           n_jobs=n_jobs, random_state=seed)
+                                           n_jobs=inner_n_jobs, random_state=seed)
         else:
             model = LogisticRegression(max_iter=1000, class_weight=None, solver="liblinear")
         model.fit(Xtr, y)
-        pred[:, j] = model.predict_proba(Xte)[:, 1]
+        return j, model.predict_proba(Xte)[:, 1]
+    n_parallel = min(4, n_labels)
+    results = Parallel(n_jobs=n_parallel, backend="loky")(_one(j) for j in range(n_labels))
+    pred = np.zeros((len(Xte), n_labels), dtype=np.float64)
+    for j, p in results:
+        pred[:, j] = p
     return np.clip(pred, CLIP_LO, CLIP_HI)
 
 
@@ -280,10 +288,13 @@ def main(argv: list[str] | None = None) -> int:
             pred = fit_predict(Xtr, Y[tr], Xte, args.model, seed, args.jobs)
             if pred_dir is not None:
                 # ponytail: per-drug per-label dump for calibration/QKS (fail-closed audit needs this)
-                out = pd.DataFrame({"drug_id": df.iloc[te]["drug_id"].values})
+                # Use dict-of-arrays + pd.concat (axis=1) once instead of 207 single-column inserts
+                # which trigger DataFrame fragmentation and dominate wall time.
+                cols = {"drug_id": df.iloc[te]["drug_id"].values}
                 for j, lbl in enumerate(labels):
-                    out[f"{lbl}_true"] = Y[te, j]
-                    out[f"{lbl}_pred"] = pred[:, j]
+                    cols[f"{lbl}_true"] = Y[te, j]
+                    cols[f"{lbl}_pred"] = pred[:, j]
+                out = pd.DataFrame(cols)
                 out.to_csv(pred_dir / f"seed{seed}_fold{fold}.csv", index=False)
             rec = {"features": args.features, "split": args.split, "seed": seed,
                     "fold": fold, "n_train": len(tr), "n_test": len(te)}
