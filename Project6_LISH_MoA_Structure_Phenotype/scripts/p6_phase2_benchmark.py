@@ -136,14 +136,27 @@ def make_folds(split: str, seed: int, n: int,
     raise ValueError(split)
 
 
+def _fit_one_label_mp(args):
+    j, Xtr_b, y, Xte_b, model_kind, seed = args
+    n_test = Xte_b.shape[0]
+    if len(np.unique(y)) < 2:
+        return j, np.full(n_test, float(y.mean()))
+    if model_kind == "rf":
+        model = RandomForestClassifier(n_estimators=300, class_weight=None,
+                                       n_jobs=1, random_state=seed)
+    else:
+        model = LogisticRegression(max_iter=1000, class_weight=None, solver="liblinear")
+    model.fit(Xtr_b, y)
+    return j, model.predict_proba(Xte_b)[:, 1]
+
+
 def fit_predict(Xtr: np.ndarray, Ytr: np.ndarray, Xte: np.ndarray,
                model_kind: str = "logistic", seed: int = 42, n_jobs: int = 8) -> np.ndarray:
     """Fit one unweighted logistic regression per label and predict probabilities.
 
-    Ponytail: parallel across labels via joblib loky backend (4 workers).
+    Ponytail: parallel across labels via multiprocessing.Pool (4 workers).
     Reduces per-fold wall time from ~7 min (sequential 206 liblinear fits) to
-    ~2 min on the 4-core box. Per-label RF inner n_jobs reduced to 1 so total
-    parallelism stays bounded at 4.
+    ~2 min on the 4-core box.
 
     Args:
         Xtr: Training feature matrix.
@@ -154,22 +167,16 @@ def fit_predict(Xtr: np.ndarray, Ytr: np.ndarray, Xte: np.ndarray,
         Clipped probability matrix (n_test, n_labels); labels absent from the
         training fold fall back to the constant training prevalence.
     """
-    from joblib import Parallel, delayed
+    import multiprocessing as mp
     n_labels = Ytr.shape[1]
-    inner_n_jobs = 1 if model_kind == "rf" else 1
-    def _one(j):
-        y = Ytr[:, j].astype(int)
-        if len(np.unique(y)) < 2:
-            return j, np.full(len(Xte), float(y.mean()))
-        if model_kind == "rf":
-            model = RandomForestClassifier(n_estimators=300, class_weight=None,
-                                           n_jobs=inner_n_jobs, random_state=seed)
-        else:
-            model = LogisticRegression(max_iter=1000, class_weight=None, solver="liblinear")
-        model.fit(Xtr, y)
-        return j, model.predict_proba(Xte)[:, 1]
+    Xtr_b = np.ascontiguousarray(Xtr, dtype=np.float32)
+    Xte_b = np.ascontiguousarray(Xte, dtype=np.float32)
+    Ytr_i8 = np.ascontiguousarray(Ytr, dtype=np.int8)
+    args_list = [(j, Xtr_b, Ytr_i8[:, j].copy(), Xte_b, model_kind, seed)
+                 for j in range(n_labels)]
     n_parallel = min(4, n_labels)
-    results = Parallel(n_jobs=n_parallel, backend="loky")(_one(j) for j in range(n_labels))
+    with mp.get_context("fork").Pool(n_parallel) as pool:
+        results = pool.map(_fit_one_label_mp, args_list)
     pred = np.zeros((len(Xte), n_labels), dtype=np.float64)
     for j, p in results:
         pred[:, j] = p
