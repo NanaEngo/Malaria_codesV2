@@ -45,23 +45,23 @@
 
 \label{sec:lish_si}
 
-This section provides the complete protocol and results of the phenotype-only LISH benchmark that is summarized in the main text. It is an orthogonal pharmacological reference, not a validation of the molecular representations studied in the main benchmark.
+The main text summarizes a phenotype-only benchmark on the public LISH mechanism-of-action (MoA) release; we detail its protocol and results here. The benchmark speaks to pharmacology rather than to chemistry: it evaluates how well gene-expression and viability readouts predict a drug's MoA, and it says nothing about whether the molecular representations examined in the main analysis capture that pharmacology, since no structural information links the two.
 
 \subsection{Data and preparation}
 
-We used the public LISH MoA training release\citep{lish_moa_2019} as a separate, phenotype-only benchmark; the public challenge repository is available at \url{https://github.com/LISHarvard/moa_challenge} (accessed 12 August 2026). The preparation retained \num{772} gene-expression features, \num{100} cell-viability features, and \num{3} experimental-condition summary columns (exposure time, high-dose fraction, treatment-type fraction), and aggregated repeated assay observations to the drug level.
+We drew on the public LISH MoA training release \citep{lish_moa_2019}, available from the challenge repository at \url{https://github.com/LISHarvard/moa_challenge} (accessed 12 August 2026), and treated it as an independent, phenotype-only dataset. After aggregating repeated assay observations to the drug level, the working table retained \num{772} gene-expression features, \num{100} cell-viability features, and three experimental-condition summaries (exposure time, high-dose fraction, treatment-type fraction).
 
-The scored endpoint comprised \num{206} MoA labels for \num{3289} drugs\citep{Trapotsi2022MoA}; labels were defined at the drug level from observed MoA-associated annotations. Because the public release used here did not contain a versioned drug--SMILES mapping, the benchmark was not used to train or evaluate molecular fingerprints, GNNs, or transformers. A prespecified sensitivity analysis excluded vehicle-control samples, yielding \num{3288} drugs. All fold records were audited for missing or non-finite metrics before interpretation. The endpoint is described as MoA-associated prediction because it does not establish causal target engagement \citep{Trapotsi2022MoA}.
+The scored endpoint comprises \num{206} MoA labels across \num{3289} drugs \citep{Trapotsi2022MoA}, each label assigned at the drug level from the observed MoA-associated annotations. The public release carries no versioned mapping from drug identifier to SMILES, so we could not use it to train or evaluate the ECFP4 fingerprint, the GNNs, or the transformer; the benchmark stands on its own as a phenotype-only reference. A prespecified sensitivity check removed vehicle-control samples, leaving \num{3288} drugs, and every fold record was checked for missing or non-finite metrics before we interpreted the results. Because MoA annotation reflects observed association rather than a measured physical interaction, we refer to the endpoint throughout as MoA-associated prediction rather than as target engagement \citep{Trapotsi2022MoA}.
 
 \subsection{Protocol}
 
-We fitted an unweighted per-label logistic model independently for each of the \num{206} labels, evaluated with five random seeds and five drug-grouped folds, and reported mean column-wise log loss as the primary metric with macro-AUPRC\citep{davis2006auprc}, macro-AUROC\citep{bmj2006rocauc}, mean Brier score, and expected calibration error\citep{natoesci2017ece} as secondary metrics.
+For each of the \num{206} labels we fitted an unweighted logistic model independently, evaluated over five random seeds and five drug-grouped folds. Mean column-wise log loss served as the primary metric; macro-AUPRC \citep{davis2006auprc}, macro-AUROC \citep{bmj2006rocauc}, mean Brier score, and expected calibration error \citep{natoesci2017ece} accompany it as secondary summaries of the same fold grid.
 
 \subsection{Results}
 
 \label{sec:lish_si_results}
 
-With vehicle controls retained, the phenotype-only baseline achieved the metrics reported in \Cref{tab:lish_metrics} across \num{25} fold--seed evaluations. Removing vehicle controls changed macro-AUROC by only $-\num{0.0018}$, and the other metrics moved by less than \num{0.002} in absolute value, indicating that the phenotype-driven baseline is robust to control exclusion.
+\Cref{tab:lish_metrics} reports the phenotype-only baseline, averaged over the \num{25} fold--seed evaluations, with vehicle controls retained. Excluding those controls left macro-AUROC essentially unchanged ($-\num{0.0018}$) and moved every other metric by less than \num{0.002} in absolute terms, so the baseline's behavior does not depend on whether vehicle-treated samples remain in the training data.
 
 \begin{table}[h]
 \centering
@@ -80,14 +80,13 @@ Expected calibration error & \num{0.00376} & \num{0.00381} & $+\num{0.00005}$ \\
 \end{tabular}
 \end{table}
 
-\subsection{Interpretation boundary}
+\subsection{Scope of the comparison}
 
-These metrics summarize the phenotype-only reference; they are \textbf{not numerically comparable} with the molecular ROC-AUC results of the main manuscript because the task, labels, features, aggregation unit, and primary metric differ. The labels indicate MoA-associated prediction rather than causal target engagement. The LISH analysis therefore serves as an orthogonal pharmacological reference and control-sensitivity analysis, not as a molecular-model validation or evidence of causal mechanism.
-
+These metrics characterize the phenotype-only reference on its own terms; they cannot be set numerically against the molecular ROC-AUC results in the main text, because the two analyses differ in task, labels, features, unit of aggregation, and primary metric. The labels themselves record MoA association rather than a demonstrated physical interaction with a target. The LISH result is therefore best read as an orthogonal pharmacological reference, together with a check on its sensitivity to vehicle controls, rather than as evidence bearing on the molecular models or on causal mechanism.
 \section{Post-hoc calibration metrics for the molecular benchmark}
 \label{sec:calibration_si}
 
-Calibration metrics were computed post-hoc from the archived fold-level test predictions of the extended campaign (five seeds $\times$ five folds per configuration; \num{99180} pooled test records per configuration). No model was retrained; the estimates therefore describe the calibration of the deployed checkpoints, pooled over seeds and folds, and are reported as a pooled-calibration estimand. Expected calibration error (ECE) and maximum calibration error (MCE) use \num{10} equal-width bins; the Brier score is the mean squared error between predicted probability and label.
+We computed calibration metrics after the fact from the archived fold-level test predictions of the extended campaign, pooling five seeds and five folds per configuration into \num{99180} test records each; no model was retrained for this analysis. The resulting ECE and MCE (computed with \num{10} equal-width bins) and Brier score (the mean squared error between predicted probability and label) describe the calibration of the deployed checkpoints as a group, not of any single fold or seed in isolation, because the predictions come from checkpoints already fitted during the extended campaign and are pooled across seeds and folds.
 
 \begin{table}[h]
 \centering
@@ -116,16 +115,41 @@ Split & Model & {ECE} & {MCE} & {Brier} \\
 \end{tabular}
 \end{table}
 
-The degradation is consistent across families: ECE roughly doubles from the random split to the scaffold split and widens further on the novel partitions, and ChemBERTa --- the arm with the largest ROC-AUC fold-level spread --- also shows the largest calibration error under scaffold shift. These estimates are secondary robustness evidence; they do not alter the canonical ROC-AUC results and are not presented as calibrated probabilities for prospective use. Per-configuration reliability summaries are provided in the released data package.
+The pattern is consistent across model families: ECE roughly doubles from the random split to the scaffold split and widens further on the novel partitions. ChemBERTa, already the arm with the widest fold-level spread in ROC-AUC, also carries the largest calibration error under scaffold shift. These pooled estimates refine the ranking analysis without revising it; they leave the canonical ROC-AUC results untouched and should not be read as calibrated probabilities ready for prospective use. Per-configuration reliability diagrams are available in the released data package.
+
+\subsection{Calibration and ranking on the high-RRS polypharmacology subset}
+\label{sec:polypharma_si}
+
+We also stratified the calibration and ROC-AUC analyses by resistance-relevant score (RRS), the docking-based classification from the P2 Set-C study that uses docking-RRS $\ge 80\%$ on available targets. Applying that classification \citep{temgoua2027md}, we found six candidates with an A*/A RRS class on the targets for which docking scores were available (PP-01, PP-02, PP-06, PP-11, PP-13, PP-15), together contributing \num{30} test samples per configuration out of the \num{99180} pooled records. This available-target definition is broader than a stricter, complete two-target definition (PP-01 and PP-15 only, n=2), since it also admits candidates that lack a score on one target but retain a high RRS on the other. Calibration broken down by RRS class, under both the complete and available-target definitions, is provided in the released data package.
+
+\begin{table}[h]
+\centering
+\caption{Available-target polypharmacology subset ROC-AUC on the scaffold split (six A*/A-class candidates, \num{30} test samples per configuration against \num{99150} single-target samples). $\Delta$AUC is polypharmacology minus single-target. The small candidate count precludes a bootstrap 95\% interval, so values are reported descriptively.}
+\label{tab:s2_polypharma_available}
+\small
+\begin{tabular}{l S[table-format=1.3] S[table-format=1.3] S[table-format=-1.3]}
+\toprule
+Model & {Polypharma AUC} & {Single-target AUC} & {$\Delta$AUC} \\
+\midrule
+ECFP4--RF & 0.616 & 0.789 & -0.173 \\
+GIN & 0.144 & 0.812 & -0.668 \\
+GIN-TFP (native) & 0.296 & 0.817 & -0.521 \\
+GIN-TNE (native) & 0.224 & 0.815 & -0.591 \\
+ChemBERTa & 0.616 & 0.789 & -0.173 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+On the scaffold split, ROC-AUC on the available-target polypharmacology subset falls below the single-target value for every model, with deficits ranging from $-\num{0.173}$ to $-\num{0.668}$. ChemBERTa and ECFP4--RF hold up best (a deficit of $-\num{0.173}$ each), while GIN, GIN-TFP, and GIN-TNE lose considerably more ($-\num{0.52}$ to $-\num{0.67}$). The stricter complete two-target subset, built from only two candidates, is noisier still (AUC ranging \num{0.00}--\num{0.84}) and shows even larger deficits for most models. These numbers are descriptive only: the small candidate count prevents any inferential claim, and the honest-negative scaffold result that anchors the main analysis stands unchanged.
 
 \section{Light GNN hyperparameter sensitivity on the scaffold split}
 \label{sec:gnn_sensitivity_si}
 
-To probe whether the canonical negative result depends on the specific GIN capacity choice, we retrained the base GIN on the frozen canonical scaffold split with two configurations bracketing the canonical setting (hidden dimension \num{128}, dropout \num{0.1}): a smaller model (hidden \num{64}, dropout \num{0.2}) and a larger model (hidden \num{256}, dropout \num{0.1}). The protocol was otherwise identical to the canonical benchmark (five seeds $\times$ five folds, same optimizer constants, epoch budget, and early-stopping rule). These sensitivity runs are secondary analyses and leave all canonical estimates unchanged.
+The canonical negative result could, in principle, reflect a poor choice of GIN capacity rather than a genuine limit of the representation. To probe this, we retrained the base GIN on the frozen canonical scaffold split at two settings bracketing the canonical configuration (hidden dimension \num{128}, dropout \num{0.1}): a smaller model (hidden \num{64}, dropout \num{0.2}) and a larger one (hidden \num{256}, dropout \num{0.1}), keeping every other element of the protocol identical — five seeds, five folds, the same optimizer constants, epoch budget, and early-stopping rule.
 
 \begin{table}[h]
 \centering
-\caption{Base-GIN scaffold-split sensitivity to hidden dimension and dropout (secondary analysis; \num{25} fold--seed records per configuration). The canonical configuration (hidden \num{128}, dropout \num{0.1}) reached ROC AUC \num{0.8047}.}
+\caption{Base-GIN sensitivity to hidden dimension and dropout on the scaffold split (\num{25} fold--seed records per configuration). The canonical configuration (hidden \num{128}, dropout \num{0.1}) reached ROC AUC \num{0.8047}.}
 \label{tab:s3_gin_sensitivity}
 \begin{tabular}{lccc}
 \toprule
@@ -138,16 +162,16 @@ Hidden \num{256}, dropout \num{0.1} & \num{0.8000} & \num{0.0160} & \num{0.0370}
 \end{tabular}
 \end{table}
 
-All three configurations remain clearly below the ECFP4--RF\citep{ecfp_2010} scaffold reference (ROC AUC \num{0.8300}), and the spread across configurations (\num{0.8000}--\num{0.8081}) is small relative to the gap to the fingerprint reference (\num{0.022}--\num{0.030}). Doubling or halving the hidden capacity, or changing the dropout rate, therefore does not close the scaffold-split gap on this panel. This sensitivity check bounds, but does not eliminate, the possibility that some untested architecture or budget would perform differently; it supports reading the canonical negative result as a property of the representation comparison rather than of one specific capacity choice.
+All three configurations remain clearly below the ECFP4--RF \citep{ecfp_2010} scaffold reference (ROC AUC \num{0.8300}), and the spread across them (\num{0.8000}--\num{0.8081}) is small next to the gap that separates any of them from the fingerprint baseline (\num{0.022}--\num{0.030}). Doubling or halving the hidden capacity, or changing the dropout rate, does not close that gap on this panel. The check bounds the possibility that some untested architecture or training budget would behave differently without eliminating it; taken together with the canonical result, it supports reading the negative finding as a property of the representation comparison itself rather than of one particular capacity choice.
 
 \section{Paired differences against the ECFP4--RF reference}
 \label{sec:paired_ci_si}
 
-The main text reports the paired model-minus-reference differences with their permutation-based intervals. For completeness, \Cref{tab:s4_paired_ci} archives the audited paired seed-level contrasts with 95\% intervals derived from the paired $t$ statistics (\num{5} per-seed means per arm). All eight contrasts are negative and exclude zero at the 95\% level after Benjamini--Hochberg correction\citep{benjamini1995}.
+The main text reports each model-minus-reference difference alongside a permutation-based interval. \Cref{tab:s4_paired_ci} complements that summary with the paired seed-level contrasts and the 95\% intervals derived from the paired $t$ statistics (five per-seed means per arm). All eight contrasts are negative and exclude zero at the 95\% level after Benjamini--Hochberg correction \citep{benjamini1995}.
 
 \begin{table}[h]
 \centering
-\caption{Paired model-minus-ECFP4--RF AUC differences with 95\% intervals (secondary table; derived from the audited paired seed-level statistics).}
+\caption{Paired model-minus-ECFP4--RF AUC differences with 95\% intervals, derived from the paired seed-level statistics.}
 \label{tab:s4_paired_ci}
 \begin{tabular}{llccc}
 \toprule
@@ -165,7 +189,7 @@ Scaffold & ChemBERTa & $-\num{0.0433}$ & \numrange{-0.0499}{-0.0367} & $\num{0.0
 \end{tabular}
 \end{table}
 
-These intervals are consistent with the permutation analysis of the main text. They are descriptive summaries of the evaluated seed--fold grid and do not extend to other panels, splits, or architectures.
+These paired-$t$-based intervals are wider than the permutation intervals reported for the same four scaffold contrasts in the main text, as expected from the two different construction methods. The two tables agree on point estimates, sign, and exclusion of zero at the same four $\Delta$AUC values. The intervals reported here describe the evaluated seed--fold grid and should not be extended to other panels, splits, or architectures.
 
 \bibliographystyle{unsrtnat}
 \bibliography{Bibliography_P5}
