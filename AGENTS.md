@@ -1,6 +1,8 @@
 # AGENTS.md — active project instructions
 
-**Updated:** 29 August 2026 (per-project DARs promoted; P1 V5, P3 V1, P3 V2, P4 V1, P5 V1 archived to `_archives/`)
+**Updated:** 29 August 2026 16:00 UTC
+**Conda environment**: `malaria_md` (Python 3.11, RDKit 2025.03.6, PennyLane 0.45.1, PyTorch 2.13.0, Vina 1.2.7)
+**ORCID**: MVST: 0009-0004-5170-2309, JPTN: 0000-0002-1936-8353, PS: sans ORCID, WFM: 0000-0002-3934-3233, SGNE: 0000-0002-3013-3029
 **Long-form historical instructions:** `docs/archive/md_full_20260812/AGENTS.md`
 
 **P1 SOUMISSION JCIM = V7 (canonical):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/manuscript/P1_V7_Integrated_Polypharmacology_RRS.tex` (main 25 p.) + `_SM.tex` (17 p.) + cover letter; **package ACS auto-contenu `submission_ACS_P1V7/`** (PDF + .bbl/.aux pour xr + .bib). **V7 supersedes V6 (10/08/2026)** with comprehensive validation (DEKOIS 2.0 external benchmark, MMV enrichment, redocking RMSD — 3 tables + SM S11), physicochemical characterization (3 tables), enhanced narrative (Discussion +125%), methodological rigor (grid box specs, 99.3% cost reduction). **V4/V5/V6 = archives pré-soumission** (V4 : espace chimique + remédiation 2F6I 484 ; V5 : docking ciblé ; V6 : version 10/08/2026). V5 results-only was moved to `_archives/P1_V5_CorrectedGrid_archived_20260829/` on 2026-08-29 (the canonical V7 has all V5 inputs integrated; V5 had no scripts/manuscript). Compilation V7 : main 25 p., SM 17 p., cover 1 p., 0 erreur / 0 réf. indéfinie ✅ — package techniquement prêt; restent la vérification des métadonnées en ligne, la lecture auteur finale et la revue structurale indépendante avant toute promotion soumission.
@@ -39,10 +41,10 @@ Read the relevant DAR before changing code, parameters, protocols, or manuscript
 | Project | Status | Essential result or boundary |
 |---|---|---|
 | P1 | **V7 technically submission-ready (JCIM)** | V7 enhanced + validated (DEKOIS/MMV/redocking), 25 p. main / 17 p. SM / 1 p. cover, package refreshed; final author/metadata review and independent structural review remain |
-| P2 | Set-C MD pilot CANONICAL; audit adversarial = MINOR REVISION, GO JCIM | Production 15320 COMPLETE 16/16 (2026-08-18); QC=0; MD-RRS `COMPUTED_WITH_COHORT_CONTRACT` (PP-01/PP-02 Class A, rule `setc_p2_minheavy_5A_ge10percent_v1`); MM-GBSA 16/16 (8 mutants >100 % = rétention-pas-gain); full-panel MD-RRS reste `NOT_COMPUTED`. **28/08 robustesse intégrée au manuscrit** : gate MD-filter pilot-scope (7/12 rows, PP-01 promu 2 cibles, PP-02 non), bootstrap CI95 (A* 0.294 [0.118, 0.529]), consensus GNINA CNN (38/38 classe A, ρ=0.558) — recompile propre main 30 p. / SM 16 p., 0 erreurs ; Vina-only reste canonique |
-| P3 | V2608 manuscript ready (V4 canonical) | ECFP4 0.948; hybrid 0.888; QKS ≈ RBF (p=0.088); no quantum advantage; TNE competitive on PfDHFR (R² 0.473 vs 0.461), inferior on PfATP4/PfCRT; Zenodo DOI `10.5281/zenodo.19608875` reserved, upload pending. V1 + V2 archived 2026-08-29; canonical = V4 (`Project3_Quantum_Inspired_RepresentationsV2607_V4/`); see P3 DAR for V2608 manuscript + scripts in V1 archive |
-| P4 | v12 benchmark complete; V1 archived | Random 0.6724 > MCTS 0.6649; Pareto front is a separate pre-activity artifact; QMC Tier 1 functional, Tier 2 not publication-grade |
-| P5 | Benchmark complete; V1 archived | ECFP4-RF dominates under scaffold split (0.830); topological fusion modestly complementary; LISH-MoA phenotype baseline 0.6435 macro-AUROC; Zenodo 31/31 staged READY_FOR_UPLOAD |
+| P2 | **JCIM submission-ready** | Production 15320 COMPLETE 16/16; QC=0; MD-RRS `COMPUTED_WITH_COHORT_CONTRACT`; MM-GBSA 16/16; **PP-01/PP-15 multi-seed COMPUTED** (±0.05/0.03 kcal/mol); STRING 400/900 COMPUTED (ρ=0.9975); SM Table S17 added; recompile main 30 p. / SM 17 p., 0 erreurs |
+| P3 | **JCAMD submission-ready (V4 canonical)** | ECFP4 0.948; hybrid 0.888; QKS ≈ RBF; no quantum advantage; Zenodo DOI reserved. Package `submission_JCAMD/` created |
+| P4 | **JCAMD submission-ready** | Random 0.6724 > MCTS 0.6649; Pareto front 4 points (HV 1.2366); package `submission_JCAMD/` created |
+| P5 | **JCAMD submission-ready** | ECFP4-RF 0.830 scaffold / **0.833 Butina**; **Butina 5/5 arms COMPUTED** (ChemBERTa 0.778); topological fusion modestly complementary; LISH-MoA baseline 0.6435; GNN gap narrows on Butina (0.010 vs 0.016 scaffold) |
 | P6 | Phase 2 complete | 7 arms × 25 folds; pooled calibration ECE 0.0006–0.0074; RRS-class proxy (pos_rate tertile) monotonic; QKS phenotype_vs_both Spearman 0.283; attention-fusion PLANNED_SECONDARY |
 | P7 | Project init | Quantum molecular encoding; no canonical results yet; environment setup in progress |
 
