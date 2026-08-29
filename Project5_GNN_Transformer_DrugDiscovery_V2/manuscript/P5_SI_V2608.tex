@@ -163,6 +163,30 @@ Hidden \num{256}, dropout \num{0.1} & \num{0.8000} & \num{0.0160} & \num{0.0370}
 
 All three configurations remain clearly below the ECFP4--RF \citep{ecfp_2010} scaffold reference (ROC AUC \num{0.8300}), and the spread across them (\num{0.8000}--\num{0.8081}) is small relative to the gap that separates any of them from the fingerprint baseline (\num{0.022}--\num{0.030}). Doubling or halving the hidden capacity, or changing the dropout rate, does not close that gap on this panel. The check bounds the possibility that some untested architecture or training budget would behave differently without eliminating it; taken together with the canonical result, it supports reading the negative finding as a property of the representation comparison itself rather than of one particular capacity choice.
 
+\section{Butina cluster split}
+\label{sec:butina_si}
+
+As a stricter chemical-extrapolation test, Bemis--Murcko scaffolds \citep{bemis_murcko_1996} were clustered with the Butina algorithm \citep{butina1999} at a Tanimoto distance cut-off of \num{0.55} on the ECFP4 matrix, and whole clusters were assigned to five folds per seed so that test clusters were entirely absent from training. Five seeds were used, matching the primary protocol (\num{25} fold--seed records per arm). Metrics were recomputed from the stored per-fold prediction files with the same scoring functions as the primary benchmark.
+
+\begin{table}[h]
+\centering
+\caption{Mean ROC AUC across the five per-seed means under the Butina cluster split. The ordering of the five arms is identical to the canonical scaffold split.}
+\label{tab:s5_butina}
+\begin{tabular}{lc}
+\toprule
+Model & ROC AUC (Butina) \\
+\midrule
+ECFP4--RF & \textbf{\num{0.8331}} \\
+GIN--TFP & \num{0.8232} \\
+GIN & \num{0.8202} \\
+GIN--TNE & \num{0.8191} \\
+ChemBERTa & \num{0.7776} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Because cluster assignment discards intra-cluster train--test pairs that the scaffold split retains, the Butina partition is a stricter extrapolation regime. The ECFP4--RF-over-GIN margin narrows from \num{0.025} (scaffold) to \num{0.013} (Butina) but the fingerprint baseline remains the highest-ranked arm and every learned model stays below it. The result is a secondary robustness estimate; it does not replace the prespecified primary benchmark.
+
 \section{Paired differences against the ECFP4--RF reference}
 \label{sec:paired_ci_si}
 
