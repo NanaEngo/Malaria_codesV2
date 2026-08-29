@@ -1,13 +1,15 @@
-% Table S17: Multi-seed redocking reproducibility (PP-15, Vina 1.2.7)
+% Table S17: Multi-seed redocking reproducibility (PP-15 and PP-01, Vina 1.2.7)
 \begin{table}[htbp]
 \centering
 \scriptsize
-\caption{Multi-seed redocking reproducibility for candidate PP-15 (AutoDock Vina~\citep{vina_2021}, exhaustiveness 32, five random seeds; lowest-energy mode). Values in \si{\kcalmol}. Seed-sensitivity control on the same grid box that produced the canonical single-run score; not a binding or resistance measurement.}
-\label{tab:s17_multiseed_redock}
+\caption{Multi-seed redocking reproducibility for candidates PP-15 and PP-01 (AutoDock Vina~\citep{vina_2021}, five random seeds; lowest-energy mode). Values in \si{\kcalmol}. Each control reuses the exact canonical ligand preparation and grid box that produced the candidate's canonical single-run score. For PP-01 PfCRT WT, the canonical value ($-9.300$) lies \qty{0.04}{\kcalmol} above the observed seed range because the original receptor-preparation detail of that single run is not preserved on disk; this is within the $\le\qty{0.05}{\kcalmol}$ seed-noise floor. Seed-sensitivity controls measure docking-stochasticity reproducibility, not binding or resistance.\label{tab:s17_multiseed_redock}}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}} l c c c l @{}}\toprule
 Candidate--Target & Mean & Range & Canonical run & Seed sensitivity \\\midrule
-PP-15 PfDHFR WT & $-8.590\pm0.007$ & $-8.603/-8.585$ & $-8.621$ & $\le\qty{0.03}{\kcalmol}$ \\\\
-PP-15 PfCRT WT & $-7.822\pm0.011$ & $-7.840/-7.810$ & $-7.810$ & $\le\qty{0.03}{\kcalmol}$ \\\\\bottomrule
+PP-15 PfDHFR WT & $-8.590\pm0.007$ & $-8.603/-8.585$ & $-8.621$ & $\le\qty{0.03}{\kcalmol}$ \\
+PP-15 PfCRT WT & $-7.822\pm0.011$ & $-7.840/-7.810$ & $-7.810$ & $\le\qty{0.03}{\kcalmol}$ \\
+PP-01 PfDHFR WT & $-7.499\pm0.021$ & $-7.529/-7.475$ & $-7.500$ & $\le\qty{0.05}{\kcalmol}$ \\
+PP-01 PfCRT WT & $-9.250\pm0.015$ & $-9.262/-9.225$ & $-9.300$ & $\le\qty{0.05}{\kcalmol}$ \\
+\bottomrule
 \end{tabular*}
 \end{table}

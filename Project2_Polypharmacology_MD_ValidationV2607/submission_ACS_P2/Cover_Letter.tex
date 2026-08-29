@@ -1,0 +1,62 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{a4paper, margin=2cm}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{siunitx}
+\sisetup{separate-uncertainty=true, range-phrase=--}
+\DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
+\DeclareSIUnit\angstrom{\text{\AA}}
+\singlespacing
+
+\begin{document}
+\emergencystretch=2em
+
+\begin{flushleft}
+\textbf{Myke-Vital Temgoua Sao} \\
+Department of Physics, Faculty of Science \\
+University of Yaound\'{e} I \\
+P.O. Box 812, Yaound\'{e}, Cameroon \\
+\href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[1.5em]
+August 28, 2026
+\end{flushleft}
+
+\begin{flushleft}
+Prof.\ Kenneth M.\ Merz, Jr., Editor-in-Chief \\
+\textit{Journal of Chemical Information and Modeling} \\
+American Chemical Society
+\end{flushleft}
+
+\vspace{0.5em}
+
+\noindent Dear Prof.\ Merz,
+
+We submit our manuscript \textbf{``Resistance-Aware Docking Prioritization of Antimalarial Leads from African Natural Products''} for consideration as an Article in \textit{JCIM}.
+
+This work evaluates a docking-based resistance-aware prioritization strategy and uses targeted molecular dynamics as a separate structural follow-up. It does not assign a systems-level mechanism of action from docking alone. Seventeen Set-C candidates were ranked by a docking-derived resistance resilience score (RRS) across six PfDHFR and PfCRT resistance states, with chemical-space (ACSI) and network (PNS) scores kept as separate ranking dimensions. Four parent-study complexes that are not on the Set-C list were simulated for \qty{10}{\nano\second} each as a short pose-retention check. On the 12 candidates with complete two-target data the classes were one A*, one A, four B, five C, and one D; five PfCRT-only compounds are reported separately. Only PfCRT--214 gave an interpretable MM-GBSA estimate ($\qty{-18.25 \pm 0.40}{\kcalmol}$). An external docking panel (39 ligands, 312 records) averaged near RRS 100, with little mutant/wild-type contrast under the same protocol. A Tartarus cross-check showed no composite MPO--affinity association, consistent with treating those scores as separate ranking tools.
+
+A 16-system Set-C MD pilot on two candidates asks whether short trajectories and MM-GBSA recover the docking-RRS pattern. It is single-replicate, is not used to assign RRS classes, and is not biological validation. Sensitivity checks explore candidate removal and score perturbation. Companion Paper~1 results provide upstream methods and chemical-space context only, not independent replication.
+
+Code, source data, and analysis scripts are available on GitHub under an open-source licence; a Zenodo snapshot will be deposited at publication. Statistics are reported with effect sizes, permutation $p$-values, bootstrap intervals, and Bonferroni adjustment.
+
+\noindent\textbf{Suggested reviewers.}
+\begin{enumerate}
+  \item Dr.\ Fidele Ntie-Kang, University of Buea --- African natural-product computational discovery
+  \item Dr.\ Kelly Chibale, University of Cape Town --- antimalarial drug discovery
+  \item Dr.\ John D.\ Chodera, Memorial Sloan Kettering --- free-energy methods and MD best practices
+\end{enumerate}
+
+\noindent This manuscript is original, not under consideration elsewhere, and all authors have approved the submission.
+
+\vspace{1em}
+
+\noindent Sincerely,
+
+\vspace{1em}
+
+\noindent \textbf{Myke-Vital Temgoua Sao} \\
+(on behalf of all co-authors)
+
+\end{document}
