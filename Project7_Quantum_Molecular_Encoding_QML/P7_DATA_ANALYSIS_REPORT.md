@@ -1,5 +1,7 @@
 # P7 Data Analysis Report — Quantum Molecular Encoding
 
+> **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P7) via leurs DAR respectifs et AGENTS.md.
+
 **Scope:** Project 7 only — true quantum machine learning via molecular structure encoding  
 **Created:** 28 August 2026  
 **Status:** Project initialization; no canonical results yet
