@@ -3,6 +3,7 @@
 **Project**: Project 1 — Chem-space antimalarial / polypharmacology-oriented RRS framework
 **Canonical directory**: `Project1_Chem_space_antimalarial_V7_CorrectedGrid/`
 **Manuscript target**: *J. Chem. Inf. Model.* (JCIM, ACS)
+**Conda environment**: `malaria_md` (Python 3.11, RDKit 2025.03.6, Meeko 0.7.1, Vina 1.2.7)
 **Author**: Myke Vital Sao Temgoua
 **Last refreshed**: 2026-08-29
 **Status**: submission-ready package (`INTERNAL_WORK_AUTHORIZED`), awaiting author Paragon Plus deposit

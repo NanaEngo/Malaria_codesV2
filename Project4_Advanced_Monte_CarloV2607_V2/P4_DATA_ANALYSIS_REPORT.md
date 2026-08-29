@@ -2,6 +2,7 @@
 
 **Scope:** Pareto-guided MCTS, multi-objective candidate generation, and QMC diagnostics.
 **Updated:** 17 August 2026
+**Conda environment**: `malaria_md` (Python 3.11, pymoo, RDKit)
 
 > **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P7) via leurs DAR respectifs et AGENTS.md.
 **Long-form history:** `docs/archive/md_full_20260812/P4_DATA_ANALYSIS_REPORT.md`

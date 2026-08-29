@@ -3,6 +3,7 @@
 **Project**: Project 3 — Quantum-inspired molecular representations (TFP / TNE / QKS) for African antimalarial candidates
 **Canonical directory**: `Project3_Quantum_Inspired_RepresentationsV2607_V4/`
 **Manuscript target**: *J. Cheminformatics* / *Nat. Comput. Sci.* (TBD)
+**Conda environment**: `malaria_md` (Python 3.11, PennyLane 0.45.1, TensorLy 0.9.0, Ripser.py)
 **Author**: Myke Vital Sao Temgoua
 **Last refreshed**: 2026-08-29
 **Status**: V2608 manuscript ready; benchmarks complete; Zenodo DOI reserved (`10.5281/zenodo.19608875`), upload pending

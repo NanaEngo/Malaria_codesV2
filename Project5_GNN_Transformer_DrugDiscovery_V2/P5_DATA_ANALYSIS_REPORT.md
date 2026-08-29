@@ -2,6 +2,7 @@
 
 **Scope:** GNN/Transformer drug-discovery benchmark on the canonical P3-derived antimalarial panel.
 **Updated:** 28 August 2026 19:17Z
+**Conda environment**: `malaria_md` (Python 3.11, PyTorch 2.13.0, PyG 2.8.0, Transformers 5.14.1)
 
 > **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P7) via leurs DAR respectifs et AGENTS.md. (completed-arm integration; ChemBERTa 125/125 + calibration 30 configs + GNN sensitivity 15617 + RRS/polypharma calibration extensions COMPUTED_SECONDARY; no new training)
 **Long-form history:** `docs/archive/md_full_20260812/P5_DATA_ANALYSIS_REPORT.md`
