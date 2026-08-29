@@ -1,7 +1,7 @@
 # BMAD Q1 Data Analysis Report — active summary
 
-**Scope:** P1–P6. Each project has a dedicated DAR where applicable.
-**Updated:** 28 August 2026
+**Scope:** P1–P7. Each project has a dedicated DAR where applicable.
+**Updated:** 29 August 2026 (P4 V1 + P5 V1 archived; per-project DARs canonical)
 
 > **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport (ou le DAR de projet dédié) AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P7) via leurs DAR respectifs et AGENTS.md.
 **Long-form history:** `docs/archive/md_full_20260812/BMAD_Q1_DATA_ANALYSIS_REPORT.md`
@@ -13,7 +13,8 @@
 | **P1** | V7 is the submission-oriented workspace (JCIM); V6/V4/V5 provide corrected evidence and remediation layers | Chemical-space novelty, target-wise docking, and computational RRS/polypharmacology are reportable only within their stated provenance boundaries |
 | **P2** | Canonical 17-member Set-C cohort and docking-RRS/ACSI/PNS analysis complete; Set-C MD pilot 16/16 complete with QC, MD-RRS and MM-GBSA secondary outputs; external replication 312/312 complete; PP-15 single-ligand feasibility probe with FINAL PBC-whole MM-GBSA PfDHFR -29.52 ± 0.33 kcal/mol and PfCRT -27.79 ± 0.49 kcal/mol (29 Aug) reportable; PP-01_PfDHFR_I164L rerun MM-GBSA -24.36 ± 1.77 kcal/mol (endframe=880, 88 frames) reportable | Docking-RRS is canonical; the PP-01/PP-02 Set-C MD pilot is complete as a secondary analysis; full 17-candidate MD-RRS remains NOT_COMPUTED by design; external panel provides computational sensitivity evidence; PP-15 probe is outside the Set-C estimand and serves as within-protocol feasibility contrast |
 | **P3** | Canonical classical, hybrid, QKS, TNE/TDA, and external-validation analyses complete | Quantum-inspired descriptors are complementary; no quantum advantage over RBF or ECFP4 is claimed |
-| **P5** | Scaffold-controlled molecular-representation benchmark complete; manuscript 16 p. + SI 4 p. + cover 1 p., JCAMD target | ECFP4–RF dominates under scaffold split; topological fusion modestly complementary; honest-negative result with explicit limits |
+| **P4** | v12 20-seed benchmark complete; V1 archived | Random 0.6724 > MCTS 0.6649 (honest negative); Pareto front separate pre-activity artifact; QMC Tier 1 functional, Tier 2 not publication-grade |
+| **P5** | Scaffold-controlled molecular-representation benchmark complete; V1 archived | ECFP4–RF dominates under scaffold split; topological fusion modestly complementary; honest-negative result with explicit limits |
 | **P6** | Leakage-aware structure–phenotype MoA benchmark complete (collision-group + scaffold); manuscript 8 p. + cover 1 p., JCAMD target | Molecular-arm AUROCs near chance (0.501–0.508) under collision-group-disjoint evaluation; scaffold 4/4 GNN arms AUROC 0.501–0.506; phenotype reference AUROC 0.636; pooled calibration ECE ≤0.0020, bounded QKS Spearman phenotype_vs_structure ≈0.007 |
 
 ## 2. P1 — chemical space, docking, and RRS/polypharmacology
@@ -112,6 +113,17 @@ Canonical full-library results:
 
 Removing QK reduces hybrid AUC by **0.040**; TFP contributes **0.014**; TNE is mildly negative in the ablation. QKS re-runs show quantum ≈ RBF at n=5,000 and n=19,849; no quantum advantage is claimed. External descriptor analyses retain the **351 TNE failures** as an explicit ITT/complete-case sensitivity issue rather than hiding them. The external QKS pilot (n=150) gives quantum **0.8385** versus RBF **0.8423**, p=0.374; this is an external replication of equivalence, not an advantage.
 
+## 4b. P4 — Pareto-guided MCTS molecular generation
+
+| Method | Mean reward ± SD |
+|---|---:|
+| Random | 0.6724 ± 0.0056 |
+| MCTS + ScafVAE | 0.6649 ± 0.0068 |
+| GA | 0.6453 ± 0.0124 |
+| Greedy | 0.4278 ± 0.0000 |
+
+MCTS vs Random: paired t₁₉=−4.97, p=0.000085 — honest negative, MCTS does not beat broad Random exploration. Pareto front (hypervolume 1.2366) is a separate pre-activity artifact, not a scalar optimisation claim. QMC Tier 1 (DFT) functional; Tier 2 (DMC) not publication-grade without wavefunction optimisation. V1 archived to `_archives/Project4_Advanced_Monte_CarloV2607_archived_20260829/`; canonical = V2.
+
 ## 5. P5 V2 — scaffold-controlled molecular-representation benchmark
 
 ### Canonical findings
@@ -168,8 +180,9 @@ The P3 external arm will compare ECFP4, TFP, TNE, and an explicitly labelled opt
 | P2 Set-C production | `Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c_preparation_20260812_v1/` | 16/16 production trajectories completed; post-production chain COMPLETE; MD-RRS COMPUTED_WITH_COHORT_CONTRACT; MM-GBSA Set-C 16/16 |
 | P2 external replication | `Project2_Polypharmacology_MD_ValidationV2607/results/robustness_transfer_20260827/` | 312/312 finite records, 39 ligands, 8 PfDHFR/PfCRT states; bootstrap RRS 100.45 [99.59, 101.32] |
 | P3 external validation | `Project3_Quantum_Inspired_RepresentationsV2607/results/` | canonical/external sensitivity outputs |
+| P4 benchmark | `Project4_Advanced_Monte_CarloV2607_V2/results/benchmark_molecules_opt_v12/` | 20-seed v12-activity; Random 0.6724 > MCTS 0.6649 |
 | P5 benchmark | `Project5_GNN_Transformer_DrugDiscovery_V2/results/` | ECFP4–RF 0.8300 (scaffold); 25 fold–seed replicates; ChEMBL transfer 22,267 compounds |
-| P6 benchmark | `Project6_LISH_MoA_Structure_Phenotype/results/p6_phase2/` | 4 molecular arms completed; collision-group AUROC 0.501–0.508; phenotype 0.636 |
+| P6 benchmark | `Project6_LISH_MoA_Structure_Phenotype/results/p6_phase2/` | 7 arms × 25 folds; pooled calibration ECE 0.0006–0.0074; RRS-class proxy; QKS Spearman 0.283 (phenotype_vs_both) |
 
 ## 9. Cross-project rules
 
@@ -184,6 +197,7 @@ The P3 external arm will compare ECFP4, TFP, TNE, and an explicitly labelled opt
 - **P1 (V7):** complete funding items and final author read-through for V7; package `submission_ACS_P1V7/` verified auto-contained (main 25 p. / SM 17 p. / cover 1 p., 0 undefined refs, 12/08/2026).
 - **P2:** manuscript submission-ready (JCIM, 28 p. main + 16 p. SM); external replication 312/312 complete; graphical abstract TikZ created. Author gates: metadata verification, Zenodo upload. Full 17-candidate MD-RRS remains NOT_COMPUTED by design.
 - **P3:** preserve the honest-negative external validation framing and complete repository deposit preparation.
+- **P4:** v12 benchmark complete; V1 archived. Author gates: final prose review, versioned data deposit, Zenodo/GitHub release.
 - **P5:** manuscript submission-ready (JCAMD, 16 p. main + 4 p. SI); Zenodo package 31/31 staged. Author gates: visual PDF review, metadata, Zenodo upload.
 - **P6:** manuscript submission-ready (JCAMD, 8 p. + cover); all molecular arms completed under both collision-group and scaffold splits (29 Aug 2026); pooled calibration + bounded QKS computed. Remaining author gates: metadata, Zenodo upload.
 - **All:** keep this summary short; place detailed job narratives and superseded decisions in the archive.

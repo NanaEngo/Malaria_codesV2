@@ -1,23 +1,36 @@
 # AGENTS.md — active project instructions
 
-**Updated:** 13 August 2026
+**Updated:** 29 August 2026 (per-project DARs promoted; P1 V5, P3 V1, P3 V2, P4 V1, P5 V1 archived to `_archives/`)
 **Long-form historical instructions:** `docs/archive/md_full_20260812/AGENTS.md`
 
-**P1 SOUMISSION JCIM = V7 (canonical):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/manuscript/P1_V7_Integrated_Polypharmacology_RRS.tex` (main 25 p.) + `_SM.tex` (17 p.) + cover letter; **package ACS auto-contenu `submission_ACS_P1V7/`** (PDF + .bbl/.aux pour xr + .bib). **V7 supersedes V6 (10/08/2026)** with comprehensive validation (DEKOIS 2.0 external benchmark, MMV enrichment, redocking RMSD — 3 tables + SM S11), physicochemical characterization (3 tables), enhanced narrative (Discussion +125%), methodological rigor (grid box specs, 99.3% cost reduction). **V4/V5/V6 = archives pré-soumission** (V4 : espace chimique + remédiation 2F6I 484 ; V5 : docking ciblé ; V6 : version 10/08/2026). Compilation V7 : main 25 p., SM 17 p., cover 1 p., 0 erreur / 0 réf. indéfinie ✅ — package techniquement prêt; restent la vérification des métadonnées en ligne, la lecture auteur finale et la revue structurale indépendante avant toute promotion soumission.
+**P1 SOUMISSION JCIM = V7 (canonical):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/manuscript/P1_V7_Integrated_Polypharmacology_RRS.tex` (main 25 p.) + `_SM.tex` (17 p.) + cover letter; **package ACS auto-contenu `submission_ACS_P1V7/`** (PDF + .bbl/.aux pour xr + .bib). **V7 supersedes V6 (10/08/2026)** with comprehensive validation (DEKOIS 2.0 external benchmark, MMV enrichment, redocking RMSD — 3 tables + SM S11), physicochemical characterization (3 tables), enhanced narrative (Discussion +125%), methodological rigor (grid box specs, 99.3% cost reduction). **V4/V5/V6 = archives pré-soumission** (V4 : espace chimique + remédiation 2F6I 484 ; V5 : docking ciblé ; V6 : version 10/08/2026). V5 results-only was moved to `_archives/P1_V5_CorrectedGrid_archived_20260829/` on 2026-08-29 (the canonical V7 has all V5 inputs integrated; V5 had no scripts/manuscript). Compilation V7 : main 25 p., SM 17 p., cover 1 p., 0 erreur / 0 réf. indéfinie ✅ — package techniquement prêt; restent la vérification des métadonnées en ligne, la lecture auteur finale et la revue structurale indépendante avant toute promotion soumission.
 
 ## 1. Canonical source map
 
-- **P1–P3 DAR:** `BMAD_Q1_DATA_ANALYSIS_REPORT.md`
-- **P4 DAR:** `P4_DATA_ANALYSIS_REPORT.md`
-- **P5 DAR:** `P5_DATA_ANALYSIS_REPORT.md`
+- **P1 DAR:** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/P1_DATA_ANALYSIS_REPORT.md`
+- **P2 DAR:** `Project2_Polypharmacology_MD_ValidationV2607/P2_DATA_ANALYSIS_REPORT.md`
+- **P3 DAR:** `Project3_Quantum_Inspired_RepresentationsV2607_V4/P3_DATA_ANALYSIS_REPORT.md`
+- **P4 DAR:** `Project4_Advanced_Monte_CarloV2607_V2/P4_DATA_ANALYSIS_REPORT.md`
+- **P5 DAR:** `Project5_GNN_Transformer_DrugDiscovery_V2/P5_DATA_ANALYSIS_REPORT.md`
+- **P6 DAR:** `Project6_LISH_MoA_Structure_Phenotype/P6_DATA_ANALYSIS_REPORT.md`
+- **P7 DAR:** `Project7_Quantum_Molecular_Encoding_QML/P7_DATA_ANALYSIS_REPORT.md`
+- **BMAD (Q1 cross-project synthesis):** `BMAD_Q1_DATA_ANALYSIS_REPORT.md` — pulls headline numbers from each per-project DAR
 - **Master roadmap:** `P1_P5_RRS_POLYPHARMA_ROADMAP.md`
 - **Document index:** `docs/MD_DOCUMENT_INDEX.md`
-- **P1 V7 (JCIM submission):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/`
-- **P1 V6 (archive):** `Project1_Chem_space_antimalarial_V6_CorrectedGrid/`
-- **P2:** `Project2_Polypharmacology_MD_ValidationV2607/`
-- **P3:** `Project3_Quantum_Inspired_RepresentationsV2607/`
-- **P4:** `Project4_Advanced_Monte_CarloV2607/`
-- **P5:** `Project5_GNN_Transformer_DrugDiscovery/`\n- **P6:** `Project6_LISH_MoA_Structure_Phenotype/` (follow-up LISH-MoA; structure arm blocked pending mapping)
+- **Canonical project directories:**
+  - **P1 V7 (JCIM submission):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/`
+  - **P1 V5 (archive 2026-08-29):** `_archives/P1_V5_CorrectedGrid_archived_20260829/`
+  - **P2:** `Project2_Polypharmacology_MD_ValidationV2607/`
+  - **P3 (V2608 manuscript):** `Project3_Quantum_Inspired_RepresentationsV2607_V4/`
+  - **P3 V1 (archive 2026-08-29):** `_archives/P3_V2607_archived_20260829/` (historical scripts/tests; P3 V4 reuses them)
+  - **P3 V2 (archive 2026-08-29):** `_archives/P3_V2607_V2_archived_20260829/`
+  - **P4:** `Project4_Advanced_Monte_CarloV2607_V2/`
+  - **P4 V1 (archive 2026-08-29):** `_archives/Project4_Advanced_Monte_CarloV2607_archived_20260829/` (superset of scripts in V2)
+  - **P5:** `Project5_GNN_Transformer_DrugDiscovery_V2/`
+  - **P5 V1 (archive 2026-08-29):** `_archives/Project5_GNN_Transformer_DrugDiscovery_archived_20260829/` (strict subset of V2 scripts/results)
+  - **P6:** `Project6_LISH_MoA_Structure_Phenotype/`
+  - **P7:** `Project7_Quantum_Molecular_Encoding_QML/`
+- **Archived project directories (do not use as source for new claims):** `_archives/`
 
 Read the relevant DAR before changing code, parameters, protocols, or manuscript claims.
 
@@ -27,10 +40,11 @@ Read the relevant DAR before changing code, parameters, protocols, or manuscript
 |---|---|---|
 | P1 | **V7 technically submission-ready (JCIM)** | V7 enhanced + validated (DEKOIS/MMV/redocking), 25 p. main / 17 p. SM / 1 p. cover, package refreshed; final author/metadata review and independent structural review remain |
 | P2 | Set-C MD pilot CANONICAL; audit adversarial = MINOR REVISION, GO JCIM | Production 15320 COMPLETE 16/16 (2026-08-18); QC=0; MD-RRS `COMPUTED_WITH_COHORT_CONTRACT` (PP-01/PP-02 Class A, rule `setc_p2_minheavy_5A_ge10percent_v1`); MM-GBSA 16/16 (8 mutants >100 % = rétention-pas-gain); full-panel MD-RRS reste `NOT_COMPUTED`. **28/08 robustesse intégrée au manuscrit** : gate MD-filter pilot-scope (7/12 rows, PP-01 promu 2 cibles, PP-02 non), bootstrap CI95 (A* 0.294 [0.118, 0.529]), consensus GNINA CNN (38/38 classe A, ρ=0.558) — recompile propre main 30 p. / SM 16 p., 0 erreurs ; Vina-only reste canonique |
-| P3 | Benchmarks complete | ECFP4 0.9475; hybrid 0.8876; QKS ≈ RBF; no quantum advantage claimed |
-| P4 | v12 benchmark complete | Random 0.6724 > MCTS 0.6649; Pareto front is a separate pre-activity artifact |
-| P5 | Benchmark complete | ECFP4-RF dominates under scaffold split; topological fusion is modestly complementary; phenotype-only LISH-MoA baseline is complete and separate |
-| P6 | Phase 2 benchmark running | Mapping audit PASSED 25/08 (100 % coverage 3289/3289, contrat gelé, 1722 molécules uniques); baseline phénotype reproduite au 4e décimal sur splits honnêtes; bras structure ≈ hasard, fusion RF < baseline (AUROC 0.583 < 0.636); arms GIN/GIN-TFP/GIN-TNE/ChemBERTa soumis (job 15500) |
+| P3 | V2608 manuscript ready (V4 canonical) | ECFP4 0.948; hybrid 0.888; QKS ≈ RBF (p=0.088); no quantum advantage; TNE competitive on PfDHFR (R² 0.473 vs 0.461), inferior on PfATP4/PfCRT; Zenodo DOI `10.5281/zenodo.19608875` reserved, upload pending. V1 + V2 archived 2026-08-29; canonical = V4 (`Project3_Quantum_Inspired_RepresentationsV2607_V4/`); see P3 DAR for V2608 manuscript + scripts in V1 archive |
+| P4 | v12 benchmark complete; V1 archived | Random 0.6724 > MCTS 0.6649; Pareto front is a separate pre-activity artifact; QMC Tier 1 functional, Tier 2 not publication-grade |
+| P5 | Benchmark complete; V1 archived | ECFP4-RF dominates under scaffold split (0.830); topological fusion modestly complementary; LISH-MoA phenotype baseline 0.6435 macro-AUROC; Zenodo 31/31 staged READY_FOR_UPLOAD |
+| P6 | Phase 2 complete | 7 arms × 25 folds; pooled calibration ECE 0.0006–0.0074; RRS-class proxy (pos_rate tertile) monotonic; QKS phenotype_vs_both Spearman 0.283; attention-fusion PLANNED_SECONDARY |
+| P7 | Project init | Quantum molecular encoding; no canonical results yet; environment setup in progress |
 
 ## 3. Live P2 jobs
 
