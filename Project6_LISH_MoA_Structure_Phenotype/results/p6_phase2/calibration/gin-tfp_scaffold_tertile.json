@@ -1,0 +1,1940 @@
+{
+  "status": "COMPUTED",
+  "prediction_dir": "results/p6_phase2/predictions/p6_lish_moa_gin-tfp_scaffold",
+  "features": "phenotype",
+  "split": "scaffold",
+  "stratify_by": "pos_rate_tertile",
+  "audit": {
+    "files_audited": 25,
+    "files_ok": 25,
+    "files_bad": 0,
+    "bad_details": [],
+    "fold_identities": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        4,
+        4
+      ]
+    ],
+    "n_moa": 206,
+    "moa_set": [
+      "moa_11-beta-hsd1_inhibitor",
+      "moa_5-alpha_reductase_inhibitor",
+      "moa_acat_inhibitor",
+      "moa_acetylcholine_receptor_agonist",
+      "moa_acetylcholine_receptor_antagonist",
+      "moa_acetylcholinesterase_inhibitor",
+      "moa_adenosine_receptor_agonist",
+      "moa_adenosine_receptor_antagonist",
+      "moa_adenylyl_cyclase_activator",
+      "moa_adrenergic_receptor_agonist",
+      "moa_adrenergic_receptor_antagonist",
+      "moa_akt_inhibitor",
+      "moa_aldehyde_dehydrogenase_inhibitor",
+      "moa_alk_inhibitor",
+      "moa_ampk_activator",
+      "moa_analgesic",
+      "moa_androgen_receptor_agonist",
+      "moa_androgen_receptor_antagonist",
+      "moa_anesthetic_-_local",
+      "moa_angiogenesis_inhibitor",
+      "moa_angiotensin_receptor_antagonist",
+      "moa_anti-inflammatory",
+      "moa_antiarrhythmic",
+      "moa_antibiotic",
+      "moa_anticonvulsant",
+      "moa_antifungal",
+      "moa_antihistamine",
+      "moa_antimalarial",
+      "moa_antioxidant",
+      "moa_antiprotozoal",
+      "moa_antiviral",
+      "moa_apoptosis_stimulant",
+      "moa_aromatase_inhibitor",
+      "moa_atm_kinase_inhibitor",
+      "moa_atp-sensitive_potassium_channel_antagonist",
+      "moa_atp_synthase_inhibitor",
+      "moa_atpase_inhibitor",
+      "moa_atr_kinase_inhibitor",
+      "moa_aurora_kinase_inhibitor",
+      "moa_autotaxin_inhibitor",
+      "moa_bacterial_30s_ribosomal_subunit_inhibitor",
+      "moa_bacterial_50s_ribosomal_subunit_inhibitor",
+      "moa_bacterial_antifolate",
+      "moa_bacterial_cell_wall_synthesis_inhibitor",
+      "moa_bacterial_dna_gyrase_inhibitor",
+      "moa_bacterial_dna_inhibitor",
+      "moa_bacterial_membrane_integrity_inhibitor",
+      "moa_bcl_inhibitor",
+      "moa_bcr-abl_inhibitor",
+      "moa_benzodiazepine_receptor_agonist",
+      "moa_beta_amyloid_inhibitor",
+      "moa_bromodomain_inhibitor",
+      "moa_btk_inhibitor",
+      "moa_calcineurin_inhibitor",
+      "moa_calcium_channel_blocker",
+      "moa_cannabinoid_receptor_agonist",
+      "moa_cannabinoid_receptor_antagonist",
+      "moa_carbonic_anhydrase_inhibitor",
+      "moa_casein_kinase_inhibitor",
+      "moa_caspase_activator",
+      "moa_catechol_o_methyltransferase_inhibitor",
+      "moa_cc_chemokine_receptor_antagonist",
+      "moa_cck_receptor_antagonist",
+      "moa_cdk_inhibitor",
+      "moa_chelating_agent",
+      "moa_chk_inhibitor",
+      "moa_chloride_channel_blocker",
+      "moa_cholesterol_inhibitor",
+      "moa_cholinergic_receptor_antagonist",
+      "moa_coagulation_factor_inhibitor",
+      "moa_corticosteroid_agonist",
+      "moa_cyclooxygenase_inhibitor",
+      "moa_cytochrome_p450_inhibitor",
+      "moa_dihydrofolate_reductase_inhibitor",
+      "moa_dipeptidyl_peptidase_inhibitor",
+      "moa_diuretic",
+      "moa_dna_alkylating_agent",
+      "moa_dna_inhibitor",
+      "moa_dopamine_receptor_agonist",
+      "moa_dopamine_receptor_antagonist",
+      "moa_egfr_inhibitor",
+      "moa_elastase_inhibitor",
+      "moa_erbb2_inhibitor",
+      "moa_estrogen_receptor_agonist",
+      "moa_estrogen_receptor_antagonist",
+      "moa_faah_inhibitor",
+      "moa_farnesyltransferase_inhibitor",
+      "moa_fatty_acid_receptor_agonist",
+      "moa_fgfr_inhibitor",
+      "moa_flt3_inhibitor",
+      "moa_focal_adhesion_kinase_inhibitor",
+      "moa_free_radical_scavenger",
+      "moa_fungal_squalene_epoxidase_inhibitor",
+      "moa_gaba_receptor_agonist",
+      "moa_gaba_receptor_antagonist",
+      "moa_gamma_secretase_inhibitor",
+      "moa_glucocorticoid_receptor_agonist",
+      "moa_glutamate_inhibitor",
+      "moa_glutamate_receptor_agonist",
+      "moa_glutamate_receptor_antagonist",
+      "moa_gonadotropin_receptor_agonist",
+      "moa_gsk_inhibitor",
+      "moa_hcv_inhibitor",
+      "moa_hdac_inhibitor",
+      "moa_histamine_receptor_agonist",
+      "moa_histamine_receptor_antagonist",
+      "moa_histone_lysine_demethylase_inhibitor",
+      "moa_histone_lysine_methyltransferase_inhibitor",
+      "moa_hiv_inhibitor",
+      "moa_hmgcr_inhibitor",
+      "moa_hsp_inhibitor",
+      "moa_igf-1_inhibitor",
+      "moa_ikk_inhibitor",
+      "moa_imidazoline_receptor_agonist",
+      "moa_immunosuppressant",
+      "moa_insulin_secretagogue",
+      "moa_insulin_sensitizer",
+      "moa_integrin_inhibitor",
+      "moa_jak_inhibitor",
+      "moa_kit_inhibitor",
+      "moa_laxative",
+      "moa_leukotriene_inhibitor",
+      "moa_leukotriene_receptor_antagonist",
+      "moa_lipase_inhibitor",
+      "moa_lipoxygenase_inhibitor",
+      "moa_lxr_agonist",
+      "moa_mdm_inhibitor",
+      "moa_mek_inhibitor",
+      "moa_membrane_integrity_inhibitor",
+      "moa_mineralocorticoid_receptor_antagonist",
+      "moa_monoacylglycerol_lipase_inhibitor",
+      "moa_monoamine_oxidase_inhibitor",
+      "moa_monopolar_spindle_1_kinase_inhibitor",
+      "moa_mtor_inhibitor",
+      "moa_mucolytic_agent",
+      "moa_neuropeptide_receptor_antagonist",
+      "moa_nfkb_inhibitor",
+      "moa_nicotinic_receptor_agonist",
+      "moa_nitric_oxide_donor",
+      "moa_nitric_oxide_production_inhibitor",
+      "moa_nitric_oxide_synthase_inhibitor",
+      "moa_norepinephrine_reuptake_inhibitor",
+      "moa_nrf2_activator",
+      "moa_opioid_receptor_agonist",
+      "moa_opioid_receptor_antagonist",
+      "moa_orexin_receptor_antagonist",
+      "moa_p-glycoprotein_inhibitor",
+      "moa_p38_mapk_inhibitor",
+      "moa_parp_inhibitor",
+      "moa_pdgfr_inhibitor",
+      "moa_pdk_inhibitor",
+      "moa_phosphodiesterase_inhibitor",
+      "moa_phospholipase_inhibitor",
+      "moa_pi3k_inhibitor",
+      "moa_pkc_inhibitor",
+      "moa_potassium_channel_activator",
+      "moa_potassium_channel_antagonist",
+      "moa_ppar_receptor_agonist",
+      "moa_ppar_receptor_antagonist",
+      "moa_progesterone_receptor_agonist",
+      "moa_progesterone_receptor_antagonist",
+      "moa_prostaglandin_inhibitor",
+      "moa_prostanoid_receptor_antagonist",
+      "moa_proteasome_inhibitor",
+      "moa_protein_kinase_inhibitor",
+      "moa_protein_phosphatase_inhibitor",
+      "moa_protein_synthesis_inhibitor",
+      "moa_protein_tyrosine_kinase_inhibitor",
+      "moa_radiopaque_medium",
+      "moa_raf_inhibitor",
+      "moa_ras_gtpase_inhibitor",
+      "moa_retinoid_receptor_agonist",
+      "moa_retinoid_receptor_antagonist",
+      "moa_rho_associated_kinase_inhibitor",
+      "moa_ribonucleoside_reductase_inhibitor",
+      "moa_rna_polymerase_inhibitor",
+      "moa_serotonin_receptor_agonist",
+      "moa_serotonin_receptor_antagonist",
+      "moa_serotonin_reuptake_inhibitor",
+      "moa_sigma_receptor_agonist",
+      "moa_sigma_receptor_antagonist",
+      "moa_smoothened_receptor_antagonist",
+      "moa_sodium_channel_inhibitor",
+      "moa_sphingosine_receptor_agonist",
+      "moa_src_inhibitor",
+      "moa_steroid",
+      "moa_syk_inhibitor",
+      "moa_tachykinin_antagonist",
+      "moa_tgf-beta_receptor_inhibitor",
+      "moa_thrombin_inhibitor",
+      "moa_thymidylate_synthase_inhibitor",
+      "moa_tlr_agonist",
+      "moa_tlr_antagonist",
+      "moa_tnf_inhibitor",
+      "moa_topoisomerase_inhibitor",
+      "moa_transient_receptor_potential_channel_antagonist",
+      "moa_tropomyosin_receptor_kinase_inhibitor",
+      "moa_trpv_agonist",
+      "moa_trpv_antagonist",
+      "moa_tubulin_inhibitor",
+      "moa_tyrosine_kinase_inhibitor",
+      "moa_ubiquitin_specific_protease_inhibitor",
+      "moa_vegfr_inhibitor",
+      "moa_vitamin_b",
+      "moa_vitamin_d_receptor_agonist",
+      "moa_wnt_inhibitor"
+    ],
+    "n_drugs_per_fold": {
+      "0_0": 831,
+      "0_1": 575,
+      "0_2": 570,
+      "0_3": 655,
+      "0_4": 658,
+      "1_0": 643,
+      "1_1": 607,
+      "1_2": 785,
+      "1_3": 599,
+      "1_4": 655,
+      "2_0": 872,
+      "2_1": 556,
+      "2_2": 550,
+      "2_3": 686,
+      "2_4": 625,
+      "3_0": 636,
+      "3_1": 616,
+      "3_2": 595,
+      "3_3": 893,
+      "3_4": 549,
+      "4_0": 537,
+      "4_1": 720,
+      "4_2": 852,
+      "4_3": 605,
+      "4_4": 575
+    },
+    "n_moa_per_fold": {
+      "0_0": 206,
+      "0_1": 206,
+      "0_2": 206,
+      "0_3": 206,
+      "0_4": 206,
+      "1_0": 206,
+      "1_1": 206,
+      "1_2": 206,
+      "1_3": 206,
+      "1_4": 206,
+      "2_0": 206,
+      "2_1": 206,
+      "2_2": 206,
+      "2_3": 206,
+      "2_4": 206,
+      "3_0": 206,
+      "3_1": 206,
+      "3_2": 206,
+      "3_3": 206,
+      "3_4": 206,
+      "4_0": 206,
+      "4_1": 206,
+      "4_2": 206,
+      "4_3": 206,
+      "4_4": 206
+    }
+  },
+  "calibration": {
+    "per_label": [
+      {
+        "moa": "moa_11-beta-hsd1_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.0038939235297072734,
+        "brier": 0.0009548686064082773
+      },
+      {
+        "moa": "moa_5-alpha_reductase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.005248958037343699,
+        "brier": 0.0009751434088528967
+      },
+      {
+        "moa": "moa_acat_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.0037768869070916736,
+        "brier": 0.0012409584441929974
+      },
+      {
+        "moa": "moa_acetylcholine_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.009121313469139556,
+        "mean_pred": 0.007414688639634691,
+        "brier": 0.009106898361434138
+      },
+      {
+        "moa": "moa_acetylcholine_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.01459410155062329,
+        "mean_pred": 0.00927109151219982,
+        "brier": 0.01454377655378302
+      },
+      {
+        "moa": "moa_acetylcholinesterase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.003952569169960474,
+        "mean_pred": 0.004285471805981907,
+        "brier": 0.003980511586282474
+      },
+      {
+        "moa": "moa_adenosine_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.004245146977716274,
+        "brier": 0.0024685811003773194
+      },
+      {
+        "moa": "moa_adenosine_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.00486470051687443,
+        "mean_pred": 0.005101059762186909,
+        "brier": 0.004895430505050213
+      },
+      {
+        "moa": "moa_adenylyl_cyclase_activator",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.003523347876137927,
+        "brier": 0.0006391055300149077
+      },
+      {
+        "moa": "moa_adrenergic_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.013681970203709334,
+        "mean_pred": 0.008084705733541935,
+        "brier": 0.013582587614877548
+      },
+      {
+        "moa": "moa_adrenergic_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.018242626938279112,
+        "mean_pred": 0.011069202905978888,
+        "brier": 0.018074463029595922
+      },
+      {
+        "moa": "moa_akt_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0033444816053511705,
+        "mean_pred": 0.004050112833911938,
+        "brier": 0.0033695328026140717
+      },
+      {
+        "moa": "moa_aldehyde_dehydrogenase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.003634610119758106,
+        "brier": 0.00034674796879521035
+      },
+      {
+        "moa": "moa_alk_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.002128306476132563,
+        "mean_pred": 0.003970965803646047,
+        "brier": 0.0021546257945892137
+      },
+      {
+        "moa": "moa_ampk_activator",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.003661608174559894,
+        "brier": 0.0006522727015373705
+      },
+      {
+        "moa": "moa_analgesic",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.003817634715046003,
+        "brier": 0.0006483535419615412
+      },
+      {
+        "moa": "moa_androgen_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.00471463901930569,
+        "brier": 0.002471686650163081
+      },
+      {
+        "moa": "moa_androgen_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.004560656734569778,
+        "mean_pred": 0.004596298862281745,
+        "brier": 0.004573258577196317
+      },
+      {
+        "moa": "moa_anesthetic_-_local",
+        "n": 16445,
+        "pos_rate": 0.003952569169960474,
+        "mean_pred": 0.004157824962524896,
+        "brier": 0.003960768931395577
+      },
+      {
+        "moa": "moa_angiogenesis_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004511000417314238,
+        "brier": 0.0018567915246084326
+      },
+      {
+        "moa": "moa_angiotensin_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004117294530517587,
+        "brier": 0.0018625153217742341
+      },
+      {
+        "moa": "moa_anti-inflammatory",
+        "n": 16445,
+        "pos_rate": 0.0036485253876558225,
+        "mean_pred": 0.00426810330812629,
+        "brier": 0.0036701505104944883
+      },
+      {
+        "moa": "moa_antiarrhythmic",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.0037036834534648383,
+        "brier": 0.00034608147780737964
+      },
+      {
+        "moa": "moa_antibiotic",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.0046899733594873046,
+        "brier": 0.0024648549437322016
+      },
+      {
+        "moa": "moa_anticonvulsant",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.004457251679513683,
+        "brier": 0.0006634872408236241
+      },
+      {
+        "moa": "moa_antifungal",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.0034540371494484546,
+        "brier": 0.000948289236425389
+      },
+      {
+        "moa": "moa_antihistamine",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.003680403991336253,
+        "brier": 0.0006494853778630228
+      },
+      {
+        "moa": "moa_antimalarial",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.0033455199371194,
+        "brier": 0.0009423975080164224
+      },
+      {
+        "moa": "moa_antioxidant",
+        "n": 16445,
+        "pos_rate": 0.0033444816053511705,
+        "mean_pred": 0.0050847811292102,
+        "brier": 0.0033858330571461563
+      },
+      {
+        "moa": "moa_antiprotozoal",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004238315769876925,
+        "brier": 0.0018623419237609998
+      },
+      {
+        "moa": "moa_antiviral",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.0031358339399677293,
+        "brier": 0.0009391607924604358
+      },
+      {
+        "moa": "moa_apoptosis_stimulant",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.003972879184929511,
+        "brier": 0.002467664679551411
+      },
+      {
+        "moa": "moa_aromatase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.004056005014410163,
+        "brier": 0.0024687620393399165
+      },
+      {
+        "moa": "moa_atm_kinase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.00392182932174087,
+        "brier": 0.0003517282561908646
+      },
+      {
+        "moa": "moa_atp-sensitive_potassium_channel_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.0037351015303325992,
+        "brier": 0.0003479715964981309
+      },
+      {
+        "moa": "moa_atp_synthase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.003612579162450796,
+        "brier": 0.0006498600239666603
+      },
+      {
+        "moa": "moa_atpase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.00486470051687443,
+        "mean_pred": 0.00560203770657489,
+        "brier": 0.004887201670440393
+      },
+      {
+        "moa": "moa_atr_kinase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.003418080446709274,
+        "brier": 0.0009464585969637195
+      },
+      {
+        "moa": "moa_aurora_kinase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.00486470051687443,
+        "mean_pred": 0.00486291210200325,
+        "brier": 0.0048780997328931085
+      },
+      {
+        "moa": "moa_autotaxin_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.0028952299147410724,
+        "brier": 0.00033659231819905763
+      },
+      {
+        "moa": "moa_bacterial_30s_ribosomal_subunit_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0030404378230465185,
+        "mean_pred": 0.003791539109479019,
+        "brier": 0.0030605402845946144
+      },
+      {
+        "moa": "moa_bacterial_50s_ribosomal_subunit_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0036485253876558225,
+        "mean_pred": 0.004052832729915019,
+        "brier": 0.0036776084809328246
+      },
+      {
+        "moa": "moa_bacterial_antifolate",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004671279593064594,
+        "brier": 0.0018747461264891237
+      },
+      {
+        "moa": "moa_bacterial_cell_wall_synthesis_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.009121313469139556,
+        "mean_pred": 0.0065787588634853055,
+        "brier": 0.009081327747853103
+      },
+      {
+        "moa": "moa_bacterial_dna_gyrase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.004560656734569778,
+        "mean_pred": 0.005369881987419046,
+        "brier": 0.004597958070056027
+      },
+      {
+        "moa": "moa_bacterial_dna_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.005472788081483734,
+        "mean_pred": 0.005459912444218849,
+        "brier": 0.005499969435369942
+      },
+      {
+        "moa": "moa_bacterial_membrane_integrity_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.004057045123246307,
+        "brier": 0.000655970012477072
+      },
+      {
+        "moa": "moa_bcl_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.0036573868979991593,
+        "brier": 0.0018583310538860852
+      },
+      {
+        "moa": "moa_bcr-abl_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004531105187116326,
+        "brier": 0.0018666454703694672
+      },
+      {
+        "moa": "moa_benzodiazepine_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.0036485253876558225,
+        "mean_pred": 0.004550297873097946,
+        "brier": 0.0036774840531766714
+      },
+      {
+        "moa": "moa_beta_amyloid_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.003772551227955705,
+        "brier": 0.0012586813809835492
+      },
+      {
+        "moa": "moa_bromodomain_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.003952569169960474,
+        "mean_pred": 0.0050364964080021665,
+        "brier": 0.003986414948163948
+      },
+      {
+        "moa": "moa_btk_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.0035413799090331954,
+        "brier": 0.0015458855937801614
+      },
+      {
+        "moa": "moa_calcineurin_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.003828473123386254,
+        "brier": 0.0003526762140056863
+      },
+      {
+        "moa": "moa_calcium_channel_blocker",
+        "n": 16445,
+        "pos_rate": 0.013986013986013986,
+        "mean_pred": 0.008089985343745821,
+        "brier": 0.013947676150436036
+      },
+      {
+        "moa": "moa_cannabinoid_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.002128306476132563,
+        "mean_pred": 0.0040769095948856564,
+        "brier": 0.0021606168820839434
+      },
+      {
+        "moa": "moa_cannabinoid_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.002736394040741867,
+        "mean_pred": 0.003753917941513345,
+        "brier": 0.0027641984715843265
+      },
+      {
+        "moa": "moa_carbonic_anhydrase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.003749681078827557,
+        "brier": 0.0018483621013075135
+      },
+      {
+        "moa": "moa_casein_kinase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004559874060284915,
+        "brier": 0.0018733427008035084
+      },
+      {
+        "moa": "moa_caspase_activator",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.0036841652385166315,
+        "brier": 0.000647039896896314
+      },
+      {
+        "moa": "moa_catechol_o_methyltransferase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.0038992417085359486,
+        "brier": 0.0006479693837209395
+      },
+      {
+        "moa": "moa_cc_chemokine_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.005168744299179082,
+        "mean_pred": 0.005795171630101006,
+        "brier": 0.005197826987504863
+      },
+      {
+        "moa": "moa_cck_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.0034149858337524184,
+        "brier": 0.0009525155141717638
+      },
+      {
+        "moa": "moa_cdk_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.007297050775311645,
+        "mean_pred": 0.005668371969488569,
+        "brier": 0.007274155601925933
+      },
+      {
+        "moa": "moa_chelating_agent",
+        "n": 16445,
+        "pos_rate": 0.002736394040741867,
+        "mean_pred": 0.004112432274968385,
+        "brier": 0.0027667382494619237
+      },
+      {
+        "moa": "moa_chk_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.004455449868594922,
+        "brier": 0.0012669414505698305
+      },
+      {
+        "moa": "moa_chloride_channel_blocker",
+        "n": 16445,
+        "pos_rate": 0.002128306476132563,
+        "mean_pred": 0.004940903214096966,
+        "brier": 0.0021787914049671447
+      },
+      {
+        "moa": "moa_cholesterol_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.005259241736494999,
+        "brier": 0.0024828461682510168
+      },
+      {
+        "moa": "moa_cholinergic_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.002736394040741867,
+        "mean_pred": 0.003991643679771369,
+        "brier": 0.002775983423286151
+      },
+      {
+        "moa": "moa_coagulation_factor_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.004730274951846562,
+        "brier": 0.00036271046832798504
+      },
+      {
+        "moa": "moa_corticosteroid_agonist",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.00436187727824399,
+        "brier": 0.0015595960265372209
+      },
+      {
+        "moa": "moa_cyclooxygenase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.02249923989054424,
+        "mean_pred": 0.013202859028941555,
+        "brier": 0.02223584282658837
+      },
+      {
+        "moa": "moa_cytochrome_p450_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.004560656734569778,
+        "mean_pred": 0.00426901897925602,
+        "brier": 0.004579267707235045
+      },
+      {
+        "moa": "moa_dihydrofolate_reductase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004089298986063305,
+        "brier": 0.0018625634408747215
+      },
+      {
+        "moa": "moa_dipeptidyl_peptidase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.003925044604872347,
+        "brier": 0.0012470888478024929
+      },
+      {
+        "moa": "moa_diuretic",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.003525113967076843,
+        "brier": 0.00033873384349190525
+      },
+      {
+        "moa": "moa_dna_alkylating_agent",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.003921941173544456,
+        "brier": 0.0024639652646986183
+      },
+      {
+        "moa": "moa_dna_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.018242626938279112,
+        "mean_pred": 0.010425503543297451,
+        "brier": 0.01806740695747379
+      },
+      {
+        "moa": "moa_dopamine_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.006688963210702341,
+        "mean_pred": 0.005611665067268454,
+        "brier": 0.006709548794919245
+      },
+      {
+        "moa": "moa_dopamine_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.020674977196716328,
+        "mean_pred": 0.012101253368717927,
+        "brier": 0.02043652727802839
+      },
+      {
+        "moa": "moa_egfr_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.007601094557616297,
+        "mean_pred": 0.005988451363701684,
+        "brier": 0.007605192431424829
+      },
+      {
+        "moa": "moa_elastase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.003646515367052984,
+        "brier": 0.00034597411408720337
+      },
+      {
+        "moa": "moa_erbb2_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.0035515254289686243,
+        "brier": 0.0003442088105159876
+      },
+      {
+        "moa": "moa_estrogen_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.007297050775311645,
+        "mean_pred": 0.005653153210626124,
+        "brier": 0.007289534898808354
+      },
+      {
+        "moa": "moa_estrogen_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.0038114981063166404,
+        "brier": 0.0018520845677641208
+      },
+      {
+        "moa": "moa_faah_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004375928368304701,
+        "brier": 0.0018754006331903196
+      },
+      {
+        "moa": "moa_farnesyltransferase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.0038446941752087755,
+        "brier": 0.0009577605957758826
+      },
+      {
+        "moa": "moa_fatty_acid_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.004275306266011551,
+        "brier": 0.001265197189959797
+      },
+      {
+        "moa": "moa_fgfr_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0030404378230465185,
+        "mean_pred": 0.00557973908018857,
+        "brier": 0.003095713339120356
+      },
+      {
+        "moa": "moa_flt3_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.005168744299179082,
+        "mean_pred": 0.005243589679606307,
+        "brier": 0.005208623699284743
+      },
+      {
+        "moa": "moa_focal_adhesion_kinase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.0034543929370411007,
+        "brier": 0.0009430031279103113
+      },
+      {
+        "moa": "moa_free_radical_scavenger",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.0034628393780527186,
+        "brier": 0.0009436611765695724
+      },
+      {
+        "moa": "moa_fungal_squalene_epoxidase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.004258580295209222,
+        "brier": 0.0012645685771761359
+      },
+      {
+        "moa": "moa_gaba_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.005168744299179082,
+        "mean_pred": 0.005038462934882604,
+        "brier": 0.005178805877943003
+      },
+      {
+        "moa": "moa_gaba_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.007905138339920948,
+        "mean_pred": 0.005911563690108241,
+        "brier": 0.007916046453934567
+      },
+      {
+        "moa": "moa_gamma_secretase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0030404378230465185,
+        "mean_pred": 0.0044518072514577066,
+        "brier": 0.0030690677785065058
+      },
+      {
+        "moa": "moa_glucocorticoid_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.010945576162967468,
+        "mean_pred": 0.007899646566308871,
+        "brier": 0.010666550221822902
+      },
+      {
+        "moa": "moa_glutamate_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.0033393217950626465,
+        "brier": 0.0006428935294056197
+      },
+      {
+        "moa": "moa_glutamate_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.0036485253876558225,
+        "mean_pred": 0.0038196989733926233,
+        "brier": 0.003665015819594483
+      },
+      {
+        "moa": "moa_glutamate_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.019154758285193068,
+        "mean_pred": 0.011507116246413793,
+        "brier": 0.019007551326666903
+      },
+      {
+        "moa": "moa_gonadotropin_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.003974410761633987,
+        "brier": 0.0009564202855866349
+      },
+      {
+        "moa": "moa_gsk_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0030404378230465185,
+        "mean_pred": 0.004047292707769138,
+        "brier": 0.0030662721001955564
+      },
+      {
+        "moa": "moa_hcv_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0036485253876558225,
+        "mean_pred": 0.004341738228641218,
+        "brier": 0.003680061906299812
+      },
+      {
+        "moa": "moa_hdac_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.005472788081483734,
+        "mean_pred": 0.0052522115595972415,
+        "brier": 0.005495048529728683
+      },
+      {
+        "moa": "moa_histamine_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.0030404378230465185,
+        "mean_pred": 0.004794561253583076,
+        "brier": 0.0030811472981205077
+      },
+      {
+        "moa": "moa_histamine_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.012161751292186074,
+        "mean_pred": 0.00824504339506091,
+        "brier": 0.012128563868056
+      },
+      {
+        "moa": "moa_histone_lysine_demethylase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.004385811527842846,
+        "brier": 0.0012623236198538086
+      },
+      {
+        "moa": "moa_histone_lysine_methyltransferase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004156808104842063,
+        "brier": 0.0018654246297411655
+      },
+      {
+        "moa": "moa_hiv_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0033444816053511705,
+        "mean_pred": 0.004765149216500451,
+        "brier": 0.003363666157403891
+      },
+      {
+        "moa": "moa_hmgcr_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.002128306476132563,
+        "mean_pred": 0.004237048143393312,
+        "brier": 0.0021665069675768345
+      },
+      {
+        "moa": "moa_hsp_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.004256612952265126,
+        "mean_pred": 0.003945386091607303,
+        "brier": 0.004280924217531647
+      },
+      {
+        "moa": "moa_igf-1_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.002128306476132563,
+        "mean_pred": 0.004510866127925577,
+        "brier": 0.0021805909232841263
+      },
+      {
+        "moa": "moa_ikk_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.00350385584375906,
+        "brier": 0.0015506659882227616
+      },
+      {
+        "moa": "moa_imidazoline_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.003969851107657261,
+        "brier": 0.0015535969756014898
+      },
+      {
+        "moa": "moa_immunosuppressant",
+        "n": 16445,
+        "pos_rate": 0.0033444816053511705,
+        "mean_pred": 0.004294181572318781,
+        "brier": 0.0033616158729402913
+      },
+      {
+        "moa": "moa_insulin_secretagogue",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.004143636069949999,
+        "brier": 0.0015688377297609756
+      },
+      {
+        "moa": "moa_insulin_sensitizer",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.003835556194726285,
+        "brier": 0.0024596683093183642
+      },
+      {
+        "moa": "moa_integrin_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.002128306476132563,
+        "mean_pred": 0.00382875207481265,
+        "brier": 0.0021666699186460815
+      },
+      {
+        "moa": "moa_jak_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.004560656734569778,
+        "mean_pred": 0.004790944170415861,
+        "brier": 0.004590783820619235
+      },
+      {
+        "moa": "moa_kit_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.005168744299179082,
+        "mean_pred": 0.0049802590699385635,
+        "brier": 0.005192158940231679
+      },
+      {
+        "moa": "moa_laxative",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.0033485776119863133,
+        "brier": 0.00034331000974244767
+      },
+      {
+        "moa": "moa_leukotriene_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.004389649302694965,
+        "brier": 0.0003609536244138234
+      },
+      {
+        "moa": "moa_leukotriene_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.002736394040741867,
+        "mean_pred": 0.004112266247498412,
+        "brier": 0.002767910081412242
+      },
+      {
+        "moa": "moa_lipase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.003922443184892281,
+        "brier": 0.00064963400145423
+      },
+      {
+        "moa": "moa_lipoxygenase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0033444816053511705,
+        "mean_pred": 0.004609306918895906,
+        "brier": 0.0033757377841965256
+      },
+      {
+        "moa": "moa_lxr_agonist",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.0032222362242388457,
+        "brier": 0.0003396584512566961
+      },
+      {
+        "moa": "moa_mdm_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.004040253949464253,
+        "brier": 0.0015473423442975496
+      },
+      {
+        "moa": "moa_mek_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0033444816053511705,
+        "mean_pred": 0.004704745761557179,
+        "brier": 0.0033804049105974465
+      },
+      {
+        "moa": "moa_membrane_integrity_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0033444816053511705,
+        "mean_pred": 0.004669333769857173,
+        "brier": 0.00335563149012738
+      },
+      {
+        "moa": "moa_mineralocorticoid_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.0037491984448758836,
+        "brier": 0.0012534786507131955
+      },
+      {
+        "moa": "moa_monoacylglycerol_lipase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.0038455217859489866,
+        "brier": 0.0006539125753023109
+      },
+      {
+        "moa": "moa_monoamine_oxidase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.004560656734569778,
+        "mean_pred": 0.0063103144842643144,
+        "brier": 0.004597836673047837
+      },
+      {
+        "moa": "moa_monopolar_spindle_1_kinase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.0033835102025847456,
+        "brier": 0.0009500939763800993
+      },
+      {
+        "moa": "moa_mtor_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.006688963210702341,
+        "mean_pred": 0.005711007294152956,
+        "brier": 0.006722661336825681
+      },
+      {
+        "moa": "moa_mucolytic_agent",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.004608553777594781,
+        "brier": 0.002466725101743756
+      },
+      {
+        "moa": "moa_neuropeptide_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004149423827412357,
+        "brier": 0.0018671512989449966
+      },
+      {
+        "moa": "moa_nfkb_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.005776831863788386,
+        "mean_pred": 0.004770218943852462,
+        "brier": 0.005796251544277953
+      },
+      {
+        "moa": "moa_nicotinic_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.003772599274465391,
+        "brier": 0.0003520385792758242
+      },
+      {
+        "moa": "moa_nitric_oxide_donor",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.004690247796447646,
+        "brier": 0.0012706677462179141
+      },
+      {
+        "moa": "moa_nitric_oxide_production_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.0038315694293210886,
+        "brier": 0.0006565958802493012
+      },
+      {
+        "moa": "moa_nitric_oxide_synthase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.0034001047815408513,
+        "brier": 0.001544932546005098
+      },
+      {
+        "moa": "moa_norepinephrine_reuptake_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.0036366762450418194,
+        "brier": 0.0006512554185449397
+      },
+      {
+        "moa": "moa_nrf2_activator",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.0041075807646808815,
+        "brier": 0.0009580951017870605
+      },
+      {
+        "moa": "moa_opioid_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.0030404378230465185,
+        "mean_pred": 0.004782365818708752,
+        "brier": 0.0030862449153869088
+      },
+      {
+        "moa": "moa_opioid_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.004256612952265126,
+        "mean_pred": 0.004868788255284254,
+        "brier": 0.004288433073912084
+      },
+      {
+        "moa": "moa_orexin_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.003755142131010266,
+        "brier": 0.0018610902276260885
+      },
+      {
+        "moa": "moa_p-glycoprotein_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.003945616314215568,
+        "brier": 0.0012574462477377326
+      },
+      {
+        "moa": "moa_p38_mapk_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0033444816053511705,
+        "mean_pred": 0.004160237184645499,
+        "brier": 0.0033676932634554443
+      },
+      {
+        "moa": "moa_parp_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0030404378230465185,
+        "mean_pred": 0.00385272802432229,
+        "brier": 0.0030652486066862256
+      },
+      {
+        "moa": "moa_pdgfr_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.006384919428397689,
+        "mean_pred": 0.0057221815358173165,
+        "brier": 0.0064131826151621486
+      },
+      {
+        "moa": "moa_pdk_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.0035851306023188707,
+        "brier": 0.0009503132885284403
+      },
+      {
+        "moa": "moa_phosphodiesterase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.013986013986013986,
+        "mean_pred": 0.008737704168476084,
+        "brier": 0.013906066272901795
+      },
+      {
+        "moa": "moa_phospholipase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.003964874287375725,
+        "brier": 0.001259497079948139
+      },
+      {
+        "moa": "moa_pi3k_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.007601094557616297,
+        "mean_pred": 0.005857589148523329,
+        "brier": 0.007598084837003993
+      },
+      {
+        "moa": "moa_pkc_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.00407554786508915,
+        "brier": 0.001563106765128389
+      },
+      {
+        "moa": "moa_potassium_channel_activator",
+        "n": 16445,
+        "pos_rate": 0.0030404378230465185,
+        "mean_pred": 0.005215046075208809,
+        "brier": 0.003076439078263496
+      },
+      {
+        "moa": "moa_potassium_channel_antagonist",
+        "n": 16445,
+        "pos_rate": 0.005168744299179082,
+        "mean_pred": 0.005176486664195382,
+        "brier": 0.005194876245878202
+      },
+      {
+        "moa": "moa_ppar_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.006080875646093037,
+        "mean_pred": 0.005865388849243121,
+        "brier": 0.0061008378964565076
+      },
+      {
+        "moa": "moa_ppar_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.0036209586225395456,
+        "brier": 0.0015550276730486733
+      },
+      {
+        "moa": "moa_progesterone_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.005472788081483734,
+        "mean_pred": 0.0050183738007082085,
+        "brier": 0.005488415482819929
+      },
+      {
+        "moa": "moa_progesterone_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.0037489562448152396,
+        "brier": 0.0009476166376641842
+      },
+      {
+        "moa": "moa_prostaglandin_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004416604760817304,
+        "brier": 0.0018621419476133648
+      },
+      {
+        "moa": "moa_prostanoid_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.004560656734569778,
+        "mean_pred": 0.004784181572738293,
+        "brier": 0.004559995464544834
+      },
+      {
+        "moa": "moa_proteasome_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.0038982043700831067,
+        "brier": 0.0012441526816822919
+      },
+      {
+        "moa": "moa_protein_kinase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.003996845239844993,
+        "brier": 0.002475175151697047
+      },
+      {
+        "moa": "moa_protein_phosphatase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.004538792916568631,
+        "brier": 0.00036351210531219356
+      },
+      {
+        "moa": "moa_protein_synthesis_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.005472788081483734,
+        "mean_pred": 0.004554333400623368,
+        "brier": 0.005460413081285706
+      },
+      {
+        "moa": "moa_protein_tyrosine_kinase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.0038689354745382975,
+        "brier": 0.00125394416196522
+      },
+      {
+        "moa": "moa_radiopaque_medium",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.0036405749574743604,
+        "brier": 0.002459355148416099
+      },
+      {
+        "moa": "moa_raf_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.002736394040741867,
+        "mean_pred": 0.004146358722036316,
+        "brier": 0.0027688649685367345
+      },
+      {
+        "moa": "moa_ras_gtpase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.0039730958097817974,
+        "brier": 0.0006543004185780501
+      },
+      {
+        "moa": "moa_retinoid_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.0033444816053511705,
+        "mean_pred": 0.004891499829802891,
+        "brier": 0.003371678028791126
+      },
+      {
+        "moa": "moa_retinoid_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.004079133154570884,
+        "brier": 0.0003549810940106961
+      },
+      {
+        "moa": "moa_rho_associated_kinase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004026312855809724,
+        "brier": 0.0018674144832558789
+      },
+      {
+        "moa": "moa_ribonucleoside_reductase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.002128306476132563,
+        "mean_pred": 0.004222657499714433,
+        "brier": 0.0021589122464770565
+      },
+      {
+        "moa": "moa_rna_polymerase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.004103452238568769,
+        "brier": 0.0015592513157112653
+      },
+      {
+        "moa": "moa_serotonin_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.012161751292186074,
+        "mean_pred": 0.007090540558484393,
+        "brier": 0.012124752068208419
+      },
+      {
+        "moa": "moa_serotonin_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.02097902097902098,
+        "mean_pred": 0.011973981041741499,
+        "brier": 0.020805130788662626
+      },
+      {
+        "moa": "moa_serotonin_reuptake_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.003927220483175619,
+        "brier": 0.0024616276036357717
+      },
+      {
+        "moa": "moa_sigma_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004127479638577167,
+        "brier": 0.0018588778601859978
+      },
+      {
+        "moa": "moa_sigma_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.0043350538595541615,
+        "brier": 0.0018686424312226043
+      },
+      {
+        "moa": "moa_smoothened_receptor_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.003971187472628743,
+        "brier": 0.001565043064670591
+      },
+      {
+        "moa": "moa_sodium_channel_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.013681970203709334,
+        "mean_pred": 0.008408782214253363,
+        "brier": 0.013611868890173693
+      },
+      {
+        "moa": "moa_sphingosine_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.00367003395183067,
+        "brier": 0.001556739270205206
+      },
+      {
+        "moa": "moa_src_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0036485253876558225,
+        "mean_pred": 0.0044002494605643325,
+        "brier": 0.00368342911170123
+      },
+      {
+        "moa": "moa_steroid",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.0038891764137667217,
+        "brier": 0.00035336914477195237
+      },
+      {
+        "moa": "moa_syk_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.004065959008921653,
+        "brier": 0.0009632353256858871
+      },
+      {
+        "moa": "moa_tachykinin_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0030404378230465185,
+        "mean_pred": 0.004713900714762518,
+        "brier": 0.003079065921137482
+      },
+      {
+        "moa": "moa_tgf-beta_receptor_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.004400286435826372,
+        "brier": 0.0015654314692225267
+      },
+      {
+        "moa": "moa_thrombin_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.004199419805680864,
+        "brier": 0.0009609650754645678
+      },
+      {
+        "moa": "moa_thymidylate_synthase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.004180153288466152,
+        "brier": 0.0012624570988271212
+      },
+      {
+        "moa": "moa_tlr_agonist",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.003073405949385985,
+        "brier": 0.0015419710492165213
+      },
+      {
+        "moa": "moa_tlr_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0006080875646093037,
+        "mean_pred": 0.0038584659140960893,
+        "brier": 0.0006549692364776564
+      },
+      {
+        "moa": "moa_tnf_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0018242626938279112,
+        "mean_pred": 0.004043341594396938,
+        "brier": 0.0018664369035286488
+      },
+      {
+        "moa": "moa_topoisomerase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.005472788081483734,
+        "mean_pred": 0.005027438773552157,
+        "brier": 0.005501282314660158
+      },
+      {
+        "moa": "moa_transient_receptor_potential_channel_antagonist",
+        "n": 16445,
+        "pos_rate": 0.0009121313469139556,
+        "mean_pred": 0.004694713012002725,
+        "brier": 0.0009750177399234179
+      },
+      {
+        "moa": "moa_tropomyosin_receptor_kinase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.0036073619297997783,
+        "brier": 0.00034146825677620744
+      },
+      {
+        "moa": "moa_trpv_agonist",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.003807242039563113,
+        "brier": 0.0012527653297311372
+      },
+      {
+        "moa": "moa_trpv_antagonist",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.004657243503460424,
+        "brier": 0.0024671464928154928
+      },
+      {
+        "moa": "moa_tubulin_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.006688963210702341,
+        "mean_pred": 0.005606259446096187,
+        "brier": 0.006716757422664242
+      },
+      {
+        "moa": "moa_tyrosine_kinase_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.003952569169960474,
+        "mean_pred": 0.0049976920221195325,
+        "brier": 0.003991190423372899
+      },
+      {
+        "moa": "moa_ubiquitin_specific_protease_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0003040437823046519,
+        "mean_pred": 0.003824812985824997,
+        "brier": 0.0003466459718003564
+      },
+      {
+        "moa": "moa_vegfr_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.009425357251444208,
+        "mean_pred": 0.007518867052056552,
+        "brier": 0.009453642098606826
+      },
+      {
+        "moa": "moa_vitamin_b",
+        "n": 16445,
+        "pos_rate": 0.0012161751292186075,
+        "mean_pred": 0.0037470951915031456,
+        "brier": 0.0012544579627980575
+      },
+      {
+        "moa": "moa_vitamin_d_receptor_agonist",
+        "n": 16445,
+        "pos_rate": 0.002432350258437215,
+        "mean_pred": 0.004596909068894826,
+        "brier": 0.002485821885065041
+      },
+      {
+        "moa": "moa_wnt_inhibitor",
+        "n": 16445,
+        "pos_rate": 0.0015202189115232593,
+        "mean_pred": 0.0038623383474792527,
+        "brier": 0.0015532913785804145
+      }
+    ],
+    "pooled": {
+      "n": 3387670,
+      "ece": 0.001292584399236054,
+      "mce": 0.21439610014084504,
+      "brier": 0.003415995571375683,
+      "threshold_kcal_mol_note": "threshold=100000.0 reserved for kcal/mol convention; ECE/MCE/Brier are unitless probabilities.",
+      "bins": [
+        {
+          "bin": 0,
+          "n": 3385804,
+          "frac": 0.9994491789341937,
+          "mean_pred": 0.004612231680097549,
+          "pos_frac": 0.003393285612516259
+        },
+        {
+          "bin": 1,
+          "n": 1795,
+          "frac": 0.0005298627079969419,
+          "mean_pred": 0.13510573662896935,
+          "pos_frac": 0.003342618384401114
+        },
+        {
+          "bin": 2,
+          "n": 71,
+          "frac": 2.0958357809349788e-05,
+          "mean_pred": 0.21439610014084504,
+          "pos_frac": 0.0
+        },
+        {
+          "bin": 3,
+          "n": 0,
+          "frac": 0.0,
+          "mean_pred": null,
+          "pos_frac": null
+        },
+        {
+          "bin": 4,
+          "n": 0,
+          "frac": 0.0,
+          "mean_pred": null,
+          "pos_frac": null
+        },
+        {
+          "bin": 5,
+          "n": 0,
+          "frac": 0.0,
+          "mean_pred": null,
+          "pos_frac": null
+        },
+        {
+          "bin": 6,
+          "n": 0,
+          "frac": 0.0,
+          "mean_pred": null,
+          "pos_frac": null
+        },
+        {
+          "bin": 7,
+          "n": 0,
+          "frac": 0.0,
+          "mean_pred": null,
+          "pos_frac": null
+        },
+        {
+          "bin": 8,
+          "n": 0,
+          "frac": 0.0,
+          "mean_pred": null,
+          "pos_frac": null
+        },
+        {
+          "bin": 9,
+          "n": 0,
+          "frac": 0.0,
+          "mean_pred": null,
+          "pos_frac": null
+        }
+      ]
+    },
+    "stratification": {
+      "scheme": "pos_rate_tertile",
+      "n_labels": 206,
+      "cut_points_pos_rate": [
+        0.0012161751292186075,
+        0.0030404378230465185
+      ],
+      "strata": [
+        {
+          "stratum": "low",
+          "n_labels": 68,
+          "pos_rate_min": 0.0003040437823046519,
+          "pos_rate_max": 0.0012161751292186075,
+          "pos_rate_pooled": 0.0007377532952980524,
+          "mean_pred_pooled": 0.00385341348979275,
+          "brier_pooled": 0.0007804654643601398
+        },
+        {
+          "stratum": "mid",
+          "n_labels": 69,
+          "pos_rate_min": 0.0012161751292186075,
+          "pos_rate_max": 0.0030404378230465185,
+          "pos_rate_pooled": 0.0021106807496221484,
+          "mean_pred_pooled": 0.004164501813313703,
+          "brier_pooled": 0.0021473977546568007
+        },
+        {
+          "stratum": "high",
+          "n_labels": 69,
+          "pos_rate_min": 0.0030404378230465185,
+          "pos_rate_max": 0.02249923989054424,
+          "pos_rate_pooled": 0.007292644343684041,
+          "mean_pred_pooled": 0.0060273376715434986,
+          "brier_pooled": 0.007281927406603344
+        }
+      ]
+    }
+  }
+}
