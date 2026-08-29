@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{Scaffold-split effects relative to ECFP4--RF. Values are differences in mean ROC AUC; paired tests use the five per-seed means ($df=4$).}
+\label{tab:effect_summary}
+\begin{tabular}{lccc}
+\toprule
+Model & Mean ROC AUC & $\Delta$ vs. ECFP4--RF & BH-adjusted $p$ \\
+\midrule
+ECFP4--RF & \num{0.8300} & {--} & {--} \\
+GIN & \num{0.8047} & $-\num{0.025}$ & \num{0.0330} \\
+GIN--TFP & \num{0.8138} & $-\num{0.016}$ & \num{0.0330} \\
+GIN--TNE & \num{0.8090} & $-\num{0.021}$ & \num{0.0378} \\
+ChemBERTa & \num{0.7867} & $-\num{0.043}$ & \num{0.0002} \\
+\bottomrule
+\end{tabular}
+\end{table}
