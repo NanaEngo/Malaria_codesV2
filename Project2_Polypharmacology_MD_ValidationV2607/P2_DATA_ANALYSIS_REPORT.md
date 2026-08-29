@@ -226,6 +226,15 @@ Status: `COMPUTED_CONSENSUS_RRS_SENSITIVITY`. Interpretation: the near-proportio
 
 ## 9. Open items and 25 August reconciliation
 
+> **Open-items inventory (confirmed 29 Aug 2026)** — exhaustive scan of P2 `.md` documents. **No BLOCKED item is active.** The four genuinely non-computed/pending items below are all either by-design limits, missing-input entries, or administrative; none blocks JCIM submission. Historical `NOT_COMPUTED`/`PENDING` wording in runbooks (pre-18 Aug) is superseded.
+>
+> | # | Item | Status | Blocker / reason |
+> |---|------|--------|------------------|
+> | 1 | Full-panel Set-C MD-RRS (17 cand., 136 sys) | `NOT_COMPUTED` **by design** | full-cohort production contract never prepared; pilot (PP-01/PP-02, 16 sys) is the only canonical MD-RRS |
+> | 2 | STRING 400/900 threshold sensitivity | `NOT_COMPUTED_MISSING_THRESHOLD_SPECIFIC_STRING_MATRICES` | matrices unavailable; must not be inferred from the 700 network |
+> | 3 | PP-01/PP-15 multi-seed redocking | `PENDING_INPUTS` | no dedicated receptor/ligand/config triplet in the repository |
+> | 4 | Zenodo deposit / DOI | `pending` | archive deposit not yet made (see SUBMISSION_MANIFEST.md) |
+
 - [x] Existing-results unlock audit: PfCRT pH 5.2 redocking verified 100/100; PNS imputation sensitivity verified 17/17; lightweight RRS thresholds, leave-one-mutant-out, and score perturbations regenerated.
 - [x] Provenance manifest added: `results/p2_results_unlock_manifest.json`.
 - [x] Short-MD execution was attempted under authorized array `15428`; tasks failed closed at `grompp` because the execution node lacked `charmm36-jul2022.ff/forcefield.itp`, and the remaining tasks were canceled. No new valid short-MD trajectory is promoted. Full details: `docs/P2_SHORT_MD_EXECUTION_STATUS_20260825.md`.
