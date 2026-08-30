@@ -1,0 +1,65 @@
+\documentclass[9pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{top=0.55in,bottom=0.55in,left=0.68in,right=0.68in}
+\usepackage{enumitem}
+\setlist{itemsep=0pt, topsep=1pt, parsep=0pt}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{siunitx}
+\sisetup{separate-uncertainty=true, range-phrase=--}
+
+\begin{document}
+\fontsize{9}{10.5}\selectfont
+
+\begin{flushleft}
+\textbf{Myke Vital Sao Temgoua} \\
+Department of Physics, Faculty of Science \\
+University of Yaound\'{e} I \\
+P.O. Box 812, Yaound\'{e}, Cameroon \\
+\href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[0.8em]
+\today
+\end{flushleft}
+
+\begin{flushleft}
+The Editors \\
+\textit{Journal of Computer-Aided Molecular Design} \\
+Springer Nature
+\end{flushleft}
+
+\vspace{0.2em}
+
+\noindent Dear Editors,
+
+We submit our manuscript \textbf{``Pareto-guided Monte Carlo tree search for analysing multi-objective alternatives in antimalarial molecular design''} for consideration as a Research Article in the \textit{Journal of Computer-Aided Molecular Design}.
+
+This work addresses a fundamental challenge in computer-aided molecular design: navigating multi-objective trade-offs when potency, synthetic accessibility, and resistance-related criteria cannot be simultaneously optimised. We introduce a scaffold-aware Pareto-guided Monte Carlo tree search (MCTS) for antimalarial fragment assembly that retains chemically distinct candidate profiles rather than collapsing them into a single scalar ranking, aligned with JCAMD's emphasis on rigorous, transparent methods for molecular analysis and design.
+
+The study presents two complementary evaluations: (\textit{i}) a \num{20}-seed fixed-budget benchmark quantifying scalar optimisation efficiency, and (\textit{ii}) a Pareto analysis exposing multi-objective trade-offs invisible to fixed scalar weightings. The scalar benchmark constitutes an honest-negative finding: random search achieved mean reward \num{0.6724}\,$\pm$\,\num{0.0056}, followed by MCTS (\num{0.6649}\,$\pm$\,\num{0.0068}; paired $t_{19} = -4.97$, $p = 0.000085$), genetic algorithm (\num{0.6453}\,$\pm$\,\num{0.0124}), and greedy search (\num{0.4278}). MCTS incurs a measurable scalar-performance cost relative to broad random exploration in this relatively flat reward landscape. The Pareto analysis identifies four non-dominated candidate profiles (hypervolume \num{1.2366}) exposing potency--accessibility trade-offs across resistance-informed chemotype similarity and polypharmacology-informed docking scores—computational design proxies that inform decision-making without substituting for experimental validation.
+
+\noindent\textbf{Key methodological features} aligned with JCAMD's scope:
+
+\begin{enumerate}
+\item \textbf{Dual evaluation framework:} separates optimisation efficiency from candidate-set geometry. The scalar benchmark quantifies computational cost; the Pareto analysis demonstrates decision-support value through transparent multi-objective trade-offs.
+
+\item \textbf{Chemistry-informed search policy:} PUCT prior focuses expansion on synthetically valid fragment combinations, reducing wasted oracle calls on chemically unproductive branches; scaffold-aware policies contribute $\Delta = +0.148$ and Pareto maintenance $\Delta = +0.108$ in the $2^5$ factorial ablation.
+
+\item \textbf{Transparent honest-negative reporting:} scalar benchmark demonstrates methodological value without algorithmic superiority claims. MCTS maintains candidate diversity and chemically interpretable profiles despite lower scalar reward.
+
+\item \textbf{Computational reproducibility:} complete provenance (code, molecule sets, analysis outputs) available under MIT licence at \url{https://github.com/NanaEngo/Malaria_codesV2}.
+\end{enumerate}
+
+\noindent\textbf{Evidence boundaries:} resistance-informed terms employ Morgan/Tanimoto similarity to reference chemotypes; polypharmacology-informed terms aggregate multi-target docking scores. These are explicitly computational proxies, not direct biological measurements or experimental activity. No IC\textsubscript{50}/EC\textsubscript{50}, confirmed resistance circumvention, or measured polypharmacology is claimed.
+
+\noindent\textbf{Relevance to JCAMD readership:} the fragment-assembly framework generalises to therapeutic targets where decision-makers evaluate candidates under different weighting schemes—early-stage discovery favouring novelty versus late-stage optimisation prioritising synthetic feasibility. Particularly relevant for de novo molecular generation, multi-objective optimisation in drug discovery, and computational methods for neglected tropical diseases.
+
+This work is original, not under consideration elsewhere, and all authors have reviewed and approved the submission. We are submitting under the traditional subscription publishing model and declare no competing financial interests.
+
+\vspace{0.3em}
+
+\noindent Sincerely,
+
+\noindent \textbf{Myke Vital Sao Temgoua} (on behalf of all co-authors)
+
+\end{document}

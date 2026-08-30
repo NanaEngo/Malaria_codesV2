@@ -1,0 +1,384 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[margin=2.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\graphicspath{{Graphics/}}
+\usepackage{siunitx}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{xr-hyper}
+\externaldocument[SM-]{P4_Pareto_MCTS_JCAMD_SM}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{natbib}
+
+\sisetup{
+  detect-all           = true,
+  group-digits         = integer,
+  group-minimum-digits = 5,
+  range-phrase         = {--},
+  range-units          = single,
+}
+
+\title{\textbf{Pareto-guided Monte Carlo tree search for analysing multi-objective\\ alternatives in antimalarial molecular design}}
+
+\author{%
+  \begin{tabular}{c}
+  Myke Vital Sao Temgoua$^{1}$, Jean-Pierre Tchapet Njafa$^{1}$, Serge Guy Nana Engo$^{1}$\\
+  Penabei Samafou$^{2}$, Wilfred Fon Mbacham$^{3}$\\[0.2em]
+  \small Corresponding author: \texttt{myke-vital.sao@facsciences-uy1.cm}
+  \end{tabular}
+}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\begin{minipage}{0.92\textwidth}
+\small\raggedright
+$^{1}$Department of Physics, Faculty of Science, University of Yaound\'{e} I, P.O.\ Box 812, Yaound\'{e}, Cameroon\\
+$^{2}$Department of Medical Imaging and Radiation Sciences, Universit\'{e} de Sherbrooke, Sherbrooke, QC, Canada\\
+$^{3}$Department of Biochemistry, Faculty of Science, University of Yaound\'{e} I, P.O.\ Box 812, Yaound\'{e}, Cameroon
+\end{minipage}
+\end{center}
+
+\begin{abstract}
+\noindent
+\textbf{Background:} Molecular design is a multi-objective decision problem: a candidate suboptimal under one weighting may remain valuable when potency, accessibility and risk-related criteria are rebalanced.\par
+\textbf{Methods:} We developed a scaffold-aware Pareto-guided Monte Carlo tree search (MCTS) for antimalarial fragment assembly, combining a chemistry-informed PUCT prior with a non-dominated candidate archive. The method was benchmarked against random, greedy and genetic baselines under a common search budget, and the retained candidate set was examined using resistance-informed chemotype similarity and a polypharmacology-informed docking proxy.\par
+\textbf{Results:} In the \num{20}-seed scalar benchmark, random search achieved the highest mean reward (\num{0.6724} $\pm$ \num{0.0056}), followed by greedy search (\num{0.6676}, deterministic), MCTS (\num{0.6649} $\pm$ \num{0.0068}), and the genetic algorithm (\num{0.6453} $\pm$ \num{0.0124}); the paired MCTS--random difference was \num{-0.0075} (95\% CI $[\num{-0.0107},\,\num{-0.0043}]$, $p = \num{0.000085}$), and repeating the benchmark with the full \num{80}-fragment vocabulary widened the deficit to \num{-0.0214}. A separate Pareto analysis identified four non-dominated profiles (hypervolume \num{1.2366} over the four non-constant objectives, an indicator bounded by \num{1.4641}), exposing potency--accessibility trade-offs that fixed-weight scalar aggregation discards.\par
+\textbf{Conclusions:} MCTS did not improve the scalar reward; its value lies in transparent objective-space exploration. The resistance and polypharmacology terms are computational proxies and do not substitute for experimental validation.
+\end{abstract}
+
+\begin{center}
+	\includegraphics[width=1.02\linewidth]{Graphics/Graphical_abstract.pdf}
+\end{center}
+
+\noindent\textbf{Keywords:} de novo design; Monte Carlo tree search; Pareto optimisation; antimalarial; multi-objective; synthetic accessibility; resistance resilience
+
+\noindent\textbf{Highlights:}
+\begin{itemize}
+\item A scaffold-aware Pareto-MCTS retains chemically distinct antimalarial candidate profiles.
+\item A \num{20}-seed benchmark quantifies scalar performance against random, greedy and genetic search.
+\item The retained front spans potency, accessibility, a resistance-informed chemotype-similarity proxy and a polypharmacology-informed docking proxy.
+\item Candidate-set geometry and scalar reward are reported as complementary outcomes.
+\end{itemize}
+
+% ============================================================================
+\section{Introduction}
+% ============================================================================
+
+Malaria remains a leading cause of mortality in sub-Saharan Africa, \num{263} million cases and \num{597000} deaths in 2023 \citep{WHO2024MalariaReport}, with artemisinin-resistant \emph{Plasmodium falciparum} now spreading from Southeast Asia to Africa \citep{Ariey2014,Ashley2018}. New scaffolds active against resistant parasites are urgently needed; African natural products, the historical source of quinine and artemisinin, are a reservoir for such scaffolds \citep{Temgoua2026a}. De novo generation provides a route from this NP chemical space toward resistance-aware lead candidates.
+
+Computational molecular design is a decision problem with competing objectives~\citep{GDPLarge2019,Olivecrona2017}. Scalarisation yields a single optimisation target, but its conclusions depend on weights chosen before the candidate set is known; a suboptimal candidate under one weighting can become valuable when the relative importance of potency, accessibility or risk-related properties changes~\citep{Mothra2024,Zitzler2003}. Pareto archives represent this decision space directly. Fragment-based generation compounds this challenge: a large action space with stringent valence and reactivity constraints means an uninformed policy spends evaluations on chemically unproductive branches. We address both problems by combining a scaffold-aware fragment prior with Pareto retention. The resistance-informed term is a Morgan/Tanimoto similarity to the docking-derived resistance-associated reference chemotypes of the companion polypharmacology study~\citep{Temgoua2026b}, and the polypharmacology-informed term aggregates three Tartarus docking columns (\texttt{score\_1syh}, \texttt{score\_6y2f}, \texttt{score\_4lde}). These are computational proxies: they encode design-relevant context, not direct WT/mutant measurements or a four-target biological assay.
+
+Two linked outcomes are examined. The fixed-budget benchmark quantifies MCTS efficiency relative to conventional baselines; the Pareto archive is examined for profiles that differ in potency and accessibility and would be obscured by a single scalar ranking. The first is inferentially benchmarked; the second is a candidate-set analysis within the defined fragment space.
+
+\subsection{Related work}
+
+Multi-objective optimisation (MOO) in molecular generation has gained attention as the limitations of scalar aggregation become apparent. Mothra~\citep{Mothra2024} introduced a SMILES-based Pareto multi-objective MCTS and demonstrated that Pareto fronts reveal trade-offs missed by scalar reward functions. Subsequent Pareto-MCTS generators have targeted protein--ligand binding~\citep{ParetoDrug2024} and dual-target scaffolds~\citep{CombiMOTS2026}, with CombiMOTS framing dual-target engagement as a resistance-mitigation strategy. Beyond MCTS, evolutionary approaches (NSGA-II, MOEA/D) have been applied to multi-objective de novo design~\citep{Jensen2019}, and reinforcement learning methods have been adapted with vector rewards~\citep{Zhou2019}. A common finding across these studies is that the Pareto front exposes solutions invisible to any fixed scalar weighting, for example, a high-potency/low-accessibility extreme that is optimal only under degenerate weights~\citep{Zitzler2003}.
+
+The study contributes a decision-oriented evaluation: Pareto-MCTS retains resistance-informed and polypharmacology-informed candidate records rather than collapsing them into one ranking; a scaffold-aware PUCT prior focuses expansion on chemically compatible branches; and a four-method, \num{20}-seed benchmark separates optimisation efficiency from candidate-set geometry. The scalar benchmark asks which method obtains the largest reward; the candidate-level analysis asks which chemically distinct compromises remain available when objectives are examined jointly. Treating these as separate estimands avoids conflating search efficiency with decision support.
+
+% ============================================================================
+\section{Results}
+% ============================================================================
+
+\subsection{Hyperparameter screening}
+\label{sec:hparam}
+
+We screened \num{32} configurations using two seeds per configuration (\num{64} runs; \num{30} iterations per run). The screening favoured $c_{\text{PUCT}}=\num{5.0}$ over $\num{0.5}$ and $\nu=\num{0.01}$ over $\num{0.20}$, whereas progressive-widening parameters and temperature were less influential at this screening budget. We therefore used
+\[
+c_{\text{PUCT}}=\num{5.0},\quad
+\nu=\num{0.01},\quad
+pw_{\alpha}=\num{0.5},\quad
+pw_{k}=\num{1.0},\quad
+T=\num{0.8},
+\]
+where the first two values were selected by the screening and the latter three are the implementation defaults (not varied in this screen).
+The final implementation returns the highest-scoring valid intermediate encountered during each rollout, preventing later fragment additions from obscuring an earlier high-quality state (\Cref{sec:rollout_fix}).
+
+\subsection{Four-method benchmark}
+\label{sec:benchmark}
+
+We evaluated MCTS+ScafVAE, random search, greedy search and a genetic algorithm across \num{20} independent seeds, with \num{1000} search iterations per seed (\Cref{tab:benchmark}). The scalar objective combined MPO, docking, SYBA, SA and public-activity proximity; the resistance-informed and polypharmacology-informed terms were reserved for the candidate-level analysis. Wall-clock time is reported as an outcome because the methods perform different numbers of oracle evaluations.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Benchmark statistics across \num{20} independent seeds (medium fragment set, \num{1000} search iterations per seed). Values are mean, standard deviation and observed min/max of the best scalar reward per seed. The scalar reward includes the public-activity proximity term (weight \num{0.10}; see \Cref{sec:oracles}). MCTS uses the hyperparameter-screened configuration (\Cref{sec:hparam}): $c_{\text{PUCT}}=\num{5.0}$, $\nu=\num{0.01}$, $T=\num{0.8}$, with the ScafVAE policy wired into PUCT priors.}
+  \label{tab:benchmark}
+  \begin{tabular}{lccccc}
+    \toprule
+    Method & Mean reward & Std & Min & Max & Mean time (s) \\
+    \midrule
+    Random        & \num{0.6724} & \num{0.0056} & \num{0.6616} & \num{0.6856} & \num{50.4} \\
+    MCTS+ScafVAE  & \num{0.6649} & \num{0.0068} & \num{0.6554} & \num{0.6779} & \num{92.1} \\
+    Greedy        & \num{0.6676} & \num{0.0000} & \num{0.6676} & \num{0.6676} & \num{0.7} \\
+    Genetic algorithm & \num{0.6453} & \num{0.0124} & \num{0.6178} & \num{0.6715} & \num{2.0} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.80\textwidth]{Graphics/benchmark_reward_bar.pdf}
+  \caption{Mean best scalar reward per method over \num{20} seeds (\Cref{tab:benchmark}; public-activity-augmented reward). Faint points are the individual per-seed values; the filled marker is the mean and the error bars are one sample standard deviation. Greedy search is deterministic, so its standard deviation is zero. Significance brackets show the two paired comparisons (MCTS--random, $p=\num{0.000085}$; MCTS--GA, $p<\num{0.0001}$).}
+  \label{fig:benchmark}
+\end{figure}
+
+Random search achieved the highest mean reward (\num{0.6724} $\pm$ \num{0.0056}) and the highest individual seed (\num{0.6856}). Greedy search, deterministic across all \num{20} seeds, reached \num{0.6676} (zero variance). MCTS reached \num{0.6649} $\pm$ \num{0.0068}; the paired difference from random was \num{-0.0075} (95\% CI $[\num{-0.0107},\,\num{-0.0043}]$, $t_{19}=\num{-4.97}$, $p=\num{0.000085}$). MCTS exceeded the genetic algorithm (\num{0.6453} $\pm$ \num{0.0124}; $t_{19}=\num{6.95}$, $p<\num{0.0001}$). Greedy returned the same molecule and reward in every replicate, whereas the stochastic methods produced non-identical best-in-seed molecules. MCTS required \SI{92.1}{s} per seed on average, compared with \SI{50.4}{s} for random search and \SI{0.7}{s} for greedy search. Thus, under this scalar objective, the computational cost of MCTS was not compensated by a higher mean reward; its potential value must be assessed from the multi-objective candidate set.
+
+The scalar comparison establishes the efficiency baseline; the next analysis addresses the complementary question of which candidate profiles remain available after joint objective evaluation.
+
+Structural diversity of the generated molecule sets is analysed in the Supplementary Information in Figure~\ref{SM-fig:sm_mds} and Table~\ref{SM-tab:sm_diversity}: the three stochastic methods show non-zero pairwise Tanimoto dissimilarity (\num{0.7732}--\num{0.8046}), whereas deterministic greedy search collapses to one repeated local optimum. These statistics describe the sampled sets under this fragment vocabulary; they do not establish coverage of chemical space beyond the evaluated candidates.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.98\textwidth]{Graphics/p4_evidence_overview.pdf}
+  \caption{Integrated evidence overview generated directly from the source data. (A) Paired per-seed differences between MCTS and random search under the v12 public-activity-augmented scalar reward; the horizontal band is the 95\% confidence interval for the mean difference. (B) The locked pre-activity Pareto front, with the RRS-informed proxy encoded by colour and the PNS-informed proxy by marker shape; SA is constant. (C) Observed high-minus-low main effects from the factorial ablation; these relative effects use a different oracle configuration and are not comparable to the main benchmark's absolute rewards.}
+  \label{fig:overview}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.72\textwidth]{Graphics/benchmark_efficiency.pdf}
+  \caption{Computational efficiency of the four methods: mean best scalar reward against mean wall-clock time per seed (\Cref{tab:benchmark}), with time on a logarithmic axis. Error bars are one sample standard deviation. MCTS incurs the highest cost because the tree search evaluates the oracle at every construction step; greedy and the genetic algorithm are far cheaper.}
+  \label{fig:efficiency}
+\end{figure}
+
+\subsection{Pareto front}
+\label{sec:pareto_results}
+
+We then examined the candidates under a joint objective vector comprising MPO, accessibility, the RRS-informed chemotype proxy and the PNS-informed docking proxy. Accessibility was evaluated separately for the discovered molecules because the search-time field was invariant; MPO, SA, RRS and PNS were unchanged. The resulting front contains four mutually non-dominated solutions across \num{20} seeds, with hypervolume \num{1.2366} under the stated normalisation (\Cref{fig:pareto}, \Cref{tab:pareto}). This analysis asks which potency--accessibility compromises remain visible when the objectives are considered jointly.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.62\textwidth]{Graphics/pareto_front.pdf}
+  \caption{Canonical \textbf{pre-activity} merged Pareto front from \num{20} independent Pareto-MCTS seeds. Marker shape encodes the PNS-informed Tartarus docking proxy; colour encodes the RRS-informed chemotype-similarity proxy. The four solutions are mutually non-dominated under the defined secondary objective vector comprising MPO, SYBA, the RRS-informed proxy and the PNS-informed proxy; SA is constant at \num{3.0} and excluded. The underlying molecule and score records are available with the study data.}
+  \label{fig:pareto}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.86\textwidth]{Graphics/rrs_pns_profile.pdf}
+  \caption{Domain-specific objective readout from the common pre-activity oracle applied to recorded best-in-seed molecules. (A) RRS distributions, with individual molecules shown and the valid row count reported for each method. (B) Fraction of valid rows with PNS = 1, the maximum value of the normalised three-column docking proxy; intermediate PNS values are retained in the source data. MCTS is shown descriptively against re-scored scalar baselines; the unequal counts and the single deterministic greedy row preclude an inferential method comparison. The canonical four-point MCTS front itself contains three PNS = 1 solutions and spans RRS = \num{0.141}--\num{0.223}.}
+  \label{fig:rrs_pns}
+\end{figure}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Canonical \textbf{pre-activity} merged Pareto front from \num{20} independent Pareto-MCTS seeds. All four points are mutually non-dominated under the defined secondary objective vector MPO, SYBA, RRS and PNS (SA is constant at \num{3.0} and excluded). SYBA was evaluated with the lich/conda classifier because the search-time accessibility field was invariant; this table is not evidence of informative four-way optimisation during the search. SMILES and score tables are provided with the source data.}
+  \label{tab:pareto}
+  \begin{tabular}{lccccc}
+    \toprule
+    Candidate & MPO $\uparrow$ & SYBA $\uparrow$ & SA$^{-1}$ $\uparrow$ & RRS & PNS \\
+    \midrule
+    P1 & \num{0.910} & \num{1.000} & \num{0.778} & \num{0.211} & \num{1.0} \\
+    P2 & \num{0.945} & \num{1.000} & \num{0.778} & \num{0.196} & \num{1.0} \\
+    P3 & \num{0.946} & \num{0.021} & \num{0.778} & \num{0.141} & \num{0.0} \\
+    P4 & \num{0.729} & \num{0.994} & \num{0.778} & \num{0.223} & \num{1.0} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The front makes the decision trade-off concrete. P2 combines high MPO with SYBA = \num{1.000}, whereas P3 reaches the highest MPO (\num{0.946}) at SYBA = \num{0.021}; P1 and P4 occupy higher-accessibility, lower-potency positions. All four candidates share SA = \num{3.0}. Three have PNS = \num{1.0}, the maximum of the normalised docking proxy, and the RRS-informed proxy spans \num{0.141}--\num{0.223}. In the independent re-scoring of baseline molecules, MCTS had mean RRS-informed similarity \num{0.150} across \num{19} valid rows, compared with \num{0.141} for random search and \num{0.139} for GA; PNS = \num{1.0} occurred in \num{12}/\num{19}, \num{7}/\num{20} and \num{11}/\num{19} rows, respectively. These values describe the candidate profiles rather than establishing superiority of one generator. The scalar-weight sweep provides the central decision insight: P3 becomes the argmax only when the MPO weight exceeds approximately \num{0.997}, whereas P2 is preferred across most of the normalised MPO--SYBA range. A Pareto archive therefore preserves a chemically distinct high-potency option without requiring the user to commit to that extreme weighting in advance.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Agreement of fixed-weight scalar aggregation over the normalised MPO--SYBA plane: the weight interval $w_{\text{MPO}}$ over which each candidate is the scalar argmax, across all front and baseline molecules. P3 is selected only at a degenerate weight ($w_{\text{MPO}}\gtrsim\num{0.997}$). The complete weight sweep is available with the study data.}
+  \label{tab:scalar_sweep}
+  \begin{tabular}{lcS[table-format=1.3]}
+    \toprule
+    {Candidate / point} & {$w_{\text{MPO}}$ range} & {Fraction of $w$ space} \\
+    \midrule
+    P2 (high MPO \& SYBA) & $[0.0000,\ 0.9556]$ & \num{0.956} \\
+    Baseline (mid)         & $[0.9556,\ 0.9968]$ & \num{0.041} \\
+    P3 (high MPO, low SYBA) & $[0.9968,\ 1.0000]$ & \num{0.003} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Multi-objective front comparison against baselines}
+\label{sec:front_comparison}
+
+To place the MCTS front in context, we applied the same joint objective vector to each method's recorded best-in-seed molecules and constructed method-specific fronts under a common min--max normalisation (\Cref{tab:front_comp}). This secondary analysis evaluates candidate-set geometry rather than scalar search efficiency; accessibility was transformed identically for all methods.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Secondary multi-objective re-scoring comparison of the four generation methods. Each per-seed best molecule of the canonical \num{20}-seed benchmark was re-scored on the full objective (MPO, SYBA, RRS, PNS); the Pareto front of each method was then built and compared under a common min--max normalisation. Hypervolume here uses the cross-method convention of \Cref{sec:pareto}, bounded by \num{19.45}; these values are not comparable with the value reported in \Cref{tab:pareto}, which uses the same four objectives under a front-internal normalisation bounded by \num{1.4641}. Hypervolume and C-metric are the clean reference-independent metrics (C = fraction of the non-dominated union reference dominated by the method's front); the inverted generational distance against a reference excluding the method's own points (IGD${}_{\mathrm{loo}}$) and the spread are reported for completeness. Data: \texttt{results/pareto/p4\_multiobj\_front\_summary.csv}.}
+  \label{tab:front_comp}
+  \begin{tabular}{llccccc}
+    \toprule
+    Method & Unique/20 & Front & HV & C-met. & IGD${}_{\mathrm{loo}}$ & Spread \\
+    \midrule
+    Random   & \num{20} & \num{12}  & \num{17.22} & \num{0.467} & \num{0.299} & \num{1.101} \\
+    Greedy   & \num{1}  & \num{1}  & \num{16.79} & \num{0.667} & \num{0.420} & --- \\
+    GA       & \num{15} & \num{8}  & \num{14.59} & \num{0.000} & \num{0.323} & \num{0.988} \\
+    Baselines pooled & \num{36} & \num{12} & \num{16.23} & \num{0.067} & \num{0.304} & \num{0.933} \\
+    \textbf{MCTS (front)} & \num{4} & \num{4} & \textbf{\num{19.10}} & \textbf{\num{0.867}} & \num{0.502} & \num{0.673} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Two findings emerge. First, greedy search is \emph{deterministic} here: it returns the identical molecule across all \num{20} seeds, so its ``front'' reduces to a single point (unique count \num{1}). That single molecule is nonetheless strictly dominated by a point of the MCTS front (higher MPO \emph{and} higher RRS). In this secondary re-scoring analysis, the MCTS front attains the largest hypervolume (\num{19.10} under the common normalisation, above the \num{16.79} of the single greedy point, \num{16.23} of the pooled baseline front and \num{14.59} of GA) and the largest dominance coverage (C-metric \num{0.867}) of the non-dominated union reference. The IGD${}_{\mathrm{loo}}$ column is shown for completeness but must be read with caution: with this leave-one-out reference, the MCTS front is the most distant from the baseline-heavy reference, consistent with a designed front spanning the potency--accessibility trade-off rather than the broad baseline range. The hypervolume and C-metric, which are free of any comparison reference, are therefore the primary metrics reported here.
+
+\subsection{Sensitivity of the Pareto selection rule}
+\label{sec:selection_ablation}
+
+To test whether the gain of our framework arises from the \emph{selection} rule rather than the global Pareto stack, we ran an ablation in which tree selection is restricted, at each node, to the non-dominated children (a ParetoPUCT-style prior) before the PUCT score is applied. At equal budget (\num{700} iterations, \num{5} seeds), the two selection rules produce near-identical fronts (merged-front hypervolume under a common normalisation: scalar-proxy \num{15.56} vs Pareto-only \num{15.49}, $\Delta$ $\approx$ \num{0.5}\%). A paired per-seed sensitivity check quantifies what this study can and cannot establish: the per-seed hypervolume differences range from $\num{-1.78}$ to $+\num{1.81}$ (mean $+\num{0.53}$, paired $t=\num{0.85}$, $p>\num{0.05}$); with the observed between-seed deviation the minimal detectable effect is $\num{1.76}$ at \num{5} seeds and would remain $\num{0.88}$ even at \num{20} seeds (two-sided $\alpha=\num{0.05}$, power $=\num{0.8}$). Since the observed mean difference is smaller than this detectability floor, the near-null is not a power artefact that a larger run would overturn within a realistic budget; it is consistent with the scalar per-objective proxy not being a bottleneck. The value of Pareto-MCTS in the present design therefore comes from the global accumulation of a non-dominated front together with policy-guided exploration (both shared by both variants), rather than from the specific selection rule.
+
+\subsection{Component and vocabulary ablations}
+\label{sec:ablation}
+
+A $2^{5}$ factorial experiment (ScafVAE policy, Pareto front, $c_{\text{PUCT}}$, temperature, vocabulary size; five replicates per cell) isolates the contribution of individual design choices. This ablation was retained from the pre-activity development protocol and uses a different oracle-weight configuration from v12; absolute rewards are therefore not comparable to the main benchmark, and only the within-ablation relative factor effects are interpreted (summarised in \Cref{fig:overview}).
+
+The ScafVAE policy produces the largest gain ($\Delta = +\num{0.148}$), followed by the Pareto front ($\Delta = +\num{0.108}$) and the large vocabulary ($\Delta = +\num{0.079}$). Changing $c_{\text{PUCT}}$ from \num{2.0} to \num{1.0} improves reward by \num{0.055}; temperature has only a marginal effect. Although the larger vocabulary shows a benefit within this factorial, the head-to-head comparison (\Cref{tab:allfrag}) demonstrates that the MCTS deficit relative to random search persists, and widens, under the full vocabulary, ruling out vocabulary-induced reward flatness as the sole explanation. 
+
+A separate vocabulary ablation (all / medium / minimal / aromatic-only; \num{10} seeds each), run under the earlier development vocabulary rather than the \num{80}-fragment v12 set, yields a highly significant effect (one-way ANOVA $F=\num{350.1}$, $p=\num{1.12e-26}$). The aromatic-only vocabulary is significantly worse than the other three sets (Tukey HSD $p<\num{0.001}$), while the full and medium vocabularies do not differ significantly and the medium--minimal comparison is modest but significant ($p_{\mathrm{adj}}=\num{0.0052}$). Restricting the fragment set to aromatics alone therefore severely limits performance.
+
+To test whether the MCTS deficit arises from a flat reward landscape under the medium vocabulary (\num{37} fragments), we repeated the \num{20}-seed benchmark with the full \num{80}-fragment vocabulary (\Cref{tab:allfrag}). The deficit did not narrow: random search retained the highest mean reward (\num{0.6701} $\pm$ \num{0.0108}), while MCTS fell further behind (\num{0.6488} $\pm$ \num{0.0152}; mean $\Delta = \num{-0.0214}$, \num{19}/\num{20} seeds where random exceeded MCTS). The larger vocabulary did not rescue MCTS, indicating that the deficit is structural rather than vocabulary-limited.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Benchmark statistics across \num{20} independent seeds (full \num{80}-fragment vocabulary, \num{1000} search iterations per seed). Formatting as \Cref{tab:benchmark}.}
+  \label{tab:allfrag}
+  \begin{tabular}{lcccc}
+    \toprule
+    Method & Mean reward & Std & Min & Max \\
+    \midrule
+    Random        & \num{0.6701} & \num{0.0108} & \num{0.6505} & \num{0.6910} \\
+    MCTS+ScafVAE  & \num{0.6488} & \num{0.0152} & \num{0.6190} & \num{0.6772} \\
+    Greedy        & \num{0.4593} & \num{0.0000} & \num{0.4593} & \num{0.4593} \\
+    Genetic algorithm & \num{0.6427} & \num{0.0138} & \num{0.6139} & \num{0.6663} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ============================================================================
+\section{Discussion}
+% ============================================================================
+
+\subsection{What the benchmark actually shows}
+
+Within the curated medium fragment vocabulary and a fixed search budget, random search attains the highest mean scalar reward and the single best seed. MCTS trails by a modest margin (mean $\Delta = \num{-0.0075}$, $p = \num{0.000085}$; 95\% CI $[\num{-0.0107},\,\num{-0.0043}]$) but maintains a Pareto front of non-dominated candidates under the multi-objective protocol. The deficit persists and widens under the full \num{80}-fragment vocabulary ($\Delta = \num{-0.0214}$; \Cref{tab:allfrag}), ruling out vocabulary-induced reward flatness as the cause. A structural analysis attributes the deficit to tree convergence: with \num{1000} iterations and PUCT $c_{\text{PUCT}}=\num{5.0}$, the search tree concentrates evaluations on a narrow set of paths after approximately \num{200} iterations, whereas random search distributes the same oracle budget across \num{1000} independent trajectories. Progressive widening ($\max(5,\,k\,N^{\alpha})$ with $k=\num{1.0}$, $\alpha=\num{0.5}$) limits the number of expanded actions at each node, further constraining diversity. The practical value of the framework lies not in peak single-objective performance but in the transparent exploration of trade-offs that scalar aggregation conceals.
+
+The scalar result places the method in a useful but non-triumphal position. In this constrained fragment space, random search is difficult to improve upon when the objective is a single weighted reward. The rationale for retaining Pareto structure is different: it allows the chemical decision-maker to inspect alternative profiles rather than committing the search to one set of weights. The front-level comparison supports this interpretation, while the narrow fragment vocabulary and proxy nature of the objectives limit its generality.
+
+\subsection{Why greedy collapses under activity-augmented reward}
+
+The most striking result in \Cref{tab:benchmark} is the deterministic greedy baseline scoring \num{0.6676}, only \num{0.0048} below random search, with zero variance across all \num{20} seeds. Greedy returned the same molecule and reward in every replicate under the activity-augmented v12 objective, indicating deterministic convergence to one local solution in the evaluated fragment space. Because the activity term is only one component of the aggregate reward, the observed result does not identify which individual objective caused this convergence; it does show that immediate local optimisation recovered a competitive solution, narrowly trailing the stochastic random baseline. The zero variance is therefore evidence of reproducible path collapse under this protocol, not proof that the entire reward landscape has a single attractor. More broadly, this result motivates reporting deterministic and stochastic baselines together when evaluating multi-objective molecular generation.
+
+\subsection{Relation to prior multi-objective MCTS}
+
+Mothra~\citep{Mothra2024} introduced a SMILES-based Pareto multi-objective MCTS showing that Pareto fronts reveal trade-offs missed by scalar aggregation; subsequent Pareto-MCTS generators have targeted protein--ligand binding~\citep{ParetoDrug2024} or dual-target scaffolds~\citep{CombiMOTS2026}. CombiMOTS~\citep{CombiMOTS2026} frames dual-target engagement as resistance mitigation but remains within binding/drug-likeness objectives rather than resistance or polypharmacology phenotypes. The present contribution is a reproducible transfer to an antimalarial domain with domain-informed objective records: MPO, SYBA, an RRS-informed chemotype proxy and a PNS-informed docking proxy. Three implementation details matter for reproducibility: (i)~a scaffold-aware fragment policy replaces the uniform rollout prior, (ii)~dynamic progressive widening manages the large fragment branching factor, and (iii)~a rollout-degradation failure mode is diagnosed and corrected through global best-molecule tracking. The scalar benchmark shows random search remains the strongest baseline; the Pareto analysis characterises competing candidate profiles not represented by a single ranking. This distinction is the central result, not a claim of universal algorithmic superiority.
+
+\subsection{Limitations}
+
+Interpretation is bounded by several features of the design. The fragment vocabulary (\num{80} fragments in the full set, of which the \num{37}-fragment medium subset was used for the main benchmark) constrains accessible chemical space, so the findings do not generalise automatically to open-ended SMILES generation. Greedy is deterministic in this space, whereas the stochastic methods generate non-identical candidates; diversity statistics describe the recorded best-in-seed sets. Accessibility was evaluated separately for the Pareto display because the search-time accessibility field was invariant; the front should therefore be read as a candidate-level analysis, not as evidence that informative accessibility values guided the search.
+
+The scoring functions are computational proxies. RRS-informed similarity does not propagate per-target WT/mutant ratios, PNS aggregates three docking columns rather than a four-target assay, and activity proximity measures similarity to known actives rather than IC\textsubscript{50} or EC\textsubscript{50}. To assess the activity proxy, we trained a random forest classifier on the companion ChEMBL-derived antimalarial activity panel of \num{19836} molecules (ECFP4 features) to predict experimental activity; the classifier achieved five-fold cross-validation AUC of \num{0.9479} $\pm$ \num{0.0040}. Applied to the \num{20} best-in-seed molecules of the present benchmark, the RF assigned a mean activity probability of \num{0.676} $\pm$ \num{0.135}, with \num{18} of \num{20} predicted active (threshold \num{0.5}). The mean maximum Tanimoto to the \num{19321} active entries of the ChEMBL IC\textsubscript{50}/EC\textsubscript{50} panel used by the activity reward was \num{0.242} $\pm$ \num{0.052}, with Pearson correlation to RF probability of $r = \num{0.803}$. This is consistent with the Tanimoto-max proxy carrying activity-related information while systematically underestimating RF-based activity probability. The check is orthogonal in model class, a random forest on ECFP4 rather than a maximum-Tanimoto rule but not in data, since the activity reward and the classifier draw on overlapping public activity sources; it therefore tests the internal consistency of the proxy rather than providing independent evidence of activity. These analyses support prioritisation, not biological validation; prospective experiments are required before biological claims are made. The present fragment space produces a narrow RRS range (\num{0.141}--\num{0.223}) and predominantly discrete PNS values (\num{0.0} or \num{1.0}), so the study demonstrates objective integration and candidate-selection provenance more strongly than broad phenotypic separation.
+
+\subsection{Implications for antimalarial design}
+
+A distinctive feature of the present setup is that domain-informed proxy signals are recorded alongside candidate retention rather than appearing only in an opaque final ranking. Whereas prior Pareto-MCTS generators commonly optimise binding, drug-likeness, toxicity or dual-target objectives~\citep{Mothra2024,ParetoDrug2024,CombiMOTS2026}, this implementation adds RRS-informed and PNS-informed proxies alongside potency and accessibility. The current data also define the limit of that claim: the RRS-informed proxy spans only \num{0.141}--\num{0.223}, and PNS equals \num{1.0} for three of four front points. The framework is a computational prioritisation layer; biochemical, cellular and resistance experiments remain necessary to establish biological activity. Two extensions follow from the companion studies of this series: the per-target docking-derived WT/mutant ratios of the companion polypharmacology study~\citep{Temgoua2026b} would replace the present chemotype-similarity proxy with a target-resolved resistance dimension that remains computational rather than measured, and the quantum-inspired topological and tensor-network descriptors developed for the same natural-product space~\citep{Temgoua2026c}, which that study reports as complementary to established fingerprints rather than superior to them, offer further candidate objective dimensions. Neither substitution is made here, and neither would convert a docking-derived signal into a dynamics-derived one.
+
+% ============================================================================
+\section{Methods}
+% ============================================================================
+
+\subsection{Molecular environment}
+\label{sec:env}
+
+De novo generation is formulated as a Markov decision process. The state is a partially constructed molecule (canonical SMILES); actions append one fragment from a curated vocabulary at a regiospecific attachment point. Episode termination occurs after at most \num{10} construction steps or upon violation of a reactivity filter. The main benchmark uses the medium fragment subset; ablations also evaluate the full, minimal and aromatic-only vocabularies.
+
+\subsection{MCTS with scaffold-aware policy}
+\label{sec:mcts}
+
+The agent follows the standard four-phase MCTS loop (selection, expansion, rollout, backpropagation)~\citep{Coulom2006} rooted at benzene, with $N_{\text{iter}}=\num{1000}$. Selection maximises the PUCT score~\citep{Silver2016}
+\begin{equation}
+  a^{*} = \arg\max_{a}\;
+  Q(s,a)
+  + c_{\text{PUCT}}\,P(a\mid s)\,\frac{\sqrt{N(s)}}{1+N(s,a)}
+  \;-\; \nu\,\frac{N(s,a)}{\max_{b} N(s,b)},
+\end{equation}
+where $Q(s,a)=W(s,a)/N(s,a)$ is the mean action value, $W(s,a)$ the reward accumulated through that edge by backpropagation, $N(s,a)$ its visit count and $N(s)$ the parent visit count. The third term is the virtual loss: it scales with a child's visit count relative to the most-visited sibling and so discourages repeated selection of the same child within a single search. We use $c_{\text{PUCT}}=\num{5.0}$ and $\nu=\num{0.01}$. The policy $P(a\mid s)$ combines heuristic scaffold-informed fragment priors, scaffold Tanimoto compatibility and a reactivity penalty via a softmax. Dynamic progressive widening limits the number of expanded actions at each node to $\max(5,\,k\,N^{\alpha})$ with $k=\num{1.0}$ and $\alpha=\num{0.5}$.
+
+\subsection{Global best-molecule tracking}
+\label{sec:rollout_fix}
+
+Policy-biased rollouts can degrade a high-quality intermediate by subsequent fragment additions. During each rollout the oracle is therefore evaluated at every construction step; the highest-scoring intermediate rather than the terminal state is returned. This change increased the mean reward by a factor of approximately \num{2.6} relative to the agent without global best-molecule tracking.
+
+\subsection{Pareto front maintenance}
+\label{sec:pareto}
+
+The agent maintains a global non-dominated \textbf{pre-activity} candidate pool over the recorded objective schema
+\[
+\mathbf{f}(s)=\bigl(f_{\text{MPO}}(s),\,f_{\text{SYBA}}(s),\,f_{\text{RRS}}(s),\,f_{\text{PNS}}(s)\bigr),
+\]
+with minimisation objectives converted to maximisation by negation. In the pre-activity search, SYBA was constant at zero in every per-seed record and was automatically excluded as a non-informative dimension; SA was likewise constant ($\mathrm{SA}=\num{3.0}$) and excluded. The final four-point front uses the secondary SYBA evaluation; its displayed four-dimensional non-dominance is therefore not a claim of four-way informative optimisation during the original search. After each rollout the best intermediate molecule is tested for dominance; dominated members are removed. The hypervolume indicator is computed with the active (non-constant) objectives only: each active objective is min--max normalised to $[0,1]$, and the hypervolume is evaluated with respect to a reference point $\mathbf{r}=\num{1.1}$ (slightly worse than the worst normalised value of $1$) in each active dimension, so that the reported value lies in $[0,1.1]^{k}$ for $k$ active objectives. Two hypervolume conventions therefore appear in this article and are not interchangeable. The front of \Cref{tab:pareto} is evaluated over the four active objectives of the displayed front (MPO, SYBA, RRS and PNS; SA is the only constant dimension and is excluded), with each active objective negated first where it is maximised and then min--max normalised to $[0,1]$ within that front, which bounds the indicator by $1.1^{4}=\num{1.4641}$ and yields \num{1.2366}. Because SYBA was constant during the search and was re-evaluated only for the displayed front, this four-dimensional indicator characterises the reported front and not the information available to the search. The secondary method comparison of \Cref{tab:front_comp} and the selection ablation of \Cref{sec:selection_ablation} use the same four objectives but under a min--max normalisation shared across methods rather than internal to a single front, with the normalised vectors negated to match the minimisation convention of the hypervolume routine; a reference point of \num{1.1} in each dimension then bounds the indicator by $(1.1+1)^{4}=\num{19.45}$. Values obtained under the two conventions must not be compared with one another. For PUCT selection a scalar proxy $Q(s,a)$ is obtained by summing the min--max normalised components that vary in the run; the full vector is stored for candidate-pool updates and the secondary objective analysis. The constant search-time SYBA field therefore contributed no information to $Q(s,a)$ during the search.
+
+\subsection{Scoring oracles}
+\label{sec:oracles}
+
+Each molecule is scored by an aggregator returning MPO, SYBA~\citep{Vorsilak2020}, SA~\citep{Ertl2009}, docking-derived terms, an RRS-informed chemotype-similarity proxy, a PNS-informed normalised Tartarus docking proxy, and public-activity proximity (activity). In the pre-activity analysis, the search-time SYBA field was constant and was not treated as an informative accessibility measurement. RRS uses Morgan/Tanimoto similarity to the resistance-associated reference chemotypes of the companion polypharmacology study~\citep{Temgoua2026b}, whose canonical resistance layer is docking-derived; the current implementation does not propagate the per-target docking-derived WT/mutant ratios reported there, and no molecular-dynamics resistance quantity enters the present work. PNS averages the detected Tartarus columns \texttt{score\_1syh}, \texttt{score\_6y2f} and \texttt{score\_4lde}; it is not a direct PfDHFR/PfCRT/PfATP4/PfClpP panel. These proxies remain displayed dimensions of the secondary pre-activity front, but their biological validation is outside the present study. The RRS-informed and PNS-informed proxy signals were available during candidate discovery; the constant search-time SYBA field was not informative. In the v12 scalar benchmark, RRS and PNS are disabled and are not silently substituted for the public-activity term. Default scalar-reward weights are $w_{\text{MPO}}=\num{0.27}$, $w_{\text{docking}}=\num{0.225}$, $w_{\text{SYBA}}=\num{0.135}$, $w_{\text{SA}}=\num{0.045}$, $w_{\text{RRS}}=\num{0.135}$, $w_{\text{PNS}}=\num{0.09}$, $w_{\text{activity}}=\num{0.10}$. The activity oracle scores a molecule by its maximum Morgan-2 Tanimoto to the \num{19321} experimentally active antimalarial compounds of the independent public ChEMBL IC\textsubscript{50}/EC\textsubscript{50} dataset (\num{22447} molecules), scaled continuously (Tanimoto $\le \num{0.20}$ gives a soft gradient; $\num{0.20}$--$\num{1.0}$ maps linearly). The four-method v12 scalar benchmark uses the reduced reward \texttt{compute\_mpo\_reward} with weights $w_{\text{MPO}}=\num{0.36}$, $w_{\text{docking}}=\num{0.315}$, $w_{\text{SYBA}}=\num{0.135}$, $w_{\text{SA}}=\num{0.09}$ and $w_{\text{activity}}=\num{0.10}$; RRS and PNS are disabled in this benchmark because they require the external resistance-profiling and network datasets of the companion studies. Separately, the canonical Pareto-MCTS front reported in \Cref{tab:pareto} was generated under the pre-activity vector objective set (MPO, SYBA, RRS, PNS), with activity excluded from its dominance check and hypervolume. Thus, the v12 activity term changes only the scalar benchmark and does not retroactively alter the locked Pareto front. MPO and docking scores are drawn from precomputed libraries where available; QED~\citep{Bickerton2012} serves as an MPO fallback for novel structures. SYBA on the reported Pareto front was evaluated with the lich/conda classifier because the search-time SYBA field was constant. The search-time field is not interpreted as a validated accessibility measurement. The accessibility column reported in \Cref{tab:pareto} is the linear transform $\mathrm{SA}^{-1} = (10 - \mathrm{SA})/9$ of the raw Ertl score, so that the shared raw value $\mathrm{SA} = \num{3.0}$ corresponds to $\mathrm{SA}^{-1} = \num{0.778}$; the source CSV stores the raw value.
+
+\subsection{Statistical analysis and reproducibility}
+
+All searches are seeded; the specific seed integers and the random-number generators (NumPy \texttt{default\_rng}, seeded per method and per seed with no cross-method state leakage) are fixed in the committed script. The four-method benchmark uses \num{20} independent seeds; ablations use five or ten replicates as indicated. Paired $t$-tests are reported for the two planned head-to-head comparisons (MCTS--random and MCTS--GA); because both are pre-specified primary comparisons, we report unadjusted two-sided $p$-values and note that both remain significant after a conservative Bonferroni adjustment across the two primaries (adjusted threshold $\num{0.025}$): MCTS--random $p = \num{0.000085}$, MCTS--GA $p<\num{0.0001}$. The vocabulary ablation is tested with a one-way ANOVA (three degrees of freedom between groups) followed by pairwise Tukey HSD post-hoc comparisons. The benchmark used a value-preserving vectorisation of the docking Tanimoto scan, verified on held-out molecules. The \num{20} per-seed runs use independent seeded random-number streams, and the best-in-seed molecule sets are retained for candidate-level analysis. Analyses were executed with Python 3.11, RDKit, NumPy, SciPy, scikit-learn~\citep{Pedregosa2011} and pymoo. Code, configuration files, molecule lists and score tables are released under the MIT licence in the public repository \url{https://github.com/NanaEngo/Malaria_codesV2}.
+
+% ============================================================================
+\section{Conclusions}
+% ============================================================================
+
+A Pareto-guided MCTS agent equipped with a scaffold-aware fragment policy trails random search by a modest margin on the public-activity-augmented scalar reward (mean $\Delta = \num{-0.0075}$, $p = \num{0.000085}$, 95\% CI $[\num{-0.0107},\,\num{-0.0043}]$ at the screened optimal configuration). In the separate pre-activity analysis, it yields a front of non-dominated candidates under the defined secondary objective vector; the RRS-informed and PNS-informed proxies were available during candidate discovery, whereas SYBA was evaluated separately for the accessibility dimension. The factorial ablation identifies large within-ablation effects for the policy and Pareto components, although its oracle configuration differs from the scalar benchmark. Within the studied fragment space, random search remains a strong scalar baseline; the added value of MCTS is transparent objective-space exploration, not scalar superiority.
+
+The principal output is a four-point Pareto front that exposes potency--accessibility trade-offs that fixed-weight scalar aggregation discards: across the normalised MPO--SYBA weight space, P2 is the scalar argmax over \num{95.6}\% of weightings, whereas P3 the highest-MPO candidate of the four, is selected only above $w_{\mathrm{MPO}} \approx \num{0.997}$, that is in \num{0.3}\% of the space. This candidate-level analysis, combined with the random-forest check in which \num{18} of \num{20} best-in-seed molecules were classified as active by a model of different functional form trained on an overlapping public activity panel, provides a testable prioritisation set for biochemical, cellular, and resistance-mutant follow-up. The framework is generalisable to other fragment vocabularies and objective vectors, provided that the separation between search-time proxies and downstream biological validation is maintained.
+
+Three practical implications follow. First, the scalar benchmark confirms that random search is a strong baseline in constrained fragment spaces; any new method must demonstrate value beyond single-objective performance. Second, the Pareto archive provides a decision-support layer that preserves chemically distinct candidate profiles without requiring the user to commit to fixed weights in advance. Third, the explicit separation of computational proxies (RRS, PNS, activity proximity) from biological validation ensures that the framework can be extended to new objective vectors without conflating search metrics with biological claims. The analysis scripts and the result files listed in the Data availability section are available in the public repository; as noted there, the full-vocabulary benchmark of \Cref{tab:allfrag} is reported from the summary statistics retained in the analysis record rather than from deposited per-seed files.
+
+% ============================================================================
+\section*{List of Abbreviations}
+% ============================================================================
+
+\textbf{MCTS:} Monte Carlo tree search; \textbf{MPO:} multi-parameter optimisation; \textbf{SYBA:} synthetic Bayesian accessibility; \textbf{SA:} synthetic accessibility score; \textbf{RRS:} resistance resilience score; \textbf{PNS:} polypharmacology-network score; \textbf{GA:} genetic algorithm; \textbf{PUCT:} polynomial upper confidence trees; \textbf{SMILES:} simplified molecular-input line-entry system; \textbf{ChEMBL:} ChEMBL bioactivity database; \textbf{HV:} hypervolume; \textbf{IGD:} inverted generational distance; \textbf{MDS:} multidimensional scaling; \textbf{CI:} confidence interval.
+
+% ============================================================================
+\section*{Data availability}
+% ============================================================================
+
+All data supporting the conclusions are available under the MIT licence in the public repository \url{https://github.com/NanaEngo/Malaria_codesV2}. The repository contains (i)~the 20-seed four-method benchmark tables and best-in-seed SMILES (\texttt{results/benchmark\_molecules\_opt/} for the baseline reward and \texttt{results/benchmark\_molecules\_opt\_v12/} for the public-activity-augmented reward); (ii)~per-seed and merged Pareto fronts with the secondary SYBA evaluation record (\texttt{results/pareto/}); (iii)~diversity metrics and MDS coordinates (\texttt{results/diversity/}); (iv)~component and vocabulary ablation summaries; and (v)~analysis scripts. The full-vocabulary benchmark summarised in \Cref{tab:allfrag} was executed as a single recorded run; the table reports the summary statistics retained in the study's analysis record, and the corresponding per-seed output files are not part of this deposit.
+
+\section*{Competing interests}
+The authors declare that they have no competing interests.
+
+\section*{Authors' contributions}
+MVST: conceptualization, methodology, software, formal analysis, writing---original draft. JPTN: methodology, supervision, writing---review \& editing. PS: data curation, writing---review \& editing. WFM: validation, writing---review \& editing. SGNE: supervision, writing---review \& editing. All authors read and approved the final manuscript.
+
+\section*{Acknowledgements}
+We thank the developers of RDKit, SYBA and the open-source MCTS literature for foundational tools and ideas. Computational resources were provided by the University of Yaound\'{e} I HPC facility.
+
+\section*{Funding}
+This research received no funding. The authors received no grants, sponsorship or financial support of any kind, from any organisation, for the work reported in this article.
+
+\section*{Ethics approval and consent to participate}
+Not applicable.
+
+\section*{Consent for publication}
+Not applicable.
+
+\section*{Use of Artificial Intelligence}
+During the preparation of this work the authors used AI assistants to support code development and data analysis scripting. The authors reviewed and edited all AI-assisted output and take full responsibility for the content of this article. No generative AI tool is listed as an author. All computational results, statistical analyses, and quantitative claims were generated and verified by the authors.
+
+% ============================================================================
+\bibliographystyle{unsrtnat}
+\bibliography{P4_Bibliography}
+
+\end{document}

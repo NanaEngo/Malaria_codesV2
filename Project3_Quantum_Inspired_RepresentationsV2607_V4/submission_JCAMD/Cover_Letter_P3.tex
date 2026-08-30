@@ -1,0 +1,74 @@
+% ============================================================================
+% Cover Letter — Paper 3
+% Target: Journal of Computer-Aided Molecular Design (JCAMD)
+% ============================================================================
+\documentclass[9pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{top=0.55in,bottom=0.55in,left=0.68in,right=0.68in}
+\usepackage{enumitem}
+\setlist{itemsep=0pt, topsep=1pt, parsep=0pt}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{siunitx}
+\sisetup{separate-uncertainty=true, range-phrase=--}
+\DeclareSIUnit\angstrom{\text{\AA}}
+
+\begin{document}
+\fontsize{9}{10.5}\selectfont
+
+\begin{flushleft}
+\textbf{Myke Vital Sao Temgoua} \\
+Department of Physics, Faculty of Science \\
+University of Yaound\'{e} I \\
+P.O. Box 812, Yaound\'{e}, Cameroon \\
+\href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[0.8em]
+\today
+\end{flushleft}
+
+\begin{flushleft}
+Prof.\ Diane Joseph-McCarthy, PhD, Editor-in-Chief \\
+\textit{Journal of Computer-Aided Molecular Design} \\
+Springer Nature
+\end{flushleft}
+
+\vspace{0.2em}
+
+\noindent Dear Prof.\ Joseph-McCarthy,
+
+We submit our manuscript \textbf{``Do topological and quantum-inspired molecular representations add value? Evidence from African antimalarial chemical space''} for consideration as an Original Research Article in \textit{Journal of Computer-Aided Molecular Design}.
+
+This work addresses a computational method evaluation question relevant to computer-aided drug design: whether physics-inspired molecular representations—persistent homology-based topological fingerprints, tensor network compression, and quantum kernel methods—offer practical advantages over established classical fingerprints for virtual screening and molecular property prediction. We present a rigorous benchmarking study comparing three novel descriptors (TFP, TNE, QKS) against ECFP4 and other classical baselines on \num{19849} African natural-product-derived antimalarial candidates, with computational activity labels from the Ersilia eos80ch model. The evaluation uses matched 5-fold cross-validation protocols, ablation analysis, and includes a label-source-shift transfer assessment on \num{22447} ChEMBL compounds.
+
+\noindent\textbf{Key methodological contributions and findings:}
+
+\begin{enumerate}
+\item \textbf{Topological descriptor for scaffold analysis:} persistent homology decomposes the scaffold expansion paradox (\qty{92.6}{\percent} whole-molecule Tanimoto-distinct yet \qty{69.3}{\percent} scaffold-conserving) into H$_0$ (divergent connectivity) versus H$_1$ (conserved ring topology). TFP achieves cross-validated AUC \num{0.876}, providing structural interpretability but not predictive superiority over ECFP4 (\num{0.948}).
+
+\item \textbf{Tensor network molecular compression:} Tucker decomposition at bond dimension $d=8$ achieves \num{6.1}$\times$ real-atom compression (mean \num{39} atoms $\rightarrow$ \num{192} elements; reconstruction error \num{0.113}). TNE retains docking-score-predictive information on PfDHFR ($R^2 = \num{0.473}$ versus ECFP4 \num{0.461}) but degrades on cross-validated activity prediction (AUC \num{0.722}).
+
+\item \textbf{Quantum kernel baseline comparison:} simulated 6-qubit quantum kernels showed no statistically detectable difference from properly tuned RBF kernels internally (AUC \num{0.823} versus \num{0.829}, $p = \num{0.060}$), and performed lower on ChEMBL transfer (AUC \num{0.817} versus \num{0.847}, $p = \num{0.021}$). This honest-negative result establishes that current quantum kernel implementations do not outperform optimized classical baselines for this application.
+
+\item \textbf{Hybrid descriptor evaluation:} the combined TFP+TNE+QK descriptor achieves AUC \num{0.888}, below ECFP4 (\num{0.948}, $p < \num{0.0001}$). Ablation analysis identifies QKS as the principal contributor ($\Delta = -\num{0.040}$), while stacking TFP and TNE onto ECFP4 yields no detectable gain ($\Delta$AUC $= \num{-0.0002}$, $p = \num{0.084}$).
+
+\item \textbf{Scaffold-based validation:} Bemis--Murcko scaffold-grouped cross-validation (panel spans \num{632} scaffolds) reveals all descriptors lose \numrange{0.086}{0.196} AUC, with ECFP4 dropping from \num{0.948} to \num{0.822}, quantifying scaffold memorization effects across descriptor classes.
+
+\item \textbf{Computational efficiency and practical applicability:} all three methods are implemented with open-source libraries (Ripser.py, TensorLy, PennyLane) and scale to tens of thousands of molecules. TNE compression reduces storage requirements while TFP provides interpretable topological features for post-hoc analysis. Complete computational protocols are provided for reproducibility.
+\end{enumerate}
+
+\noindent\textbf{Scope alignment with JCAMD:} this work directly addresses the journal's focus on computational method development and rigorous benchmarking for drug discovery applications. The study provides: (i)~three reusable molecular descriptor implementations with full algorithmic details, (ii)~controlled baseline comparisons under matched cross-validation protocols, (iii)~explicit performance boundaries through scaffold-based validation and external transfer assessment, (iv)~honest reporting of negative findings where novel methods did not outperform classical approaches, and (v)~practical guidance on when these methods add value (structural interpretation, compression) versus when they do not (primary virtual screening).
+
+\noindent\textbf{Evidence boundaries:} all activity labels are computational predictions (Ersilia eos80ch model), not experimental measurements. The ChEMBL transfer panel is label-source-independent but not confirmed molecule-level-disjoint from the internal panel, representing a transferability assessment rather than strict external validation. The quantum kernel outperformed linear kernels but not the gamma-tuned RBF baseline, establishing that careful classical method optimization remains competitive.
+
+\noindent\textbf{Reproducibility:} complete computational provenance (persistent homology calculations, Tucker decomposition parameters, quantum kernel circuits, cross-validation splits, ablation protocols, baseline hyperparameter grids) is archived at \url{https://github.com/NanaEngo/Malaria_codesV2} under MIT license. The Supporting Information (\num{16} pages) contains implementation pseudocode, descriptor generation workflows, and complete benchmark tables. All random seeds are fixed (\texttt{random\_state=42}) for exact reproducibility.
+
+This manuscript is original, not under consideration elsewhere, and all authors have reviewed and approved the submission. We declare no competing financial interests.
+
+\vspace{0.3em}
+
+\noindent Sincerely,
+
+\noindent \textbf{Myke Vital Sao Temgoua} (on behalf of all co-authors)
+
+\end{document}
