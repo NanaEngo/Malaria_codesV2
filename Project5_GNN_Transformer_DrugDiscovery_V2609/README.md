@@ -15,8 +15,8 @@ The table reports mean ROC AUC ± population SD across the five per-seed means (
 |---|---:|---:|
 | **ECFP4-RF** | **0.9433 ± 0.0003** | **0.8300 ± 0.0023** |
 | ChemBERTa | 0.9121 ± 0.0012 | 0.7867 ± 0.0054 |
-| GIN | 0.9098 ± 0.0033 | 0.8047 ± 0.0141 |
-| GIN-TFP | 0.9084 ± 0.0038 | 0.8138 ± 0.0107 |
+| GIN | 0.9098 ± 0.0022 | 0.8047 ± 0.0141 |
+| GIN-TFP | 0.9084 ± 0.0012 | 0.8138 ± 0.0107 |
 | GIN-TNE | 0.8918 ± 0.0018 | 0.8090 ± 0.0149 |
 
 On the independent public malaria panel (`n=22,267`), ECFP4-RF reaches 0.9190 versus GIN 0.8843 ± 0.0021 under scaffold split (Δ=0.0346, p=3.35×10⁻⁶). GIN-TFP adds modest complementary signal but does not surpass ECFP4-RF.

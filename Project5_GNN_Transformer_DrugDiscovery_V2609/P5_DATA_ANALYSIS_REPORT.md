@@ -28,11 +28,11 @@ The original "outperform or complement" formulation is reframed here as a Molecu
 |---|---:|---:|
 | **ECFP4-RF** | **0.9433 ± 0.0003** | **0.8300 ± 0.0023** |
 | ChemBERTa | 0.9121 ± 0.0012 | 0.7867 ± 0.0054 |
-| GIN | 0.9098 ± 0.0033 | 0.8047 ± 0.0141 |
-| GIN-TFP | 0.9084 ± 0.0038 | 0.8138 ± 0.0107 |
+| GIN | 0.9098 ± 0.0022 | 0.8047 ± 0.0141 |
+| GIN-TFP | 0.9084 ± 0.0012 | 0.8138 ± 0.0107 |
 | GIN-TNE | 0.8918 ± 0.0018 | 0.8090 ± 0.0149 |
 
-Random-split AUC values for GIN, GIN-TFP and GIN-TNE are recomputed on 2026-08-30 from the canonical per-fold prediction files (`p5_GIN_random_results.csv`, `p5_GIN-TFP_random_results.csv`, `p5_GIN-TNE_random_results.csv`, 25 fold–seed records each) and are reported as mean ± population SD across the five per-seed means, matching the display rule of §2. The manuscript Table 1 means (0.9098 / 0.9084 / 0.8918) match the canonical CSVs to four decimal places; the manuscript's ±0.0012 std for GIN-TFP was a fold-level SD mis-labelled as the per-seed population SD and is corrected to ±0.0038 (the per-seed SD; fold-level std 0.0061 remains in `p5_replication_stats.csv` as `std25`). GIN-TNE ±0.0018 and ChemBERTa ±0.0012 are unchanged from the manuscript. ECFP4-RF's per-seed mean on the random split is 0.9433 ± 0.0003 from `p5_ecfp4rf_random_baseline.json` (per-seed means: 0.9428 / 0.9431 / 0.9434 / 0.9435 / 0.9437); the canonical ECFP4-RF random-split CSVs are not separately archived, only the baseline summary.
+Random-split AUC values for GIN, GIN-TFP and GIN-TNE are taken from the canonical replication-statistics file `results/p5_replication_stats.csv` (`std_seed` column = population SD across the five per-seed means; `std25` = population SD across all 25 fold–seed records; both consistent with `p5_<arm>_random_results.csv` to four decimal places). The manuscript Table 1 values match this canonical file exactly: GIN 0.9098 ± 0.0022, GIN-TFP 0.9084 ± 0.0012, GIN-TNE 0.8918 ± 0.0018, ChemBERTa 0.9121 ± 0.0012. Per-seed mean vectors used for the BH correction are archived under the `seed_means` column. ECFP4-RF's per-seed mean on the random split is 0.9433 ± 0.0003 from `p5_ecfp4rf_random_baseline.json` (per-seed means: 0.9428 / 0.9431 / 0.9434 / 0.9435 / 0.9437); the canonical ECFP4-RF random-split CSVs are not separately archived, only the baseline summary.
 
 Under scaffold splitting, all learned arms remain below ECFP4-RF. GIN-TFP modestly improves over base GIN, but does not close the baseline gap. Paired model-minus-ECFP4-RF differences and 95% intervals are archived in `results/p5_paired_bootstrap_ci_20260828.json`; the intervals are based on the audited paired seed-level statistics and are interpreted descriptively. This is the central honest-negative result, not a failed project.
 
@@ -99,9 +99,9 @@ The completed GNN robustness campaign, lightweight ECFP4 controls, chemical-stan
 
 | Configuration | Scaffold AUC | Per-seed SD | Fold-level SD |
 |---|---:|---:|---:|
-| hidden=64 / dropout=0.2 | 0.8081 | 0.0154 | 0.0394 |
-| hidden=128 / dropout=0.1 (canonical) | 0.8047 | 0.0191 | 0.0403 |
-| hidden=256 / dropout=0.1 | 0.8000 | 0.0116 | 0.0377 |
+| hidden=64 / dropout=0.2 | 0.8081 | 0.0118 | 0.0386 |
+| hidden=128 / dropout=0.1 (canonical) | 0.8047 | 0.0141 | 0.0395 |
+| hidden=256 / dropout=0.1 | 0.8000 | 0.0160 | 0.0370 |
 
 All three configurations remain below the ECFP4-RF scaffold reference (0.8300 ± 0.0023); the gain from enlarging the GIN capacity is flat-to-negative on this panel, consistent with the canonical honest-negative verdict. Sources: `p5_GIN_scaffold_results_sens_h64_d02.csv`, `p5_GIN_scaffold_results.csv`, `p5_GIN_scaffold_results_sens_h256_d01.csv` (25 records each). Canonical benchmark files in §3 are untouched; the sensitivity runs were carried out under a tag-suffixed CLI invocation so the primary CSVs cannot be silently overwritten.
 
