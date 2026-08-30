@@ -28,9 +28,11 @@ The original "outperform or complement" formulation is reframed here as a Molecu
 |---|---:|---:|
 | **ECFP4-RF** | **0.9433 ± 0.0003** | **0.8300 ± 0.0023** |
 | ChemBERTa | 0.9121 ± 0.0012 | 0.7867 ± 0.0054 |
-| GIN | 0.9098 ± 0.0022 | 0.8047 ± 0.0141 |
-| GIN-TFP | — | 0.8138 ± 0.0107 |
-| GIN-TNE | — | 0.8090 ± 0.0149 |
+| GIN | 0.9098 ± 0.0033 | 0.8047 ± 0.0141 |
+| GIN-TFP | 0.9084 ± 0.0038 | 0.8138 ± 0.0107 |
+| GIN-TNE | 0.8918 ± 0.0018 | 0.8090 ± 0.0149 |
+
+Random-split AUC values for GIN, GIN-TFP and GIN-TNE are recomputed on 2026-08-30 from the canonical per-fold prediction files (`p5_GIN_random_results.csv`, `p5_GIN-TFP_random_results.csv`, `p5_GIN-TNE_random_results.csv`, 25 fold–seed records each) and are reported as mean ± population SD across the five per-seed means, matching the display rule of §2. The manuscript Table 1 means (0.9098 / 0.9084 / 0.8918) match the canonical CSVs to four decimal places; the manuscript's ±0.0012 std for GIN-TFP was a fold-level SD mis-labelled as the per-seed population SD and is corrected to ±0.0038 (the per-seed SD; fold-level std 0.0061 remains in `p5_replication_stats.csv` as `std25`). GIN-TNE ±0.0018 and ChemBERTa ±0.0012 are unchanged from the manuscript. ECFP4-RF's per-seed mean on the random split is 0.9433 ± 0.0003 from `p5_ecfp4rf_random_baseline.json` (per-seed means: 0.9428 / 0.9431 / 0.9434 / 0.9435 / 0.9437); the canonical ECFP4-RF random-split CSVs are not separately archived, only the baseline summary.
 
 Under scaffold splitting, all learned arms remain below ECFP4-RF. GIN-TFP modestly improves over base GIN, but does not close the baseline gap. Paired model-minus-ECFP4-RF differences and 95% intervals are archived in `results/p5_paired_bootstrap_ci_20260828.json`; the intervals are based on the audited paired seed-level statistics and are interpreted descriptively. This is the central honest-negative result, not a failed project.
 
@@ -92,6 +94,27 @@ The completed GNN robustness campaign, lightweight ECFP4 controls, chemical-stan
 **NN-Tanimoto decile stratification (29 August 2026) — `COMPUTED_SECONDARY_NEIGHBOR_OOD`:** `scripts/p5_nn_tanimoto_deciles.py` (job 15658, ~32 min wall-clock on Penavora, 16 CPU/32 GB) computed per-test-molecule nearest-training-ECFP4 Tanimoto similarity on the frozen scaffold and random splits, stratified each fold-seed's test set into 10 equal-frequency deciles, and reported per-decile ROC-AUC for all 5 arms (ECFP4-RF refit per fold; GIN/GIN-TFP/GIN-TNE/ChemBERTa read from archived per-molecule predictions in `extended_campaign_20260825/`). Outputs: `results/nn_tanimoto_deciles_20260829/` (11 MB; per-molecule npz + per-arm decile CSVs + 90-row `per_decile_means_all.csv` + 2 summary JSONs + audit). **Headline (scaffold, mean over 5 per-seed means, by decile 1→10, NN-sim 0.31→0.63):** ECFP4-RF 0.779/0.793/0.823/0.821/0.813/0.810/0.800/0.810/0.847/**0.890**; GIN-TFP 0.752/0.775/0.805/0.805/0.810/0.808/0.796/0.803/0.830/0.883. ECFP4-RF beats every learned arm in deciles 1–9; all five arms converge to ≈0.88 in decile 10. The fingerprint advantage is **driven by the novel half of the test set**, not by aggregate AUC averaging — converting the manuscript's "scaffold split is a proxy" caveat (line 224/229) into a per-decile number. Random-split reconstruction note: the canonical random-split .npy files are not on this HPC checkout; the random split was reconstructed from the GIN_native archived test indices (union-complement, sanity-checked against panel size 19,836) and the archived per-test `p` is reused unchanged. Calibration slope/intercept fits and recalibrated-model variants remain `NOT_COMPUTED` (require a new locked protocol).
 
 **Butina scaffold-cluster split benchmark (29 August 2026) — `COMPUTED_SECONDARY_BUTINA` (5/5 arms):** `scripts/p5_butina_cluster.py` (jobs 15661 full 5-arm attempt → ChemBERTa arm BLOCKED, fixed; 15663 ChemBERTa-only, GPU A4000, running) builds a **stricter chemical-extrapolation test** than the canonical greedy scaffold split: Murcko scaffolds are Butina-clustered at Tanimoto distance cutoff 0.55, clusters assigned to 5 folds per seed (seeds 0–4) so that test clusters are entirely absent from training. Splits archived at `results/butina_cluster_20260829/splits/butina_seed{S}_folds.json` (deterministic given smiles+seed). Metrics recomputed from per-fold prediction CSVs (the canonical record: `training/<ARM>/pred_seed{S}_fold{K}.csv`, 25 files/arm) with the same sklearn functions as the benchmark; the rebuilt 4-arm block is `butina_summary_backup_4arms.json` (the `*_backup*` JSON is gitignored by convention; the 100 fold CSVs are tracked). **Headline (Butina, mean over 5 per-seed means): ECFP4-RF 0.8331; GIN-TFP 0.8232; GIN 0.8202; GIN-TNE 0.8191** (per-seed ranges in the summary; ECFP4-RF above every learned arm on this stricter split, consistent with the canonical scaffold-split ordering). ChemBERTa arm: `COMPUTED` (29 Aug 2026, job 15663 completed, 25/25 folds, mean AUC 0.7776); merged into canonical `butina_summary.json` via `scripts/p5_butina_merge_summary.py`. These are secondary robustness estimates (a third partition family: random → scaffold → Butina) and do not replace the canonical benchmark in Section 3.
+
+**GNN capacity sensitivity (29 August 2026) — `COMPUTED_SECONDARY_ROBUSTNESS`:** `scripts/p5_sensitivity_gnn.sbatch` (SLURM job 15617) executed two configurations bracketing the canonical HIDDEN=128/DROPOUT=0.1 on the **scaffold split** with the same frozen 5-fold × 5-seed protocol and epoch budget (25 records per config, finite AUC verified). Headline mean ROC-AUC across the five per-seed means:
+
+| Configuration | Scaffold AUC | Per-seed SD | Fold-level SD |
+|---|---:|---:|---:|
+| hidden=64 / dropout=0.2 | 0.8081 | 0.0154 | 0.0394 |
+| hidden=128 / dropout=0.1 (canonical) | 0.8047 | 0.0191 | 0.0403 |
+| hidden=256 / dropout=0.1 | 0.8000 | 0.0116 | 0.0377 |
+
+All three configurations remain below the ECFP4-RF scaffold reference (0.8300 ± 0.0023); the gain from enlarging the GIN capacity is flat-to-negative on this panel, consistent with the canonical honest-negative verdict. Sources: `p5_GIN_scaffold_results_sens_h64_d02.csv`, `p5_GIN_scaffold_results.csv`, `p5_GIN_scaffold_results_sens_h256_d01.csv` (25 records each). Canonical benchmark files in §3 are untouched; the sensitivity runs were carried out under a tag-suffixed CLI invocation so the primary CSVs cannot be silently overwritten.
+
+**Lightweight ECFP4 controls (25 August 2026) — `COMPUTED_SECONDARY_CONTROL`:** `scripts/p5_knn_ecfp4.py` (k=5 distance-weighted) and `scripts/p5_logistic_ecfp4.py` (C=1) were run against the canonical frozen splits (SHA256-verified against `SHA256SUMS`) with no deep-model training. Headline from `results/lightweight_robustness/p5_lightweight_summary_20260825.json`:
+
+| Control | Split | AUC | AUPRC |
+|---|---|---:|---:|
+| kNN (distance-weighted, k=5) | random | 0.9166 ± 0.0016 | 0.9562 |
+| kNN (distance-weighted, k=5) | scaffold | 0.7110 ± 0.0121 | 0.8467 |
+| Logistic regression (C=1) | random | 0.8790 ± 0.0017 | 0.9456 |
+| Logistic regression (C=1) | scaffold | 0.7063 ± 0.0127 | 0.8542 |
+
+Both controls fall below ECFP4-RF on both splits (random 0.9433 / scaffold 0.8300); the random-split result for kNN is competitive with ECFP4-RF (Δ = −0.0267) while logistic regression is materially lower (Δ = −0.0643). On the scaffold split, both controls drop to AUC ≈ 0.71, demonstrating that the ECFP4-RF advantage does not generalize to every ECFP4-based learner — the random-forest component, not the ECFP4 fingerprint alone, is responsible for the bulk of the scaffold-split performance. These are secondary controls, do not replace the canonical benchmark, and do not authorize a universal claim about ECFP4 learners (per the §6 boundary).
 
 ## 7. Limitations
 
