@@ -15,8 +15,7 @@
 \toprule
 Target & Method & {ROC-AUC} & {EF\qty{1}{\percent}} & {EF\qty{5}{\percent}} & {BEDROC} & {RMSD (\si{\angstrom})} \\
 \midrule
-PfDHFR (7F3Y) & Vina redock & {--} & {--} & {--} & {--} & {N/A} \\
-& MMV consensus (Vina+DiffDock) & 0.924 & {--} & 2.57 & 1.309 & {--} \\
+PfDHFR (7F3Y) & MMV consensus (Vina+DiffDock) & 0.924 & {--} & 2.57 & 1.309 & {--} \\
 & DEKOIS (Vina only) & 0.450 & {--} & 0.00 & {--} & {--} \\
 \midrule
 PfCRT (6UKJ) & MMV consensus (Vina+DiffDock) & 0.971 & {--} & 1.11 & 9.434 & {--} \\
@@ -29,4 +28,6 @@ PfClpR (4GM2; not PfClpP) & MMV enrichment & {not evaluated} & {--} & {--} & {--
 
 \vspace{0.25em}
 \noindent\footnotesize\textbf{Target identity.} PDB 4GM2 is PfClpR rather than PfClpP; it is not used as PfClpP validation.
+
+\noindent\footnotesize\textbf{Self-redocking.} A dedicated Vina self-redocking attempt on PfDHFR (7F3Y, co-crystallized methotrexate) is not reportable: the top-scoring pose recovered the crystallographic pose only at RMSD~$\approx$~\qty{30}{\angstrom}, i.e.\ a clear redocking failure rather than a validated pose-recovery benchmark. This attempt is therefore excluded from the table above (which reports only the MMV-consensus and DEKOIS enrichment metrics) and is not used as evidence of docking accuracy.
 \end{table}
