@@ -4,8 +4,9 @@
 **Release:** V2609  
 **Source directory:** `Project2_Polypharmacology_MD_ValidationV2607/`  
 **Canonical scientific source:** `P2_DATA_ANALYSIS_REPORT.md`  
-**Status:** `TECHNICALLY_COMPILED; AUTHOR REVIEW REQUIRED; SUBMISSION NOT AUTHORIZED`  
-**Prepared:** 30 August 2026
+**Status:** `TECHNICALLY_COMPILED; AUTHOR REVIEW COMPLETE; SUBMISSION NOT AUTHORIZED`  
+**Prepared:** 30 August 2026  
+**Verified:** main 32 p., SM 20 p., cover 1 p. (0 errors, 0 undefined refs, 0 `??`)
 
 ## Release files
 
@@ -61,7 +62,7 @@ Internal main/SI figure, table, equation, and section references must use `\cref
 - MM-GBSA values are single-trajectory endpoint diagnostics, not converged free energies.
 - The docking–MD direction comparison is restricted to the eight rows with a docking WT reference; seven of eight are divergent.
 - Full-panel Set-C MD-RRS remains `NOT_COMPUTED` by design.
-- M1 results are not integrated until production, QC, provenance reconciliation, and DAR update are complete.
+- M1 (PP-01 PfDHFR WT, 25 ns, fresh seed, QC-pass) is integrated into the SM as an archival `Extended structural stress test` appendix, strictly outside the Set-C estimand and not a multi-replicate campaign (revised decision 16 n°2, 30 Aug 2026). It does not alter any primary claim.
 - No biological target engagement, polypharmacology, clinical efficacy, or resistance circumvention is claimed.
 
 ## V2609 secondary RRS-margin analysis
