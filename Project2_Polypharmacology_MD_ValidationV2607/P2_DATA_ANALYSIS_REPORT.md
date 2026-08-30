@@ -7,6 +7,8 @@
 **Last refreshed**: 2026-08-29 (audit reconciliation)
 
 **DAR update record — 29 Aug 2026:** Reconciled the editorial status to HOLD; added an explicit evidence-level/claim policy; preserved the PP-01 canonical multi-seed result with its PfCRT provenance limitation; and quarantined non-canonical ligand/grid runs from manuscript inference. No numerical result was changed by this update.
+
+**M1 authorization and launch record — 29 Aug 2026:** A targeted replicated-MD extension was authorized before implementation: four PP-01 pillar states (PfDHFR WT, PfCRT WT, PfDHFR N51I, PfCRT K76T), three independent replicates per state, 100 ns per replicate, 12 trajectories total. This is a robustness analysis of inter-replicate variability, not a validation of affinity or resistance. The versioned launcher is `scripts/p2_m1_replicated_md.sbatch`; the runbook is `docs/P2_M1_RUNBOOK_20260829.md`; output root is `results/m1_replicated_md_20260829/`; environment is `malaria_md`; GPU concurrency is capped at one task (`%1`). SLURM job **15671** was submitted after shell, Python, input-presence, and `sbatch --test-only` preflight checks passed. Results remain `NOT_COMPUTED` until production and post-production QC complete. Earlier failed submissions 15671, 15683, and 15695 were fail-closed before production (GMXRC nounset or invalid source-run paths) and are excluded from analysis. Corrected submission **15707** uses the root canonical topology/checkpoint files, passes a real 10-step `grompp` preflight on PP-01 PfDHFR WT, and is running with one GPU task at a time.
 **Status**: **HOLD — DAR reconciliation required before manuscript edits or submission**. The computational record is substantial, but the current evidence supports computational prioritisation only; it does not establish target engagement, affinity, or resistance resilience.
 
 > **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P6) via leurs DAR respectifs et AGENTS.md.
@@ -476,3 +478,62 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
 - **Scope:** single-system rerun, integrated with canonical §5bis (16/16 pilot) as a non-canonical pillar; do not promote to Set-C claim.
 
 **Updated:** 28 August 2026 22:35Z.
+
+## 11. Implementation checkpoint 29 August 2026 — P2_V2609 narrative pivot audit
+
+The P2 manuscript `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` was audited against the 12 recommendations of `docs/P2_V2609_NARRATIVE_PIVOT_PLAN.md` (29 Aug 2026). The manuscript is **already substantially compliant** with the pivot: 10 of 12 recommendations are met without modification.
+
+| Pivot recommendation | Manuscript status | Evidence |
+|---|---|---|
+| Title uses methodological object (calibration/retention/triage), avoids "validated resistance" / "binding affinity" / "resistance-resilient" | OK (acceptable) | L65: "Resistance-Aware Docking Prioritization of Antimalarial Leads from African Natural Products" — uses *prioritization* (pivot §6 preferred term); no "validated", "binding affinity", or "resistance-resilient" claims |
+| n=12 primary vs n=17 available distincts | OK | L141 (Methods), L151 (estimands section), Table S8 Cohort_Estimands |
+| DEKOIS AUC = 0.45 [0.37, 0.53] visible in Results + Discussion | OK | Abstract L124; Results L214 ("DEKOIS 2.0 enrichment for PfDHFR with Vina alone was null (ROC-AUC 0.450, EF5% = 0.00)"); framed as "absence of demonstrated enrichment", not mechanistic proof |
+| PNS ≠ causal network mechanism | OK | L139 ("centrality is a topological weighting heuristic rather than a causal measure of target essentiality") |
+| MD = stress test, not affinity/kinetics/thermodynamics | OK | L250 ("pose-retention and local-geometry check, not as a measurement of residence time or converged free energy") |
+| MM-GBSA = single-replicate endpoint, not validated free energy | OK | L252 (intra-trajectory SEM, not inter-replicate); L376 caption ("Single-replicate endpoints should be read only as within-protocol contrasts") |
+| PP-01 = "passed two-target gate" / "selected for follow-up", not "validated/robust/eliminated" | OK | L370 ("PP-01 satisfied the two-target gate … in four of four mutants") |
+| PP-02 = "did not pass the gate", not "eliminated" | OK | L370 ("PP-02 did not, because its PfDHFR states lack a docking wild-type anchor") |
+| DEKOIS as absence of enrichment, not as mechanistic proof | OK | L214 ("score-based recovery of known actives is protocol- and library-dependent"); abstract L124 ("underscoring that the scores were used for within-panel prioritisation rather than calibrated affinity prediction") |
+| PNS-RRS non confirmé | OK | L303 ("PNS and RRS were only weakly associated (ρ=-0.2098, adjusted p=1.0000)"); abstract L124 |
+| Référentiel langage pivot §6 (avoid "validated resistance resilience", "biological", "thermodynamically unstable pose", etc.) | **Mitigated** | One borderline occurrence L331 ("robust H-bond network") reformulated to "stable H-bond network" |
+| Cohortes n=12 / n=17 + Table S8 evidence boundary | OK | Table S8 Cohort_Estimands (estimands + denominators); Table S13 Evidence_Scope (claim–evidence–boundary) |
+
+**Mitigation applied (1/12)** : L331 "engages in a robust H-bond network" → "engages in a stable H-bond network". The other usages of "robust" (e.g. "robustness analyses", "robustness checks", "robustness_transfer" in section/SM labels) refer to the statistical robustness analysis (different concept) and are pivot-compliant.
+
+**Conclusion**: no structural change is needed in the manuscript to satisfy the V2609 pivot. The narrative framing ("resistance-aware prioritization" + "calibration study of docking-derived RRS") is already in place; the manuscript describes itself as a **calibration and triage** study, not a validation. The V2609 pivot can be marked as "integrated" in the manuscript status table once a final author review is performed.
+
+**Compilation**: MS 30 p., 0 LaTeX error (libxpdf xref "damaged" warning is a known artefact of `pdflatex` not affecting compilation).
+
+## 12. Implementation checkpoint 29 August 2026 — P2_V2609 runs audit and Soares2023 alignment
+
+**Audit of the 12 P2_V2609 pivot recommendations** (see `docs/P2_V2609_NARRATIVE_PIVOT_PLAN.md`) for **run suggestions** (new simulations required):
+
+The pivot contains **1 explicit run suggestion** : the JCIM MD-reporting guidelines \citep{soares2023mdreport} (Soares et al., DOI 10.1021/acs.jcim.3c00599, *J Chem Inf Model* 2023) recommend **at least three replicates** per system with adequate duration and convergence. The pivot itself authorises the alternative *"si aucune nouvelle campagne n'est exécutée, le pilote doit rester explicitement secondaire, exploratoire et non thermodynamique"* (pivot §8 L214).
+
+The P2 manuscript canonique (`Polypharmacology_MD_Validation_V2607.tex`) **already follows the alternative path** ("réduire la portée de la revendication") and explicitly declares at L250, L370, L436, L447 and L449 that the MD pilot is single-replicate, 10 ns, secondary, and is not a residence-time or converged free-energy measurement. No new MD replicates are launched for the V2609 submission.
+
+**Action applied** : the JCIM MD-reporting guidelines \citep{soares2023mdreport} are now cited in the manuscript §Limitations (L447), and the choice *not* to extend the pilot to three replicates is stated explicitly in that paragraph: *"no new replicate campaign was launched for the present submission, and the pilot is therefore reported strictly as a secondary protocol-level structural stress test rather than as a thermodynamic or kinetic measurement"*.
+
+**Bibliography addition** : one new entry, `soares2023mdreport`, added to `Bibliography_P2.bib`.
+
+**Compilation** : MS 31 p. (was 30 p. pre-addition), 0 LaTeX error.
+
+## 13. Implementation checkpoint 29 August 2026 — P2 M1 runbook path alignment
+
+**`docs/P2_M1_RUNBOOK_20260829.md`** is the runbook for the active PP-01 replication MD campaign (job SLURM **15711**, array 0-11, 12 trajectories × 100 ns = 1,200 ns production, GPU A4000, ETA 2-4 calendar days per runbook).
+
+**Audit** of the runbook against the actual execution path:
+
+| Element | Runbook claim | Actual (sbatch + DAR canonical) | Status |
+|---|---|---|---|
+| Source root | `results/set_c_md/set_c_preparation_20260812_v1/` | `results/md_systems/set_c_preparation_20260812_v1/` | **Misaligned** (legacy path) |
+| 4 systems × 3 replicates | PP-01_PfDHFR_WT, PP-01_PfCRT_WT, PP-01_PfDHFR_N51I, PP-01_PfCRT_K76T × {1,2,3} | Idem in `SYSTEMS=()` and `REPLICATES=(1 2 3)` | OK |
+| Output root | `results/m1_replicated_md_20260829/` | `results/m1_replicated_md_20260829/` | OK |
+| 12 tasks × 100 ns | "1,200 ns of production" | `SLURM --array=0-11%1` (concurrency 1) | OK |
+| Witness throughput | 28.169 ns/day | DAR §4.1 (10 ns in 8.5 h, 27.3–36.9 ns/day) | OK |
+| ETA | 2-4 calendar days | 15711 running 1h08min at audit time | Consistent |
+| Interpretation gate | No affinity / resistance / kinetic claim | Conforms to pivot V2609 + Soares2023 (manuscript L250, L370, L447) | OK |
+
+**Mitigation applied** : the runbook preflight and post-production `P2_SETC_ROOT` paths were corrected from the legacy `results/set_c_md/...` to the canonical `results/md_systems/...` path that `scripts/p2_m1_replicated_md.sbatch` actually reads and that the DAR consistently references. The path inside the launcher was already correct; only the documentation had drifted.
+
+**Status of M1 at audit time** : job 15711 active, replicate_1 (task 0, PP-01_PfDHFR_WT) running, 11 tasks pending.

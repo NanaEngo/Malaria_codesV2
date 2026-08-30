@@ -44,13 +44,13 @@
 \section{Orthogonal LISH mechanism-of-action benchmark}
 \label{sec:lish_si}
 
-The main text summarises a phenotype-only benchmark on the public LISH mechanism-of-action (MoA) release; the protocol and results are detailed here. The benchmark addresses pharmacology rather than chemistry: it evaluates how well gene-expression and viability readouts predict a drug's MoA, and it says nothing about whether the molecular representations examined in the main analysis capture that pharmacology, because no structural information links the two data sets.
+The main text summarises a phenotype-only benchmark on the public LISH mechanism-of-action (MoA) release; the protocol and results are reported in full here. The benchmark is pharmacological rather than chemical: it tests how well gene-expression and viability readouts predict a drug's MoA. It does not address whether the molecular representations examined in the main analysis capture that pharmacology, because no structural information links the two data sets.
 
 \subsection{Data and preparation}
 
 We drew on the public LISH MoA training release \citep{lish_moa_2019}, available from the challenge repository at \url{https://github.com/LISHarvard/moa_challenge} (accessed 12 August 2026), and treated it as an independent, phenotype-only data set. After aggregating repeated assay observations to the drug level, the working table retained \num{772} gene-expression features, \num{100} cell-viability features, and three experimental-condition summaries (exposure time, high-dose fraction, treatment-type fraction).
 
-The scored endpoint comprises \num{206} MoA labels across \num{3289} drugs \citep{Trapotsi2022MoA}, each label assigned at the drug level from the observed MoA-associated annotations. The public release carries no versioned mapping from drug identifier to SMILES, so the data set could not be used to train or evaluate the ECFP4 fingerprint, the graph neural networks, or the transformer; the benchmark stands on its own as a phenotype-only reference. A prespecified sensitivity check removed vehicle-control samples, leaving \num{3288} drugs, and every fold record was checked for missing or non-finite metrics before the results were interpreted. Because MoA annotation reflects observed association rather than a measured physical interaction, the endpoint is referred to throughout as MoA-associated prediction rather than as target engagement \citep{Trapotsi2022MoA}.
+The scored endpoint comprises \num{206} MoA labels across \num{3289} drugs \citep{Trapotsi2022MoA}, each label assigned at the drug level from the observed MoA-associated annotations. The public release carries no versioned mapping from drug identifier to SMILES, so the data set could not be used to train or evaluate the ECFP4 fingerprint, the graph neural networks, or the transformer. A prespecified sensitivity check removed vehicle-control samples, leaving \num{3288} drugs, and every fold record was checked for missing or non-finite metrics before the results were interpreted. Because MoA annotation reflects observed association rather than a measured physical interaction, the endpoint is referred to throughout as MoA-associated prediction rather than as target engagement \citep{Trapotsi2022MoA}.
 
 \subsection{Protocol}
 
@@ -80,7 +80,7 @@ Expected calibration error & \num{0.00376} & \num{0.00381} & $+\num{0.00005}$ \\
 
 \subsection{Scope of the comparison}
 
-These metrics characterise the phenotype-only reference on its own terms; they cannot be set numerically against the molecular ROC-AUC results in the main text, because the two analyses differ in task, labels, features, unit of aggregation and primary metric. The labels themselves record MoA association rather than a demonstrated physical interaction with a target. The LISH result is therefore best read as an orthogonal pharmacological reference, together with a check on its sensitivity to vehicle controls, rather than as evidence bearing on the molecular models or on causal mechanism.
+These metrics describe the phenotype-only reference on its own terms; they cannot be set numerically against the molecular ROC-AUC results in the main text, because the two analyses differ in task, labels, features, unit of aggregation and primary metric. The labels themselves record MoA association rather than a demonstrated physical interaction with a target. The LISH result is reported as an orthogonal pharmacological reference, together with a check on its sensitivity to vehicle controls; it does not bear on the molecular models or on causal mechanism.
 
 \section{Post-hoc calibration metrics for the molecular benchmark}
 \label{sec:calibration_si}
@@ -89,7 +89,7 @@ Calibration metrics were computed after the fact from the archived fold-level te
 
 \begin{table}[h]
 \centering
-\caption{Post-hoc calibration metrics (pooled over \num{25} fold--seed evaluations per configuration). ECE and MCE rise from the random split to the scaffold and novel-partition splits for every model family, indicating that confidence degrades under scaffold shift even when ranking (ROC-AUC) is only moderately affected.}
+\caption{Post-hoc calibration metrics, pooled across \num{25} fold--seed evaluations per configuration. Estimates describe the deployed-checkpoint family, not any single fold, and should be read as trend diagnostics rather than deployment-grade calibration. ECE and MCE rise from the random split to the scaffold and novel-partition splits for every model family, indicating that confidence degrades under scaffold shift even when ranking (ROC-AUC) is only moderately affected.}
 \label{tab:s2_calibration}
 \small
 \begin{tabular}{l l S[table-format=1.4] S[table-format=1.4] S[table-format=1.5]}
@@ -114,7 +114,7 @@ Split & Model & {ECE} & {MCE} & {Brier} \\
 \end{tabular}
 \end{table}
 
-The pattern is consistent across model families: ECE roughly doubles from the random split to the scaffold split and widens further on the novel partitions. ChemBERTa, already the arm with the widest fold-level spread in ROC-AUC, also carries the largest calibration error under scaffold shift. These pooled estimates refine the ranking analysis without revising it; they leave the canonical ROC-AUC results untouched and should not be read as calibrated probabilities ready for prospective use. Per-configuration reliability diagrams are available in the released data package.
+The pattern is consistent across model families: ECE roughly doubles from the random split to the scaffold split and widens further on the novel partitions. ChemBERTa, already the arm with the widest fold-level spread in ROC-AUC, also carries the largest calibration error under scaffold shift. The pooled estimates are post hoc and do not revise the canonical ROC-AUC ranking; they are not calibrated probabilities ready for prospective use. Per-configuration reliability diagrams are available in the released data package.
 
 \subsection{Calibration and ranking on the high-RRS polypharmacology subset}
 \label{sec:polypharma_si}
@@ -139,12 +139,12 @@ ChemBERTa & 0.616 & 0.789 & -0.173 \\
 \end{tabular}
 \end{table}
 
-On the scaffold split, ROC-AUC on the available-target polypharmacology subset falls below the single-target value for every model, with deficits ranging from $-\num{0.173}$ to $-\num{0.668}$. ChemBERTa and ECFP4--RF hold up best (a deficit of $-\num{0.173}$ each), while GIN, GIN-TFP and GIN-TNE lose considerably more ($-\num{0.52}$ to $-\num{0.67}$). The stricter complete two-target subset, built from only two candidates, is noisier still (AUC ranging \num{0.00}--\num{0.84}) and shows even larger deficits for most models. These numbers are descriptive only: the small candidate count prevents any inferential claim, and the honest-negative scaffold result that anchors the main analysis stands unchanged.
+On the scaffold split, ROC-AUC on the available-target polypharmacology subset falls below the single-target value for every model, with deficits ranging from $-\num{0.173}$ to $-\num{0.668}$. ChemBERTa and ECFP4--RF hold up best (a deficit of $-\num{0.173}$ each), while GIN, GIN-TFP and GIN-TNE lose considerably more ($-\num{0.52}$ to $-\num{0.67}$). The stricter complete two-target subset, built from only two candidates ($n=2$, ten test records per arm), does not support meaningful AUC estimates; values from that subset are reported only as technical outputs and are not interpreted as evidence. The available-target analysis above is the only subset with interpretable ROC-AUC. These numbers are descriptive only: the small candidate count prevents any inferential claim, and the honest-negative scaffold result that anchors the main analysis stands unchanged.
 
 \section{Light GNN hyperparameter sensitivity on the scaffold split}
 \label{sec:gnn_sensitivity_si}
 
-The canonical negative result could, in principle, reflect a poor choice of GIN capacity rather than a genuine limit of the representation. To probe this possibility the base GIN was retrained on the frozen canonical scaffold split at two settings that bracket the canonical configuration (hidden dimension \num{128}, dropout \num{0.1}): a smaller model (hidden \num{64}, dropout \num{0.2}) and a larger one (hidden \num{256}, dropout \num{0.1}), keeping every other element of the protocol identical---five seeds, five folds, the same optimiser constants, epoch budget and early-stopping rule.
+The canonical negative result could reflect a poor choice of GIN capacity rather than a genuine limit of the representation. To test this, the base GIN was retrained on the frozen canonical scaffold split at two settings that bracket the canonical configuration (hidden dimension \num{128}, dropout \num{0.1}): a smaller model (hidden \num{64}, dropout \num{0.2}) and a larger one (hidden \num{256}, dropout \num{0.1}), keeping every other element of the protocol identical---five seeds, five folds, the same optimiser constants, epoch budget and early-stopping rule.
 
 \begin{table}[h]
 \centering
@@ -161,7 +161,31 @@ Hidden \num{256}, dropout \num{0.1} & \num{0.8000} & \num{0.0160} & \num{0.0370}
 \end{tabular}
 \end{table}
 
-All three configurations remain clearly below the ECFP4--RF \citep{ecfp_2010} scaffold reference (ROC AUC \num{0.8300}), and the spread across them (\num{0.8000}--\num{0.8081}) is small relative to the gap that separates any of them from the fingerprint baseline (\num{0.022}--\num{0.030}). Doubling or halving the hidden capacity, or changing the dropout rate, does not close that gap on this panel. The check bounds the possibility that some untested architecture or training budget would behave differently without eliminating it; taken together with the canonical result, it supports reading the negative finding as a property of the representation comparison itself rather than of one particular capacity choice.
+All three configurations remain below the ECFP4--RF \citep{ecfp_2010} scaffold reference (ROC AUC \num{0.8300}), and the spread across them (\num{0.8000}--\num{0.8081}) is small relative to the gap that separates any of them from the fingerprint baseline (\num{0.022}--\num{0.030}). Doubling or halving the hidden capacity, or changing the dropout rate, does not close that gap on this panel. The check bounds the possibility that some untested architecture or training budget would behave differently without eliminating it; combined with the canonical result, it supports reading the negative finding as a property of the representation comparison rather than of one particular capacity choice.
+
+\section{Butina cluster split}
+\label{sec:butina_si}
+
+As a stricter chemical-extrapolation test, Bemis--Murcko scaffolds \citep{bemis_murcko_1996} were clustered with the Butina algorithm \citep{butina1999} at a Tanimoto distance cut-off of \num{0.55} on the ECFP4 matrix, and whole clusters were assigned to five folds per seed so that test clusters were entirely absent from training. Five seeds were used, matching the primary protocol (\num{25} fold--seed records per arm). Metrics were recomputed from the stored per-fold prediction files with the same scoring functions as the primary benchmark.
+
+\begin{table}[h]
+\centering
+\caption{Mean ROC AUC across the five per-seed means under the Butina cluster split. The ordering of the five arms is identical to the canonical scaffold split.}
+\label{tab:s5_butina}
+\begin{tabular}{lc}
+\toprule
+Model & ROC AUC (Butina) \\
+\midrule
+ECFP4--RF & \textbf{\num{0.8331}} \\
+GIN--TFP & \num{0.8232} \\
+GIN & \num{0.8202} \\
+GIN--TNE & \num{0.8191} \\
+ChemBERTa & \num{0.7776} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Because cluster assignment discards intra-cluster train--test pairs that the scaffold split retains, the Butina partition is a stricter extrapolation regime. The ECFP4--RF-over-GIN margin narrows from \num{0.025} (scaffold) to \num{0.013} (Butina) but the fingerprint baseline remains the highest-ranked arm and every learned model stays below it. The result is a secondary sensitivity estimate; it does not replace the prespecified primary benchmark.
 
 \section{Paired differences against the ECFP4--RF reference}
 \label{sec:paired_ci_si}
@@ -189,6 +213,38 @@ Scaffold & ChemBERTa & $-\num{0.0433}$ & \numrange{-0.0499}{-0.0367} & $\num{0.0
 \end{table}
 
 These paired-$t$-based intervals are wider than the permutation intervals reported for the same four scaffold contrasts in the main text, as expected from the two different construction methods. The two tables agree on point estimates, sign and exclusion of zero at the same four $\Delta$AUC values. The intervals reported here describe the evaluated seed--fold grid and should not be extended to other panels, splits or architectures.
+
+\section{Nearest-training-neighbor Tanimoto decile stratification}
+\label{sec:nn_deciles_si}
+
+The scaffold contrast could mask a regime in which the ranking of arms reverses. To test this, each test molecule was paired with its highest-Tanimoto training neighbour (ECFP4, radius \num{2}, \num{2048} bits) and the test set was binned by decile of that nearest-neighbour similarity. Per-decile mean ROC-AUC (averaged across five seeds and five folds) was recomputed from the stored per-fold prediction files for each arm on the canonical scaffold split (\num{25} fold--seed records per decile--arm cell). Decile \numrange{1}{10} span NN-Tanimoto means of $\num{0.306} \to \num{0.631}$ (D\num{1}: $\num{0.306}$, D\num{10}: $\num{0.631}$); the D\num{5}--D\num{8} bins correspond to a familiar chemical neighbourhood and the D\num{1}--D\num{4} bins to out-of-distribution extrapolation. D\num{9} and D\num{10} carry the highest similarity and are examined separately below.
+
+\begin{table}[h]
+\centering
+\caption{Per-decile mean ROC-AUC on the scaffold split, stratified by the ECFP4 Tanimoto similarity between each test molecule and its nearest training-set neighbour (mean NN-similarity per decile in column 2; five seeds, five folds per cell).}
+\label{tab:s5_nn_deciles}
+\small
+\begin{tabular}{l S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] S[table-format=1.3] S[table-format=1.3]}
+\toprule
+Decile & {NN-sim} & {ECFP4--RF} & {GIN} & {GIN--TFP} & {GIN--TNE} & {ChemBERTa} \\
+\midrule
+D\num{1}  & \num{0.306} & \num{0.779} & \num{0.726} & \num{0.752} & \num{0.743} & \num{0.734} \\
+D\num{2}  & \num{0.348} & \num{0.793} & \num{0.765} & \num{0.775} & \num{0.776} & \num{0.743} \\
+D\num{3}  & \num{0.373} & \num{0.823} & \num{0.796} & \num{0.805} & \num{0.800} & \num{0.769} \\
+D\num{4}  & \num{0.395} & \num{0.821} & \num{0.800} & \num{0.805} & \num{0.794} & \num{0.766} \\
+D\num{5}  & \num{0.416} & \num{0.813} & \num{0.804} & \num{0.810} & \num{0.794} & \num{0.771} \\
+D\num{6}  & \num{0.437} & \num{0.810} & \num{0.804} & \num{0.808} & \num{0.806} & \num{0.773} \\
+D\num{7}  & \num{0.461} & \num{0.800} & \num{0.793} & \num{0.796} & \num{0.791} & \num{0.772} \\
+D\num{8}  & \num{0.490} & \num{0.810} & \num{0.804} & \num{0.803} & \num{0.794} & \num{0.788} \\
+D\num{9}  & \num{0.533} & \num{0.847} & \num{0.814} & \num{0.830} & \num{0.819} & \num{0.812} \\
+D\num{10} & \num{0.631} & \num{0.890} & \num{0.880} & \num{0.883} & \num{0.883} & \num{0.880} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three regularities emerge. First, ECFP4--RF dominates in every decile---including D\num{10} where its margin over GIN--TFP is only $\num{+0.007}$ and over the GIN family is $\num{+0.010}$ on average. The fingerprint arm never falls below the best learned model in any bin. Second, the ECFP4--RF-minus-GIN--TFP margin is non-monotone: it is largest in the cold out-of-distribution deciles D\num{1}--D\num{4} ($\Delta \in \numrange{0.016}{0.027}$), narrows to $\Delta \in \numrange{0.001}{0.007}$ in the mid-range D\num{5}--D\num{8} familiar neighbourhood (NN-sim $\num{0.42}$--$\num{0.49}$), partially reopens in D\num{9} ($\Delta = \num{+0.017}$) and narrows again in D\num{10}. The "parity in the familiar regime" reading of the primary result therefore lives in the D\num{5}--D\num{8} window, not at the very top of the similarity distribution. Third, ChemBERTa tracks the GNN family in mid-range deciles (D\num{5}--D\num{7}: $\num{0.771}$--$\num{0.773}$) and falls behind in the OOD tail (D\num{1}--D\num{4}: $\num{0.734}$--$\num{0.769}$), recovering only at D\num{10} ($\num{0.880}$). The base GIN shows a similar profile with a sharper D\num{1} drop ($\num{0.726}$ vs ECFP4--RF $\num{0.779}$).
+
+The decile-level analysis matches the main-text ranking (ECFP4--RF $>$ GIN family $>$ ChemBERTa under scaffold shift) without reversing it, and localises the bulk of the fingerprint advantage to the OOD tail of the distribution. The D\num{5}--D\num{8} mid-range window is the natural test bed for any future claim that topological or attention-based augmentation can match the fingerprint baseline on familiar chemistry; the headroom there is at most $\sim\num{0.007}$ ROC-AUC per arm under the present protocol.
 
 \bibliographystyle{unsrtnat}
 \bibliography{Bibliography_P5}
