@@ -2,10 +2,10 @@
 
 **Project**: Project 3 — Quantum-inspired molecular representations (TFP / TNE / QKS) for African antimalarial candidates
 **Canonical directory**: `Project3_Quantum_Inspired_RepresentationsV2607_V4/`
-**Manuscript target**: *J. Cheminformatics* / *Nat. Comput. Sci.* (TBD)
+**Manuscript target**: *J. Comput.-Aided Mol. Des.* (JCAMD, Springer Nature)
 **Author**: Myke Vital Sao Temgoua
-**Last refreshed**: 2026-08-29
-**Status**: V2608 manuscript ready; benchmarks complete; Zenodo DOI reserved (`10.5281/zenodo.19608875`), upload pending
+**Last refreshed**: 2026-08-30
+**Status**: V2608 manuscript submitted to JCAMD (Springer Nature Editorial Manager) on 2026-08-30; benchmarks complete; Zenodo DOI reserved (`10.5281/zenodo.19608875`), upload pending
 
 > **Canonical scope rule.** This is the only P3 DAR. The P3 V4 directory is the
 > canonical release of P3. The legacy directories `Project3_Quantum_Inspired_RepresentationsV2607/`

@@ -1,11 +1,11 @@
 # AGENTS.md — active project instructions
 
-**Updated:** 29 August 2026 16:00 UTC
+**Updated:** 30 August 2026 (P1 V7 → JCIM, P3 V4 → JCAMD, P4 → JCAMD submitted; default-branch fix in progress)
 **Conda environment**: `malaria_md` (Python 3.11, RDKit 2025.03.6, PennyLane 0.45.1, PyTorch 2.13.0, Vina 1.2.7)
 **ORCID**: MVST: 0009-0004-5170-2309, JPTN: 0000-0002-1936-8353, PS: sans ORCID, WFM: 0000-0002-3934-3233, SGNE: 0000-0002-7484-3508
 **Long-form historical instructions:** `docs/archive/md_full_20260812/AGENTS.md`
 
-**P1 SOUMISSION JCIM = V7 (canonical):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/manuscript/P1_V7_Integrated_Polypharmacology_RRS.tex` (main 25 p.) + `_SM.tex` (17 p.) + cover letter; **package ACS auto-contenu `submission_ACS_P1V7/`** (PDF + .bbl/.aux pour xr + .bib). **V7 supersedes V6 (10/08/2026)** with comprehensive validation (DEKOIS 2.0 external benchmark, MMV enrichment, redocking RMSD — 3 tables + SM S11), physicochemical characterization (3 tables), enhanced narrative (Discussion +125%), methodological rigor (grid box specs, 99.3% cost reduction). **V4/V5/V6 = archives pré-soumission** (V4 : espace chimique + remédiation 2F6I 484 ; V5 : docking ciblé ; V6 : version 10/08/2026). V5 results-only was moved to `_archives/P1_V5_CorrectedGrid_archived_20260829/` on 2026-08-29 (the canonical V7 has all V5 inputs integrated; V5 had no scripts/manuscript). Compilation V7 : main 25 p., SM 17 p., cover 1 p., 0 erreur / 0 réf. indéfinie ✅ — package techniquement prêt; restent la vérification des métadonnées en ligne, la lecture auteur finale et la revue structurale indépendante avant toute promotion soumission.
+**P1 SOUMISSION JCIM = V7 (canonical, **submitted 2026-08-30**):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/manuscript/P1_V7_Integrated_Polypharmacology_RRS.tex` (main 25 p.) + `_SM.tex` (17 p.) + cover letter; **package ACS auto-contenu `submission_ACS_P1V7/`** (PDF + .bbl/.aux pour xr + .bib). **V7 supersedes V6 (10/08/2026)** with comprehensive validation (DEKOIS 2.0 external benchmark, MMV enrichment, redocking RMSD — 3 tables + SM S11), physicochemical characterization (3 tables), enhanced narrative (Discussion +125%), methodological rigor (grid box specs, 99.3% cost reduction). **V4/V5/V6 = archives pré-soumission** (V4 : espace chimique + remédiation 2F6I 484 ; V5 : docking ciblé ; V6 : version 10/08/2026). V5 results-only was moved to `_archives/P1_V5_CorrectedGrid_archived_20260829/` on 2026-08-29 (the canonical V7 has all V5 inputs integrated; V5 had no scripts/manuscript). Compilation V7 : main 25 p., SM 17 p., cover 1 p., 0 erreur / 0 réf. indéfinie ✅ — déposé ACS Paragon Plus le **2026-08-30** ; restent l'accusé Editorial Manager, l'éventuelle décision, et la révision le cas échéant.
 
 ## 1. Canonical source map
 
@@ -40,10 +40,10 @@ Read the relevant DAR before changing code, parameters, protocols, or manuscript
 
 | Project | Status | Essential result or boundary |
 |---|---|---|
-| P1 | **V7 technically submission-ready (JCIM)** | V7 enhanced + validated (DEKOIS/MMV/redocking), 25 p. main / 17 p. SM / 1 p. cover, package refreshed; final author/metadata review and independent structural review remain |
+| P1 | **V7 submitted to JCIM (2026-08-30)** | V7 enhanced + validated (DEKOIS/MMV/redocking), 25 p. main / 17 p. SM / 1 p. cover; awaiting Editorial Manager acknowledgement |
 | P2 | **JCIM submission-ready** | Production 15320 COMPLETE 16/16; QC=0; MD-RRS `COMPUTED_WITH_COHORT_CONTRACT`; MM-GBSA 16/16; **PP-01/PP-15 multi-seed COMPUTED** (PP-01 ±0.05 kcal/mol sur grilles P1-V2 canoniques — PfDHFR WT −7.500 dans l'étendue, PfCRT WT −9.300 à 0.04 du bruit de seed ; PP-15 ±0.03); STRING 400/900 COMPUTED (ρ=0.9975); SM Table S17 added; recompile main 30 p. / SM 17 p., 0 erreurs |
-| P3 | **JCAMD submission-ready (V4 canonical)** | ECFP4 0.948; hybrid 0.888; QKS ≈ RBF; no quantum advantage; Zenodo DOI reserved. Package `submission_JCAMD/` created |
-| P4 | **JCAMD submission-ready** | Random 0.6724 > MCTS 0.6649; Pareto front 4 points (HV 1.2366); package `submission_JCAMD/` created |
+| P3 | **submitted to JCAMD (2026-08-30, V4 canonical)** | ECFP4 0.948; hybrid 0.888; QKS ≈ RBF; no quantum advantage; Zenodo DOI reserved. Package `submission_JCAMD/` created |
+| P4 | **submitted to JCAMD (2026-08-30)** | Random 0.6724 > MCTS 0.6649; Pareto front 4 points (HV 1.2366); package `submission_JCAMD/` created |
 | P5 | **JCAMD submission-ready** | ECFP4-RF 0.830 scaffold / **0.833 Butina**; **Butina 5/5 arms COMPUTED** (ChemBERTa 0.778); topological fusion modestly complementary; LISH-MoA baseline 0.6435; GNN gap narrows on Butina (0.010 vs 0.016 scaffold) |
 | P6 | Phase 2 complete | 7 arms × 25 folds; pooled calibration ECE 0.0006–0.0074; RRS-class proxy (pos_rate tertile) monotonic; QKS phenotype_vs_both Spearman 0.283; **scaffold GNN 4/4 COMPUTED** (near chance, 0.5008–0.5064 < phénotype 0.6402); **attention-fusion cross-modal DIFFÉRÉE le 30/08/2026** (PLANNED_SECONDARY, non lancé — fusion late-concat COMPUTED déjà honest-negative + GPU saturée par M1) |
 | P7 | Project init | Quantum molecular encoding; no canonical results yet; environment setup in progress |
@@ -90,7 +90,7 @@ The bounded Set-C pilot has 16 prepared and equilibrated systems (PP-01/PP-02 ×
 
 ## 6. Pre-submission development policy
 
-P1–P5 remain in author-controlled pre-submission development. No administrative or independent-review status blocks scientific work before submission. Provenance, identity, numerical, geometry, runtime, and QC safeguards remain mandatory. Submission does not automatically change this policy; only explicit author instruction may activate submission-facing review gates.
+P2, P5, P6, P7 remain in author-controlled pre-submission development. **P1 (JCIM), P3 (JCAMD) and P4 (JCAMD) were submitted on 2026-08-30**; they are now in `POST_SUBMISSION_REVIEW` — provenance, identity, numerical, geometry, runtime, and QC safeguards remain mandatory; only explicit author instruction may activate submission-facing review gates (revision responses, cover-letter updates). The P1 reactivation rule in `P1_DEVELOPMENT_PHASE.json` remains dormant until the author explicitly requests reactivation of submission/review restrictions.
 
 ### P1 component status (V7-era snapshot)
 

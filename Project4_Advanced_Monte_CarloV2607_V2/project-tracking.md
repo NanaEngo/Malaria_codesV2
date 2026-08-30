@@ -1,6 +1,6 @@
 # P4 — project tracking (spine)
 
-**Active loop:** **L4 COMPLETE 2026-08-18 / V1–V2 diff audit 2026-08-19** — Pre-submission audit passed all 9 gates; 3 CRITICAL items fixed via Option A (Greedy rerun 0.6676, fragment priors → heuristic, multi-obj v12 rerun); 5 HIGH items fixed; manuscript CLEARED FOR SUBMISSION to Journal of Cheminformatics · **Next:** first submission (L5) · **beat:** 12 · **opened:** 2026-08-18
+**Active loop:** **L5 SUBMITTED 2026-08-30 to JCAMD** — main `P4_Pareto_MCTS_JCAMD.tex` + SM `P4_Pareto_MCTS_JCAMD_SM.tex` + cover letter + Graphics package uploaded to Springer Nature Editorial Manager · awaiting acknowledgement · **beat:** 12 · **opened:** 2026-08-18
 
 **L3 summary:** Adversarial (3C+2H+4M+4L) · Edge-case (1H+2M) · Peer (3 reviewer objections) · Critical-think (1H+2M, no overclaim) · ScholarEval (3.94/5.0) · Prose (4.5/5, 0 AI patterns) · Structure (4.5/5, sound) · Files: `outputs/critical-reviews/review-*-20260818.md` + `L3-SUMMARY-20260818.md`
 

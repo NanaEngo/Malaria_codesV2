@@ -4,8 +4,8 @@
 **Canonical directory**: `Project1_Chem_space_antimalarial_V7_CorrectedGrid/`
 **Manuscript target**: *J. Chem. Inf. Model.* (JCIM, ACS)
 **Author**: Myke Vital Sao Temgoua
-**Last refreshed**: 2026-08-29
-**Status**: submission-ready package (`INTERNAL_WORK_AUTHORIZED`), awaiting author Paragon Plus deposit
+**Last refreshed**: 2026-08-30
+**Status**: submitted to JCIM (ACS Paragon Plus) on 2026-08-30; awaiting Editorial Manager acknowledgement
 
 > **Canonical scope rule.** This is the only P1 DAR. All P1-related analyses (V4–V7
 > cohort, evidence, figures, tables, scripts) are recorded here. The legacy P1 V5

@@ -1,7 +1,8 @@
 # P4 Data Analysis Report — active summary
 
 **Scope:** Pareto-guided MCTS, multi-objective candidate generation, and QMC diagnostics.
-**Updated:** 17 August 2026
+**Updated:** 30 August 2026
+**Status:** **Submitted to JCAMD (Springer Nature Editorial Manager) on 2026-08-30** — main `P4_Pareto_MCTS_JCAMD.tex` + SM `P4_Pareto_MCTS_JCAMD_SM.tex` + cover letter + Graphics package; awaiting acknowledgement.
 
 > **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P7) via leurs DAR respectifs et AGENTS.md.
 **Long-form history:** `docs/archive/md_full_20260812/P4_DATA_ANALYSIS_REPORT.md`

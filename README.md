@@ -6,10 +6,10 @@ Multi-project research codebase for computational antimalarial drug discovery, c
 
 | Project | Directory | DAR | Status |
 |---------|-----------|-----|--------|
-| P1 — Chem space + virtual screening | `Project1_Chem_space_antimalarial_V7_CorrectedGrid/` | [P1 DAR](Project1_Chem_space_antimalarial_V7_CorrectedGrid/P1_DATA_ANALYSIS_REPORT.md) | V7 JCIM submission-ready |
+| P1 — Chem space + virtual screening | `Project1_Chem_space_antimalarial_V7_CorrectedGrid/` | [P1 DAR](Project1_Chem_space_antimalarial_V7_CorrectedGrid/P1_DATA_ANALYSIS_REPORT.md) | V7 **submitted to JCIM** (2026-08-30) |
 | P2 — Polypharmacology MD validation | `Project2_Polypharmacology_MD_ValidationV2607/` | [P2 DAR](Project2_Polypharmacology_MD_ValidationV2607/P2_DATA_ANALYSIS_REPORT.md) | Set-C MD pilot complete; manuscript 30p/16p SM |
-| P3 — Quantum-inspired representations | `Project3_Quantum_Inspired_RepresentationsV2607_V4/` | [P3 DAR](Project3_Quantum_Inspired_RepresentationsV2607_V4/P3_DATA_ANALYSIS_REPORT.md) | V2608 manuscript ready; Zenodo DOI reserved |
-| P4 — Advanced Monte Carlo | `Project4_Advanced_Monte_CarloV2607_V2/` | [P4 DAR](Project4_Advanced_Monte_CarloV2607_V2/P4_DATA_ANALYSIS_REPORT.md) | v12 benchmark complete |
+| P3 — Quantum-inspired representations | `Project3_Quantum_Inspired_RepresentationsV2607_V4/` | [P3 DAR](Project3_Quantum_Inspired_RepresentationsV2607_V4/P3_DATA_ANALYSIS_REPORT.md) | V2608 manuscript **submitted to JCAMD** (2026-08-30); Zenodo DOI reserved |
+| P4 — Advanced Monte Carlo | `Project4_Advanced_Monte_CarloV2607_V2/` | [P4 DAR](Project4_Advanced_Monte_CarloV2607_V2/P4_DATA_ANALYSIS_REPORT.md) | v12 benchmark complete; **submitted to JCAMD** (2026-08-30) |
 | P5 — GNN/Transformer drug discovery | `Project5_GNN_Transformer_DrugDiscovery_V2609/` | [P5 DAR](Project5_GNN_Transformer_DrugDiscovery_V2609/P5_DATA_ANALYSIS_REPORT.md) | Benchmark complete; Zenodo staged |
 | P6 — LISH-MoA structure-phenotype | `Project6_LISH_MoA_Structure_Phenotype/` | [P6 DAR](Project6_LISH_MoA_Structure_Phenotype/P6_DATA_ANALYSIS_REPORT.md) | 7-arm scaffold complete; calibration + QKS computed |
 | P7 — Quantum molecular encoding QML | `Project7_Quantum_Molecular_Encoding_QML/` | [P7 DAR](Project7_Quantum_Molecular_Encoding_QML/P7_DATA_ANALYSIS_REPORT.md) | Project init |

@@ -1,7 +1,7 @@
 # BMAD Q1 Data Analysis Report — active summary
 
 **Scope:** P1–P7. Each project has a dedicated DAR where applicable.
-**Updated:** 29 August 2026 (P4 V1 + P5 V1 archived; per-project DARs canonical)
+**Updated:** 30 August 2026 (P1→JCIM, P3→JCAMD, P4→JCAMD submitted 2026-08-30; per-project DARs canonical)
 
 > **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport (ou le DAR de projet dédié) AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P7) via leurs DAR respectifs et AGENTS.md.
 **Long-form history:** `docs/archive/md_full_20260812/BMAD_Q1_DATA_ANALYSIS_REPORT.md`
@@ -13,7 +13,7 @@
 | **P1** | V7 is the submission-oriented workspace (JCIM); V6/V4/V5 provide corrected evidence and remediation layers | Chemical-space novelty, target-wise docking, and computational RRS/polypharmacology are reportable only within their stated provenance boundaries |
 | **P2** | Canonical 17-member Set-C cohort and docking-RRS/ACSI/PNS analysis complete; Set-C MD pilot 16/16 complete with QC, MD-RRS and MM-GBSA secondary outputs; external replication 312/312 complete; PP-15 single-ligand feasibility probe with FINAL PBC-whole MM-GBSA PfDHFR -29.52 ± 0.33 kcal/mol and PfCRT -27.79 ± 0.49 kcal/mol (29 Aug) reportable; PP-01_PfDHFR_I164L rerun MM-GBSA -24.36 ± 1.77 kcal/mol (endframe=880, 88 frames) reportable | Docking-RRS is canonical; the PP-01/PP-02 Set-C MD pilot is complete as a secondary analysis; full 17-candidate MD-RRS remains NOT_COMPUTED by design; external panel provides computational sensitivity evidence; PP-15 probe is outside the Set-C estimand and serves as within-protocol feasibility contrast |
 | **P3** | Canonical classical, hybrid, QKS, TNE/TDA, and external-validation analyses complete | Quantum-inspired descriptors are complementary; no quantum advantage over RBF or ECFP4 is claimed |
-| **P4** | v12 20-seed benchmark complete; V1 archived | Random 0.6724 > MCTS 0.6649 (honest negative); Pareto front separate pre-activity artifact; QMC Tier 1 functional, Tier 2 not publication-grade |
+| **P4** | v12 20-seed benchmark complete; V1 archived (**submitted to JCAMD 2026-08-30**) | Random 0.6724 > MCTS 0.6649 (honest negative); Pareto front separate pre-activity artifact; QMC Tier 1 functional, Tier 2 not publication-grade |
 | **P5** | Scaffold-controlled molecular-representation benchmark complete; V1 archived | ECFP4–RF dominates under scaffold split; topological fusion modestly complementary; honest-negative result with explicit limits |
 | **P6** | Leakage-aware structure–phenotype MoA benchmark complete (collision-group + scaffold); manuscript 8 p. + cover 1 p., JCAMD target | Molecular-arm AUROCs near chance (0.501–0.508) under collision-group-disjoint evaluation; scaffold 4/4 GNN arms AUROC 0.501–0.506; phenotype reference AUROC 0.636; pooled calibration ECE ≤0.0020, bounded QKS Spearman phenotype_vs_structure ≈0.007 |
 
