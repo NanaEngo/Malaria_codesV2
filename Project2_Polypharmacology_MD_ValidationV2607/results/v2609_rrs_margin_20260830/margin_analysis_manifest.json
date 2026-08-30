@@ -1,0 +1,19 @@
+{
+  "analysis": "V2609_RRS_THRESHOLD_MARGIN_ANALYSIS",
+  "status": "COMPUTED_SECONDARY_SENSITIVITY",
+  "input": "results/c_rrs_classification.csv",
+  "input_sha256": "9ef22d0cf8c4ae920c5aa2330cef42f7e44d7e88a3a60783ca876be3ef2e089c",
+  "thresholds_percent": [
+    70.0,
+    80.0
+  ],
+  "near_threshold_half_width_percent": 5.0,
+  "candidate_count": 17,
+  "finite_observation_count": 164,
+  "canonical_classes_modified": false,
+  "biological_calibration_claim": false,
+  "outputs": [
+    "results/v2609_rrs_margin_20260830/rrs_threshold_margins_long.csv",
+    "results/v2609_rrs_margin_20260830/rrs_threshold_margins_by_candidate.csv"
+  ]
+}

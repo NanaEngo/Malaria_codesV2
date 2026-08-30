@@ -47,7 +47,7 @@ The following gates have passed for the current Phase 2 benchmark:
 7. paired seed/fold comparisons with multiplicity correction;
 8. complete failure accounting for TFP/TNE and bounded, separately labelled QKS computation.
 
-Completed Phase 2 results include phenotype-only baselines on k-fold, collision-group, and scaffold splits; ECFP4-linear and ECFP4-RF structure baselines; phenotype+ECFP4 fusion; and the complete collision-group molecular matrix (GIN, GIN-TFP, GIN-TNE, and ChemBERTa). Dedicated per-label calibration plots and the bounded QKS sensitivity remain `NOT_COMPUTED`.
+Completed Phase 2 results include phenotype-only baselines on k-fold, collision-group, and scaffold splits; ECFP4-linear and ECFP4-RF structure baselines; phenotype+ECFP4 fusion; the complete collision-group molecular matrix (GIN, GIN-TFP, GIN-TNE, and ChemBERTa); pooled calibration across arms; and the bounded QKS sensitivity (extended to four arm pairs). Dedicated per-label calibration **plots** remain `NOT_COMPUTED`; the bounded QKS sensitivity is `COMPUTED` (29 Aug 2026). Under the scaffold-held-out split all four molecular arms remain near chance (GIN 0.50642, GIN-TFP 0.50077, GIN-TNE 0.50609, ChemBERTa 0.50344 macro-AUROC, below the phenotype reference 0.64023). The cross-modal attention-fusion arm remains `PLANNED_SECONDARY` and is intentionally **not run** (decision 30 Aug 2026: the `COMPUTED` late-concat fusion is already an honest-negative below the phenotype baseline, and the single GPU is saturated by the active M1 production job). See `P6_DATA_ANALYSIS_REPORT.md` §1/§4.6 and `../docs/CENTRAL_QUESTIONS_PROJECTS.md` §P6.
 
 ## Manuscript boundary
 

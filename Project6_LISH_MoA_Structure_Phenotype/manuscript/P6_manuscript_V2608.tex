@@ -75,7 +75,7 @@ A versioned mapping from \texttt{drug\_id} to SMILES was constructed from PRISM-
 
 \subsection{Models}
 
-Five model configurations were evaluated:
+Six model configurations were evaluated:
 
 \begin{itemize}
 \item \textbf{Phenotype reference}: an unweighted per-label logistic model fitted independently for each of the \num{206} labels, using the predefined gene-expression, viability, and experimental-condition features. This model operates on the same drug-level records but uses no molecular structure information.
@@ -148,6 +148,28 @@ ECFP4--RF & \num{0.53562} & \num{0.53562} & \num{0.53817}\\
 
 These comparisons reinforce the importance of reporting the split and endpoint together. The modest random-to-collision-group cost for the phenotype reference (\num{0.00726} AUROC units) reflects the limited impact of collision awareness on this phenotype-driven task, whereas the structure baselines remain near chance across all splits.
 
+\subsection{Scaffold-held-out molecular arms}
+
+The four molecular arms were also evaluated under a stricter scaffold-held-out boundary, in which whole Bemis--Murcko scaffolds were kept out of training. Mean metrics over the same \num{25} fold--seed grid are reported in \Cref{tab:p6_scaffold_gnn}. All four arms remained at chance macro-AUROC (\num{0.501}--\num{0.506}), below the scaffold phenotype reference (\num{0.64023}) and reproducing the collision-group ordering. The best scaffold molecular-arm log loss was again obtained by GIN-TFP (\num{0.02373}), marginally below its collision-group value, while its macro-AUROC (\num{0.50077}) stayed at chance. The near-chance ranking therefore extends to a stricter chemical-generalisation boundary and is not an artefact of the collision-group split alone.
+
+\begin{table}[htbp]
+\centering
+\caption{Scaffold-held-out results for the four molecular arms across \num{25} seed--fold evaluations. Log loss is the primary endpoint.}
+\label{tab:p6_scaffold_gnn}
+\begin{tabular}{lrrrrr}
+\toprule
+Arm & Log loss & Macro-AUROC & Macro-AUPRC & Brier & ECE\\
+\midrule
+GIN & \num{0.02474} & \num{0.50642} & \num{0.01509} & \num{0.00349} & \num{0.00493}\\
+GIN-TFP & \num{0.02373} & \num{0.50077} & \num{0.01300} & \num{0.00343} & \num{0.00325}\\
+GIN-TNE & \num{0.02429} & \num{0.50609} & \num{0.01399} & \num{0.00342} & \num{0.00318}\\
+ChemBERTa & \num{0.02559} & \num{0.50344} & \num{0.01327} & \num{0.00344} & \num{0.00761}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The log-loss/AUROC dissociation observed under collision-group folds therefore persists under scaffold-held-out extraction: the molecular arms produce well-calibrated, prevalence-like probabilities that approach the marginal label distribution without ranking drugs of different MoA-associated profiles.
+
 \subsection{Calibration diagnostics}
 
 \Cref{tab:p6_calibration} reports pooled calibration metrics computed over the archived scaffold-split fold-level test predictions (\num{25} seed--fold replicates, $n=\num{3387670}$ drug--label observations pooled across \num{206} MoA labels). Only fold-level prediction files matching the documented \texttt{drug\_id}, \texttt{<moa>\_true}, \texttt{<moa>\_pred} column contract and the seed/fold filename convention are admitted, and the MoA set must be invariant across folds. The phenotype and structure arms are tightly calibrated (pooled ECE \num{0.0016} and \num{0.0012}; Brier \num{0.0038} and \num{0.0040}), and the fusion arm remains well calibrated (ECE \num{0.0020}; Brier \num{0.0040}). The maximum calibration error is dominated by a single tail bin in every arm, indicating that the pooled ECE is not masking a localized miscalibration. These results are consistent with the collision-group conclusion that the molecular arms produce prevalence-like, well-calibrated probabilities rather than discriminative rankings.
@@ -187,11 +209,11 @@ Phenotype vs.\ fusion (phenotype\,+\,ECFP4--RF) & \num{0.052} & \num{0.286} & \n
 
 \section{Discussion}
 
-This benchmark was designed to test a specific question: whether molecular structure representations improve prediction of observed MoA-associated labels under collision-group-disjoint evaluation. The answer is negative for the evaluated molecular arms.
+This benchmark was designed to test a specific question: whether molecular structure representations improve prediction of observed MoA-associated labels under collision-group-disjoint evaluation. The answer is negative for the evaluated molecular arms, and the negative result is robust to the evaluation boundary: it persists under both collision-group (\Cref{tab:p6_primary}) and scaffold-held-out (\Cref{tab:p6_scaffold_gnn}) splits.
 
 \subsection{Calibrated but non-discriminative}
 
-GIN-TFP achieved the lowest molecular-arm log loss (\num{0.02334}), marginally below even the phenotype reference on this endpoint, but its macro-AUROC (\num{0.50479}) remained close to chance and far from the phenotype reference (\num{0.63619}). This dissociation is informative: a low multi-label log loss can be achieved by well-calibrated prevalence-like predictions, whereas ranking ability requires discriminating which drugs carry which labels. The structure arms therefore appear reasonably calibrated but non-discriminative on this task.
+GIN-TFP achieved the lowest molecular-arm log loss (\num{0.02334} under collision group; \num{0.02373} under scaffold), marginally below even the phenotype reference on this endpoint, but its macro-AUROC (\num{0.50479} under collision group; \num{0.50077} under scaffold) remained close to chance and far from the phenotype reference (\num{0.63619}; \num{0.64023} scaffold). This dissociation is informative: a low multi-label log loss can be achieved by well-calibrated prevalence-like predictions, whereas ranking ability requires discriminating which drugs carry which labels. The structure arms therefore appear reasonably calibrated but non-discriminative on this task under both evaluation boundaries.
 
 \subsection{Why phenotype features dominate}
 
@@ -213,11 +235,11 @@ The collision-group mapping is a central contribution of the analysis. It preven
 
 \section{Limitations}
 
-First, the benchmark predicts MoA-associated annotations rather than experimentally established causal mechanisms. No target engagement, antimalarial activity, resistance phenotype, or prospective biological validation was measured. Second, the primary molecular comparison used collision-group folds, whereas scaffold-held-out results were not computed for the four new GNN and ChemBERTa arms; the canonical-protocol scaffold sensitivity is available only for the phenotype and ECFP4--RF baselines. Third, summary metrics are reported across paired seed--fold records, but a complete multiplicity-adjusted paired comparison and confidence-interval analysis should accompany any future claim of relative performance. Fourth, per-label calibration diagrams and calibration slope/intercept were not computed; the pooled ECE, MCE, and Brier score reported in the Results section are summary calibration diagnostics only. Fifth, the bounded QKS protocol is a CDF-quantile proxy, not a full quantum-kernel reference implementation, and is reported as a single-fingerprint separability diagnostic. Sixth, the mapping relies on PRISM-aligned source records and a frozen matching procedure; external structure-source replication may alter coverage or collision composition.
+First, the benchmark predicts MoA-associated annotations rather than experimentally established causal mechanisms. No target engagement, antimalarial activity, resistance phenotype, or prospective biological validation was measured. Second, the primary molecular comparison used collision-group folds; a scaffold-held-out sensitivity is reported for the four GNN and ChemBERTa arms and preserves the near-chance verdict, but it remains a sensitivity analysis on the same mapped cohort rather than a prospectively independent chemical-generalisation test. Third, summary metrics are reported across paired seed--fold records, but a complete multiplicity-adjusted paired comparison and confidence-interval analysis should accompany any future claim of relative performance. Fourth, per-label calibration diagrams and calibration slope/intercept were not computed; the pooled ECE, MCE, and Brier score reported in the Results section are summary calibration diagnostics only. Fifth, the bounded QKS protocol is a CDF-quantile proxy, not a full quantum-kernel reference implementation, and is reported as a single-fingerprint separability diagnostic. Sixth, the mapping relies on PRISM-aligned source records and a frozen matching procedure; external structure-source replication may alter coverage or collision composition, and only \num{100}{\%} signature-matched rows were included.
 
 \section{Future directions}
 
-Several extensions could strengthen the evidence base. First, scaffold-held-out retraining of the GNN and ChemBERTa arms would test whether the near-chance AUROCs persist under a stricter generalization boundary; the canonical-protocol scaffold sensitivity is currently available only for the phenotype and ECFP4--RF baselines. Second, per-label calibration analysis (reliability diagrams, calibration slope, and per-MoA ECE) would reveal whether specific MoA categories are better predicted by molecular structure than others, potentially identifying a subset of labels where structure contributes. Third, contrastive pretraining on the molecular panel could improve representation quality before fine-tuning. Fourth, the bounded QKS proxy could be replaced with a full reference kernel implementation once the per-drug descriptor matrix is finalized. Finally, prospective biochemical validation on a subset of high-confidence predictions would test whether the computational ranking predicts biological activity.
+Several extensions could strengthen the evidence base. First, a truly prospective chemical-generalisation test---for example scaffold splits on an independently mapped cohort or experimental validation of the highest-confidence predictions---would test whether the near-chance pattern persists beyond the frozen PRISM-aligned cohort; the current scaffold sensitivity reuses the same cohort and mapping. Second, per-label calibration analysis (reliability diagrams, calibration slope, and per-MoA ECE) would reveal whether specific MoA categories are better predicted by molecular structure than others, potentially identifying a subset of labels where structure contributes. Third, contrastive pretraining on the molecular panel could improve representation quality before fine-tuning. Fourth, the bounded QKS proxy could be replaced with a full reference kernel implementation once the per-drug descriptor matrix is finalized. Finally, prospective biochemical validation on a subset of high-confidence predictions would test whether the computational ranking predicts biological activity.
 
 \section{Conclusion}
 
@@ -242,6 +264,10 @@ This research received no specific grant from any funding agency in the public, 
 \section*{Ethics approval and consent to participate}
 
 Not applicable. This study is entirely computational and uses publicly available chemical databases; no human or animal subjects were involved.
+
+\section*{Data and code accuracy statement}
+
+The numerical values reported in the results tables were recomputed directly from the archived per-fold prediction files and the corresponding report JSONs before the manuscript was finalised; where a tuning table initially disagreed with those artifacts it was corrected (see the project data-analysis report, 30 August 2026). All frozen splits, per-fold outputs, descriptors, and the audited prediction files are released with the repository.
 
 \section*{Use of Artificial Intelligence}
 

@@ -1,6 +1,6 @@
-# Project2 scripts
+# Project2 scripts — V2609 reproducibility
 
-Run commands from `Project2_Polypharmacology_MD_ValidationV2607/`. The
+Run commands from `Project2_Polypharmacology_MD_ValidationV2607/`. The active manuscript release is V2609; V2607 remains the immutable source release. The
 canonical computational audit is deterministic and fail-closed on cohort
 identity.
 
@@ -48,7 +48,7 @@ The parent-study MD scripts and Set-C pilot scripts are separate from the
 ## Verification
 
 ```bash
-mamba run -n qom python -m pytest tests -q
+mamba run -n malaria_md python -m pytest tests -q
 ```
 
 The tests validate manifests and machine-readable outputs without launching

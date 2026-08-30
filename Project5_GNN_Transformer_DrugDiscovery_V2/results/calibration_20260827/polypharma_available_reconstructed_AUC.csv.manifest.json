@@ -1,0 +1,25 @@
+{
+  "artifact": "polypharma_available_reconstructed_AUC.csv",
+  "sha256": "40fc9a7c72b923edd3a1841ccfbf8da39e4fb8bc2a187152a1f88a96cfc4cb19",
+  "status": "RECONSTRUCTED_AVAILABLE_POLYPHARMA_20260830",
+  "definition": "RRS_class_available in {A*,A} (c_rrs_classification.csv), candidates PP-01/02/06/11/13/15",
+  "panel_indices": [8, 13, 18, 29, 39, 46],
+  "split": "canonical_scaffold",
+  "pooling": "6 candidates x 5 test folds = 30 pooled test samples per arm",
+  "single_target_basis": "canonical scaffold split, excluding the 6 candidate rows (99150 samples)",
+  "arms_AUC": {
+    "GIN_native":   {"polypharma": 0.144, "single_target": 0.812, "delta_vs_single": -0.668, "match_SI": true},
+    "GIN-TFP_native":{"polypharma": 0.296, "single_target": 0.817, "delta_vs_single": -0.521, "match_SI": true},
+    "GIN-TNE_native":{"polypharma": 0.224, "single_target": 0.815, "delta_vs_single": -0.591, "match_SI": true},
+    "ChemBERTa":     {"polypharma": 0.616, "single_target": 0.789, "delta_vs_single": -0.173, "match_SI": true},
+    "ECFP4-RF":      {"polypharma": 0.144, "single_target": 0.830, "delta_vs_single": -0.686,
+                      "match_SI": false, "note": "SI Table S2 listed 0.616/0.789/-0.173 - an exact copy of the ChemBERTa row (copy-paste transcription error). Values here recomputed from newly archived per-fold scaffold predictions (scripts/p5_ecfp4rf_scaffold_preds.py, canonical class_weight='None' RandomForest 500, Morgan2/2048)."}
+  },
+  "SI_table_s2_ecfp4rf_correction": {
+    "was": [0.616, 0.789, -0.173],
+    "corrected_to": [0.144, 0.830, -0.686],
+    "rationale": "row duplicated ChemBERTa values; ECFP4-RF single-target scaffold is canonically 0.8300 (not 0.789)"
+  },
+  "producer": "scripts/p5_polypharma_available_reconstruct.py + scripts/p5_ecfp4rf_scaffold_preds.py",
+  "date": "2026-08-30"
+}

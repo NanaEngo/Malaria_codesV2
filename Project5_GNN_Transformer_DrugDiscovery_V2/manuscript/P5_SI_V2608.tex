@@ -130,7 +130,7 @@ Calibration and ROC-AUC analyses were also stratified by resistance-relevant sco
 \toprule
 Model & {Polypharma AUC} & {Single-target AUC} & {$\Delta$AUC} \\
 \midrule
-ECFP4--RF & 0.616 & 0.789 & -0.173 \\
+ECFP4--RF & \num{0.144} & \num{0.830} & -0.686 \\
 GIN & 0.144 & 0.812 & -0.668 \\
 GIN-TFP (native) & 0.296 & 0.817 & -0.521 \\
 GIN-TNE (native) & 0.224 & 0.815 & -0.591 \\
@@ -139,7 +139,7 @@ ChemBERTa & 0.616 & 0.789 & -0.173 \\
 \end{tabular}
 \end{table}
 
-On the scaffold split, ROC-AUC on the available-target polypharmacology subset falls below the single-target value for every model, with deficits ranging from $-\num{0.173}$ to $-\num{0.668}$. ChemBERTa and ECFP4--RF hold up best (a deficit of $-\num{0.173}$ each), while GIN, GIN-TFP and GIN-TNE lose considerably more ($-\num{0.52}$ to $-\num{0.67}$). The stricter complete two-target subset, built from only two candidates ($n=2$, ten test records per arm), does not support meaningful AUC estimates; values from that subset are reported only as technical outputs and are not interpreted as evidence. The available-target analysis above is the only subset with interpretable ROC-AUC. These numbers are descriptive only: the small candidate count prevents any inferential claim, and the honest-negative scaffold result that anchors the main analysis stands unchanged.
+On the scaffold split, ROC-AUC on the available-target polypharmacology subset falls below the single-target value for every model, with deficits ranging from $-\num{0.173}$ to $-\num{0.686}$. ChemBERTa holds up best (a deficit of $-\num{0.173}$), while ECFP4--RF, GIN, GIN-TFP and GIN-TNE all lose substantially more ($-\num{0.52}$ to $-\num{0.69}$). The stricter complete two-target subset, built from only two candidates ($n=2$, ten test records per arm), does not support meaningful AUC estimates; values from that subset are reported only as technical outputs and are not interpreted as evidence. The available-target analysis above is the only subset with interpretable ROC-AUC. These numbers are descriptive only: the small candidate count prevents any inferential claim, and the honest-negative scaffold result that anchors the main analysis stands unchanged.
 
 \section{Light GNN hyperparameter sensitivity on the scaffold split}
 \label{sec:gnn_sensitivity_si}

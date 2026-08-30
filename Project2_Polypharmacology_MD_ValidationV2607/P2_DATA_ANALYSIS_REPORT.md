@@ -4,12 +4,12 @@
 **Canonical directory**: `Project2_Polypharmacology_MD_ValidationV2607/`
 **Manuscript target**: *J. Chem. Inf. Model.* (JCIM, ACS)
 **Author**: Myke Vital Sao Temgoua
-**Last refreshed**: 2026-08-29 (audit reconciliation)
+**Last refreshed**: 2026-08-30 (V2609 implementation checkpoint; canonical data unchanged)
 
 **DAR update record — 29 Aug 2026:** Reconciled the editorial status to HOLD; added an explicit evidence-level/claim policy; preserved the PP-01 canonical multi-seed result with its PfCRT provenance limitation; and quarantined non-canonical ligand/grid runs from manuscript inference. No numerical result was changed by this update.
 
-**M1 authorization and launch record — 29 Aug 2026:** A targeted replicated-MD extension was authorized before implementation: four PP-01 pillar states (PfDHFR WT, PfCRT WT, PfDHFR N51I, PfCRT K76T), three independent replicates per state, 100 ns per replicate, 12 trajectories total. This is a robustness analysis of inter-replicate variability, not a validation of affinity or resistance. The versioned launcher is `scripts/p2_m1_replicated_md.sbatch`; the runbook is `docs/P2_M1_RUNBOOK_20260829.md`; output root is `results/m1_replicated_md_20260829/`; environment is `malaria_md`; GPU concurrency is capped at one task (`%1`). SLURM job **15671** was submitted after shell, Python, input-presence, and `sbatch --test-only` preflight checks passed. Results remain `NOT_COMPUTED` until production and post-production QC complete. Earlier failed submissions 15671, 15683, and 15695 were fail-closed before production (GMXRC nounset or invalid source-run paths) and are excluded from analysis. Corrected submission **15707** uses the root canonical topology/checkpoint files, passes a real 10-step `grompp` preflight on PP-01 PfDHFR WT, and is running with one GPU task at a time.
-**Status**: **HOLD — DAR reconciliation required before manuscript edits or submission**. The computational record is substantial, but the current evidence supports computational prioritisation only; it does not establish target engagement, affinity, or resistance resilience.
+**M1 authorization and launch record — 29 Aug 2026:** A targeted replicated-MD extension was authorized before implementation: four PP-01 pillar states (PfDHFR WT, PfCRT WT, PfDHFR N51I, PfCRT K76T), three independent replicates per state, 100 ns per replicate, 12 trajectories total. This is a robustness analysis of inter-replicate variability, not a validation of affinity or resistance. The versioned launcher is `scripts/p2_m1_replicated_md.sbatch`; the runbook is `docs/P2_M1_RUNBOOK_20260829.md`; output root is `results/m1_replicated_md_20260829/`; environment is `malaria_md`; GPU concurrency is capped at one task (`%1`). SLURM job **15671** was submitted after shell, Python, input-presence, and `sbatch --test-only` preflight checks passed. Results remain `NOT_COMPUTED` until production and post-production QC complete. Earlier failed submissions 15671, 15683, and 15695 were fail-closed before production (GMXRC nounset or invalid source-run paths) and are excluded from analysis. Audit execution du 30 août 2026 : les tentatives 15671/15683/15695 ont échoué en préproduction (GMXRC nounset / chemins sources invalides). Les tâches 15707_0/1/2 ont échoué à `grompp` avec `-maxwarn 0` sur un mot-clé inconnu `tc-integrator` (production.mdp, ligne 34) — `MPI_ABORT` avant `mdrun` ; le journal 15710 rapporte `CANCELLED at 2026-08-29T19:51:45`. Le `mdrun` de `PP-01_PfDHFR_WT/replicate_1` **tourne toujours** (PID 675626, dès le 29/08 19:52, progressé à ~6,98 M pas ~13,9 ns au 30/08 07:22, ~1,2 ns/h) ; SLURM ne le voit plus (accounting désactivé) mais le process survit. Les checkpoints continuent d'avancer. Les 11 autres réplicats restent en préparation/debut de production. Débit observé ~1,2 ns/h : pour 100 ns il faut ~83 h, or `#SBATCH --time=2-00:00:00` ne couvre que 48 h → la production ne pouvait pas atteindre 100 ns dans la fenêtre allouée. Le fichier `production.mdp` du sbatch actuel ne contient plus `tc-integrator` ; le `--time` a été porté à `4-00:00:00` (96 h). Voir `docs/P2_M1_EXECUTION_AUDIT_20260830.md`. **M1 = RUN INTERRUPTED / UNCONFIRMED ; 0/12 trajectoires complètes et QC-validées ; NOT_COMPUTED / NOT_REPORTABLE ; non intégré à V2609.**
+**Status**: **V2609 implementation in progress — canonical data frozen; author review required before submission**. The computational record is substantial, but the current evidence supports computational prioritisation only; it does not establish target engagement, affinity, or resistance resilience.
 
 > **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P6) via leurs DAR respectifs et AGENTS.md.
 
@@ -276,7 +276,7 @@ Only levels 1–3 are available here. Results from levels 2–3 must not be desc
 
 ### Companion P1 context
 
-P1 V7 was audited as an upstream companion source. Its redocking, DEKOIS/MMV enrichment, physicochemical, chemical-space, scaffold, and MPO-sensitivity outputs are usable in P2 only as methodological or chemical-space context. A cohort audit confirmed exact identity for all 17 PP-01--PP-17 SMILES; the overlap and shared workflow provenance preclude independent-replication claims. The source files, hashes, and permitted-use boundary are recorded in `results/robustness_transfer_20260827/external_transfer_audit.json` and `p1_p2_cohort_audit.json`; the boundary is summarized in SI Table S16.
+P1 V7 was audited as an upstream companion source. Its redocking, DEKOIS/MMV enrichment, physicochemical, chemical-space, scaffold, and MPO-sensitivity outputs are usable in P2 only as methodological or chemical-space context. A cohort audit confirmed exact identity for all 17 PP-01--PP-17 SMILES; the overlap and shared workflow provenance preclude independent-replication claims. The source files, hashes, and permitted-use boundary are recorded in `results/robustness_transfer_20260827/external_transfer_audit.json` and `p1_p2_cohort_audit.json`; the boundary is summarized in the P1-context SI table.
 
 
 A bounded post-processing audit was completed without new docking, MD, MM-GBSA, network extraction, or external data retrieval. Script: `scripts/p2_robustness_transfer_audit.py`; seed `20260827`; outputs: `results/robustness_transfer_20260827/`.
@@ -337,7 +337,7 @@ Script: `scripts/p2_rrs_polypharma_secondary_20260828.py` (seed 42, B=10\u2074).
 
 **RUN1 — Set-C bootstrap CI95 (n=17):** class fractions A* 0.294 [0.118, 0.529], A 0.059 [0.000, 0.176], B 0.294 [0.118, 0.529], C 0.294 [0.118, 0.529], D 0.059 [0.000, 0.176]. Per-mutant retention (pooled, WT=100): PfDHFR N51I 74.7 [67.2, 85.2], C59R 73.7 [67.4, 82.1], S108N 75.3 [67.7, 85.8], I164L 76.8 [68.9, 88.2] (n=12); PfCRT K76T 85.4 [81.0, 90.4], K76A 87.0 [83.1, 90.9] (n=17). The PfCRT retention CIs exclude 100, consistent with the retention-not-gain reading; the PfDHFR CIs are wide and overlap 100 for I164L.
 
-**RUN1b — external panel bootstrap:** mean RRS 100.45 [99.59, 101.34], class-A fraction 0.974 [0.923, 1.000] (matches the value already reported in SM Table S15).
+**RUN1b — external panel bootstrap:** mean RRS 100.45 [99.59, 101.34], class-A fraction 0.974 [0.923, 1.000] (matches the value already reported in the robustness-transfer SI table).
 
 **RUN2 — MD-filter retention gate (pilot scope PP-01/PP-02, 12 gate rows):** docking RRS \u2265 80 AND pilot MD-RRS < 100. 7/12 rows pass both gates. **PP-01 is polypharma-promoted at pilot scope** (PfCRT via K76A MD-RRS 97.8, PfDHFR 4/4 mutants 91.0\u201398.9; docking RRS 91.7 / 85.8). PP-02 is NOT promoted: its PfCRT rows pass (90.1/87.3) but PfDHFR has no eligible docking WT anchor under the 5.0 kcal/mol rule, so only one target is gate-eligible. K76T MD-RRS 102.7 for PP-01 PfCRT is the one >100 row and is read as within-noise retention, not gain.
 
@@ -359,7 +359,7 @@ Status: `COMPUTED_CONSENSUS_RRS_SENSITIVITY`. Interpretation: the near-proportio
 
 **Current release status:** `READING_FINAL_AUTHOR`. The primary Set-C docking analysis, the separate parent-study MD cohort, and the bounded Set-C MD pilot have completed their declared production and QC gates. The optional witness job `15507_[0]` is not a prerequisite for the manuscript and remains non-blocking. K76A MM-GBSA retains the original canonical endpoint with an explicit Limitations caveat.
 
-**28 Aug — robustness analyses integrated in manuscript (v2607 recompile clean: main 30 p., SM 16 p., 0 errors, 0 undefined refs):** (1) the pilot-scope MD-filter retention gate (7/12 gate rows pass docking RRS $\geq$ 80 % AND pilot MD-RRS < 100; PP-01 satisfies the two-target gate, PP-02 does not) was added to the Set-C MD pilot Results subsection and Discussion (role of structural follow-up), bounded by the saturated bound fraction and the 2.0 kcal/mol noise floor; (2) the Set-C bootstrap CI95 (class fractions A* 0.294 [0.118, 0.529], PfCRT retention CIs excluding 100, PfDHFR intervals wide) was added to the Discussion and as a new row in SM Table S15; (3) SM Table S15 gained the MD-filter gate row. The GNINA CNN consensus (38/38 class A, 0 discordance, ρ=0.558) and external-docking replication were already integrated (Discussion + S15). No canonical value replaced; Vina-only remains the canonical estimand.
+**28 Aug — robustness analyses integrated in manuscript (v2607 recompile clean: main 30 p., SM 16 p., 0 errors, 0 undefined refs):** (1) the pilot-scope MD-filter retention gate (7/12 gate rows pass docking RRS $\geq$ 80 % AND pilot MD-RRS < 100; PP-01 satisfies the two-target gate, PP-02 does not) was added to the Set-C MD pilot Results subsection and Discussion (role of structural follow-up), bounded by the saturated bound fraction and the 2.0 kcal/mol noise floor; (2) the Set-C bootstrap CI95 (class fractions A* 0.294 [0.118, 0.529], PfCRT retention CIs excluding 100, PfDHFR intervals wide) was added to the Discussion and as a new row in the robustness-transfer SI table; (3) SM Table S15 gained the MD-filter gate row. The GNINA CNN consensus (38/38 class A, 0 discordance, ρ=0.558) and external-docking replication were already integrated (Discussion + S15). No canonical value replaced; Vina-only remains the canonical estimand.
 
 **K76A MM-GBSA resolution (author decision, 28 August 2026):** The PP-01 PfCRT K76A endpoint uses the original 19-Aug value (−35.29 ± 1.17 kcal/mol, SD_prop, SEM 0.50) from the canonical trajectory (`20260815T185233Z/replicate_1`, 100 frames). An independent second replicate on a different trajectory (`20260825T063226Z/replicate_1`) produced −27.54 ± 1.89 kcal/mol after PBC-whole correction. The 7.75 kcal/mol inter-replicate difference is documented in the manuscript Limitations section and treated as evidence of inter-replicate sensitivity for this mutant state. The `FAILED_NUMERICAL_QC` status (BOND overflow in sander parsing) applies to the 25–26 Aug diagnostic runs on the second trajectory, not to the original canonical endpoint. The Submission Manifest has been updated to reflect this resolution.
 
@@ -479,9 +479,9 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
 
 **Updated:** 28 August 2026 22:35Z.
 
-## 11. Implementation checkpoint 29 August 2026 — P2_V2609 narrative pivot audit
+## 11. Implementation checkpoint 30 August 2026 — P2 V2609 narrative pivot audit
 
-The P2 manuscript `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` was audited against the 12 recommendations of `docs/P2_V2609_NARRATIVE_PIVOT_PLAN.md` (29 Aug 2026). The manuscript is **already substantially compliant** with the pivot: 10 of 12 recommendations are met without modification.
+The P2 V2609 release manuscript `manuscript/LaTeX/Polypharmacology_MD_Validation_V2609.tex` was audited against the 12 recommendations of `docs/P2_V2609_NARRATIVE_PIVOT_PLAN.md` (29 Aug 2026); V2607 remains the immutable source release. The manuscript is **already substantially compliant** with the pivot: 10 of 12 recommendations are met without modification. V2609 is implemented as a narrative and audit refinement of the canonical V2607 dataset; canonical numerical results remain unchanged unless reconciled in this DAR.
 
 | Pivot recommendation | Manuscript status | Evidence |
 |---|---|---|
@@ -500,17 +500,17 @@ The P2 manuscript `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` wa
 
 **Mitigation applied (1/12)** : L331 "engages in a robust H-bond network" → "engages in a stable H-bond network". The other usages of "robust" (e.g. "robustness analyses", "robustness checks", "robustness_transfer" in section/SM labels) refer to the statistical robustness analysis (different concept) and are pivot-compliant.
 
-**Conclusion**: no structural change is needed in the manuscript to satisfy the V2609 pivot. The narrative framing ("resistance-aware prioritization" + "calibration study of docking-derived RRS") is already in place; the manuscript describes itself as a **calibration and triage** study, not a validation. The V2609 pivot can be marked as "integrated" in the manuscript status table once a final author review is performed.
+**Conclusion**: the V2609 pivot is implemented as a narrative refinement of the canonical V2607 dataset. The detailed execution sequence and exit criteria are maintained in `docs/P2_V2609_IMPLEMENTATION_PLAN.md`. The narrative framing ("resistance-aware prioritization" + "calibration of the interpretation of docking-derived RRS") is in place; the manuscript describes itself as a **calibration and triage** study, not a validation. Final author review remains required before any submission decision.
 
 **Compilation**: MS 30 p., 0 LaTeX error (libxpdf xref "damaged" warning is a known artefact of `pdflatex` not affecting compilation).
 
-## 12. Implementation checkpoint 29 August 2026 — P2_V2609 runs audit and Soares2023 alignment
+## 12. Implementation checkpoint 30 August 2026 — P2 V2609 runs audit and Soares2023 alignment
 
 **Audit of the 12 P2_V2609 pivot recommendations** (see `docs/P2_V2609_NARRATIVE_PIVOT_PLAN.md`) for **run suggestions** (new simulations required):
 
 The pivot contains **1 explicit run suggestion** : the JCIM MD-reporting guidelines \citep{soares2023mdreport} (Soares et al., DOI 10.1021/acs.jcim.3c00599, *J Chem Inf Model* 2023) recommend **at least three replicates** per system with adequate duration and convergence. The pivot itself authorises the alternative *"si aucune nouvelle campagne n'est exécutée, le pilote doit rester explicitement secondaire, exploratoire et non thermodynamique"* (pivot §8 L214).
 
-The P2 manuscript canonique (`Polypharmacology_MD_Validation_V2607.tex`) **already follows the alternative path** ("réduire la portée de la revendication") and explicitly declares at L250, L370, L436, L447 and L449 that the MD pilot is single-replicate, 10 ns, secondary, and is not a residence-time or converged free-energy measurement. No new MD replicates are launched for the V2609 submission.
+The P2 V2609 manuscript (`Polypharmacology_MD_Validation_V2609.tex`) **follows the alternative path** ("réduire la portée de la revendication") and explicitly declares at L250, L370, L436, L447 and L449 that the MD pilot is single-replicate, 10 ns, secondary, and is not a residence-time or converged free-energy measurement. No new MD replicates are launched for the V2609 submission.
 
 **Action applied** : the JCIM MD-reporting guidelines \citep{soares2023mdreport} are now cited in the manuscript §Limitations (L447), and the choice *not* to extend the pilot to three replicates is stated explicitly in that paragraph: *"no new replicate campaign was launched for the present submission, and the pilot is therefore reported strictly as a secondary protocol-level structural stress test rather than as a thermodynamic or kinetic measurement"*.
 
@@ -518,7 +518,7 @@ The P2 manuscript canonique (`Polypharmacology_MD_Validation_V2607.tex`) **alrea
 
 **Compilation** : MS 31 p. (was 30 p. pre-addition), 0 LaTeX error.
 
-## 13. Implementation checkpoint 29 August 2026 — P2 M1 runbook path alignment
+## 13. Implementation checkpoint 30 August 2026 — P2 M1 runbook path alignment
 
 **`docs/P2_M1_RUNBOOK_20260829.md`** is the runbook for the active PP-01 replication MD campaign (job SLURM **15711**, array 0-11, 12 trajectories × 100 ns = 1,200 ns production, GPU A4000, ETA 2-4 calendar days per runbook).
 

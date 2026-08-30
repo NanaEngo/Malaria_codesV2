@@ -1,7 +1,7 @@
 # Submission Manifest — Project 2
 
 **Journal:** *Journal of Chemical Information and Modeling* (ACS)
-**Updated:** 27 August 2026 (final robustness and companion-context consolidation; P2Rank box audit + ProLIF interaction fingerprints + Figure S4)
+**Updated:** 27 August 2026 (final robustness and companion-context consolidation; P2Rank box audit + ProLIF interaction fingerprints + the P2Rank figure)
 **Package status:** The canonical P2 main manuscript, Supporting Information, and cover letter compile without fatal LaTeX errors or unresolved references. The manuscript is suitable for final author reading. No Zenodo DOI is recorded; archival deposit remains pending.
 
 ## Canonical evidence status
@@ -51,7 +51,7 @@ results/p2rank_boxes_20260827/     # predictions/residues CSVs + README
 - **PfCRT (6UKJ):** top pocket (score 162.7, prob 0.999) lies 5.7 Å from the Vina box center — independent corroboration.
 - PfDHFR (7F3Y) and PfATP4 (9N10): 23–46 Å separations with documented receptor-frame caveats (provenance flags, not refutations).
 - PfClpP (2F6I): weak P2Rank signals; frame-independent report only (ClpP docking ran in P1).
-- Integrated as **Figure S4** in the Supporting Information; cited in the main text Methods (grid-box paragraph) with the P2Rank citation (Krivák & Hoksza 2018).
+- Integrated as **the P2Rank figure** in the Supporting Information; cited in the main text Methods (grid-box paragraph) with the P2Rank citation (Krivák & Hoksza 2018).
 
 ### ProLIF interaction-fingerprint occupancy
 
@@ -83,7 +83,7 @@ results/robustness_transfer_20260827/step1_external_rRS_feasibility.md
 results/robustness_transfer_20260827/external_transfer_audit.json
 ```
 
-The permitted use is summarized in SI Table S16. The local ChEMBL feasibility audit found no paired target-state WT/mutant fields; ChEMBL itself is not an independent P2-RRS replication; the separate targeted docking replication is documented below as a bounded computational sensitivity analysis.
+The permitted use is summarized in SI the P1 context table. The local ChEMBL feasibility audit found no paired target-state WT/mutant fields; ChEMBL itself is not an independent P2-RRS replication; the separate targeted docking replication is documented below as a bounded computational sensitivity analysis.
 
 ## SI tables added or updated
 
@@ -149,4 +149,4 @@ Observed:
 
 ## Submission boundary
 
-The manuscript reports computational prioritization and targeted structural follow-up. It does not establish biological polypharmacology, target engagement, clinical efficacy, resistance circumvention, or converged mutant-state free energies. The Set-C cohort is filtered, the MD pilot is single-replicate, K76A MM-GBSA is non-reportable, and P1 evidence is contextual rather than independent validation.
+The manuscript reports computational prioritization and targeted structural follow-up. It does not establish biological polypharmacology, target engagement, clinical efficacy, resistance circumvention, or converged mutant-state free energies. The Set-C cohort is filtered, the MD pilot is single-replicate, K76A MM-GBSA is interpreted with an inter-replicate sensitivity caveat, and P1 evidence is contextual rather than an independent P2 replication.

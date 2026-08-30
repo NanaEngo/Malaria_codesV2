@@ -1,15 +1,17 @@
-# Project2 manuscript
+# Project2 manuscript — V2609 release
 
-## Canonical submission package
+## Source and V2609 submission package
 
 - **Target journal:** *Journal of Chemical Information and Modeling* (ACS)
-- **Main source:** `LaTeX/Polypharmacology_MD_Validation_V2607.tex`
-- **Supporting Information:** `LaTeX/Polypharmacology_MD_Validation_SM_V2607.tex`
-- **Cover letter:** `LaTeX/Cover_Letter.tex`
+- **Immutable source release:** `LaTeX/Polypharmacology_MD_Validation_V2607.tex`, `LaTeX/Polypharmacology_MD_Validation_SM_V2607.tex`, `LaTeX/Cover_Letter.tex`
+- **V2609 main release:** `LaTeX/Polypharmacology_MD_Validation_V2609.tex`
+- **V2609 Supporting Information:** `LaTeX/Polypharmacology_MD_Validation_SM_V2609.tex`
+- **V2609 cover letter:** `LaTeX/Cover_Letter_V2609.tex`
 - **Bibliography:** `LaTeX/Bibliography_Polypharmacology_MD_Validation.bib`
-- **Submission manifest:** `LaTeX/SUBMISSION_MANIFEST.md`
+- **V2609 submission manifest:** `LaTeX/SUBMISSION_MANIFEST_V2609.md`
+- **Historical/canonical V2607 manifest:** `LaTeX/SUBMISSION_MANIFEST.md`
 
-The LaTeX files are the source of truth. Compiled PDFs and auxiliary files are
+The V2607 LaTeX files are the immutable source release; the separately named V2609 LaTeX files are the active narrative-refinement release. The V2609 manifest is authoritative for the active release. Neither source set should be edited by hand after compilation. Compiled PDFs and auxiliary files are
 regenerated from these sources and must not be edited by hand.
 
 ## Scientific scope
@@ -79,7 +81,7 @@ circumvention is claimed.
   summary.
 - `../results/README.md` — result-file inventory and source boundaries.
 - `Methods/` — detailed MD and MM-GBSA protocol notes.
-- `ANTI_HALLUCINATION.md` — evidence and writing safeguards.
+- `../docs/P2_V2609_MD_AUDIT_MATRIX.md` — Markdown inventory and deletion policy.
 
 Historical drafts are retained only in the repository archive and are not
 submission sources. If a number in a narrative file disagrees with the

@@ -1,6 +1,6 @@
 # Project2 — résultats canoniques et reproduction
 
-**Dernière mise à jour : 25 août 2026**
+**Dernière mise à jour : 30 août 2026**
 **Statut :** docking/RRS/ACSI/PNS terminé ; cohorte parentale MD séparée ; pilote Set-C MD secondaire terminé ; full-panel MD-RRS non calculé par conception.
 
 ## Périmètre scientifique canonique
@@ -33,11 +33,7 @@ Les scores Vina, RRS, ACSI, PNS, MD-RRS et MM-GBSA représentent des estimands d
 
 ## Audit de déblocage des résultats existants
 
-L’audit `docs/P2_RESULTS_UNLOCK_AUDIT_20260825.md` et le manifeste
-`results/p2_results_unlock_manifest.json` confirment que la sensibilité PfCRT
-pH 5.2 (100/100) et la sensibilité PNS par imputation étaient déjà calculées.
-Elles sont distinctes du redocking multi-seed PP-01/PP-15 et des matrices STRING
-400/900, qui restent respectivement sans entrées dédiées et sans données source.
+Le manifeste `results/p2_results_unlock_manifest.json` et les audits versionnés associés dans le DAR confirment que la sensibilité PfCRT pH 5.2 (100/100) et la sensibilité PNS par imputation sont calculées. Elles sont distinctes du redocking multi-seed PP-01/PP-15 et de la sensibilité STRING 400/900, désormais documentés dans le DAR et leurs répertoires de résultats versionnés.
 
 ## Pilote Set-C MD
 
@@ -68,7 +64,13 @@ La reproduction MD complète nécessite l’environnement et les fichiers de par
 
 ## Provenance et versions
 
-Les sources canoniques du manuscrit sont :
+Les fichiers source V2607 restent immuables. La release active V2609 est portée par :
+
+- `manuscript/LaTeX/Polypharmacology_MD_Validation_V2609.tex` ;
+- `manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2609.tex` ;
+- `manuscript/LaTeX/Cover_Letter_V2609.tex` ;
+
+Les sources V2607 correspondantes sont conservées comme référence historique et ne doivent pas être écrasées :
 
 - `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` ;
 - `manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2607.tex` ;

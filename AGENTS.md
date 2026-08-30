@@ -45,7 +45,7 @@ Read the relevant DAR before changing code, parameters, protocols, or manuscript
 | P3 | **JCAMD submission-ready (V4 canonical)** | ECFP4 0.948; hybrid 0.888; QKS ≈ RBF; no quantum advantage; Zenodo DOI reserved. Package `submission_JCAMD/` created |
 | P4 | **JCAMD submission-ready** | Random 0.6724 > MCTS 0.6649; Pareto front 4 points (HV 1.2366); package `submission_JCAMD/` created |
 | P5 | **JCAMD submission-ready** | ECFP4-RF 0.830 scaffold / **0.833 Butina**; **Butina 5/5 arms COMPUTED** (ChemBERTa 0.778); topological fusion modestly complementary; LISH-MoA baseline 0.6435; GNN gap narrows on Butina (0.010 vs 0.016 scaffold) |
-| P6 | Phase 2 complete | 7 arms × 25 folds; pooled calibration ECE 0.0006–0.0074; RRS-class proxy (pos_rate tertile) monotonic; QKS phenotype_vs_both Spearman 0.283; attention-fusion PLANNED_SECONDARY |
+| P6 | Phase 2 complete | 7 arms × 25 folds; pooled calibration ECE 0.0006–0.0074; RRS-class proxy (pos_rate tertile) monotonic; QKS phenotype_vs_both Spearman 0.283; **scaffold GNN 4/4 COMPUTED** (near chance, 0.5008–0.5064 < phénotype 0.6402); **attention-fusion cross-modal DIFFÉRÉE le 30/08/2026** (PLANNED_SECONDARY, non lancé — fusion late-concat COMPUTED déjà honest-negative + GPU saturée par M1) |
 | P7 | Project init | Quantum molecular encoding; no canonical results yet; environment setup in progress |
 
 ## 3. Live P2 jobs
@@ -110,3 +110,5 @@ P1–P5 remain in author-controlled pre-submission development. No administrativ
 ## 7. Maintenance rule
 
 Keep this file operational and short. Put historical job narratives, superseded plans, long audit prose, and version histories in `docs/archive/` or the relevant project archive. Add a dated checkpoint to the relevant DAR when a validated result changes the scientific status.
+
+> **Checkpoint 30 Aug 2026 — P6.** Scaffold-held-out GNN arms `COMPUTED` (4/4, near chance 0.5008–0.5064 < phénotype 0.6402) ; table scaffold DAR corrigée (erratum daté) ; cross-modal **attention-fusion différée** — `PLANNED_SECONDARY`, non lancé (fusion late-concat `COMPUTED` = honest-negative, structure ≈ chance, single GPU saturée par M1 15711). Traçable : DAR §1/§4.6, `docs/CENTRAL_QUESTIONS_PROJECTS.md` §P6, `README.md`.
