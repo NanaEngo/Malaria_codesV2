@@ -63,12 +63,13 @@ P3's ZENODO manifest at `P3_ZENODO_DEPOSIT_MANIFEST.json` records
 `status: reserved_pending_upload`.
 
 The P3 V4 directory lacks a top-level `README.md`, `scripts/`, `tests/`, or
-`requirements.txt`. The historical scripts and tests live in
-`_archives/P3_V2607_archived_20260829/scripts/` (60+ scripts) and
-`_archives/P3_V2607_archived_20260829/tests/`. The V2608 manuscript compiles
-without those (results-only canonical). When the V2608 manuscript is
-re-compiled the original scripts must be cross-referenced from the archive
-(see §0.2 runbook).
+`requirements.txt`. The historical scripts and tests were archived in
+`_archives/P3_V2607_archived_20260829/scripts/` (70 files) and
+`_archives/P3_V2607_archived_20260829/tests/`, and removed from the archives on
+2026-08-30 (author decision: archives kept results-only). The V2608 manuscript
+compiles without those (results-only canonical); it consumes the committed
+`results/` CSVs directly and requires no re-execution. Scripts are recoverable
+from the git history of the project.
 
 ---
 
@@ -134,13 +135,11 @@ Project3_Quantum_Inspired_RepresentationsV2607_V4/  ← canonical (this report)
 
 ### 4.1 Historical scripts and tests (archived)
 
-Scripts and tests for P3 are **not** in the V4 directory. They live in
-`_archives/P3_V2607_archived_20260829/scripts/` (60+ files: `p3_hybrid_benchmark.py`,
-`p3_qks_benchmark.py`, `p3_tne_pipeline.py`, `p3_tda_pipeline.py`,
-`p3_external_validation.py`, `p3_physical_validation.py`, `p3_quantum_param_search.py`,
-etc.) and `_archives/P3_V2607_archived_20260829/tests/`. The V2608 manuscript
-does not require re-execution; it consumes the committed `results/` CSVs and
-summary texts directly. See §0.2 for the runbook.
+Scripts and tests for P3 are **not** in the V4 directory. They were archived
+in `_archives/P3_V2607_archived_20260829/{scripts,tests}/` and removed from the
+archives on 2026-08-30 (author decision: archives kept results-only). The
+V2608 manuscript does not require re-execution; it consumes the committed
+`results/` CSVs and summary texts directly. See §0.2 for the runbook.
 
 ---
 
@@ -184,14 +183,25 @@ summary texts directly. See §0.2 for the runbook.
 
 ## 6. Reproducibility runbook
 
-P3 V4 has results-only canonical. Re-execution requires the archived scripts.
+P3 V4 has results-only canonical. Re-execution requires the original scripts,
+which were removed from the archives on 2026-08-30 (author decision: archives
+kept results-only). The scripts are recoverable from git history at commit
+`1fde783dc` (the last commit in which the V1 archive still contained the full
+`scripts/`/`tests/` trees), e.g.:
 
 ```bash
-# 1. Recover scripts + tests from the V1 archive
-ln -s ../../_archives/P3_V2607_archived_20260829/scripts ./scripts_v1
-ln -s ../../_archives/P3_V2607_archived_20260829/tests ./tests_v1
+# 0. Recover scripts + tests from git history
+mkdir -p scripts_v1 tests_v1
+(cd _archives/P3_V2607_archived_20260829 2>/dev/null || true)
+git log -1 --oneline 1fde783dc
+# restore the whole scripts + tests trees (V1 archive) at that commit:
+git worktree add --detach /tmp/p3_v1 1fde783dc \
+  && cp -r /tmp/p3_v1/_archives/P3_V2607_archived_20260829/scripts ./scripts_v1 \
+  && cp -r /tmp/p3_v1/_archives/P3_V2607_archived_20260829/tests ./tests_v1 \
+  && git worktree remove /tmp/p3_v1
+# (or per-file: git show 1fde783dc:<path> > file)
 
-# 2. (Optional) re-run the three core pipelines
+# 1. (Optional) re-run the three core pipelines
 mamba run -n p3_env python scripts_v1/p3_tda_pipeline.py        # 19849 TFPs
 mamba run -n p3_env python scripts_v1/p3_tne_pipeline.py        # 19836 TNE embeddings
 mamba run -n p3_env python scripts_v1/p3_hybrid_benchmark.py    # RF per representation
@@ -309,7 +319,7 @@ transfer.
 | P3 V1 (full) | archived to `_archives/P3_V2607_archived_20260829/` (118 MB results, 60+ scripts, V1/V2/V3 manuscript archive) on 2026-08-29 |
 | P3 V2 (full) | archived to `_archives/P3_V2607_V2_archived_20260829/` (111 MB results, no SM beyond V2607) on 2026-08-29 |
 | P3 V4 canonical | `Project3_Quantum_Inspired_RepresentationsV2607_V4/` (111 MB results, V2608 main + SM + cover) |
-| P3 V4 missing `scripts/`, `tests/`, `README.md`, `requirements.txt` | historical scripts/tests recovered via symlink to V1 archive (§0.2) |
+| P3 V4 missing `scripts/`, `tests/`, `README.md`, `requirements.txt` | scripts/tests removed from archives 2026-08-30 (results-only); recoverable from git history at `1fde783dc` (§0.2) |
 | P3 V4 ZENODO manifest `canonical_manifest` pointer | points to the now-archived V1 JSON. The pointer is technically still valid (V1 is the historical manifest source of truth); however, the V4 ZENODO JSON does not enumerate P3 V4's own file list. **Author action item:** regenerate `canonical_manifest` to point at the V4 directory contents or back-fill the V4 contents. |
 
 ---
@@ -322,13 +332,13 @@ transfer.
 2. **Zenodo deposit.** DOI `10.5281/zenodo.19608875` is reserved; the upload
    remains pending. The P3 V4 ZENODO manifest should be updated to enumerate
    the V4 file inventory.
-3. **Restore scripts and tests in P3 V4** as a top-level `scripts/` and
-   `tests/` directory (currently symlinked from the V1 archive for
-   reproducibility). The V2608 manuscript compiles without re-execution, so
-   this is documentation hygiene, not a functional gap.
-4. **Tartarus / external validation** — `p3_external_validation_qks_ckpt.json`
-   in the V1 archive is the checkpoint; the V4 directory contains only the
-   CSV summaries. Re-export the ckpt if a clean re-run is requested.
+3. **Scripts and tests** are no longer in the archives (removed 2026-08-30 per
+   author decision; archives kept results-only). They remain recoverable from
+   git history at commit `1fde783dc`. Restoring them as a top-level `scripts/`
+   and `tests/` directory in V4 is optional documentation hygiene.
+4. **Tartarus / external validation** — `results/p3_external_validation_qks_ckpt.json`
+   is now part of the canonical V4 `results/` (copied from the V1 archive on
+   2026-08-30). Re-export the ckpt only if a clean re-run is requested.
 5. **BMAD update.** The next BMAD refresh should re-pull P3 headline numbers
    from this DAR; the current BMAD §6 P3 row is consistent with this DAR
    (verified 2026-08-29).
