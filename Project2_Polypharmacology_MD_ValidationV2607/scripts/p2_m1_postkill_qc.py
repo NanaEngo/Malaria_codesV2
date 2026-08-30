@@ -155,6 +155,14 @@ def main() -> int:
     parser.add_argument("--min-bound-fraction", type=float, default=0.10)
     parser.add_argument("--max-frames", type=int, default=2000)
     parser.add_argument("--seed", type=int, default=26082901, help="Replicate seed (from launcher)")
+    parser.add_argument(
+        "--termination",
+        default="SLURM_TIME_LIMIT_KILL",
+        choices=("SLURM_TIME_LIMIT_KILL", "USER_DECISION", "NATURAL_COMPLETION"),
+        help="Termination cause recorded in the provenance manifest. Default is the historical\n"
+        "SLURM_TIME_LIMIT_KILL value; pass USER_DECISION when the run was stopped by scancel on\n"
+        "an author decision (e.g. the 25 ns M1 stop), so the provenance is honest.",
+    )
     args = parser.parse_args()
 
     rep: Path = args.replicate.resolve()
@@ -238,7 +246,7 @@ def main() -> int:
         "source_root": "results/md_systems/set_c_preparation_20260812_v1",
         "wallclock_end": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "inputs": inputs,
-        "termination": "SLURM_TIME_LIMIT_KILL" if not complete else "NATURAL_COMPLETION",
+        "termination": args.termination if not complete else "NATURAL_COMPLETION",
         "interpretation": (
             "partial single-replicate structural stress trajectory; "
             "NOT a completed 100 ns replicate; not affinity or resistance validation"

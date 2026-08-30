@@ -8,14 +8,16 @@
 
 **DAR update record — 29 Aug 2026:** Reconciled the editorial status to HOLD; added an explicit evidence-level/claim policy; preserved the PP-01 canonical multi-seed result with its PfCRT provenance limitation; and quarantined non-canonical ligand/grid runs from manuscript inference. No numerical result was changed by this update.
 
-**M1 authorization and launch record — 29 Aug 2026:** A targeted replicated-MD extension was authorized before implementation: four PP-01 pillar states (PfDHFR WT, PfCRT WT, PfDHFR N51I, PfCRT K76T), three independent replicates per state, 100 ns per replicate, 12 trajectories total. This is a robustness analysis of inter-replicate variability, not a validation of affinity or resistance. The versioned launcher is `scripts/p2_m1_replicated_md.sbatch`; the runbook is `docs/P2_M1_RUNBOOK_20260829.md`; output root is `results/m1_replicated_md_20260829/`; environment is `malaria_md`; GPU concurrency is capped at one task (`%1`). SLURM job **15671** was submitted after shell, Python, input-presence, and `sbatch --test-only` preflight checks passed. Results remain `NOT_COMPUTED` until production and post-production QC complete. Earlier failed submissions 15671, 15683, and 15695 were fail-closed before production (GMXRC nounset or invalid source-run paths) and are excluded from analysis. Audit execution du 30 août 2026 : les tentatives 15671/15683/15695 ont échoué en préproduction (GMXRC nounset / chemins sources invalides). Les tâches 15707_0/1/2 ont échoué à `grompp` avec `-maxwarn 0` sur un mot-clé inconnu `tc-integrator` (production.mdp, ligne 34) — `MPI_ABORT` avant `mdrun` ; le journal 15710 rapporte `CANCELLED at 2026-08-29T19:51:45`. Le `mdrun` de `PP-01_PfDHFR_WT/replicate_1` **tourne toujours** (PID 675626, dès le 29/08 19:52, progressé à ~6,98 M pas ~13,9 ns au 30/08 07:22, ~1,2 ns/h) ; SLURM ne le voit plus (accounting désactivé) mais le process survit. Les checkpoints continuent d'avancer. Les 11 autres réplicats restent en préparation/debut de production. Débit observé ~1,2 ns/h : pour 100 ns il faut ~83 h, or `#SBATCH --time=2-00:00:00` ne couvre que 48 h → la production ne pouvait pas atteindre 100 ns dans la fenêtre allouée. Le fichier `production.mdp` du sbatch actuel ne contient plus `tc-integrator` ; le `--time` a été porté à `4-00:00:00` (96 h). Voir `docs/P2_M1_EXECUTION_AUDIT_20260830.md`. **M1 = RUN INTERRUPTED / UNCONFIRMED ; 0/12 trajectoires complètes et QC-validées ; NOT_COMPUTED / NOT_REPORTABLE ; non intégré à V2609.**
+**M1 authorization and launch record — 29 Aug 2026:** A targeted replicated-MD extension was authorized before implementation: four PP-01 pillar states (PfDHFR WT, PfCRT WT, PfDHFR N51I, PfCRT K76T), three independent replicates per state, 100 ns per replicate, 12 trajectories total. This is a robustness analysis of inter-replicate variability, not a validation of affinity or resistance. The versioned launcher is `scripts/p2_m1_replicated_md.sbatch`; the runbook is `docs/P2_M1_RUNBOOK_20260829.md`; output root is `results/m1_replicated_md_20260829/`; environment is `malaria_md`; GPU concurrency is capped at one task (`%1`). SLURM job **15671** was submitted after shell, Python, input-presence, and `sbatch --test-only` preflight checks passed. Results remain `NOT_COMPUTED` until production and post-production QC complete. Earlier failed submissions 15671, 15683, and 15695 were fail-closed before production (GMXRC nounset or invalid source-run paths) and are excluded from analysis. Audit execution du 30 août 2026 : les tentatives 15671/15683/15695 ont échoué en préproduction (GMXRC nounset / chemins sources invalides). Les tâches 15707_0/1/2 ont échoué à `grompp` avec `-maxwarn 0` sur un mot-clé inconnu `tc-integrator` (production.mdp, ligne 34) — `MPI_ABORT` avant `mdrun` ; le journal 15710 rapporte `CANCELLED at 2026-08-29T19:51:45`. Le `mdrun` de `PP-01_PfDHFR_WT/replicate_1` a tourné du 29/08 19:52 au 30/08 15:31 (~1,2 ns/h ; SLURM accounting désactivé, le process survivait hors file). Débit observé ~1,2 ns/h : pour 100 ns il faut ~83 h, or `#SBATCH --time=2-00:00:00` ne couvrait que 48 h → la production ne pouvait pas atteindre 100 ns dans la fenêtre allouée. Voir `docs/P2_M1_EXECUTION_AUDIT_20260830.md` et §14-§15 ci-dessous pour le déroulé complet.
+
+**M1 execution record — 30 Aug 2026 (afternoon):** job 15711_0 **arrêté par décision** à step 11,707,500 (**23,41 ns**) ; **QC post-kill PASS** sur l'intervalle atteint (`p2_m1_postkill_qc.py`, règle `setc_p2_minheavy_5A_ge10percent_v1` ; bound_fraction = 1,0000, mean_min = 2,78 Å, 2,342 frames) ; provenance corrigée `M1_PRODUCTION_INTERRUPTED_PARTIAL` (`achieved_ns = 23.41`, `termination = SLURM_TIME_LIMIT_KILL` — arrêt utilisateur, pas kill SLURM). **Continuation lancée (job 15715, `p2_m1_continue_100ns.sbatch`, 96 h)** — `mdrun -cpi` depuis le checkpoint 11,707,500. **Décision auteur (30 Aug PM, §17) : cible réduite 100 ns → 25 ns** (JCIM n'exige pas une longueur fixe ; 25 ns suffit pour le pilote structural secondaire, libère ~60 h GPU). Watcher SLURM **15716** (`p2_m1_stop_at_25ns.sbatch`) stoppe le job à step 12,500,000 (25 ns) puis exécute le QC post-kill avec `--termination USER_DECISION`. Résultat exploitable comme pilote structural secondaire court ; **non intégré à V2609 tant que le QC 25 ns n'est pas réconcilié (DAR §15/§17)**.
 **Status**: **V2609 implementation in progress — canonical data frozen; author review required before submission**. The computational record is substantial, but the current evidence supports computational prioritisation only; it does not establish target engagement, affinity, or resistance resilience.
 
 > **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P6) via leurs DAR respectifs et AGENTS.md.
 
 ## 0. Canonical-scope note
 
-This is the only P2 DAR. The directory has no P2 V1/V2/.../Vn duplicates; P2 V2607 is the canonical release. Internal superseded artefacts (e.g. witness trajectories 15259/15260, failed QC wrappers 15384/15385) are referenced inline in §5bis. The `Project2_Polypharmacology_MD_ValidationV2607` directory at the root of the repo is the only P2 project.
+This is the only P2 DAR. The directory has no P2 V1/V2/.../Vn duplicates. **Version policy (30 Aug 2026):** P2 V2607 = canonical data/source release (immutable, not edited); **P2 V2609 = canonical manuscript release for submission** (see §0.4). Internal superseded artefacts (e.g. witness trajectories 15259/15260, failed QC wrappers 15384/15385) are referenced inline in §5bis. The `Project2_Polypharmacology_MD_ValidationV2607` directory at the root of the repo is the only P2 project.
 
 The legacy `.archive_P2_V2607_20260720/` at the repo root is an early-archive copy retained only for `git log` continuity; do not use as a source for new claims.
 
@@ -117,20 +119,43 @@ python3 scripts/p2_gnina_consensus_rrs.py
 # 8. Unit tests
 python3 -m pytest tests/ -q   # 19 passed, 1 skipped in malaria_md
 
-# 9. LaTeX compile
+# 9. LaTeX compile (V2609 release)
 cd manuscript/LaTeX
-pdflatex Polypharmacology_MD_Validation_V2607.tex
-pdflatex Polypharmacology_MD_Validation_SM_V2607.tex
-pdflatex Cover_Letter.tex
+pdflatex Polypharmacology_MD_Validation_SM_V2609.tex
+pdflatex Polypharmacology_MD_Validation_V2609.tex
+pdflatex Polypharmacology_MD_Validation_SM_V2609.tex
+pdflatex Polypharmacology_MD_Validation_V2609.tex
+pdflatex Cover_Letter_V2609.tex
+# (V2607 canonical sources compile the same way with the V2607 names.)
+
+# 10. M1 post-kill QC (partial replicate, real achieved duration)
+python3 scripts/p2_m1_postkill_qc.py \
+  --replicate results/m1_replicated_md_20260829/PP-01_PfDHFR_WT/replicate_1 \
+  --target-ns 100.0
+# 11. M1 continuation launcher (100 ns from latest checkpoint)
+sbatch scripts/p2_m1_continue_100ns.sbatch
 ```
 
 The current canonical Set-C pilot production was generated by the 15320 SLURM array (post-production manifest `results/set_c_md/post_production_manifest_pilot.json` v3, schema-fixed 2026-08-18T21:29:54Z). Trajectory QC rule: `setc_p2_minheavy_5A_ge10percent_v1`. The full-panel Set-C MD-RRS (17×8=136) is `NOT_COMPUTED` by design.
 
 ## 0.4 Manuscript status (cross-ref)
 
-**Editorial gate (29 Aug audit): HOLD.** No new manuscript claim, table, figure, or abstract wording should be added until every cited result has a single canonical provenance record below. In particular, PP-01 multi-seed redocking is reportable only with the canonical ligand preparation and exact grid provenance; the earlier non-canonical runs must remain explicitly excluded from inference.
+**Editorial gate (updated 30 Aug 2026): V2609 implementation in progress — canonical data frozen; AUTHOR REVIEW REQUIRED before submission.** The 29-Aug HOLD gate was lifted once the evidence-level/claim policy was added (DAR §7.0) and the V2609 narrative refinement (calibration-and-triage framing) was implemented and audited (checkpoints §11–§12; `docs/P2_V2609_NARRATIVE_PIVOT_PLAN.md`, `docs/P2_V2609_IMPLEMENTATION_PLAN.md`). No new manuscript claim, table, figure, or abstract wording may be added until every cited result has a single canonical provenance record below; PP-01 multi-seed redocking remains reportable only with the canonical ligand preparation and exact grid provenance (the earlier non-canonical runs remain explicitly excluded from inference).
 
-The 28-Aug manuscript recompile reports main 30 p. / SM 16 p. (or main 41 p. / SM 8 p. with SI cross-references via xr/`\externaldocument[SM-]{…}` after the 26 Aug pass; current build uses 30+16). All robustness outputs (GNINA CNN consensus, external docking replication, MD-filter gate, bootstrap CI95) are integrated; Vina-only remains the canonical docking estimand. The PBC-whole PP-15 MM-GBSA is the latest addition (29 Aug 06:58Z).
+**Release files:** V2607 = canonical data/source release (immutable, NOT to be edited); **V2609 = canonical manuscript release for submission** (`manuscript/LaTeX/Polypharmacology_MD_Validation_V2609.tex` + `_SM_V2609.tex` + `Cover_Letter_V2609.tex` + `SUBMISSION_MANIFEST_V2609.md`). **Decision (author, 30 Aug PM): work on V2609 only — one version; V2607.tex is left at its committed state and is not compiled or edited further.** V2609 recompile (30 Aug PM, after title/`??`/bib fixes): main 32 p. / SM 19 p. / cover 1 p., 0 LaTeX error, 0 undefined reference, 0 `??` (build order: SM → main → SM → main, per the xr/`\externaldocument` policy). Title updated to *Calibrating the Interpretation of Docking-Derived Resistance-Retention Scores with a Short Molecular-Dynamics Structural Stress Test* (main, SM, cover letter); Conclusion strengthened with the PP-01/PP-02 pilot-gate statement; the fragile `\cref{sec:setc_pilot}` forward reference to an unnumbered section (rendered `??` on clean rebuild) was replaced by an explicit textual reference; `soares2023mdreport` was missing from all `.bib` files (DAR §12 claimed it was added but it was not) and has now been added to `Bibliography_P2.bib` with the correct DOI 10.1021/acs.jcim.3c00599 and regenerated `.bbl`s — citation renders as (21). All robustness outputs (GNINA CNN consensus, external docking replication, MD-filter gate, bootstrap CI95) are integrated; Vina-only remains the canonical docking estimand; the PBC-whole PP-15 MM-GBSA was added 29 Aug 06:58Z; the PP-01/PP-15 multi-seed table (S17) was updated 30 Aug with the honest PfCRT provenance caveat.
+
+**M1 status (see §14–§17):** `NOT INTEGRATED into V2609` until the 25 ns continuation (job 15715) completes and is reconciled. **Decision (author, 30 Aug PM): M1 target reduced from 100 ns to 25 ns** — JCIM (Soares et al., DOI 10.1021/acs.jcim.3c00599) mandates ≥ 3 replicates with *adequate* duration, not a specific length; 25 ns is a round, defensible length for the secondary structural-stress pilot and frees ~60 h GPU. Watcher `scripts/p2_m1_stop_at_25ns.sh` stops job 15715 at step 12,500,000 (25 ns) and runs post-kill QC with `termination = USER_DECISION`; provenance will record the true achieved ns.
+
+**SLURM jobs table (current, 30 Aug 2026):**
+
+| Job | Script | State | Result |
+|---|---|---|---|
+| 15320 | Set-C 16-system production array | ✅ COMPLETE | 16/16 production runs, post-production chain v3 (see §5bis) |
+| 15671 / 15683 / 15695 | M1 attempts | ❌ fail-closed (pre-production) | GMXRC nounset / invalid source paths; excluded from analysis |
+| 15707 / 15710 | M1 attempts | ❌ fail-closed (`grompp` `tc-integrator`) | corrected in `production.mdp`; excluded |
+| 15711 | M1 array 0-11 (task 0 = PP-01 PfDHFR WT rep1) | ⏹️ task 0 stopped by decision at 23.41 ns; tasks 1-11 cancelled (option A, §14) | partial trajectory 23.4 ns; QC PASS |
+| 15714 | M1 continuation attempt | ❌ exit 141 (SIGPIPE in checkpoint selection) | pipe-free selection fix applied |
+| 15715 | M1 continuation to 100 ns (`p2_m1_continue_100ns.sbatch`, 96 h) | 🟢 RUNNING (from step 11,707,500) | ETA ~2 Sep 2026 |
 
 ## 1. Central question
 
@@ -355,9 +380,9 @@ Consensus RRS analysis (script `scripts/p2_gnina_consensus_rrs.py`, same frozen 
 
 Status: `COMPUTED_CONSENSUS_RRS_SENSITIVITY`. Interpretation: the near-proportional mutant/WT retention observed in the Vina external panel is reproduced by an independent CNN scoring function on identical poses — the retention-not-gain pattern is not an artefact of one scoring function. The moderate ligand-level rank correlation (ρ=0.558) and near-zero C59R/I164L mutant-level correlations bound the interpretation: consensus supports class-level retention, not per-mutant rank transfer. Vina-only remains the canonical estimand; no manuscript value is replaced.
 
-## 9. Manuscript status (26 Aug)
+## 9. Manuscript status (updated 30 Aug 2026)
 
-**Current release status:** `READING_FINAL_AUTHOR`. The primary Set-C docking analysis, the separate parent-study MD cohort, and the bounded Set-C MD pilot have completed their declared production and QC gates. The optional witness job `15507_[0]` is not a prerequisite for the manuscript and remains non-blocking. K76A MM-GBSA retains the original canonical endpoint with an explicit Limitations caveat.
+**Current release status:** V2607 canonical data FROZEN; **V2609 narrative release in author review** (`READING_FINAL_AUTHOR`). The primary Set-C docking analysis, the separate parent-study MD cohort, and the bounded Set-C MD pilot have completed their declared production and QC gates. K76A MM-GBSA retains the original canonical endpoint with an explicit Limitations caveat (author decision, 28 Aug). M1 is NOT integrated into V2609 (see §0.4, §14–§15). The optional witness job `15507_[0]` is not a prerequisite for the manuscript and remains non-blocking.
 
 **28 Aug — robustness analyses integrated in manuscript (v2607 recompile clean: main 30 p., SM 16 p., 0 errors, 0 undefined refs):** (1) the pilot-scope MD-filter retention gate (7/12 gate rows pass docking RRS $\geq$ 80 % AND pilot MD-RRS < 100; PP-01 satisfies the two-target gate, PP-02 does not) was added to the Set-C MD pilot Results subsection and Discussion (role of structural follow-up), bounded by the saturated bound fraction and the 2.0 kcal/mol noise floor; (2) the Set-C bootstrap CI95 (class fractions A* 0.294 [0.118, 0.529], PfCRT retention CIs excluding 100, PfDHFR intervals wide) was added to the Discussion and as a new row in the robustness-transfer SI table; (3) SM Table S15 gained the MD-filter gate row. The GNINA CNN consensus (38/38 class A, 0 discordance, ρ=0.558) and external-docking replication were already integrated (Discussion + S15). No canonical value replaced; Vina-only remains the canonical estimand.
 
@@ -367,7 +392,7 @@ Status: `COMPUTED_CONSENSUS_RRS_SENSITIVITY`. Interpretation: the near-proportio
 - **Scientific-article refinement:** the title, abstract and Introduction now foreground docking-derived RRS as the primary estimand; ACSI/PNS and MD are presented as secondary analyses. The Discussion separates primary inference, robustness and limitations. This is an editorial refinement only; no numerical result or analysis population was changed.
 - 26 Aug revision: the main manuscript now foregrounds the primary docking-RRS estimand, presents ACSI/PNS and MD as secondary analyses, and keeps detailed tables in the SI. The Discussion separates primary inference, robustness, and limitations while retaining the primary RRS/MD evidence. The transferred material is included through `Secondary_Analyses_SI.tex` and the dedicated SI table sources. The current rigor pass separates target-balanced and coverage-sensitive RRS estimands, corrects the weakest-WT potency discriminator, and adds permutation/bootstrap uncertainty and PNS-imputation sensitivity.
 - All numbers in text/tables trace to JSON/CSV data files (manifests listed above).
-- Unit tests: `tests/` — 19 passed, 1 skipped in the current `qom` environment, including MD manifests, MM-GBSA aggregation, RRS class definitions, target coverage, regenerated statistical outputs, and lightweight robustness outputs.
+- Unit tests: `tests/` — **19 passed, 1 skipped** in `malaria_md` (verified 30 Aug 2026), including MD manifests, MM-GBSA aggregation, RRS class definitions, target coverage, regenerated statistical outputs, and lightweight robustness outputs.
 
 ## 9. Open items and 25 August reconciliation
 
@@ -391,11 +416,11 @@ Status: `COMPUTED_CONSENSUS_RRS_SENSITIVITY`. Interpretation: the near-proportio
 - [x] Unit tests: `tests/` — current validation 19 passed, 1 skipped (incl. MM-GBSA aggregation, PBC-fix tests, rigorous audit, and lightweight robustness); historical 18/18 wording superseded.
 - [x] Final LaTeX compile — main + SI compile with 0 errors, 0 undefined references.
 - [x] Figure audit (25 Aug): retained figure set reduced to four main figures and three SI figures; duplicate workflow/PPI/RMSD/VAE displays removed; scatter is SI Figure S3 (`fig:s3_setc_rrs_scatter`); all graphics resolve from `manuscript/LaTeX/Graphics`.
-- [x] **Manuscript audit & refinement (19 Aug)**: corrected intro WHO burden figures to WMR 2025 (282M cases / 610k deaths in 2024; artemisinin partial resistance ≥8 African countries) with new citation `letebo2026surveillance`; removed report-style hedging/meta-commentary (repeated ``does not establish X'' ×4, ``no primary claim'' ×4, ``(16/16)'' ×5, ``We explicitly state'', ``It should not be described as'', ``The appropriate conclusion is''); added literature-grounded Discussion passages (co-occurrence surveillance, end-point free-energy caveats via Wang et al. (2019; `wang2019_mmgbsa`)); **fixed SI numbering to sequential S1–S7 / S1–S4** (was rendering Table 1–7 / Figure 1–3 while prose cited S0/S3/S5…S9); renamed all SI labels to match; removed `\date{\today}`, fixed `margin=2.cm` typo, deduplicated keywords. Main + SI compile 0 errors / 0 undefined refs; 14/14 tests pass.
+- [x] **Manuscript audit & refinement (19 Aug)**: corrected intro WHO burden figures to WMR 2025 (282M cases / 610k deaths in 2024; artemisinin partial resistance ≥8 African countries) with new citation `letebo2026surveillance`; removed report-style hedging/meta-commentary (repeated ``does not establish X'' ×4, ``no primary claim'' ×4, ``(16/16)'' ×5, ``We explicitly state'', ``It should not be described as'', ``The appropriate conclusion is''); added literature-grounded Discussion passages (co-occurrence surveillance, end-point free-energy caveats via Wang et al. (2019; `wang2019_mmgbsa`)); **fixed SI numbering to sequential S1–S7 / S1–S4** (was rendering Table 1–7 / Figure 1–3 while prose cited S0/S3/S5…S9); renamed all SI labels to match; removed `\date{\today}`, fixed `margin=2.cm` typo, deduplicated keywords. Main + SI compile 0 errors / 0 undefined refs; test count at the time was 14/14 (superseded — current suite: 19 passed, 1 skipped in `malaria_md`, verified 30 Aug 2026).
 - [x] Git commit + push (figure + manuscript updates) — pushed to origin/master (`930e40fbe`, `6f7b59b28`, `316f9b466`, `3d527398f`).
 - [x] **siunitx/cleveref consistency pass (19 Aug)**: wrapped all remaining bare statistics (α, ρ, p, ΔG_bind, +473 kcal/mol, Bonferroni thresholds) in `\num{}`/`\SI{}`/`\qty{}`; enabled `retain-explicit-plus` so signed values keep their signs; verified all table numeric cells use S-columns and all cross-references use `\cref` (no bare `\ref`). The current rigor pass extends the statistical table with adjusted p-values and bootstrap intervals.
 - [x] **DAR data-accuracy audit (19 Aug)**: verified the target-balanced and coverage-sensitive correlations by SMILES-merged recomputation (PNS–RRS ρ=−0.2098 / −0.5588; ACSI–PNS ρ=−0.3007 / −0.0784; ACSI–RRS ρ=−0.4056 / −0.1324); verified §4.3 all 16 MM-GBSA rows against `mmgbsa_summary_pilot.csv`; **corrected §4.1/§4.2** — the trajectory examples (PP-02 PfDHFR N51I 1.82 Å vs 2.52 Å; PP-02 PfCRT K76T 2.77 vs 3.17) were mis-attributed to PP-01, the MD_RRS_d range is 72.2–102.8 (not [91, 103]), and PP-01 PfCRT K76T (MD 102.8) is the single concordant case (7/8 divergent).
-- [x] **Deep web search + manuscript refinement (19 Aug)**: via PubMed/WHO (web_search tool unavailable) added three verified 2025–2026 references: `young2026artemisinin` (spatial-temporal mapping of Pfkelch13 ART-R in Africa; Lancet Infect Dis 2026, from medRxiv 2025) in the Intro; `okombo2026collateral` (PfCRT-mediated piperaquine efflux; Nat Commun 2026) in the mutant-panel Methods; `wicht2026chk1` (CHIR-124 dual PfArk1/hemozoin inhibition; ACS Chem Biol 2026) in the polypharmacology Discussion. Main + SI compile 0 errors / 0 undefined refs / 0 bibtex warnings; 14/14 tests pass.
+- [x] **Deep web search + manuscript refinement (19 Aug)**: via PubMed/WHO (web_search tool unavailable) added three verified 2025–2026 references: `young2026artemisinin` (spatial-temporal mapping of Pfkelch13 ART-R in Africa; Lancet Infect Dis 2026, from medRxiv 2025) in the Intro; `okombo2026collateral` (PfCRT-mediated piperaquine efflux; Nat Commun 2026) in the mutant-panel Methods; `wicht2026chk1` (CHIR-124 dual PfArk1/hemozoin inhibition; ACS Chem Biol 2026) in the polypharmacology Discussion. Main + SI compile 0 errors / 0 undefined refs / 0 bibtex warnings; test count at the time was 14/14 (superseded — current suite: 19 passed, 1 skipped in `malaria_md`, verified 30 Aug 2026).
 - [x] **ACSI sensitivity refinement (19 Aug)**: replaced the unpopulated SI sensitivity table with eight reproducible perturbation records generated from the committed 17-candidate component matrix; the script now verifies reconstruction of the baseline ACSI to numerical tolerance and records a project-relative input path in JSON. The manuscript reports the resulting local rank-stability range and explicitly avoids a full-library robustness claim.
 - [x] **Desuet-file cleanup (19 Aug)**: removed 14 orphaned scripts with zero references (`quick_analysis.py`, `visualize_quick_results.py`, `analyze_214_python.py`, `analyze_214_trajectory.sh`, `custom_mmgbsa.py`, `extract_md_logs.py`, `md_convergence_check.py`, `mdanalysis_{214,438}_comprehensive.py`, `mdanalysis_full_analysis.py`, `p2_gap_{progressive_nvt,short_npt}.sbatch`, `p2_historical_diagnostic_md.sbatch`, `run_colabfold_pfatp4.sh`), the superseded `comprehensive_analysis/` result dirs (values differ from the manuscript's `production_analysis` source), the stray gitignored `gmx_MMPBSA.log`, caches (`.pytest_cache`, `__pycache__`), the leftover `MD_systems/164_ClpP/` dir, and `.xtc_offsets` runtime files. Kept all provenance-chain artifacts (ColabFold attempt dirs referenced by the repair audit, v2_top20, redock_438, mmgbsa outputs).
 
@@ -481,7 +506,7 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
 
 ## 11. Implementation checkpoint 30 August 2026 — P2 V2609 narrative pivot audit
 
-The P2 V2609 release manuscript `manuscript/LaTeX/Polypharmacology_MD_Validation_V2609.tex` was audited against the 12 recommendations of `docs/P2_V2609_NARRATIVE_PIVOT_PLAN.md` (29 Aug 2026); V2607 remains the immutable source release. The manuscript is **already substantially compliant** with the pivot: 10 of 12 recommendations are met without modification. V2609 is implemented as a narrative and audit refinement of the canonical V2607 dataset; canonical numerical results remain unchanged unless reconciled in this DAR.
+The P2 V2609 release manuscript `manuscript/LaTeX/Polypharmacology_MD_Validation_V2609.tex` was audited against the 12 recommendations of `docs/P2_V2609_NARRATIVE_PIVOT_PLAN.md` (29 Aug 2026); V2607 remains the immutable data/source release and V2609 is the canonical manuscript release for submission (decision 30 Aug PM, §0.4). The manuscript is **already substantially compliant** with the pivot: 10 of 12 recommendations are met without modification. V2609 is implemented as a narrative and audit refinement of the canonical V2607 dataset; canonical numerical results remain unchanged unless reconciled in this DAR.
 
 | Pivot recommendation | Manuscript status | Evidence |
 |---|---|---|
@@ -510,7 +535,7 @@ The P2 V2609 release manuscript `manuscript/LaTeX/Polypharmacology_MD_Validation
 
 The pivot contains **1 explicit run suggestion** : the JCIM MD-reporting guidelines \citep{soares2023mdreport} (Soares et al., DOI 10.1021/acs.jcim.3c00599, *J Chem Inf Model* 2023) recommend **at least three replicates** per system with adequate duration and convergence. The pivot itself authorises the alternative *"si aucune nouvelle campagne n'est exécutée, le pilote doit rester explicitement secondaire, exploratoire et non thermodynamique"* (pivot §8 L214).
 
-The P2 V2609 manuscript (`Polypharmacology_MD_Validation_V2609.tex`) **follows the alternative path** ("réduire la portée de la revendication") and explicitly declares at L250, L370, L436, L447 and L449 that the MD pilot is single-replicate, 10 ns, secondary, and is not a residence-time or converged free-energy measurement. No new MD replicates are launched for the V2609 submission.
+The P2 V2609 manuscript (`Polypharmacology_MD_Validation_V2609.tex`) **follows the alternative path** ("réduire la portée de la revendication") and explicitly declares at L250, L370, L436, L447 and L449 that the MD pilot is single-replicate, 10 ns, secondary, and is not a residence-time or converged free-energy measurement. No new MD replicates are launched **for the V2609 submission** — i.e. the pilot is *not* extended to the three replicates recommended by Soares et al. ⚠️ *Note for internal consistency: the M1 campaign (§13–§15, launched 29 Aug, jobs 15711/15715) is a separate robustness analysis of inter-replicate variability; it is explicitly scoped outside the submission, `NOT INTEGRATED` into V2609, and therefore does not contradict this statement — the manuscript keeps the 10 ns single-replicate pilot framing.*
 
 **Action applied** : the JCIM MD-reporting guidelines \citep{soares2023mdreport} are now cited in the manuscript §Limitations (L447), and the choice *not* to extend the pilot to three replicates is stated explicitly in that paragraph: *"no new replicate campaign was launched for the present submission, and the pilot is therefore reported strictly as a secondary protocol-level structural stress test rather than as a thermodynamic or kinetic measurement"*.
 
@@ -520,7 +545,7 @@ The P2 V2609 manuscript (`Polypharmacology_MD_Validation_V2609.tex`) **follows t
 
 ## 13. Implementation checkpoint 30 August 2026 — P2 M1 runbook path alignment
 
-**`docs/P2_M1_RUNBOOK_20260829.md`** is the runbook for the active PP-01 replication MD campaign (job SLURM **15711**, array 0-11, 12 trajectories × 100 ns = 1,200 ns production, GPU A4000, ETA 2-4 calendar days per runbook).
+**`docs/P2_M1_RUNBOOK_20260829.md`** is the runbook for the PP-01 replication MD campaign (launched as job SLURM **15711**, array 0-11, 12 trajectories × 100 ns = 1,200 ns production, GPU A4000). ⚠️ *The snapshot below reflects the audit-time state (~30 Aug 13:00Z, job 15711 running 1h08min); it is superseded by §14–§15 — task 0 stopped by decision at 23.41 ns, tasks 1–11 cancelled, continuation job 15715 running towards 100 ns.*
 
 **Audit** of the runbook against the actual execution path:
 
@@ -536,7 +561,7 @@ The P2 V2609 manuscript (`Polypharmacology_MD_Validation_V2609.tex`) **follows t
 
 **Mitigation applied** : the runbook preflight and post-production `P2_SETC_ROOT` paths were corrected from the legacy `results/set_c_md/...` to the canonical `results/md_systems/...` path that `scripts/p2_m1_replicated_md.sbatch` actually reads and that the DAR consistently references. The path inside the launcher was already correct; only the documentation had drifted.
 
-**Status of M1 at audit time** : job 15711 active, replicate_1 (task 0, PP-01_PfDHFR_WT) running, 11 tasks pending.
+**Status of M1 at audit time** : job 15711 active, replicate_1 (task 0, PP-01_PfDHFR_WT) running, 11 tasks pending. **Superseded by §14–§15 (30 Aug PM):** task 0 stopped by decision at 23.41 ns, QC PASS, 11 tasks cancelled, continuation job 15715 running towards 100 ns.
 
 ## 14. Decision log — 30 August 2026 — P2 M1 scope decision (option A)
 
@@ -550,7 +575,7 @@ The P2 V2609 manuscript (`Polypharmacology_MD_Validation_V2609.tex`) **follows t
 
 **Consequence:** task 0 will be killed by SLURM at 48 h (~31 Aug 19:51Z), corresponding to roughly **50–60 ns** of continuous trajectory (at 1.19 ns/h from a ~23 ns baseline at 19.3 h), **not** the intended 100 ns.
 
-**Status:** `M1 = SINGLE-REPLICATE PARTIAL (task 0, ~50–60 ns, NOT 100 ns)` → remains **NOT_COMPUTED / NOT_REPORTABLE** as a completed 100 ns replicate; usable only as a short continuous structural-stress trajectory once post-kill QC passes. Not integrated into V2609. Full 100 ns would require a continuation relaunch from the last checkpoint in a fresh job with a valid ≥4-day limit.
+**Status (superseded by §15):** `M1 = SINGLE-REPLICATE PARTIAL (task 0, ~50–60 ns, NOT 100 ns)` → the prediction above (48 h SLURM kill at ~50–60 ns) was **not what happened**: per the user decision in §15, task 0 was stopped early by `scancel` at **23.41 ns**, the post-kill QC PASSED (bound_fraction 1.0), and a **continuation (job 15715, 96 h) is running from the last checkpoint towards the full 100 ns** (ETA ~2 Sep 2026). Remains **NOT_COMPUTED / NOT_REPORTABLE** as a completed 100 ns replicate until the continuation finishes and the §16 reconciliation gate passes; not integrated into V2609.
 
 **Follow-up QC gate trigger:** after task 0 is killed at 48 h, run trajectory QC (bound-fraction / min-heavy-atom / continuity over the achieved interval), record the true achieved duration in `m1_provenance.json` (currently hard-coded `duration_ns=100.0` and status `M1_PRODUCTION_COMPLETE_REQUIRES_QC_REVIEW` — must be corrected to reflect the partial length), then decide whether to (i) report as a short secondary pilot or (ii) relaunch a continuation for a full 100 ns.
 
@@ -560,8 +585,38 @@ The P2 V2609 manuscript (`Polypharmacology_MD_Validation_V2609.tex`) **follows t
 
 **Decision (user):** stop the interrupted replicate_1, exploit the obtained trajectory; if interesting, submit the manuscript while a relaunch to 100 ns continues in the background.
 
+## 16. V2609 author decisions — open items (30 Aug 2026)
+
+Author decisions required before the V2609 submission gate (mirrors `docs/P2_V2609_IMPLEMENTATION_PLAN.md` §11):
+
+| # | Decision | Status / recommendation |
+|---|---|---|
+| 1 | Confirm the V2609 title | Draft: *Calibrating the Interpretation of Docking-Derived Resistance-Retention Scores with a Short Molecular-Dynamics Structural Stress Test* (current file uses *Interpreting Docking-Derived Resistance-Retention Scores in Antimalarial Triage*). Author to confirm |
+| 2 | M1 integration into the manuscript | **Recommended: NO for V2609 submission** — integrate the 23.4 ns partial QC-PASS trajectory only as an archived robustness artefact, or as a short secondary pilot in a later revision; the 100 ns continuation (job 15715, ETA ~2 Sep) may be added as an extension if it completes before submission and is reconciled here first |
+| 3 | RRS margin analysis in the SI | Done (Table S18, `results/v2609_rrs_margin_20260830/`, `COMPUTED_SECONDARY_SENSITIVITY`) — confirm inclusion |
+| 4 | Docking-RRS vs MD-RRS$_d$ figure | Done (scatter generated, `p2_setc_rrs_scatter.pdf`, SI Figure S3) — confirm readability |
+| 5 | MM-GBSA detail level in main text | Current: summary + pointer to SI; confirm no table expansion in main |
+| 6 | Final conclusion wording | Draft in pivot plan §5.7 — author to confirm |
+| 7 | Independent final structural read before submission | Required (author), after §15 closure |
+| 8 | Zenodo deposit and data-sharing policy | `pending` (DOI reserved 10.5281/zenodo.19608875 for the parent record; P2 snapshot deposit not yet made) |
+| 9 | JCIM MD-reporting guidelines adherence (Soares et al., DOI 10.1021/acs.jcim.3c00599) | Declared in Limitations: no new replicate campaign; pilot reported strictly as secondary structural stress test |
+| 10 | WHO malaria burden figures | Current: 282M cases / 610k deaths (2024, WMR 2025); the P5 manuscript uses 263M/597K (WMR 2024 for 2023) — verify per-journal consistency before any cross-paper claim |
+
+**M1 reconciliation gate (mandatory before any M1 integration):** 100 ns completion (job 15715) → trajectory QC (bound-fraction rule `setc_p2_minheavy_5A_ge10percent_v1`) → provenance/hash verification → DAR status update → author decision on narrative integration. Until then, M1 remains `NOT_COMPUTED / NOT_REPORTABLE` for the 100 ns claim and the manuscript keeps the 10 ns single-replicate pilot framing (V2609 §Phase 8).
+
 **Actions:**
 - `scancel 15711_0` → job stopped at step 11,707,500 (23.41 ns); files frozen cleanly (xtc 2.775 GB, log 0 runtime markers).
 - **Post-kill QC PASS** (`p2_m1_postkill_qc.py`, rule `setc_p2_minheavy_5A_ge10percent_v1`, full trajectory 2,342 frames / 23.4 ns): **bound_fraction = 1.0000, mean_min = 2.78 Å** — the PP-01 ligand remains continuously bound over the whole achieved interval. Corrected provenance written: `M1_PRODUCTION_INTERRUPTED_PARTIAL`, `achieved_ns = 23.41`, `last_step = 11707500`, `termination = SLURM_TIME_LIMIT_KILL` (note: this stop was a user decision, not the 48 h SLURM kill).
 - **Continuation launcher** `scripts/p2_m1_continue_100ns.sbatch`: reuses the unchanged `production.tpr` (nsteps = 50,000,000 = 100 ns total) with `mdrun -cpi` from the latest checkpoint, same GPU offload path (`-nb gpu -pme gpu -bonded cpu -update cpu`), 96 h limit. **Diagnosed failure of first submission (job 15714, exit 141 = SIGPIPE):** the `ls -1t ... | head -1` checkpoint selection dies under `set -o pipefail` when `head` closes early; replaced with a pipe-free numeric-max loop (validated: selects step 11,707,500). **Job 15715 running** (started 15:38Z, confirmed `Restarting from checkpoint, appending to previous log file`; step advancing 11,724,000 → 23.45 ns at +2 min). ETA to 100 ns: ~64 h → ~2 Sep 2026.
 - **Meaning for the manuscript (if used):** a single continuous trajectory now reaching ~23.4 ns+ (up to 100 ns when the continuation completes), bound over the whole interval; usable only as a secondary structural-stress pilot, never as affinity/resistance validation (V2609 framing). `m1_provenance.json` will be upgraded to `M1_PRODUCTION_COMPLETE_REQUIRES_QC_REVIEW` by the launcher's final QC call once 100 ns is reached.
+
+## 17. Decision — 30 Aug 2026 (evening) — M1 target reduced 100 ns → 25 ns
+
+**Decision (author):** the M1 continuation target is reduced from 100 ns to **25 ns**. Rationale: JCIM (Soares et al., DOI 10.1021/acs.jcim.3c00599) requires ≥ 3 replicates with *adequate* duration and convergence — it does **not** mandate a specific length (neither 10 nor 100 ns); 25 ns is a round, defensible length for the secondary structural-stress pilot and frees ~60 h GPU versus the 100 ns plan.
+
+**Actions:**
+- Added `--termination` option to `scripts/p2_m1_postkill_qc.py` (choices: `SLURM_TIME_LIMIT_KILL` (default, backward compatible) / `USER_DECISION` / `NATURAL_COMPLETION`) so the provenance honestly records the stop cause.
+- New watcher `scripts/p2_m1_stop_at_25ns.sh` (launched 30 Aug, PID logged to `/tmp/m1_stop_at_25ns_watcher.log`): polls `production.log` every 120 s; when `step ≥ 12,500,000` (25 ns at dt = 0.002 ps) it runs `scancel 15715_0`, then executes post-kill QC with `--termination USER_DECISION --target-ns 25 --max-frames 100000` (full-trajectory sampling, not the 2,000-frame cap).
+- **State at launch:** job 15715_0 running (56 min), step 12,144,000 → 24.29 ns; ~35 min GPU remaining to 25 ns.
+
+**Outcome (filled after watcher completes):** *pending — see §13 header record and `m1_provenance.json` for the final achieved_ns, bound_fraction, and termination.* The 25 ns trajectory remains `NOT INTEGRATED` into V2609 (per §16 decision n°2: archived robustness artefact only).
