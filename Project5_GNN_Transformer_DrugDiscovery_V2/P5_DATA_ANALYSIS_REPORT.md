@@ -2,16 +2,13 @@
 
 **Scope:** GNN/Transformer drug-discovery benchmark on the canonical P3-derived antimalarial panel.
 **Updated:** 28 August 2026 19:17Z
-**Conda environment**: `malaria_md` (Python 3.11, PyTorch 2.13.0, PyG 2.8.0, Transformers 5.14.1)
 
 > **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P7) via leurs DAR respectifs et AGENTS.md. (completed-arm integration; ChemBERTa 125/125 + calibration 30 configs + GNN sensitivity 15617 + RRS/polypharma calibration extensions COMPUTED_SECONDARY; no new training)
 **Long-form history:** `docs/archive/md_full_20260812/P5_DATA_ANALYSIS_REPORT.md`
 
 ## 1. Central question
 
-Under chemical-distribution shift, does the representation–task alignment of learned graph and sequence models compensate for their out-of-distribution extrapolation deficit relative to ECFP4 fingerprints on a curated antimalarial natural-product panel, or are the fingerprint advantages confined to the out-of-distribution tail?
-
-The original "outperform or complement" formulation is reframed here as a Molecular Out-Of-Distribution (MOOD) characterisation, in line with the 2024–2026 literature on real-world chemical shift \citep{sheridan2024realworld}, distance-aware uncertainty quantification \citep{unique2026uq}, and the limits of scaffold-based split conventions \citep{bash2025umap}. The canonical benchmark, distribution-shift audits (NN-Tanimoto decile stratification, external ChEMBL transfer, GNN capacity sensitivity, extended scaffold partitions, Butina cluster split), and calibration-under-shift evidence are structured to test this question.
+Do learned graph and sequence representations outperform or complement classical fingerprints on a chemically challenging antimalarial panel under random and scaffold splits?
 
 ## 2. Canonical panel and protocol
 
@@ -90,7 +87,7 @@ The completed GNN robustness campaign, lightweight ECFP4 controls, chemical-stan
 
 **NN-Tanimoto decile stratification (29 August 2026) — `COMPUTED_SECONDARY_NEIGHBOR_OOD`:** `scripts/p5_nn_tanimoto_deciles.py` (job 15658, ~32 min wall-clock on Penavora, 16 CPU/32 GB) computed per-test-molecule nearest-training-ECFP4 Tanimoto similarity on the frozen scaffold and random splits, stratified each fold-seed's test set into 10 equal-frequency deciles, and reported per-decile ROC-AUC for all 5 arms (ECFP4-RF refit per fold; GIN/GIN-TFP/GIN-TNE/ChemBERTa read from archived per-molecule predictions in `extended_campaign_20260825/`). Outputs: `results/nn_tanimoto_deciles_20260829/` (11 MB; per-molecule npz + per-arm decile CSVs + 90-row `per_decile_means_all.csv` + 2 summary JSONs + audit). **Headline (scaffold, mean over 5 per-seed means, by decile 1→10, NN-sim 0.31→0.63):** ECFP4-RF 0.779/0.793/0.823/0.821/0.813/0.810/0.800/0.810/0.847/**0.890**; GIN-TFP 0.752/0.775/0.805/0.805/0.810/0.808/0.796/0.803/0.830/0.883. ECFP4-RF beats every learned arm in deciles 1–9; all five arms converge to ≈0.88 in decile 10. The fingerprint advantage is **driven by the novel half of the test set**, not by aggregate AUC averaging — converting the manuscript's "scaffold split is a proxy" caveat (line 224/229) into a per-decile number. Random-split reconstruction note: the canonical random-split .npy files are not on this HPC checkout; the random split was reconstructed from the GIN_native archived test indices (union-complement, sanity-checked against panel size 19,836) and the archived per-test `p` is reused unchanged. Calibration slope/intercept fits and recalibrated-model variants remain `NOT_COMPUTED` (require a new locked protocol).
 
-**Butina scaffold-cluster split benchmark (29 August 2026) — `COMPUTED_SECONDARY_BUTINA` (5/5 arms):** `scripts/p5_butina_cluster.py` (jobs 15661 full 5-arm attempt → ChemBERTa arm BLOCKED, fixed; 15663 ChemBERTa-only, GPU A4000, running) builds a **stricter chemical-extrapolation test** than the canonical greedy scaffold split: Murcko scaffolds are Butina-clustered at Tanimoto distance cutoff 0.55, clusters assigned to 5 folds per seed (seeds 0–4) so that test clusters are entirely absent from training. Splits archived at `results/butina_cluster_20260829/splits/butina_seed{S}_folds.json` (deterministic given smiles+seed). Metrics recomputed from per-fold prediction CSVs (the canonical record: `training/<ARM>/pred_seed{S}_fold{K}.csv`, 25 files/arm) with the same sklearn functions as the benchmark; the rebuilt 4-arm block is `butina_summary_backup_4arms.json` (the `*_backup*` JSON is gitignored by convention; the 100 fold CSVs are tracked). **Headline (Butina, mean over 5 per-seed means): ECFP4-RF 0.8331; GIN-TFP 0.8232; GIN 0.8202; GIN-TNE 0.8191** (per-seed ranges in the summary; ECFP4-RF above every learned arm on this stricter split, consistent with the canonical scaffold-split ordering). ChemBERTa arm: `COMPUTED` (29 Aug 2026, job 15663 completed, 25/25 folds, mean AUC 0.7776); merged into canonical `butina_summary.json` via `scripts/p5_butina_merge_summary.py`. These are secondary robustness estimates (a third partition family: random → scaffold → Butina) and do not replace the canonical benchmark in Section 3.
+**Butina scaffold-cluster split benchmark (29 August 2026) — `COMPUTED_SECONDARY_BUTINA` (4/5 arms) / `RUNNING` (ChemBERTa arm):** `scripts/p5_butina_cluster.py` (jobs 15661 full 5-arm attempt → ChemBERTa arm BLOCKED, fixed; 15663 ChemBERTa-only, GPU A4000, running) builds a **stricter chemical-extrapolation test** than the canonical greedy scaffold split: Murcko scaffolds are Butina-clustered at Tanimoto distance cutoff 0.55, clusters assigned to 5 folds per seed (seeds 0–4) so that test clusters are entirely absent from training. Splits archived at `results/butina_cluster_20260829/splits/butina_seed{S}_folds.json` (deterministic given smiles+seed). Metrics recomputed from per-fold prediction CSVs (the canonical record: `training/<ARM>/pred_seed{S}_fold{K}.csv`, 25 files/arm) with the same sklearn functions as the benchmark; the rebuilt 4-arm block is `butina_summary_backup_4arms.json` (the `*_backup*` JSON is gitignored by convention; the 100 fold CSVs are tracked). **Headline (Butina, mean over 5 per-seed means): ECFP4-RF 0.8331; GIN-TFP 0.8232; GIN 0.8202; GIN-TNE 0.8191** (per-seed ranges in the summary; ECFP4-RF above every learned arm on this stricter split, consistent with the canonical scaffold-split ordering). ChemBERTa arm: fold AUCs 0.7797/0.7748/0.8650 (first 3/25, job 15663); pending completion, then `scripts/p5_butina_merge_summary.py` merges it into the canonical `butina_summary.json`. These are secondary robustness estimates (a third partition family: random → scaffold → Butina) and do not replace the canonical benchmark in Section 3.
 
 ## 7. Limitations
 
@@ -178,86 +175,9 @@ The canonical P5 V2608 manuscript reports the audited LISH phenotype-only refere
 
 **Open items (author action only):** final target-journal confirmation (JCAMD), author names/affiliations/ORCID/corresponding author verification, visual PDF read-through, JCAMD portal check for graphical abstract/supplementary-file requirements, Zenodo upload with DOI verification, and tagged GitHub release.
 
-## 9.1 Implementation checkpoint 29 August 2026 — NN-Tanimoto decile stratification promoted to manuscript body
-
-Following the pivot review (`P5_V2_PIVOT_20260829.md`), the secondary nearest-training-neighbour Tanimoto decile stratification (job **15658**, `COMPUTED_SECONDARY_NEIGHBOR_OOD`) was promoted from a DAR-only artefact to primary manuscript content. Changes:
-
-- `manuscript/P5_manuscript_V2608.tex` — new Discussion subsection "Nearest-training-neighbour Tanimoto decile stratification" (\cref{sec:nn-deciles-ref}) reporting the per-decile scaffold-split AUC stratification (D\num{1}--D\num{10}, NN-similarity $\num{0.306} \to \num{0.631}$); Future directions paragraph updated to point at this new subsection instead of the prior "prespecified distance-to-nearest-training-compound analysis would demand a new locked protocol" remark; polypharmacology numbers from SI Table S2 promoted to main text with the explicit `n=6` available-target definition.
-- `manuscript/P5_SI_V2608.tex` — new Section S5 "Nearest-training-neighbor Tanimoto decile stratification" with the 10×5 per-decile table (NN-sim, ECFP4--RF, GIN, GIN--TFP, GIN--TNE, ChemBERTa) and the three-regularities analysis (fingerprint dominance in every decile; non-monotone margin with mid-range D\num{5}--D\num{8} collapse to $\Delta \in \numrange{0.001}{0.007}$; ChemBERTa tracks GNN in mid-range but falls in OOD).
-- `submission_JCAMD/` — re-synchronised from `manuscript/`.
-- Compilation: manuscript 17 p., SI 6 p., 0 LaTeX error, 0 undefined reference (only the pre-existing `Hfootnote.1` warning remains).
-
-## 9.2 Implementation checkpoint 29 August 2026 — MOOD reframing of P5V2 (R1–R5)
-
-The central question was reframed from a binary "outperform or complement" formulation into a MOOD (Molecular Out-Of-Distribution) characterisation. Reference document: `docs/P5_V2_REFINEMENTS_MOOD_20260829.md`. Five refinements were implemented in `manuscript/P5_manuscript_V2608.tex` (canonical); no re-runs were performed.
-
-- **R1 — Central question reframed (DAR §1 + manuscript Introduction).** New question: *Under chemical-distribution shift, does the representation–task alignment of learned graph and sequence models compensate for their out-of-distribution extrapolation deficit relative to ECFP4 fingerprints on a curated antimalarial natural-product panel, or are the fingerprint advantages confined to the out-of-distribution tail?* Citation \citep{sheridan2024realworld}.
-- **R2 — "Robustness analyses" → "Distribution-shift characterisation".** Re-labelled the Discussion subsection to align with MOOD vocabulary.
-- **R3 — NN-Tanimoto decile stratification promoted to lead audit.** Reordered the seven sub-audits so the decile stratification opens the section, before external ChEMBL transfer.
-- **R4 — Discussion paragraph on UQ under chemical shift.** New sub-paragraph citing \citep{sheridan2024realworld} and \citep{unique2026uq}, connecting the post-hoc ECE doubling (SI §S2 calibration) to the open problem of distance-aware UQ proxies.
-- **R5 — Citation of Bash 2025 on scaffold split severity.** One sentence in Methods (Splits) citing \citep{bash2025umap}; Butina and decile stratification noted as partial mitigations of the residual similarity leakage documented there.
-
-**Bibliography additions** (3 entries): `sheridan2024realworld` (JCIM 2024, DOI 10.1021/acs.jcim.3c01774), `unique2026uq` (JCIM 2026, DOI 10.1021/acs.jcim.5c02381, placeholder author block pending proof), `bash2025umap` (J Cheminform 2025, DOI 10.1186/s13321-025-01039-8). All mirrored into `submission_JCAMD/Bibliography_P5.bib`.
-
-**Compilation**: manuscript 18 p. (was 17 p. pre-R1–R5), SI 6 p., 0 LaTeX error, 0 undefined reference (only the pre-existing `Hfootnote.1` warning remains). `submission_JCAMD/` re-synchronised. Prose revised for direct scientific style (no AI jargon, no report-style phrasing).
-
-## 9.3 Implementation checkpoint 29 August 2026 — Springer JCAMD editorial compliance
-
-The manuscript was audited against the conventional JCAMD editorial requirements (Springer Nature submission guidelines, JCAMD Original Paper conventions). Three editorial gaps were closed in `manuscript/P5_manuscript_V2608.tex`. No re-runs were performed.
-
-- **Abstract length** — the previous abstract counted 256 words, above the conventional JCAMD 250-word limit. Reduced to 249 words by removing 7 redundant connectives, two `\citep{}` references (Springer bans in-text citations in abstracts), and one longer adverbial clause. Numbers and `\cref{}` to the decile section preserved.
-- **ORCID iDs** — Springer requires ORCID identifiers next to each author with a verified record. Added `\href{https://orcid.org/...}` links for MVST (0009-0004-5170-2309), JPTN (0000-0002-1936-8353), WFM (0000-0002-3934-3233) and SGNE (0000-0002-7484-3508). PS has no ORCID (per AGENTS.md, "sans ORCID"); no badge added. The ORCID badge is rendered by a local TikZ definition of `\textorcid` (the Springer `svjour3` class would supply it natively; we use `article` and provide the icon locally to avoid re-template-ing the manuscript for a single badge).
-- **AI use disclosure** — already present (`\section*{Use of Artificial Intelligence}`), confirms AI-assisted tools were used for code and data-analysis scripting, all text reviewed by the authors, no AI listed as an author.
-
-**Audit of remaining Springer requirements** (all confirmed compliant):
-
-| Requirement | Status |
-|---|---|
-| Title (informative, no period, ≤100 chars) | OK (89 chars) |
-| Structured IMRAD sections | OK (Intro / Results / Discussion / Methods / Conclusions) |
-| Author affiliations with superscripts | OK (5 authors, 3 affiliations, corresponding author email) |
-| Highlights (3–5 bullet points) | OK (5 items) |
-| Keywords (4–6) | OK (6 items, no overlap with title) |
-| Competing interests | OK ("no competing interests") |
-| Funding | OK ("no specific grant") |
-| Ethics approval and consent | OK (computational, not applicable) |
-| Consent for publication | OK (no individual data) |
-| Data and code availability | OK (GitHub + Zenodo with DOI added at proof) |
-| Author contributions | OK |
-| Acknowledgements | OK |
-| References list (`unsrtnat`) | OK (≥38 entries, BibTeX clean) |
-| Manuscript word count | OK (~6300 words, within Original Paper range) |
-
-**Springer Nature global editorial-policies audit (https://www.springernature.com/gp/policies/editorial-policies, 29 Aug 2026):**
-
-| Policy | Status |
-|---|---|
-| Act with integrity | OK |
-| **Artificial Intelligence** — 4 expectations (human accountability, AI supports not replaces judgement, transparency, confidentiality) | **Closed** — Use-of-AI section now names all four expectations explicitly |
-| **Author contributions** — required contribution statement | **Closed** — Authors' contributions section rewritten with CRediT taxonomy and corresponding-author authority clause |
-| **Competing interests** — disclosure required | OK |
-| **Confidentiality and embargos** | N/A (author side) |
-| **Consent of human participants** | OK (Ethics = Not applicable) |
-| **Corrections and retractions** | N/A |
-| **Corresponding authors** — confirm authority on behalf of all co-authors | **Closed** — explicit clause added to Authors' contributions |
-| **Dual use research of concern** | N/A |
-| **Editorial independence** | N/A |
-| **Fraud and malpractice** | N/A |
-| **Funder affiliations** | OK (no funding, declared) |
-| **Harmful research content** | N/A |
-| **Inclusive publishing** | N/A |
-| **Peer-review** | N/A |
-| **Personal data** | OK (Consent = Not applicable) |
-| **Plagiarism** | N/A (handled at submission by SN) |
-| **Preprints** | OK |
-| **Reproducibility and robustness** | OK (data + code on GitHub/Zenodo) |
-| **Research data** | OK |
-| **Third-party permissions** | OK (no reproduced figures) |
-| **Transfer between journals** | OK |
-
 ## 10. Implementation coverage
 
-The exhaustive P5 V2 suggestion-to-evidence matrix is maintained at `Project5_GNN_Transformer_DrugDiscovery_V2/docs/P5V2_SUGGESTIONS_IMPLEMENTATION_MATRIX_20260827.md`. It confirms implementation of the panel-specific claim boundary, separated robustness section, independent scaffold partitions, AUPRC/effect reporting, paired descriptor analyses, salience stability, chemical and ChEMBL audits, ChemBERTa completion audit, LISH separation, post-hoc calibration metrics (added 27/08), NN-Tanimoto decile stratification (added 29/08, deterministic re-scoring of the stored per-fold prediction files in `results/nn_tanimoto_deciles_20260829/`, no new SLURM allocation), and reproducibility package. Full OOD neighbor analysis, cluster-based split retraining, calibration slope/intercept fits, recalibrated variants, and prospective validation remain explicitly `NOT_COMPUTED`.
+The exhaustive P5 V2 suggestion-to-evidence matrix is maintained at `Project5_GNN_Transformer_DrugDiscovery_V2/docs/P5V2_SUGGESTIONS_IMPLEMENTATION_MATRIX_20260827.md`. It confirms implementation of the panel-specific claim boundary, separated robustness section, independent scaffold partitions, AUPRC/effect reporting, paired descriptor analyses, salience stability, chemical and ChEMBL audits, ChemBERTa completion audit, LISH separation, post-hoc calibration metrics (added 27/08), NN-Tanimoto decile stratification (added 29/08, job 15658, `COMPUTED_SECONDARY_NEIGHBOR_OOD`), and reproducibility package. Full OOD neighbor analysis, cluster-based split retraining, calibration slope/intercept fits, recalibrated variants, and prospective validation remain explicitly `NOT_COMPUTED`.
 
 ## 11. Next actions
 

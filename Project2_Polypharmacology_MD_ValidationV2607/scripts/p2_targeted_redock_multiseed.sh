@@ -32,13 +32,11 @@ for key in ('receptor','ligand','config'):
 PY
 
 MANIFEST="$P2_REDOCK_INPUT_MANIFEST"
-# Note: `python -c CODE MANIFEST` (not `python - MANIFEST -c`), otherwise the
-# manifest is consumed as a script and the -c flag is ignored, leaving OUT empty.
-OUT=$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["output_dir"])' "$MANIFEST")
-RECEPTOR=$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["receptor"])' "$MANIFEST")
-LIGAND=$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["ligand"])' "$MANIFEST")
-CONFIG=$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["config"])' "$MANIFEST")
-SEEDS=($(python -c 'import json,sys; print(*json.load(open(sys.argv[1]))["seeds"])' "$MANIFEST"))
+OUT=$(python - "$MANIFEST" -c 'import json,sys; print(json.load(open(sys.argv[1]))["output_dir"])')
+RECEPTOR=$(python - "$MANIFEST" -c 'import json,sys; print(json.load(open(sys.argv[1]))["receptor"])')
+LIGAND=$(python - "$MANIFEST" -c 'import json,sys; print(json.load(open(sys.argv[1]))["ligand"])')
+CONFIG=$(python - "$MANIFEST" -c 'import json,sys; print(json.load(open(sys.argv[1]))["config"])')
+SEEDS=($(python - "$MANIFEST" -c 'import json,sys; print(*json.load(open(sys.argv[1]))["seeds"])'))
 mkdir -p "$OUT"
 [[ -s "$RECEPTOR" && -s "$LIGAND" && -s "$CONFIG" ]] || { echo 'FAIL-CLOSED: docking input missing' >&2; exit 3; }
 command -v vina >/dev/null || { echo 'FAIL-CLOSED: vina unavailable' >&2; exit 3; }
@@ -61,8 +59,7 @@ for seed in "${SEEDS[@]}"; do
   out="$OUT/seed_${seed}.pdbqt"
   log="$OUT/seed_${seed}.log"
   [[ -e "$out" ]] && { echo "Refusing to overwrite $out" >&2; exit 4; }
-  # vina 1.2.7 has no --log flag; stdout carries the run log.
-  vina --receptor "$RECEPTOR" --ligand "$LIGAND" --config "$CONFIG" --seed "$seed" --out "$out" >"$log" 2>&1
+  vina --receptor "$RECEPTOR" --ligand "$LIGAND" --config "$CONFIG" --seed "$seed" --out "$out" --log "$log"
 done
 
 python - "$OUT" "${SEEDS[@]}" <<'PY'
