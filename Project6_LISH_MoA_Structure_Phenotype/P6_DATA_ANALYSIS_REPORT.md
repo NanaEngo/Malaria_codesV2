@@ -82,8 +82,8 @@ All four GNN scaffold arms remain at chance macro-AUROC (0.501–0.506), below t
 ### 4.3 Pooled calibration
 
 - Phenotype: ECE=0.0016, MCE=0.648, Brier=0.0038
-- Structure: ECE=0.0012, MCE=0.946, Brier=0.0040
-- Fusion: ECE=0.0020, MCE=0.697, Brier=0.0040
+- Structure: ECE=0.0012, MCE=0.3893, Brier=0.0034 (RF, scaffold)
+- Fusion: ECE=0.0017, MCE=0.2590, Brier=0.0034 (RF, scaffold)
 
 > **Calibration re-baselining complete (30 Aug 2026, job 15717 done):** under the model-unification decision, both molecular calibration rows now derive from the **RF** scaffold predictions. Structure (`predictions/p6_lish_moa_structure_scaffold_rf`): n=3,387,670 pooled observations, **ECE=0.0012, MCE=0.3893, Brier=0.0034**. Fusion (`predictions/p6_lish_moa_both_scaffold_rf`, regenerated from job 15717): **ECE=0.0017, MCE=0.2590, Brier=0.0034** (replaces the provisional logistic fusion row ECE 0.0020/MCE 0.697/Brier 0.0040). The manuscript `tab:p6_calibration` fusion row is updated to the RF values.
 
@@ -91,8 +91,8 @@ All four GNN scaffold arms remain at chance macro-AUROC (0.501–0.506), below t
 
 | Pair | τ=0.5 abs-diff | Spearman max-prob |
 |---|---:|---:|
-| phenotype vs structure | 0.0651 | −0.0064 |
-| phenotype vs fusion | 0.0680 | 0.2830 |
+| phenotype vs structure (RF) | 0.0229 | +0.0361 |
+| phenotype vs fusion (RF) | 0.0329 | +0.4272 |
 | phenotype vs GIN | 0.0467 | −0.0119 |
 | phenotype vs ChemBERTa | 0.0537 | −0.0354 |
 

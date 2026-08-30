@@ -29,7 +29,7 @@ JCAMD is the better fit than JCIM for this manuscript because the central contri
 - Scaffold-held-out runs for the four GNN/ChemBERTa molecular arms
 
 ## Model-unification note (30 Aug 2026)
-The ECFP4 baseline and the phenotype+ECFP4 fusion are RandomForest on every split. The scaffold structure arm is the RF run (AUROC 0.53817; the 0.53749 value previously reported was the per-label logistic run and is superseded). The scaffold fusion RF run is being computed (SLURM job 15717); pooled calibration, QKS, and the paired uncertainty summaries are re-derived from the RF prediction/fold outputs once it completes. The logistic scaffold runs remain on disk for provenance only.
+The ECFP4 baseline and the phenotype+ECFP4 fusion are RandomForest on every split. The scaffold structure arm is the RF run (AUROC 0.53817; the 0.53749 value previously reported was the per-label logistic run and is superseded). SLURM job 15717 (scaffold fusion RF) **completed** 30 Aug ~21:37Z; pooled calibration (fusion ECE 0.0017/MCE 0.2590/Brier 0.0034), QKS (phenotype-vs-fusion τ0.5 0.0329 / Spearman 0.427), and the paired seed-fold uncertainty summaries were re-derived from the RF prediction/fold outputs. The logistic scaffold runs remain on disk for provenance only and are no longer cited.
 
 ## Outside the present scope
 - Reliability plots, calibration slope/intercept, and per-MoA ECE as inferential endpoints
