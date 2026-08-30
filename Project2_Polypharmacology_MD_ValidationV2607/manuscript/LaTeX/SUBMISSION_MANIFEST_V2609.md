@@ -6,7 +6,8 @@
 **Canonical scientific source:** `P2_DATA_ANALYSIS_REPORT.md`  
 **Status:** `TECHNICALLY_COMPILED; AUTHOR REVIEW COMPLETE; SUBMISSION NOT AUTHORIZED`  
 **Prepared:** 30 August 2026  
-**Verified:** main 32 p., SM 20 p., cover 1 p. (0 errors, 0 undefined refs, 0 `??`)
+**Verified:** main 32 p., SM 20 p., cover 1 p. (0 errors, 0 undefined refs, 0 `??`)  
+**Author declarations:** no external funding confirmed; no competing interests declared; P2 affiliations harmonized to author-approved P1 wording; ORCID verification remains pending for authors other than Serge Guy Nana Engo (`0000-0002-7484-3508`).
 
 ## Release files
 

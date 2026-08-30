@@ -1,6 +1,6 @@
 # P2 — Final author review and adversarial audit
 
-**Date:** 30 August 2026  
+**Date:** 30 August 2026 (declaration and final compilation update)  
 **Target:** *Journal of Chemical Information and Modeling* (JCIM, ACS)  
 **Canonical manuscript:** `manuscript/LaTeX/Polypharmacology_MD_Validation_V2609.tex`  
 **Canonical SI:** `manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2609.tex`  
@@ -173,9 +173,9 @@ clean directory without inherited auxiliary files.
 
 ## Remaining author actions
 
-1. Confirm all author names, order, affiliations and ORCID identifiers in Paragon Plus.
-2. Confirm funding declaration and sponsor-role statement; do not infer “no funding” from the acknowledgement.
-3. Confirm competing-interest declaration.
+1. Confirm all author names, order and ORCID identifiers in Paragon Plus. Serge Guy Nana Engo is confirmed as `0000-0002-7484-3508`; the other four ORCID records remain to be entered/verified.
+2. The author confirmed that no external funding was received; the manuscript, SI and cover letter now state this explicitly. Verify the corresponding funding field and sponsor-role statement in Paragon Plus.
+3. The manuscript and SI state no competing interests; confirm this declaration in Paragon Plus.
 4. Complete the Zenodo archive and record the final DOI in the data-availability statement if required.
 5. Perform the final human visual inspection of all PDF pages and tables.
 6. Upload only the canonical V2609 package and the required supporting files.
@@ -184,4 +184,4 @@ clean directory without inherited auxiliary files.
 
 `READY_FOR_AUTHOR_APPROVAL`
 
-The scientific manuscript is internally coherent and suitable for final author approval. It is not marked `READY_FOR_SUBMISSION` until the human-controlled metadata, declarations, visual inspection and data-archive steps are completed.
+The scientific manuscript is internally coherent and suitable for final author approval. Affiliations are harmonized to the author-approved P1 wording and the no-external-funding statement is now explicit. It is not marked `READY_FOR_SUBMISSION` until the human-controlled ORCID metadata, Paragon Plus declarations, visual inspection and data-archive steps are completed.
