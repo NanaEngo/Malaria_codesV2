@@ -13,7 +13,7 @@
 - **P2 DAR:** `Project2_Polypharmacology_MD_ValidationV2607/P2_DATA_ANALYSIS_REPORT.md`
 - **P3 DAR:** `Project3_Quantum_Inspired_RepresentationsV2607_V4/P3_DATA_ANALYSIS_REPORT.md`
 - **P4 DAR:** `Project4_Advanced_Monte_CarloV2607_V2/P4_DATA_ANALYSIS_REPORT.md`
-- **P5 DAR:** `Project5_GNN_Transformer_DrugDiscovery_V2/P5_DATA_ANALYSIS_REPORT.md`
+- **P5 DAR:** `Project5_GNN_Transformer_DrugDiscovery_V2609/P5_DATA_ANALYSIS_REPORT.md`
 - **P6 DAR:** `Project6_LISH_MoA_Structure_Phenotype/P6_DATA_ANALYSIS_REPORT.md`
 - **P7 DAR:** `Project7_Quantum_Molecular_Encoding_QML/P7_DATA_ANALYSIS_REPORT.md`
 - **BMAD (Q1 cross-project synthesis):** `BMAD_Q1_DATA_ANALYSIS_REPORT.md` — pulls headline numbers from each per-project DAR
@@ -28,7 +28,7 @@
   - **P3 V2 (archive 2026-08-29):** `_archives/P3_V2607_V2_archived_20260829/`
   - **P4:** `Project4_Advanced_Monte_CarloV2607_V2/`
   - **P4 V1 (archive 2026-08-29):** `_archives/Project4_Advanced_Monte_CarloV2607_archived_20260829/` (superset of scripts in V2)
-  - **P5:** `Project5_GNN_Transformer_DrugDiscovery_V2/`
+  - **P5:** `Project5_GNN_Transformer_DrugDiscovery_V2609/`
   - **P5 V1 (archive 2026-08-29):** `_archives/Project5_GNN_Transformer_DrugDiscovery_archived_20260829/` (strict subset of V2 scripts/results)
   - **P6:** `Project6_LISH_MoA_Structure_Phenotype/`
   - **P7:** `Project7_Quantum_Molecular_Encoding_QML/`

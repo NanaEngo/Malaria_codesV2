@@ -1,0 +1,56 @@
+{
+  "boundary": "Full GIN threshold reruns are not included; this is an ECFP4-RF sensitivity analysis.",
+  "n_estimators": 500,
+  "rows": [
+    {
+      "active_min_pchembl": 6.0,
+      "inactive_max_pchembl": 5.0,
+      "n": 22267,
+      "n_active": 19160,
+      "n_estimators": 500,
+      "n_inactive": 3107,
+      "scaffold_auc_mean": 0.9271446811929536,
+      "scaffold_auc_sd_fold_seed": 0.008832759680423278,
+      "spec": "canonical",
+      "status": "COMPUTED"
+    },
+    {
+      "active_min_pchembl": 6.5,
+      "inactive_max_pchembl": 5.0,
+      "n": 16700,
+      "n_active": 13593,
+      "n_estimators": 500,
+      "n_inactive": 3107,
+      "scaffold_auc_mean": 0.9469074467252737,
+      "scaffold_auc_sd_fold_seed": 0.008674428221871975,
+      "spec": "strict_active",
+      "status": "COMPUTED"
+    },
+    {
+      "active_min_pchembl": 6.0,
+      "inactive_max_pchembl": 5.5,
+      "n": 22267,
+      "n_active": 19160,
+      "n_estimators": 500,
+      "n_inactive": 3107,
+      "scaffold_auc_mean": 0.9271446382151598,
+      "scaffold_auc_sd_fold_seed": 0.008832772824570338,
+      "spec": "strict_inactive",
+      "status": "COMPUTED"
+    },
+    {
+      "active_min_pchembl": 7.0,
+      "inactive_max_pchembl": 5.5,
+      "n": 12107,
+      "n_active": 9000,
+      "n_estimators": 500,
+      "n_inactive": 3107,
+      "scaffold_auc_mean": 0.9607885296459835,
+      "scaffold_auc_sd_fold_seed": 0.006387312651615656,
+      "spec": "high_stringency",
+      "status": "COMPUTED"
+    }
+  ],
+  "source": "/home/nanaengo/Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery_V2609/results/p5_public_chembl_malaria.csv",
+  "status": "COMPUTED_RF_ONLY"
+}

@@ -13,7 +13,7 @@ def sha(p: Path): return hashlib.sha256(p.read_bytes()).hexdigest()
 def stat(p: Path): return {"path": str(p.relative_to(ROOT)), "exists": p.exists(), "sha256": sha(p) if p.exists() else None}
 
 p2 = ROOT / "Project2_Polypharmacology_MD_ValidationV2607"
-p5 = ROOT / "Project5_GNN_Transformer_DrugDiscovery_V2"
+p5 = ROOT / "Project5_GNN_Transformer_DrugDiscovery_V2609"
 p6 = ROOT / "Project6_LISH_MoA_Structure_Phenotype"
 
 p2_files=[p2/'results/robustness_transfer_20260827/external_docking_preflight_manifest.json',p2/'results/robustness_transfer_20260827/external_docking_panel_candidate_40_manifest.json',p2/'results/robustness_transfer_20260827/external_docking_launch_status.md']

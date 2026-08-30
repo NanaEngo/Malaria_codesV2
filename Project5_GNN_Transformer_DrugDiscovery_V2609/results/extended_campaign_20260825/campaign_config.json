@@ -1,0 +1,50 @@
+{
+  "campaign": "P5_extended_campaign_20260825",
+  "created_utc": "2026-08-25T10:53:20Z",
+  "descriptor_modes": {
+    "GIN": [
+      "native"
+    ],
+    "GIN-TFP": [
+      "native",
+      "permuted"
+    ],
+    "GIN-TNE": [
+      "native",
+      "permuted"
+    ]
+  },
+  "models": [
+    "GIN",
+    "GIN-TFP",
+    "GIN-TNE"
+  ],
+  "n_folds": 5,
+  "novel_partitions": {
+    "novel_101": 101,
+    "novel_202": 202,
+    "novel_303": 303
+  },
+  "panel": "/home/nanaengo/Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery_V2609/results/p5_canonical_panel.csv",
+  "panel_n": 19836,
+  "panel_sha256": "1823d54fc4a4408750cbbda2f7a010725e8a8344f920252fb3f26745a9e7ee75",
+  "policy": "All outputs versioned; canonical results never overwritten; missing dependencies fail closed.",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "training": {
+    "batch_size": 512,
+    "dropout": 0.1,
+    "epochs": 50,
+    "hidden": 128,
+    "lr": 0.001,
+    "patience": 10,
+    "weight_decay": 0.0001
+  },
+  "v1_graph_path": "/home/nanaengo/Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery/results/p5_graphs.pt",
+  "v1_graph_sha256": "118ff24050f8e446d34f5fb2329259cb93b5ebc49989791d6a5ca1380b72ff8e"
+}

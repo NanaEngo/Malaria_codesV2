@@ -31,7 +31,7 @@ from p6_phase2_benchmark import DRUG_LEVEL, MAPPING, OUT_DIR, SEEDS, make_folds,
 
 NUM_WORKERS = int(__import__('os').environ.get('P6_NUM_WORKERS', '2'))
 
-P5_SCRIPTS = PROJ.parent / "Project5_GNN_Transformer_DrugDiscovery_V2" / "scripts"
+P5_SCRIPTS = PROJ.parent / "Project5_GNN_Transformer_DrugDiscovery_V2609" / "scripts"
 DESC_NPZ = OUT_DIR / "p6_tfp_tne_descriptors.npz"
 
 

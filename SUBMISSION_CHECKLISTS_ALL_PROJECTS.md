@@ -156,7 +156,7 @@ submission_JoC/
 
 ## 📋 P5 V2 — JCAMD (Springer Nature)
 
-**Répertoire** : `Project5_GNN_Transformer_DrugDiscovery_V2/manuscript/`
+**Répertoire** : `Project5_GNN_Transformer_DrugDiscovery_V2609/manuscript/`
 
 | # | Action | Fichier | Statut |
 |---|--------|---------|:------:|
@@ -173,7 +173,7 @@ submission_JoC/
 | 11 | AI disclosure | "AI-assisted tools... authors take full responsibility" | ✅ |
 | 12 | Butina results | En attente (job 15663 en cours) | ⏳ |
 
-**Package à créer** : `Project5_GNN_Transformer_DrugDiscovery_V2/submission_JCAMD/`
+**Package à créer** : `Project5_GNN_Transformer_DrugDiscovery_V2609/submission_JCAMD/`
 
 **Contenu du package** :
 ```

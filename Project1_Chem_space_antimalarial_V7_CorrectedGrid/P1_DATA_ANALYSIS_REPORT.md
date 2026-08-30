@@ -354,7 +354,7 @@ with **0 errors** and the same warning set (`AUDIT_WARN_REVIEW_REQUIRED`,
 - **P2 DAR** (`Project2_Polypharmacology_MD_ValidationV2607/P2_DATA_ANALYSIS_REPORT.md`)
   — the Set-C 17-member cohort originates in P2 (`c_pns_ranking.csv` →
   `v7_candidate_manifest.csv` via canonical-SMILES join).
-- **P5 DAR** (`Project5_GNN_Transformer_DrugDiscovery_V2/P5_DATA_ANALYSIS_REPORT.md`)
+- **P5 DAR** (`Project5_GNN_Transformer_DrugDiscovery_V2609/P5_DATA_ANALYSIS_REPORT.md`)
   — downstream polypharmacology modelling; cohort = Set-C + P5 GNN/Transformer
   training set.
 - **`docs/CENTRAL_QUESTIONS_PROJECTS.md`** — cross-project scientific questions;

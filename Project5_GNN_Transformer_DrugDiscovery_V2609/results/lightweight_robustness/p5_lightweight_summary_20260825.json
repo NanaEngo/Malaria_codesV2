@@ -1,0 +1,33 @@
+{
+  "status": "COMPUTED_SECONDARY_ROBUSTNESS",
+  "training_deep_models": false,
+  "official_split_source": "../Project5_GNN_Transformer_DrugDiscovery/results",
+  "official_split_sha256_verified_against": "Project5_GNN_Transformer_DrugDiscovery_V2609/results/SHA256SUMS",
+  "chemical_audit": {
+    "panel_n": 19836,
+    "scaffold_train_test_overlap_all_25_records": 0,
+    "random_test_prevalence_range": [0.7421225107, 0.7421875],
+    "scaffold_test_prevalence_range": [0.5860488798, 0.8621553885],
+    "bounded_tanimoto_sample": {
+      "train_per_fold": 500,
+      "test_per_fold": 100,
+      "random_mean_max_range": [0.4766771971, 0.567837045],
+      "scaffold_mean_max_range": [0.29183454196, 0.3877453932]
+    }
+  },
+  "baselines": {
+    "kNN_ECFP4_k5_distance_weighted": {
+      "random": {"mean_auc": 0.9165800492, "std_auc": 0.0016188158, "mean_auprc": 0.9561630023, "mean_f1": 0.9212526651, "mean_balanced_accuracy": 0.8323029854},
+      "scaffold": {"mean_auc": 0.7110184689, "std_auc": 0.0120780117, "mean_auprc": 0.8466575401, "mean_f1": 0.8435936884, "mean_balanced_accuracy": 0.6233268757}
+    },
+    "Logistic_ECFP4_C1": {
+      "random": {"mean_auc": 0.8789814626, "std_auc": 0.0016522508, "mean_auprc": 0.9455691698, "mean_f1": 0.8960801489, "mean_balanced_accuracy": 0.7984741127},
+      "scaffold": {"mean_auc": 0.7062787739, "std_auc": 0.0127376917, "mean_auprc": 0.8542343524, "mean_f1": 0.7958914301, "mean_balanced_accuracy": 0.6398542092}
+    }
+  },
+  "salience": {
+    "TFP": {"n_aggregate_runs": 25, "top10_percent_share": 0.1772389499, "individual_run_topk": "NOT_COMPUTED_INPUTS_NOT_ARCHIVED"},
+    "TNE": {"n_aggregate_runs": 25, "top10_percent_share": 0.1804362464, "individual_run_topk": "NOT_COMPUTED_INPUTS_NOT_ARCHIVED"}
+  },
+  "canonical_boundary": "These secondary controls do not replace the canonical ECFP4-RF comparison and do not authorize a universal claim about ECFP4 learners."
+}

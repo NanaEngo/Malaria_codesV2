@@ -288,7 +288,7 @@ transfer.
 - **P2 DAR** (`Project2_Polypharmacology_MD_ValidationV2607/P2_DATA_ANALYSIS_REPORT.md`) —
   Set-C 17-candidate cohort; P3 cross-links via
   `p3_polypharm_tfp_rrs.csv` and `p3_rrs_labels_for_sota.csv`.
-- **P5 DAR** (`Project5_GNN_Transformer_DrugDiscovery_V2/P5_DATA_ANALYSIS_REPORT.md`) —
+- **P5 DAR** (`Project5_GNN_Transformer_DrugDiscovery_V2609/P5_DATA_ANALYSIS_REPORT.md`) —
   downstream polypharmacology modelling; P3 topological/quantum features
   are an input candidate to P5 fusion arms.
 - **P4 DAR** (`P4_DATA_ANALYSIS_REPORT.md`) — Monte Carlo scaffold; P3 MC

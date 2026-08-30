@@ -40,7 +40,7 @@ Script: `scripts/lightweight_runs_20260825.py`; sorties: `results/lightweight_ro
 Aucun manuscrit déjà soumis (P1/P3/P4/P5) n'a été modifié dans cette passe.
 
 ## Audit adversarial P5-V2 — PASS1 + mitigations (25 août 2026)
-Cible : ligne avancée Project5_GNN_Transformer_DrugDiscovery_V2 (couche LED). Rapport : outputs/critical-reviews/PASS1_adversarial_20260825.md. F1 numériques re-vérifiés vs JSON bruts ✓ ; C-P5-01 non applicable au manifeste V2 (ChEMBL364 réel) ; C-P5-02 phrase clarificatrice ± ajoutée ; C-P5-03 équation hiérarchique en \small → recompile err=0/overfull=0/undef=0.
+Cible : ligne avancée Project5_GNN_Transformer_DrugDiscovery_V2609 (couche LED). Rapport : outputs/critical-reviews/PASS1_adversarial_20260825.md. F1 numériques re-vérifiés vs JSON bruts ✓ ; C-P5-01 non applicable au manifeste V2 (ChEMBL364 réel) ; C-P5-02 phrase clarificatrice ± ajoutée ; C-P5-03 équation hiérarchique en \small → recompile err=0/overfull=0/undef=0.
 
 
 ## Passe R-P5 — referees sévères P5-V2 (25 août 2026)

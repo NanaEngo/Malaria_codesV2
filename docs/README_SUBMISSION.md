@@ -11,7 +11,7 @@
 | **P2** | JCIM (ACS) | Main 41p + SM 8p + cover compiled; Set-C MD-RRS pilot COMPUTED_WITH_COHORT_CONTRACT (PP-01/PP-02 only); external docking 312/312 + RRS computed; PP-15 pilot + PP-01_I164L single-system rerun logged; full-panel (17×8=136) MD-RRS remains NOT_COMPUTED by design | `Project2_Polypharmacology_MD_ValidationV2607/manuscript/LaTeX/SUBMISSION_MANIFEST.md` |
 | **P3** | Journal of Cheminformatics | Canonical benchmarks and external validation complete; final deposit/author checks remain | `Project3_Quantum_Inspired_RepresentationsV2607/manuscript/LaTeX/SUBMISSION_MANIFEST.md` |
 | **P4** | Journal of Cheminformatics | v12-activity benchmark and Pareto analysis integrated; final deposit/author checks remain | `Project4_Advanced_Monte_CarloV2607/manuscript/SUBMISSION_MANIFEST.md` |
-| **P5 V2** | JCAMD (Springer) | Main 16p + SI 5p + cover compiled; 0 LaTeX errors; calibration 30 configs + RRS/polypharma extensions computed; Zenodo 31/31 staged READY_FOR_UPLOAD_NOT_UPLOADED; final author metadata + visual PDF read-through remain | `Project5_GNN_Transformer_DrugDiscovery_V2/manuscript/SUBMISSION_MANIFEST.md` |
+| **P5 V2** | JCAMD (Springer) | Main 16p + SI 5p + cover compiled; 0 LaTeX errors; calibration 30 configs + RRS/polypharma extensions computed; Zenodo 31/31 staged READY_FOR_UPLOAD_NOT_UPLOADED; final author metadata + visual PDF read-through remain | `Project5_GNN_Transformer_DrugDiscovery_V2609/manuscript/SUBMISSION_MANIFEST.md` |
 
 ## Rules
 
