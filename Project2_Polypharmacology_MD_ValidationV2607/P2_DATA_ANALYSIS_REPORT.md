@@ -537,3 +537,21 @@ The P2 V2609 manuscript (`Polypharmacology_MD_Validation_V2609.tex`) **follows t
 **Mitigation applied** : the runbook preflight and post-production `P2_SETC_ROOT` paths were corrected from the legacy `results/set_c_md/...` to the canonical `results/md_systems/...` path that `scripts/p2_m1_replicated_md.sbatch` actually reads and that the DAR consistently references. The path inside the launcher was already correct; only the documentation had drifted.
 
 **Status of M1 at audit time** : job 15711 active, replicate_1 (task 0, PP-01_PfDHFR_WT) running, 11 tasks pending.
+
+## 14. Decision log — 30 August 2026 — P2 M1 scope decision (option A)
+
+**Decision (user, option A):** complete replicate_1 (task 0, PP-01_PfDHFR_WT) and stop; do **not** run the 11 remaining replicates. Rationale: at the measured ~1.2 ns/h and the `%1` GPU throttle, the full 12-replicate × 100 ns array would need ~42 calendar days, which is incoherent with the submission timeline; M1 is already **optional** for the V2609 pivot (the manuscript is defensible without any new simulation).
+
+**Actions taken:**
+- Cancelled the 11 pending array tasks `15711_[1-11]` (used no resources under `%1`). Task 0 left untouched and running.
+- Verified GPU is active in task 0: log header `Using GPU 8x4 nonbonded short-range kernels`, 1 compatible GPU, 8 OpenMP threads.
+
+**Time-limit fact uncovered:** the running task 0 carries `TimeLimit=2-00:00:00` (48 h), although the launcher on disk now requests 96 h (edited *after* the job was submitted, so the *running* job kept 48 h). Extension of a running job was refused by SLURM (`Access/permission denied`).
+
+**Consequence:** task 0 will be killed by SLURM at 48 h (~31 Aug 19:51Z), corresponding to roughly **50–60 ns** of continuous trajectory (at 1.19 ns/h from a ~23 ns baseline at 19.3 h), **not** the intended 100 ns.
+
+**Status:** `M1 = SINGLE-REPLICATE PARTIAL (task 0, ~50–60 ns, NOT 100 ns)` → remains **NOT_COMPUTED / NOT_REPORTABLE** as a completed 100 ns replicate; usable only as a short continuous structural-stress trajectory once post-kill QC passes. Not integrated into V2609. Full 100 ns would require a continuation relaunch from the last checkpoint in a fresh job with a valid ≥4-day limit.
+
+**Follow-up QC gate trigger:** after task 0 is killed at 48 h, run trajectory QC (bound-fraction / min-heavy-atom / continuity over the achieved interval), record the true achieved duration in `m1_provenance.json` (currently hard-coded `duration_ns=100.0` and status `M1_PRODUCTION_COMPLETE_REQUIRES_QC_REVIEW` — must be corrected to reflect the partial length), then decide whether to (i) report as a short secondary pilot or (ii) relaunch a continuation for a full 100 ns.
+
+**Prepared (30 Aug 2026):** `scripts/p2_m1_postkill_qc.py` implements this gate for the single partial replicate: it reads the REAL last step/time from `production.log` (validated on the live log: 11,617,000 steps → 23.23 ns, 0 integrity issues), refuses to run when runtime markers are present, computes bound-fraction QC on the achieved interval under rule `setc_p2_minheavy_5A_ge10percent_v1`, and writes a corrected `m1_provenance.json` with `status = M1_PRODUCTION_INTERRUPTED_PARTIAL` (or `..._COMPLETE...` only if ≥ target), true `achieved_ns`, `last_step`, `termination = SLURM_TIME_LIMIT_KILL`, and an explicit non-affinity/non-resistance interpretation. It refuses to overwrite an existing completed provenance (exit 3). `py_compile` PASS; `--help` PASS. Runbook updated (`docs/P2_M1_RUNBOOK_20260829.md`, single-partial-replicate path).
