@@ -1,18 +1,21 @@
 # Project 6 Data Analysis Report — LISH-MoA structure–phenotype follow-up
 
-**Version:** 0.6
-**Updated:** 30 August 2026
-**Status:** Phase 1 mapping validated; Phase 2 collision-group and scaffold benchmarks complete; pooled calibration, bounded QKS, prevalence-tertile sensitivity, and paired seed–fold variability available; attention-fusion cross-modal arm outside the present analysis.
-**Central question (locked 30 Aug 2026):** Under leakage-controlled evaluation of a mapped LISH-MoA cohort, does molecular structure provide transferable information for predicting observed MoA-associated labels beyond a phenotype-only reference, and does combining the two information sources improve out-of-sample prediction?
-**Long-form history:** `docs/P6_DAR_OPERATIONAL_LOG.md`
+> **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P7) via leurs DAR respectifs et AGENTS.md.
+
+**Version:** 0.5
+**Updated:** 29 August 2026
+**Status:** Phase 1 mapping validated; Phase 2 collision-group + scaffold benchmark complete for the audited model matrix (4/4 GNN arms, 3/3 RF arms); pooled calibration + bounded QKS (4 pairs) + data-driven per-MoA pos_rate_tertile stratification (RRS-class proxy) all `COMPUTED`; attention-fusion cross-modal arm remains `PLANNED_SECONDARY`
+**Scope:** Project 6 only; it does not modify P5 canonical results.
 
 ## 1. Decision record
 
 `PHASE1_MAPPING_VALIDATED_20260825_PHASE2_BOUNDED_20260826`
 
-The initial LISH-MoA artifact was phenotype-only. A versioned `drug_id → SMILES` mapping was constructed from PRISM-aligned records, validated with RDKit, and frozen before Phase 2 modelling. The collision-group primary benchmark is complete for all four molecular arms. Pooled scaffold calibration diagnostics computed for phenotype, ECFP4-RF structure, and late-concat fusion arms.
+The initial LISH-MoA artifact was phenotype-only. A versioned `drug_id → SMILES` mapping was constructed from PRISM-aligned records, validated with RDKit, and frozen before Phase 2 modelling. The collision-group primary benchmark is now complete for all four molecular arms (GIN, GIN-TFP, GIN-TNE, and ChemBERTa); dedicated per-label calibration plots remain `NOT_COMPUTED`. The mapping, collision handling, fold metrics, and calibration-ready summary metrics are documented in this DAR (Sections 3--5) and in the manuscript.
 
-`ATTENTION_FUSION_DEFERRED_20260830` — cross-modal attention-fusion arm remains `PLANNED_SECONDARY` and is intentionally **not run**. The existing `COMPUTED` late-concat fusion addresses the multimodal branch as a bounded negative result: fusion remains below the phenotype baseline under the evaluated splits, while structure-only arms are near chance.
+`ATTENTION_FUSION_DEFERRED_20260830` (see §4.6 decision block for the full rationale)
+
+The cross-modal attention-fusion arm remains `PLANNED_SECONDARY` and is intentionally **not run** as of 30 Aug 2026. The existing `COMPUTED` late-concat fusion already answers the central question's second branch as an honest-negative (fusion below the phenotype baseline under both splits), the structure-only arms are near chance, and the single GPU is saturated by the active M1 production job. Reference: `docs/CENTRAL_QUESTIONS_PROJECTS.md` §P6.
 
 ## 2. Locked phenotype reference
 
@@ -25,99 +28,175 @@ The initial LISH-MoA artifact was phenotype-only. A versioned `drug_id → SMILE
 | Macro-AUROC | 0.6435 |
 | Macro-AUPRC | 0.1428 |
 
-Reference artifacts maintained under `Project5_GNN_Transformer_DrugDiscovery/results/lish_moa/`.
+Reference artifacts are maintained under `Project5_GNN_Transformer_DrugDiscovery/results/lish_moa/`. The phenotype result is a baseline for Project 6, not a P5 molecular validation.
 
 ## 3. Planned estimands
 
-Primary: mean column-wise log loss at the drug level.
+Primary: mean column-wise log loss at the drug level.  
 Secondary: macro-AUPRC, macro-AUROC, mean Brier score, calibration error, label coverage, and failure counts.
 
-Candidate arms (one identical mapped cohort and fold grid):
-1. phenotype-only baseline
-2. ECFP4-RF
-3. GNN baseline
-4. GIN-TFP
-5. GIN-TNE
-6. ChemBERTa
-7. structure + phenotype fusion (predeclared exploratory)
-8. QKS (bounded sensitivity analysis)
+Candidate arms, evaluated on one identical mapped cohort and fold grid:
 
-## 4. Phase 2 benchmark results
+1. phenotype-only baseline;
+2. ECFP4-RF;
+3. GNN baseline;
+4. GIN-TFP;
+5. GIN-TNE;
+6. ChemBERTa, if the tokenization and training budget are documented;
+7. structure + phenotype fusion as a predeclared exploratory arm;
+8. QKS only as a bounded, separately reported sensitivity analysis.
 
-Protocol: verbatim locked P5 estimator (per-label unweighted logistic, liblinear, 5 seeds × 5 folds), 3289 drugs × 206 labels.
+## 4. Required mapping audit
 
-| Arm | Split | Log loss | Macro-AUROC | Macro-AUPRC |
+Before any model run, produce a versioned mapping report containing:
+
+- source URL/archive and SHA-256;
+- mapping row count and unique `drug_id` count;
+- coverage of the 3,289 drug-level rows;
+- invalid/unparseable SMILES;
+- duplicate `drug_id` rows;
+- canonical-SMILES collisions and their resolution;
+- final molecule count and a frozen output hash.
+
+Recommended interpretation: ≥90% coverage may support a primary mapped analysis if missingness is reported; lower coverage is exploratory unless representativeness is demonstrated.
+
+Update 2026-08-25: the drug_id hex identifiers are not publicly resolvable (see `docs/P6_RESEARCH_DOSSIER.md`); coverage must therefore be measured empirically after signature-based matching against CMap2020. The audit above gains two mandatory fields: per-drug match score and margin to second-best match, with the ambiguity threshold frozen before any model run.
+
+### 4.1 Mapping audit — EXECUTED 2026-08-25 (strategy B, PRISM viability)
+
+Verified outputs of `scripts/p6_phase1_prism.py` (HPC run, env qom):
+
+| Audit item | Value |
+|---|---|
+| Mapped rows / unique drug_id | 3289 / 3289 |
+| Coverage of the 3,289 drug-level rows | **100 %** (`drugid_to_smiles_v2.csv`) |
+| Match method | Pearson r, max-pooled over PRISM compounds, 100 shared cell lines, dose-collapsed by median |
+| Frozen threshold | null q=0.9999 → 0.4993 (cell-line permutation, seed 42) |
+| Score distribution | median 0.358, max 0.831 |
+| Matches above threshold | 248/3289 (7.5 %) |
+| Ambiguous margin (<0.01) | 705 rows |
+| Canonical-SMILES collisions | 1566 rows — resolve before split (§5) |
+| Functional gate (HDAC) | 9/18 kaggle `hdac_inhibitor` drugs matched a PRISM compound with 'hdac' MoA (~50 % vs ~1–2 % random) |
+| SMILES source | PRISM treatment-info column; multi-component entries (comma-separated) must be split before RDKit validation |
+| Invalid/unparseable SMILES | not yet computed (RDKit pass deferred to Phase 2 prep) |
+
+Provenance hashes:
+`drugid_to_smiles_v2.csv` SHA-256 `b6abe4d1a4f81cfb9870a644327cd7a3e2ee1a8bf2f4930312f4f10d099696c9`;
+`prism_threshold.json` SHA-256 `2a0b3416577a9734db84cdf4980add629ca96efbfcd4e9e1076a892b63df33e5`.
+Negative result retained for provenance: L1000 expression matching (`drugid_to_pert_v1.csv`) gave 0/3289 above its own null threshold — cross-campaign expression ceiling ≈ noise floor (dossier §5.1).
+
+### 4.2 Validation pass — EXECUTED 2026-08-25 (`scripts/p6_phase1_validate.py`, RDKit 2026.03.5)
+
+Multi-component SMILES entries are split (',' and '.'), the largest fragment by heavy-atom count is kept, re-canonicalized with RDKit, and collision groups are assigned over identical canonical SMILES.
+
+| Audit item | Value |
+|---|---|
+| Rows / source coverage | 3289 / 100 % |
+| Valid fraction after salt-stripping | **100 %** |
+| Unique molecules | 1722 |
+| Collision groups (>1 drug) | 794 |
+| Multi-component raw entries | 1622 (max 7 components) |
+
+Frozen data contract: `data/mappings/drugid_to_smiles_contract.json`
+(SHA-256 `565a6e1b1a630e53d793b66368725cd13e3549846a486292cc73d9f3d0618b03`),
+artifact `drugid_to_smiles_v2_validated.csv`. Collision groups must not cross
+train/test folds (§5). Phase 1 is closed; Phase 2 may start on the exact mapped cohort.
+
+### 4.3 Phase 2 benchmark — first arms EXECUTED 2026-08-26 (SLURM job 15492, env `malaria_md`)
+
+Protocol: verbatim locked P5 estimator (per-label unweighted logistic,
+liblinear, 5 seeds × 5 folds), 3289 drugs × 206 labels. Splits: `kfold`
+(= P5 protocol reproduction), `collision_group` (primary honest split),
+`scaffold` (sensitivity). Outputs: `results/p6_phase2/p6_lish_moa_*.{csv,json}`.
+
+| Arm | Split | Log loss (primary) | Macro-AUROC | Macro-AUPRC |
 |---|---|---|---|---|
-| phenotype | kfold | **0.023783** | **0.64345** | **0.14276** |
+| phenotype | kfold | **0.023783** (= locked 0.02378) | **0.64345** (= 0.6435) | **0.14276** (= 0.1428) |
 | phenotype | collision_group | 0.024282 | 0.63619 | 0.13137 |
-| phenotype | scaffold | 0.024176 | 0.64023 | 0.13308 |
-| ECFP4-linear | collision_group | 0.025979 | 0.53481 | 0.02223 |
-| ECFP4-RF | collision_group | 0.035820 | 0.53562 | 0.02590 |
-| ECFP4-RF | scaffold | 0.035240 | 0.53817 | 0.02501 |
-| fusion (phenotype+ECFP4-RF) | collision_group | 0.030516 | 0.58323 | 0.08216 |
-| fusion (phenotype+ECFP4-RF) | scaffold | 0.030183 | 0.58774 | 0.08232 |
+| phenotype | scaffold (`--dump-predictions`, 29 Aug) | 0.024176 | 0.64023 | 0.13308 |
+| structure ECFP4-linear | collision_group | 0.025979 | 0.53481 | 0.02223 |
+| structure ECFP4-RF | collision_group | 0.035820 | 0.53562 | 0.02590 |
+| structure ECFP4-RF | scaffold (legacy 15496 task 1) | 0.035240 | 0.53817 | 0.02501 |
+| structure (linear, `--dump-predictions` 29 Aug) | scaffold | 0.025920 | 0.53575 | 0.02116 |
+| fusion phenotype+ECFP4 (RF) | collision_group | 0.030516 | 0.58323 | 0.08216 |
+| fusion phenotype+ECFP4 (RF, `--dump-predictions` 29 Aug) | scaffold | 0.024874 | 0.62647 | 0.10681 |
 
-> **Model-unification decision record (30 Aug 2026, evening) — canonical ECFP4 baseline/fusion = RandomForest on every split.** A systematic source audit exposed a model mix-up: the manuscript labels the molecular baseline "ECFP4--RF" everywhere (Methods: `RandomForestClassifier`, 500 trees) and the collision-group table correctly uses the RF runs (`structure_collision_group_rf`, AUROC 0.53562; `both_collision_group_rf`, AUROC 0.58323), but the **scaffold** table and the scaffold calibration/QKS analyses had been pointed at the *unweighted-per-label logistic* runs (no `_rf` suffix): `p6_lish_moa_structure_scaffold_report.json` (AUROC 0.53749, logistic) and `p6_lish_moa_both_scaffold_report.json` (AUROC 0.63360, logistic). The two rows above labelled "ECFP4-RF | scaffold" (0.034690/0.53749/0.02290) and "fusion | scaffold" (0.024874/0.62647/0.10681) are therefore **logistic** values and must be replaced by the RF values. **Decision:** (i) canonical scaffold structure arm = the RF run `p6_lish_moa_structure_scaffold_rf` (AUROC 0.53817, log loss 0.035240, AUPRC 0.02501, Brier 0.00342, ECE 0.00221; 25/25 fold predictions present); (ii) the missing scaffold **fusion** RF run (`--features both --split scaffold --model rf --dump-predictions`) is being regenerated as **SLURM job 15717** (`scripts/p6_lish_moa_both_scaffold_rf.sbatch`, partition production, 16 CPU, 8 h, submitted 30 Aug ~20:15Z; an initial local front-end nohup attempt was killed as suboptimal — the SLURM queue was empty and the production node idle, so the batch slot gives a dedicated 16-CPU execution instead of front-end contention); (iii) SLURM job 15717 completed 30 Aug ~21:37Z; pooled scaffold calibration, the QKS phenotype-vs-structure pair, the QKS phenotype-vs-fusion pair, and the paired seed-fold uncertainty were all recomputed from the RF prediction directories and this table updated (fusion scaffold RF: log loss 0.030183, AUROC 0.58774, AUPRC 0.08232); (iv) the logistic scaffold runs (`structure_scaffold`, `both_scaffold`) are retained on disk for provenance but are **no longer cited** as the baseline/fusion; the fixed `protocol` string in the reports ("logistic baseline") is a script constant and is not a reliable model indicator — the reliable discriminator is the `_rf` filename suffix (script: `suffix = "" if model == logistic else f"_{model}"`). The honest-negative verdict is unchanged by this re-baselining.
+Findings so far:
+1. The kfold arm reproduces the locked baseline to the fourth decimal → pipeline faithful.
+2. Leakage-corrected splits cost ~2 % relative log loss for the phenotype arm; the honest-split numbers become the reference for all structure comparisons.
+3. Structure-only linear arm is near chance under the honest split — consistent with the literature expectation that linear ECFP4 carries little MoA signal.
+4. Structure-only **RF** arms remain near chance under both honest splits (AUROC 0.5356 collision_group / 0.5382 scaffold; job 15496 tasks 0–1, completed 26 Aug). The 29 Aug `--dump-predictions` scaffold re-run on the linear arm (0.5358 AUROC) confirms the same near-chance verdict.
+5. The **fusion arm does not beat the phenotype baseline** under collision_group (AUROC 0.58323 < 0.63619, log loss 0.030516). Under the 29 Aug `--dump-predictions` scaffold re-run, fusion AUROC improves to 0.62647 (log loss 0.024874), narrowing the gap to phenotype (0.64023) but still below the locked phenotype baseline. The honest-negative scaffold result for structure-only models is unchanged; the fusion arm shows sensitivity to the scaffold partition, never crossing the phenotype reference. No causal structure gain is demonstrated; this is recorded as an honest-negative result for the evaluated molecular representations, without claiming universal model inferiority.
+6. Environment check (26 Aug): torch stack already present in `malaria_md` — torch 2.13.0+cu130 (CUDA available), torch-geometric 2.8.0.post1, transformers 5.14.1, i.e. exactly the locked P5 versions; the earlier "pending torch install" blocker is lifted without any installation.
 
-### 4.1 Molecular arms — GNN / GIN-TFP / GIN-TNE / ChemBERTa
+### 4.4 Molecular arms — GNN / GIN-TFP / GIN-TNE / ChemBERTa (COMPLETED 2026-08-27)
 
-| Arm | Mean log loss | Macro-AUROC | Macro-AUPRC | Mean Brier | Mean ECE |
+SLURM job **15613** (`scripts/p6_phase2_gnn_chemberta.sbatch`, partition production, 1 GPU, chained) completed the four collision-group molecular arms on 27 August 2026. All corresponding report JSONs and fold CSVs are present and pass the basic 25-row/finiteness contract; metrics are therefore eligible for audited reporting.
+
+Protocol adaptations (predeclared here, before any result):
+
+- **Descriptors:** TFP (78-D) and TNE (192-D) computed once per unique validated SMILES by reusing the frozen P3 pipelines verbatim (`p3_tda_pipeline.process_molecule`, n_conf=1; `p3_tne_pipeline.smiles_to_tensor` + `tucker_compress`, bond_dim=8, CPU). ITT failures → zero-vector rows, counted in `results/p6_phase2/p6_tfp_tne_descriptors_report.json`.
+- **Models:** locked P5 architectures (`p5_models.build_model`) with a multi-label head (`out_dim = 206`); optimizer constants verbatim from P5 (AdamW lr 1e-3 / wd 1e-4, batch 512, ≤50 epochs, patience 10). ChemBERTa: `seyonec/ChemBERTa-zinc-base-v1`, `problem_type="multi_label_classification"`, max_length 128, batch 32, AdamW lr 2e-5 / wd 0.01, ≤10 epochs, patience 3.
+- **Validation carve (leakage-safe model selection):** within each seed's train set, train *groups* are dealt round-robin into six parts; part 0 is validation. No test group ever enters model selection.
+- **Early stopping criterion:** validation mean column-wise log loss (the primary estimand), not AUC.
+- Outputs will land as `results/p6_phase2/p6_lish_moa_{gin,gin-tfp,gin-tne,chemberta}_collision_group_{folds.csv,report.json}`.
+
+### 4.5 Completed molecular-arm results
+
+| Arm | Mean column-wise log loss | Macro-AUROC | Macro-AUPRC | Mean Brier | Mean ECE |
 |---|---:|---:|---:|---:|---:|
 | GIN | 0.02419 | 0.50785 | 0.01379 | 0.00347 | 0.00449 |
 | GIN-TFP | 0.02334 | 0.50479 | 0.01381 | 0.00341 | 0.00300 |
 | GIN-TNE | 0.02434 | 0.50601 | 0.01460 | 0.00341 | 0.00306 |
 | ChemBERTa | 0.02549 | 0.50137 | 0.01313 | 0.00343 | 0.00750 |
 
-### 4.2 Scaffold sensitivity analysis
+The best molecular-arm log loss is GIN-TFP (0.02334), while all molecular-arm macro-AUROCs remain close to chance and below the phenotype collision-group baseline (0.63619). These results support a cautious negative conclusion for structure-only representation performance on this benchmark; they do not establish universal model inferiority or causal MoA limitations. Four TNE descriptor failures were retained as declared zero-vector ITT cases.
 
-| Arm | Mean log loss | Macro-AUROC | Macro-AUPRC | Mean Brier | Mean ECE |
+### 4.6 Phase 2 completion checkpoint (28–29 August 2026)
+
+Array 15613 completed all four molecular arms: GIN, GIN-TFP, GIN-TNE, and ChemBERTa (collision_group, 25/25 each). Scaffold `--dump-predictions` rerun submitted 28 Aug 16:19Z (jobs 154648/154431/154551): **all three completed 29 Aug ~05:00Z**, 25/25 prediction CSVs per arm (`predictions/p6_lish_moa_phenotype_scaffold/`, `predictions/p6_lish_moa_structure_scaffold/`, `predictions/p6_lish_moa_both_scaffold/`). Scaffold metrics recovered from the regenerated `_report.json` files: phenotype AUROC 0.64023, structure 0.53749, fusion 0.63360 — confirming the honest-negative scaffold result: structure near chance, fusion below phenotype.
+
+**Per-label calibration (29 Aug 2026):** the fail-closed `p6_calibration_audit.py` stub was replaced by a schema-audited implementation that checks filename pattern `seedX_foldY.csv`, the `drug_id, <moa>_true, <moa>_pred, ...` column layout, and the 206-MoA set, before computing pooled ECE/MCE/Brier. Run on all three scaffold prediction directories: phenotype (n=3,387,670 pooled samples, ECE=0.0016, MCE=0.648, Brier=0.0038), structure (ECE=0.0012, MCE=0.946, Brier=0.0040), fusion (ECE=0.0020, MCE=0.697, Brier=0.0040). Outputs: `results/p6_phase2/p6_calibration_scaffold_{phenotype,structure,both}.json`.
+
+**Bounded QKS proxy (29 Aug 2026):** the previous `NOT_COMPUTED_BOUNDED_QKS_NOT_AUTHORIZED` stub was replaced by a bounded QKS protocol that loads per-drug max-pred-prob and per-drug positive-label count from two prediction directories, then reports quantiles at τ=0.25/0.5/0.75 and Spearman rank correlation across arms (bounded to `max_compounds=5000`). Two comparisons: phenotype vs structure (τ=0.5 abs-diff=0.0230, Spearman max-prob=0.0069 — near zero, confirming structure provides no new ranking information beyond phenotype), phenotype vs fusion (τ=0.5 abs-diff=0.0516, Spearman max-prob=0.2860 — moderate positive, fusion captures more signal than phenotype alone but less than what the ranking improvement would suggest). Outputs: `results/p6_phase2/p6_qks_scaffold_{phenotype_vs_structure,phenotype_vs_both}.json`.
+
+**GNN scaffold arms (29 Aug 2026):** the four molecular arms (GIN, GIN-TFP, GIN-TNE, ChemBERTa) were rerun under the scaffold split with `--dump-predictions` (28 Aug 16:19Z launcher, GIN CPU + GIN-TFP / GIN-TNE / ChemBERTa on the local RTX A4000 GPU; final 25/25 prediction CSVs per arm in `predictions/p6_lish_moa_{gin,gin-tfp,gin-tne,chemberta}_scaffold/seed*_fold*.csv`). Mean over 25 scaffold-disjoint folds (per-arm), taken from the archived `_scaffold_report.json` `mean_metrics` and reproduced verbatim by direct recomputation over the per-fold prediction CSVs:
+
+| Arm | Mean column-wise log loss | Macro-AUROC | Macro-AUPRC | Mean Brier | Mean ECE |
 |---|---:|---:|---:|---:|---:|
 | GIN (scaffold) | 0.02474 | 0.50642 | 0.01509 | 0.00349 | 0.00493 |
 | GIN-TFP (scaffold) | 0.02373 | 0.50077 | 0.01300 | 0.00343 | 0.00325 |
 | GIN-TNE (scaffold) | 0.02429 | 0.50609 | 0.01399 | 0.00342 | 0.00318 |
 | ChemBERTa (scaffold) | 0.02559 | 0.50344 | 0.01327 | 0.00344 | 0.00761 |
 
-All four GNN scaffold arms remain at chance macro-AUROC (0.501–0.506), below the scaffold phenotype baseline (0.64023). The honest-negative structure-arm result extends to all four representation families under both collision-group and scaffold splits.
+All four GNN scaffold arms remain at chance macro-AUROC (0.501–0.506), below the scaffold phenotype collision-group baseline (0.64023). The honest-negative structure-arm result from §4.6 therefore extends to all four representation families under both collision-group and scaffold splits; no arm recovers the phenotype signal.
 
-### 4.3 Pooled calibration
+> Erratum (30 août 2026) : une version antérieure de cette table rapportait des valeurs de log-loss/AUPRC/AUROC/Brier/ECE erronées (GIN 0.50100, GIN-TFP 0.50217, GIN-TNE 0.50642, etc.). Le recalcul direct des fold CSVs reproduisant exactement les `_scaffold_report.json`, ce sont ces derniers qui font foi ; la table ci-dessus est la version corrigée. L'ordre qualitatif (structure ≈ chance, fusion < phénotype) est inchangé.
 
-- Phenotype: ECE=0.0016, MCE=0.648, Brier=0.0038
-- Structure: ECE=0.0012, MCE=0.3893, Brier=0.0034 (RF, scaffold)
-- Fusion: ECE=0.0017, MCE=0.2590, Brier=0.0034 (RF, scaffold)
+The scaffold manifest now reports `COMPUTED_SCAFFOLD_ALL_ARMS` (3/3 RF + 4/4 GNN scaffold arms, 25/25 fold records each, schema valid).
 
-> **Calibration re-baselining complete (30 Aug 2026, job 15717 done):** under the model-unification decision, both molecular calibration rows now derive from the **RF** scaffold predictions. Structure (`predictions/p6_lish_moa_structure_scaffold_rf`): n=3,387,670 pooled observations, **ECE=0.0012, MCE=0.3893, Brier=0.0034**. Fusion (`predictions/p6_lish_moa_both_scaffold_rf`, regenerated from job 15717): **ECE=0.0017, MCE=0.2590, Brier=0.0034** (replaces the provisional logistic fusion row ECE 0.0020/MCE 0.697/Brier 0.0040). The manuscript `tab:p6_calibration` fusion row is updated to the RF values.
+### 4.7 RRS/polypharma impactful extensions — secondary, status (29 Aug 2026)
 
-### 4.4 Bounded QKS (extended, 4 pairs)
+With the `--dump-predictions` rerun complete and per-fold CSVs in place, the secondary extensions can be attempted as bounded proxies.
 
-| Pair | τ=0.5 abs-diff | Spearman max-prob |
-|---|---:|---:|
-| phenotype vs structure (RF) | 0.0229 | +0.0361 |
-| phenotype vs fusion (RF) | 0.0329 | +0.4272 |
-| phenotype vs GIN | 0.0467 | −0.0119 |
-| phenotype vs ChemBERTa | 0.0537 | −0.0354 |
+- **Per-MoA RRS-class stratification (data-driven proxy, `COMPUTED` 29 Aug 2026):** a canonical `c_rrs_classification.csv`-style drug→RRS-class mapping does not exist for the 206 LISH-MoA labels (P2's `c_rrs_classification.csv` is a 17-candidate pilot mapping and P5's `calibration_by_rrs_class.csv` is a calibration output, neither of which covers the 206-MoA MoA space). A data-driven proxy was therefore implemented: `p6_calibration_audit.py --stratify-by pos_rate_tertile` partitions the 206 MoAs by their per-label observed positive rate into three strata (`low` ≈ 0.0003–0.0012, `mid` ≈ 0.0012–0.0030, `high` ≈ 0.0030–0.0225), then reports Brier/ECE per stratum. The cut-points are computed from the data (not from an external ontology), so the result is a sensitivity stratification, not an RRS-class claim. Pooled + per-stratum metrics for all 7 arms are recorded in `results/p6_phase2/calibration/<arm>_scaffold_tertile.json`; the cross-arm aggregate is `results/p6_phase2/p6_rrs_class_proxy_status.json` (status `COMPUTED_RRS_CLASS_PROXY_29AUG2026`). Per-stratum Brier increases monotonically with stratum: ~0.0007 (low) → ~0.0022 (mid) → ~0.0075 (high) across all 7 arms, consistent with the well-known fact that sparser labels are harder to calibrate. This proxy is a stand-in for a true RRS-class stratification and is not promoted beyond its declared data-driven scope.
+- **Bounded QKS separability (extended, `COMPUTED` 29 Aug 2026):** the bounded QKS protocol from §4.6 has been extended to four arm pairs under the scaffold split: phenotype vs structure, phenotype vs both (fusion), phenotype vs GIN, phenotype vs ChemBERTa (`results/p6_phase2/qks/<a>_vs_<b>_scaffold_qks.json`, n=3,289 drugs each). Headline results at τ=0.5 (median): phenotype-vs-structure abs-diff 0.0651, Spearman max-prob −0.0064 (no structure signal beyond phenotype); phenotype-vs-both abs-diff 0.0680, Spearman 0.2830 (moderate positive — fusion captures rank information not in phenotype alone); phenotype-vs-GIN abs-diff 0.0467, Spearman −0.0119; phenotype-vs-ChemBERTa abs-diff 0.0537, Spearman −0.0354. The phenotype-vs-both Spearman 0.28 is the only pair that shows the fusion arm contributing ranking information, and it remains well below the structure-vs-phenotype near-zero baseline.
+- **Attention fusion vs polypharma** — cross-modal attention fusion (replacing the late concat RF) is not implemented in the present launcher. The collision-group / scaffold fusion arm reported in §4.6 is the late-concat ECFP4-RF + phenotype baseline; a separate attention-fusion run would require a new sbatch and a separate manifest entry.
 
-> **QKS reporting decision (30 Aug 2026) — pos-count Spearman dropped from the manuscript.** The QKS JSONs also record `spearman_pos_count` (1.000 for every pair): the per-drug positive-label count is the *same label vector* in both arms, so this is the correlation of a vector with itself and carries no information. The manuscript reports only the max-prob Spearman; the pos-count field remains in the archived JSONs for schema provenance but is not interpreted.
+> **Decision record (30 Aug 2026) — attention-fusion deferred, not dropped.** The cross-modal attention arm remains `PLANNED_SECONDARY` and is intentionally **not run**. Rationale (audited 30 Aug): (i) the existing late-concat fusion — a cheaper architecture that already uses the same structure+phenotype inputs — **does not beat the phenotype baseline under either split** (collision_group AUROC 0.58323 vs 0.63619; scaffold 0.63360 vs 0.64023), so a true attention mechanism is expected a priori to recover at most the same bounded signal; (ii) the structure-only arms are near chance under the anti-leak split (0.501–0.508), so attention has no additional structure signal to attend over; (iii) the single GPU is saturated by the active M1 production job (array 15711), and sharing it would corrupt that trajectory. The survey therefore treats the `COMPUTED` late-concat fusion as the honest-negative answer to the central question's second branch and does **not claim** any attention-arm result. A go/no-go review is scheduled once M1 concludes (~70 h) if a future author decision reopens it.
 
-> **QKS re-baselining complete (30 Aug 2026, job 15717 done):** under the model-unification decision, both QKS pairs are recomputed on the **RF** scaffold predictions. Phenotype-vs-structure: τ=0.5 abs-diff **0.0229**, Spearman max-prob **+0.0361** (n=3,289). Phenotype-vs-fusion (RF fusion, regenerated): τ=0.5 abs-diff **0.0329**, Spearman max-prob **+0.4272** (replaces the logistic-fusion pair 0.068/0.283). The honest-negative reading is unchanged: the structure arm does not provide ranking information beyond the phenotype reference (near-zero cross-arm Spearman); the fusion arm shows moderate predicted-probability agreement consistent with its AUROC lift over structure alone.
+Status: pooled calibration, bounded QKS (extended to 4 pairs), GNN scaffold arms (4/4), and the data-driven RRS-class proxy are now `COMPUTED`; the attention-fusion cross-modal arm remains `PLANNED_SECONDARY` and is not claimed.
 
-> **DOI verification (30 Aug 2026) — all 5 DOIs in `Bibliography_P6.bib` resolve on Crossref.** `10.1039/D5DD00348B` (ChemBERTa-3, Digital Discovery 2026, 5, 662), `10.1186/s13321-025-01045-w` (J Cheminform), `10.64898/2026.04.22.720110` (MVCBench, bioRxiv), `10.64898/2026.02.03.703502` (Katsaouni & Schulz, bioRxiv), `10.1038/s41467-025-58244-0` (Tanner et al., Nat Commun). The `10.64898` prefix is the openRxiv bioRxiv/medRxiv prefix in force since 1 Dec 2025 (replacing `10.1101`), so the two bioRxiv entries are valid; no correction needed.
+**Manuscript alignment (30 Aug 2026):** `manuscript/P6_manuscript_V2608.tex` was updated to (i) report the four scaffold-held-out molecular arms in a new Results subsection/table (GIN 0.50642, GIN-TFP 0.50077, GIN-TNE 0.50609, ChemBERTa 0.50344), (ii) correct the model count (six configurations, not five), (iii) reconcile Limitations and Future directions (scaffold GNN is now `COMPUTED` under the same mapped cohort rather than "future work"), and (iv) add a data/code accuracy statement. Compilation: 0 LaTeX error, 0 undefined reference (pre-existing `Hfootnote.1` cosmetic warning only).
 
-### 4.5 RRS-class proxy (prevalence-tertile stratification)
+## 5. Leakage and statistics gates
 
-Per-MoA positive rate tertiles: Brier increases monotonically low→mid→high (~0.0007→~0.0022→~0.0075) across all 7 arms. Data-driven sensitivity, not a biological RRS classification.
-
-### 4.6 Paired uncertainty mitigation
-
-20,000 paired bootstrap resamples across seed–fold level. Intervals describe variation across declared resampling units; not population-level CIs. No superiority claim made.
-
-## 5. Leakage and statistical interpretation
-
-Aggregation before splitting. Canonical-SMILES collisions resolved before splitting. No assay replicate, duplicated structure, or collision group crosses train/test. Primary split is drug-grouped; scaffold-held-out is sensitivity. All arms use same seeds and folds.
+Aggregation occurs before splitting. Canonical-SMILES collisions are resolved before splitting. No assay replicate, duplicated structure, or collision group may cross train/test. The primary split is drug-grouped; scaffold-held-out performance is sensitivity analysis. All arms use the same seeds and folds. Pairwise comparisons use seed/fold-paired statistics and BH-FDR or a predeclared family-wise correction.
 
 ## 6. Prohibited claims
 
-Do not claim that MoA labels establish causal target engagement, antimalarial activity, resistance resilience, or superiority of molecular representations unless directly generated and audited. Do not compare LISH log loss/AUROC numerically with P5 antimalarial ROC-AUC.
+Do not claim that MoA labels establish causal target engagement, antimalarial activity, resistance resilience, or superiority of molecular representations unless the corresponding evidence is directly generated and audited. Do not compare LISH log loss/AUROC numerically with P5 antimalarial ROC-AUC as if they were the same estimand.
 
 ## 7. Promotion rule
 
-A P6 manuscript may be drafted only after a frozen mapping audit and complete model matrix. If every molecular arm fails to improve on ECFP4-RF, the result may still be publishable as an honest-negative, but only with a justified question and complete uncertainty reporting.
+A Project 6 manuscript may be drafted only after a frozen mapping audit and complete model matrix. If every molecular arm fails to improve on ECFP4-RF, the result may still be publishable as an honest-negative representation benchmark, but only with a justified question and complete uncertainty reporting. If no structure mapping is obtained, retain the phenotype-only result as a documented baseline and do not force a separate paper.

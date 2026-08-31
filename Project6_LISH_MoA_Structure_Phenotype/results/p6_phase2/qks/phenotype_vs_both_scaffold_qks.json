@@ -1,11 +1,11 @@
 {
   "status": "COMPUTED",
-  "split": "scaffold",
-  "label_a": "phenotype",
-  "label_b": "fusion_both_rf",
+  "split": "unknown",
+  "label_a": "arm_a",
+  "label_b": "arm_b",
   "max_compounds": 5000,
   "arm_a_path": "results/p6_phase2/predictions/p6_lish_moa_phenotype_scaffold",
-  "arm_b_path": "results/p6_phase2/predictions/p6_lish_moa_both_scaffold_rf",
+  "arm_b_path": "results/p6_phase2/predictions/p6_lish_moa_both_scaffold",
   "arm_a_n_drugs": 3289,
   "arm_b_n_drugs": 3289,
   "arm_a_folds": [
@@ -217,21 +217,21 @@
     "taus": {
       "0.25": {
         "quantile_arm_a": 0.0379755172581208,
-        "quantile_arm_b": 0.03,
-        "abs_diff": 0.007975517258120804
+        "quantile_arm_b": 0.00273463549092412,
+        "abs_diff": 0.03524088176719668
       },
       "0.5": {
         "quantile_arm_a": 0.07618701406685674,
-        "quantile_arm_b": 0.043333333333333335,
-        "abs_diff": 0.032853680733523405
+        "quantile_arm_b": 0.008184491656720638,
+        "abs_diff": 0.0680025224101361
       },
       "0.75": {
         "quantile_arm_a": 0.2100095035327786,
-        "quantile_arm_b": 0.06333333333333334,
-        "abs_diff": 0.1466761701994453
+        "quantile_arm_b": 0.039372898638248444,
+        "abs_diff": 0.17063660489453017
       }
     },
-    "spearman_max_prob": 0.4272291224579252,
+    "spearman_max_prob": 0.2830325332783181,
     "spearman_pos_count": 1.0
   },
   "interpretation": "QKS at median (tau=0.5) is the headline separability; tau=0.25/0.75 are robustness. Spearman on max-prob cross-arm and on positive-count cross-arm. The lower the abs_diff, the more the two arms agree on the predicted-prob and positive-label distributions."

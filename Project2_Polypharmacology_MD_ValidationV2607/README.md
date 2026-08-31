@@ -2,7 +2,7 @@
 
 **Status checkpoint (30 August 2026):** docking/RRS/ACSI/PNS analysis complete; Set-C pilot COMPLETE (16/16 trajectories PASS-QC); post-production chain COMPLETE (manifest v3, qc_exit_code=0, md_rrs_exit_code=0); pilot MD-RRS COMPUTED_WITH_COHORT_CONTRACT (PP-01/PP-02 → Class A over PfCRT;PfDHFR); Set-C MM-GBSA computed 16/16. Full-panel (17×8=136-row) MD-RRS remains NOT_COMPUTED by design. The V2609 LaTeX release is maintained separately from the immutable V2607 source files. The current manuscript framing is computational triage and interpretation calibration, not biological validation. See `docs/P2_V2609_IMPLEMENTATION_PLAN.md`, `docs/P2_V2609_NARRATIVE_PIVOT_PLAN.md`, and `docs/P2_V2609_MD_AUDIT_MATRIX.md`.
 
-**Roadmap:** `docs/P1_P5_RRS_POLYPHARMA_ROADMAP.md`
+**Roadmap:** `P1_P5_RRS_POLYPHARMA_ROADMAP.md`
 
 ## Scientific design
 
@@ -33,7 +33,7 @@ The bounded pilot contains 16 prepared systems (PP-01/PP-02 × PfDHFR/PfCRT muta
 
 ## Canonical locations
 
-- Archived V2607 source manuscript: `_archives/V2607_manuscript/Polypharmacology_MD_Validation_V2607.tex`
+- Immutable V2607 source manuscript: `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex`
 - Active V2609 main manuscript: `manuscript/LaTeX/Polypharmacology_MD_Validation_V2609.tex`
 - Active V2609 Supporting Information: `manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2609.tex`
 - Active V2609 cover letter: `manuscript/LaTeX/Cover_Letter_V2609.tex`

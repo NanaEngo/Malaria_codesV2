@@ -44,7 +44,7 @@
 \usepackage{cleveref}
 % SM cross-refs (labels SM-* live in the supplementary document)
 \usepackage{xr}
-\externaldocument[SM-]{Polypharmacology_MD_Validation_SM_V2609}
+\externaldocument[SM-]{Polypharmacology_MD_Validation_SM_V2607}
 
 % cleveref names
 \crefname{table}{Table}{Tables}
@@ -306,7 +306,7 @@ On the two-target set, PNS and RRS were only weakly associated ($\rho=\num{-0.20
 
 \subsection{Computational prioritization intersection}
 
-Requiring Class~A or A*, ACSI $>$ \num{0.5}, and above-mean PNS leaves PP-15 on the two-target panel; PP-15 was, however, included only as a feasibility probe outside the \num{17}-candidate Set-C estimand (see \cref{sec:setc_pilot}; the PP-15 feasibility details are provided in the Supporting Information) and so is not a product of the Set-C prioritisation pipeline. That intersection is reported as a shortlist for experiment, not as evidence of activity or resistance resilience.
+Requiring Class~A or A*, ACSI $>$ \num{0.5}, and above-mean PNS leaves PP-15 on the two-target panel; PP-15 was, however, included only as a feasibility probe outside the \num{17}-candidate Set-C estimand (see \cref{sec:setc_pilot} and the PP-15 feasibility subsection in the Supporting Information) and so is not a product of the Set-C prioritisation pipeline. That intersection is reported as a shortlist for experiment, not as evidence of activity or resistance resilience.
 
 \subsection{Parent-study MD check (non-overlapping cohort)}
 
@@ -370,9 +370,9 @@ Only the PfCRT--ligand 214 system yields an interpretable MM-GBSA endpoint estim
 
 \subsection{Docking-RRS and short-MD structural retention are non-equivalent estimands}\label{sec:non_equiv_estimands}
 
-The primary and secondary quantities are summarized in the Supporting Information (\cref{SM-tab:s6_cohort_estimands,SM-tab:s13_evidence_scope,SM-tab:s18_rrs_margin_sensitivity}).
+The primary and secondary quantities are summarized in the Supporting Information (Tables S6 and S13).
 
-A 16-system pilot on PP-01 and PP-02 asked whether short trajectories and MM-GBSA would recover the docking-RRS pattern. All 16 trajectories met the geometric acceptance checks. For the eight mutants with a docking wild-type reference, docking predicted weaker mutant scores, while trajectory metrics more often indicated retained or tighter contacts (seven of eight comparisons disagreed in direction). This divergence is the principal calibration result: docking scores describe a static empirical scoring comparison, whereas the short MD metrics describe local geometric retention over the tested trajectory. Neither measurement is a direct estimate of affinity, residence time, target engagement, or resistance. MM-GBSA mutant/wild-type ratios exceeded \num{100}\,\% for eight of twelve mutants; those ratios are endpoint comparisons, not free-energy measures of resilience. The pilot therefore does not reproduce docking-RRS and does not imply resistance or tighter binding. Full values and the threshold-margin sensitivity analysis are in the Supporting Information (\cref{SM-fig:s3_setc_rrs_scatter,SM-tab:s8_setc_mmgbsa,SM-tab:s18_rrs_margin_sensitivity}).
+A 16-system pilot on PP-01 and PP-02 asked whether short trajectories and MM-GBSA would recover the docking-RRS pattern. All 16 trajectories met the geometric acceptance checks. For the eight mutants with a docking wild-type reference, docking predicted weaker mutant scores, while trajectory metrics more often indicated retained or tighter contacts (seven of eight comparisons disagreed in direction). This divergence is the principal calibration result: docking scores describe a static empirical scoring comparison, whereas the short MD metrics describe local geometric retention over the tested trajectory. Neither measurement is a direct estimate of affinity, residence time, target engagement, or resistance. MM-GBSA mutant/wild-type ratios exceeded \num{100}\,\% for eight of twelve mutants; those ratios are endpoint comparisons, not free-energy measures of resilience. The pilot therefore does not reproduce docking-RRS and does not imply resistance or tighter binding. Full values are in the Supporting Information (\cref{SM-fig:s3_setc_rrs_scatter,SM-tab:s8_setc_mmgbsa}).
 
 As a bounded consistency check, we intersected the docking-RRS retention criterion (class-A, RRS $\geq$ \qty{80}{\percent}) with pilot MD-RRS retention parity (mean minimum-distance ratio $<$ \num{100}) at pilot scope. Seven of twelve gate-eligible rows passed both gates: PP-01 satisfied the two-target gate (PfCRT via K76A, PfDHFR in four of four mutants), whereas PP-02 did not, because its PfDHFR states lack a docking wild-type anchor under the \qty{5.0}{\kcalmol} eligibility rule and only one target was gate-eligible. The single row above parity (PP-01 PfCRT K76T, \num{102.7}) lies within the \qty{2.0}{\kcalmol} endpoint noise floor and is read as retention, not gain (\cref{SM-tab:s15_robustness_transfer}).
 
