@@ -1,0 +1,57 @@
+% ============================================================================
+% Cover Letter — Paper 5 (Molecular Diversity / Springer)
+% Target: Molecular Diversity
+% ============================================================================
+\documentclass[11pt,a4paper]{letter}
+
+\usepackage[margin=1.9cm]{geometry}
+\setlength{\parskip}{0.3em}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{siunitx}
+\sisetup{
+  detect-all           = true,
+  group-minimum-digits = 4,
+}
+
+\signature{Myke Vital Sao Temgoua \\ \small Corresponding Author}
+\address{%
+  University of Yaound\'{e} I \\
+  Department of Physics, Faculty of Science \\
+  P.O. Box 812, Yaound\'{e}, Cameroon \\
+  \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm}
+}
+
+\begin{document}
+
+\begin{letter}{%
+  The Editors \\
+  \textit{Molecular Diversity} \\
+  Springer Nature
+}
+
+\opening{Dear Editors,}
+
+\noindent 31 August 2026
+
+We submit for consideration as a Research Article the manuscript entitled \textbf{``Scaffold-Controlled Evaluation of Molecular Representations for Antimalarial Activity Prediction''} to \textit{Molecular Diversity}.
+
+The manuscript addresses the central question of whether advanced molecular representations---graph neural networks, sequence transformers, and topologically enriched architectures---improve antimalarial activity prediction beyond classical fingerprints when evaluated under chemical-distribution shift. This question is directly relevant to \textit{Molecular Diversity}'s scope in computational methods for library design and molecular property prediction, particularly given the journal's emphasis on quantitative structure-activity relationships and the practical utility of molecular descriptors.
+
+We report a controlled five-fold cross-validation benchmark, repeated over five random seeds (\num{25} fold--seed replicates per model), on a frozen panel of \num{19836} African antimalarial natural products. The evaluation compares ECFP4 random forests against four learned architectures: GIN (Graph Isomorphism Network), GIN--TFP (GIN fused with persistent-homology descriptors), GIN--TNE (GIN fused with tensor-network embeddings), and ChemBERTa (pretrained sequence transformer). Both stratified-random and Bemis--Murcko scaffold splits are examined; the scaffold protocol is framed as a distribution shift rather than a stricter evaluation, following recent molecular out-of-distribution specifications \citep{sheridan2024realworld,bash2025umap,fooladi2025ood}.
+
+Three protocol features distinguish the study. First, pretrained ChemBERTa weights are restored independently before fine-tuning in \emph{every} fold, eliminating the cross-fold weight-transfer channel that can artificially inflate transformer performance---a safeguard rarely documented in molecular benchmarks yet critical for valid comparison. Second, persistent-homology (via filtration, persistence diagrams, and persistence images) and tensor-network descriptors (via Tucker decomposition of adjacency and Laplacian tensors) are inserted into a graph architecture and evaluated under the same scaffold-held-out regime on an antimalarial natural-product cohort---a combination not covered by existing representation surveys. Third, a nearest-training-neighbour Tanimoto decile stratification localises the fingerprint advantage within the chemical similarity distribution, answering whether representation--task alignment compensates for the learned models' out-of-distribution extrapolation deficit or whether the advantage is confined to the distribution tail.
+
+Under the scaffold protocol, ECFP4--RF attained the highest mean ROC AUC (\num{0.8300}), ahead of GIN--TFP (\num{0.8138}), GIN--TNE (\num{0.8090}), GIN (\num{0.8047}), and ChemBERTa (\num{0.7867}). All four contrasts against ECFP4--RF remained statistically significant after Benjamini--Hochberg correction within the scaffold family (adjusted $p \le \num{0.0378}$). The Tanimoto decile analysis reveals that the ECFP4 advantage is concentrated in the out-of-distribution tail (deciles D\num{1}--D\num{4}, $\Delta \in \numrange{0.016}{0.027}$) and in D\num{9} ($\Delta = +\num{0.017}$), while mid-range deciles D\num{5}--D\num{8} exhibit near-parity ($\Delta \in \numrange{0.001}{0.007}$). Representation--task alignment therefore does not compensate for the learned models' OOD deficit on this panel; the fingerprint advantage is confined to the chemical frontier. Projection-weight analysis in the fusion architectures identified persistent-image dimensions as the most salient block in GIN--TFP, yet this salience did not improve ranking performance---a negative result with implications for the practical utility of topological molecular descriptors.
+
+The same ECFP4--RF $>$ GIN ordering was recovered on a molecule-disjoint external ChEMBL transfer panel. A phenotype-only LISH mechanism-of-action reference is provided in the Supporting Information as orthogonal pharmacological context; its metrics are not numerically comparable with the molecular structure-based results, and no structure-to-MoA claim is made. The findings are presented as data set- and protocol-bounded conclusions documenting the OOD response of the evaluated panel, splits, architectures, and training budgets; they do not generalise to all learned molecular models but provide empirical benchmarks for antimalarial natural-product discovery workflows.
+
+This work is relevant to \textit{Molecular Diversity} readers engaged in molecular descriptor selection, library design for malaria drug discovery, and the evaluation of machine learning methods for structure-activity prediction. The explicit documentation of fold-independent transformer initialisation, the controlled insertion of topological descriptors into graph architectures, and the distance-resolved performance decomposition via Tanimoto deciles provide methodological rigor often missing from molecular representation comparisons. Code, frozen splits, trained checkpoints, and the full Supporting Information are available in the public repository (\url{https://github.com/NanaEngo/Malaria_codesV2}); a citable Zenodo archive is being finalised and its DOI will be inserted at proof stage.
+
+The work is original, has not been published previously, is not under consideration elsewhere, has been approved by all authors, and the authors declare no competing financial interests.
+
+\closing{We thank you for your consideration.}
+
+\end{letter}
+\end{document}
+
