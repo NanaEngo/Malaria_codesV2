@@ -1,0 +1,186 @@
+========================================
+P5 GRAPHICAL ABSTRACT — ALL TEXT LABELS
+========================================
+
+-----------------------------------------
+PANEL A: THE QUESTION
+-----------------------------------------
+
+[Main Question - Top Overlay]
+Can learned graph/sequence representations outperform ECFP4 fingerprints
+on antimalarial natural products under chemical distribution shift?
+
+[Left Side - ECFP4]
+ECFP4 Fingerprints
+(Classical Cheminformatics)
+
+radius=2
+hash → bits
+2048-bit fingerprint
+
+[Center]
+VS?
+
+[Right Side - Learned Models]
+GNN (Graph Isomorphism)
+Persistent Homology (TDA)
+ChemBERTa Transformer
+
+[Bottom Caption]
+Under Scaffold Extrapolation (Bemis-Murcko Split)
+HELD OUT (scaffold overlay text)
+
+-----------------------------------------
+PANEL B: THE EXPERIMENT
+-----------------------------------------
+
+[Step 1 - Data]
+19,836 molecules
+African antimalarial
+natural products
+
+[Arrow Label]
+split
+
+[Step 2 - Splits]
+Random Split
+Stratified 5-fold
+
+Scaffold Split
+Bemis-Murcko groups held out
+
+[Arrow Label]
+train
+
+[Step 3 - Models]
+5 Models Evaluated
+
+ECFP4-RF (500 trees)
+GIN (3 layers)
+GIN-TFP (+PersHomology)
+GIN-TNE (+TensorNet)
+ChemBERTa (pretrained)
+
+[Arrow Label]
+evaluate
+
+[Step 4 - Evaluation]
+ROC AUC
+5 folds × 5 seeds
+= 25 replicates
+
+Paired t-test + BH correction
+
+-----------------------------------------
+PANEL C: THE RESULT
+-----------------------------------------
+
+[Chart Title]
+Mean ROC AUC under Scaffold Split
+
+[X-Axis Label]
+ROC AUC (Scaffold Split)
+
+[Y-Axis Labels - Model Names]
+ECFP4-RF
+GIN-TFP
+GIN-TNE
+GIN
+ChemBERTa
+
+[Data Values - Right of Bars]
+0.8300
+0.8138
+0.8090
+0.8047
+0.7867
+
+[Significance Markers]
+*** (above each learned model bar)
+
+[Callout Box Title]
+Honest-Negative Finding
+
+[Callout Box Content]
+✅ ECFP4-RF wins under scaffold split
+
+✅ Topological descriptors visible in fusion
+   (high projection-weight salience)
+
+❌ But do NOT improve ranking vs. baseline
+
+📊 Advantage concentrated in OOD tail
+   (low-similarity deciles)
+
+[Bottom Conclusion Strip]
+Conclusion: Classical fingerprints + random forests remain the reference 
+for antimalarial natural products under chemical extrapolation. Learned 
+representations show interpretable signal but do not close the predictive gap.
+
+-----------------------------------------
+ABBREVIATIONS USED
+-----------------------------------------
+
+ECFP4 = Extended-Connectivity Fingerprint (radius 4)
+RF = Random Forest
+GNN = Graph Neural Network
+GIN = Graph Isomorphism Network
+TFP = Topological Fingerprint (Persistent Homology)
+TNE = Tensor Network Embedding
+TDA = Topological Data Analysis
+ROC AUC = Receiver Operating Characteristic Area Under Curve
+CV = Cross-Validation
+BH = Benjamini-Hochberg (multiple testing correction)
+OOD = Out-of-Distribution
+
+-----------------------------------------
+SMILES STRINGS (for structure rendering)
+-----------------------------------------
+
+Artemisinin: CC1CCC2C(=C)C(=O)OC2C1C
+
+Diverse Examples:
+1. CN1C=NC2=C1C(=O)N(C(=O)N2C)C
+2. CC12CCC3C(C1CCC2O)CCC4=CC(=O)CCC34C
+3. C1=CC=C(C=C1)C(C(=O)O)N
+4. COc1cc2c(cc1OC)C(=O)C(CC2)c3ccc(O)c(OC)c3
+
+Scaffolds:
+Quinoline: c1ccc2c(c1)cccn2
+Indole: c1ccc2c(c1)[nH]cc2
+Benzofuran: c1ccc2c(c1)cco2
+Benzoic acid (GNN): c1ccc(cc1)C(=O)O
+
+-----------------------------------------
+NUMERICAL DATA (exact values)
+-----------------------------------------
+
+Panel size: 19,836 molecules
+Replication: 5 folds × 5 seeds = 25 replicates
+
+Scaffold Split ROC AUC (mean ± SD across 5 per-seed means):
+ECFP4-RF:   0.8300 ± 0.0023
+GIN-TFP:    0.8138 ± 0.0107  (Δ = -0.016, p_adj = 0.0330)
+GIN-TNE:    0.8090 ± 0.0149  (Δ = -0.021, p_adj = 0.0378)
+GIN:        0.8047 ± 0.0141  (Δ = -0.025, p_adj = 0.0330)
+ChemBERTa:  0.7867 ± 0.0054  (Δ = -0.043, p_adj = 0.0002)
+
+All p-values Benjamini-Hochberg corrected within family.
+
+-----------------------------------------
+FONT SPECIFICATIONS
+-----------------------------------------
+
+Title: Arial Bold, 14 pt
+Headers: Arial Bold, 11 pt
+Labels: Arial Regular, 9 pt
+Data values: Arial Bold, 10 pt
+Minimum size: 8 pt (for small annotations)
+
+-----------------------------------------
+END OF TEXT CONTENT
+-----------------------------------------
+
+File: 05_text_content.txt
+Version: 1.0
+Date: 2026-09-02

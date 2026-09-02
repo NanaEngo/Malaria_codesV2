@@ -1,0 +1,361 @@
+{
+  "metadata": {
+    "title": "P5 Graphical Abstract - Scaffold-Controlled Molecular Representation Evaluation",
+    "journal": "Journal of Computer-Aided Molecular Design",
+    "manuscript_version": "V2608",
+    "created": "2026-09-02",
+    "dimensions": {
+      "width_mm": 170,
+      "height_mm": 100,
+      "dpi": 300,
+      "orientation": "landscape"
+    }
+  },
+  
+  "color_palette": {
+    "classical": {
+      "primary": "#2E86AB",
+      "secondary": "#A23B72",
+      "accent": "#FFD700"
+    },
+    "learned": {
+      "gnn": "#F18F01",
+      "topological": "#8E44AD",
+      "transformer": "#E74C3C"
+    },
+    "neutral": {
+      "background": "#F8F9FA",
+      "text": "#212529",
+      "grid": "#DEE2E6"
+    }
+  },
+  
+  "panels": [
+    {
+      "id": "A",
+      "name": "THE_QUESTION",
+      "position": {
+        "y_start": 0,
+        "y_end": 30,
+        "height_percent": 30
+      },
+      "elements": [
+        {
+          "type": "molecular_representation",
+          "name": "ECFP4_fingerprint",
+          "position": "left",
+          "components": [
+            {
+              "element": "molecular_structure",
+              "example_smiles": "CC(=O)Oc1ccccc1C(=O)O",
+              "note": "Aspirin as example"
+            },
+            {
+              "element": "circular_neighborhoods",
+              "radius": 2,
+              "visualization": "concentric_circles"
+            },
+            {
+              "element": "bit_vector",
+              "length": 2048,
+              "display": "compact_bar"
+            }
+          ],
+          "label": "ECFP4 Fingerprints\n(classical)",
+          "color": "#2E86AB"
+        },
+        {
+          "type": "separator",
+          "name": "versus_symbol",
+          "position": "center",
+          "content": "VS?",
+          "styling": {
+            "font_size": 24,
+            "font_weight": "bold",
+            "color": "#212529"
+          }
+        },
+        {
+          "type": "learned_representations",
+          "name": "GNN_topological_transformer",
+          "position": "right",
+          "components": [
+            {
+              "model": "GNN",
+              "icon": "molecular_graph",
+              "description": "Graph Neural Network\n(message passing)",
+              "color": "#F18F01"
+            },
+            {
+              "model": "Topological",
+              "icon": "persistent_homology",
+              "description": "Persistent Homology\n(TDA descriptors)",
+              "color": "#8E44AD"
+            },
+            {
+              "model": "Transformer",
+              "icon": "attention_mechanism",
+              "description": "ChemBERTa\n(sequence model)",
+              "color": "#E74C3C"
+            }
+          ]
+        },
+        {
+          "type": "caption",
+          "position": "bottom_center",
+          "content": "Under Scaffold Extrapolation (Bemis-Murcko split)",
+          "styling": {
+            "font_size": 11,
+            "font_weight": "bold",
+            "arrow": "right_pointing"
+          }
+        }
+      ],
+      "question_text": "Can learned graph/sequence representations outperform ECFP4 fingerprints\non antimalarial natural products under chemical distribution shift?"
+    },
+    
+    {
+      "id": "B",
+      "name": "THE_EXPERIMENT",
+      "position": {
+        "y_start": 30,
+        "y_end": 65,
+        "height_percent": 35
+      },
+      "workflow": [
+        {
+          "step": 1,
+          "name": "Data",
+          "icon": "database",
+          "content": {
+            "n_molecules": 19836,
+            "source": "African antimalarial natural products",
+            "example_structures": [
+              "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+              "CC12CCC3C(C1CCC2O)CCC4=CC(=O)CCC34C",
+              "C1=CC=C(C=C1)C(C(=O)O)N"
+            ]
+          },
+          "label": "19,836 molecules\nAfrican antimalarial\nnatural products"
+        },
+        {
+          "step": 2,
+          "name": "Splits",
+          "icon": "split_path",
+          "content": {
+            "random_split": {
+              "description": "Stratified 5-fold",
+              "icon": "shuffled_molecules"
+            },
+            "scaffold_split": {
+              "description": "Bemis-Murcko groups held out",
+              "icon": "framework_grouping",
+              "note": "Whole scaffold groups → test folds"
+            }
+          },
+          "label": "Random vs Scaffold\nSplit protocols"
+        },
+        {
+          "step": 3,
+          "name": "Models",
+          "icon": "stacked_boxes",
+          "content": [
+            {
+              "model": "ECFP4-RF",
+              "description": "2048-bit fingerprint + 500 trees",
+              "icon": "fingerprint",
+              "color": "#2E86AB"
+            },
+            {
+              "model": "GIN",
+              "description": "Graph Isomorphism Network",
+              "icon": "graph",
+              "color": "#F18F01"
+            },
+            {
+              "model": "GIN-TFP",
+              "description": "+ Topological Fusion (Persistent Homology)",
+              "icon": "topology",
+              "color": "#8E44AD"
+            },
+            {
+              "model": "GIN-TNE",
+              "description": "+ Tensor Network Embeddings",
+              "icon": "tensor",
+              "color": "#9B59B6"
+            },
+            {
+              "model": "ChemBERTa",
+              "description": "Pretrained Transformer (SMILES)",
+              "icon": "text",
+              "color": "#E74C3C"
+            }
+          ],
+          "label": "5 models\nevaluated"
+        },
+        {
+          "step": 4,
+          "name": "Evaluation",
+          "icon": "roc_curve",
+          "content": {
+            "metric": "ROC AUC",
+            "replication": "5 folds × 5 seeds = 25 replicates",
+            "statistics": "Paired t-test + BH correction"
+          },
+          "label": "ROC AUC\n5×5 CV"
+        }
+      ]
+    },
+    
+    {
+      "id": "C",
+      "name": "THE_RESULT",
+      "position": {
+        "y_start": 65,
+        "y_end": 100,
+        "height_percent": 35
+      },
+      "chart": {
+        "type": "horizontal_bar",
+        "title": "Mean ROC AUC under Scaffold Split",
+        "x_axis": {
+          "label": "ROC AUC",
+          "range": [0.75, 0.85],
+          "ticks": [0.75, 0.77, 0.79, 0.81, 0.83, 0.85]
+        },
+        "y_axis": {
+          "label": "Model",
+          "categories": [
+            "ECFP4-RF",
+            "GIN-TFP",
+            "GIN-TNE",
+            "GIN",
+            "ChemBERTa"
+          ]
+        },
+        "data": [
+          {
+            "model": "ECFP4-RF",
+            "value": 0.8300,
+            "error": 0.0023,
+            "color": "#2E86AB",
+            "significance": "reference",
+            "styling": {
+              "border": "bold",
+              "fill": "solid",
+              "pattern": "diagonal_hatching",
+              "marker": "gold_star"
+            }
+          },
+          {
+            "model": "GIN-TFP",
+            "value": 0.8138,
+            "error": 0.0107,
+            "color": "#8E44AD",
+            "significance": "***",
+            "delta_vs_baseline": -0.016,
+            "p_value_adjusted": 0.0330
+          },
+          {
+            "model": "GIN-TNE",
+            "value": 0.8090,
+            "error": 0.0149,
+            "color": "#9B59B6",
+            "significance": "***",
+            "delta_vs_baseline": -0.021,
+            "p_value_adjusted": 0.0378
+          },
+          {
+            "model": "GIN",
+            "value": 0.8047,
+            "error": 0.0141,
+            "color": "#F18F01",
+            "significance": "***",
+            "delta_vs_baseline": -0.025,
+            "p_value_adjusted": 0.0330
+          },
+          {
+            "model": "ChemBERTa",
+            "value": 0.7867,
+            "error": 0.0054,
+            "color": "#E74C3C",
+            "significance": "***",
+            "delta_vs_baseline": -0.043,
+            "p_value_adjusted": 0.0002
+          }
+        ]
+      },
+      "callout_box": {
+        "position": "right_of_chart",
+        "title": "Honest-Negative Finding",
+        "content": [
+          {
+            "icon": "checkmark",
+            "text": "ECFP4-RF wins under scaffold split"
+          },
+          {
+            "icon": "checkmark",
+            "text": "Topological descriptors visible in fusion\n(high projection-weight salience)"
+          },
+          {
+            "icon": "cross",
+            "text": "But do NOT improve ranking vs. baseline"
+          },
+          {
+            "icon": "chart",
+            "text": "Advantage concentrated in OOD tail\n(low-similarity deciles)"
+          }
+        ],
+        "styling": {
+          "border": "2px solid #212529",
+          "background": "#FFFACD",
+          "padding": "8px"
+        }
+      },
+      "conclusion_text": "Conclusion: Classical fingerprints + random forests remain the reference for antimalarial natural products under chemical extrapolation. Learned representations show interpretable signal but do not close the predictive gap."
+    }
+  ],
+  
+  "layout_grid": {
+    "type": "three_panel_horizontal",
+    "panel_heights": [30, 35, 35],
+    "margins": {
+      "top": 5,
+      "bottom": 5,
+      "left": 5,
+      "right": 5
+    },
+    "spacing_between_panels": 3
+  },
+  
+  "typography": {
+    "title": {
+      "font": "Arial",
+      "size": 14,
+      "weight": "bold"
+    },
+    "headers": {
+      "font": "Arial",
+      "size": 11,
+      "weight": "bold"
+    },
+    "labels": {
+      "font": "Arial",
+      "size": 9,
+      "weight": "regular"
+    },
+    "data_values": {
+      "font": "Arial",
+      "size": 10,
+      "weight": "bold"
+    }
+  },
+  
+  "accessibility": {
+    "color_blind_safe": true,
+    "high_contrast": true,
+    "min_text_size": 8,
+    "patterns_in_addition_to_color": true,
+    "alt_text": "Three-panel graphical abstract showing scaffold-controlled molecular representation benchmark. Panel A compares ECFP4 fingerprints versus learned graph/transformer models under chemical extrapolation. Panel B illustrates workflow from 19,836 antimalarial molecules through random and scaffold splits to five models evaluated by ROC AUC. Panel C shows horizontal bar chart where ECFP4-RF achieves highest ROC AUC (0.8300), statistically outperforming all learned models under scaffold split."
+  }
+}

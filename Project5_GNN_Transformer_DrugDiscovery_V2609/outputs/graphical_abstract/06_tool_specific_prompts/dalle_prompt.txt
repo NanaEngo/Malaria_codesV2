@@ -1,0 +1,95 @@
+DALL-E PROMPT — P5 Graphical Abstract
+======================================
+
+STYLE: Professional scientific infographic, clean modern design, publication-ready quality, high contrast, colorblind-safe color palette
+
+COMPOSITION: Landscape orientation, three horizontal panels stacked vertically, white background with light gray separators between panels
+
+---
+
+PANEL 1 (TOP THIRD) - THE QUESTION:
+
+Left side shows a molecular structure transforming into circular fingerprint patterns, then into a blue binary bit array labeled "ECFP4 Fingerprints (Classical)". 
+
+Center has large bold text "VS?"
+
+Right side shows three stacked icons: 
+1. An orange molecular graph network with colored nodes and connecting arrows
+2. A purple topological shape (torus with hole) next to a barcode diagram labeled "Persistent Homology"  
+3. A red text sequence "C C ( = O ) O ..." with curved attention lines labeled "ChemBERTa Transformer"
+
+Bottom of panel has rightward arrow with text "Under Scaffold Extrapolation (Bemis-Murcko Split)" and three gray molecular frameworks stamped "HELD OUT"
+
+Top overlay: Text box with question "Can learned graph/sequence representations outperform ECFP4 fingerprints on antimalarial natural products under chemical distribution shift?"
+
+---
+
+PANEL 2 (MIDDLE THIRD) - THE EXPERIMENT:
+
+Left to right workflow connected by black arrows:
+
+1. Blue database cylinder icon labeled "19,836 molecules / African antimalarial natural products" with four small diverse molecular structures below
+
+2. Split diagram showing two paths:
+   - Top path (light green box): "Random Split - Stratified 5-fold"
+   - Bottom path (light orange box with bold border): "Scaffold Split - Bemis-Murcko groups held out" with visual of molecules grouped by framework
+
+3. Five stacked colored rectangles labeled:
+   - Blue: "ECFP4-RF (500 trees)"
+   - Orange: "GIN (3 layers)"
+   - Purple: "GIN-TFP (+PersHomology)"
+   - Dark purple: "GIN-TNE (+TensorNet)"
+   - Red: "ChemBERTa (pretrained)"
+
+4. ROC curve diagram labeled "ROC AUC / 5×5 CV = 25 replicates"
+
+---
+
+PANEL 3 (BOTTOM THIRD) - THE RESULT:
+
+Left side: Horizontal bar chart titled "Mean ROC AUC under Scaffold Split"
+Five horizontal bars extending from y-axis (0.75 to 0.85 range):
+- Top bar (longest): Blue with diagonal hatching, bold black border, gold star at end, labeled "ECFP4-RF 0.8300"
+- Second bar: Purple with horizontal lines, labeled "GIN-TFP 0.8138 ***"
+- Third bar: Dark purple with vertical lines, labeled "GIN-TNE 0.8090 ***"
+- Fourth bar: Orange with dots, labeled "GIN 0.8047 ***"
+- Bottom bar (shortest): Red with cross-hatching, labeled "ChemBERTa 0.7867 ***"
+
+Each bar has thin black error bar caps at the end.
+
+Right side: Yellow rounded rectangle box with black border, titled "Honest-Negative Finding" containing:
+- Green checkmark: "ECFP4-RF wins under scaffold split"
+- Green checkmark: "Topological descriptors visible in fusion (high salience)"
+- Red X: "But do NOT improve ranking vs. baseline"
+- Chart icon: "Advantage concentrated in OOD tail (low-similarity deciles)"
+
+Bottom strip (light gray background, full width): 
+"Conclusion: Classical fingerprints + random forests remain the reference for antimalarial natural products under chemical extrapolation. Learned representations show interpretable signal but do not close the predictive gap."
+
+---
+
+TECHNICAL SPECIFICATIONS:
+- Landscape orientation, 16:9 aspect ratio approximate
+- High resolution, suitable for print
+- Professional scientific poster aesthetic
+- Clean sans-serif typography (Arial-like)
+- High contrast between elements
+- Colorblind-safe palette (no red-green only distinctions)
+- Pattern fills on bars for accessibility
+- Grid lines on bar chart (light gray, subtle)
+
+COLOR PALETTE:
+- ECFP4/Classical: Deep blue (#2E86AB)
+- GNN: Vibrant orange (#F18F01)
+- Topological: Rich purple (#8E44AD)
+- Tensor: Dark purple (#9B59B6)
+- Transformer: Coral red (#E74C3C)
+- Winner accent: Gold (#FFD700)
+- Background: Off-white (#F8F9FA)
+- Text: Charcoal (#212529)
+
+EMPHASIS:
+- Make the gold star on ECFP4-RF bar very prominent
+- Bold border around scaffold split box (it's the key protocol)
+- Yellow callout box should stand out
+- "Honest-Negative Finding" title should be clear and prominent

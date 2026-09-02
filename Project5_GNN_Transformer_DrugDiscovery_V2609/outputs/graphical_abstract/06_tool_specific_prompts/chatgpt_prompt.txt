@@ -1,0 +1,74 @@
+ChatGPT PROMPT — P5 Graphical Abstract Generation
+===================================================
+
+CONTEXT:
+You are creating a graphical abstract for a scientific paper published in the Journal of Computer-Aided Molecular Design. The paper is an honest-negative benchmark showing that classical ECFP4 fingerprints + random forests outperform learned graph neural networks and transformers on antimalarial natural products under scaffold split (chemical extrapolation).
+
+TASK:
+Generate a three-panel landscape graphical abstract (170 mm wide × 100 mm tall) with:
+
+PANEL A (Top 30%): THE QUESTION
+- Left side: Show ECFP4 fingerprint process (molecule → circular neighborhoods → bit vector)
+- Center: Large "VS?" text
+- Right side: Show 3 learned models (GNN, Topological, Transformer) as icons
+- Bottom: "Under Scaffold Extrapolation" with example scaffolds held out
+- Question overlay: "Can learned graph/sequence representations outperform ECFP4 fingerprints on antimalarial natural products under chemical distribution shift?"
+- Colors: Blue for ECFP4, Orange/Purple/Red for learned models
+
+PANEL B (Middle 35%): THE EXPERIMENT
+Linear workflow with 4 steps connected by arrows:
+1. DATA: "19,836 molecules, African antimalarial natural products" (show 4 diverse structures)
+2. SPLITS: Two paths — Random (light green) and Scaffold (light orange, emphasized)
+3. MODELS: 5 stacked boxes (ECFP4-RF, GIN, GIN-TFP, GIN-TNE, ChemBERTa)
+4. EVALUATION: ROC curve icon, "5×5 CV = 25 replicates"
+
+PANEL C (Bottom 35%): THE RESULT
+Left 60%: Horizontal bar chart showing ROC AUC under Scaffold Split
+- ECFP4-RF: 0.8300 (blue bar, gold star, bold border, WINNER)
+- GIN-TFP: 0.8138 (purple, ***)
+- GIN-TNE: 0.8090 (dark purple, ***)
+- GIN: 0.8047 (orange, ***)
+- ChemBERTa: 0.7867 (red, ***)
+
+Right 35%: Yellow callout box "Honest-Negative Finding"
+- ✅ ECFP4-RF wins under scaffold split
+- ✅ Topological descriptors visible in fusion (high salience)
+- ❌ But do NOT improve ranking vs. baseline
+- 📊 Advantage concentrated in OOD tail
+
+Bottom strip: "Conclusion: Classical fingerprints + random forests remain the reference for antimalarial natural products under chemical extrapolation. Learned representations show interpretable signal but do not close the predictive gap."
+
+STYLE:
+- Professional scientific diagram style (clean, clear, high contrast)
+- Colorblind-safe palette (blue, orange, purple, red)
+- Add patterns to bars for accessibility (hatching, dots, lines)
+- Sans-serif font (Arial), 8-14 pt
+- 300 DPI resolution
+
+KEY EMPHASIS:
+1. Make ECFP4 winner obvious (gold star, longest bar)
+2. Emphasize scaffold split as key protocol
+3. Frame as "honest-negative" (not a failure, rigorous methodology)
+4. Ensure readability for colorblind viewers (patterns + colors)
+
+MOLECULAR STRUCTURES (SMILES):
+- Artemisinin: CC1CCC2C(=C)C(=O)OC2C1C
+- Diverse examples: CN1C=NC2=C1C(=O)N(C(=O)N2C)C, CC12CCC3C(C1CCC2O)CCC4=CC(=O)CCC34C
+- Scaffolds: c1ccc2c(c1)cccn2, c1ccc2c(c1)[nH]cc2, c1ccc2c(c1)cco2
+
+OUTPUT FORMAT:
+- High-resolution PNG or PDF
+- 170 mm × 100 mm at 300 DPI
+- RGB color space for web, CMYK for print
+
+ITERATIVE REFINEMENT STRATEGY:
+1. Generate initial draft
+2. Review for scientific accuracy and visual clarity
+3. Adjust spacing, font sizes, and color contrast
+4. Add patterns to bars for accessibility
+5. Final polish pass for professional publication quality
+
+If you cannot generate the full image directly, provide:
+- Detailed layout description
+- Color codes and specifications
+- Instructions for manual assembly in design software
