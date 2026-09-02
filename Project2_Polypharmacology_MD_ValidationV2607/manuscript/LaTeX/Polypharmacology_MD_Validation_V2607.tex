@@ -21,6 +21,7 @@
 
 % Figures and tables (achemso already requires graphicx, caption, float)
 \usepackage{booktabs, tabularx, array, multirow, longtable}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage{tikz}
 \usepackage{rotating}
 \usepackage[table]{xcolor}
@@ -41,7 +42,7 @@
 \DeclareSIUnit\barpressure{\mathrm{bar}}
 
 % Cross-referencing - load after achemso/hyperref
-\usepackage{cleveref}
+\usepackage[nameinlink,noabbrev]{cleveref}
 % SM cross-refs (labels SM-* live in the supplementary document)
 \usepackage{xr}
 \externaldocument[SM-]{Polypharmacology_MD_Validation_SM_V2607}
