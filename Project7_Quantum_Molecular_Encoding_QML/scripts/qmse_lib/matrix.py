@@ -2,7 +2,8 @@ import numpy as np
 from rdkit import Chem
 from rdkit.Chem import Draw
 from PIL.Image import Image
-from quantum_molecular_encodings.processing import find_rs_stereoisomers, find_ze_conformers
+# Use local processing functions instead of external quantum_molecular_encodings package
+from .processing import find_rs_stereoisomers, find_ze_conformers
 
 AVERAGE_BOND_LENGTHS: dict[tuple[int, int, Chem.BondType], float] = {
     (1, 6, Chem.BondType.SINGLE): 1.09,  # H-C single bond

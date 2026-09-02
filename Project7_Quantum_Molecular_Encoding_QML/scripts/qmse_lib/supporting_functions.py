@@ -14,12 +14,9 @@ from qiskit.converters import circuit_to_dag, dag_to_circuit
 from qiskit_ibm_runtime import QiskitRuntimeService
 from qiskit_aer import AerSimulator
 
-
-
-
-from quantum_molecular_encodings.matrix import BondOrderMatrix
-from quantum_molecular_encodings.encodings.bond import BondFeatureMap
-from quantum_molecular_encodings.encodings.overlap import UnitaryOverlap
+# Use local implementations instead of external quantum_molecular_encodings package
+from .matrix import BondOrderMatrix
+from .encodings import BondFeatureMap, UnitaryOverlap as QMSEUnitaryOverlap
 
 def coulomb_matrix(smiles: str, add_hydrogens: bool = False, bond_coupling: float = 1.0) -> np.ndarray:
     """

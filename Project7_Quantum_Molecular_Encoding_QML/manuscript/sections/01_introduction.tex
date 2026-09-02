@@ -1,0 +1,54 @@
+% =============================================================================
+% P7 MANUSCRIPT — SECTION 1: INTRODUCTION
+% =============================================================================
+% Last updated: 28 August 2026
+% Status: DRAFT v1
+%
+% NOTE TO AUTHORS:
+% - Update self-citations (P1, P3, P5) with actual reference keys after compiling
+% - Verify quantum ML citations match latest literature
+% - Consider moving Hybrid VQC discussion to SI if experiments not conducted
+% =============================================================================
+
+\section{Introduction}
+
+%------------------------------------------------------------------------------
+\subsection{The Quantum Encoding Gap}
+%------------------------------------------------------------------------------
+
+Antimalarial drug discovery confronts an urgent challenge: resistance to frontline therapies threatens malaria elimination efforts,\cite{WHO2023Malaria} while the chemical diversity of available compounds remains constrained by historical screening biases.\cite{Burrows2017ChemicalSpace} Classical molecular representations — Extended-Connectivity Fingerprints (ECFP),\cite{Rogers2010ECFP} Morgan fingerprints,\cite{RDKit2023} and related bit-vector encodings — have proven effective for similarity searches and virtual screening.\cite{Cereto-Massague2015Fingerprints} However, these methods inherently lose structural information through hashing and discretization: bond topology, stereochemistry, and atomic connectivity are compressed into fixed-length binary vectors that prioritize computational efficiency over molecular fidelity.
+
+Quantum molecular encoding\cite{Boy2025QMSE,Rupp2012CoulombMatrix} proposes an alternative paradigm: embed molecular structure \textit{directly} into quantum states, leveraging the exponentially large Hilbert space to preserve topological and geometric information without lossy compression. Prior studies in malaria drug discovery have explored \textit{quantum-inspired} methods — algorithms that mimic quantum properties using classical hardware\cite{Sao2026P3QuantumInspired} — but these approaches still operate on pre-computed classical fingerprints. True quantum encoding, where molecular graphs are transformed into quantum circuits \textit{ab initio}, remains unexplored for antimalarial activity prediction.
+
+The landscape of quantum machine learning (QML) for chemistry encompasses two main strategies: quantum kernel methods\cite{Havlicek2019QuantumKernel,Schuld2019QuantumML} and variational quantum circuits (VQC).\cite{Cerezo2021VQA,McClean2018Barren} Quantum kernels measure molecular similarity in quantum feature spaces via the UnitaryOverlap (fidelity) metric,\cite{Havlicek2019QuantumKernel} offering a framework compatible with established support vector machines. VQCs employ trainable parameterized gates to learn task-specific representations,\cite{Benedetti2019PQC} analogous to classical neural networks. Molecular encoding schemes include the BondOrderMatrix\cite{Boy2025QMSE} (topology-preserving, 2D) and CoulombMatrix\cite{Rupp2012CoulombMatrix} (geometry-dependent, 3D). Challenges include computational cost — statevector simulation scales exponentially with qubit count — the barren plateau phenomenon where gradients vanish in deep VQC training,\cite{McClean2018Barren,Cerezo2021VQA} and the absence of empirical benchmarks demonstrating quantum advantage over classical methods in drug discovery.
+
+%------------------------------------------------------------------------------
+\subsection{From Classical to Quantum-Inspired to Quantum-Native}
+%------------------------------------------------------------------------------
+
+Our prior work on antimalarial drug discovery established a progression from classical to quantum-inspired representations. In Project~1 (P1),\cite{Sao2026P1ChemSpace} we constructed a hybrid chemical library by integrating African natural-product seeds with computationally expanded derivatives, achieving 92.6\% ECFP4-unreachable diversity. Multi-target molecular docking against four validated \textit{Plasmodium falciparum} targets (PfDHFR, PfCRT, PfATP4, PfClpP) identified 20 top candidates with multi-parameter optimization (MPO) scores of 0.515--0.550 and selectivity indices exceeding~10. This cohort — designated P1~Set~A — serves as the test set for the present study. In Project~5 (P5),\cite{Sao2026P5GraphLearning} graph neural networks (GNN) and Transformer architectures were evaluated on scaffold-split benchmarks, demonstrating that classical molecular graphs capture meaningful chemical patterns but remain limited by the expressivity of fixed featurization schemes.
+
+Project~3 (P3)\cite{Sao2026P3QuantumInspired} introduced Quantum Kernel Similarity (QKS), a quantum-inspired metric applied to ECFP4 fingerprints. QKS achieved area-under-curve (AUC) performance statistically indistinguishable from classical radial basis function (RBF) kernels (0.8876 vs 0.9475 for ECFP4 alone), leading to the conclusion that quantum-inspired transformations of classical features do not inherently confer advantage. A critical limitation of P3 is that QKS operates \textit{after} classical featurization: molecules are first reduced to ECFP4 bit vectors, then subjected to quantum-inspired kernel computation. This two-stage process preserves the information loss intrinsic to fingerprint generation.
+
+%------------------------------------------------------------------------------
+\subsection{This Work: True Quantum Encoding}
+%------------------------------------------------------------------------------
+
+The present study advances from quantum-inspired to quantum-native molecular encoding. We implement the Quantum Molecular Structure Encoding (QMSE) framework,\cite{Boy2025QMSE} wherein SMILES representations are converted to BondOrderMatrix descriptors — preserving atomic numbers, bond orders, and stereochemical information — and then directly mapped to parameterized quantum circuits. This eliminates the classical fingerprint intermediate, enabling molecular structure to populate quantum Hilbert space without lossy hashing.
+
+We evaluate two complementary architectures. First, the \textbf{quantum kernel method} computes the UnitaryOverlap kernel\cite{Havlicek2019QuantumKernel} between quantum states encoding molecular structure, then feeds the resulting Gram matrix to a support vector machine (SVM) for classification. This approach is non-trainable (encoding is fixed) and conceptually simple, avoiding gradient-based optimization. Second, a \textbf{hybrid quantum-classical neural network} (optional, contingent on computational feasibility) combines a quantum layer — implementing BondFeatureMap encoding with trainable variational gates\cite{Boy2025QMSE} — and a classical multilayer perceptron (MLP). This end-to-end architecture allows gradient-based learning of molecular features but risks encountering barren plateaus where optimization stalls.\cite{McClean2018Barren}
+
+The test cohort is P1~Set~A: 17 polypharmacology candidates from the P1~V7 chemical-space expansion,\cite{Sao2026P1ChemSpace} with synthetic binary activity labels derived from molecular dynamics resistance retention scores (MD-RRS) for proof-of-concept evaluation. The classical baseline is ECFP4 fingerprints (radius\,=\,2, 2048~bits) with Tanimoto kernel and SVM, mirroring the P1 screening protocol.\cite{Sao2026P1ChemSpace} Leave-one-out cross-validation (LOO-CV) ensures maximum data utilization for the small cohort. Our research questions are:
+
+\begin{enumerate}
+    \item Does the QMSE quantum kernel outperform the ECFP4 classical baseline for antimalarial activity prediction?
+    \item Is topology-based BondOrderMatrix encoding more effective than geometry-based CoulombMatrix (requiring 3D conformer generation)?
+    \item Can a hybrid VQC achieve competitive performance without gradient vanishing?
+    \item What is the computational cost trade-off between quantum encoding and classical fingerprint generation?
+\end{enumerate}
+
+We designed this study to test quantum advantage claims rigorously, with the understanding that negative or neutral results constitute valid scientific contributions documenting when and why quantum encoding does not improve classical methods.\cite{Cerezo2023QMLChallenges,Huang2021PowerQuantum} The honest-negative framing acknowledges that quantum machine learning remains an exploratory domain where empirical benchmarks — particularly in drug discovery applications — are essential for assessing practical utility.\cite{Liu2021RigorousFramework}
+
+% =============================================================================
+% END OF SECTION 1: INTRODUCTION
+% =============================================================================

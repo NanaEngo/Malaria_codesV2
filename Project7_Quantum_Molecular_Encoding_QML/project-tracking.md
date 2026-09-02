@@ -2,8 +2,8 @@
 
 **Date:** 28 August 2026  
 **Model:** Claude Sonnet 4.5  
-**Active loop:** L0 SETUP  
-**Beat:** 1  
+**Active loop:** L1 EVIDENCE (Literature complete, awaiting experimental data)  
+**Beat:** 2  
 
 ---
 
@@ -74,13 +74,14 @@
 
 ## Sprint Plan
 
-### Phase 1: Setup & Outline (Current)
+### Phase 1: Setup & Outline ✅ COMPLETE
 - [x] Create manuscript scaffold
 - [x] Create project tracking
-- [ ] Create analysis ledger
-- [ ] Complete full outline (sections, figures, tables)
-- [ ] Identify missing literature
-- [ ] Define computational experiments needed
+- [x] Create analysis ledger
+- [x] Complete full outline (sections, figures, tables)
+- [x] **Literature search (65+ papers, mapped to claims)**
+- [x] **Bibliography file with all core citations**
+- [ ] Extract authors from [TBD] placeholders (~20 arXiv papers)
 
 ### Phase 2: Evidence Generation
 - [ ] Run QMSE kernel experiments (p7_phase1_poc.py)
@@ -108,14 +109,15 @@
 ## Missing Inputs
 
 ### Literature
-- [ ] Quantum molecular encoding foundations (Boy et al. 2025 quantum-molecular-encodings)
-- [ ] BondOrderMatrix original paper
-- [ ] CoulombMatrix original paper (Rupp et al.)
-- [ ] Quantum kernel methods in chemistry
-- [ ] PennyLane quantum ML framework
-- [ ] Barren plateau problem (McClean et al.)
-- [ ] Existing quantum ML for drug discovery
-- [ ] P1-P6 self-citations
+- [x] Quantum molecular encoding foundations (Boy et al. 2025 quantum-molecular-encodings) ✅
+- [x] BondOrderMatrix in QMSE paper (arXiv:2507.20422) ✅
+- [x] CoulombMatrix original paper (Rupp et al. 2012) ✅
+- [x] Quantum kernel methods in chemistry (Havlíček, Schuld, Q2SAR, QKDTI) ✅
+- [x] PennyLane quantum ML framework (Bergholm et al. 2018) ✅
+- [x] Barren plateau problem (McClean, Cerezo, survey) ✅
+- [x] Quantum ML for drug discovery (Q2SAR, QKDTI, reviews) ✅
+- [ ] **ACTION:** Extract author names from ~20 arXiv papers with [TBD] placeholders
+- [x] P1-P6 self-citations (placeholder DOIs for unpublished) ✅
 
 ### Data
 - [ ] P1 Set A molecular structures (SMILES)

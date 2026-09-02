@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-08-31T11:19:22.337190",
+  "script": "p7_data_preparation.py",
+  "datasets": {
+    "p1_set_a": {
+      "file": "p1_set_a_20_candidates.csv",
+      "n_molecules": 17,
+      "source": "Project1_Chem_space_antimalarial_V7_CorrectedGrid",
+      "columns": [
+        "molecule_id",
+        "candidate_id",
+        "canonical_smiles",
+        "v5_source_smiles",
+        "p2_source_rank",
+        "p2_source_smiles",
+        "p2_source_sha256",
+        "cohort_id",
+        "activity",
+        "smiles"
+      ]
+    }
+  }
+}

@@ -58,7 +58,7 @@
 {\centering
 Myke Vital Sao Temgoua\href{https://orcid.org/0009-0004-5170-2309}{\textsuperscript{\textorcid}}\footnotemark[1]$^{1}$,
 Jean-Pierre Tchapet Njafa\href{https://orcid.org/0000-0002-1936-8353}{\textsuperscript{\textorcid}}$^{1}$,
-Penabei Samafou$^{2}$,
+Penabei Samafou\href{https://orcid.org/0000-0002-9683-7678}{\textsuperscript{\textorcid}}$^{2}$,
 Wilfred Fon Mbacham\href{https://orcid.org/0000-0002-3934-3233}{\textsuperscript{\textorcid}}$^{3}$,
 Serge Guy Nana Engo\href{https://orcid.org/0000-0002-7484-3508}{\textsuperscript{\textorcid}}$^{1}$\\[0.5em]
 {\small $^{1}$Department of Physics, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}\\
@@ -87,7 +87,7 @@ Malaria continues to impose a heavy burden in sub-Saharan Africa, with approxima
 
 A scale-centric view of molecular machine learning holds that pretrained foundation models and sequence transformers should supersede compact, task-trained cheminformatics predictors \citep{mol_tdl_2026,tn_efficient_2026}. Parallel discussions invoke quantum-inspired representations as a further route to improved performance \citep{naleczcharkiewicz2024,kumar2024quantumdrug}. Controlled benchmarks, however, paint a more tempered picture. Across \num{156} task--metric comparisons, Guo and Ding found that classical machine learning on fingerprints won \qty{47.4}{\percent} of entries, ahead of pretrained sequence models (\qty{28.8}{\percent}) and graph neural networks (\qty{21.8}{\percent}); the classical advantage was largest under random splits and narrowed, but did not disappear, under scaffold separation \citep{guo_ding_2026}. An independent survey of \num{25} pretrained embeddings across \num{25} data sets concluded that almost no neural embedding statistically improved on an ECFP baseline \citep{benchmark_pretrained_2025}. For natural products specifically, a \num{20}-fingerprint comparison over more than \num{100000} compounds showed that no single encoding dominates and that ECFP is frequently matched or exceeded \citep{boldini2024}.
 
-Under chemical-distribution shift the open question is whether the representation--task alignment of learned graph and sequence models compensates for their out-of-distribution (OOD) extrapolation deficit relative to ECFP4 fingerprints, or whether the fingerprint advantage is confined to the OOD tail. We operationalise this Molecular Out-Of-Distribution (MOOD) characterisation on a single, chemically challenging antimalarial panel through three concrete tests. First, do the tested graph and transformer architectures improve ranking relative to ECFP4--RF under both random and scaffold splits? Second, do persistent-homology or tensor-network descriptors reduce the scaffold-generalisation gap when fused inside a graph isomorphism network? Third, how does fold-independent restoration of pretrained weights affect the evaluation of a sequence transformer? A nearest-training-neighbour Tanimoto stratification then localises any residual advantage within the similarity distribution.
+Under chemical-distribution shift the open question is whether the representation task alignment of learned graph and sequence models compensates for their out-of-distribution (OOD) extrapolation deficit relative to ECFP4 fingerprints, or whether the fingerprint advantage is confined to the OOD tail. We operationalise this Molecular Out-Of-Distribution (MOOD) characterisation on a single, chemically challenging antimalarial panel through three concrete tests. First, do the tested graph and transformer architectures improve ranking relative to ECFP4--RF under both random and scaffold splits? Second, do persistent-homology or tensor-network descriptors reduce the scaffold-generalisation gap when fused inside a graph isomorphism network? Third, how does fold-independent restoration of pretrained weights affect the evaluation of a sequence transformer? A nearest-training-neighbour Tanimoto stratification then localises any residual advantage within the similarity distribution.
 
 \subsection{Related work}
 
@@ -109,13 +109,52 @@ The molecular ranking comparison forms the primary evaluation. A phenotype-only 
 
 \subsection{ECFP4--RF outperforms learned representations under scaffold separation}
 
-\input{Table_P5_Study_Design.tex}
+%\input{Table_P5_Study_Design.tex}
+\begin{table}[ht!]
+	\centering
+	\caption{Summary of the P5 benchmark design.}
+	\label{tab:study_design}
+	\begin{tabular}{ll}
+		\toprule
+		Element & Specification \\
+		\midrule
+		Panel & \num{19836} labelled molecules \\
+		Task & Binary antimalarial activity prediction \\
+		Reference & ECFP4--RF (\num{2048}-bit fingerprint; \num{500} trees) \\
+		Learned models & GIN, GIN--TFP, GIN--TNE, ChemBERTa \\
+		Splits & Stratified random and Bemis--Murcko scaffold \\
+		Replication & Five folds $\times$ five seeds per split \\
+		Primary metric & Test ROC AUC \\
+		Statistical unit & Five per-seed means, paired by seed \\
+		Multiplicity & Benjamini--Hochberg within each four-model family \\
+		External analysis & Molecule-disjoint ChEMBL transfer panel \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
 
 The experimental design is summarised in \Cref{tab:study_design}. Scaffold-split effect sizes relative to the ECFP4--RF baseline are given in \Cref{tab:effect_summary}; all paired tests operate on the five per-seed means.
 
-\input{Table_P5_Effect_Summary.tex}
+%\input{Table_P5_Effect_Summary.tex}
+\begin{table}[ht!]
+	\centering
+	\caption{Scaffold-split effects relative to ECFP4--RF. Values are differences in mean ROC AUC; paired tests use the five per-seed means ($df=4$).}
+	\label{tab:effect_summary}
+	\begin{tabular}{lccc}
+		\toprule
+		Model & Mean ROC AUC & $\Delta$ vs. ECFP4--RF & BH-adjusted $p$ \\
+		\midrule
+		ECFP4--RF & \num{0.8300} & {--} & {--} \\
+		GIN & \num{0.8047} & $-\num{0.025}$ & \num{0.0330} \\
+		GIN--TFP & \num{0.8138} & $-\num{0.016}$ & \num{0.0330} \\
+		GIN--TNE & \num{0.8090} & $-\num{0.021}$ & \num{0.0378} \\
+		ChemBERTa & \num{0.7867} & $-\num{0.043}$ & \num{0.0002} \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
-\begin{table}[t]
+
+\begin{table}[ht!]
 \centering
 \caption{Mean test ROC AUC $\pm$ SD of the five per-seed means (each seed averages five fold-level test AUCs). The underlying analysis comprises \num{25} fold--seed replicates per split. Reported $p$-values are raw paired tests on the five per-seed means versus ECFP4--RF under the scaffold protocol; Benjamini--Hochberg correction across the four comparisons yields adjusted $p$-values of \num{0.0330} (GIN), \num{0.0330} (GIN--TFP), \num{0.0378} (GIN--TNE) and \num{0.0002} (ChemBERTa). The GIN--TNE contrast is the weakest of the four (adjusted $p = \num{0.0378}$) yet survives correction. Statistical procedures are detailed in the Methods.}
 \label{tab:h1}
@@ -154,7 +193,7 @@ ChemBERTa, fine-tuned under per-fold weight restoration (see Methods), reaches $
 
 The $\pm$ values are population standard deviations across the five per-seed mean AUCs under the fixed five-fold protocol; fold-level dispersions are correspondingly larger. These uncertainty summaries quantify repeated computational runs, not uncertainty over a future population of compounds. Because the five per-seed means constitute the inferential unit, the resulting intervals should not be interpreted as population-level confidence intervals or as independent evidence from \num{25} observations. Ordering among the learned models is descriptive; the prespecified inferential comparisons were restricted to each learned arm versus ECFP4--RF.
 
-\begin{figure}[t]
+\begin{figure}[ht!]
 \centering
 \includegraphics[width=0.98\textwidth]{p5_auc_benchmark.png}
 \caption{Mean test ROC-AUC with \qty{95}{\percent} confidence intervals computed from the five per-seed means (each mean aggregates five fold-level test AUCs), shown for random (left) and scaffold (right) splits. The underlying analysis comprises \num{25} fold--seed replicates per model and split. Bar annotations report the mean followed by the interval half-width. The ECFP4--RF baseline (red) is not exceeded by any tested GNN or transformer arm.}
@@ -163,7 +202,7 @@ The $\pm$ values are population standard deviations across the five per-seed mea
 
 Validation trajectories across \num{50} training epochs document the optimisation path under the prespecified patience of \num{10} (\Cref{fig:learning_curves}). All five molecular arms are shown under both random and scaffold splits; each curve aggregates five folds repeated over five seeds. Early stopping selects the validation-optimal epoch before test evaluation; the trajectories describe optimisation behaviour rather than establishing the absence of over-fitting.
 
-\begin{figure}[t]
+\begin{figure}[ht!]
 \centering
 \includegraphics[width=0.95\textwidth]{p5_learning_curves.png}
 \caption{Validation ROC-AUC trajectories used to select the validation-optimal epoch. Curves are available for every tested arm under both random and scaffold splits; each available arm contains five folds repeated over five seeds. Early stopping with patience \num{10} selects the validation-optimal epoch before test evaluation.}
@@ -176,7 +215,7 @@ Even when predictive gains are absent, learned fusion weights can be examined de
 
 This pattern indicates that topological descriptors are utilised by the fusion head, yet it does not establish feature necessity or causal relevance. On the present panel the descriptor signal fails to translate into a ranking advantage over fingerprints. The identity of the top-salience dimensions is only moderately stable across independent scaffold partitions (top-\qty{10}{\percent} Jaccard overlap \num{0.274}--\num{0.399}; \Cref{sec:extended-scaffold-partitions-ref}), so the canonical ranking should be read as descriptive of one frozen fusion head rather than as a stable feature-importance result. Projection-weight salience and predictive ranking are therefore complementary, not interchangeable, summaries.
 
-\begin{figure}[t]
+\begin{figure}[ht!]
 \centering
 \includegraphics[width=0.98\textwidth]{p5_salience.png}
 \caption{Descriptive projection-weight salience in the topological fusion heads under the scaffold split. Values are mean raw $|W|$ across \num{25} fold--seed replicates. Left: TFP (\num{78} dimensions), partitioned into homology-0 (dimensions \num{0}--\num{32}), persistent-image (dimensions \num{33}--\num{57}) and Betti (dimensions \num{58}--\num{77}); the persistent-image block carries the largest raw weight magnitude. Right: TNE (\num{192} dimensions), shown in descending order. Weight magnitude is interpreted descriptively and is not a causal attribution.}
@@ -199,7 +238,7 @@ The molecular collection was previously characterised in a quantum-representatio
 
 \subsection{Position relative to recent representation benchmarks}
 
-Broad benchmark evidence already shows that compact fingerprint models remain competitive. In a \num{156}-comparison study, classical machine learning on fingerprints won the largest share of task--metric entries \citep{guo_ding_2026}; in a \num{25}-embedding comparison, almost no neural embedding statistically improved over ECFP \citep{benchmark_pretrained_2025}; and in a natural-product-focused comparison, ECFP was frequently matched or exceeded by alternative fingerprints \citep{boldini2024}. The present study does not merely restate those aggregates. Three elements distinguish it. First, the transformer comparison enforces fold-independent restoration of pretrained weights, removing the cross-fold weight-transfer channel that can inflate apparent transformer performance; this initialisation protocol is rarely reported in comparable benchmarks. Second, the topological-fusion arms (GIN--TFP, GIN--TNE) test persistent-homology and tensor-network descriptors inside a graph architecture under scaffold-held-out evaluation on an antimalarial natural-product panel---a combination not covered by the aggregate comparisons cited above. Third, the ordering is corroborated on a molecule-disjoint external ChEMBL panel, across three additional independent scaffold partitions, and with a fully released reproducibility package. The negative result is therefore a controlled outcome for this panel and protocol, not a restatement of aggregate statistics.
+Broad benchmark evidence already shows that compact fingerprint models remain competitive. In a \num{156}-comparison study, classical machine learning on fingerprints won the largest share of task--metric entries \citep{guo_ding_2026}; in a \num{25}-embedding comparison, almost no neural embedding statistically improved over ECFP \citep{benchmark_pretrained_2025}; and in a natural-product-focused comparison, ECFP was frequently matched or exceeded by alternative fingerprints \citep{boldini2024}. The present study does not merely restate those aggregates. Three elements distinguish it. First, the transformer comparison enforces fold-independent restoration of pretrained weights, removing the cross-fold weight-transfer channel that can inflate apparent transformer performance; this initialisation protocol is rarely reported in comparable benchmarks. Second, the topological-fusion arms (GIN--TFP, GIN--TNE) test persistent-homology and tensor-network descriptors inside a graph architecture under scaffold-held-out evaluation on an antimalarial natural-product panel, a combination not covered by the aggregate comparisons cited above. Third, the ordering is corroborated on a molecule-disjoint external ChEMBL panel, across three additional independent scaffold partitions, and with a fully released reproducibility package. The negative result is therefore a controlled outcome for this panel and protocol, not a restatement of aggregate statistics.
 
 \subsection{Implications for molecular-model selection}
 
@@ -267,7 +306,7 @@ Feature assembly fails rather than imputes. A SMILES string that RDKit cannot pa
 
 \subsection{Splits}
 
-Two protocols were evaluated, each with five folds repeated over five seeds (\num{25} fold--seed replicates). (i) \emph{Random}: stratified five-fold cross-validation. (ii) \emph{Scaffold}: molecules were grouped by Bemis--Murcko scaffold before fold assignment. A Bemis--Murcko scaffold is the framework that remains once every side-chain substituent has been deleted---the ring systems together with the linker atoms that join them \citep{bemis_murcko_1996}. Two molecules fall in the same group when they share that framework, however differently they are substituted. Scaffolds were computed with RDKit (\texttt{MurckoScaffold.MurckoScaffoldSmiles}), and whole scaffold groups were assigned to folds by greedy minimum-maximum size balancing, so that the held-out test scaffolds are disjoint from the training scaffolds. Validation molecules were sampled from the non-test portion and can therefore share scaffolds with training molecules; early stopping consequently assesses optimisation on the training chemical distribution, whereas the held-out test fold provides the scaffold-shift estimate. For both protocols the group-to-fold assignment was independently re-randomised for each of the five seeds (scaffold-group membership itself was fixed; only the seed-dependent order in which groups were greedily assigned to folds varied). Consequently the five per-seed ECFP4--RF replicates correspond to five distinct fold partitions rather than five repeated fits on an identical partition; this is why the deterministic ECFP4--RF classifier (\texttt{random\_state=0}, see below) still exhibits a non-zero standard deviation across per-seed means. The split indices are released with the study. As a partial mitigation of the residual similarity leakage documented in the literature \citep{bash2025umap,fooladi2025ood}, the primary random and scaffold partitions are complemented by a Butina cluster split and by a NN-Tanimoto decile stratification of the test molecules; the Butina split is described under ``Distribution-shift characterisation'' and the decile stratification under \cref{sec:nn-deciles-ref}. Recent multi-splitter benchmarks confirm that Bemis--Murcko scaffold splits are among the least challenging OOD regimes (performance close to random splitting), whereas ECFP4-based clustering and nearest-neighbour distance strata induce substantially larger drops for both classical and GNN models \citep{fooladi2025ood}; the NN-Tanimoto analysis therefore supplies a stricter, distance-resolved view of the same chemical shift.
+Two protocols were evaluated, each with five folds repeated over five seeds (\num{25} fold--seed replicates). (i) \emph{Random}: stratified five-fold cross-validation. (ii) \emph{Scaffold}: molecules were grouped by Bemis--Murcko scaffold before fold assignment. A Bemis--Murcko scaffold is the framework that remains once every side-chain substituent has been deleted, the ring systems together with the linker atoms that join them \citep{bemis_murcko_1996}. Two molecules fall in the same group when they share that framework, however differently they are substituted. Scaffolds were computed with RDKit (\texttt{MurckoScaffold.MurckoScaffoldSmiles}), and whole scaffold groups were assigned to folds by greedy minimum-maximum size balancing, so that the held-out test scaffolds are disjoint from the training scaffolds. Validation molecules were sampled from the non-test portion and can therefore share scaffolds with training molecules; early stopping consequently assesses optimisation on the training chemical distribution, whereas the held-out test fold provides the scaffold-shift estimate. For both protocols the group-to-fold assignment was independently re-randomised for each of the five seeds (scaffold-group membership itself was fixed; only the seed-dependent order in which groups were greedily assigned to folds varied). Consequently the five per-seed ECFP4--RF replicates correspond to five distinct fold partitions rather than five repeated fits on an identical partition; this is why the deterministic ECFP4--RF classifier (\texttt{random\_state=0}, see below) still exhibits a non-zero standard deviation across per-seed means. The split indices are released with the study. As a partial mitigation of the residual similarity leakage documented in the literature \citep{bash2025umap,fooladi2025ood}, the primary random and scaffold partitions are complemented by a Butina cluster split and by a NN-Tanimoto decile stratification of the test molecules; the Butina split is described under ``Distribution-shift characterisation'' and the decile stratification under \cref{sec:nn-deciles-ref}. Recent multi-splitter benchmarks confirm that Bemis--Murcko scaffold splits are among the least challenging OOD regimes (performance close to random splitting), whereas ECFP4-based clustering and nearest-neighbour distance strata induce substantially larger drops for both classical and GNN models \citep{fooladi2025ood}; the NN-Tanimoto analysis therefore supplies a stricter, distance-resolved view of the same chemical shift.
 
 \subsection{Models}
 

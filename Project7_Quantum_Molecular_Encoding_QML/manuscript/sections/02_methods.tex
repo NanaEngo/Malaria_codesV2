@@ -1,0 +1,200 @@
+% =============================================================================
+% P7 MANUSCRIPT — SECTION 2: MATERIALS AND METHODS
+% =============================================================================
+% Last updated: 28 August 2026
+% Status: DRAFT v1 (awaiting experimental results for placeholders)
+%
+% NOTE TO AUTHORS:
+% - Replace [PLACEHOLDER] markers with actual values after experiments
+% - Fill in hardware specs in section 2.7
+% - Include/exclude section 2.5 (Hybrid VQC) based on whether experiments were run
+% - Update cross-references after compiling full manuscript
+% =============================================================================
+
+\section{Materials and Methods}
+
+%------------------------------------------------------------------------------
+\subsection{Dataset — P1 Set A Antimalarial Candidates}
+\label{sec:methods:dataset}
+%------------------------------------------------------------------------------
+
+We evaluated quantum molecular encoding on the 20 top-ranked antimalarial candidates from the P1 V7 chemical-space expansion study.\cite{Sao2026P1ChemSpace} These molecules were selected via multi-parameter optimization (MPO scores 0.515--0.550) to balance predicted antimalarial activity, drug-likeness, and target selectivity (selectivity index $>$\,10 across four validated \textit{Plasmodium falciparum} targets: PfDHFR, PfCRT, PfATP4, and PfClpP). The P1 Set A cohort represents novel chemical space, with 92.6\% of molecules unreachable via ECFP4 fingerprint-based similarity searches from African natural-product seeds and 69.3\% scaffold recovery from the hybrid library.\cite{Sao2026P1ChemSpace}
+
+Activity labels were derived from [PLACEHOLDER: specify source — e.g., \textit{in vitro} assays, docking scores, or surrogate classification]. Canonical SMILES representations were obtained from the P1 V7 candidate manifest, ensuring consistency with prior analyses.\cite{Sao2026P1ChemSpace} This focused cohort size (n\,=\,20) was chosen to enable full quantum statevector simulation on classical hardware while providing direct comparison with P1 docking results\cite{Sao2026P1ChemSpace} and P5 graph neural network baselines.\cite{Sao2026P5GraphLearning}
+
+%------------------------------------------------------------------------------
+\subsection{Quantum Molecular Encoding}
+\label{sec:methods:encoding}
+%------------------------------------------------------------------------------
+
+We employed the Quantum Molecular Structure Encoding (QMSE) framework\cite{Boy2025QMSE} to directly embed molecular topology into quantum circuits without classical fingerprint intermediates. Two matrix-based encoding schemes were evaluated: BondOrderMatrix (primary) and CoulombMatrix (ablation comparison).
+
+\subsubsection{BondOrderMatrix Construction}
+
+The BondOrderMatrix $\mathbf{M}^{\text{bond}}$ encodes molecular topology via bond orders and atomic numbers:\cite{Boy2025QMSE}
+%
+\begin{equation}
+M^{\text{bond}}_{ij} = 
+\begin{cases}
+Z_i & \text{if } i = j \quad \text{(diagonal: atomic number)} \\
+b_{ij} \cdot Z_i \cdot Z_j & \text{if } i \neq j \quad \text{(off-diagonal: bond-weighted charge product)}
+\end{cases}
+\label{eq:bondordermatrix}
+\end{equation}
+%
+where $Z_i$ is the atomic number of atom~$i$, and $b_{ij}$ is the bond order between atoms $i$ and $j$ (1\,=\,single, 2\,=\,double, 3\,=\,triple, 1.5\,=\,aromatic). Stereochemical information is preserved via sign conventions: $Z$-conformers use negative off-diagonal elements, and $S$-stereoisomers use negative diagonal elements.\cite{Boy2025QMSE}
+
+For a molecule with $N$ atoms, $\mathbf{M}^{\text{bond}}$ is an $N \times N$ symmetric matrix. To enable batch processing across molecules of varying sizes, matrices were zero-padded to a maximum dimension of [PLACEHOLDER: specify max\_atoms, e.g., 30\,$\times$\,30]. Hydrogen atoms were kept implicit to reduce computational overhead. All BondOrderMatrix constructions were performed using RDKit 2023.3.1\cite{RDKit2023} and the reference \texttt{qmse\_lib} implementation.\cite{Boy2025QMSE}
+
+\subsubsection{CoulombMatrix (Ablation Comparison)}
+
+For ablation analysis, we compared BondOrderMatrix against the geometry-dependent CoulombMatrix $\mathbf{M}^{\text{Coulomb}}$:\cite{Rupp2012CoulombMatrix}
+%
+\begin{equation}
+M^{\text{Coulomb}}_{ij} = 
+\begin{cases}
+0.5 \cdot Z_i^{2.4} & \text{if } i = j \quad \text{(atomic self-energy)} \\
+\frac{Z_i \cdot Z_j}{r_{ij}} & \text{if } i \neq j \quad \text{(electrostatic interaction)}
+\end{cases}
+\label{eq:coulombmatrix}
+\end{equation}
+%
+where $r_{ij}$ is the three-dimensional Euclidean distance (in \AA) between atoms $i$ and $j$. Three-dimensional coordinates were generated via RDKit's ETKDG version 3 conformer generator,\cite{RDKit2023} followed by energy minimization using the Universal Force Field (UFF). The CoulombMatrix approach requires conformer generation, introducing computational overhead and conformer-dependence absent in BondOrderMatrix.
+
+%------------------------------------------------------------------------------
+\subsection{Quantum Circuit Construction — BondFeatureMap}
+\label{sec:methods:circuits}
+%------------------------------------------------------------------------------
+
+Molecular encoding matrices were mapped to quantum circuits using the BondFeatureMap architecture.\cite{Boy2025QMSE} Each molecule with $N$ atoms is represented by a quantum state on $N$ qubits (up to [PLACEHOLDER: specify max\_qubits] qubits after padding). The encoding consists of three stages:
+
+\textbf{(1) Data Encoding Layer.} Matrix elements $M_{ij}$ are converted to rotation angles $\theta_{ij}$ via the arctan transformation:
+%
+\begin{equation}
+\theta_{ij} = \arctan(M_{ij})
+\end{equation}
+%
+These angles parameterize single-qubit $R_Z$ rotation gates applied to qubits $i$ and $j$:
+%
+\begin{equation}
+R_Z(\theta_{ij}) = e^{-i \theta_{ij} Z / 2}
+\end{equation}
+%
+where $Z$ is the Pauli-Z operator. Diagonal elements ($i\,=\,j$) encode atomic identity; off-diagonal elements ($i\,\neq\,j$) encode bond information.
+
+\textbf{(2) Entangling Layer.} Adjacent qubits are entangled via controlled-NOT (CNOT) gates in linear connectivity:
+%
+\begin{equation}
+\text{CNOT}(q_i, q_{i+1}) \quad \text{for } i = 1, 2, \ldots, N-1
+\end{equation}
+%
+Alternative entangling gates (e.g., $R_{ZZ}$) were evaluated for hardware compatibility but did not affect performance in statevector simulation.
+
+\textbf{(3) Measurement.} Pauli-Z expectation values $\langle Z_i \rangle$ are measured on all qubits, producing an $N$-dimensional quantum feature vector. For kernel methods (Section~\ref{sec:methods:kernel}), measurement is implicit in the inner-product computation; for hybrid variational quantum circuits (Section~\ref{sec:methods:vqc}), expectation values are fed to classical layers.
+
+All quantum circuits were simulated using PennyLane 0.34.0\cite{Bergholm2018PennyLane} with the \texttt{default.qubit} device for exact statevector simulation. No shot noise was introduced; all results reflect noiseless quantum computation. True quantum hardware was not used due to limited qubit availability and circuit depth constraints. Circuit depth was fixed at [PLACEHOLDER: specify depth, e.g., $d\,=\,1$ encoding layer] for kernel methods; trainable variational layers (Section~\ref{sec:methods:vqc}) added depth proportional to \texttt{n\_layers}.
+
+%------------------------------------------------------------------------------
+\subsection{Quantum Kernel Method}
+\label{sec:methods:kernel}
+%------------------------------------------------------------------------------
+
+\subsubsection{UnitaryOverlap Kernel}
+
+The quantum kernel measures molecular similarity in Hilbert space via the UnitaryOverlap (also called fidelity or swap-test kernel):\cite{Havlicek2019QuantumKernel,Schuld2019QuantumML}
+%
+\begin{equation}
+K_{\text{quantum}}(\mathbf{x}_i, \mathbf{x}_j) = \left| \langle \psi(\mathbf{x}_i) | \psi(\mathbf{x}_j) \rangle \right|^2
+\label{eq:quantumkernel}
+\end{equation}
+%
+where $|\psi(\mathbf{x}_i)\rangle$ is the quantum state after encoding molecule~$\mathbf{x}_i$ via BondFeatureMap (Section~\ref{sec:methods:circuits}), and $\langle \cdot | \cdot \rangle$ denotes the inner product in Hilbert space. The kernel value ranges from 0 (orthogonal quantum states) to 1 (identical states). Unlike classical kernels that operate in explicit feature spaces, $K_{\text{quantum}}$ exploits quantum superposition to access exponentially large feature spaces.
+
+For a dataset of $n$ molecules, the Gram matrix $\mathbf{K} \in \mathbb{R}^{n \times n}$ is constructed by computing all pairwise kernel values:
+%
+\begin{equation}
+\mathbf{K}[i,j] = K_{\text{quantum}}(\mathbf{x}_i, \mathbf{x}_j) \quad \text{for } i,j = 1, \ldots, n
+\end{equation}
+%
+The resulting matrix is symmetric ($\mathbf{K} = \mathbf{K}^T$) and positive semi-definite by construction, satisfying Mercer's condition for valid kernel functions.
+
+\subsubsection{Kernel-SVM Classification}
+
+Quantum kernels were used for binary classification via Support Vector Machines (SVM)\cite{Cortes1995SVM} with the pre-computed Gram matrix as input. The scikit-learn 1.3.0\cite{ScikitLearn2011} \texttt{SVC} classifier was configured with \texttt{kernel='precomputed'} and regularization parameter $C\,=\,[PLACEHOLDER: specify C, e.g., 1.0 or grid-searched value]. Cross-validation followed Leave-One-Out (LOO-CV) protocol: for each of 20 molecules, the model was trained on 19 and tested on the held-out molecule. LOO-CV maximizes data utilization for small cohorts and provides unbiased performance estimates.
+
+For comparison, we implemented a classical baseline using Extended-Connectivity Fingerprints (ECFP4, radius\,=\,2, 2048 bits)\cite{Rogers2010ECFP} with Tanimoto kernel:
+%
+\begin{equation}
+K_{\text{Tanimoto}}(\mathbf{f}_i, \mathbf{f}_j) = \frac{\mathbf{f}_i \cdot \mathbf{f}_j}{\|\mathbf{f}_i\|^2 + \|\mathbf{f}_j\|^2 - \mathbf{f}_i \cdot \mathbf{f}_j}
+\label{eq:tanimoto}
+\end{equation}
+%
+where $\mathbf{f}_i$ and $\mathbf{f}_j$ are binary ECFP4 fingerprints. The same LOO-CV protocol and SVM hyperparameters were applied to ensure fair comparison.
+
+%------------------------------------------------------------------------------
+\subsection{Hybrid Quantum-Classical Neural Network [OPTIONAL]}
+\label{sec:methods:vqc}
+%------------------------------------------------------------------------------
+
+% [AUTHOR NOTE: Include this section only if hybrid VQC experiments were run.
+% Otherwise, move to Supporting Information or omit entirely.]
+
+[PLACEHOLDER: To be drafted if VQC experiments are conducted. Outline structure:
+\begin{itemize}
+\item Architecture: Input QMSE matrix $\to$ Quantum layer (BondFeatureMap + variational layers) $\to$ Classical MLP (Dense $\to$ ReLU $\to$ Dropout $\to$ Output sigmoid)
+\item Trainable parameters: $(n_{\text{layers}} \times n_{\text{qubits}} \times 3)$ rotation angles in quantum layer + MLP weights
+\item Training protocol: Adam optimizer, binary cross-entropy loss, 50 epochs with early stopping (patience\,=\,10), LOO-CV
+\item Gradient computation: Parameter-shift rule for quantum gradients (PennyLane automatic differentiation), backpropagation for classical layers
+\item Barren plateau monitoring: Track gradient norms per epoch; flag vanishing if $\|\nabla L\| < 10^{-6}$
+\end{itemize}
+]
+
+%------------------------------------------------------------------------------
+\subsection{Evaluation Metrics}
+\label{sec:methods:metrics}
+%------------------------------------------------------------------------------
+
+\textbf{Primary metric.} Model performance was quantified via Area Under the Receiver Operating Characteristic Curve (AUC-ROC), which measures discriminative power independent of classification threshold and is robust to class imbalance.\cite{Fawcett2006ROC}
+
+\textbf{Secondary metrics.} We report classification accuracy (fraction of correct predictions), F1-score (harmonic mean of precision and recall), and confusion matrices. For methods with probabilistic outputs, decision thresholds were set to 0.5.
+
+\textbf{Statistical significance.} AUC differences between quantum and classical methods were assessed via permutation tests with 1000 random label shuffles. The null hypothesis (no difference) was rejected at $\alpha\,=\,0.05$. Additionally, DeLong's test\cite{DeLong1988ROC} was used to compare correlated ROC curves from LOO-CV folds.
+
+%------------------------------------------------------------------------------
+\subsection{Computational Environment and Reproducibility}
+\label{sec:methods:computational}
+%------------------------------------------------------------------------------
+
+\textbf{Hardware.} All experiments were conducted on [PLACEHOLDER: specify CPU model, RAM (e.g., Intel Xeon, 64 GB RAM)]. [PLACEHOLDER: If GPU used for VQC training: NVIDIA GPU model]. Quantum circuits were simulated classically; no quantum hardware was employed.
+
+\textbf{Software.} The computational pipeline used Python 3.10 with the following libraries:
+%
+\begin{itemize}
+    \item \textbf{PennyLane} 0.34.0\cite{Bergholm2018PennyLane} — quantum circuit construction and simulation
+    \item \textbf{PyTorch} 2.1.0\cite{PyTorch2019} — [if VQC: hybrid VQC training and automatic differentiation]
+    \item \textbf{Qiskit} 1.0.0\cite{Qiskit2023} — circuit visualization and verification
+    \item \textbf{RDKit} 2023.3.1\cite{RDKit2023} — molecular graph processing, SMILES parsing, ECFP4 generation
+    \item \textbf{scikit-learn} 1.3.0\cite{ScikitLearn2011} — SVM training, cross-validation, performance metrics
+\end{itemize}
+
+\textbf{Reproducibility.} All random number generators were seeded with \texttt{seed\,=\,42} to ensure deterministic results. Source code, conda environment specification (\texttt{environment.yml}), and processed data are available at [PLACEHOLDER: GitHub repository URL or Zenodo DOI]. The P1 Set A candidate SMILES and activity labels are provided in the Supporting Information (Table S1).
+
+%------------------------------------------------------------------------------
+\subsection{Computational Cost Measurement}
+\label{sec:methods:cost}
+%------------------------------------------------------------------------------
+
+To quantify the computational overhead of quantum molecular encoding, we measured:
+%
+\begin{itemize}
+    \item \textbf{Encoding time:} Wall-clock time per molecule for BondOrderMatrix/CoulombMatrix construction and quantum circuit generation
+    \item \textbf{Kernel computation time:} Time to construct the $20 \times 20$ Gram matrix (190 pairwise kernel evaluations, leveraging symmetry)
+    \item \textbf{Training time:} LOO-CV SVM training time for quantum and classical methods
+    \item \textbf{Memory usage:} Peak RAM consumption during statevector simulation
+\end{itemize}
+%
+All timing measurements were averaged over three independent runs with identical random seeds. Comparisons between quantum and classical pipelines isolate the cost attributable to quantum encoding and circuit simulation.
+
+% =============================================================================
+% END OF SECTION 2: METHODS
+% =============================================================================
