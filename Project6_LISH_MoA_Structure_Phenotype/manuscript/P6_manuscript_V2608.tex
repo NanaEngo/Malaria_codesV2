@@ -33,7 +33,7 @@
 \crefname{section}{Section}{Sections}
 \crefname{subsection}{Section}{Sections}
 
-\title{Leakage-Aware Structure--Phenotype Prediction of Mechanism-of-Action Profiles Across a Mapped Drug Cohort}
+\title{What Transfers Across Chemical Boundaries? Leakage-Aware Structure--Phenotype Prediction of Observed MoA-Associated Labels}
 
 
 
@@ -41,7 +41,7 @@
 
 \begin{document}
 
-{\centering\Large\bfseries Leakage-Aware Structure--Phenotype Prediction of Mechanism-of-Action Profiles Across a Mapped Drug Cohort\par}
+{\centering\Large\bfseries What Transfers Across Chemical Boundaries? Leakage-Aware Structure--Phenotype Prediction of Observed MoA-Associated Labels\par}
 \vspace{1em}
 {\centering
 Myke Vital Sao Temgoua\thanks{Corresponding author: \texttt{myke-vital.sao@facsciences-uy1.cm}}$^{1}$,
@@ -54,14 +54,14 @@ Serge Guy Nana Engo$^{1}$\\[0.5em]
 {\small $^{3}$Department of Biochemistry, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}\par}
 
 \begin{abstract}
-Mechanism-of-action (MoA) prediction from molecular structure is often evaluated under random splits that can place chemically identical or closely related compounds on both sides of a test boundary. We constructed an auditable mapping between \num{3289} drug-level LISH-MoA records and \num{1722} unique molecular structures, resolved salts, assigned identical canonical structures to \num{794} collision groups, and evaluated a graph neural network, two graph--descriptor fusion models, and a pretrained molecular transformer under collision-group-disjoint cross-validation. Under this leakage-controlled protocol, all molecular-arm macro-AUROCs remained close to chance (\num{0.501}--\num{0.508}) and well below the phenotype-only reference (AUROC \num{0.63619}). The best molecular-arm log loss was obtained by GIN-TFP (\num{0.02334}), but low log loss accompanied near-chance ranking, indicating calibrated but non-discriminative predictions. These results do not demonstrate that molecular representations are universally inferior; they indicate that, under this mapped cohort, endpoint, and evaluation boundary, structure alone did not provide a convincing predictive advantage for MoA-associated labels. The benchmark addresses prediction of observed MoA-associated annotations and does not establish causal mechanism, target engagement, or biological activity.
+Mechanism-of-action (MoA) prediction from molecular structure is often evaluated under random splits that can place chemically identical or closely related compounds on both sides of a test boundary. We constructed an auditable mapping between \num{3289} drug-level LISH-MoA records and \num{1722} unique molecular structures, resolved salts, assigned identical canonical structures to \num{794} collision groups, and evaluated a graph neural network, two graph--descriptor fusion models, and a pretrained molecular transformer under collision-group-disjoint cross-validation. Under this leakage-controlled protocol, the learned molecular arms (GIN, GIN-TFP, GIN-TNE, ChemBERTa) remained close to chance on macro-AUROC (\num{0.501}--\num{0.508}); the fingerprint baseline reached \num{0.536}, and the phenotype-only reference \num{0.63619}. The best learned-arm log loss was obtained by GIN-TFP (\num{0.02334}), but low log loss accompanied near-chance ranking, indicating calibrated but non-discriminative predictions. These results do not demonstrate that molecular representations are universally inferior; they indicate that, under this mapped cohort, endpoint, and evaluation boundary, structure alone did not provide a convincing predictive advantage for MoA-associated labels. The benchmark addresses prediction of observed MoA-associated annotations and does not establish causal mechanism, target engagement, or biological activity.
 \end{abstract}
 
 \section{Introduction}
 
 Mechanism-of-action prediction is a multi-label problem in which one compound may be associated with several pharmacological annotations. Molecular structure and cellular phenotype describe different levels of this problem: structure encodes chemical constitution, whereas phenotype summarizes responses observed across cellular systems and experimental conditions \citep{Trapotsi2022MoA}. A useful benchmark should therefore distinguish predictive performance from biological mechanism assignment and should evaluate generalization under boundaries that reflect the intended deployment setting.
 
-Random drug-level cross-validation can be optimistic when repeated records, salts, or identical canonical structures cross train and test sets. Collision-aware evaluation is particularly important for multi-label drug data because labels and covariates can be shared across records that are chemically identical \citep{guo2024scaffold}. Recent benchmarks indicate that representation scale does not guarantee improved molecular prediction: classical machine learning on fingerprints wins \qty{47.4}{\percent} of task--metric entries in a \num{156}-comparison study \citep{guo_ding_2026}, and almost no neural embedding statistically improves over ECFP in a \num{25}-embedding comparison \citep{benchmark_pretrained_2025}. The present study asks whether molecular representations add predictive information to a drug-level MoA-associated phenotype benchmark when canonical-structure collisions are prevented from crossing the primary evaluation boundary. We compare a graph model, two graph--descriptor fusion models, and a pretrained molecular transformer under a common cohort and fold contract. The analysis is a representation benchmark, not a causal MoA study.
+Random drug-level cross-validation can be optimistic when repeated records, salts, or identical canonical structures cross train and test sets. Collision-aware evaluation is particularly important for multi-label drug data because labels and covariates can be shared across records that are chemically identical \citep{guo2024scaffold}. Recent benchmarks indicate that representation scale does not guarantee improved molecular prediction: classical machine learning on fingerprints wins \qty{47.4}{\percent} of task--metric entries in a \num{156}-comparison study \citep{guo_ding_2026}, and almost no neural embedding statistically improves over ECFP in a \num{25}-embedding comparison \citep{benchmark_pretrained_2025}. The present study asks whether molecular structure provides transferable predictive information for observed MoA-associated labels beyond a phenotype-only reference when canonical-structure collisions are prevented from crossing the evaluation boundary, and whether combining structure with phenotype improves out-of-sample prediction. We compare a graph model, graph--descriptor fusion models, a pretrained molecular transformer, and a late-concat fusion baseline under a common cohort and fold contract. The analysis is a prediction benchmark, not a causal MoA study.
 
 \section{Materials and methods}
 
@@ -96,7 +96,7 @@ All deep models were trained with binary cross-entropy loss over the \num{206} m
 
 \subsection{Reproducibility and analysis boundaries}
 
-All mapping records, descriptor computations, fold assignments, and per-fold model outputs were retained with their random seeds, the collision policy, and the descriptor-failure accounting. Two extensions to the primary protocol are reported as bounded proxies under the same scaffold split: pooled calibration metrics and a quantile-kernel-similarity (QKS) separability diagnostic. The fold-level prediction files used as input are gated on a documented column contract and on MoA-set invariance across folds; results that fail this audit are not aggregated. A per-label calibration analysis and a full quantum-kernel implementation are left as future work.
+Mapping records, descriptor computations, fold assignments, and per-fold model outputs were preserved with their random seeds, collision policy, and descriptor-failure accounting. Two extensions to the primary protocol are reported as bounded proxies under the same scaffold split: pooled calibration metrics and a quantile-kernel-similarity (QKS) separability diagnostic. The fold-level prediction files used as input are gated on a documented column contract and on MoA-set invariance across folds; results that fail this audit are not aggregated. The present calibration analysis is pooled across labels; per-label reliability curves and calibration slope/intercept are outside the current estimand. The QKS result is likewise a bounded proxy rather than a full quantum-kernel implementation.
 
 \section{Results}
 
@@ -106,7 +106,7 @@ The mapping covered all \num{3289} drug-level rows. After salt stripping and can
 
 \subsection{Primary collision-group benchmark}
 
-\Cref{tab:p6_primary} presents the collision-group results across \num{25} seed--fold evaluations. GIN-TFP had the lowest molecular-arm log loss at \num{0.02334}, followed by GIN at \num{0.02419} and GIN-TNE at \num{0.02434}. ChemBERTa had the highest molecular-arm log loss at \num{0.02549}. Macro-AUROC values for the molecular arms ranged from \num{0.50137} to \num{0.50785}, while the phenotype reference reached \num{0.63619}. The molecular-arm AUPRC values were also substantially lower than the phenotype reference.
+\Cref{tab:p6_primary} presents the collision-group results across \num{25} seed--fold evaluations. GIN-TFP had the lowest learned-arm log loss at \num{0.02334}, followed by GIN at \num{0.02419} and GIN-TNE at \num{0.02434}. ChemBERTa had the highest learned-arm log loss at \num{0.02549}. Macro-AUROC values for the learned molecular arms ranged from \num{0.50137} to \num{0.50785}, the fingerprint baseline reached \num{0.53562}, and the phenotype reference \num{0.63619}. The learned-arm AUPRC values were also substantially lower than the phenotype reference.
 
 \begin{table}[htbp]
 \centering
@@ -117,7 +117,7 @@ The mapping covered all \num{3289} drug-level rows. After salt stripping and can
 Arm & Log loss & Macro-AUROC & Macro-AUPRC & Brier & ECE\\
 \midrule
 Phenotype reference & \num{0.02428} & \num{0.63619} & \num{0.13137} & \num{0.00381} & \num{0.00387}\\
-ECFP4--RF & \num{0.02598} & \num{0.53562} & \num{0.02223} & \num{0.00394} & \num{0.00412}\\
+ECFP4--RF & \num{0.03582} & \num{0.53562} & \num{0.02590} & \num{0.00344} & \num{0.00232}\\
 GIN & \num{0.02419} & \num{0.50785} & \num{0.01379} & \num{0.00347} & \num{0.00449}\\
 GIN-TFP & \num{0.02334} & \num{0.50479} & \num{0.01381} & \num{0.00341} & \num{0.00300}\\
 GIN-TNE & \num{0.02434} & \num{0.50601} & \num{0.01460} & \num{0.00341} & \num{0.00306}\\
@@ -126,22 +126,22 @@ ChemBERTa & \num{0.02549} & \num{0.50137} & \num{0.01313} & \num{0.00343} & \num
 \end{tabular}
 \end{table}
 
-The dissociation between log loss and AUROC is informative: a low multi-label log loss can be achieved by well-calibrated prevalence-like predictions, whereas ranking ability requires discriminating which drugs carry which labels. The structure arms therefore appear reasonably calibrated but non-discriminative on this task. These are descriptive paired-benchmark results; no superiority claim is made without a complete paired statistical comparison.
+The dissociation between log loss and AUROC is informative: a low multi-label log loss can be achieved by well-calibrated prevalence-like predictions, whereas ranking ability requires discriminating which drugs carry which labels. The structure arms therefore appear reasonably calibrated but non-discriminative on this task. Paired seed--fold bootstrap intervals for the scaffold comparisons are provided in the data release; they quantify variation across the 25 predefined replicates and are not population-level confidence intervals over molecules. These comparisons are exploratory and are not used to support a superiority claim.
 
 \subsection{Reference and sensitivity analyses}
 
-\Cref{tab:p6_splits} compares performance across the three evaluated splits for the phenotype reference and ECFP4--RF baseline. The phenotype reference reproduced the locked random-split result (AUROC \num{0.64345}) and showed minimal degradation under collision-group splitting (\num{0.63619}) and scaffold sensitivity (\num{0.64023}). The ECFP4--RF baseline reached AUROC \num{0.53562} under collision-group splitting and \num{0.53817} under scaffold splitting. The phenotype--ECFP4 fusion arm reached AUROC \num{0.58323}, below the phenotype reference.
+\Cref{tab:p6_splits} compares performance across the three evaluated splits for the phenotype reference and ECFP4--RF baseline. The phenotype reference reproduced the locked random-split result (AUROC \num{0.64345}) and showed minimal degradation under collision-group splitting (\num{0.63619}) and scaffold sensitivity (\num{0.64023}). The ECFP4--RF baseline reached AUROC \num{0.53562} under collision-group splitting and \num{0.53817} under scaffold splitting; it was not evaluated under the drug-level random split. The phenotype--ECFP4 fusion arm reached AUROC \num{0.58323}, below the phenotype reference.
 
 \begin{table}[htbp]
 \centering
 \caption{Split sensitivity for the phenotype reference and ECFP4--RF baseline.}
 \label{tab:p6_splits}
-\begin{tabular}{lrrr}
+\begin{tabular}{lccc}
 \toprule
 Arm & Random & Collision-group & Scaffold \\
 \midrule
 Phenotype reference & \num{0.64345} & \num{0.63619} & \num{0.64023}\\
-ECFP4--RF & \num{0.53562} & \num{0.53562} & \num{0.53817}\\
+ECFP4--RF & --- & \num{0.53562} & \num{0.53817}\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -172,7 +172,7 @@ The log-loss/AUROC dissociation observed under collision-group folds therefore p
 
 \subsection{Calibration diagnostics}
 
-\Cref{tab:p6_calibration} reports pooled calibration metrics computed over the archived scaffold-split fold-level test predictions (\num{25} seed--fold replicates, $n=\num{3387670}$ drug--label observations pooled across \num{206} MoA labels). Only fold-level prediction files matching the documented \texttt{drug\_id}, \texttt{<moa>\_true}, \texttt{<moa>\_pred} column contract and the seed/fold filename convention are admitted, and the MoA set must be invariant across folds. The phenotype and structure arms are tightly calibrated (pooled ECE \num{0.0016} and \num{0.0012}; Brier \num{0.0038} and \num{0.0040}), and the fusion arm remains well calibrated (ECE \num{0.0020}; Brier \num{0.0040}). The maximum calibration error is dominated by a single tail bin in every arm, indicating that the pooled ECE is not masking a localized miscalibration. These results are consistent with the collision-group conclusion that the molecular arms produce prevalence-like, well-calibrated probabilities rather than discriminative rankings.
+\Cref{tab:p6_calibration} reports pooled calibration metrics computed over the archived scaffold-split fold-level test predictions (\num{25} seed--fold replicates, $n=\num{3387670}$ drug--label observations pooled across \num{206} MoA labels). The analysis used only fold-level prediction files matching the documented \texttt{drug\_id}, \texttt{<moa>\_true}, \texttt{<moa>\_pred} column contract and seed/fold convention, with an invariant MoA set across folds. The phenotype and structure arms are tightly calibrated (pooled ECE \num{0.0016} and \num{0.0012}; Brier \num{0.0038} and \num{0.0040}), and the fusion arm remains well calibrated (ECE \num{0.0017}; Brier \num{0.0034}). The maximum calibration error is dominated by a single tail bin in every arm, indicating that the pooled ECE is not masking a localized miscalibration. The archived JSON files also contain per-label Brier summaries and the prevalence-tertile sensitivity stratification described in the DAR; those records are used for auditability, not as a claim of label-specific calibration. These results are consistent with the collision-group conclusion that the molecular arms produce prevalence-like, well-calibrated probabilities rather than discriminative rankings.
 
 \begin{table}[htbp]
 \centering
@@ -183,33 +183,33 @@ The log-loss/AUROC dissociation observed under collision-group folds therefore p
 Arm & $n$ & ECE & MCE & Brier \\
 \midrule
 Phenotype reference & \num{3387670} & \num{0.0016} & \num{0.648} & \num{0.0038} \\
-ECFP4--RF (structure) & \num{3387670} & \num{0.0012} & \num{0.946} & \num{0.0040} \\
-Phenotype\,+\,ECFP4--RF fusion & \num{3387670} & \num{0.0020} & \num{0.697} & \num{0.0040} \\
+ECFP4--RF (structure) & \num{3387670} & \num{0.0012} & \num{0.389} & \num{0.0034} \\
+Phenotype\,+\,ECFP4--RF fusion & \num{3387670} & \num{0.0017} & \num{0.259} & \num{0.0034} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Bounded QKS separability}
 
-\Cref{tab:p6_qks} reports a bounded quantile-kernel-similarity (QKS) proxy between the phenotype arm and the two molecular arms over the same \num{3289} scaffold-split drugs. The proxy is the absolute difference of empirical CDF quantiles of the per-drug maximum predicted probability, evaluated at $\tau\in\{0.25,0.50,0.75\}$, supplemented with the Spearman rank correlation between cross-arm maximum predicted probability and between cross-arm per-drug positive-label count. The protocol is bounded to a single drug cohort and to the scaffold split; it is not a reference quantum-kernel implementation. The phenotype-vs-structure proxy at $\tau=0.5$ is $\num{0.023}$ and the cross-arm Spearman on maximum predicted probability is $\num{0.007}$, indicating that the structure arm does not add ranking information on top of the phenotype arm. The phenotype-vs-fusion proxy at $\tau=0.5$ is $\num{0.052}$ and the cross-arm Spearman is $\num{0.286}$, indicating a moderate agreement between the phenotype arm and the fusion arm on the predicted-probability ranking, consistent with the modest fusion-arm AUROC lift over the structure arm alone.
+\Cref{tab:p6_qks} reports a bounded quantile-kernel-similarity (QKS) proxy between the phenotype arm and the two molecular arms over the same \num{3289} scaffold-split drugs. The proxy is the absolute difference of empirical CDF quantiles of the per-drug maximum predicted probability, evaluated at $\tau\in\{0.25,0.50,0.75\}$, supplemented with the Spearman rank correlation between cross-arm maximum predicted probability. The protocol is bounded to a single drug cohort and to the scaffold split; it is not a reference quantum-kernel implementation. Values are taken from the extended four-pair run archived with the analysis artifacts. The phenotype-vs-structure proxy at $\tau=0.5$ is $\num{0.023}$ and the cross-arm Spearman on maximum predicted probability is $\num{0.036}$, indicating that the structure arm does not add ranking information on top of the phenotype arm. The phenotype-vs-fusion proxy at $\tau=0.5$ is $\num{0.033}$ and the cross-arm Spearman is $\num{0.427}$, indicating moderate agreement between the phenotype arm and the fusion arm on the predicted-probability ranking; this descriptive association does not establish incremental predictive value.
 
 \begin{table}[htbp]
 \centering
-\caption{Bounded QKS proxy between the phenotype arm and the two molecular arms over the scaffold-split prediction set (\num{3289} drugs, $\tau=0.5$ headline).}
+\caption{Bounded QKS proxy between the phenotype arm and the two molecular arms over the scaffold-split prediction set (\num{3289} drugs, $\tau=0.5$ headline; $\Delta F(0.5)=\lvert F_p(0.5)-F_y(0.5)\rvert$, the absolute difference of empirical CDF quantiles of per-drug maximum predicted probability).}
 \label{tab:p6_qks}
-\begin{tabular}{lrrr}
+\begin{tabular}{lrr}
 \toprule
-Pair & $\lvert F_p(0.5)-F_y(0.5)\rvert$ & $\rho_S$ (max-prob) & $\rho_S$ (pos-count) \\
+Pair & $\Delta F(0.5)$ & $\rho_S$ max-prob \\
 \midrule
-Phenotype vs.\ structure (ECFP4--RF)   & \num{0.023} & \num{0.007} & \num{1.000} \\
-Phenotype vs.\ fusion (phenotype\,+\,ECFP4--RF) & \num{0.052} & \num{0.286} & \num{1.000} \\
+Phenotype vs.\ structure (ECFP4)   & \num{0.023} & \num{0.036} \\
+Phenotype vs.\ fusion (phenotype $+$ ECFP4) & \num{0.033} & \num{0.427} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \section{Discussion}
 
-This benchmark was designed to test a specific question: whether molecular structure representations improve prediction of observed MoA-associated labels under collision-group-disjoint evaluation. The answer is negative for the evaluated molecular arms, and the negative result is robust to the evaluation boundary: it persists under both collision-group (\Cref{tab:p6_primary}) and scaffold-held-out (\Cref{tab:p6_scaffold_gnn}) splits.
+This benchmark was designed to test whether molecular structure provides transferable information for predicting observed MoA-associated labels beyond a phenotype-only reference, and whether a simple combination of the two sources improves prediction under leakage-controlled evaluation. For the evaluated molecular arms, structure did not recover the phenotype ranking signal: the negative result persists under both collision-group (\Cref{tab:p6_primary}) and scaffold-held-out (\Cref{tab:p6_scaffold_gnn}) splits, while the late-concat fusion remains below the phenotype reference.
 
 \subsection{Calibrated but non-discriminative}
 
@@ -235,15 +235,15 @@ The collision-group mapping is a central contribution of the analysis. It preven
 
 \section{Limitations}
 
-First, the benchmark predicts MoA-associated annotations rather than experimentally established causal mechanisms. No target engagement, antimalarial activity, resistance phenotype, or prospective biological validation was measured. Second, the primary molecular comparison used collision-group folds; a scaffold-held-out sensitivity is reported for the four GNN and ChemBERTa arms and preserves the near-chance verdict, but it remains a sensitivity analysis on the same mapped cohort rather than a prospectively independent chemical-generalisation test. Third, summary metrics are reported across paired seed--fold records, but a complete multiplicity-adjusted paired comparison and confidence-interval analysis should accompany any future claim of relative performance. Fourth, per-label calibration diagrams and calibration slope/intercept were not computed; the pooled ECE, MCE, and Brier score reported in the Results section are summary calibration diagnostics only. Fifth, the bounded QKS protocol is a CDF-quantile proxy, not a full quantum-kernel reference implementation, and is reported as a single-fingerprint separability diagnostic. Sixth, the mapping relies on PRISM-aligned source records and a frozen matching procedure; external structure-source replication may alter coverage or collision composition, and only \num{100}{\%} signature-matched rows were included.
+First, the benchmark predicts MoA-associated annotations rather than experimentally established causal mechanisms. No target engagement, antimalarial activity, resistance phenotype, or prospective biological validation was measured. Second, the primary molecular comparison used collision-group folds; a scaffold-held-out sensitivity is reported for the four GNN and ChemBERTa arms and preserves the near-chance verdict, but it remains a sensitivity analysis on the same mapped cohort rather than a prospectively independent chemical-generalisation test. Third, the paired seed--fold analysis quantifies variation across the 25 predefined replicates, but it is not a substitute for independent external validation. The comparisons are exploratory; no confirmatory multiplicity claim or population-level confidence interval is made. Fourth, the archived outputs contain per-label Brier summaries, but reliability diagrams and calibration slope/intercept were not computed; the pooled ECE, MCE, and Brier score reported in the Results section are summary calibration diagnostics only, and the prevalence-tertile stratification is a sensitivity analysis rather than a biological label classification. Fifth, the bounded QKS protocol is a CDF-quantile proxy, not a full quantum-kernel reference implementation, and is reported as a single-fingerprint separability diagnostic. Sixth, the mapping relies on PRISM-aligned source records and a frozen matching procedure; external structure-source replication may alter coverage or collision composition, and only \num{100}{\%} signature-matched rows were included.
 
 \section{Future directions}
 
-Several extensions could strengthen the evidence base. First, a truly prospective chemical-generalisation test---for example scaffold splits on an independently mapped cohort or experimental validation of the highest-confidence predictions---would test whether the near-chance pattern persists beyond the frozen PRISM-aligned cohort; the current scaffold sensitivity reuses the same cohort and mapping. Second, per-label calibration analysis (reliability diagrams, calibration slope, and per-MoA ECE) would reveal whether specific MoA categories are better predicted by molecular structure than others, potentially identifying a subset of labels where structure contributes. Third, contrastive pretraining on the molecular panel could improve representation quality before fine-tuning. Fourth, the bounded QKS proxy could be replaced with a full reference kernel implementation once the per-drug descriptor matrix is finalized. Finally, prospective biochemical validation on a subset of high-confidence predictions would test whether the computational ranking predicts biological activity.
+Several extensions could strengthen the evidence base. First, a truly prospective chemical-generalisation test---for example scaffold splits on an independently mapped cohort or experimental validation of the highest-confidence predictions---would test whether the near-chance pattern persists beyond the frozen PRISM-aligned cohort; the current scaffold sensitivity reuses the same cohort and mapping. Second, reliability diagrams, calibration slope/intercept, and per-MoA ECE could be added in a dedicated calibration study; the present work retains per-label Brier summaries and a prevalence-tertile sensitivity analysis but does not interpret either as evidence of label-specific biological calibration. Third, contrastive pretraining on the molecular panel could improve representation quality before fine-tuning. Fourth, the bounded QKS proxy could be replaced with a full reference kernel implementation once the per-drug descriptor matrix is finalized. Finally, prospective biochemical validation on a subset of high-confidence predictions would test whether the computational ranking predicts biological activity.
 
 \section{Conclusion}
 
-Under a frozen, collision-group-disjoint evaluation of \num{3289} LISH-MoA drug-level records, the evaluated molecular representations did not demonstrate a predictive advantage over the phenotype reference. GIN-TFP obtained the best molecular-arm log loss, but molecular AUROCs remained close to chance. The result supports reporting collision-aware structure--phenotype benchmarks with explicit failure accounting and cautious interpretation. It does not establish universal molecular-model inferiority or causal biological conclusions.
+Under a frozen, leakage-controlled evaluation of \num{3289} LISH-MoA drug-level records, the evaluated molecular representations did not provide transferable ranking information beyond the phenotype reference, and the late-concat fusion did not improve on that reference. GIN-TFP obtained the best molecular-arm log loss, but molecular AUROCs remained close to chance. The result supports evaluating structure and phenotype at their appropriate information levels, with collision control and explicit failure accounting; it does not establish universal molecular-model inferiority or causal biological conclusions.
 
 \section*{Data and code availability}
 
@@ -267,7 +267,7 @@ Not applicable. This study is entirely computational and uses publicly available
 
 \section*{Data and code accuracy statement}
 
-The numerical values reported in the results tables were recomputed directly from the archived per-fold prediction files and the corresponding report JSONs before the manuscript was finalised; where a tuning table initially disagreed with those artifacts it was corrected (see the project data-analysis report, 30 August 2026). All frozen splits, per-fold outputs, descriptors, and the audited prediction files are released with the repository.
+The numerical values in the results tables were recomputed from the released per-fold prediction files and corresponding summary artifacts. Frozen splits, per-fold outputs, descriptors, and prediction files are released with the repository.
 
 \section*{Use of Artificial Intelligence}
 
