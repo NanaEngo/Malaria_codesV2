@@ -23,13 +23,13 @@ def main():
     df = pd.read_csv(CSV_PATH)
 
     labels = {
-        "w_vina": "Vina (35%)",
-        "w_diff": "DiffDock (25%)",
-        "w_qed": "QED (20%)",
-        "w_admet": "ADMET (15%)",
-        "w_ro5": "Ro5 (5%)",
+        "w_vina": "Vina\n(35%)",
+        "w_diff": "DiffDock\n(25%)",
+        "w_qed": "QED\n(20%)",
+        "w_admet": "ADMET\n(15%)",
+        "w_ro5": "Ro5\n(5%)",
     }
-    var_labels = {"-0.2": "-20%", "-0.1": "-10%", "0.1": "+10%", "0.2": "+20%"}
+    var_labels = {"-0.2": "−20%", "-0.1": "−10%", "0.1": "+10%", "0.2": "+20%"}
 
     weights = list(labels.keys())
     variations = ["-0.2", "-0.1", "0.1", "0.2"]
@@ -47,23 +47,32 @@ def main():
     norm = mcolors.BoundaryNorm(bounds, cmap.N)
 
     with plt.style.context(SCIENCE_STYLE):
-        fig, ax = plt.subplots(figsize=(7, 4.5))
-        im = ax.imshow(matrix, cmap=cmap, norm=norm, aspect="auto")
+        fig, ax = plt.subplots(figsize=(6, 4))
+        im = ax.imshow(matrix, cmap=cmap, norm=norm, aspect="auto",
+                       interpolation="nearest")
 
         ax.set_xticks(range(len(variations)))
-        ax.set_xticklabels([var_labels[v] for v in variations], fontsize=11)
+        ax.set_xticklabels([var_labels[v] for v in variations],
+                           fontsize=14, fontweight="bold")
         ax.set_yticks(range(len(weights)))
-        ax.set_yticklabels([labels[w] for w in weights], fontsize=11)
+        ax.set_yticklabels([labels[w] for w in weights],
+                           fontsize=13, fontweight="bold")
+
+        # Draw grid lines between cells
+        for i in range(len(weights) + 1):
+            ax.axhline(i - 0.5, color="white", linewidth=1.5)
+        for j in range(len(variations) + 1):
+            ax.axvline(j - 0.5, color="white", linewidth=1.5)
 
         for i in range(len(weights)):
             for j in range(len(variations)):
                 val = matrix[i, j]
                 txt = f"{val:.2f}"
                 ax.text(j, i, txt, ha="center", va="center",
-                        fontsize=13, fontweight="bold", color="white")
+                        fontsize=14, fontweight="bold", color="white")
 
-        ax.set_xlabel("Weight variation", labelpad=10, fontsize=12)
-        ax.set_ylabel("MPO component", labelpad=10, fontsize=12)
+        ax.set_xlabel("Weight variation", labelpad=12, fontsize=14)
+        ax.set_ylabel("MPO component", labelpad=12, fontsize=14)
 
         legend_elements = [
             Patch(facecolor="#388E3C", edgecolor="white",
@@ -72,7 +81,7 @@ def main():
                   label="Jaccard = 0.50 (unstable)"),
         ]
         ax.legend(handles=legend_elements, loc="upper center",
-                  bbox_to_anchor=(0.5, -0.12), ncol=2, fontsize=9,
+                  bbox_to_anchor=(0.5, -0.14), ncol=2, fontsize=10,
                   framealpha=0.9, fancybox=False)
 
         fig.tight_layout()

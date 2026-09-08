@@ -60,15 +60,17 @@ def main() -> int:
     pockets = {p: load_pockets(p) for p in pdbs}
 
     # ---- panel (a): distance bar chart -------------------------------
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.6))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5),
+                                   gridspec_kw={"width_ratios": [1.1, 1]})
 
     labels, dists, colors = [], [], []
     for p in pdbs:
         cx, cy, cz = GRIDS[p]["center"]
+        short = GRIDS[p]["name"].split("(")[0].strip()
         for pk in pockets[p][:3]:
             px, py, pz = pk["center"]
             d = math.sqrt((px - cx) ** 2 + (py - cy) ** 2 + (pz - cz) ** 2)
-            labels.append(f"{GRIDS[p]['name']}\n{GRIDS[p]['size']} Å box\npocket{pk['rank']}")
+            labels.append(f"{short}\npocket {pk['rank']}")
             dists.append(d)
             colors.append("#2a9d8f" if p == "6UKJ" else "#8ab4f8")
     x = np.arange(len(labels))
@@ -76,9 +78,9 @@ def main() -> int:
     ax1.axhline(12.5, color="red", ls="--", lw=1.2,
                 label="box half-edge (12.5 Å)")
     ax1.set_xticks(x)
-    ax1.set_xticklabels(labels, fontsize=7.5)
-    ax1.set_ylabel("Distance pocket center – Vina box center (Å)")
-    ax1.set_title("(a) P2Rank pocket centers vs Vina box centers")
+    ax1.set_xticklabels(labels, fontsize=8, ha="center")
+    ax1.set_ylabel("Distance pocket center – Vina box center (Å)", fontsize=9)
+    ax1.set_title("(a) P2Rank pocket centres vs Vina box centres", fontsize=10)
     ax1.legend(fontsize=8)
     for b, d in zip(bars, dists):
         ax1.text(b.get_x() + b.get_width() / 2, d + 0.8, f"{d:.1f}",
@@ -98,12 +100,11 @@ def main() -> int:
                         c="#2a9d8f" if p == "6UKJ" else "#8ab4f8",
                         alpha=0.85, edgecolors="black", linewidth=0.3)
     ax2.set_xlabel("x (Å)"); ax2.set_ylabel("y (Å)"); ax2.set_zlabel("z (Å)")
-    ax2.set_title("(b) Vina box centers (*) and top-3 P2Rank pockets\n"
-                  "per receptor (same frame pairs)")
-    ax2.legend(fontsize=6.5, loc="upper left")
+    ax2.set_title("(b) Vina box centres (*) and top-3 P2Rank pockets\n"
+                  "per receptor (same frame pairs)", fontsize=10)
+    ax2.legend(fontsize=7, loc="upper left", framealpha=0.9)
 
-    fig.suptitle("Independent P2Rank pocket audit vs P2 Vina docking boxes",
-                 fontsize=11, y=1.02)
+    fig.suptitle("")
     fig.tight_layout()
 
     pdf = FIG_DIR / "figure_p2rank_boxes.pdf"
