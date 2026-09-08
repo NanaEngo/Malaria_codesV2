@@ -237,14 +237,14 @@ Interaction fingerprints (ProLIF 2.2.1, \num{100} frames per trajectory, sixteen
 \small
 \caption{PP-15 single-ligand feasibility probe (outside the Set-C estimand). Vina scores are best-pose affinities on wild-type receptors; MD columns report the OpenFF~2.2.0/CHARMM36m protocol outcome for the canonical \qty{10}{ns} production runs (self-contained replicate directories). Trajectory QC passes for both systems (bound fraction \num{1.000}; mean minimum distances \qty{2.77}{\angstrom} PfDHFR and \qty{3.20}{\angstrom} PfCRT). MM-GBSA is GB\textsuperscript{OBC2} (igb=5), \qty{0.15}{\molar} salt, mean over the frame window $\pm$ SEM (\num{100} frames for PfDHFR, \num{80} for PfCRT; PBC-whole trajectories). No mutant or RRS estimate is reported.}
 \label{tab:s_pp15}
-\begin{tabular}{l S[table-format=-1.2] l l S[table-format=-2.2] S[table-format=1.2] S[table-format=-2.2]}
+\begin{tabularx}{\textwidth}{@{}l S[table-format=-1.2] X S[table-format=-2.2] S[table-format=1.2] S[table-format=-2.2]@{}}
 \toprule
-Target & {Vina (\si{\kcalmol})} & Audit & Production & {MM-GBSA (\si{\kcalmol})} & {SEM} & {Bound fraction} \\
+Target & {Vina (\si{\kcalmol})} & {Protocol} & {MM-GBSA (\si{\kcalmol})} & {SEM} & {Bound fraction} \\
 \midrule
-PfDHFR (7F3Y) & -8.62 & PASS & 10 ns complete & -29.52 & 0.33 & \num{1.000} \\
-PfCRT (6UKJ) & -7.81 & PASS & 10 ns complete & -27.79 & 0.49 & \num{1.000} \\
+PfDHFR (7F3Y) & -8.62 & PASS; 10 ns complete & -29.52 & 0.33 & \num{1.000} \\
+PfCRT (6UKJ) & -7.81 & PASS; 10 ns complete & -27.79 & 0.49 & \num{1.000} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 % ============================================================================

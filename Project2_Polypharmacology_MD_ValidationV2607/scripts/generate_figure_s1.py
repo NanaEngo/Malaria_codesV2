@@ -47,36 +47,36 @@ def main():
     norm = mcolors.BoundaryNorm(bounds, cmap.N)
 
     with plt.style.context(SCIENCE_STYLE):
-        fig, ax = plt.subplots(figsize=(7, 4))
+        fig, ax = plt.subplots(figsize=(7, 4.5))
         im = ax.imshow(matrix, cmap=cmap, norm=norm, aspect="auto")
 
         ax.set_xticks(range(len(variations)))
-        ax.set_xticklabels([var_labels[v] for v in variations])
+        ax.set_xticklabels([var_labels[v] for v in variations], fontsize=11)
         ax.set_yticks(range(len(weights)))
-        ax.set_yticklabels([labels[w] for w in weights])
+        ax.set_yticklabels([labels[w] for w in weights], fontsize=11)
 
         for i in range(len(weights)):
             for j in range(len(variations)):
                 val = matrix[i, j]
                 txt = f"{val:.2f}"
                 ax.text(j, i, txt, ha="center", va="center",
-                        fontsize=12, fontweight="bold", color="white")
+                        fontsize=13, fontweight="bold", color="white")
 
-        ax.set_xlabel("Weight variation", labelpad=10)
-        ax.set_ylabel("MPO component", labelpad=10)
+        ax.set_xlabel("Weight variation", labelpad=10, fontsize=12)
+        ax.set_ylabel("MPO component", labelpad=10, fontsize=12)
 
         legend_elements = [
             Patch(facecolor="#388E3C", edgecolor="white",
                   label="Jaccard = 1.00 (stable)"),
             Patch(facecolor="#D32F2F", edgecolor="white",
                   label="Jaccard = 0.50 (unstable)"),
-            Patch(facecolor="none", edgecolor="red", linestyle="--",
-                  linewidth=1.5, label="Threshold (0.70)"),
         ]
-        ax.legend(handles=legend_elements, loc="lower right", fontsize=9,
+        ax.legend(handles=legend_elements, loc="upper center",
+                  bbox_to_anchor=(0.5, -0.12), ncol=2, fontsize=9,
                   framealpha=0.9, fancybox=False)
 
         fig.tight_layout()
+        fig.subplots_adjust(bottom=0.18)
         out_path = os.path.join(OUT_DIR, "Figure_S1_MPO_sensitivity.pdf")
         fig.savefig(out_path, dpi=300, bbox_inches="tight")
         fig.savefig(out_path.replace(".pdf", ".png"), dpi=300, bbox_inches="tight")
