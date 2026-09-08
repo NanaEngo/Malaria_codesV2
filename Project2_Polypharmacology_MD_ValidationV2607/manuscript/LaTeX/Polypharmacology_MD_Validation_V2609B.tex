@@ -88,6 +88,7 @@
 
 \begin{document}
 \emergencystretch=12em
+\sloppy
 
 \maketitle
 
@@ -167,7 +168,7 @@ Seventeen candidates were selected from the Set-C candidate panel generated from
 
 \begin{table}[htbp]
 \centering
-\caption{Breakdown of the 136 docking protein--ligand systems by category (17 polypharmacological candidates $\times$ 8 wild-type/mutant PfDHFR and PfCRT structures). $^*$Production MD was performed at \qty{10}{\nano\second} each (\qty{40}{\nano\second} total) on 4 wild-type parent-study complexes distinct from the Set-C list. Ligand 164 is retained as the 164-labelled PfClpR cohort; PDB 4GM2 is PfClpR rather than PfClpP. The other parent-study systems were Ligand 201 (PfDHFR), Ligand 214 (PfCRT), and Ligand 438 (PfATP4).}
+\caption{Breakdown of the 136 docking protein--ligand systems by target. The 17 Set-C candidates were docked against 5 PfDHFR states (WT + N51I, C59R, S108N, I164L) and 3 PfCRT states (WT + K76T, K76A). Production MD was performed separately on four non-overlapping parent-study wild-type complexes (Ligands 164/PfClpR, 201/PfDHFR, 214/PfCRT, 438/PfATP4; \qty{10}{\nano\second} each) and is not shown here.}
 \label{tab:system_breakdown}
 \small
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}X S[table-format=2.0] S[table-format=1.0] S[table-format=3.0] l}
@@ -306,11 +307,11 @@ On the two-target set, PNS and RRS were only weakly associated ($\rho=\num{-0.20
 
 \subsection{Computational prioritization intersection}
 
-Requiring Class~A or A*, ACSI $>$ \num{0.5}, and above-mean PNS leaves PP-15 on the two-target panel; PP-15 was, however, included only as a feasibility probe outside the \num{17}-candidate Set-C estimand (see \cref{sec:setc_pilot}; the PP-15 feasibility details are provided in the Supporting Information) and so is not a product of the Set-C prioritisation pipeline. That intersection is reported as a shortlist for experiment, not as evidence of activity or resistance resilience.
+Requiring Class~A or A*, ACSI $>$ \num{0.5}, and above-mean PNS leaves PP-15 on the two-target panel; PP-15 was, however, included only as a feasibility probe outside the \num{17}-candidate Set-C estimand (see Section~\ref{sec:setc_pilot}; the PP-15 feasibility details are provided in the Supporting Information) and so is not a product of the Set-C prioritisation pipeline. That intersection is reported as a shortlist for experiment, not as evidence of activity or resistance resilience.
 
 \subsection{Parent-study MD check (non-overlapping cohort)}
 
-These four complexes test whether docked poses remain bound on a short timescale; they do not validate the Set-C ranking (\cref{sec:non_equiv_estimands}).
+These four complexes test whether docked poses remain bound on a short timescale; they do not validate the Set-C ranking (Section~\ref{sec:non_equiv_estimands}).
 
 \begin{table}[htbp]
 \centering
@@ -337,7 +338,7 @@ The other two systems, the 164-labelled PfClpR cohort and PfDHFR, had stable pro
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.9\textwidth]{rmsd_representative.png}
-\caption{Detailed stability analysis for the parent-study PfCRT--Ligand 214 complex over \qty{10}{\nano\second} production MD. The system exhibits transporter flexibility while retaining a bound ligand; cohort-level stability values are reported in \Cref{tab:md_stability}.}
+\caption{Stability analysis for the parent-study PfCRT--Ligand 214 complex over \qty{10}{\nano\second} production MD. (A)~Protein backbone RMSD; (B)~ligand heavy-atom RMSD; (C)~protein--ligand contacts within \qty{5}{\angstrom}; (D)~protein--ligand hydrogen bonds per frame. Dashed lines in (A) and (B) indicate stability thresholds. The system retains a bound ligand with persistent contacts and H-bonds; cohort-level metrics are in \Cref{tab:md_stability}.}
 \label{fig:pfcrt_rmsd}
 \end{figure}
 
@@ -465,7 +466,7 @@ RRS class frequencies depend on the selection filters and on unequal target cove
 
 \section{Conclusion}
 
-Resistance-aware polypharmacology docking produces a discriminant prioritization signal inside the curated 17-candidate cohort: the 12 candidates with complete PfDHFR and PfCRT data fall into five mutually exclusive classes (A*–D) that separate predicted wild-type potency from predicted mutant retention (\cref{tab:rrs_primary}). The three ranking dimensions---RRS, PNS, and ACSI---capture distinct information, with weak cross-correlations confirming their complementarity. Short molecular dynamics stress tests probe a different estimand and cannot serve as direct validation of docking-derived retention classes: on non-overlapping parent-study complexes, ligand retention occurred in only two of four systems; on the Set-C pilot, trajectory metrics and docking-RRS disagreed in direction for seven of eight mutant comparisons. Docking-RRS and MD-RRS are non-equivalent quantities; computational prioritization and structural scrutiny should be reported as parallel ranking dimensions with non-overlapping failure modes, not as convergent evidence of resistance resilience. An external docking panel averaged near RRS \num{100}, with little mutant/wild-type contrast under the same protocol. The ranking is useful inside this computational panel as a hypothesis-generating prioritization; it does not constitute a validated triage procedure and does not demonstrate biological polypharmacology, a systems-level mechanism, or experimental resistance circumvention. PP-01 \textbf{merits} experimental follow-up; PP-02 was not promoted by the pilot gate. Target-engagement assays, phenotypic tests, longer or free-energy simulations on mutants, and prospective experiments remain necessary before any biological claim can be advanced.
+Resistance-aware polypharmacology docking produces a discriminant prioritization signal inside the curated 17-candidate cohort: the 12 candidates with complete PfDHFR and PfCRT data fall into five mutually exclusive classes (A*–D) that separate predicted wild-type potency from predicted mutant retention (\cref{tab:rrs}). The three ranking dimensions---RRS, PNS, and ACSI---capture distinct information, with weak cross-correlations confirming their complementarity. Short molecular dynamics stress tests probe a different estimand and cannot serve as direct validation of docking-derived retention classes: on non-overlapping parent-study complexes, ligand retention occurred in only two of four systems; on the Set-C pilot, trajectory metrics and docking-RRS disagreed in direction for seven of eight mutant comparisons. Docking-RRS and MD-RRS are non-equivalent quantities; computational prioritization and structural scrutiny should be reported as parallel ranking dimensions with non-overlapping failure modes, not as convergent evidence of resistance resilience. An external docking panel averaged near RRS \num{100}, with little mutant/wild-type contrast under the same protocol. The ranking is useful inside this computational panel as a hypothesis-generating prioritization; it does not constitute a validated triage procedure and does not demonstrate biological polypharmacology, a systems-level mechanism, or experimental resistance circumvention. PP-01 \textbf{merits} experimental follow-up; PP-02 was not promoted by the pilot gate. Target-engagement assays, phenotypic tests, longer or free-energy simulations on mutants, and prospective experiments remain necessary before any biological claim can be advanced.
 
 % ============================================================================
 % BACK MATTER
