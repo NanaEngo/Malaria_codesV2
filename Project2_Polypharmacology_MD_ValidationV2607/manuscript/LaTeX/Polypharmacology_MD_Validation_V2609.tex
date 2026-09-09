@@ -23,12 +23,13 @@
 \usepackage{booktabs, tabularx, array, multirow, longtable}
 \usepackage{tikz}
 \usepackage{rotating}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage[table]{xcolor}
 \captionsetup{labelfont=bf,font={footnotesize,it}}
 
 % Units and SI
 \usepackage[
-  group-minimum-digits = 4,
+  group-minimum-digits = 5,
   per-mode             = symbol,
   range-phrase         = {--},
   range-units          = single,
@@ -140,7 +141,7 @@ Rigid docking is efficient for ranking but treats the receptor and scoring lands
 
 Workflows that combine a docking-derived retention metric, network pharmacology and short MM-GBSA endpoints are sometimes presented as joint evidence for resistance-resilient polypharmacology, but each layer measures a different estimand and has its own scope of inference. Treating them as independent evidence of mechanism, rather than as parallel ranking signals with non-overlapping failure modes, inflates the apparent epistemic reach of a single short MD pilot. We make this distinction explicit throughout.
 
-We asked whether target-level docking-score retention could distinguish predicted potency from predicted mutant sensitivity in a chemically diverse antimalarial library. The primary analysis used \num{12} candidates with eligible PfDHFR and PfCRT wild-type scores; five PfCRT-only candidates formed a coverage-limited sensitivity set. RRS was calculated from empirical Vina scores, whereas PNS and ACSI provided complementary ranking dimensions. Four parent-study wild-type complexes---chemically and numerically distinct from the 17 Set-C candidates---underwent \qty{10}{\nano\second} simulations as a methodological pose-retention check; a 16-system Set-C pilot provided the only trajectory-level comparison against docking-RRS for members of the prioritization cohort. Biological polypharmacology and resistance circumvention were not tested. *The study supports computational prioritisation but does not establish biological target engagement, affinity, or resistance resilience.*
+We asked whether target-level docking-score retention could distinguish predicted potency from predicted mutant sensitivity in a chemically diverse antimalarial library. The primary analysis used \num{12} candidates with eligible PfDHFR and PfCRT wild-type scores; five PfCRT-only candidates formed a coverage-limited sensitivity set. RRS was calculated from empirical Vina scores, whereas PNS and ACSI provided complementary ranking dimensions. Four parent-study wild-type complexes, chemically and numerically distinct from the 17 Set-C candidates, underwent \qty{10}{\nano\second} simulations as a methodological pose-retention check; a 16-system Set-C pilot provided the only trajectory-level comparison against docking-RRS for members of the prioritization cohort. Biological polypharmacology and resistance circumvention were not tested. The study supports computational prioritization but does not establish biological target engagement, affinity, or resistance resilience.
 
 % ============================================================================
 % 2. METHODS
@@ -152,7 +153,7 @@ We asked whether target-level docking-score retention could distinguish predicte
 
 The primary analysis is docking-score retention (RRS) for the 12 Set-C candidates that have eligible PfDHFR and PfCRT wild-type scores. The central estimand is a computational triage signal, not a biological resilience phenotype. We therefore distinguish the primary docking-RRS analysis from secondary structural-retention diagnostics, technical validation, and unobserved biological quantities. Three secondary analyses are reported separately: the five PfCRT-only candidates, a four-complex parent-study MD check, and a 16-system Set-C MD pilot. They address different coverage and sampling questions and are not combined with the primary RRS classes. The parent-study MD systems are not among the 17 Set-C candidates and do not validate the Set-C ranking.
 
-\begin{figure}[htbp]
+\begin{figure}[ht!]
 \centering
 \includegraphics[width=0.98\textwidth]{p2_cohort_workflow.pdf}
 \caption{Study design. Docking-derived RRS, ACSI, and PNS are computed on the 17 Set-C candidates across \num{136} WT/mutant PfDHFR and PfCRT systems. Four parent-study complexes (non-overlapping with the Set-C list) undergo a single \qty{10}{\nano\second} production MD per system (CHARMM36m/GAFF2 or OpenFF/CHARMM36m for the parent-study and Set-C cohorts, respectively); a \num{16}-system pilot (PP-01 and PP-02, single \qty{10}{\nano\second} replicate per mutant) is reported separately and does not define the RRS classes. None of the MD trajectories is replicated at the level recommended by the JCIM MD-reporting guidelines \citep{soares2023mdreport}.}
@@ -165,7 +166,7 @@ The Set-C cohort is a filtered prioritization cohort rather than a representativ
 
 Seventeen candidates were selected from the Set-C candidate panel generated from the library of \num{65856} molecules described previously \citep{temgoua2026antimalarial}. After MPO $\geq$ \num{0.70}, SYBA $>$ \num{0}, and SI $>$ \num{10} filtering, \num{19913} primary leads remained; the present Set-C cohort is a further prioritization of that filtered set. The candidate-selection panel is distinct from the production-MD cohort. Three sequential filters were applied: (1) MPO score $\geq$ \num{0.70} (primary leads); (2) SYBA score $>$ \num{0} (synthesisable); (3) selectivity index SI $>$ \num{10} (selectively antiparasitic). The selection additionally required multi-target engagement of at least two of the four docking targets and scaffold diversity of no more than three compounds per Bemis--Murcko scaffold. The selection includes one of the previously named consensus leads (Ligand 87, PfDHFR). The four additional parent-study consensus leads (Ligands 201, 214, 438, 164) were not part of the 17-candidate docking set but were used to construct the wild-type complexes for the production MD check. The 164 system is identified as the 164-labelled PfClpR cohort; PDB 4GM2 is PfClpR rather than PfClpP, so this system is not structural validation of PfClpP. Five approved antimalarial drugs (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) were included as reference controls for the docking analysis (\cref{tab:system_breakdown}).
 
-\begin{table}[htbp]
+\begin{table}[ht!]
 \centering
 \caption{Breakdown of the 136 docking protein--ligand systems by category (17 polypharmacological candidates $\times$ 8 wild-type/mutant PfDHFR and PfCRT structures). $^*$Production MD was performed at \qty{10}{\nano\second} each (\qty{40}{\nano\second} total) on 4 wild-type parent-study complexes distinct from the Set-C list. Ligand 164 is retained as the 164-labelled PfClpR cohort; PDB 4GM2 is PfClpR rather than PfClpP. The other parent-study systems were Ligand 201 (PfDHFR), Ligand 214 (PfCRT), and Ligand 438 (PfATP4).}
 \label{tab:system_breakdown}
@@ -187,7 +188,7 @@ PfCRT WT + 2 mutants (Set-C) & 17 & 3 & 51 & \textemdash \\
 
 We selected six resistance-associated states for comparison (\cref{tab:mutations}); target identifiers are listed in the Supporting Information (\cref{SM-tab:s5_plasmodb}). Each state corresponds to a WHO-listed molecular marker of antimalarial drug resistance, giving the panel a clinical anchor rather than an arbitrary residue choice \citep{who_compendium_markers}.
 
-\begin{table}[htbp]
+\begin{table}[ht!]
 \centering
 \caption{Resistance mutation panel.}
 \label{tab:mutations}
@@ -275,14 +276,14 @@ Two of 17 candidates had ACSI above \num{0.70} (cohort mean \num{0.543}). ACSI m
 
 \subsection{Cross-metric associations}
 
-\begin{figure}[htbp]
+\begin{figure}[ht!]
 \centering
 \includegraphics[width=0.85\textwidth]{cross_metric_correlation.png}
 \caption{Cross-metric Spearman correlations for Set-C candidates. The primary analysis uses the 12 complete two-target candidates; the 17-candidate matrix is shown only for comparison when target coverage is incomplete. PNS already includes wild-type docking scores, so that pair is not an independent test.}
 \label{fig:crossmetric}
 \end{figure}
 
-\begin{table}[htbp]
+\begin{table}[ht!]
 \centering
 \caption{Cross-metric Spearman correlations on the complete two-target set ($n=12$). Permutation $p$-values use \num{100000} permutations; adjusted $p$-values use Bonferroni correction for three tests. Bootstrap intervals are percentile \qty{95}{\percent} intervals from \num{10000} resamples. At this sample size the correlations are descriptive.}
 \label{tab:crossmetric}
@@ -312,7 +313,7 @@ Requiring Class~A or A*, ACSI $>$ \num{0.5}, and above-mean PNS leaves PP-15 on 
 
 These four complexes are not among the 17 Set-C candidates. The trajectories test whether the docked poses remain bound on a short timescale; they do not validate the Set-C ranking.
 
-\begin{table}[htbp]
+\begin{table}[ht!]
 \centering
 \caption[MD stability metrics]{Production MD stability metrics for parent-study wild-type complexes (\qty{10}{\nano\second}). BB RMSD, ligand RMSD, minimum distance, contacts, and H-bonds are computed from PBC-unwrapped trajectories.}
 \label{tab:md_stability}
@@ -334,14 +335,14 @@ Two systems, PfCRT and PfATP4, retained their ligands throughout production. PfC
 
 The other two systems, the 164-labelled PfClpR cohort and PfDHFR, had stable protein conformations (backbone RMSD \qty{1.31}{\angstrom} and \qty{3.05}{\angstrom}, respectively) but the ligands are completely unbound (minimum distances \qty{67.42}{\angstrom} and \qty{78.21}{\angstrom}, zero contacts). This indicates either incorrect initial placement or rapid dissociation during equilibration, not a PBC artefact. Consequently, MM-GBSA analyses for these systems are not interpretable as affinity estimates. Protein equilibration alone was insufficient to retain the docked poses.
 
-\begin{figure}[htbp]
+\begin{figure}[ht!]
 \centering
 \includegraphics[width=0.9\textwidth]{rmsd_representative.pdf}
 \caption{Detailed stability analysis for the parent-study PfCRT--Ligand 214 complex over \qty{10}{\nano\second} production MD. The system exhibits transporter flexibility while retaining a bound ligand; cohort-level stability values are reported in \Cref{tab:md_stability}.}
 \label{fig:pfcrt_rmsd}
 \end{figure}
 
-\begin{table}[htbp]
+\begin{table}[ht!]
 \centering
 \caption[Parent-study MM-GBSA interpretation]{Endpoint interpretation for four parent-study complexes used for production MD. These systems are distinct from the 17 Set-C candidates. Only PfCRT--214 yields an interpretable MM-GBSA endpoint; dissociated systems are reported as N/A.}
 \label{tab:mmgbsa}
@@ -378,7 +379,7 @@ As a bounded consistency check, we intersected the docking-RRS retention criteri
 
 A single-ligand feasibility probe (PP-15, outside the Set-C cohort) extended the same OpenFF protocol to wild-type PfDHFR and PfCRT: Vina best poses were \qty{-8.62}{\kcalmol} and \qty{-7.81}{\kcalmol}, respectively, and both systems completed \qty{10}{ns} production trajectories with valid checkpoints, yielding MM-GBSA estimates of \qty{-29.52 \pm 0.33}{\kcalmol} (PfDHFR) and \qty{-27.79 \pm 0.49}{\kcalmol} (PfCRT); as for the pilot, no RRS estimate is reported for this probe (\cref{SM-tab:s_pp15}).
 
-\begin{table}[htbp]
+\begin{table}[ht!]
 \centering
 \caption{Set-C pilot MM-GBSA estimates (exploratory; not used to assign RRS classes). $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots $\pm$ SEM; within-trajectory standard deviations are in the Supporting Information. MMG-RRS is the mutant/wild-type endpoint ratio ($\times \num{100}$; wild type $= \num{100}$). Docking RRS is shown for comparison (n/a: no wild-type docking reference for PP-02 PfDHFR). Single-replicate endpoints should be read only as within-protocol contrasts.}\label{tab:mmmgbsa_setc}
 \scriptsize
