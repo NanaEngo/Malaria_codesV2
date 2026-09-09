@@ -89,8 +89,8 @@ Stage the canonical P1 V8 artifacts into a self-contained package
 
 | # | Action | Detail | Done |
 |---|--------|--------|:----:|
-| 4.1 | Data Availability statement (main) | add GitHub URL + DOI: `https://github.com/NanaEngo/Malaria_codesV2` · DOI `10.5281/zenodo.<XXXXX>` | ✅ 2026-09-09 URL + MIT + `v1.0.0` inserted; DOI sentence pending Zenodo assignment |
-| 4.2 | SM §S11 (Reproducibility) | same URL + DOI (`\url{...}`) | ✅ 2026-09-09 same as 4.1 |
+| 4.1 | Data Availability statement (main) | add GitHub URL + DOI: `https://github.com/NanaEngo/Malaria_codesV2` · DOI `10.5281/zenodo.<XXXXX>` | ✅ 2026-09-09 Zenodo-only statement (author decision: GitHub URL omitted from manuscript availability statements); DOI to insert upon assignment |
+| 4.2 | SM §S11 (Reproducibility) | same URL + DOI (`\url{...}`) | ✅ 2026-09-09 same Zenodo-only statement as 4.1 |
 | 4.3 | Response letter R2.6 | replace `[TO COMPLETE]` with the public URL, license, release tag, and DOI | ✅ 2026-09-09 rewritten (public URL, MIT, `v1.0.0`, staged package); DOI to append after assignment |
 | 4.4 | Recompile main + SM + response; sync PDFs; `git diff --check` | 0 errors / 0 undefined | ⬜ |
 
