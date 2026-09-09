@@ -40,7 +40,7 @@ Project2_Polypharmacology_MD_ValidationV2607/    ← canonical (this report)
 │   │   ├── Polypharmacology_MD_Validation_SM_V2607.tex (SI)
 │   │   ├── Secondary_Analyses_SI.tex
 │   │   ├── Cover_Letter.{tex,pdf}
-│   │   ├── Bibliography_P2.bib
+│   │   ├── Project2_Polypharmacology_MD_Validation.bib
 │   │   ├── acs-Polypharmacology_MD_Validation_V2607.bib
 │   │   ├── acs-Polypharmacology_MD_Validation_SM_V2607.bib
 │   │   ├── Graphics/                              (PDFs referenced by LaTeX)

@@ -14,7 +14,7 @@
 - `Polypharmacology_MD_Validation_V2609.tex` — main manuscript.
 - `Polypharmacology_MD_Validation_SM_V2609.tex` — Supporting Information.
 - `Cover_Letter_V2609.tex` — cover letter.
-- `Bibliography_P2.bib` — shared bibliography source.
+- `Project2_Polypharmacology_MD_Validation.bib` — shared bibliography source.
 - `acs-Polypharmacology_MD_Validation_V2609.bib` — generated/main bibliography support.
 - `acs-Polypharmacology_MD_Validation_SM_V2609.bib` — generated/SI bibliography support.
 - `Table_RRS_Primary.tex` — primary RRS table.
