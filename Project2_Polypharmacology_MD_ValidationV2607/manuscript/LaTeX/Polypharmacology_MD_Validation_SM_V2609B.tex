@@ -37,13 +37,13 @@
 \crefname{subsection}{Section}{Sections}
 
 \usepackage{xr}
-\externaldocument[MAIN-]{Polypharmacology_MD_Validation_V2609}
+\externaldocument[MAIN-]{Polypharmacology_MD_Validation_V2609B}
 % Build order: pdflatex main; pdflatex SM; pdflatex main; pdflatex SM
 
-\graphicspath{{Graphics/}{../Graphics/}}
+\graphicspath{{Graphics/}}
 
-\title{Supporting Information for \\ ``Interpreting Docking-Derived Resistance-Retention Scores in Antimalarial Triage \\
-from African Natural Products''}
+\title{Supporting Information for \\ ``Docking-Retention Scores Stratify Antimalarial Leads \\
+but Short MD Reveals Non-Equivalent Estimands''}
 \author{Myke Vital Sao Temgoua}
 \affiliation[UY1Phys]{Department of Physics, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}
 \email{myke-vital.sao@facsciences-uy1.cm}
@@ -72,7 +72,7 @@ from African Natural Products''}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{figure_p2rank_boxes.pdf}
-\caption{P2Rank\citep{Krivak2018P2Rank} pocket centres versus the fixed Vina\citep{vina_2021} grid boxes. (a)~Distance from the top three P2Rank pockets to the Vina box centre for PfDHFR (7F3Y), PfCRT (6UKJ), and PfATP4 (9N10); the dashed line is the \qty{12.5}{\angstrom} box half-edge. (b)~Same centres in 3D (star: Vina box). For PfCRT the top pocket (score \num{162.7}, probability \num{0.999}) lies \qty{5.7}{\angstrom} from the box centre. Larger separations for PfDHFR and PfATP4 may reflect a different receptor frame in the parent-study grid files and are noted as provenance caveats, not as docking failures. P2Rank 2.5.1; exploratory check only.}
+\caption{P2Rank\citep{Krivak2018P2Rank} pocket centres versus the fixed Vina\citep{vina_2021} grid boxes. (a)~Distance from the top three P2Rank pockets to the Vina box centre for PfDHFR (7F3Y), PfCRT (6UKJ), and PfATP4 (9N10); the dashed line is the \qty{12.5}{\angstrom} box half-edge. (b)~Same centres in 3D (star: Vina box). For PfCRT the top pocket (score \num{162.7}, probability \num{0.999}) lies \qty{5.7}{\angstrom} from the box centre. Larger separations for PfDHFR and PfATP4 may reflect a different receptor frame in the parent-study grid files, and are noted as provenance caveats rather than docking failures.}
 \label{fig:s4_p2rank_boxes}
 \end{figure}
 
@@ -83,7 +83,7 @@ from African Natural Products''}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{Figure_S1_MPO_sensitivity.pdf}
-\caption{MPO weight sensitivity. Each cell is the Jaccard similarity of the top-20 list after changing one MPO weight by \qty{\pm 20}{\percent}. Green ($1.00$) means no change; red ($0.50$) means substantial reordering.}
+\caption{Sensitivity of the top-20 candidate ranking to \qty{\pm 20}{\percent} perturbation of each MPO weight, measured as Jaccard similarity. Green ($1.00$) indicates no change; red ($0.50$) indicates substantial reordering.}
 \label{fig:s1_mpo_sensitivity}
 \end{figure}
 
@@ -147,7 +147,7 @@ PfClpR & \scriptsize\texttt{PF3D7\_1436800}\normalsize & 4GM2 & 4GM2 is PfClpR, 
 \setlength{\tabcolsep}{6pt}
 \end{table}
 
-Identifiers were taken from PlasmoDB/VEuPathDB (accessed 12 August 2026) \citep{plasmodb_2026}; the release/build string was not recorded. A parent-study PfCRT redocking check at pH~5.2 (100/100 library ligands; $\rho = 0.270$, $p = 0.006551$) was not merged into the Set-C RRS cohort. No GO or pathway enrichment was run, because a defined multi-gene targetome and parasite-proteome background were not available \citep{Trapotsi2022MoA}.
+Target identifiers were taken from PlasmoDB/VEuPathDB (accessed 12 August 2026) \citep{plasmodb_2026}; the release/build string was not recorded. A parent-study PfCRT redocking check at pH~5.2 (100/100 library ligands; $\rho = 0.270$, $p = 0.006551$) was not merged into the Set-C RRS cohort. No GO or pathway enrichment was run, because a defined multi-gene targetome and parasite-proteome background were not available \citep{Trapotsi2022MoA}.
 
 % ============================================================================
 % 6. Parent-study MD (non-overlapping cohort)
@@ -184,12 +184,12 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {SEM} & Interpretation \\
 % 7. Set-C MD pilot
 % ============================================================================
 
-\noindent The parent-study trajectories are a short, non-membrane explicit-solvent check on four wild-type complexes outside the Set-C list. Separately, a \num{16}-system pilot ran PP-01 and PP-02 against the six-mutant panel for \qty{10}{\nano\second} each (single replicate per system). Trajectory-derived ratios and MM-GBSA are compared with docking RRS below. Neither design estimates long residence times or replicate uncertainty; per the JCIM MD-reporting guidelines \citep{soares2023mdreport}, at least three independent replicates per system are recommended, and no new replicate campaign was launched for the present submission. Scope boundaries are summarized in \cref{tab:s13_evidence_scope,tab:s14_panel_scope}.
+\noindent Four parent-study wild-type complexes were simulated as a methodological pose-retention check; only PfCRT--214 yielded an interpretable MM-GBSA estimate ($\qty{-18.25 \pm 0.40}{\kcalmol}$). The 16-system single-replicate Set-C pilot on PP-01 and PP-02 tested whether short trajectories and MM-GBSA recover the docking-RRS pattern. All trajectories met geometric acceptance checks; trajectory metrics and docking-RRS disagreed in direction for seven of eight mutant comparisons, demonstrating that docking-RRS and MD-RRS are non-equivalent estimands rather than interchangeable measures of the same quantity. Scope boundaries are summarized in \cref{tab:s13_evidence_scope,tab:s14_panel_scope}.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{p2_setc_rrs_scatter.pdf}
-\caption{Set-C pilot: trajectory-derived ratios versus docking RRS (wild type $= \num{100}$). (a)~Mean minimum-distance ratios for eight mutants with a docking wild-type reference. (b)~MM-GBSA ratios versus docking RRS. Four PP-02 PfDHFR states lack a docking wild-type reference. The dashed diagonal indicates equality; the horizontal and vertical guides indicate the wild-type ratio. Docking predicted weaker mutant scores in the comparable systems; trajectory metrics did not recover that pattern. Neither quantity is a free-energy or experimental resistance measure.}
+\caption{Trajectory-derived ratios versus docking RRS (wild type $= \num{100}$). (a)~Mean minimum-distance ratios for eight mutants with a docking wild-type reference. (b)~MM-GBSA ratios versus docking RRS (four PP-02 PfDHFR states lack a docking wild-type reference). The dashed diagonal indicates equality; horizontal and vertical guides denote the wild-type ratio. Docking predicted weaker mutant scores; trajectory metrics did not recover that pattern. Neither quantity is a free-energy or experimental resistance measure.}
 \label{fig:s3_setc_rrs_scatter}
 \end{figure}
 
@@ -197,7 +197,7 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {SEM} & Interpretation \\
 \centering
 \small
 \setlength{\tabcolsep}{3pt}
-\caption{Set-C pilot MM-GBSA estimates. $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots; $\mathrm{SD}_{\mathrm{prop}}$ is the propagated within-trajectory standard deviation, not a SEM or replicate uncertainty. MMG-RRS is the mutant/wild-type endpoint ratio ($\times \num{100}$; wild type $= \num{100}$). MD-RRS is the corresponding mean minimum-distance ratio. n/a: no docking wild-type reference for PP-02 PfDHFR. Two systems needed periodic-boundary reconstruction before endpoint analysis. Ratios above \qty{100}{\percent} indicate retention within endpoint noise, not increased affinity.}
+\caption{Set-C pilot MM-GBSA estimates. $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots; $\mathrm{SD}_{\mathrm{prop}}$ is the propagated within-trajectory standard deviation, not a SEM or replicate uncertainty. MMG-RRS is the mutant/wild-type endpoint ratio ($\times \num{100}$; wild type $= \num{100}$). MD-RRS is the corresponding mean minimum-distance ratio (n/a: no docking wild-type reference for PP-02 PfDHFR). Two systems needed periodic-boundary reconstruction before endpoint analysis. Ratios above \qty{100}{\percent} indicate retention within endpoint noise, not increased affinity.}
 \label{tab:s8_setc_mmgbsa}
 \scriptsize
 \begin{tabularx}{\textwidth}{l l l S[table-format=-2.2] S[table-format=1.2] S[table-format=3.1] S[table-format=3.1] S[table-format=3.2]}
@@ -228,14 +228,14 @@ PP-02 & PfDHFR & WT$^\ast$ & -30.16 & 2.06 & 100.0 & 100.0 & {--} \\
 \input{Table_S10_WT_Replicate_Consistency.tex}
 
 \subsection*{Convergence and interaction analysis}
-All eighteen MM--GBSA endpoints (GB\textsuperscript{OBC2} igb=5, \qty{0.15}{\molar} salt, \num{100} snapshots each; seventeen cohort systems plus one independent PP-01 PfCRT WT replicate) converge with a within-trajectory SEM below \qty{1.0}{\kcalmol} (range \qty{0.25}{--}\qty{0.61}{\kcalmol}; e.g.\ PP-01 PfCRT WT \qty{-30.61\pm0.41}{\kcalmol}). Because snapshots are temporally autocorrelated, this SEM characterises sampling within a single trajectory and does not capture inter-replicate variability. The empirical noise floor of \qty{2.0}{\kcalmol} estimated from the two independent WT replicates (see the WT replicate-consistency table) is therefore retained for interpreting mutant--wild-type contrasts.
+All eighteen MM--GBSA endpoints (GB\textsuperscript{OBC2} igb=5, \qty{0.15}{\molar} salt, \num{100} snapshots each; seventeen cohort systems plus one independent PP-01 PfCRT WT replicate) converge with a within-trajectory SEM below \qty{1.0}{\kcalmol} (range \qty{0.25}{--}\qty{0.61}{\kcalmol}; e.g.\ PP-01 PfCRT WT \qty{-30.61\pm0.41}{\kcalmol}). Because snapshots are temporally autocorrelated, this SEM characterises within-trajectory sampling and does not capture inter-replicate variability; the \qty{2.0}{\kcalmol} empirical noise floor from the two independent WT replicates (see the WT replicate-consistency table) is retained for interpreting mutant--wild-type contrasts.
 
-Interaction fingerprints (ProLIF 2.2.1, \num{100} frames per trajectory, sixteen systems) show a sparse set of persistent contacts: four to eleven contacts per system exceed \qty{50}{\percent} occupancy, most at \qty{100}{\percent}. Recurring anchors include PfCRT TYR16 (fully occupied in five of six PfCRT systems) and PfDHFR LEU46/MET55, consistent with the canonical binding pockets. As a feasibility probe independent of the primary cohort, the single ligand PP-15 was docked to the wild-type states of PfCRT and PfDHFR (Vina 1.2.7) and prepared under the identical OpenFF~2.2.0/CHARMM36m explicit-solvent protocol used for the Set-C pilot. Both systems passed the pre-equilibration audits and completed EM--NVT--NPT equilibration and \qty{10}{ns} production trajectories with valid checkpoints (\cref{tab:s_pp15}); trajectory QC (heavy-atom protein--ligand minimum distance \num{< 5.0} \si{\angstrom} for \num{>= 10}\% of frames) passes for both, with a bound fraction of \num{1.000} (mean minimum distances \qty{2.77}{\angstrom} PfDHFR and \qty{3.20}{\angstrom} PfCRT). MM-GBSA estimates on PBC-whole trajectories (GB\textsuperscript{OBC2} igb=5, \qty{0.15}{\molar} salt) are \qty{-29.52 \pm 0.33}{\kcalmol} (PfDHFR) and \qty{-27.79 \pm 0.49}{\kcalmol} (PfCRT), and are reported in \cref{tab:s_pp15}. The probe is outside the 17-candidate Set-C estimand: no mutant or RRS estimate is reported for PP-15, and the single-replicate endpoints serve only as within-protocol feasibility contrasts. Docking-mode reproducibility for PP-15 was checked across five random seeds on the same grid box used for its canonical single-run score (\cref{tab:s17_multiseed_redock}); mode-1 affinity is stable to within \qty{0.03}{\kcalmol} on both wild-type receptors, so the seed choice does not drive the probe ranking. The same control was repeated for PP-01 on the canonical inputs of its wild-type scores (RRS-pilot ligand preparation and the P1-V2 wild-type grid boxes; \cref{tab:s17_multiseed_redock}): mode-1 affinity is stable to within \qty{0.05}{\kcalmol} on both wild-type receptors, and the canonical PfDHFR WT score (\qty{-7.50}{\kcalmol}) falls inside the five-seed spread (mean \qty{-7.499 \pm 0.021}{\kcalmol}). For PfCRT WT the canonical value (\qty{-9.30}{\kcalmol}) lies \qty{0.04}{\kcalmol} above the observed range (\qty{-9.262}{--}\qty{-9.225}{\kcalmol}) because the original receptor-preparation detail of that single run is not preserved on disk; this is within the \qty{0.05}{\kcalmol} seed-noise floor, so the seed-sensitivity conclusion is unchanged. Within the reproduced ligand, receptor, and grid configuration, the tested seed choices produced a dispersion no greater than \qty{0.05}{\kcalmol}. This supports protocol-local seed stability, but does not establish exact reproducibility of the historical PfCRT WT score because the original receptor preparation was not archived.
+Interaction fingerprints (ProLIF 2.2.1, \num{100} frames per trajectory, sixteen systems) identify a sparse set of persistent contacts: four to eleven contacts per system exceed \qty{50}{\percent} occupancy, most at \qty{100}{\percent}. Recurring anchors include PfCRT TYR16 (fully occupied in five of six PfCRT systems) and PfDHFR LEU46/MET55, consistent with the canonical binding pockets. As an independent feasibility probe, the single ligand PP-15 was docked to the wild-type states of PfCRT and PfDHFR (Vina 1.2.7) and prepared under the identical OpenFF~2.2.0/CHARMM36m explicit-solvent protocol used for the Set-C pilot. Both systems passed the pre-equilibration audits and completed EM--NVT--NPT equilibration and \qty{10}{ns} production trajectories with valid checkpoints (\cref{tab:s_pp15}); trajectory QC (heavy-atom protein--ligand minimum distance \num{< 5.0} \si{\angstrom} for \num{>= 10}\% of frames) passes for both, with a bound fraction of \num{1.000} (mean minimum distances \qty{2.77}{\angstrom} PfDHFR and \qty{3.20}{\angstrom} PfCRT). MM-GBSA estimates on PBC-whole trajectories (GB\textsuperscript{OBC2} igb=5, \qty{0.15}{\molar} salt) are \qty{-29.52 \pm 0.33}{\kcalmol} (PfDHFR) and \qty{-27.79 \pm 0.49}{\kcalmol} (PfCRT), and are reported in \cref{tab:s_pp15}. The probe is outside the 17-candidate Set-C estimand: no mutant or RRS estimate is reported for PP-15, and the single-replicate endpoints serve only as within-protocol feasibility contrasts. Docking-mode reproducibility was checked for PP-15 across five random seeds on the same grid box used for its canonical single-run score (\cref{tab:s17_multiseed_redock}); mode-1 affinity is stable to within \qty{0.03}{\kcalmol} on both wild-type receptors, so the seed choice does not drive the probe ranking. The same control was repeated for PP-01 on the canonical inputs of its wild-type scores (RRS-pilot ligand preparation and the P1-V2 wild-type grid boxes; \cref{tab:s17_multiseed_redock}): mode-1 affinity is stable to within \qty{0.05}{\kcalmol} on both wild-type receptors, and the canonical PfDHFR WT score (\qty{-7.50}{\kcalmol}) falls inside the five-seed spread (mean \qty{-7.499 \pm 0.021}{\kcalmol}). For PfCRT WT the canonical value (\qty{-9.30}{\kcalmol}) lies \qty{0.04}{\kcalmol} above the observed range (\qty{-9.262}{--}\qty{-9.225}{\kcalmol}) because the original receptor-preparation detail of that single run is not preserved on disk; this is within the \qty{0.05}{\kcalmol} seed-noise floor, so the seed-sensitivity conclusion is unchanged. Within the reproduced ligand, receptor, and grid configuration, the tested seed choices produced a dispersion no greater than \qty{0.05}{\kcalmol}. This supports protocol-local seed stability, but does not establish exact reproducibility of the historical PfCRT WT score because the original receptor preparation was not archived.
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{PP-15 single-ligand feasibility probe (outside the Set-C estimand). Vina scores are best-pose affinities on wild-type receptors; MD columns report the OpenFF~2.2.0/CHARMM36m protocol outcome for the canonical \qty{10}{ns} production runs (self-contained replicate directories). Trajectory QC passes for both systems (bound fraction \num{1.000}; mean minimum distances \qty{2.77}{\angstrom} PfDHFR and \qty{3.20}{\angstrom} PfCRT). MM-GBSA is GB\textsuperscript{OBC2} (igb=5), \qty{0.15}{\molar} salt, mean over the frame window $\pm$ SEM (\num{100} frames for PfDHFR, \num{80} for PfCRT; PBC-whole trajectories). No mutant or RRS estimate is reported.}
+\caption{PP-15 single-ligand feasibility probe (outside the Set-C estimand). Vina scores are best-pose affinities on wild-type receptors; MD columns report the OpenFF~2.2.0/CHARMM36m protocol outcome for the canonical \qty{10}{ns} production runs. Trajectory QC passes for both systems (bound fraction \num{1.000}; mean minimum distances \qty{2.77}{\angstrom} PfDHFR and \qty{3.20}{\angstrom} PfCRT). MM-GBSA is GB\textsuperscript{OBC2} (igb=5), \qty{0.15}{\molar} salt, mean over the frame window $\pm$ SEM (\num{100} frames for PfDHFR, \num{80} for PfCRT; PBC-whole trajectories). No mutant or RRS estimate is reported.}
 \label{tab:s_pp15}
 \begin{tabularx}{\textwidth}{@{}l S[table-format=-1.2] X S[table-format=-2.2] S[table-format=1.2] S[table-format=-2.2]@{}}
 \toprule
@@ -267,6 +267,6 @@ PfCRT (6UKJ) & -7.81 & PASS; 10 ns complete & -27.79 & 0.49 & \num{1.000} \\
 
 AI assistants were used to help with code and analysis scripts. All four Springer Nature AI-policy expectations were respected: (i) human accountability for every scientific claim remains with the listed authors; (ii) AI supported but did not replace scholarly judgement, editorial decision-making or the design of the comparison; (iii) the use of AI is disclosed here transparently; (iv) no confidential manuscript material, peer-review content or restricted data were shared with external AI services. All AI-assisted text and code were reviewed and edited by the authors. No generative AI tool is an author. Computational results, statistics, and quantitative claims were produced and checked by the authors.
 
-\bibliography{Bibliography_P2}
+\bibliography{Project2_Polypharmacology_MD_Validation}
 
 \end{document}
