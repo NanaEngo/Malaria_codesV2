@@ -40,7 +40,7 @@ Project2_Polypharmacology_MD_ValidationV2607/    ← canonical (this report)
 │   │   ├── Polypharmacology_MD_Validation_SM_V2607.tex (SI)
 │   │   ├── Secondary_Analyses_SI.tex
 │   │   ├── Cover_Letter.{tex,pdf}
-│   │   ├── Project2_Polypharmacology_MD_Validation.bib
+│   │   ├── Bibliography_P2.bib
 │   │   ├── acs-Polypharmacology_MD_Validation_V2607.bib
 │   │   ├── acs-Polypharmacology_MD_Validation_SM_V2607.bib
 │   │   ├── Graphics/                              (PDFs referenced by LaTeX)
@@ -134,9 +134,9 @@ The 28-Aug manuscript recompile reports main 30 p. / SM 16 p. (or main 41 p. / S
 
 ## 1. Central question
 
-Can resistance-aware polypharmacology docking prioritize antimalarial leads that retain activity across mutant PfDHFR and PfCRT panels, and does short molecular dynamics corroborate or refute the docking-derived retention signal?
+Does a resistance-aware, target-level computational workflow (docking-derived RRS + PNS + ACSI + targeted MD) distinguish predicted potency from predicted resilience in a chemically diverse antimalarial library — and what does a targeted MD pilot add beyond docking?
 
-**Bounded answer:** (i) the docking workflow produces a discriminant stratification (classes A*–D) that separates candidates by predicted wild-type potency and mutant retention; (ii) short MD stress tests are not concordant — directional disagreement in 7/8 mutant comparisons — demonstrating that docking-RRS and MD-RRS are non-equivalent estimands. Neither result establishes biological target engagement or resistance.
+**Bounded answer:** the workflow supports *computational prioritisation* but does **not** establish biological target engagement, resistance circumvention, or pathway-level mechanism (as stated in the manuscript abstract).
 
 ## 2. Primary cohort: Set-C docking (17 candidates, 136 systems)
 

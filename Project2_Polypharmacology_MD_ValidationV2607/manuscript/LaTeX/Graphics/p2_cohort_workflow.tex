@@ -1,126 +1,46 @@
-\documentclass[border=8pt]{standalone}
+\documentclass[border=5pt]{standalone}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,fit,calc,backgrounds}
+\usetikzlibrary{arrows.meta,positioning,fit}
 \usepackage{lmodern}
 \usepackage{xcolor}
-\usepackage{siunitx}
 \definecolor{navy}{HTML}{17365D}
 \definecolor{teal}{HTML}{0F6B6D}
 \definecolor{amber}{HTML}{B56B00}
-\definecolor{crimson}{HTML}{A51C30}
 \definecolor{softgray}{HTML}{F3F5F7}
-\definecolor{lightblue}{HTML}{E8F0FE}
-\definecolor{lightgreen}{HTML}{E8F5E9}
-\definecolor{lightorange}{HTML}{FFF3E0}
-\definecolor{lightred}{HTML}{FFEBEE}
 \begin{document}
 \begin{tikzpicture}[
   font=\sffamily,
   >=Latex,
-  node distance=9mm and 12mm,
-  every node/.style={line width=0.4pt},
-  % Styles
-  source/.style={draw=navy, rounded corners=4pt, fill=navy!6, align=center,
-    text width=42mm, minimum height=11mm, inner sep=5pt, font=\small\sffamily},
-  source2/.style={draw=crimson, rounded corners=4pt, fill=crimson!5, align=center,
-    text width=42mm, minimum height=11mm, inner sep=5pt, font=\small\sffamily},
-  method/.style={draw=navy!70, rounded corners=3pt, fill=lightblue, align=center,
-    text width=50mm, minimum height=10mm, inner sep=4pt, font=\footnotesize\sffamily},
-  mdbox/.style={draw=amber!80, rounded corners=3pt, fill=lightorange, align=center,
-    text width=50mm, minimum height=10mm, inner sep=4pt, font=\footnotesize\sffamily},
-  result/.style={draw=teal!80, rounded corners=3pt, fill=lightgreen, align=center,
-    text width=50mm, minimum height=10mm, inner sep=4pt, font=\footnotesize\sffamily},
-  secondary/.style={draw=crimson!60, rounded corners=3pt, fill=lightred, align=center,
-    text width=50mm, minimum height=10mm, inner sep=4pt, font=\footnotesize\sffamily},
-  boundary/.style={draw=black!35, dashed, rounded corners=6pt, inner sep=6mm},
-  arrow/.style={->, semithick, draw=black!55},
-  arrowdash/.style={->, semithick, draw=black!55, dashed},
-  % Label styles
-  blabel/.style={font=\scriptsize\sffamily\color{blue!65!black}, midway, left, xshift=-2pt},
-  olabel/.style={font=\scriptsize\sffamily\color{orange!85!black}, midway, right, xshift=2pt},
+  node distance=7mm and 8mm,
+  every node/.style={line width=0.35pt},
+  source/.style={draw=navy, rounded corners=3pt, fill=softgray, align=center, text width=38mm, minimum height=10mm, inner sep=4pt},
+  dock/.style={draw=navy, rounded corners=3pt, fill=navy!8, align=center, text width=43mm, minimum height=12mm, inner sep=4pt},
+  md/.style={draw=amber, rounded corners=3pt, fill=amber!10, align=center, text width=43mm, minimum height=12mm, inner sep=4pt},
+  result/.style={draw=teal, rounded corners=3pt, fill=teal!10, align=center, text width=43mm, minimum height=12mm, inner sep=4pt},
+  boundary/.style={draw=black!45, dashed, rounded corners=5pt, inner sep=7mm},
+  arrow/.style={->, semithick, draw=black!65}
 ]
 
-% === ROW 1: Inputs ===
-\node[source] (library) {
-  \textbf{Chemical Library}\\
-  \num{65856} African NP-inspired molecules
-};
-\node[source2, right=25mm of library] (targets) {
-  \textbf{Target Panel}\\
-  PfDHFR \& PfCRT\\
-  WT + 6 resistance mutants
-};
+\node[source] (library) {African NP-inspired library\\\textbf{65,856 molecules}};
+\node[dock, below left=of library] (setc) {\textbf{Set-C docking cohort}\\17 polypharmacology-oriented candidates\\136 WT/mutant systems};
+\node[md, below right=of library] (parent) {\textbf{Parent-study MD cohort}\\4 named WT complexes\\10 ns each, 40 ns total};
 
-% === ROW 2: Cohorts ===
-\node[method, below left=12mm and 8mm of library] (setc) {
-  \textbf{Set-C Docking Cohort}\\
-  17 candidates $\times$ 8 states = 136 systems\\
-  MPO $\geq$ 0.70, SYBA $>$ 0, SI $>$ 10
-};
-\node[mdbox, below right=12mm and 8mm of targets] (parent) {
-  \textbf{Parent MD Cohort}\\
-  4 WT complexes (non-overlapping)\\
-  10 ns each, CHARMM36m/GAFF2
-};
+\node[dock, below=of setc] (dockmetrics) {AutoDock Vina\\PfDHFR + PfCRT WT/mutants};
+\node[result, below=of dockmetrics] (rrs) {Docking-derived outputs\\\textbf{RRS} + ACSI + PNS};
+\node[md, below=of parent] (mdmetrics) {Trajectory analysis\\RMSD, contacts, bound-state QC};
+\node[result, below=of mdmetrics] (mmgbsa) {MM-GBSA when valid\\\textbf{one interpretable result}: PfCRT--214};
 
-% === ROW 3: Methods ===
-\node[method, below=9mm of setc] (docking) {
-  \textbf{AutoDock Vina 1.2.7}\\
-  Exhaustiveness 64, V2-corrected grids\\
-  $\rightarrow$ Docking scores per complex
-};
-\node[mdbox, below=9mm of parent] (traj) {
-  \textbf{MD Trajectory Analysis}\\
-  RMSD, contacts, H-bonds, bound QC\\
-  GB$^{\text{OBC2}}$ MM-GBSA endpoint
-};
+\node[md, below=of mmgbsa] (pilot) {Set-C MD pilot\\16 systems, 16/16 QC PASS\\reported as secondary};
+\node[boundary, fit=(setc) (dockmetrics) (rrs), label={[blue!65!black]above:\\small Docking-derived estimand}] (dockbox) {};
+\node[boundary, fit=(parent) (mdmetrics) (mmgbsa), label={[orange!75!black]above:\\small Trajectory-derived estimand}] (mdbox) {};
 
-% === ROW 4: Outputs ===
-\node[result, below=9mm of docking] (rrs) {
-  \textbf{Docking-RRS (primary)}\\
-  5-class retention: A*, A, B, C, D\\
-  + ACSI + PNS ranking
-};
-\node[result, below=9mm of traj] (mdresult) {
-  \textbf{MD-RRS (secondary)}\\
-  Min-distance ratio per mutant\\
-  MMG-RRS ratio, bound fraction
-};
-
-% === ROW 5: Pilot ===
-\node[secondary, below=9mm of mdresult] (pilot) {
-  \textbf{Set-C MD Pilot}\\
-  16 systems (PP-01, PP-02), 10 ns each\\
-  16/16 QC PASS, single replicate
-};
-
-% === Dashed lines for non-equivalence ===
-\node[secondary, right=5mm of rrs] (comp) {
-  \textbf{Estimand Comparison}\\
-  7/8 directional disagreements\\
-  $\Rightarrow$ non-equivalent
-};
-
-% === Boundaries ===
-\node[boundary, fit=(setc) (docking) (rrs),
-  label={[blue!65!black]above:\small\sffamily\textbf{Docking-derived estimand}}] (dockbox) {};
-\node[boundary, fit=(parent) (traj) (mdresult),
-  label={[orange!85!black]above:\small\sffamily\textbf{MD-derived estimand}}] (mdbox) {};
-
-% === Arrows ===
 \draw[arrow] (library) -- (setc);
-\draw[arrow] (targets) -- (parent);
-\draw[arrow] (setc) -- (docking);
-\draw[arrow] (docking) -- (rrs);
-\draw[arrow] (parent) -- (traj);
-\draw[arrow] (traj) -- (mdresult);
-\draw[arrow] (mdresult) -- (pilot);
-\draw[arrowdash, thick, crimson] (rrs) -- (comp);
-\draw[arrowdash, thick, crimson] (mdresult) -- (comp);
-
-% === Vertical annotation ===
-\node[font=\scriptsize\sffamily, rotate=90, above=2mm of dockbox] at ($(dockbox.north west)!0.5!(dockbox.north east)$) {};
-\node[font=\scriptsize\sffamily, rotate=90, above=2mm of mdbox] at ($(mdbox.north west)!0.5!(mdbox.north east)$) {};
-
+\draw[arrow] (library) -- (parent);
+\draw[arrow] (setc) -- (dockmetrics);
+\draw[arrow] (dockmetrics) -- (rrs);
+\draw[arrow] (parent) -- (mdmetrics);
+\draw[arrow] (mdmetrics) -- (mmgbsa);
+\draw[arrow, dashed] (setc.south) -- ++(0,-7mm) -| (pilot.west);
+\node[align=center, text width=35mm, font=\scriptsize, below=1mm of pilot] {MD-RRS + MM-GBSA\\\textbf{SECONDARY PILOT}\\16/16 QC PASS};
 \end{tikzpicture}
 \end{document}

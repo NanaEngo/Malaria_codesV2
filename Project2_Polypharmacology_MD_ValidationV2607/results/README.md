@@ -75,7 +75,7 @@ Les sources V2607 correspondantes sont conservées comme référence historique 
 - `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` ;
 - `manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2607.tex` ;
 - `manuscript/LaTeX/Cover_Letter.tex` ;
-- `manuscript/LaTeX/Project2_Polypharmacology_MD_Validation.bib`.
+- `manuscript/LaTeX/Bibliography_Polypharmacology_MD_Validation.bib`.
 
 Les analyses historiques et scripts non canoniques sont conservés pour la provenance, mais ne doivent pas être utilisés pour régénérer les claims du manuscrit. Les fichiers contenant des statuts historiques doivent être interprétés avec les manifestes canoniques datés.
 

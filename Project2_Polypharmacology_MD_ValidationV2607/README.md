@@ -33,7 +33,7 @@ The bounded pilot contains 16 prepared systems (PP-01/PP-02 × PfDHFR/PfCRT muta
 
 ## Canonical locations
 
-- Immutable V2607 source manuscript (archived): `_archives/V2607_manuscript/Polypharmacology_MD_Validation_V2607.tex`
+- Immutable V2607 source manuscript: `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex`
 - Active V2609 main manuscript: `manuscript/LaTeX/Polypharmacology_MD_Validation_V2609.tex`
 - Active V2609 Supporting Information: `manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2609.tex`
 - Active V2609 cover letter: `manuscript/LaTeX/Cover_Letter_V2609.tex`

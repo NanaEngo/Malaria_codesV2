@@ -3,15 +3,15 @@
 ## Source and V2609 submission package
 
 - **Target journal:** *Journal of Chemical Information and Modeling* (ACS)
-- **Immutable source release (archived):** `_archives/V2607_manuscript/Polypharmacology_MD_Validation_V2607.tex`, `_archives/V2607_manuscript/Polypharmacology_MD_Validation_SM_V2607.tex`, `LaTeX/Cover_Letter.tex`
+- **Immutable source release:** `LaTeX/Polypharmacology_MD_Validation_V2607.tex`, `LaTeX/Polypharmacology_MD_Validation_SM_V2607.tex`, `LaTeX/Cover_Letter.tex`
 - **V2609 main release:** `LaTeX/Polypharmacology_MD_Validation_V2609.tex`
 - **V2609 Supporting Information:** `LaTeX/Polypharmacology_MD_Validation_SM_V2609.tex`
 - **V2609 cover letter:** `LaTeX/Cover_Letter_V2609.tex`
-- **Bibliography:** `LaTeX/Project2_Polypharmacology_MD_Validation.bib`
+- **Bibliography:** `LaTeX/Bibliography_Polypharmacology_MD_Validation.bib`
 - **V2609 submission manifest:** `LaTeX/SUBMISSION_MANIFEST_V2609.md`
-- **Historical/canonical V2607 manifest:** `_archives/V2607_manuscript/SUBMISSION_MANIFEST.md`
+- **Historical/canonical V2607 manifest:** `LaTeX/SUBMISSION_MANIFEST.md`
 
-The V2607 LaTeX files are archived in `_archives/V2607_manuscript/`; the V2609 LaTeX files are the active narrative-refinement release. The V2609 manifest is authoritative for the active release. Neither source set should be edited by hand after compilation. Compiled PDFs and auxiliary files are
+The V2607 LaTeX files are the immutable source release; the separately named V2609 LaTeX files are the active narrative-refinement release. The V2609 manifest is authoritative for the active release. Neither source set should be edited by hand after compilation. Compiled PDFs and auxiliary files are
 regenerated from these sources and must not be edited by hand.
 
 ## Scientific scope
