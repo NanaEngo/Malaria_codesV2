@@ -40,7 +40,7 @@ Read the relevant DAR before changing code, parameters, protocols, or manuscript
 
 | Project | Status | Essential result or boundary |
 |---|---|---|
-| P1 | **V7 submitted to JCIM (2026-08-30)** | V7 enhanced + validated (DEKOIS/MMV/redocking), 25 p. main / 17 p. SM / 1 p. cover; awaiting Editorial Manager acknowledgement |
+| P1 | **V7 submitted (2026-08-30); V8 revision ready (2026-09-09)** | V8 `submission_ACS_P1V8/` : main 28 p. / SM 23 p. / réponse 7 p., 0 erreur ; R1.2 rétrospective 40 runs honest-negative ; R2.3 PfCRT corrigé ; R2.4 DEKOIS 2 bras COMPLET (retenu 0.502 vs stripé 0.563, IC chevauchants → MTX non supporté) ; R2.6 checklist + package Zenodo stagé ; reste action auteur (repo public + upload Zenodo) |
 | P2 | **JCIM submission-ready** | Production 15320 COMPLETE 16/16; QC=0; MD-RRS `COMPUTED_WITH_COHORT_CONTRACT`; MM-GBSA 16/16; **PP-01/PP-15 multi-seed COMPUTED** (PP-01 ±0.05 kcal/mol sur grilles P1-V2 canoniques — PfDHFR WT −7.500 dans l'étendue, PfCRT WT −9.300 à 0.04 du bruit de seed ; PP-15 ±0.03); STRING 400/900 COMPUTED (ρ=0.9975); SM Table S17 added; recompile main 30 p. / SM 17 p., 0 erreurs |
 | P3 | **submitted to JCAMD (2026-08-30, V4 canonical)** | ECFP4 0.948; hybrid 0.888; QKS ≈ RBF; no quantum advantage; Zenodo DOI reserved. Package `submission_JCAMD/` created |
 | P4 | **submitted to JCAMD (2026-08-30)** | Random 0.6724 > MCTS 0.6649; Pareto front 4 points (HV 1.2366); package `submission_JCAMD/` created |
