@@ -12,7 +12,7 @@
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage[noabbrev,capitalize]{cleveref}
 \setlength{\emergencystretch}{3em}
-\externaldocument[M-]{P1_V7_main}
+\externaldocument[M-]{P1_V8_main}
 \graphicspath{{Graphics/}}
 \author{Myke Vital Sao Temgoua}
 \email{myke-vital.sao@facsciences-uy1.cm}
@@ -108,6 +108,8 @@ D & No available RRS value $\geq\qty{80}{\percent}$ & 1 \\
 \end{tabular}
 \end{table}
 
+\input{tables/sm_table_vina_distributions.tex}
+
 \section*{S8. Exploratory cross-metric analysis}
 \begin{table}[h]
 \centering
@@ -121,9 +123,14 @@ PNS--RRS & \num{-0.559} & \num{0.020} & Nominal trend; not Bonferroni-significan
 ACSI--RRS & \num{-0.132} & \num{0.613} & Not significant \\
 RRS--wild-type Vina score & \num{-0.433} & \num{0.082} & Not significant \\
 PNS--wild-type Vina score & \num{0.389} & \num{0.123} & Descriptive/mechanical comparison \\
+$N_{\mathrm{fav}}$--RRS$_{\mathrm{mean}}$ & \num{0.515} & \num{0.034} & Nominal positive trend; not Bonferroni-significant \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+The $N_{\mathrm{fav}}$--RRS association was further assessed by a permutation test (\num{100000} random RRS assignments): the two-sided empirical $p$-value was \num{0.037}, consistent with the analytical result. The null distribution had mean \num{0.001} and standard deviation \num{0.250} (95\% CI: \numrange{-0.484}{0.484}). This positive trend indicates that candidates with more favorable targets tend to carry higher mean RRS values; the association does not survive Bonferroni correction for the three primary hypothesis-oriented tests ($\alpha=\num{0.017}$) and is therefore treated as descriptive. At $n=\num{17}$, a two-sided test at $\alpha=\num{0.05}$ has \qty{80}{\percent} power to detect $|\rho|\geq\num{0.62}$ (asymptotic approximation); the observed $\rho=\num{0.515}$ falls below this threshold, confirming that the study is underpowered for this particular association and the null result should be interpreted with caution.
+
+\input{tables/sm_table_pns_sensitivity.tex}
 
 \section*{S9. Target evidence classes and limitations}
 The panel spans four distinct antimalarial vulnerabilities: PfDHFR represents folate metabolism and antifolate resistance; PfCRT represents a resistance-linked digestive-vacuole transporter; PfClpP represents parasite proteostasis through the caseinolytic protease, a vulnerability supported by recent work on apicoplast chaperonin--Clp proteostasis \cite{Tissawak2025}; and PfATP4 represents P-type ATPase-mediated ion regulation, for which an endogenous structure and modulator-bound state have recently been reported \cite{Haile2025}. PfDHFR uses a catalytic-site ligand anchor; PfClpP uses a catalytic triad; PfCRT uses a membrane-associated Y01 cavity proxy; and PfATP4 uses conserved P-type ATPase machinery without a co-crystallized inhibitor. Consequently, all four-target profiles are exploratory and are not equivalent evidence of biological target engagement. No RRS values are reported for PfClpP or PfATP4.
@@ -191,23 +198,31 @@ The integrated candidate manifest, raw docking table, RRS table, cross-metric ma
 \section*{S12. Docking validation and protocol assessment}
 The docking protocol was validated using three complementary strategies: external benchmark validation (DEKOIS 2.0), positive-control enrichment (MMV Malaria Box), and pose reproduction accuracy (redocking of co-crystallized ligands). This multi-layered approach provides transparent evidence of both protocol capabilities and inherent limitations while addressing known artifacts in structure-based virtual screening.
 
+\subsection*{S12.0. PfCRT receptor correction}
+The deposited 6UKJ cryo-EM structure (7G8 isoform) carries threonine at residue 76 of chain A, corresponding to the K76T chloroquine-resistance substitution. Because the study requires a wild-type PfCRT reference for the RRS analysis, residue 76 was corrected to lysine (3D7-like wild-type) before docking. The corrected receptor was validated by P2Rank pocket prediction: the top-ranked pocket (score 162.7, probability 0.999) lies 5.7~\SI{}{\angstrom} from the Vina grid center, independently confirming that the grid box covers the correct binding site. The V2-corrected grid center $(\num{152.99}, \num{151.042}, \num{159.379})$ with 25~\SI{}{\angstrom} dimensions was adopted for all PfCRT docking calculations.
+
 \subsection*{S12.1. External benchmark and enrichment}
 \input{tables/sm_table_enrichment_validation.tex}
 
-The DEKOIS 2.0 benchmark \cite{Bauer2013} provides property-matched decoys that avoid trivial separation artifacts common in na\"ive active/decoy sets. For PfDHFR (7F3Y), the ROC-AUC of 0.450 [95\% CI: 0.367--0.531] using AutoDock Vina alone establishes a near-random baseline that reflects the documented limitations of single-method docking scoring functions. This result motivated the adoption of a consensus Vina+DiffDock strategy for the primary library screening, which improved enrichment performance substantially (ROC-AUC 0.924 on the MMV Malaria Box positive-control set). The MMV enrichment results for PfCRT and PfATP4 use score-stratified labels (top/bottom 25\% of docked library) and therefore measure retrodictive consistency rather than external discrimination; they serve as internal controls for protocol stability.
+The DEKOIS 2.0 benchmark \cite{Bauer2013} provides property-matched decoys that avoid trivial separation artifacts common in na\"ive active/decoy sets. For PfDHFR (7F3Y), the ROC-AUC of 0.450 [95\% CI: 0.367--0.531] using AutoDock Vina alone establishes a near-random baseline that reflects the documented limitations of single-method docking scoring functions. A recent rescoring study observed similar results on PfDHFR DEKOIS, further corroborating this baseline. The MTX redocking failure (RMSD $\approx \SI{30}{\angstrom}$) illustrates that the null enrichment may partly reflect target-specific grid-positioning issues (the PfDHFR grid is centered near the NADPH cofactor site) rather than scoring-function failure alone. This result motivated the adoption of a consensus Vina+DiffDock strategy for the primary library screening, which improved enrichment performance substantially (ROC-AUC 0.924 on the MMV Malaria Box positive-control set). The MMV enrichment results for PfCRT and PfATP4 use score-stratified labels (top/bottom 25\% of docked library) and therefore measure retrodictive consistency rather than external discrimination; they serve as internal controls for protocol stability.
 
 \subsection*{S12.2. Redocking validation}
 \input{tables/sm_table_redocking_validation.tex}
 
-Redocking of co-crystallized ligands achieved successful pose reproduction (RMSD < 2.0 \si{\angstrom}) in 4 out of 5 tested cases (80\%). The single failure occurred for methotrexate (MTX) at PfDHFR, where the grid center was positioned near the NADPH cofactor binding site rather than the folate substrate pocket. This illustrates target-specific sensitivity to grid positioning and underscores the importance of anchor-guided box placement. For the three targets used in the primary analysis (PfDHFR, PfCRT, PfATP4), all validation ligands reproduced successfully. PfClpP validation used the catalytic triad as the anchor reference rather than a full-length inhibitor, as none was co-crystallized in 2F6I.
+Redocking of co-crystallized ligands achieved successful pose reproduction (RMSD < 2.0 \si{\angstrom}) in 4 out of 5 tested cases (80\%). The single failure occurred for methotrexate (MTX) at PfDHFR, where the grid center was positioned near the NADPH cofactor binding site rather than the folate substrate pocket. This illustrates target-specific sensitivity to grid positioning and underscores the importance of anchor-guided box placement. Full-ligand redocking succeeded for PfDHFR (P218) and PfCRT (Y01); PfClpP (2F6I) was validated by peptide-fragment pose reproduction only, and PfATP4 (9N10) by ADP cofactor pose reproduction only. These partial validations are not equivalent to full-ligand redocking and are reported separately.
 
-\subsection*{S12.3. Validation dataset summary}
+\subsection*{S12.3. Multi-seed validation}
+\input{tables/sm_table_multiseed_validation.tex}
+
+The 5-seed PP-15 runs confirm that its N\_fav = 4 classification is seed-stable: all individual PfDHFR and PfCRT scores exceed the $-6.0$~\si{\kilo\calorie\per\mole} threshold by $>1.8$~\si{\kilo\calorie\per\mole}. The PP-01 canonical PfCRT score lies within the 5-seed spread after accounting for the un-preserved receptor-preparation details.
+
+\subsection*{S12.4. Validation dataset summary}
 \input{tables/sm_table_validation_datasets.tex}
 
-\subsection*{S12.4. Validation interpretation and scope}
+\subsection*{S12.5. Validation interpretation and scope}
 The convergent evidence from DEKOIS, MMV enrichment, and redocking establishes that the consensus Vina+DiffDock protocol provides reliable pose sampling and scoring-function enrichment within the documented constraints of physics-based docking. The near-random DEKOIS baseline (single-method Vina) confirms that scoring-function limitations persist and that enrichment depends on consensus strategies rather than on any single method achieving experimental-affinity accuracy. Consequently, all reported Vina scores in this study are computational scoring-function outputs and are not convertible to experimental binding affinities. The validation results support the use of these scores for ranking and enrichment in virtual screening workflows while maintaining explicit boundaries on their physical interpretation.
 
-\section*{S12. Available machine-readable resources}
+\section*{S13. Available machine-readable resources}
 The accompanying repository provides the computational record used in this study. The available resources include:
 \begin{itemize}
     \item the locked candidate manifest and canonical molecular identifiers;

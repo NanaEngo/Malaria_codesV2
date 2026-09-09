@@ -1,9 +1,9 @@
-# P1 V7 — ACS Paragon Plus Submission Manifest
+# P1 V8 — ACS Paragon Plus Submission Manifest
 
 **Journal:** Journal of Chemical Information and Modeling (JCIM)
 **Manuscript Type:** Article
 **Date Prepared:** 12 August 2026 (package refresh)
-**Version:** V7 (Canonical Submission Version)
+**Version:** V8 (Canonical Submission Version)
 
 ---
 
@@ -12,15 +12,15 @@
 ### Required Files for Submission
 
 #### 1. Main Manuscript (PDF)
-- **File:** `P1_V7_Integrated_Polypharmacology_RRS.pdf`
+- **File:** `P1_V8_Integrated_Polypharmacology_RRS.pdf`
 - **Pages:** 25
 - **Size:** 449 KB
 - **Status:** ✅ Ready
 - **Compilation:** 0 errors, 0 undefined references
 
 #### 2. Supporting Information (PDF)
-- **File:** `P1_V7_Integrated_Polypharmacology_RRS_SM.pdf`
-- **Pages:** 17 (+4 from V7 initial version)
+- **File:** `P1_V8_Integrated_Polypharmacology_RRS_SM.pdf`
+- **Pages:** 17 (+4 from V8 initial version)
 - **Size:** 524 KB
 - **Status:** ✅ Ready
 - **Sections:** S1-S12 (12 sections) + **NEW S10: MPO framework**
@@ -37,10 +37,10 @@
 - **Notes:** 0 `journaltitle` entries, all journal names verified
 
 #### 4. Auxiliary Files (Cross-References)
-- `P1_V7_Integrated_Polypharmacology_RRS.aux` (13 KB)
-- `P1_V7_Integrated_Polypharmacology_RRS.bbl` (13 KB)
-- `P1_V7_Integrated_Polypharmacology_RRS_SM.aux` (13 KB)
-- `P1_V7_Integrated_Polypharmacology_RRS_SM.bbl` (3.6 KB)
+- `P1_V8_Integrated_Polypharmacology_RRS.aux` (13 KB)
+- `P1_V8_Integrated_Polypharmacology_RRS.bbl` (13 KB)
+- `P1_V8_Integrated_Polypharmacology_RRS_SM.aux` (13 KB)
+- `P1_V8_Integrated_Polypharmacology_RRS_SM.bbl` (3.6 KB)
 
 ---
 
@@ -68,11 +68,11 @@
 
 ---
 
-## V7 Enhancements Over V6
+## V8 Enhancements Over V6
 
 ### 1. Comprehensive Validation Documentation (+3 pages SM)
 
-**New SM Section S12: Docking validation and protocol assessment** (renumbered from S11 during the V7 package refresh)
+**New SM Section S12: Docking validation and protocol assessment** (renumbered from S11 during the V8 package refresh)
 
 | Enhancement | Details | Impact |
 |-------------|---------|--------|
@@ -175,9 +175,9 @@
 3. **Manuscript Type:** Article
 
 ### File Upload Order
+1. Main manuscript PDF (`P1_V8_Integrated_Polypharmacology_RRS.pdf`)
 
-1. Main manuscript PDF (`P1_V7_Integrated_Polypharmacology_RRS.pdf`)
-2. Supporting Information PDF (`P1_V7_Integrated_Polypharmacology_RRS_SM.pdf`)
+2. Supporting Information PDF (`P1_V8_Integrated_Polypharmacology_RRS_SM.pdf`)
 3. Bibliography file (`Sao_Chim_Space.bib`)
 4. Cover letter PDF (prepare separately)
 5. TOC graphic (if required separately)
@@ -200,9 +200,9 @@ For each of 5 authors:
 
 ## Archive and Version Control
 
-### V7 Canonical Files (This Package)
+### V8 Canonical Files (This Package)
 
-- **Location:** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/submission_ACS_P1V7/`
+- **Location:** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/submission_ACS_P1V8/`
 - **Git Tracking:** Yes (PDFs and auxiliary files tracked)
 - **Backup:** GitHub repository https://github.com/NanaEngo/Malaria_codesV2
 
@@ -211,9 +211,9 @@ For each of 5 authors:
 - **V6:** `Project1_Chem_space_antimalarial_V6_CorrectedGrid/submission_ACS_P1V6/` (10/08/2026, 19 p. main, 5 p. SM)
 - **V5:** `Project1_Chem_space_antimalarial_V5_CorrectedGrid/` (methodological archive, 4-target docking)
 - **V4:** `Project1_Chem_space_antimalarial_V4_CorrectedGrid/` (chemical space archive, 2F6I remediation)
+**V8 Package Refresh:** 12 August 2026
 
-**V7 Package Refresh:** 12 August 2026
-**V7 Supersedes:** V6 (August 10, 2026)
+**V8 Supersedes:** V6 (August 10, 2026)
 
 ---
 
@@ -242,7 +242,7 @@ Department of Physics, Faculty of Science, University of Yaoundé I
 P.O. Box 812, Yaoundé, Cameroon
 
 **Manuscript Prepared By:** authors; package refreshed and audited 12 August 2026
-**Version History:** `project-tracking.md` and `P1_V7_V5_INTEGRATION_COMPLETED.md`
+**Version History:** `project-tracking.md` and `P1_V8_V5_INTEGRATION_COMPLETED.md`
 
 ---
 

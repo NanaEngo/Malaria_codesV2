@@ -1,0 +1,20 @@
+%% Per-target Vina score distributions and threshold justification
+%% Source: results/derived/v7_integrated_candidate_metrics.csv
+\begin{table}[htbp]
+\centering
+\caption{Per-target Vina score distributions for the 17-member cohort. The operational within-target favorability threshold of \qty{-6.0}{\kilo\calorie\per\mole} is the overall median across all \num{68} candidate--target pairs (\num{-6.046}~\si{\kilo\calorie\per\mole}). Per-target medians range from \num{-5.92} (PfDHFR) to \num{-6.36} (PfATP4). The threshold is a prioritization device, not an affinity cutoff.}
+\label{tab:sm_vina_distributions}
+\small
+\begin{tabular}{l S[table-format=-1.3] S[table-format=-1.3] S[table-format=-1.3] S[table-format=-1.3] S[table-format=2.0]}
+\toprule
+Target & {Min} & {Median} & {Mean} & {Max} & {$n$} \\
+\midrule
+PfDHFR  & -6.346 & -5.921 & -5.762 & -4.863 & 17 \\
+PfCRT   & -7.907 & -6.280 & -6.198 & -5.116 & 17 \\
+PfClpP  & -7.031 & -6.226 & -5.916 & -5.047 & 17 \\
+PfATP4  & -7.565 & -6.361 & -6.307 & -4.635 & 17 \\
+\midrule
+\textbf{All targets} & \textbf{-7.907} & \textbf{-6.046} & \textbf{-6.046} & \textbf{-4.635} & \textbf{68} \\
+\bottomrule
+\end{tabular}
+\end{table}

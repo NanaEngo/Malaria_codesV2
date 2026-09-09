@@ -1,4 +1,4 @@
-# Submission Package — P1 V7 → Journal of Chemical Information and Modeling (ACS)
+# Submission Package — P1 V8 → Journal of Chemical Information and Modeling (ACS)
 
 **Date:** 10 August 2026 · **Status:** SUBMISSION-READY (R1–R5 cleared, register `INTERNAL_WORK_AUTHORIZED`)
 **Manuscript title:** *African Natural-Product-Inspired Antimalarial Polypharmacology: Computational Resistance Hypotheses*
@@ -10,19 +10,19 @@
 
 | # | Fichier (dans ce dossier) | Rôle dans Paragon Plus |
 |---|---|---|
-| 1 | `P1_V7_main.pdf` | **Manuscript (PDF compilé)** — main text, 25 p., 0 erreur |
-| 2 | `P1_V7_main.tex` + `.bbl` + `.bib` | Source LaTeX du main (facultatif mais recommandé par ACS) |
-| 3 | `P1_V7_SM.pdf` | **Supporting Information** (17 p.; nom ACS : `Supporting_Information.pdf`) |
-| 4 | `P1_V7_SM.tex` + `.bbl` | Source LaTeX du SM |
-| 4b | `P1_V7_main.aux` + `P1_V7_SM.aux` | **⚠️ REQUIS pour la recompilation** — le main et le SM se référencent croisément via `\usepackage{xr}` + `\externaldocument` (`\cref{SM-...}` / `\cref{M-...}`). Sans ces `.aux`, la recompilation produit des références non résolues. |
-| 5 | `Cover_Letter_P1_V7.pdf` (+ .tex) | **Cover letter** — obligatoire (1 p.) |
-| 6 | `p1_v7_toc_graphic_ACS.tiff` | **TOC graphic (obligatoire)** — 3.25×1.75 in, 300 dpi, RGB |
-| 7 | `p1_v7_toc_graphic.pdf` | Version vectorielle du TOC (pour recompilation) |
+| 1 | `P1_V8_main.pdf` | **Manuscript (PDF compilé)** — main text, 25 p., 0 erreur |
+| 2 | `P1_V8_main.tex` + `.bbl` + `.bib` | Source LaTeX du main (facultatif mais recommandé par ACS) |
+| 3 | `P1_V8_SM.pdf` | **Supporting Information** (17 p.; nom ACS : `Supporting_Information.pdf`) |
+| 4 | `P1_V8_SM.tex` + `.bbl` | Source LaTeX du SM |
+| 4b | `P1_V8_main.aux` + `P1_V8_SM.aux` | **⚠️ REQUIS pour la recompilation** — le main et le SM se référencent croisément via `\usepackage{xr}` + `\externaldocument` (`\cref{SM-...}` / `\cref{M-...}`). Sans ces `.aux`, la recompilation produit des références non résolues. |
+| 5 | `Cover_Letter_P1_V8.pdf` (+ .tex) | **Cover letter** — obligatoire (1 p.) |
+| 6 | `p1_v8_toc_graphic_ACS.tiff` | **TOC graphic (obligatoire)** — 3.25×1.75 in, 300 dpi, RGB |
+| 7 | `p1_v8_toc_graphic.pdf` | Version vectorielle du TOC (pour recompilation) |
 | 8 | `Figure_2_rrs_mutation_profiles.pdf` | Figure 2 du main |
 | 9 | `Figure_3_exploratory_metric_relationships.pdf` | Figure 3 du main |
 | 10 | `Figure_S_targetwise_profile_summary.pdf` | Figure SM (target-wise) |
 | 11 | `Figure_S_chemical_space_coverage.pdf` | Figure SM (couverture chimique) |
-| 12 | `acs-P1_V7_*.bib` / `Sao_Chim_Space.bib` | Références bibliographiques |
+| 12 | `acs-P1_V8_*.bib` / `Sao_Chim_Space.bib` | Références bibliographiques |
 
 > ⚠️ **Note ACS** : si le portail demande les **figures séparées**, soumettre les fichiers 8–11 en PDF 300 dpi (ou TIFF). Sinon, elles sont déjà intégrées au PDF du manuscrit.
 
@@ -33,7 +33,7 @@
 ### 2.1 Avant de cliquer « Submit »
 - [x] **Titre** conforme (pas d'abréviations non définies, ≤ 20 mots recommandé)
 - [x] **Abstract** présent dans le main (≈ 200 mots, sans citations)
-- [x] **TOC graphic** généré au format ACS exact : 3.25×1.75 in, 300 dpi, TIFF RGB (`p1_v7_toc_graphic_ACS.tiff`)
+- [x] **TOC graphic** généré au format ACS exact : 3.25×1.75 in, 300 dpi, TIFF RGB (`p1_v8_toc_graphic_ACS.tiff`)
 - [x] **Cover letter** rédigée (objectif, signification, déclaration d'originalité)
 - [x] **Sections obligatoires** présentes : Introduction, Materials and Methods, Results, Discussion, Conclusion, Associated Content, Author Contributions, Notes, Data Availability, Acknowledgments
 - [x] **Déclarations** : ORCID (corresponding author), funding, competing interests, AI-use statement

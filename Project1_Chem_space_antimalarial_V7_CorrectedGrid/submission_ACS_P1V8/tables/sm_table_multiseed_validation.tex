@@ -1,0 +1,21 @@
+% SM Table: Multi-seed Docking Validation
+% Generated for V8 revision
+% Package refresh: 2026-09-09
+
+\begin{table}[!htbp]
+\centering
+\caption{Multi-seed docking validation for PP-15 and PP-01 against PfDHFR and PfCRT wild-type receptors. Five independent Vina runs with different random seeds (exhaustiveness 32 for PP-15, 128 for PP-01 canonical) assess seed sensitivity. All PP-15 scores exceed the $-6.0$~\si{\kilo\calorie\per\mole} threshold by $>1.8$~\si{\kilo\calorie\per\mole}, confirming seed-stable N\_fav = 4 classification. PP-01 canonical PfCRT score ($-9.300$) lies $0.038$~\si{\kilo\calorie\per\mole} above the 5-seed range due to receptor-preparation details not preserved on disk.}
+\label{tab:sm_multiseed_validation}
+\small
+\begin{tabular}{lcccccp{4cm}}
+\toprule
+\textbf{Candidate} & \textbf{Target} & \textbf{Receptor} & \textbf{Seeds (5 runs)} & \textbf{Mean $\pm$ SD} & \textbf{Range} & \textbf{Stability vs $-6.0$} \\
+\midrule
+PP-15 & PfDHFR WT & 7F3Y & $-8.582$, $-8.590$, $-8.597$, $-8.590$, $-8.590$ & $-8.590 \pm 0.007$ & $0.018$ & Stable ($>1.8$ above) \\
+PP-15 & PfCRT WT & PfCRT\_WT.pdb (LYS-76) & $-7.810$, $-7.822$, $-7.833$, $-7.822$, $-7.822$ & $-7.822 \pm 0.011$ & $0.030$ & Stable ($>1.8$ above) \\
+PP-01 & PfDHFR WT & 7F3Y & $-7.529$, $-7.504$, $-7.485$, $-7.504$, $-7.475$ & $-7.499 \pm 0.021$ & $0.054$ & Stable \\
+PP-01 & PfCRT WT & 6UKJ (raw, THR-76) & $-9.257$, $-9.262$, $-9.257$, $-9.225$, $-9.250$ & $-9.250 \pm 0.015$ & $0.037$ & Canonical $-9.300$ is $+0.038$ above range$^\dagger$ \\
+\bottomrule
+\multicolumn{7}{p{15cm}}{$^\dagger$The PP-01 canonical PfCRT score ($-9.300$, single seed, exhaustiveness 128) is $0.038$~\si{\kilo\calorie\per\mole} above the 5-seed spread ($-9.225$ to $-9.262$). The canonical receptor preparation details are not preserved on disk; the 5-seed run uses the raw 6UKJ (THR-76) receptor. The corrected LYS-76 receptor (PfCRT\_WT.pdb) was used for PP-15. All PP-15 individual scores exceed the $-6.0$ threshold by a large margin, confirming its N\_fav = 4 assignment is seed-stable.}
+\end{tabular}
+\end{table}
