@@ -2,11 +2,13 @@
 
 Multi-project research codebase for computational antimalarial drug discovery, covering virtual screening, polypharmacology, quantum-inspired representations, Monte Carlo strategies, GNN/Transformer benchmarks, and LISH-MoA structure-phenotype prediction.
 
+**License:** MIT (see [LICENSE](LICENSE)). Conda environment: `malaria_md` (Python 3.11, RDKit, PyTorch, GROMACS; see project DARs for per-project dependencies).
+
 ## Canonical project directories
 
 | Project | Directory | DAR | Status |
 |---------|-----------|-----|--------|
-| P1 — Chem space + virtual screening | `Project1_Chem_space_antimalarial_V7_CorrectedGrid/` | [P1 DAR](Project1_Chem_space_antimalarial_V7_CorrectedGrid/P1_DATA_ANALYSIS_REPORT.md) | V7 **submitted to JCIM** (2026-08-30) |
+| P1 — Chem space + virtual screening | `Project1_Chem_space_antimalarial_V7_CorrectedGrid/` | [P1 DAR](Project1_Chem_space_antimalarial_V7_CorrectedGrid/P1_DATA_ANALYSIS_REPORT.md) | V7 submitted 2026-08-30; **V8 revision ready** (`submission_ACS_P1V8/`, R2.4 DEKOIS two-arm complete, Zenodo package staged in `zenodo_package_P1/`) |
 | P2 — Polypharmacology MD validation | `Project2_Polypharmacology_MD_ValidationV2607/` | [P2 DAR](Project2_Polypharmacology_MD_ValidationV2607/P2_DATA_ANALYSIS_REPORT.md) | Set-C MD pilot complete; manuscript 30p/16p SM |
 | P3 — Quantum-inspired representations | `Project3_Quantum_Inspired_RepresentationsV2607_V4/` | [P3 DAR](Project3_Quantum_Inspired_RepresentationsV2607_V4/P3_DATA_ANALYSIS_REPORT.md) | V2608 manuscript **submitted to JCAMD** (2026-08-30); Zenodo DOI reserved |
 | P4 — Advanced Monte Carlo | `Project4_Advanced_Monte_CarloV2607_V2/` | [P4 DAR](Project4_Advanced_Monte_CarloV2607_V2/P4_DATA_ANALYSIS_REPORT.md) | v12 benchmark complete; **submitted to JCAMD** (2026-08-30) |
