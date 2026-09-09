@@ -269,6 +269,6 @@ P.O. Box 812, Yaoundé, Cameroon
 
 ---
 
-**Package Status:** ✅ Ready for submission pending ORCID/author metadata verification and final author approval; funding declaration is complete. Revision package V8 contains all computed R1.2/R2.x results including the R2.4 two-arm MTX-retained vs MTX-stripped DEKOIS re-run (honest-negative, integrated 2026-09-09); the only remaining item is R2.6 (repository release + Zenodo DOI, author action — checklist `P1_R26_RELEASE_CHECKLIST.md`).
+**Package Status:** ✅ Ready for submission pending ORCID/author metadata verification, Zenodo DOI minting, and final author approval; funding declaration is complete. Revision package V8 contains all computed R1.2/R2.x results including the R2.4 two-arm MTX-retained vs MTX-stripped DEKOIS re-run (honest-negative, integrated 2026-09-09). R2.6 executed 2026-09-09: repository public (MIT, tag `v1.0.0` + GitHub release), Zenodo package `zenodo_package_P1/` staged and sha256-verified; only the DOI reservation/upload and DOI insertion in Data Availability (main) + SM §S11 + response R2.6 remain (checklist `P1_R26_RELEASE_CHECKLIST.md` Steps 3–4).
 **Last Updated:** 2026-09-09 (V8 revision package: computed results integrated, label-driven cross-referencing, R2.6 checklist, WT/mutant score table S6 added to the SI, response-letter refs fully label-driven)
 **Manifest Version:** 1.2

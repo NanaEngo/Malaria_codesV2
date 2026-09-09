@@ -35,11 +35,11 @@ reserved, `reserved_pending_upload`) and P5 (`build_zenodo_package.py` +
 |---|--------|------------------|:----:|
 | 1.1 | Confirm the remote | `git remote -v` → `git@github.com:NanaEngo/Malaria_codesV2.git` | ⬜ |
 | 1.2 | Commit all canonical V8 changes on `data-results` | `git status --short` must show only intended files; `git diff --check` clean | ✅ 2026-09-09 (R2.4 integration commit; package rebuilt from clean tree) |
-| 1.3 | Merge/align `data-results` with `master` and push | `git push origin data-results` (author approval required; provenance rule 10) | ⬜ |
-| 1.4 | **Make the repository public** | GitHub → Settings → Danger Zone → Change visibility → Public | ⬜ |
+| 1.3 | Merge/align `data-results` with `master` and push | `git push origin data-results` (author approval required; provenance rule 10) | ✅ 2026-09-09 `data-results` pushed (incl. remote merge of the author's parallel commits); `master` alignment remains an author decision |
+| 1.4 | **Make the repository public** | GitHub → Settings → Danger Zone → Change visibility → Public | ✅ 2026-09-09 `gh repo edit --visibility public` (URL verified, HTTP 200) |
 | 1.5 | **Add a software license** | e.g. MIT or CC-BY-4.0 (recommended for code+data mix); add `LICENSE` at repo root; state it in the README | ✅ MIT `LICENSE` already present at repo root |
-| 1.6 | **Versioned release tag** | `git tag -a v1.0.0 -m "P1 V8 JCIM submission (RRS/polypharmacology)" && git push origin v1.0.0` | ⬜ |
-| 1.7 | Add a top-level `README.md` with: paper title, DOI (after Step 3), data/script layout, license, conda env `malaria_md` | ⬜ |
+| 1.6 | **Versioned release tag** | `git tag -a v1.0.0 -m "P1 V8 JCIM submission (RRS/polypharmacology)" && git push origin v1.0.0` | ✅ 2026-09-09 tag `v1.0.0` pushed + GitHub release created (`releases/tag/v1.0.0`) |
+| 1.7 | Add a top-level `README.md` with: paper title, DOI (after Step 3), data/script layout, license, conda env `malaria_md` | ✅ 2026-09-09 README updated (P1 V8 status, MIT license, `malaria_md` env); DOI line to add after Step 3 |
 
 ## Step 2 — Zenodo deposit package (P1 inventory)
 
@@ -89,9 +89,9 @@ Stage the canonical P1 V8 artifacts into a self-contained package
 
 | # | Action | Detail | Done |
 |---|--------|--------|:----:|
-| 4.1 | Data Availability statement (main) | add GitHub URL + DOI: `https://github.com/NanaEngo/Malaria_codesV2` · DOI `10.5281/zenodo.<XXXXX>` | ⬜ |
-| 4.2 | SM §S11 (Reproducibility) | same URL + DOI (`\url{...}`) | ⬜ |
-| 4.3 | Response letter R2.6 | replace `[TO COMPLETE]` with the public URL, license, release tag, and DOI | ⬜ |
+| 4.1 | Data Availability statement (main) | add GitHub URL + DOI: `https://github.com/NanaEngo/Malaria_codesV2` · DOI `10.5281/zenodo.<XXXXX>` | ✅ 2026-09-09 URL + MIT + `v1.0.0` inserted; DOI sentence pending Zenodo assignment |
+| 4.2 | SM §S11 (Reproducibility) | same URL + DOI (`\url{...}`) | ✅ 2026-09-09 same as 4.1 |
+| 4.3 | Response letter R2.6 | replace `[TO COMPLETE]` with the public URL, license, release tag, and DOI | ✅ 2026-09-09 rewritten (public URL, MIT, `v1.0.0`, staged package); DOI to append after assignment |
 | 4.4 | Recompile main + SM + response; sync PDFs; `git diff --check` | 0 errors / 0 undefined | ⬜ |
 
 ## Gates before submission

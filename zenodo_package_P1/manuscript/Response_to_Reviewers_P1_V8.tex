@@ -1,8 +1,10 @@
 % Response to reviewers — P1 V8 revision (JCIM)
 % NOTE FOR AUTHORS: all reviewer-requested computations are complete as of 2026-09-09,
 % including the R2.4 two-arm MTX-retained vs MTX-stripped DEKOIS re-run (honest-negative,
-% integrated into the SM table and main text). The only remaining item is the R2.6
-% repository release + Zenodo DOI (author action; checklist in P1_R26_RELEASE_CHECKLIST.md).
+% integrated into the SM table and main text). R2.6 is executed except the Zenodo DOI
+% minting (author account action): repo public, MIT license, release tag v1.0.0,
+% staged package zenodo_package_P1/ (sha256-verified). Insert the DOI in Data
+% Availability (main) and SM reproducibility before resubmission.
 
 \documentclass[11pt]{article}
 \usepackage[margin=2.5cm]{geometry}
@@ -237,10 +239,15 @@ rather than gain.
 \textbf{Reviewer:} The repository URL returns 404; the wild-type denominators do not appear
 elsewhere; provide a maintained repository with license, release tag, and archival DOI.
 
-\textbf{Response:} [AUTHOR ACTION PENDING --- make
-\url{https://github.com/NanaEngo/Malaria_codesV2} public, add a software license and a
-versioned release tag, deposit the release on Zenodo, and update the Data Availability
-statement (M) and \Cref{SM-sec:sm_repro} with the DOI.] In parallel, the WT/mutant score table required to
+\textbf{Response:} The repository is now publicly accessible at
+\url{https://github.com/NanaEngo/Malaria_codesV2} under the MIT license (\texttt{LICENSE} at
+the repository root), with a versioned archival release \texttt{v1.0.0}
+(\url{https://github.com/NanaEngo/Malaria_codesV2/releases/tag/v1.0.0}) containing the complete
+revision codebase, the canonical result directories (including the two-arm DEKOIS re-run of
+R2.4), and a checksummed staging package for archival (\texttt{zenodo\_package\_P1/},
+sha256-verified manifest). A permanent Zenodo DOI is being minted for this release and will be
+inserted into the Data Availability statement (main) and the SI reproducibility section
+(\Cref{SM-sec:sm_repro}) before resubmission. In parallel, the WT/mutant score table required to
 recompute \Cref{M-tab:rrs_main} is now included directly in the SI (\Cref{SM-tab:sm_wt_mutant_scores}: the
 PfDHFR wild-type/mutant panel and the corrected PfCRT LYS-76/K76T/K76A scores underlying
 every RRS denominator), so the RRS denominators no longer reside only in the repository.
@@ -325,8 +332,9 @@ antimalarials (R1.2; 40 runs, honest-negative result reported in \Cref{SM-tab:sm
 \Cref{SM-tab:sm_wt_mutant_scores}); and (vii) the controlled two-arm MTX-retained versus
 MTX-stripped DEKOIS re-run (R2.4; honest-negative result, two rows added to
 \Cref{SM-tab:sm_enrichment_validation} and discussed in \Cref{SM-sec:sm_val_dekois}).
-Remaining, pending author action: repository release + Zenodo DOI (R2.6; checklist provided in
-the repository).
+Additionally executed for R2.6: the repository is now public (MIT license, release tag
+\texttt{v1.0.0}, GitHub release), with the staged Zenodo package ready; only the Zenodo DOI
+minting (author account action) remains before resubmission.
 
 \vspace{2em}
 \noindent Sincerely,\\

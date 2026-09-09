@@ -471,17 +471,22 @@ that answers reviewer comments, all values traced in the DARs:
   R2.4's MTX-blockade hypothesis is therefore **not supported**. Integrated
   into SM §S12.2 + enrichment table (both arms) + main §2.3.1/§4.5 + response
   R2.4 (2026-09-09).
-- **R2.6 (WT/mutant score table in the SI, 2026-09-09):** new SM table
-  `tab:sm_wt_mutant_scores` (`submission_ACS_P1V8/tables/sm_table_wt_mutant_scores.tex`)
-  lists the raw WT/mutant docking scores underlying every RRS denominator:
-  PfDHFR WT/N51I/C59R/S108N/I164L from P2 `docking_mutants.csv` (canonical
-  mutation panel) and corrected PfCRT LYS-76/K76T/K76A from
+- **R2.6 (WT/mutant score table in the SI + repository release, 2026-09-09):**
+  (i) new SM table `tab:sm_wt_mutant_scores`
+  (`submission_ACS_P1V8/tables/sm_table_wt_mutant_scores.tex`) lists the raw
+  WT/mutant docking scores underlying every RRS denominator: PfDHFR
+  WT/N51I/C59R/S108N/I164L from P2 `docking_mutants.csv` (canonical mutation
+  panel) and corrected PfCRT LYS-76/K76T/K76A from
   `results/pfcrt_redock_v2grid_20260909/revised_rrs_and_nfav.csv` (R2.3
   re-dock). Verified: recomputing RRS from this table reproduces main Table 1
   with max deviation 0.05; PfDHFR exclusions (PP-02/05/06/11/13, |S_WT| < 5
-  kcal/mol) match the manuscript exactly. Reviewer R2.6 requested the
-  WT/mutant table inside the SI itself; this closes that item (repo release +
-  DOI remain author actions).
+  kcal/mol) match the manuscript exactly. (ii) Repository release executed:
+  `NanaEngo/Malaria_codesV2` public (MIT), tag `v1.0.0` + GitHub release,
+  README updated; Zenodo staging package `zenodo_package_P1/` built by
+  `scripts/build_p1_zenodo_package.py` (384 files, 14.4 MB, sha256 verified,
+  manifest `prepared_pending_doi_reservation`). Remaining author action:
+  Zenodo DOI reservation + upload, then DOI insertion in Data Availability
+  (main), SM §S11, and response R2.6.
 
 ---
 

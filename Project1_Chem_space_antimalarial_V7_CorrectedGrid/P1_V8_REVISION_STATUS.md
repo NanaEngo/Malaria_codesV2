@@ -31,9 +31,13 @@ and reflected in the manuscript**:
    resistance signatures (RRS ≈ 100 % on both panels, within the pipeline-null spread),
    reported as such in SI Table S6 and M §4.5.
 
-All reviewer-requested computations are complete as of 2026-09-09. Remaining author item:
-**R2.6** repository release + Zenodo DOI (author admin; checklist in
-`P1_R26_RELEASE_CHECKLIST.md`).
+All reviewer-requested computations are complete as of 2026-09-09. **R2.6 executed the same
+day** except Zenodo DOI minting: repository `NanaEngo/Malaria_codesV2` now **public** (MIT
+license, release tag `v1.0.0` + GitHub release, README updated), Zenodo staging package
+`zenodo_package_P1/` built and sha256-verified (384 files, 14.4 MB, manifest
+`prepared_pending_doi_reservation`). Remaining author action: reserve DOI → upload → verify
+→ insert DOI in Data Availability (main) + SM §S11 + response R2.6
+(checklist `P1_R26_RELEASE_CHECKLIST.md` Steps 3–4).
 
 ---
 
@@ -50,7 +54,7 @@ Legend: ✅ done · 🔧 fixed this session · ⚠️ partial · ❌ open (autho
 | R2.3 | PfCRT 6UKJ K76T + grid box (CRITICAL) | ✅ | Corrected LYS-76 receptor; cavity-anchored V2 grid (152.99, 151.042, 159.379; 25 Å; exhaustiveness 32); 68-run re-dock complete; SM S3/Table 1/Table 2 regenerated; class counts now 7/4/6/0. |
 | R2.4 | DEKOIS worse-than-random + Hany citation | ✅ | Hany et al. 2025 cited and discussed (SM §S12.2); EF@1 %/EF@5 % reported (0.00); **controlled two-arm re-run completed 2026-09-09** (`results/dekois_mtxstripped_20260909/`, 2 × 1239 dockings, exh 32): retained-MTX AUC 0.502 [0.423, 0.586] vs MTX-stripped 0.563 [0.477, 0.646], overlapping CIs, EF@1 % = 0 in both arms → honest-negative, retained-MTX blockade NOT supported; two rows added to the enrichment table, narrative updated in SM §S12.2, main §2.3.1/§4.5, response R2.4. |
 | R2.5 | WT/mutant batch-effect null (was blocking) | ✅ | Pipeline-null control computed (SM §S12.7): null 99.4–100.5 %, K76T 99.1–100.6 %, K76A 99.4–100.4 %; max deviation from null 1.2 pp (K76T) / 0.5 pp (K76A); 80 %/70 % boundaries inside null spread; PfCRT channel reported neutral-within-null. >100 % RRS values explained (M §3.4). |
-| R2.6 | Repository 404 / no DOI | ❌ | Author action: make repo public, add license + release tag, Zenodo DOI, update Data Availability. |
+| R2.6 | Repository 404 / no DOI | 🔶 | Executed 2026-09-09: repo **public**, MIT license, tag `v1.0.0` + GitHub release, Data Availability/SM §S11 updated with release reference; Zenodo package `zenodo_package_P1/` staged (sha256-verified). Remaining: DOI reservation + upload (author Zenodo account), then insert DOI. |
 | R2.7 | PNS/ACSI undefined | ✅ | Methods §2.5 formulas + SM S8 sensitivity table. |
 | R2.8 | SI Table S11 contradictions | ✅ | Validation tables rebuilt separating full-ligand vs fragment/cofactor redocking; MMV rows labelled retrodictive. |
 | R2.9 | Single seed; PP-15 marginal | ✅ | Five-seed runs disclosed with protocol separation (SI Table S12); seed dispersion < 0.06 kcal/mol bounds N_fav sensitivity; per-target-median margins reported in response letter. |
@@ -124,5 +128,7 @@ label-driven (`\label` + `\Cref` via `xr` + `cleveref`); no `\section*` and no h
 ## Verdict
 
 **READY FOR AUTHOR REVIEW** (all reviewer-critical items computed, including the R2.4
-two-arm DEKOIS re-run reported as honest-negative). The only remaining item is author/external:
-R2.6 repository release + Zenodo DOI (checklist `P1_R26_RELEASE_CHECKLIST.md`).
+two-arm DEKOIS re-run reported as honest-negative; R2.6 repository release executed — public
+repo, MIT, tag v1.0.0, staged Zenodo package). The only remaining item is author/external:
+Zenodo DOI reservation + upload, then DOI insertion in the three documents
+(checklist `P1_R26_RELEASE_CHECKLIST.md` Steps 3–4).
