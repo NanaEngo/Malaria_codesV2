@@ -1,0 +1,46 @@
+{
+ "status": "COMPUTED",
+ "date": "2026-08-29",
+ "candidate": "PP-01",
+ "protocol": "AutoDock Vina v1.2.7, seeds [101,202,303,404,505], exhaustiveness 128, num_modes 10, canonical ligand results/docking/ligand_pdbqt/rank01_ligand.pdbqt, P1-V2 canonical grids: PfDHFR 7F3Y center (1.33,-1.733,-23.842); PfCRT 6UKJ center (152.99,151.042,159.379), size 25",
+ "canonical_provenance": "scores reproduced with the exact canonical inputs identified in the deep relecture: rank01_ligand.pdbqt (canonical RRS ligand prep) + P1-V2 WT grids; PfDHFR WT -7.500 inside the 5-seed spread; PfCRT WT -9.300 within 0.05 of the spread (original receptor prep detail not preserved on disk)",
+ "results": {
+  "PfDHFR_WT": {
+   "per_seed": {
+    "101": -7.529,
+    "202": -7.504,
+    "303": -7.485,
+    "404": -7.504,
+    "505": -7.475
+   },
+   "mean": -7.499,
+   "std": 0.021,
+   "range": [
+    -7.529,
+    -7.475
+   ],
+   "canonical_single_run": -7.5,
+   "canonical_in_spread": true,
+   "gap_to_spread_kcal_mol": 0.0
+  },
+  "PfCRT_WT": {
+   "per_seed": {
+    "101": -9.257,
+    "202": -9.262,
+    "303": -9.257,
+    "404": -9.225,
+    "505": -9.25
+   },
+   "mean": -9.25,
+   "std": 0.015,
+   "range": [
+    -9.262,
+    -9.225
+   ],
+   "canonical_single_run": -9.3,
+   "canonical_in_spread": false,
+   "gap_to_spread_kcal_mol": 0.038
+  }
+ },
+ "conclusion": "Mode-1 affinity is reproducible across seeds to within 0.05 kcal/mol on both WT targets; docking ranking is not seed-sensitive for PP-01 (same conclusion as PP-15)."
+}

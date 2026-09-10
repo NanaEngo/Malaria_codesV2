@@ -1,0 +1,50 @@
+{
+  "status": "COMPUTED",
+  "date": "2026-08-29",
+  "ppi_file": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/external/ppi_network.tsv",
+  "docking_panel": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/docking_mutants.csv",
+  "canonical_threshold": 700,
+  "thresholds": [
+    400,
+    700,
+    900
+  ],
+  "centrality_spearman": {
+    "400_vs_700": {
+      "rho": 0.2564,
+      "p": 0.00166,
+      "n_shared_nodes": 148
+    },
+    "400_vs_900": {
+      "rho": 0.7265,
+      "p": 0.000427,
+      "n_shared_nodes": 19
+    },
+    "700_vs_900": {
+      "rho": 1.0,
+      "p": 0.0,
+      "n_shared_nodes": 19
+    }
+  },
+  "pns_spearman": {
+    "400_vs_700": {
+      "pns_rho": 0.9975,
+      "pns_p": 0.0,
+      "n_candidates": 17,
+      "top5_jaccard": 1.0
+    },
+    "400_vs_900": {
+      "pns_rho": 0.9632,
+      "pns_p": 0.0,
+      "n_candidates": 17,
+      "top5_jaccard": 0.6667
+    },
+    "700_vs_900": {
+      "pns_rho": 0.9681,
+      "pns_p": 0.0,
+      "n_candidates": 17,
+      "top5_jaccard": 0.6667
+    }
+  },
+  "notes": "Composite centrality (degree/betweenness/closeness/eigenvector, 0.25 each) identical to the canonical load_ppi_centrality(); threshold changes only the edge filter. PfCRT centrality is imputed with the interactome mean at each threshold. PNS uses the canonical WT docking panel (docking_mutants.csv) and the formula \u03a3_j C_j \u00d7 |\u0394G_j| / n_j, identical to calculate_pns()."
+}

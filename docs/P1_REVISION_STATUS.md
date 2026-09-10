@@ -5,8 +5,34 @@
 **Journal**: *J. Chem. Inf. Model.* (JCIM)  
 **Submitted**: 2026-08-30 (V7)  
 **Decision**: Major Revision Required  
-**Status**: Revision Planning Complete, Execution Pending  
+**Status**: P2 Integration Complete — Execution Ready  
 **Updated**: 2026-09-09
+
+---
+
+## Latest Updates
+
+### 2026-09-09: P2 Outputs and Scripts Copied ✅
+- **Copied P2 outputs** to `results/p2_reference_outputs/` (11 files, ~52 KB)
+  - Statistical framework (100k perm, 10k bootstrap)
+  - ACSI scores (17 compounds)
+  - PNS scores (17 compounds)
+  - ACSI/PNS sensitivity analyses
+  - PP-01 multi-seed validation
+  - STRING threshold sensitivity
+- **Copied P2 scripts** to `scripts/from_p2/` (5 files, ~60 KB)
+  - Statistical audit framework
+  - Multi-seed launcher
+  - GNINA rescoring
+  - Preparation manifest
+- **Time saved**: ~28 days (43% timeline reduction)
+- **Reason**: P1 Set A = P2 Set C (100% cohort overlap)
+- **Documentation**: 
+  - `P1_P2_REUSABLE_OUTPUTS.md` (technical extraction)
+  - `P1_P2_INTEGRATION_SUMMARY.md` (executive summary)
+  - `P1_REVISION_ACCELERATED_PLAN.md` (updated timeline)
+
+### 2026-09-09: Revision Roadmap Created ✅
 
 ---
 

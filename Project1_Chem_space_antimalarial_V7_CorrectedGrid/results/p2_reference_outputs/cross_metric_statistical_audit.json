@@ -1,0 +1,96 @@
+{
+  "seed": 42,
+  "n_permutations": 100000,
+  "n_bootstrap": 10000,
+  "multiplicity_note": "Permutation p-values are two-sided and +1 corrected; the reported Bonferroni value multiplies each p-value by three for the prespecified H1-H3 family and is capped at 1. Bootstrap intervals are descriptive and should not be interpreted as independent validation after candidate selection; complete_two_target_12 is the target-balanced sensitivity set.",
+  "records": [
+    {
+      "analysis_set": "available_17",
+      "comparison": "PNS_vs_RRS",
+      "n": 17,
+      "spearman_rho": -0.5588235294117647,
+      "permutation_p_two_sided": 0.02224977750222498,
+      "bonferroni_p_three_hypotheses": 0.06674933250667493,
+      "bootstrap_ci95_low": -0.7891014394513337,
+      "bootstrap_ci95_high": -0.1349306431273644,
+      "inference_scope": "exploratory_selected_cohort; not independent validation"
+    },
+    {
+      "analysis_set": "available_17",
+      "comparison": "ACSI_vs_PNS",
+      "n": 17,
+      "spearman_rho": -0.07843137254901962,
+      "permutation_p_two_sided": 0.7641023589764102,
+      "bonferroni_p_three_hypotheses": 1.0,
+      "bootstrap_ci95_low": -0.5682431088659958,
+      "bootstrap_ci95_high": 0.4488803501450454,
+      "inference_scope": "exploratory_selected_cohort; not independent validation"
+    },
+    {
+      "analysis_set": "available_17",
+      "comparison": "ACSI_vs_RRS",
+      "n": 17,
+      "spearman_rho": -0.13235294117647062,
+      "permutation_p_two_sided": 0.6117438825611744,
+      "bonferroni_p_three_hypotheses": 1.0,
+      "bootstrap_ci95_low": -0.6925047242874846,
+      "bootstrap_ci95_high": 0.4420993301143017,
+      "inference_scope": "exploratory_selected_cohort; not independent validation"
+    },
+    {
+      "analysis_set": "available_17",
+      "comparison": "RRS_vs_WT_anchor_min",
+      "n": 17,
+      "spearman_rho": 0.17589295643365782,
+      "permutation_p_two_sided": 0.4947150528494715,
+      "bonferroni_p_three_hypotheses": 1.0,
+      "bootstrap_ci95_low": -0.3818040675090465,
+      "bootstrap_ci95_high": 0.6953989388787418,
+      "inference_scope": "exploratory_selected_cohort; not independent validation"
+    },
+    {
+      "analysis_set": "complete_two_target_12",
+      "comparison": "PNS_vs_RRS",
+      "n": 12,
+      "spearman_rho": -0.20979020979020982,
+      "permutation_p_two_sided": 0.5143548564514355,
+      "bonferroni_p_three_hypotheses": 1.0,
+      "bootstrap_ci95_low": -0.7582417582417582,
+      "bootstrap_ci95_high": 0.5428571428571428,
+      "inference_scope": "exploratory_selected_cohort; not independent validation"
+    },
+    {
+      "analysis_set": "complete_two_target_12",
+      "comparison": "ACSI_vs_PNS",
+      "n": 12,
+      "spearman_rho": -0.30069930069930073,
+      "permutation_p_two_sided": 0.3424165758342417,
+      "bonferroni_p_three_hypotheses": 1.0,
+      "bootstrap_ci95_low": -0.6906752017740645,
+      "bootstrap_ci95_high": 0.2903225806451613,
+      "inference_scope": "exploratory_selected_cohort; not independent validation"
+    },
+    {
+      "analysis_set": "complete_two_target_12",
+      "comparison": "ACSI_vs_RRS",
+      "n": 12,
+      "spearman_rho": -0.4055944055944056,
+      "permutation_p_two_sided": 0.1921880781192188,
+      "bonferroni_p_three_hypotheses": 0.5765642343576565,
+      "bootstrap_ci95_low": -0.8916967509025271,
+      "bootstrap_ci95_high": 0.28571428571428575,
+      "inference_scope": "exploratory_selected_cohort; not independent validation"
+    },
+    {
+      "analysis_set": "complete_two_target_12",
+      "comparison": "RRS_vs_WT_anchor_min",
+      "n": 12,
+      "spearman_rho": -0.1660870707939516,
+      "permutation_p_two_sided": 0.6038039619603804,
+      "bonferroni_p_three_hypotheses": 1.0,
+      "bootstrap_ci95_low": -0.7299503452923488,
+      "bootstrap_ci95_high": 0.5932334163726073,
+      "inference_scope": "exploratory_selected_cohort; not independent validation"
+    }
+  ]
+}
