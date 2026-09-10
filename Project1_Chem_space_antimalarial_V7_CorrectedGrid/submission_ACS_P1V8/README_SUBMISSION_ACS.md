@@ -10,11 +10,11 @@
 
 | # | Fichier (dans ce dossier) | Rôle dans Paragon Plus |
 |---|---|---|
-| 1 | `P1_V8_main.pdf` | **Manuscript (PDF compilé)** — main text, 25 p., 0 erreur |
-| 2 | `P1_V8_main.tex` + `.bbl` + `.bib` | Source LaTeX du main (facultatif mais recommandé par ACS) |
-| 3 | `P1_V8_SM.pdf` | **Supporting Information** (17 p.; nom ACS : `Supporting_Information.pdf`) |
-| 4 | `P1_V8_SM.tex` + `.bbl` | Source LaTeX du SM |
-| 4b | `P1_V8_main.aux` + `P1_V8_SM.aux` | **⚠️ REQUIS pour la recompilation** — le main et le SM se référencent croisément via `\usepackage{xr}` + `\externaldocument` (`\cref{SM-...}` / `\cref{M-...}`). Sans ces `.aux`, la recompilation produit des références non résolues. |
+| 1 | `P1_Integrated_Polypharmacology_RRS_Main_V8.pdf` | **Manuscript (PDF compilé)** — main text, 25 p., 0 erreur |
+| 2 | `P1_Integrated_Polypharmacology_RRS_Main_V8.tex` + `.bbl` + `.bib` | Source LaTeX du main (facultatif mais recommandé par ACS) |
+| 3 | `P1_Integrated_Polypharmacology_RRS_SM_V8.pdf` | **Supporting Information** (17 p.; nom ACS : `Supporting_Information.pdf`) |
+| 4 | `P1_Integrated_Polypharmacology_RRS_SM_V8.tex` + `.bbl` | Source LaTeX du SM |
+| 4b | `P1_Integrated_Polypharmacology_RRS_Main_V8.aux` + `P1_Integrated_Polypharmacology_RRS_SM_V8.aux` | **⚠️ REQUIS pour la recompilation** — le main et le SM se référencent croisément via `\usepackage{xr}` + `\externaldocument` (`\cref{SM-...}` / `\cref{M-...}`). Sans ces `.aux`, la recompilation produit des références non résolues. |
 | 5 | `Cover_Letter_P1_V8.pdf` (+ .tex) | **Cover letter** — obligatoire (1 p.) |
 | 6 | `p1_v8_toc_graphic_ACS.tiff` | **TOC graphic (obligatoire)** — 3.25×1.75 in, 300 dpi, RGB |
 | 7 | `p1_v8_toc_graphic.pdf` | Version vectorielle du TOC (pour recompilation) |

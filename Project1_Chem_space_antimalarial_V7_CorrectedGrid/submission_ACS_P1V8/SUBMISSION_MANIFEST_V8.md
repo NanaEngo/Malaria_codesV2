@@ -12,14 +12,14 @@
 ### Required Files for Submission
 
 #### 1. Main Manuscript (PDF)
-- **File:** `P1_V8_Integrated_Polypharmacology_RRS.pdf`
+- **File:** `P1_Integrated_Polypharmacology_RRS_Main_V8.pdf`
 - **Pages:** 28
 - **Size:** 490 KB
 - **Status:** ✅ Ready
 - **Compilation:** 0 errors, 0 undefined references
 
 #### 2. Supporting Information (PDF)
-- **File:** `P1_V8_Integrated_Polypharmacology_RRS_SM.pdf`
+- **File:** `P1_Integrated_Polypharmacology_RRS_SM_V8.pdf`
 - **Pages:** 23
 - **Size:** 592 KB
 - **Status:** ✅ Ready
@@ -51,10 +51,10 @@
 - **Notes:** 0 `journaltitle` entries, all journal names verified
 
 #### 6. Auxiliary Files (Cross-References)
-- `P1_V8_Integrated_Polypharmacology_RRS.aux` (13 KB)
-- `P1_V8_Integrated_Polypharmacology_RRS.bbl` (13 KB)
-- `P1_V8_Integrated_Polypharmacology_RRS_SM.aux` (13 KB)
-- `P1_V8_Integrated_Polypharmacology_RRS_SM.bbl` (3.6 KB)
+- `P1_Integrated_Polypharmacology_RRS_Main_V8.aux` (13 KB)
+- `P1_Integrated_Polypharmacology_RRS_Main_V8.bbl` (13 KB)
+- `P1_Integrated_Polypharmacology_RRS_SM_V8.aux` (13 KB)
+- `P1_Integrated_Polypharmacology_RRS_SM_V8.bbl` (3.6 KB)
 
 ---
 
@@ -198,9 +198,9 @@
 3. **Manuscript Type:** Article
 
 ### File Upload Order
-1. Main manuscript PDF (`P1_V8_Integrated_Polypharmacology_RRS.pdf`)
+1. Main manuscript PDF (`P1_Integrated_Polypharmacology_RRS_Main_V8.pdf`)
 
-2. Supporting Information PDF (`P1_V8_Integrated_Polypharmacology_RRS_SM.pdf`)
+2. Supporting Information PDF (`P1_Integrated_Polypharmacology_RRS_SM_V8.pdf`)
 3. Bibliography file (`Sao_Chim_Space.bib`)
 4. Cover letter PDF (prepare separately)
 5. TOC graphic (if required separately)
