@@ -1,0 +1,65 @@
+{
+  "protocol": {
+    "grid_center": [
+      1.33,
+      -1.733,
+      -23.842
+    ],
+    "grid_size": [
+      25.0,
+      25.0,
+      25.0
+    ],
+    "exhaustiveness": 32,
+    "num_modes": 20,
+    "cpu_per_job": 2,
+    "ligand_prep": "RDKit ETKDGv3 + MMFF, Open Babel PDBQT (original protocol)",
+    "note": "exhaustiveness 32 = V8 revised-protocol standard; retained arm reproduces the declared baseline under an identical pipeline"
+  },
+  "receptors": {
+    "retained": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/data/proteins/7F3Y.pdbqt",
+    "stripped": "/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V7_CorrectedGrid/results/retrospective_approved_antimalarials_20260909/receptors/PfDHFR_WT_receptor.pdbqt"
+  },
+  "arms": [
+    {
+      "arm": "retained",
+      "n_actives_requested": 40,
+      "n_decoys_requested": 1200,
+      "n_docked": 1239,
+      "n_actives_docked": 40,
+      "n_decoys_docked": 1199,
+      "n_prep_failed": 1,
+      "n_dock_failed": 0,
+      "ROC_AUC": 0.5023,
+      "ROC_AUC_mean_boot": 0.5031,
+      "ROC_AUC_95CI_lo": 0.4225,
+      "ROC_AUC_95CI_hi": 0.5862,
+      "EF1pct": 0.0,
+      "EF5pct": 0.5,
+      "EF10pct": 0.25,
+      "BEDROC": 0.0256,
+      "PR_AUC": 0.0316,
+      "wall_min": 206.0
+    },
+    {
+      "arm": "stripped",
+      "n_actives_requested": 40,
+      "n_decoys_requested": 1200,
+      "n_docked": 1239,
+      "n_actives_docked": 40,
+      "n_decoys_docked": 1199,
+      "n_prep_failed": 1,
+      "n_dock_failed": 0,
+      "ROC_AUC": 0.5626,
+      "ROC_AUC_mean_boot": 0.5625,
+      "ROC_AUC_95CI_lo": 0.4772,
+      "ROC_AUC_95CI_hi": 0.6463,
+      "EF1pct": 0.0,
+      "EF5pct": 0.999,
+      "EF10pct": 0.999,
+      "BEDROC": 0.0481,
+      "PR_AUC": 0.0383,
+      "wall_min": 205.9
+    }
+  ]
+}

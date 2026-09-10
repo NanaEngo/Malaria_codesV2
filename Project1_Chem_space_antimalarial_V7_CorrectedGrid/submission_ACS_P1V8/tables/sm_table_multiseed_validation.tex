@@ -1,0 +1,22 @@
+% SM Table: Multi-seed Docking Validation
+% Generated for V8 revision
+% Package refresh: 2026-09-09
+
+\begin{table}[!htbp]
+\centering
+\caption{Multi-seed docking sensitivity for PP-15 and PP-01 against PfDHFR and PfCRT wild-type receptors. Five independent AutoDock Vina runs with different random seeds (exhaustiveness \num{32} for PP-15, \num{128} for PP-01 canonical) assess seed sensitivity under the P2 canonical-grid protocol. These runs use grid centers and receptor preparations that differ from the single-run matrix in \Cref{tab:vina} (e.g., PP-15 PfDHFR \num{-8.59} here versus \num{-6.05} in \Cref{tab:vina}; see footnote), so they report seed dispersion for their own protocol, not for the \Cref{tab:vina} single-run scores.}
+\label{tab:sm_multiseed_validation}
+\small
+\begin{tabular}{lcccccp{4cm}}
+\toprule
+\textbf{Candidate} & \textbf{Target} & \textbf{Receptor} & \textbf{Seeds (5 runs)} & \textbf{Mean $\pm$ SD} & \textbf{Range} & \textbf{Seed dispersion} \\
+\midrule
+PP-15 & PfDHFR WT & 7F3Y & \numlist{-8.585;-8.588;-8.603;-8.589;-8.586} & \num{-8.590 \pm 0.007} & \num{0.018} & \qty{<0.02}{\kilo\calorie\per\mole} \\
+PP-15 & PfCRT WT & PfCRT\_WT.pdb (LYS-76) & \numlist{-7.840;-7.823;-7.810;-7.820;-7.816} & \num{-7.822 \pm 0.011} & \num{0.030} & \qty{<0.03}{\kilo\calorie\per\mole} \\
+PP-01 & PfDHFR WT & 7F3Y & \numlist{-7.529;-7.504;-7.485;-7.504;-7.475} & \num{-7.499 \pm 0.021} & \num{0.054} & \qty{<0.06}{\kilo\calorie\per\mole} \\
+PP-01 & PfCRT WT & 6UKJ (deposited, THR-76) & \numlist{-9.257;-9.262;-9.257;-9.225;-9.250} & \num{-9.250 \pm 0.015} & \num{0.037} & \qty{<0.04}{\kilo\calorie\per\mole} \\
+\bottomrule
+\multicolumn{7}{p{15cm}}{%
+\textbf{Protocol disclosure:} These five-seed runs were executed under the P2 canonical-grid protocol (PfDHFR grid centered at $(1.33, -1.733, -23.842)$; PP-15 PfCRT grid centered at $(149.821, 169.427, 141.111)$; PP-01 PfCRT grid centered at $(152.99, 151.042, 159.379)$; all \qty{25}{\angstrom} boxes). They are not directly comparable to the single-run matrix in \Cref{tab:vina}, which was generated under the original panel grids; the difference between the two protocols is visible in the PP-15 PfDHFR scores ($-8.59$ here versus $-6.05$ in \Cref{tab:vina}). The PP-15 PfCRT runs used the corrected LYS-76 receptor; the PP-01 PfCRT runs used the deposited 6UKJ receptor. Seed dispersion (\qty{<0.06}{\kilo\calorie\per\mole} across all four rows) shows that mode-1 affinity estimates are stable to seed choice within each protocol. Seed-stability assessment of the revised \Cref{tab:vina} matrix under the corrected-receptor protocol is provided together with the corrected-receptor re-docking results in the response letter.}
+\end{tabular}
+\end{table}

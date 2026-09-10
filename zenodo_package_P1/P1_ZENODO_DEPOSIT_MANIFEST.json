@@ -1,0 +1,43 @@
+{
+  "project": "P1 \u2014 Chemical-space antimalarial polypharmacology (JCIM V8 revision)",
+  "built_on": "2026-09-09",
+  "status": "prepared_pending_doi_reservation",
+  "reviewer_item": "R2.6 \u2014 repository release + archival DOI",
+  "license": "MIT (repository root LICENSE)",
+  "contents": [
+    "P1_DATA_ANALYSIS_REPORT.md",
+    "P1_R26_RELEASE_CHECKLIST.md",
+    "P1_V8_PACKAGE_AUDIT_20260909.md",
+    "P1_V8_REVISION_STATUS.md",
+    "manuscript/Cover_Letter_P1_V8.tex",
+    "manuscript/Graphics/ (11 files)",
+    "manuscript/P1_V8_SM.tex",
+    "manuscript/P1_V8_main.tex",
+    "manuscript/Response_to_Reviewers_P1_V8.tex",
+    "manuscript/SUBMISSION_MANIFEST_V8.md",
+    "manuscript/Sao_Chim_Space.bib",
+    "manuscript/tables/ (11 files)",
+    "results/dekois_mtxstripped_20260909/ (9 files)",
+    "results/pfcrt_redock_v2grid_20260909/ (236 files)",
+    "results/retrospective_approved_antimalarials_20260909/ (98 files)",
+    "scripts/launch_r24.sh",
+    "scripts/p1_r12_retrospective.py",
+    "scripts/p1_r23_pfcrt_redock.py",
+    "scripts/p1_r23_rrs_recompute.py",
+    "scripts/p1_r24_analyze.py",
+    "scripts/p1_r24_dekois_mtxstripped.py",
+    "scripts/v8_figure2_annotations.py"
+  ],
+  "checksums": "sha256sums.txt",
+  "related_repositories": [
+    "NanaEngo/Malaria_codesV2 (code; to be made public with release tag)",
+    "Companion P2/P3/P5/P6 Zenodo deposits follow the same pattern"
+  ],
+  "upload_steps": [
+    "Reserve the DOI on Zenodo (reserved_pending_upload until verified)",
+    "Upload this directory as a single versioned deposit",
+    "Verify sha256 checksums post-upload and resolve the DOI",
+    "Update Data Availability (main) + SM reproducibility section + response R2.6 with the DOI",
+    "Make the GitHub repository public and tag the release"
+  ]
+}

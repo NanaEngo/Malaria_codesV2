@@ -1,0 +1,118 @@
+{
+  "status": "AVAILABLE_PAIRED_SEED_FOLD_VARIABILITY_SUMMARY",
+  "split": "scaffold",
+  "arms": [
+    "phenotype",
+    "structure",
+    "both"
+  ],
+  "multiplicity": {
+    "families": 3,
+    "inferential_role": "not assigned",
+    "adjustment": "No confirmatory multiplicity procedure was applied; sign-flip reference statistics are retained for transparency only"
+  },
+  "method": "20,000 paired bootstrap resamples over seed-fold differences; seed-fold, not molecule, is the resampling unit. Sign-flip reference statistics are not used for confirmatory inference",
+  "comparisons": {
+    "phenotype_minus_structure": {
+      "mean_columnwise_log_loss": {
+        "n_seed_fold_pairs": 25,
+        "difference_definition": "arm_a minus arm_b",
+        "mean_difference": -0.01106575189765076,
+        "bootstrap_ci_95": [
+          -0.011687451349656895,
+          -0.010432195765650307
+        ],
+        "sign_flip_reference_probability": 0.0
+      },
+      "macro_auroc": {
+        "n_seed_fold_pairs": 25,
+        "difference_definition": "arm_a minus arm_b",
+        "mean_difference": 0.10206699066478254,
+        "bootstrap_ci_95": [
+          0.09382185603417718,
+          0.11028580415691573
+        ],
+        "sign_flip_reference_probability": 0.0
+      },
+      "macro_auprc": {
+        "n_seed_fold_pairs": 25,
+        "difference_definition": "arm_a minus arm_b",
+        "mean_difference": 0.10806820735095275,
+        "bootstrap_ci_95": [
+          0.10142089297744379,
+          0.11431995241414586
+        ],
+        "sign_flip_reference_probability": 0.0
+      }
+    },
+    "phenotype_minus_both": {
+      "mean_columnwise_log_loss": {
+        "n_seed_fold_pairs": 25,
+        "difference_definition": "arm_a minus arm_b",
+        "mean_difference": -0.006007580687792951,
+        "bootstrap_ci_95": [
+          -0.006477908726342876,
+          -0.005513544898731407
+        ],
+        "sign_flip_reference_probability": 0.0
+      },
+      "macro_auroc": {
+        "n_seed_fold_pairs": 25,
+        "difference_definition": "arm_a minus arm_b",
+        "mean_difference": 0.052558939091023806,
+        "bootstrap_ci_95": [
+          0.04578373651075489,
+          0.05920145362420203
+        ],
+        "sign_flip_reference_probability": 0.0
+      },
+      "macro_auprc": {
+        "n_seed_fold_pairs": 25,
+        "difference_definition": "arm_a minus arm_b",
+        "mean_difference": 0.05076156835698508,
+        "bootstrap_ci_95": [
+          0.04509345266403044,
+          0.056365403225162085
+        ],
+        "sign_flip_reference_probability": 0.0
+      }
+    },
+    "structure_minus_both": {
+      "mean_columnwise_log_loss": {
+        "n_seed_fold_pairs": 25,
+        "difference_definition": "arm_a minus arm_b",
+        "mean_difference": 0.005058171209857808,
+        "bootstrap_ci_95": [
+          0.004659539320003716,
+          0.005451194656903132
+        ],
+        "sign_flip_reference_probability": 0.0
+      },
+      "macro_auroc": {
+        "n_seed_fold_pairs": 25,
+        "difference_definition": "arm_a minus arm_b",
+        "mean_difference": -0.049508051573758746,
+        "bootstrap_ci_95": [
+          -0.055674376388138734,
+          -0.04268620244129577
+        ],
+        "sign_flip_reference_probability": 0.0
+      },
+      "macro_auprc": {
+        "n_seed_fold_pairs": 25,
+        "difference_definition": "arm_a minus arm_b",
+        "mean_difference": -0.057306638993967686,
+        "bootstrap_ci_95": [
+          -0.06158775510683416,
+          -0.05282670289904617
+        ],
+        "sign_flip_reference_probability": 0.0
+      }
+    }
+  },
+  "_arms_source": {
+    "phenotype": "p6_lish_moa_phenotype_scaffold_folds.csv",
+    "structure": "p6_lish_moa_structure_scaffold_rf_folds.csv",
+    "both": "p6_lish_moa_both_scaffold_rf_folds.csv"
+  }
+}

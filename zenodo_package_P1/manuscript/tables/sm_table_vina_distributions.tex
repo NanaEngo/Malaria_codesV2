@@ -1,0 +1,25 @@
+%% Per-target Vina score distributions and threshold justification
+%% Source: results/derived/v7_integrated_candidate_metrics.csv (canonical),
+%%         with the PfCRT column replaced by the corrected 3D7-like LYS-76
+%%         wild-type re-dock on the V2 cavity-anchored grid
+%%         (results/pfcrt_redock_v2grid_20260909/scores.csv).
+%% Favorability is defined within each target as score at or below that
+%% target's median (reviewer R2.2); medians are listed below.
+\begin{table}[htbp]
+\centering
+\caption{Per-target Vina score distributions for the 17-member cohort on the corrected matrix (PfCRT re-docked against the corrected 3D7-like LYS-76 receptor on the cavity-anchored V2 grid). Favorability is defined within each target as a Vina estimate at or below that target's median (per-target medians: PfDHFR $-5.92$, PfCRT $-8.06$, PfClpP $-6.02$, PfATP4 $-6.38$~kcal~mol$^{-1}$), following the reviewer request to avoid a single cross-target cutoff. The threshold is a prioritization device, not an affinity cutoff.}
+\label{tab:sm_vina_distributions}
+\small
+\begin{tabular}{l S[table-format=-1.3] S[table-format=-1.3] S[table-format=-1.3] S[table-format=-1.3] S[table-format=2.0]}
+\toprule
+Target & {Min} & {Median} & {Mean} & {Max} & {$n$} \\
+\midrule
+PfDHFR  & -6.346 & -5.921 & -5.755 & -4.863 & 17 \\
+PfCRT   & -12.010 & -8.056 & -8.422 & -6.374 & 17 \\
+PfClpP  & -7.031 & -6.016 & -5.935 & -5.047 & 17 \\
+PfATP4  & -7.565 & -6.378 & -6.308 & -4.635 & 17 \\
+\midrule
+\textbf{All targets} & \textbf{-12.010} & \textbf{-6.316} & \textbf{-6.605} & \textbf{-4.635} & \textbf{68} \\
+\bottomrule
+\end{tabular}
+\end{table}

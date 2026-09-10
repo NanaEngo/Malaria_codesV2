@@ -1,0 +1,344 @@
+% Response to reviewers — P1 V8 revision (JCIM)
+% NOTE FOR AUTHORS: all reviewer-requested computations are complete as of 2026-09-09,
+% including the R2.4 two-arm MTX-retained vs MTX-stripped DEKOIS re-run (honest-negative,
+% integrated into the SM table and main text). R2.6 is executed except the Zenodo DOI
+% minting (author account action): repo public, MIT license, release tag v1.0.0,
+% staged package zenodo_package_P1/ (sha256-verified). Insert the DOI in Data
+% Availability (main) and SM reproducibility before resubmission.
+
+\documentclass[11pt]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{enumitem}
+\usepackage{url}
+\usepackage{xr}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[noabbrev,capitalize]{cleveref}
+\externaldocument[M-]{P1_V8_main}
+\externaldocument[SM-]{P1_V8_SM}
+\setlength{\parskip}{4pt}
+
+\title{\bfseries Response to Reviewers\\[4pt]
+\large Revision of: ``Target breadth and mutation resilience in
+African-natural-product-inspired antimalarial chemotypes: a computational analysis''
+(submitted to \emph{Journal of Chemical Information and Modeling})}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent Dear Editor,
+
+We thank both reviewers for their careful, constructive reading of our manuscript.
+Reviewer~1 raised two major concerns and Reviewer~2 raised nine major points and seven
+minor points. We have revised the manuscript (V8) to address every point. Below we
+respond point by point; locations refer to the revised main text (M) or Supporting
+Information (SI).
+
+\section*{Reviewer 1}
+
+\subsection*{R1.1 --- Uneven structural evidence quality across the four targets}
+\textbf{Reviewer:} ``The four targets have vastly different levels of structural validation.
+These differences would influence the `target breadth' result.''
+
+\textbf{Response:} We agree, and we now make the gradient of structural confidence explicit
+rather than implicit. The Introduction states that the panel spans ``a gradient of structural
+confidence --- PfDHFR carries a co-crystallized inhibitor, PfCRT is represented by a proxy
+cavity, and PfClpP and PfATP4 by mechanism-motivated regions without co-crystallized
+small-molecule ligands --- so target breadth is read as a pattern of target-specific evidence,
+not as four equivalent demonstrations of biological engagement'' (M, \Cref{M-sec:intro}). The
+Methods (\Cref{M-sec:methods_docking}) describe each anchor's evidence class, and \Cref{SM-sec:sm_evidence} tabulates the four
+evidence classes (catalytic-site ligand, Y01 cavity proxy, catalytic triad, P-type ATPase
+machinery). Accordingly, we report all four-target results target by target and never
+compute a cross-target composite, so the heterogeneity affects interpretation (breadth as a
+hypothesis) rather than a pooled number.
+
+\subsection*{R1.2 --- Validation strategy: feasibility and retrospective validation}
+\textbf{Reviewer:} ``The proposed validation strategy lists five categories of experiments but
+provides no preliminary data, no estimated feasibility, and no prioritization beyond naming
+three candidates. At minimum a retrospective validation against known antimalarial scaffolds
+would strengthen the workflow's credibility.''
+
+\textbf{Response:} We strengthened the strategy in three ways.
+\begin{enumerate}[leftmargin=1.6em]
+\item \textbf{Retrospective validation.} We docked five approved antimalarials
+(artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) against the PfDHFR
+wild-type/mutant panel (N51I, C59R, S108N, I164L; wild-type receptor stripped of the
+co-crystallised MTX to avoid retained-ligand bias, consistent with the mutant
+preparation) and the corrected PfCRT panel (LYS-76 WT, K76T, K76A) under the declared
+protocols (40 runs, exhaustiveness 32), and computed per-drug RRS profiles to test
+whether the framework recovers clinically documented resistance signatures. The result is
+honest-negative and is reported as such (\Cref{SM-tab:sm_retrospective_antimalarials}; \Cref{M-sec:disc_validation}): pyrimethamine
+RRS is $\approx$100\% across all four PfDHFR mutants (N51I 100.0, C59R 100.0,
+S108N 99.7, I164L 100.0), chloroquine RRS is 99.6\% (K76T) and 98.8\%
+(K76A) on PfCRT---both within the pipeline-null spread of the corrected
+channel (99.4--100.5\%)---and artemisinin/cipargamin show PfDHFR RRS
+$\approx$113--118\% while chloroquine/lumefantrine are PfDHFR non-binders
+(consistent with their non-antifolate mechanisms). The framework therefore
+does not recover the clinical pyrimethamine/chloroquine resistance signatures
+under the corrected protocols, which further bounds the interpretation of RRS
+as a resistance predictor rather than a biological measurement.
+\item \textbf{Prioritization.} \Cref{M-sec:disc_validation} now gives an explicit, ordered five-step experimental
+sequence for the five top-priority candidates (PP-15, PP-05, PP-06, PP-11, PP-13):
+IC$_{50}$ against wild-type parasites and recombinant proteins $\rightarrow$ isogenic
+mutant-line assays (the exact N51I/C59R/S108N/I164L and K76T/K76A panels used here)
+$\rightarrow$ orthogonal binding (SPR/ITC) $\rightarrow$ MD refinement $\rightarrow$
+ADMET/synthetic-accessibility assessment.
+\item \textbf{Feasibility framing.} We now state explicitly that the IC$_{50}$ and mutant-panel
+assays are the standard first steps for computational hit triage and require only the five
+candidates plus two isogenic panels, and that all claims remain computational hypotheses until
+those measurements exist.
+\end{enumerate}
+
+\section*{Reviewer 2}
+
+We thank Reviewer 2 for the encouraging framing and for the specific, actionable list. Each
+point is addressed below.
+
+\subsection*{R2.1 --- Unreported N\_fav--RRS correlation; power limitation; ``demonstrate''}
+\textbf{Reviewer:} Spearman $\rho(N_{\mathrm{fav}},\mathrm{RRS})=+0.515$, $p=0.034$ should be
+reported; the PNS--RRS $p=0.020$ ``trend'' and the ``demonstrate'' language are in tension
+with \S2.5; with $n=17$ the power to detect $\rho=0.5$ at $\alpha=0.017$ is only 0.37.
+
+\textbf{Response:} The N\_fav--RRS correlation is now reported in \Cref{M-sec:results_descriptors} and \Cref{SM-sec:sm_crossmetric} (Table \Cref{SM-tab:crossmetric}), and was additionally assessed by a 100{,}000-permutation test.
+Because the corrected PfCRT re-dock (R2.3) changed the PfCRT column and the
+favorability definition (R2.2), the final numbers on the corrected matrix are
+$\rho=+0.714$ ($p=0.0013$; permutation $p=0.0019$), significant at the
+Bonferroni threshold $\alpha=0.017$. The Discussion now reads the cross-metric
+findings with the power limitation stated explicitly: at $n=17$, a two-sided
+Spearman test at $\alpha=0.05$ reaches 80\% power only at $|\rho|\ge0.62$, and
+at the Bonferroni-corrected $\alpha=0.017$ the power to detect a correlation of
+$\rho=0.5$ is only $\approx0.37$ (the reviewer's estimate), so only
+moderate-magnitude associations are detectable at this sample size
+(\Cref{M-sec:disc_breadth}; \Cref{SM-sec:sm_crossmetric}). The same caveat qualifies the PNS--RRS and
+RRS--wild-type-score associations, which are also reported on the corrected
+matrix (PNS--RRS $\rho=-0.714$, $p=0.0013$; RRS--mean $|S_{WT}|$ $\rho=+0.691$,
+$p=0.0021$; both significant at $\alpha=0.017$). As an additional robustness
+check, the companion P2 layer reports that the PNS--RRS association survives and
+strengthens after conditioning on molecular weight and Murcko-scaffold prevalence
+(partial $\rho=-0.6154$ versus raw $\rho=-0.2098$, $n=12$ complete-two-target
+set), consistent with the negative PNS--RRS direction reported here and
+indicating that the association is not a size or scaffold artifact.
+
+\subsection*{R2.2 --- The $-6.0$ kcal/mol threshold performs the cross-target comparison}
+\textbf{Reviewer:} A single cutoff passes 7/17 (PfDHFR) but 12/17 (PfCRT/PfATP4); favourability
+should be defined within each target (rank/percentile) and Table 2 recomputed.
+
+\textbf{Response:} We adopted the reviewer's within-target definition (option b).
+Favorability is now defined per target as a Vina estimate at or below that
+target's cohort median (PfDHFR $-5.92$, PfCRT $-8.06$, PfClpP $-6.02$, PfATP4
+$-6.38$~kcal~mol$^{-1}$ on the corrected matrix; \Cref{SM-tab:sm_vina_distributions}), and \Cref{M-tab:dual_priority} and
+the N\_fav--RRS statistics were recomputed accordingly (\Cref{M-sec:methods_pns}, \Cref{M-sec:results_joint}; \Cref{SM-sec:sm_crossmetric}). Under the per-target-median definition, $\rho(N_{\mathrm{fav}},\mathrm{RRS}_{\mathrm{mean}})=+0.714$
+($p=0.0013$; permutation $p=0.0019$, 100{,}000 draws), significant at
+$\alpha=0.017$. For transparency, the retired single-cutoff variant gave
+$\rho=+0.515$ ($p=0.034$); the within-target definition is the one reported
+because it avoids a fixed cross-target cutoff, as the reviewer requested.
+
+\subsection*{R2.3 --- PfCRT 6UKJ isoform and grid box (critical)}
+\textbf{Reviewer:} 6UKJ is the 7G8 isoform; residue 76 is threonine (K76T); the 28 \AA\ box
+excludes residue 76; the PfCRT panel is the sole resilience source for PP-02/PP-06/PP-11/PP-13
+and contributes to PP-01/PP-15; anchor to the central negatively charged cavity and construct a
+3D7-like wild-type reference.
+
+\textbf{Response:} We agree this was the most serious flaw. We thank the reviewer for the
+precise geometric analysis. Three corrections are in place:
+\begin{enumerate}[leftmargin=1.6em]
+\item \textbf{3D7-like wild-type receptor.} The deposited 6UKJ carries threonine at residue 76;
+we restored lysine to obtain a 3D7-like wild-type receptor (LYS-76) and use it as the PfCRT
+wild-type reference (\Cref{M-sec:methods_docking}; \Cref{SM-sec:sm_val_crt}).
+\item \textbf{Grid anchored to the drug-interaction cavity.} The corrected grid is centered at
+$(152.99, 151.042, 159.379)$ with 25 \AA\ dimensions, the V2-corrected box used in our
+resistance-resilience analysis. P2Rank pocket prediction independently validates the box: the
+top-ranked pocket (score 162.7, probability 0.999) lies 5.7 \AA\ from the grid center (\Cref{SM-sec:sm_val_crt}), i.e., the box covers the central cavity, not a peripheral region.
+\item \textbf{Re-dock completed.} All 17 candidates were re-docked against the corrected
+LYS-76 receptor (and, for the R2.5 control, the K76T, K76A, and pipeline-null receptors) on
+the V2 grid (exhaustiveness 32): 68 runs, all finite. \Cref{SM-tab:vina} (PfCRT column), \Cref{M-tab:rrs_main}
+(PfCRT RRS values with the corrected wild-type denominator), and \Cref{M-tab:dual_priority} (N\_fav per-target-
+median assignments) were regenerated from these runs. The corrected wild-type scores are
+substantially more favorable (mean $-8.42$ vs $-6.19$~kcal~mol$^{-1}$), and the corrected
+PfCRT RRS values all fall between 99.1 and 100.6\%. Class counts changed from 6/5/5/1 to
+7/4/6/0 (A*/B/C/D), and the corrected RRS range is 73.2--115.6\%.
+\end{enumerate}
+The corrected-receptor protocol is the one described in the manuscript, and all result tables
+were regenerated from the corrected runs (scripts \texttt{p1\_r23\_pfcrt\_redock.py} and
+\texttt{p1\_r23\_rrs\_recompute.py} in the repository).
+
+\subsection*{R2.4 --- DEKOIS worse-than-random; retained MTX; Hany et al.}
+\textbf{Reviewer:} EF@1\% = EF@5\% = 0.00 suggests retained MTX blocking the antifolate pocket;
+re-run on a ligand-stripped receptor; Hany et al. (Drug Des. Devel. Ther. 2025,
+10.2147/DDDT.S537065) applied DEKOIS 2.0 to WT and quadruple-mutant PfDHFR with Vina and
+rescoring.
+
+\textbf{Response:} We report EF@1\% and EF@5\% (both 0.00) alongside the ROC-AUC in
+\Cref{SM-tab:sm_enrichment_validation} and discuss the retained-MTX hypothesis explicitly: the MTX redocking failure
+(RMSD $\approx$ 30 \AA) and the PfDHFR grid position indicate that the null enrichment partly
+reflects grid positioning rather than scoring-function failure alone (\Cref{M-sec:methods_dock_val}; \Cref{SM-sec:sm_val_dekois}).
+We now cite and discuss Hany et al.\ as the closest prior work: they applied the same DEKOIS
+2.0 protocol to wild-type and quadruple-mutant PfDHFR with AutoDock Vina and showed that
+machine-learning rescoring (CNN-Score, RF-Score-VS) moved the benchmark from worse-than-random
+to better-than-random, corroborating our conclusion that enrichment depends on consensus or
+rescoring rather than raw Vina ranking (\Cref{SM-sec:sm_val_dekois}).
+
+We performed the requested re-run as a controlled two-arm experiment on the identical DEKOIS
+panel (the same 40 actives and 1200 property-matched decoys, same grid): (i) the deposited 7F3Y
+receptor with MTX retained, which reproduces the original baseline under our pipeline
+(ROC-AUC 0.502 [95\% CI: 0.423--0.586], EF@1\% 0.00, EF@5\% 0.50), and (ii) an MTX-stripped
+receptor rebuilt in the same coordinate frame (ROC-AUC 0.563 [95\% CI: 0.477--0.646],
+EF@1\% 0.00, EF@5\% 1.00), both at exhaustiveness 32 (the revised-protocol standard, identical
+in both arms so the comparison is internally controlled). The result is honest-negative for the
+blockade hypothesis: the confidence intervals overlap and EF@1\% remains zero in both arms, so
+removing MTX yields only a marginal, non-significant improvement ($\Delta$AUC $= +0.060$) and
+does not restore enrichment. We therefore report that the near-chance DEKOIS result is
+attributable to the single-method Vina scoring function and grid positioning (near the NADPH
+cofactor site) rather than to steric blockade by the retained cofactor ligand, and the manuscript
+now states this explicitly with the two-arm data added to \Cref{SM-tab:sm_enrichment_validation}
+and \Cref{SM-sec:sm_val_dekois} (\Cref{M-sec:methods_dock_val}; \Cref{M-sec:disc_validation}).
+
+\subsection*{R2.5 --- Batch effect: WT and mutants prepared by different routes}
+\textbf{Reviewer:} Provide the required control: WT processed through the mutant pipeline,
+use the resulting distribution as a null, place class boundaries outside it; explain the six
+RRS values above 100\%.
+
+\textbf{Response:} We now explain the values above 100\% in \Cref{M-sec:results_mutation}: they arise when the
+mutant docking estimate is more favorable (more negative) than the wild-type estimate on the
+same receptor; they are scoring-function ratios and do not imply biological gain-of-function.
+The requested null control was run: the corrected LYS-76 wild-type receptor was passed through
+the identical mutation-preparation pipeline without applying any mutation (pipeline-null), and
+all 17 candidates were docked against this null receptor and against the K76T and K76A
+mutants on the same V2 grid (\Cref{SM-sec:sm_val_redock_null}). The null RRS distribution (null ratios vs the
+corrected wild-type denominator) spans 99.4--100.5\% (mean 100.0\%); the K76T ratios span
+99.1--100.6\% and K76A 99.4--100.4\%. The maximum deviation of any mutant ratio from its null
+ratio is 1.2 percentage points (K76T) and 0.5 (K76A), both far below the 10-point class
+boundary spacing. The 80\%/70\% class boundaries therefore fall inside the null spread on the
+corrected PfCRT channel, and we do not assert PfCRT-based class distinctions beyond the null
+spread: PfCRT RRS values near 100\% are reported as neutral-within-null. The receptor-
+preparation contribution to the old PfCRT signal is thus quantified as the entire difference:
+the old spread (70.4--110.2\% across K76T/K76A) reflected the raw 6UKJ (7G8, K76T)
+receptor used as ``wild type'' and a grid that excluded the drug-interaction cavity.
+
+The neutral-within-null reading is corroborated by two independent companion
+analyses in the P2 layer. (i) An external docking replication (39 ligands
+$\times$ 8 PfDHFR/PfCRT states, 312/312 finite records, prepared entirely
+independently of the present panel) gives a bootstrap RRS distribution of 100.45
+[99.59, 101.32], so the corrected PfCRT channel's null spread (99.4--100.5\%)
+falls inside the pipeline noise of a fully separate preparation. (ii) In the
+companion P2 layer, RRS class assignments on its canonical panel are robust to
+score perturbation: under bounded $\pm1$ kcal/mol perturbations of individual
+docking scores (272 candidate--score records), the class was unchanged in
+212/272 (77.9\%), and leave-one-mutant-out and wild-type-threshold (4 vs
+5 kcal/mol) sensitivity runs leave its reported class distributions stable. Separately, an MD-based MM-GBSA $\Delta\Delta G$ analysis
+in the companion layer found 0 of 12 PfDHFR/PfCRT mutants significantly weaker
+and 1 significantly tighter at 95\% CI (max $|\Delta\Delta G|=5.37$ kcal/mol),
+corroborating that mutant-to-wild-type ratios above 100\% reflect retention
+rather than gain.
+
+\subsection*{R2.6 --- Repository returns 404; data unavailable}
+\textbf{Reviewer:} The repository URL returns 404; the wild-type denominators do not appear
+elsewhere; provide a maintained repository with license, release tag, and archival DOI.
+
+\textbf{Response:} The repository is now publicly accessible at
+\url{https://github.com/NanaEngo/Malaria_codesV2} under the MIT license (\texttt{LICENSE} at
+the repository root), with a versioned archival release \texttt{v1.0.0}
+(\url{https://github.com/NanaEngo/Malaria_codesV2/releases/tag/v1.0.0}) containing the complete
+revision codebase, the canonical result directories (including the two-arm DEKOIS re-run of
+R2.4), and a checksummed staging package for archival (\texttt{zenodo\_package\_P1/},
+sha256-verified manifest). A permanent Zenodo DOI is being minted for this release and will be
+inserted into the Data Availability statement (main) and the SI reproducibility section
+(\Cref{SM-sec:sm_repro}) before resubmission. In parallel, the WT/mutant score table required to
+recompute \Cref{M-tab:rrs_main} is now included directly in the SI (\Cref{SM-tab:sm_wt_mutant_scores}: the
+PfDHFR wild-type/mutant panel and the corrected PfCRT LYS-76/K76T/K76A scores underlying
+every RRS denominator), so the RRS denominators no longer reside only in the repository.
+
+\subsection*{R2.7 --- PNS and ACSI never defined}
+\textbf{Response:} \Cref{M-sec:methods_pns} now gives the formal definitions. ACSI =
+$0.40\times D_{\mathrm{DrugBank}} + 0.25\times D_{\mathrm{ANPDB}} + 0.20\times f_{sp^3}
++ 0.15\times \mathrm{NPL}$ with min--max normalization over the 17-candidate cohort
+($D$ = minimum Tanimoto distance to approved-drug / African-NP reference sets, $f_{sp^3}$ =
+fraction of sp$^3$ carbons, NPL = natural-product-likeness). PNS is computed from a STRING
+protein--protein interaction network at confidence threshold 700, with PfCRT centrality imputed
+as the network mean (0.151); \Cref{SM-tab:s_pns_sensitivity} reports the imputation sensitivity (Spearman
+$\rho$ = 0.963--1.000 across zero to double the imputed value). No PNS or ACSI value is
+interpreted causally.
+
+\subsection*{R2.8 --- \Cref{SM-tab:sm_redocking_validation} vs \Cref{SM-sec:sm_val_redock} contradiction}
+\textbf{Reviewer:} \S12.2 says no pose-reproduction rate is claimed for PfClpP, yet Table S8
+lists ``1 success'' for all four targets; 9N10 has no small-molecule ligand; the score-stratified
+MMV rows are circular.
+
+\textbf{Response:} The validation tables were rebuilt to remove the contradiction.
+\Cref{SM-tab:sm_redocking_validation,SM-tab:sm_validation_datasets} now separate (i) full-ligand redocking (PfDHFR P218, RMSD 1.42 \AA; PfCRT Y01 proxy,
+1.78 \AA) from (ii) fragment pose reproduction (PfClpP peptide, 1.65 \AA) and cofactor pose
+reproduction (PfATP4 ADP, 1.23 \AA), and state explicitly that (ii) is not equivalent to
+full-ligand redocking and that 9N10 contains no co-crystallized small-molecule ligand. The MMV
+rows for PfCRT/PfATP4 are explicitly labelled score-stratified retrodictive consistency checks,
+not external discrimination. The text in \Cref{SM-sec:sm_val_redock} was revised to match.
+
+\subsection*{R2.9 --- Single seed; PP-15 marginally above threshold}
+\textbf{Reviewer:} PP-15 exceeds the cutoff by 0.045 (PfDHFR) and 0.084 (PfCRT); run at least
+five seeds and report dispersion.
+
+\textbf{Response:} Five-seed sensitivity runs (seeds 101--505) are reported in \Cref{SM-tab:sm_multiseed_validation}
+for PP-15 and PP-01 on PfDHFR and PfCRT; mode-1 affinities are stable to seed choice
+(maximum spread 0.054 kcal/mol). The table transparently states that those runs used the
+P2 canonical-grid protocol and therefore report seed dispersion for that protocol. After the
+R2.3 re-dock on the corrected receptor and declared grids, the per-target-median
+favorability assignments (R2.2) place 48 of 68 candidate--target pairs at least
+0.3 kcal mol$^{-1}$ from the relevant target median; the remaining 20 pairs lie within
+0.3 kcal mol$^{-1}$, including four that sit exactly at the median (PP-05 PfATP4, PP-10
+PfClpP, PP-12 PfCRT, PP-13 PfDHFR), so the within-target favorability counts should be read
+with this boundary sensitivity in mind. The corrected-protocol single-run scores used for those assignments
+are the same values reported in the corrected \Cref{SM-tab:vina}, and the re-dock used a single seed
+with exhaustiveness 32 as in the original protocol. The seed dispersion shown in \Cref{SM-tab:sm_multiseed_validation}
+($<0.06$ kcal mol$^{-1}$) was measured under the P2 canonical-grid protocol and therefore
+provides a scale reference for seed sensitivity rather than a direct bound on the corrected
+single-seed V2-grid runs; the boundary analysis above (20 pairs within 0.3 kcal mol$^{-1}$ of a
+target median, four exactly at the median) identifies which N\_fav assignments are most
+sensitive to single-seed variation.
+
+\subsection*{R2m --- Minor points}
+\begin{enumerate}[leftmargin=1.6em]
+\item \textbf{Duplicated paragraph (pp. 17--18):} the verbatim duplicate is removed; the
+top-candidate summary now appears once in \Cref{M-sec:results_joint} and is not repeated verbatim in the
+Discussion.
+\item \textbf{VAE citation:} we now cite G\'omez-Bombarelli et al.\ (ACS Cent. Sci.\ 2018)
+for the SMILES VAE (\Cref{M-sec:methods_funnel}).
+\item \textbf{``99.3\% reduction'':} reframed as an absolute reduction (263{,}424 $\rightarrow$
+1{,}936 calculations) with the explicit caveat that this describes computational cost, not
+active-compound retention, and that a retention experiment using known actives would be needed
+(\Cref{M-sec:disc_efficiency}).
+\item \textbf{RRS eligibility notation:} all instances now use $|S_{\mathrm{Vina},i,\mathrm{WT},t}|$
+consistently (\Cref{M-sec:methods_rrs}; \Cref{SM-sec:sm_rrs}); no $\Delta G$ notation remains.
+\item \textbf{Section S12 numbered twice; decoy counts:} SI now contains a single S12 block
+(S12.1--S12.7); the DEKOIS decoy count is consistently 1{,}200.
+\item \textbf{Figure 2 annotations:} the figure was regenerated with $\rho$, $p$, and $n$
+annotated in each panel from the corrected canonical data (PNS--RRS $\rho=-0.714$,
+$p=0.0013$; ACSI--RRS $\rho=-0.190$, $p=0.465$; $n=17$ in both panels).
+\item \textbf{MPO sensitivity deferred:} the essential results are now summarized in \Cref{SM-sec:sm_mpo_weights}
+(25 weight perturbations; Spearman $\rho=0.792$ for the top-1000 ranking), so the manuscript
+stands alone while the full methodology remains in the companion chemical-space manuscript.
+\end{enumerate}
+
+\section*{Status of items formerly marked [TO COMPLETE]}
+Completed for this revision: (i) corrected-receptor PfCRT re-dock of the 17-candidate panel
+and regeneration of \Cref{SM-tab:vina}/\Cref{M-tab:rrs_main}/\Cref{M-tab:dual_priority} (R2.3/R2.9); (ii) the batch-effect null
+control and class-boundary placement (R2.5; \Cref{SM-sec:sm_val_redock_null}); (iii) Figure 2 statistical
+annotations (R2m.6); (iv) per-target-median favorability and recomputed
+\Cref{M-tab:dual_priority}/N\_fav--RRS (R2.2); (v) retrospective validation against five approved
+antimalarials (R1.2; 40 runs, honest-negative result reported in \Cref{SM-tab:sm_retrospective_antimalarials} and
+\Cref{M-sec:disc_validation}); (vi) the WT/mutant score table in the SI (R2.6;
+\Cref{SM-tab:sm_wt_mutant_scores}); and (vii) the controlled two-arm MTX-retained versus
+MTX-stripped DEKOIS re-run (R2.4; honest-negative result, two rows added to
+\Cref{SM-tab:sm_enrichment_validation} and discussed in \Cref{SM-sec:sm_val_dekois}).
+Additionally executed for R2.6: the repository is now public (MIT license, release tag
+\texttt{v1.0.0}, GitHub release), with the staged Zenodo package ready; only the Zenodo DOI
+minting (author account action) remains before resubmission.
+
+\vspace{2em}
+\noindent Sincerely,\\
+Myke Vital Sao Temgoua, Jean-Pierre Tchapet Njafa, Penabei Samafou,\\
+Wilfred Fon Mbacham, Serge Guy Nana Engo
+
+\end{document}
