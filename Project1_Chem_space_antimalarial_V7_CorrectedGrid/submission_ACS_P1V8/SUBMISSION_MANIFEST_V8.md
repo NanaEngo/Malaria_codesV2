@@ -114,7 +114,7 @@
 | Component weight rationale | Why 35% Vina, 25% DiffDock, 20% QED, 15% ADMET, 5% Ro5 | Justifies selection methodology |
 | **DiffDock confidence formula** | Logistic sigmoid: $S_{\text{diff}} = 1/(1+e^{-c})$ | **Explicitly documents transformation** |
 | Set-C selection criterion | Explicit "MPO ≥ 0.40 optimization-worthy tier" | Transparent upstream filter |
-| Cross-reference companion MS | Full validation in chemical-space manuscript | Avoids duplication, maintains focus |
+| MPO framework | Full methodology in Methods (\Cref{M-sec:methods_funnel}) and SM (\Cref{SM-sec:sm_mpo}) | Self-contained in this manuscript |
 
 **Key Equations:**
 1. Vina affinity (35% weight, min-max scaling)

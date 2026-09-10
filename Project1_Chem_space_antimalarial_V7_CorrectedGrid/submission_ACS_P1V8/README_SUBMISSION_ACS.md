@@ -104,6 +104,6 @@ cp manuscript/Graphics/p1_v7_toc_graphic*.pdf manuscript/Graphics/p1_v7_toc_grap
 
 ## 5. Rappel des points de vigilance
 1. **PfClpP = PDB 2F6I** (triade catalytique Ser252/His223/Asp219) — 4GM2 = PfClpR, explicitement exclu; PfATP4 = PDB 9N10.
-2. **DEKOIS PfDHFR = 0.450 [0.37, 0.53]** (valeur canonique, honnête) — cohérent avec P2 et BMAD.
+2. **DEKOIS PfDHFR = 0.450 [0.37, 0.53]** (valeur canonique, honnête) — cohérent avec les analyses de validation externes.
 3. **Poses = hypothèses computationnelles** — le manuscrit ne revendique ni puissance mesurée ni engagement biologique confirmé.
 4. **Lire une dernière fois** le main (25 p.) et le SM (17 p.) avant soumission.

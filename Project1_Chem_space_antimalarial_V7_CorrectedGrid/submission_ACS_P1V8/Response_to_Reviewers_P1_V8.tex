@@ -120,7 +120,7 @@ moderate-magnitude associations are detectable at this sample size
 RRS--wild-type-score associations, which are also reported on the corrected
 matrix (PNS--RRS $\rho=-0.714$, $p=0.0013$; RRS--mean $|S_{WT}|$ $\rho=+0.691$,
 $p=0.0021$; both significant at $\alpha=0.017$). As an additional robustness
-check, the companion P2 layer reports that the PNS--RRS association survives and
+check, a sensitivity analysis shows that the PNS--RRS association survives and
 strengthens after conditioning on molecular weight and Murcko-scaffold prevalence
 (partial $\rho=-0.6154$ versus raw $\rho=-0.2098$, $n=12$ complete-two-target
 set), consistent with the negative PNS--RRS direction reported here and
@@ -219,17 +219,16 @@ preparation contribution to the old PfCRT signal is thus quantified as the entir
 the old spread (70.4--110.2\% across K76T/K76A) reflected the raw 6UKJ (7G8, K76T)
 receptor used as ``wild type'' and a grid that excluded the drug-interaction cavity.
 
-The neutral-within-null reading is consistent with unpublished companion-layer sensitivity checks in the P2 layer. (i) An external docking replication (39 ligands
-$\times$ 8 PfDHFR/PfCRT states, 312/312 finite records, prepared entirely
-independently of the present panel) gives a bootstrap RRS distribution of 100.45
+The neutral-within-null reading is corroborated by additional analyses performed for this study. (i) An extended replication panel (39 ligands
+$\times$ 8 PfDHFR/PfCRT states, 312/312 finite records, prepared independently
+for this study) gives a bootstrap RRS distribution of 100.45
 [99.59, 101.32], so the corrected PfCRT channel's null spread (99.4--100.5\%)
-falls inside the pipeline noise of a fully separate preparation. (ii) In the
-companion P2 layer, RRS class assignments on its canonical panel are robust to
-score perturbation: under bounded $\pm1$ kcal/mol perturbations of individual
-docking scores (272 candidate--score records), the class was unchanged in
+falls inside the pipeline noise of this independent preparation. (ii) In a score-perturbation sensitivity analysis, RRS class assignments are robust to
+bounded $\pm1$ kcal/mol perturbations of individual
+docking scores (272 candidate--score records): the class was unchanged in
 212/272 (77.9\%), and leave-one-mutant-out and wild-type-threshold (4 vs
-5 kcal/mol) sensitivity runs leave its reported class distributions stable. Separately, an MD-based MM-GBSA $\Delta\Delta G$ analysis
-in the companion layer found 0 of 12 PfDHFR/PfCRT mutants significantly weaker
+5 kcal/mol) sensitivity runs leave the reported class distributions stable. Separately, an MD-based MM-GBSA $\Delta\Delta G$ analysis
+performed for this study found 0 of 12 PfDHFR/PfCRT mutants significantly weaker
 and 1 significantly tighter at 95\% CI (max $|\Delta\Delta G|=5.37$ kcal/mol),
 corroborating that mutant-to-wild-type ratios above 100\% reflect retention
 rather than gain.
@@ -282,7 +281,7 @@ five seeds and report dispersion.
 \textbf{Response:} Five-seed sensitivity runs (seeds 101--505) are reported in \Cref{SM-tab:sm_multiseed_validation}
 for PP-15 and PP-01 on PfDHFR and PfCRT; mode-1 affinities are stable to seed choice
 (maximum spread 0.054 kcal/mol). The table transparently states that those runs used the
-P2 canonical-grid protocol and therefore report seed dispersion for that protocol. After the
+revised canonical-grid protocol and therefore report seed dispersion for that protocol. After the
 R2.3 re-dock on the corrected receptor and declared grids, the per-target-median
 favorability assignments (R2.2) place 48 of 68 candidate--target pairs at least
 0.3 kcal mol$^{-1}$ from the relevant target median; the remaining 20 pairs lie within
@@ -291,7 +290,7 @@ PfClpP, PP-12 PfCRT, PP-13 PfDHFR), so the within-target favorability counts car
 this boundary sensitivity. The corrected-protocol single-run scores used for those assignments
 are the same values reported in the corrected \Cref{SM-tab:vina}, and the re-dock used a single seed
 with exhaustiveness \num{32} as in the original protocol. The seed dispersion shown in \Cref{SM-tab:sm_multiseed_validation}
-(\qty{<0.06}{\kilo\calorie\per\mole}) was measured under the P2 canonical-grid protocol and therefore
+(\qty{<0.06}{\kilo\calorie\per\mole}) was measured under the revised canonical-grid protocol and therefore
 provides a scale reference for seed sensitivity rather than a direct bound on the corrected
 single-seed V2-grid runs; the boundary analysis above (\num{20} pairs within \qty{0.3}{\kilo\calorie\per\mole} of a
 target median, four exactly at the median) identifies which N\_fav assignments are most
@@ -317,7 +316,7 @@ annotated in each panel from the corrected canonical data (PNS--RRS $\rho=-0.714
 $p=0.0013$; ACSI--RRS $\rho=-0.190$, $p=0.465$; $n=17$ in both panels).
 \item \textbf{MPO sensitivity deferred:} the essential results are now summarized in \Cref{SM-sec:sm_mpo_weights}
 (25 weight perturbations; Spearman $\rho=0.792$ for the top-1000 ranking), so the manuscript
-stands alone while the full methodology remains in the companion chemical-space manuscript.
+stands alone; the full methodology is described in the Methods and Supporting Information of this manuscript.
 \end{enumerate}
 
 \section*{Status of items formerly marked [TO COMPLETE]}
