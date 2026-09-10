@@ -1,0 +1,30 @@
+{
+  "status": "COMPUTED",
+  "date": "2026-08-29",
+  "candidate": "PP-01",
+  "protocol": "AutoDock Vina v1.2.7, seeds [101, 202, 303, 404, 505], exhaustiveness 32, num_modes 10, energy_range 5",
+  "per_seed_affinity_kcal_mol": {
+    "PfDHFR_WT": {
+      "101": -8.056,
+      "202": -8.077,
+      "303": -8.089,
+      "404": -8.098,
+      "505": -8.077
+    },
+    "PfCRT_WT": {
+      "101": -8.608,
+      "202": -8.616,
+      "303": -8.653,
+      "404": -8.617,
+      "505": -8.621
+    }
+  },
+  "mean_affinity_kcal_mol": {
+    "PfDHFR_WT": -8.079,
+    "PfCRT_WT": -8.623
+  },
+  "range_kcal_mol": {
+    "PfDHFR_WT": 0.042,
+    "PfCRT_WT": 0.045
+  }
+}

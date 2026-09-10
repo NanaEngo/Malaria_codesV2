@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+  \centering
+  \caption{STRING confidence-threshold sensitivity of the composite
+  interactome centrality used in PNS (edges filtered at score $\geq$ threshold).
+  Canonical threshold 700; 400 and 900 are the STRING medium/highest
+  confidence bands. Centrality formula identical to the canonical pipeline.}
+  \label{tab:string-threshold}
+  \begin{tabular}{lccc}
+    \toprule
+    STRING threshold & \num{400} & \num{700} & \num{900} \\
+    \midrule
+    Edges & 578 & 145 & 18 \\
+    Nodes & 562 & 148 & 19 \\
+    PfDHFR centrality & 1.0000 & 1.0000 & 1.0000 \\
+    PfCRT (imputed) & 0.1419 & 0.1505 & 0.2434 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
