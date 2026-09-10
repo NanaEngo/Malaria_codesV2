@@ -1,0 +1,35 @@
+% SM Table: Wild-type/mutant docking scores (R2.6)
+% Generated 2026-09-09 from docking_mutants.csv (PfDHFR panel, first-appearance order)
+% and P1 pfcrt_redock_v2grid_20260909/revised_rrs_and_nfav.csv (corrected PfCRT panel).
+
+\begin{table}[ht!]
+\centering
+\caption{Wild-type and mutant docking scores (\si{\kilo\calorie\per\mole}) underlying the RRS values of \Cref{M-tab:rrs_main}. PfDHFR values come from the separate mutation-docking panel (7F3Y; exhaustiveness \num{128}); PfCRT values come from the corrected-protocol re-dock against the 3D7-like LYS-76 wild-type and the K76T/K76A mutants on the cavity-anchored V2 grid (exhaustiveness \num{32}; \Cref{sec:sm_val_redock_null}). RRS is the percentage ratio of the absolute mutant to the absolute wild-type score (\Cref{sec:sm_rrs}); wild-type non-binders ($|S_{\mathrm{Vina},i,WT,t}|<\qty{5}{\kilo\calorie\per\mole}$) are shaded by dashes in the RRS table and make no contribution to RRS$_{\mathrm{mean}}$. Scores are AutoDock Vina scoring-function outputs, not experimental free energies.}
+\label{tab:sm_wt_mutant_scores}
+\small
+\begin{tabular}{@{}lrrrrrrrr@{}}
+\toprule
+Candidate & \multicolumn{5}{c}{PfDHFR (kcal mol$^{-1}$)} & \multicolumn{3}{c}{PfCRT (kcal mol$^{-1}$)} \\
+\cmidrule(lr){2-6}\cmidrule(lr){7-9}
+ & WT & N51I & C59R & S108N & I164L & WT & K76T & K76A \\
+\midrule
+PP-01 & \num{-7.50} & \num{-6.48} & \num{-6.41} & \num{-6.57} & \num{-6.29} & \num{-9.15} & \num{-9.14} & \num{-9.15} \\
+PP-02 & \num{-1.10} & \num{-6.52} & \num{-0.88} & \num{-6.41} & \num{-6.63} & \num{-9.34} & \num{-9.36} & \num{-9.34} \\
+PP-03 & \num{-10.30} & \num{-7.01} & \num{-7.04} & \num{-6.78} & \num{-7.11} & \num{-12.01} & \num{-12.01} & \num{-12.01} \\
+PP-04 & \num{-8.00} & \num{-5.50} & \num{-5.35} & \num{-5.50} & \num{-5.88} & \num{-7.40} & \num{-7.39} & \num{-7.42} \\
+PP-05 & \num{-0.70} & \num{-6.36} & \num{-6.26} & \num{-6.33} & \num{-6.29} & \num{-8.96} & \num{-8.96} & \num{-8.97} \\
+PP-06 & \num{-0.60} & \num{-6.71} & \num{-7.45} & \num{-6.76} & \num{-6.88} & \num{-9.03} & \num{-9.03} & \num{-9.03} \\
+PP-07 & \num{-7.60} & \num{-5.46} & \num{-5.46} & \num{-5.50} & \num{-5.49} & \num{-7.95} & \num{-7.93} & \num{-7.95} \\
+PP-08 & \num{-7.60} & \num{-4.72} & \num{-4.72} & \num{-5.11} & \num{-5.04} & \num{-6.59} & \num{-6.57} & \num{-6.60} \\
+PP-09 & \num{-7.10} & \num{-5.01} & \num{-5.18} & \num{-5.38} & \num{-5.43} & \num{-7.44} & \num{-7.42} & \num{-7.44} \\
+PP-10 & \num{-7.70} & \num{-5.85} & \num{-5.88} & \num{-5.83} & \num{-5.84} & \num{-8.04} & \num{-8.05} & \num{-8.06} \\
+PP-11 & \num{-0.70} & \num{-6.76} & \num{-0.02} & \num{-6.89} & \num{-6.82} & \num{-9.34} & \num{-9.35} & \num{-9.34} \\
+PP-12 & \num{-7.50} & \num{-5.64} & \num{-4.96} & \num{-4.72} & \num{-5.44} & \num{-8.06} & \num{-8.06} & \num{-8.06} \\
+PP-13 & \num{-3.40} & \num{-7.32} & \num{-6.56} & \num{-7.10} & \num{-6.14} & \num{-9.79} & \num{-9.70} & \num{-9.73} \\
+PP-14 & \num{-7.60} & \num{-4.73} & \num{-4.98} & \num{-5.17} & \num{-4.93} & \num{-6.43} & \num{-6.43} & \num{-6.43} \\
+PP-15 & \num{-5.60} & \num{-6.90} & \num{-6.31} & \num{-7.05} & \num{-7.38} & \num{-9.81} & \num{-9.81} & \num{-9.82} \\
+PP-16 & \num{-7.60} & \num{-5.54} & \num{-5.68} & \num{-5.60} & \num{-5.77} & \num{-7.47} & \num{-7.51} & \num{-7.44} \\
+PP-17 & \num{-8.30} & \num{-4.92} & \num{-5.08} & \num{-4.94} & \num{-4.89} & \num{-6.37} & \num{-6.38} & \num{-6.38} \\
+\bottomrule
+\end{tabular}
+\end{table}

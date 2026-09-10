@@ -1,0 +1,111 @@
+{
+  "project": "P1 — Chemical-space antimalarial polypharmacology (JCIM V8 revision)",
+  "manuscript_id": "ci-2026-00578g",
+  "journal": "Journal of Chemical Information and Modeling",
+  "version": "V8",
+  "revision_date": "2026-09-09",
+  "package_built": "2026-09-10",
+  "status": "staged_pending_upload",
+  "doi_reserved": "https://doi.org/10.5281/zenodo.22686176",
+  "license": "CC BY 4.0 International",
+  "total_files": 218,
+  "package_structure": {
+    "data": {
+      "description": "Core datasets - candidate manifests, RRS profiles, polypharmacology metrics",
+      "files": 3
+    },
+    "results": {
+      "description": "Revision analyses - PfCRT re-docking, retrospective control, DEKOIS validation",
+      "subdirectories": [
+        "pfcrt_redock_v2grid_20260909",
+        "retrospective_approved_antimalarials_20260909",
+        "dekois_mtxstripped_20260909"
+      ]
+    },
+    "scripts": {
+      "description": "Analysis and revision scripts - Python 3.11+ with malaria_md conda environment",
+      "files": 8
+    },
+    "documentation": {
+      "description": "Supporting documentation - DAR, submission manifest, reviewer response summary",
+      "files": 3
+    }
+  },
+  "reviewer_items_addressed": {
+    "R1.1": "PNS and ACSI definitions",
+    "R1.2": "Retrospective approved antimalarials control",
+    "R2.1": "Polypharmacology workflow clarification",
+    "R2.2": "Within-target favorability definition",
+    "R2.3": "PfCRT structure correction and re-docking",
+    "R2.4": "DEKOIS 2.0 two-arm external validation",
+    "R2.5": "MMV enrichment interpretation",
+    "R2.6": "Repository release with archival DOI (this deposit)",
+    "R2.7": "Statistical multiplicity correction",
+    "R2.8": "Redocking validation table split",
+    "R2.9": "Multi-seed sensitivity runs",
+    "R2.10": "C59R fold-change claim removed",
+    "R2.11": "Complete grid specifications",
+    "R2.12": "PfClpP 9N10 clarification",
+    "R2.13": "Cost reduction metric caveat",
+    "R2.14": "Physicochemical characterization tables",
+    "R2.15": "RRS formula consistency",
+    "R2.16": "Zenodo DOI insertion in manuscript"
+  },
+  "key_datasets": [
+    "data/v7_candidate_manifest.csv (17 candidates with SMILES and properties)",
+    "data/v7_integrated_candidate_metrics.csv (RRS, PNS, ACSI, N_fav)",
+    "results/pfcrt_redock_v2grid_20260909/revised_rrs_and_nfav.csv",
+    "results/retrospective_approved_antimalarials_20260909/rrs_profiles.csv",
+    "results/dekois_mtxstripped_20260909/dekois_pfdhfr_retained.csv",
+    "results/dekois_mtxstripped_20260909/dekois_pfdhfr_stripped.csv"
+  ],
+  "software_requirements": {
+    "python": "3.11+",
+    "conda_environment": "malaria_md",
+    "key_packages": {
+      "rdkit": "2025.03.6",
+      "numpy": "2.2.1",
+      "pandas": "2.2.3",
+      "scipy": "1.15.1",
+      "matplotlib": "3.10.1",
+      "scikit-learn": "1.6.1"
+    },
+    "autodock_vina": "1.2.5"
+  },
+  "checksums": {
+    "file": "sha256sums.txt",
+    "algorithm": "SHA-256",
+    "total_checksums": 218
+  },
+  "upload_workflow": [
+    "1. Verify all files present and checksums match (sha256sum -c sha256sums.txt)",
+    "2. Upload to Zenodo deposit 22686176",
+    "3. Verify upload integrity (download sha256sums.txt and spot-check files)",
+    "4. Publish deposit on Zenodo",
+    "5. Confirm DOI resolves: https://doi.org/10.5281/zenodo.22686176",
+    "6. No manuscript changes needed (DOI already inserted in V8 submission)",
+    "7. Make GitHub repository public after DOI verification"
+  ],
+  "related_repositories": [
+    "GitHub: NanaEngo/Malaria_codesV2 (to be made public after Zenodo DOI verification)",
+    "Companion Zenodo deposits: P2, P3, P5, P6 follow the same pattern"
+  ],
+  "citation": {
+    "dataset": "Sao Temgoua, M. V.; Tchapet Njafa, J.-P.; Samafou, P.; Fon Mbacham, W.; Nana Engo, S. G. (2026). P1 V8 Reproducibility Package — JCIM Revision [Data set]. Zenodo. https://doi.org/10.5281/zenodo.22686176",
+    "manuscript": "Sao Temgoua, M. V.; Tchapet Njafa, J.-P.; Samafou, P.; Fon Mbacham, W.; Nana Engo, S. G. Target breadth and mutation resilience in African-natural-product-inspired antimalarial chemotypes: a computational analysis. J. Chem. Inf. Model. 2026 (manuscript ID: ci-2026-00578g, under review)"
+  },
+  "contact": {
+    "corresponding_author": "Myke Vital Sao Temgoua",
+    "email": "myke-vital.sao@facsciences-uy1.cm",
+    "orcid": "0009-0004-5170-2309",
+    "institution": "Department of Physics, Faculty of Science, University of Yaoundé I, Cameroon"
+  },
+  "notes": [
+    "This package addresses Reviewer R2.6 requirement for maintained repository with license and archival DOI",
+    "All 18 reviewer points (2 R1, 16 R2) resolved with manuscript evidence",
+    "Two honest-negative results included: DEKOIS near-chance, retrospective control null",
+    "Package built automatically via build_p1_zenodo_package.py (manual assembly for V8)",
+    "DOI reserved on Zenodo but deposit not yet uploaded - awaiting author action",
+    "After upload verification, no manuscript changes needed (DOI already inserted)"
+  ]
+}

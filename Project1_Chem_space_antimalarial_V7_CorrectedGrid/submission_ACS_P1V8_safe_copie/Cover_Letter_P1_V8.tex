@@ -1,0 +1,60 @@
+\documentclass[9pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{top=0.55in,bottom=0.55in,left=0.68in,right=0.68in}
+\usepackage{enumitem}
+\setlist{itemsep=0pt, topsep=1pt, parsep=0pt}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{siunitx}
+\sisetup{separate-uncertainty=true, range-phrase=--}
+\DeclareSIUnit\angstrom{\text{\AA}}
+
+\begin{document}
+\fontsize{9}{10.5}\selectfont
+
+\begin{flushleft}
+\textbf{Myke Vital Sao Temgoua} \\
+Department of Physics, Faculty of Science \\
+University of Yaound\'{e} I \\
+P.O. Box 812, Yaound\'{e}, Cameroon \\
+\href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[0.8em]
+\today
+\end{flushleft}
+
+\begin{flushleft}
+Prof.\ Kenneth M.\ Merz, Jr., Editor-in-Chief \\
+\textit{Journal of Chemical Information and Modeling} \\
+American Chemical Society
+\end{flushleft}
+
+\vspace{0.2em}
+
+\noindent Dear Prof.\ Merz,
+
+We submit the revised manuscript \textbf{``Target breadth and mutation resilience in African-natural-product-inspired antimalarial chemotypes: a computational analysis''} for consideration as an Article in \textit{Journal of Chemical Information and Modeling}.
+
+This work addresses a methodological challenge in computational antimalarial discovery: evaluating target breadth and mutation resilience as distinct, complementary properties when prioritizing candidates from African natural-product-inspired chemical space, while maintaining clear boundaries between computational evidence and biological activity. A 17-member polypharmacology-oriented cohort was analyzed across four mechanistically diverse targets (PfDHFR, PfCRT, PfClpP, PfATP4) using target-specific structural anchors and a per-target resistance-resilience score (RRS). The workflow integrates three evidence layers: chemical-space expansion (\num{65856} hybrid-library molecules $\rightarrow$ \num{19913} prioritized candidates), target-anchored AutoDock Vina docking generating a complete $\num{17}\times\num{4}$ scoring matrix (\num{68}/\num{68} geometric quality pass), and per-target RRS computed separately for PfDHFR (N51I, C59R, S108N, I164L) and PfCRT (K76T, K76A) mutant panels. PfCRT was re-docked against a corrected 3D7-like wild-type receptor under a cavity-anchored grid; a pipeline-null control showed no detectable K76T/K76A signal for this panel. The cohort yielded seven A*, four B, and six C RRS profiles (range \qtyrange{73.2}{115.6}{\percent}). After multiplicity correction, PNS--RRS ($\rho=-\num{0.714}$), RRS--wild-type score ($\rho=\num{+0.691}$), and $N_{\mathrm{fav}}$--RRS ($\rho=\num{0.714}$) were significant; ACSI--RRS was not ($\rho=-\num{0.190}$).
+
+\noindent\textbf{Key elements of the revision:}
+\begin{enumerate}
+\item \textbf{Protocol validation.} Three complementary checks: (a)~external DEKOIS~2.0 benchmark (PfDHFR ROC-AUC \num{0.45}, near-chance; controlled MTX-retained vs MTX-stripped comparison, \num{0.502} vs \num{0.563} with overlapping CIs, EF@1\% zero in both arms); (b)~MMV Malaria Box enrichment (ROC-AUC \numrange{0.924}{1.000}); (c)~redocking of reference ligands (four of five reproduced with RMSD \qty{<2.0}{\angstrom}; the methotrexate exception reflects NADPH-adjacent grid placement).
+\item \textbf{Retrospective boundary check.} RRS profiles for five approved antimalarials (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) against the same panels do not recover clinically documented resistance signatures (pyrimethamine $\approx$\qty{100}{\percent} on all four PfDHFR mutants; chloroquine $\approx$\qty{99}{\percent} on PfCRT K76T/K76A, both within the pipeline-null spread), reinforcing that docking-RRS values are not resistance-circumvention evidence.
+\item \textbf{Physicochemical characterization.} All 17 candidates satisfy Lipinski/Veber criteria (\qty{100}{\percent} compliance; mean QED \num{0.703}); the ADMET summary is population-level and is not a candidate-specific safety assessment.
+\item \textbf{Methodological transparency.} Complete grid specifications, within-target median favorability, pipeline-null RRS control, multi-seed sensitivity, and formal definitions of PNS and ACSI are provided. Centroid-based library reduction yields a \qty{99.3}{\percent} computational-cost reduction relative to exhaustive docking, with the caveat that this metric describes cost rather than active-compound retention.
+\end{enumerate}
+
+\noindent\textbf{Evidence boundaries.} The study does not claim experimental affinity, confirmed simultaneous target engagement, biological resistance circumvention, or measured IC\textsubscript{50}/EC\textsubscript{50} values. It produces (a)~four-target docking profiles from which polypharmacology hypotheses can be generated, (b)~per-target RRS values summarising mutation-panel docking ratios, and (c)~exploratory cross-metric associations without conflation of evidence layers.
+
+\noindent\textbf{Reproducibility.} Complete records (source code, candidate lists, receptor and ligand files, grid configurations, raw poses, RRS protocols, machine-readable tables) are archived in the versioned Zenodo deposit \texttt{zenodo\_package\_P1/} (sha256-verified, MIT license; DOI to be inserted upon assignment). The Supporting Information contains the validation datasets and methodological specifications.
+
+The centroid-based reduction strategy lowers the computational barrier for research groups in endemic regions (\qty{94}{\percent} of malaria cases) by orders of magnitude while retaining structural diversity, offering a reproducible template for hypothesis generation in resistance-challenged therapeutic areas. This manuscript is original, is not under consideration elsewhere, and has been approved by all authors. We declare no competing financial interests.
+
+\vspace{0.3em}
+
+\noindent Sincerely,
+
+\noindent \textbf{Myke Vital Sao Temgoua} (on behalf of all co-authors)
+
+\end{document}

@@ -1,0 +1,29 @@
+% SM Table: Enrichment Validation (DEKOIS + MMV Malaria Box)
+% Generated from V4 validation content, adapted for V8
+% Package refresh: 2026-08-12; R2.4 two-arm DEKOIS re-run added 2026-09-09
+% (results/dekois_mtxstripped_20260909/, scripts/p1_r24_dekois_mtxstripped.py)
+
+\begin{table}[ht!]
+\centering
+\caption{Docking validation: external DEKOIS benchmark and MMV Malaria Box enrichment. \textit{DEKOIS provides an independent external validation using property-matched decoys (PfDHFR only, Vina single-method). The near-random DEKOIS ROC-AUC (\num{0.450}) establishes the baseline limitation of docking-only scoring. The two controlled arms (exhaustiveness \num{32}, identical grid and ligands; receptor with MTX retained vs MTX-stripped) show that removing the retained MTX does not restore enrichment: bootstrap confidence intervals overlap and EF@1\% is zero in both arms. MMV Malaria Box values use consensus Vina+DiffDock scoring; for PfCRT and PfATP4, active/decoy labels derive from score strata and therefore measure retrodictive consistency rather than external discrimination.}}
+\label{tab:sm_enrichment_validation}
+\scriptsize
+\begin{tabular}{lcccccccc}
+\toprule
+\textbf{Target (PDB)} & \textbf{ROC-AUC} & \textbf{EF@1\%} & \textbf{EF@5\%} & \textbf{EF@10\%} & \textbf{BEDROC} & \textbf{PR-AUC} & \textbf{Actives} & \textbf{Decoys} \\
+\midrule
+\multicolumn{9}{l}{\textit{DEKOIS 2.0 external validation (Vina only):}} \\
+PfDHFR (7F3Y) & \num{0.450} & \num{0.00} & \num{0.00} & \num{1.00} & \num{0.021} & \num{0.034} & \num{40} & \num{1200} \\
+\multicolumn{9}{l}{\textit{DEKOIS 2.0 controlled comparison, exhaustiveness \num{32} (Vina only):}} \\
+PfDHFR (7F3Y, MTX retained) & \num{0.502} & \num{0.00} & \num{0.50} & \num{0.25} & \num{0.026} & \num{0.032} & \num{40} & \num{1199} \\
+PfDHFR (7F3Y, MTX-stripped) & \num{0.563} & \num{0.00} & \num{1.00} & \num{1.00} & \num{0.048} & \num{0.038} & \num{40} & \num{1199} \\
+\midrule
+\multicolumn{9}{l}{\textit{MMV Malaria Box positive-control (Vina+DiffDock consensus):}} \\
+PfDHFR (7F3Y) & \num{0.924} & \num{2.70} & \num{2.57} & \num{2.72} & \num{1.309} & \num{0.842} & \num{399} & \num{399} \\
+PfCRT (6UKJ) & \num{0.971} & \num{1.11} & \num{1.11} & \num{1.11} & \num{9.434} & \num{0.992} & \num{359} & \num{40} \\
+PfATP4 (9N10) & \num{1.000} & \num{2.05} & \num{2.00} & \num{2.00} & \num{1.810} & \num{1.000} & \num{99} & \num{99} \\
+\bottomrule
+\multicolumn{9}{p{15cm}}{
+\noindent\textbf{Notes:} Top: DEKOIS 2.0 PfDHFR benchmark with \num{40} experimentally validated actives and \num{1200} property-matched decoys, docked with AutoDock Vina (single-method, no consensus). The near-random ROC-AUC (\num{0.450}, \qty{95}{\percent} CI [\numrange{0.367}{0.531}]) establishes an external baseline for docking-only limitations and motivates the consensus strategy. Middle: controlled two-arm comparison (2026-09-09) on the deposited 7F3Y receptor with MTX retained versus an MTX-stripped receptor in the same coordinate frame, same grid and ligand preparation, exhaustiveness \num{32}; bootstrap ROC-AUC \qty{95}{\percent} CIs are [\numrange{0.423}{0.586}] (retained) and [\numrange{0.477}{0.646}] (stripped); one decoy failed ligand preparation identically in both arms. Bottom: MMV Malaria Box enrichment using Vina+DiffDock consensus scores; PfCRT and PfATP4 labels are score-stratified (top/bottom \qty{25}{\percent}), measuring retrodictive consistency rather than external discrimination. BEDROC calculated with $\alpha = \num{20}$. EF = Enrichment Factor, PR-AUC = Precision-Recall Area Under Curve.}
+\end{tabular}
+\end{table}

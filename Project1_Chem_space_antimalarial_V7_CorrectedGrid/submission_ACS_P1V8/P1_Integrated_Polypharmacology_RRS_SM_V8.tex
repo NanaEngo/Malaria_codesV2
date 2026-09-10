@@ -205,13 +205,15 @@ The \qty{35}{\percent} Vina and \qty{25}{\percent} DiffDock weights (combined \q
 The complete MPO methodology, including centroid-based screening workflow (\num{484} centroids $\rightarrow$ \num{76} optimization-worthy $\rightarrow$ \num{53} clusters $\rightarrow$ \num{19913} synthesizable leads), sensitivity analysis (\num{25} weight perturbations, Spearman $\rho = \num{0.792}$ for top-1000), and external validation (DEKOIS, MMV Malaria Box enrichment), is described in \Cref{M-sec:methods_funnel} and \Cref{sec:sm_mpo}.
 
 \section{Reproducibility and availability}\label{sec:sm_repro}
-The candidate manifest, docking and RRS tables, cross-metric matrix, scripts, receptor/ligand files, and run records are archived on Zenodo under an MIT license; the archival DOI will be provided upon assignment. The figures and derived tables are reproducible computational outputs; they do not substitute for independent structural or experimental validation.
+The candidate manifest, docking and RRS tables, cross-metric matrix, scripts, receptor/ligand files, and run records are archived on Zenodo under an CC BY 
+4.0 license at \url{https://doi.org/10.5281/zenodo.22686176}. The figures and derived tables are reproducible computational outputs; they do not substitute for 
+independent structural or experimental validation.
 
 \section{Docking validation and protocol assessment}\label{sec:sm_validation}
 The docking protocol was validated using three complementary strategies: external benchmark validation (DEKOIS 2.0), positive-control enrichment (MMV Malaria Box), and pose reproduction accuracy (redocking of co-crystallized ligands; \Cref{M-sec:methods_dock_val}). Together they expose both the capabilities and the limits of the protocol.
 
 \subsection{PfCRT receptor correction}\label{sec:sm_val_crt}
-The deposited 6UKJ cryo-EM structure (7G8 isoform) carries threonine at residue 76 of chain A, corresponding to the K76T chloroquine-resistance substitution. Because the study requires a wild-type PfCRT reference for the RRS analysis, residue 76 was corrected to lysine (3D7-like wild-type) before docking. The corrected receptor was validated by P2Rank pocket prediction: the top-ranked pocket (score 162.7, probability 0.999) lies \qty{5.7}{\angstrom} from the Vina grid center, confirming that the grid box covers the binding site. The corrected LYS-76 receptor was used for the PfCRT re-docking (\Cref{sec:sm_val_redock_null}) on the V2 grid (center $(\num{152.99}, \num{151.042}, \num{159.379})$, \qty{25}{\angstrom} box) used for PfCRT throughout.
+The deposited 6UKJ cryo-EM structure (7G8 isoform) carries threonine at residue 76 of chain A, corresponding to the K76T chloroquine-resistance substitution. Because the study requires a wild-type PfCRT reference for the RRS analysis, residue 76 was corrected to lysine (3D7-like wild-type) before docking. The corrected receptor was validated by P2Rank pocket prediction \cite{Krivak2018}: the top-ranked pocket (score 162.7, probability 0.999) lies \qty{5.7}{\angstrom} from the Vina grid center, confirming that the grid box covers the binding site. The corrected LYS-76 receptor was used for the PfCRT re-docking (\Cref{sec:sm_val_redock_null}) on the V2 grid (center $(\num{152.99}, \num{151.042}, \num{159.379})$, \qty{25}{\angstrom} box) used for PfCRT throughout.
 
 \subsection{External benchmark and enrichment}\label{sec:sm_val_dekois}
 \input{tables/sm_table_enrichment_validation.tex}
