@@ -1,0 +1,38 @@
+%% ============================================================================
+%% Table S5: Predicted ADMET profile of the 17 set-C polypharm candidates
+%% Source: ADMET-AI predictions from the parent-library screening
+%%   (eos7kpb_malaria_final_screening.csv, 65,856 molecules; col `input` = SMILES).
+%% All values are predictions; no inter-tool concordance is claimed.
+%% Endpoints: LogS = aqueous solubility (log mol/L); CYP3A4 prob. = CYP3A4 inhibition
+%%   probability; Caco-2 prob. = Caco-2 permeability probability; Clint_h = predicted
+%%   human hepatic clearance (ADMET-AI endpoint values, raw scale).
+%% ============================================================================
+
+\begin{table}[htbp]
+\centering
+\caption{Predicted ADMET profile of the \num{17} set-C polypharmacology candidates (ADMET-AI, parent-library screening). All values are machine-learning predictions; experimental ADMET profiling and three-tool concordance were outside the scope of this study. Across candidates, LogS ranged from \num{0.34} to \num{0.73}; CYP3A4 inhibition was $\geq\num{0.5}$ for \num{7}/\num{17} candidates, Caco-2 permeability was $\geq\num{0.5}$ for \num{15}/\num{17}, and Clint$_h$ ranged from \num{0.48} to \num{0.63}.}
+\label{tab:s3_admet}
+\begin{tabular}{l S[table-format=1.2] S[table-format=1.2] S[table-format=1.2] S[table-format=1.2]}
+\toprule
+Compound & {ADMET-AI LogS} & {CYP3A4 prob.} & {Caco-2 prob.} & {Clint$_h$} \\
+\midrule
+PP-01 & 0.34 & 0.39 & 0.63 & 0.60 \\
+PP-02 & 0.46 & 0.97 & 0.86 & 0.55 \\
+PP-03 & 0.43 & 0.62 & 0.95 & 0.55 \\
+PP-04 & 0.40 & 0.58 & 0.92 & 0.63 \\
+PP-05 & 0.61 & 1.00 & 0.35 & 0.51 \\
+PP-06 & 0.54 & 0.90 & 0.97 & 0.60 \\
+PP-07 & 0.36 & 0.02 & 0.75 & 0.62 \\
+PP-08 & 0.59 & 1.00 & 0.41 & 0.56 \\
+PP-09 & 0.65 & 0.13 & 0.81 & 0.57 \\
+PP-10 & 0.49 & 0.13 & 0.93 & 0.62 \\
+PP-11 & 0.39 & 0.06 & 0.96 & 0.58 \\
+PP-12 & 0.49 & 0.00 & 0.98 & 0.48 \\
+PP-13 & 0.57 & 0.97 & 0.98 & 0.53 \\
+PP-14 & 0.66 & 0.05 & 0.68 & 0.49 \\
+PP-15 & 0.66 & 0.49 & 0.95 & 0.51 \\
+PP-16 & 0.54 & 0.25 & 0.91 & 0.50 \\
+PP-17 & 0.73 & 0.01 & 0.82 & 0.50 \\
+\bottomrule
+\end{tabular}
+\end{table}

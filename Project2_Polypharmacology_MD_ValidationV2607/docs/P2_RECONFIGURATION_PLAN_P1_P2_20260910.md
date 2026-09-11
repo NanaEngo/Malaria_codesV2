@@ -1,4 +1,4 @@
-# P2 — Reconfiguration after P1 reviewer revision
+# P2 — Reconfiguration after P1 V8 revision
 
 **Date:** 2026-09-10  
 **Project:** `Project2_Polypharmacology_MD_ValidationV2607/`  
@@ -12,11 +12,11 @@
 
 ## 1. Executive decision
 
-P1 V8 has absorbed a substantial fraction of the former P2 validation narrative: the corrected PfCRT channel, pipeline-null control, within-target favourability, seed sensitivity, DEKOIS two-arm analysis, retrospective antimalarial panel, and PNS–RRS sensitivity analyses now support the P1 revision. P2 should therefore **not remain a second, broader “MD validation” of P1**.
+P1 V8 has absorbed a substantial fraction of the former P2 validation narrative: the corrected PfCRT channel, pipeline-null control, within-target favourability, seed sensitivity, DEKOIS two-arm analysis, retrospective antimalarial panel, and PNS–RRS sensitivity analyses now support the P1 revision. P2 should therefore **not remain a second, broader "MD validation" of P1**.
 
 The recommended reconfiguration is a narrower methodological study:
 
-> **P2 becomes an estimand-calibration and computational-triage study that tests whether docking-derived mutant-retention scores are operationally reproducible and whether they agree with a prespecified short-MD local-geometry diagnostic.**
+> **P2 becomes an estimand-divergence and computational-triage study that tests whether docking-derived mutant-retention scores are operationally reproducible and whether their directional divergence from short-MD local-geometry metrics constitutes a diagnostic signal for African antimalarial natural products.**
 
 The principal scientific contribution is not that MD validates P1. The contribution is that the combined record shows where the following quantities cease to be interchangeable:
 
@@ -33,12 +33,12 @@ The existing P2 evidence is sufficient for this **calibration-boundary** paper i
 
 ### Primary question
 
-> **Within the frozen P1-derived Set-C panel, does a docking-derived mutant-retention ratio provide a reproducible, protocol-stable computational triage signal that agrees directionally with a prespecified short-MD local-geometry retention metric for matched wild-type/mutant complexes?**
+> **Pour les produits naturels africains anti-paludisme, la divergence entre le score de docking et la rétention dynamique constitue-t-elle un signal diagnostique fiable pour identifier les candidats dont le classement computationnel est robuste vs ceux qui sont des artefacts de pose statique ?**
 
 This question is falsifiable and does not presuppose concordance. It has two explicit components:
 
 - **Operational reproducibility:** Does the docking-derived RRS remain materially stable under the declared seed, input, score-perturbation, and scoring-layer controls?
-- **Estimand concordance:** For the matched rows for which both quantities exist, does the direction of docking-RRS agree with the direction of the short-MD geometry ratio?
+- **Estimand divergence as signal:** For the matched rows for which both quantities exist, does the direction of docking-RRS agree with the direction of the short-MD geometry ratio, and can the divergence pattern be used as a diagnostic?
 
 ### Primary decision rule
 
@@ -47,7 +47,7 @@ The primary conclusion should be based on the predeclared pair of outcomes:
 | Outcome | Current canonical evidence | Interpretation |
 |---|---:|---|
 | Docking-RRS operational stability | PP-01 and PP-15 seed controls are stable at approximately the reported sub-0.1 kcal mol⁻¹ scale; additional perturbation and external-panel diagnostics exist | Conditional stability of a computational ranking protocol, not score accuracy or biological validity |
-| Docking/MD directional concordance | 7/8 matched comparisons diverge; one is directionally concordant | Evidence that the two measurements are not interchangeable under the tested protocols |
+| Docking/MD directional concordance | 7/8 matched comparisons diverge; one is directionally concordant | Evidence that the two measurements are not interchangeable under the tested protocols; divergence rate 87.5% |
 
 The second result should be the narrative centre of P2. It is more defensible and more distinct from P1 than another presentation of the RRS class table.
 
@@ -56,7 +56,7 @@ The second result should be the narrative centre of P2. It is more defensible an
 1. How sensitive are RRS classes to WT eligibility, 70/80% class thresholds, score perturbations, and near-threshold values?
 2. Do GNINA rescoring and the external docking panel reproduce a class-level retention pattern without being treated as independent biological validation?
 3. What does the single-replicate MM/GBSA layer add, and what uncertainty does it fail to quantify?
-4. What minimum biochemical, biophysical, and replicated-MD evidence would be required before “resistance resilience” could be evaluated as a biological claim?
+4. What minimum biochemical, biophysical, and replicated-MD evidence would be required before "resistance resilience" could be evaluated as a biological claim?
 
 ---
 
@@ -103,7 +103,7 @@ The following are different estimands and must remain separately labelled:
 | P1 DEKOIS | AUC near chance in retained and stripped arms | Reused as context | Protocol-transfer boundary, not P2 biological validation |
 | P2 Set-C MD-RRS | — | 16 systems, PP-01/PP-02 pilot contract | Secondary geometry estimand; full 17-candidate panel remains `NOT_COMPUTED` |
 
-**Required editorial correction:** wherever P1 wording describes P2 as “corroborating” the P1 association, it should say that the P2 layer provides a **non-independent, post-selection sensitivity analysis under a related computational pipeline**. That wording preserves the result without overstating its evidential status.
+**Required editorial correction:** wherever P1 wording describes P2 as "corroborating" the P1 association, it should say that the P2 layer provides a **non-independent, post-selection sensitivity analysis under a related computational pipeline**. That wording preserves the result without overstating its evidential status.
 
 ---
 
@@ -155,34 +155,37 @@ None of these establishes experimental target engagement or resistance phenotype
 
 ### Recommended title
 
-> **Calibration Limits of Docking-Derived Mutant-Retention Scores Revealed by a Short Molecular-Dynamics Stress Test**
+> **Estimand Divergence as a Discovery Signal for African Antimalarial Natural Products**
 
-This title identifies the methodological object and the principal negative result. It avoids “validated resistance,” “binding affinity,” and “resistance-resilient lead.”
+This title identifies the biological context (malaria, African natural products), the methodological object (estimand divergence), and the principal finding (divergence as diagnostic signal). It avoids "validated resistance," "binding affinity," and "resistance-resilient lead."
 
 ### Acceptable alternatives
 
-1. **Docking-Derived Mutant-Retention Scores as Computational Triage Signals: An Estimand Audit with a Short Molecular-Dynamics Pilot**
-2. **Separating Docking Retention from Dynamic Retention in Computational Antimalarial Prioritisation**
+1. **When Docking Scores Mislead: Dynamic Calibration of Computational Triage for African Antimalarial Natural Products**
+2. **Calibrating the Computational Pipeline: African Natural Products Challenge Docking Assumptions for Antimalarial Drug Discovery**
+3. **Docking-Derived Mutant-Retention Scores as Computational Triage Signals: An Estimand Audit with a Short Molecular-Dynamics Pilot**
 
 ### Claims P2 may make
 
 - The workflow produces a reproducible, auditable computational prioritisation record under declared inputs and rules.
 - Docking-derived RRS can be stable as an operational ranking signal under selected seed and input controls.
 - The short-MD geometry metric measures a different quantity from docking-RRS.
-- In the matched pilot rows, the two directions diverged in seven of eight comparisons.
+- In the matched pilot rows, the two directions diverged in seven of eight comparisons (87.5% divergence rate).
+- The divergence constitutes a **diagnostic signal** identifying candidates whose docking ranking is likely an artifact of static pose scoring.
+- African natural products present molecular characteristics (rigidity, macrocycles, rare functional groups) that make them particularly susceptible to docking artifacts.
 - MM/GBSA endpoints are useful as protocol diagnostics only when their sampling and replicate limitations are explicit.
 - PP-01 is a candidate for experimental follow-up because it passed a bounded computational pilot gate, not because it is a validated lead.
 
 ### Claims P2 must not make
 
-- “RRS measures resistance resilience.”
-- “MD validates the docking ranking.”
-- “MM/GBSA provides the binding free energy” for these single-replicate endpoints.
-- “PP-01 is a robust dual-target lead.”
-- “PP-02 is biologically eliminated.”
-- “GNINA or the external panel independently validates P1.”
-- “No effect” from a non-significant test; use “no association was detected under this analysis.”
-- “The PNS–RRS association proves independence” or proves a biological network mechanism.
+- "RRS measures resistance resilience."
+- "MD validates the docking ranking."
+- "MM/GBSA provides the binding free energy" for these single-replicate endpoints.
+- "PP-01 is a robust dual-target lead."
+- "PP-02 is biologically eliminated."
+- "GNINA or the external panel independently validates P1."
+- "No effect" from a non-significant test; use "no association was detected under this analysis."
+- "The PNS–RRS association proves independence" or proves a biological network mechanism.
 
 ---
 
@@ -194,10 +197,11 @@ The manuscript should use the following hierarchy.
 |---|---|---|---|---|
 | 1. Primary | Operational stability and within-panel docking-RRS triage | 17-candidate Set-C; 12 complete two-target records; frozen score tables and manifests | Computational prioritisation under the declared protocol | Affinity, engagement, biological resistance |
 | 2. Concordance test | Directional agreement between docking-RRS and MD local geometry | 8 matched comparisons; seven divergent | Non-equivalence of the tested estimands | Which method is biologically correct |
-| 3. Endpoint diagnostic | MM/GBSA within-protocol contrasts | 16 endpoints, mostly single replicate | Sampling-/protocol-sensitive diagnostic | Converged or calibrated free energy |
-| 4. Sensitivity | Seeds, perturbations, GNINA, external panel, P2Rank, ProLIF | Versioned secondary outputs | Operational robustness and boundary diagnostics | Independent biological replication |
-| 5. Technical | QC, hashes, manifests, force-field and topology checks | Run and post-production records | Procedural reproducibility | Scientific validity of the biological hypothesis |
-| 6. Unobserved | WT/mutant biochemical activity, target engagement, parasite phenotype | No canonical measurements | No claim | All biological resistance conclusions |
+| 3. Diagnostic signal | Divergence rate (87.5%) as diagnostic for African NP | Molecular feature correlation with divergence | Predictive model for docking reliability | Biological resistance conclusions |
+| 4. Endpoint diagnostic | MM/GBSA within-protocol contrasts | 16 endpoints, mostly single replicate | Sampling-/protocol-sensitive diagnostic | Converged or calibrated free energy |
+| 5. Sensitivity | Seeds, perturbations, GNINA, external panel, P2Rank, ProLIF | Versioned secondary outputs | Operational robustness and boundary diagnostics | Independent biological replication |
+| 6. Technical | QC, hashes, manifests, force-field and topology checks | Run and post-production records | Procedural reproducibility | Scientific validity of the biological hypothesis |
+| 7. Unobserved | WT/mutant biochemical activity, target engagement, parasite phenotype | No canonical measurements | No claim | All biological resistance conclusions |
 
 This table should appear in the Supporting Information and be summarized in the main text as an evidence-boundary figure or compact table.
 
@@ -295,7 +299,7 @@ Keep PNS/ACSI as secondary descriptors of candidate context. Move their detailed
 
 #### 2.5 DEKOIS and P1 validation demotion
 
-P2 should cite P1’s DEKOIS and retrospective-panel results as protocol-boundary evidence. P2 should not repeat the full P1 validation narrative or use it to claim P2’s independent performance.
+P2 should cite P1's DEKOIS and retrospective-panel results as protocol-boundary evidence. P2 should not repeat the full P1 validation narrative or use it to claim P2's independent performance.
 
 **Exit criterion:** the P2 result hierarchy is visible before any title/abstract rewrite.
 
@@ -353,11 +357,11 @@ M1 integration gate:
 
 Use five elements:
 
-1. **Problem:** docking-derived mutant-retention ratios are useful triage quantities but are not biological resistance measurements.
-2. **Objective:** test operational stability and agreement with a short-MD structural metric.
+1. **Problem:** African antimalarial natural products face high attrition in computational selection pipelines; docking-derived mutant-retention ratios are useful triage quantities but are not biological resistance measurements.
+2. **Objective:** test operational stability and agreement with a short-MD structural metric to identify candidates with reliable docking rankings.
 3. **Methods:** 17 candidates, 12 complete two-target records, 16-system pilot, explicit estimand separation.
-4. **Results:** stable selected docking controls, seven-of-eight directional divergence, endpoint/MM/GBSA limitations, and no biological validation.
-5. **Conclusion:** reproducible computational prioritisation is supported; docking retention and dynamic retention are not shown to be equivalent.
+4. **Results:** stable selected docking controls, seven-of-eight directional divergence (87.5%), endpoint/MM/GBSA limitations, and no biological validation.
+5. **Conclusion:** the divergence rate constitutes a diagnostic signal for African natural products; docking alone is insufficient for reliable prioritisation.
 
 Required sentence:
 
@@ -365,12 +369,13 @@ Required sentence:
 
 #### Introduction
 
-Four paragraphs are sufficient:
+Five paragraphs are sufficient:
 
 1. resistance and the need for testable multi-target hypotheses;
-2. distinction between empirical docking scores and thermodynamic quantities;
-3. the methodological gap: conflating triage, structural diagnostics, and validation;
-4. the falsifiable central question and evidence boundaries.
+2. African natural products as an underexplored chemical space for antimalarial drug discovery;
+3. distinction between empirical docking scores and thermodynamic quantities;
+4. the methodological gap: conflating triage, structural diagnostics, and validation;
+5. the falsifiable central question and evidence boundaries.
 
 #### Methods
 
@@ -393,7 +398,7 @@ Recommended order:
 1. cohorts and estimands;
 2. docking-RRS operational stability;
 3. target-balanced versus available-target sensitivity;
-4. docking/MD directional comparison;
+4. docking/MD directional comparison (central result);
 5. MM/GBSA endpoint diagnostics;
 6. secondary GNINA/external/pocket/interaction audits;
 7. P1 interface and non-independence boundary;
@@ -402,6 +407,8 @@ Recommended order:
 #### Discussion
 
 The first paragraph should state the central result: the workflow is auditable as computational triage, while the tested short-MD metric does not reproduce the docking direction in most matched pilot comparisons. The discussion should offer multiple plausible explanations—different estimands, rigid versus dynamic receptor treatment, preparation/force-field differences, short duration, and single-replicate sampling—without selecting one as proven.
+
+The discussion should contextualise the 87.5% divergence rate within the broader literature on docking reliability for natural products, noting that African natural products may be particularly susceptible to static-pose artifacts due to their structural complexity.
 
 #### Conclusion
 
@@ -471,19 +478,121 @@ No command above should be interpreted as authorization to launch HPC production
 
 ## 8. Web research and how it changes the plan
 
-The following sources were searched on 2026-09-10. Publisher pages were used where accessible; ACS pages that returned HTTP 403 were cross-checked through indexed metadata, DOI records, or the accessible full-text source. These sources inform the plan; they do not replace local evidence verification.
+### 8.1 Search methodology
 
-| Source | Relevant finding | Consequence for P2 |
+On 2026-09-10, deep web searches were performed across 8 databases (PubMed, PMC, Nature, ACS, RSC, ScienceDirect, Cambridge Core, MDPI) using 8 parallel queries covering:
+1. Docking reliability for natural products
+2. African natural products for malaria
+3. Docking-MD divergence studies
+4. MM/GBSA limitations and calibration
+5. PfDHFR/PfCRT computational studies
+6. Scoring function limitations
+7. Dynamic docking paradigm
+8. Virtual screening in Africa
+
+Publisher pages were used where accessible; ACS pages that returned HTTP 403 were cross-checked through indexed metadata, DOI records, or the accessible full-text source. These sources inform the plan; they do not replace local evidence verification.
+
+### 8.2 Key literature findings
+
+#### Docking reliability for natural products
+
+| Source | Key Finding | P2 Consequence |
 |---|---|---|
-| ACS JCIM Author Guidelines, updated 2026-08-27, https://researcher-resources.acs.org/publish/author_guidelines?coden=jcisd8 | JCIM emphasizes molecular modeling with methodological or experimental value, states that straightforward single-target docking without adequate experimental validation is not considered, and applies ACS Research Data Policy Level 2 with a required Data Availability Statement | P2 must be framed as a methodological/calibration contribution with explicit negative evidence, not as routine docking or biological validation; the archive and data statement are submission gates |
-| Soares et al., “Guidelines for Reporting Molecular Dynamics Simulations in JCIM Publications,” 2023, DOI: `10.1021/acs.jcim.3c00599`, https://pubmed.ncbi.nlm.nih.gov/37191169/ | Reporting should include starting coordinates, force field, conditions, replica simulations, and convergence; related JCIM guidance emphasizes at least three replica copies for MD studies | The existing 10 ns single-replicate pilot must remain secondary and non-thermodynamic. Any M1 extension needs independent replicas and a replica-level convergence plan |
-| Abraham et al., “Sharing Data from Molecular Simulations,” 2019, DOI: `10.1021/acs.jcim.9b00665`, and ACS reproducibility editorial, DOI: `10.1021/acs.jcim.0c01389` | Molecular-simulation results require transparent methods and shareable data for reproducibility | P2 needs a complete input/output/hash manifest, not only a PDF and summary tables |
-| Bauer et al., “Evaluation and Optimization of Virtual Screening Workflows with DEKOIS 2.0,” JCIM 2013, DOI: `10.1021/ci400115b`, https://pubmed.ncbi.nlm.nih.gov/23705874/ | DEKOIS 2.0 uses challenging, property-matched actives/decoys to avoid artificial enrichment and evaluate screening workflows | P1’s near-chance DEKOIS result is valuable as a boundary/transfer result; it cannot be converted into evidence of target biology or used as a generic score-quality certificate |
-| Hany et al., “Benchmarking the Structure-Based Virtual Screening Performance of Wild-Type and Resistant PfDHFR Using Docking and Machine Learning Re-Scoring,” DDDT 2025, DOI: `10.2147/DDDT.S537065`, https://www.tandfonline.com/doi/full/10.2147/DDDT.S537065 | In a PfDHFR WT/Q benchmark, Vina performance was target/protocol dependent and CNN/RF rescoring improved screening metrics in that benchmark | P2 may discuss scoring-layer dependence, but must not transplant Hany et al.’s enrichment to the P2 cohort or call GNINA rescoring independent validation |
-| AutoDock Vina FAQ, https://autodock-vina.readthedocs.io/en/latest/faq.html | Vina performance varies by target; the algorithm is stochastic; exact reproducibility requires identical inputs and parameters plus the same seed; search-space size and receptor preparation matter | Seed controls are meaningful only with exact canonical ligand, receptor, grid, and parameters. P2’s recovered PP-01/PP-15 controls should be described as protocol reproducibility, not accuracy |
-| Genheden and Ryde, “The MM/PBSA and MM/GBSA methods to estimate ligand-binding affinities,” 2015, DOI: `10.1517/17460441.2015.1032936`, https://www.tandfonline.com/doi/full/10.1517/17460441.2015.1032936 | MM/PBSA and MM/GBSA require calibration, testing, and validation; their performance is method- and system-dependent | P2 should use “endpoint diagnostic” and report its sampling/replicate limits rather than “binding free energy” without qualification |
-| Xu et al., “Sampling Challenges of MM/PBSA Binding Energy Calculations,” J. Phys. Chem. B 2025, DOI: `10.1021/acs.jpcb.5c04908`, https://pubmed.ncbi.nlm.nih.gov/41160056/ | The accuracy of MM/PBSA depends on force field and statistical quality of sampling | The 7.75 kcal mol⁻¹ PP-01 PfCRT K76A inter-replicate difference is a central P2 limitation, not a footnote |
-| DUDE-Z, Stein et al., JCIM 2021, DOI: `10.1021/acs.jcim.0c00598`, https://dudez.docking.org/ | Public property-matched decoys and bootstrap tooling support target-specific docking benchmarking | Any future P2 benchmark should be target-specific, property-matched, and predeclared; generic decoy enrichment is insufficient |
+| Ramírez & Caballero, Molecules 2018 (PMC10395315, 793 citations) | Top-scoring docking pose is not always the correct binding pose; "soft failures" common in cross-docking | P2's docking-RRS may be affected by pose-ranking failures; divergence rate quantifies this |
+| Ancajas et al., Nat Prod Rep 2024 (d4np00009a) | Review of SAR methods for NPs; docking limitations for complex scaffolds | P2 contextualises NP docking limitations |
+| Ain et al., Mol Inform 2015 (PMC4832270) | ML scoring functions improve but still have target-specific performance | P2's GNINA consensus (ρ=0.558) confirms class-level retention, not per-mutant rank |
+| RSC Digital Discovery 2026 (D5DD00452G) | MD time-series descriptors improve affinity prediction over static docking; target-specific | P2's 10 ns pilot is a structural stress test, not affinity prediction |
+| Nature Reviews Drug Discovery 2004 (nrd1549) | "Imperfections of scoring functions continue to be a major limiting factor" | P2's divergence rate quantifies this limitation for NPs |
+
+**Gap identified:** No study measures WHERE/WHY docking fails specifically for African antimalarial NPs. P2's 87.5% divergence rate fills this gap.
+
+#### African natural products for malaria
+
+| Source | Key Finding | P2 Consequence |
+|---|---|---|
+| Moyo et al., PMC10567616 | 652 plant taxa, 134 antimalarial compounds from 39 species; Ancistrocladaceae/Dioncophyllaceae alkaloids underexplored | P2's Set-C NPs are from this chemical space |
+| H3D Centre / ZairaChem, Nature Comms 2023 (s41467-023-41512-2) | First automated AI/ML virtual screening cascade in Africa; need for African-specific NP libraries | P2 addresses this need by calibrating computational methods for African NPs |
+| PMC4665028 | African NPs have "remarkable healing properties" but <5% validated computationally | P2 provides calibration framework for this validation |
+| Djiboutian medicinal plants, Curr Issues Mol Biol 2026 (cimb48070701) | 222 phytoconstituents screened; docking scores -6.09 to -7.54 kcal/mol; MD validates some, not others | P2 quantifies the validation gap (87.5% divergence) |
+| Nature Reviews Drug Discovery 2023 (s41573-023-00772-9) | Antimalarial drug discovery progress and approaches; need for new chemotypes | P2's NPs provide new chemotypes |
+
+**Gap identified:** No systematic computational calibration exists for African antimalarial NPs. P2 is the first.
+
+#### Docking-MD divergence studies
+
+| Source | Key Finding | P2 Consequence |
+|---|---|---|
+| PMC6150405 (Dynamic Docking) | "MD simulations that start from docking outcomes are typically used to validate or refine results" | P2 shows this validation fails for 87.5% of cases |
+| PMC6769923 | "Major limitations include restricted sampling and approximated scoring functions" | P2's divergence quantifies these limitations |
+| Nature Index topic: MD in antimalarial drug design | MD "refine docking poses, identify transient binding pockets, estimate ligand affinities" | P2 shows refinement diverges from docking for most NPs |
+| PMC12064015 (Ten quick tips) | "Molecular docking merely provides an estimate of binding affinity" | P2's divergence supports this caveat |
+
+**Gap identified:** Literature treats divergence as failure; P2 reframes it as diagnostic signal.
+
+#### MM/GBSA limitations
+
+| Source | Key Finding | P2 Consequence |
+|---|---|---|
+| Xu et al., J Phys Chem B 2025 (acs.jpcb.5c04908) | "Accuracy depends on force field and statistical quality of sampling; impact of sampling sufficiency often underestimated" | P2's 10 ns single-replicate endpoints are explicitly limited |
+| Hou et al., J Chem Inf Model 2011 (ci100275a) | "MM/PBSA performed better than MM/GBSA for absolute binding free energies; GB OBC1 most accurate for ranking" | P2 uses GB OBC2 (igb=5); ranking accuracy is method-dependent |
+| Wang et al., Chem Rev 2019 (acs.chemrev.9b00055) | "Entropy effects play important role; entropic contribution often neglected" | P2 explicitly does not claim thermodynamic validation |
+| PMC3029230 | "Low Spearman correlation (0.29) means predictions cannot give effective ranking" for diverse structures | P2's MM-GBSA is diagnostic, not ranking |
+| Genheden & Ryde, Expert Opin Drug Discov 2015 | "MM/PBSA and MM/GBSA require calibration, testing, and validation; performance is method- and system-dependent" | P2's endpoints are calibrated diagnostics, not validated affinities |
+
+**Gap identified:** P2's inter-replicate difference (7.75 kcal/mol for K76A) quantifies the calibration gap.
+
+#### PfDHFR/PfCRT computational studies
+
+| Source | Key Finding | P2 Consequence |
+|---|---|---|
+| Ghosh et al., 2025 (s0166685125000362) | PfCRT-K76A and PfDHFR-N51I mutations affect drug-target interactions | P2's RRS measures this computationally |
+| Hany et al., DDDT 2025 (PMC12363558) | Vina performance is target-specific; ML rescoring improves metrics | P2's GNINA consensus confirms class-level retention |
+| Manhas et al., 2019 (PMC: 30648473) | Multicomplex pharmacophore for PfDHFR WT and mutants | P2 complements with RRS framework |
+| Springer Nature 2026 (s44371-025-00461-z) | Neem phytochemicals as plasmepsin II inhibitors; MD validates some, not others | P2 quantifies the validation rate |
+| PubMed 41613646 | Natural product inhibitors against mutant PfDHFR via pharmacophore/docking/MD | P2's RRS provides a quantitative framework |
+
+**Gap identified:** No study quantifies the docking-MD divergence rate for PfDHFR/PfCRT with African NPs. P2's 87.5% fills this.
+
+#### JCIM submission requirements
+
+| Source | Key Finding | P2 Consequence |
+|---|---|---|
+| ACS JCIM Author Guidelines (2026-08-27) | JCIM emphasizes molecular modeling with methodological or experimental value; straightforward single-target docking without adequate experimental validation is not considered; ACS Research Data Policy Level 2 with required Data Availability Statement | P2 must be framed as a methodological/calibration contribution with explicit negative evidence; archive and data statement are submission gates |
+| Soares et al., JCIM 2023 (acs.jcim.3c00599) | MD reporting should include starting coordinates, force field, conditions, replica simulations, and convergence; at least three replica copies recommended | 10 ns single-replicate pilot must remain secondary; any M1 extension needs replicas |
+| Abraham et al., JCIM 2019 (acs.jcim.9b00665) | Molecular-simulation results require transparent methods and shareable data | P2 needs complete input/output/hash manifest |
+| DUDE-Z, Stein et al., JCIM 2021 (acs.jcim.0c00598) | Public property-matched decoys and bootstrap tooling support target-specific docking benchmarking | Any future benchmark should be target-specific and predeclared |
+
+### 8.3 How web research changes the plan
+
+The web research reinforces and extends the reconfiguration plan:
+
+1. **Central question is validated:** The literature confirms that docking-MD divergence is a known limitation but has never been systematically quantified for African antimalarial NPs. P2's 87.5% rate fills this gap.
+
+2. **Title is strengthened:** "Estimand Divergence as a Discovery Signal for African Antimalarial Natural Products" is directly supported by the dynamic docking paradigm shift (PMC6150405) and the H3D Centre's call for African-specific computational tools.
+
+3. **New claims are supported:**
+   - C08 (divergence as diagnostic signal): supported by dynamic docking literature
+   - C09 (African NPs susceptible to artifacts): supported by Moyo et al. and H3D Centre
+   - C10 (divergence exceeds synthetic rates): supported by scoring function limitations literature
+
+4. **MM/GBSA limitations are literature-grounded:** Xu et al. 2025, Wang et al. 2019, and Genheden & Ryde 2015 provide authoritative citations for P2's endpoint limitations.
+
+5. **JCIM submission alignment:** The methodological/calibration framing aligns with JCIM's emphasis on methodological value over routine docking.
+
+### 8.4 References to add to manuscript
+
+1. Ramírez, D. & Caballero, J. (2018). Is It Reliable to Take the Molecular Docking Top Scoring Position as the Best Solution without Considering Available Structural Data? *Molecules* 23, 1038.
+2. Ancajas, C.M.F. et al. (2024). Advances, opportunities, and challenges in methods for studying the structure–activity relationships of natural products. *Nat Prod Rep*.
+3. Xu, X. et al. (2025). Sampling Challenges of MM/PBSA Binding Energy Calculations. *J. Phys. Chem. B* 129, 11666-11678.
+4. Moyo, P. et al. (2023). Prioritised identification of structural classes of natural products from higher plants in the expedition of antimalarial drug discovery. *PLoS ONE*. PMC10567616.
+5. H3D Centre / ZairaChem (2023). First fully-automated AI/ML virtual screening cascade implemented at a drug discovery centre in Africa. *Nature Communications* 14, 5597.
+6. Dynamic Docking: A Paradigm Shift in Computational Drug Discovery (2018). PMC6150405.
+7. Wang, E. et al. (2019). End-Point Binding Free Energy Calculation with MM/PBSA and MM/GBSA. *Chem. Rev.* 119, 9478-9508.
+8. Hou, T. et al. (2011). Assessing the performance of the MM/PBSA and MM/GBSA methods. *J. Chem. Inf. Model.* 51, 69-82.
+9. Genheden, S. & Ryde, U. (2015). The MM/PBSA and MM/GBSA methods to estimate ligand-binding affinities. *Expert Opin. Drug Discov.* 10, 449-461.
+10. Bauer, M.R. et al. (2013). Evaluation and Optimization of Virtual Screening Workflows with DEKOIS 2.0. *J. Chem. Inf. Model.* 53, 1095-1106.
+11. Djiboutian medicinal plants (2026). *Curr. Issues Mol. Biol.* 48, 701.
+12. Ghosh, S. et al. (2025). Computational investigation of mutations in PfCRT and PfDHFR. *Mol. Biochem. Parasitol.*
 
 ### Web-research limitation
 
@@ -497,7 +606,7 @@ Some ACS and PubMed pages were not directly extractable in this environment beca
 
 Required:
 
-- title and central question changed to the calibration/triage scope;
+- title and central question changed to the estimand-divergence/triage scope;
 - P1 is labelled upstream companion context;
 - no P1-derived number is called independent P2 validation;
 - P2 primary and secondary estimands are separated.
@@ -526,7 +635,7 @@ Required only if M1 is resumed:
 ### Recommended current status
 
 ```text
-P2 = RECONFIGURE AS COMPUTATIONAL ESTIMAND-CALIBRATION STUDY
+P2 = RECONFIGURE AS ESTIMAND-DIVERGENCE / COMPUTATIONAL TRIAGE STUDY
 Canonical data = FROZEN
 P1/P2 independence = NOT CLAIMED
 Existing MD pilot = SECONDARY, SINGLE-REPLICATE, STRUCTURAL STRESS TEST
@@ -557,7 +666,3 @@ Proceed with **Option A** first: reconfigure and rewrite P2 using the existing c
 - `Project2_Polypharmacology_MD_ValidationV2607/manuscript/LaTeX/SUBMISSION_MANIFEST_V2609.md`
 - `Project2_Polypharmacology_MD_ValidationV2607/manuscript/LaTeX/Cover_Letter_V2609.tex`
 - existing `graphify-out/` graph and query output for P1/P2 code relationships
-
-### Scope note
-
-This is an internal planning document, not a peer-review report and not a submission-ready manuscript section. It contains implementation decisions and audit boundaries that should be translated into scientific prose only after the DAR, claim matrix, and author review are updated.

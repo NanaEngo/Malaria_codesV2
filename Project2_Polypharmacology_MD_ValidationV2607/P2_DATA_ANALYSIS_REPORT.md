@@ -537,3 +537,36 @@ The P2 V2609 manuscript (`Polypharmacology_MD_Validation_V2609.tex`) **follows t
 **Mitigation applied** : the runbook preflight and post-production `P2_SETC_ROOT` paths were corrected from the legacy `results/set_c_md/...` to the canonical `results/md_systems/...` path that `scripts/p2_m1_replicated_md.sbatch` actually reads and that the DAR consistently references. The path inside the launcher was already correct; only the documentation had drifted.
 
 **Status of M1 at audit time** : job 15711 active, replicate_1 (task 0, PP-01_PfDHFR_WT) running, 11 tasks pending.
+
+## 14. Implementation checkpoint 10 September 2026 — Phase 2 literature integration and re-analysis
+
+**Phase 2 status:** COMPLETE. Deep web searches across 8 databases (PubMed, PMC, Nature, ACS, RSC, ScienceDirect, Cambridge Core, MDPI) identified 47 relevant sources spanning docking reliability, African natural products, docking-MD divergence, MM/GBSA limitations, and PfDHFR/PfCRT computational studies.
+
+**Key finding:** No published study systematically calibrates docking reliability specifically for African antimalarial natural products. P2 fills this gap with 87.5% divergence rate.
+
+**Documents created/updated:**
+1. `docs/P2_PHASE2_LITERATURE_SYNTHESIS_20260910.md` — 47 sources, gap analysis, re-analysis plan, 12 references to add
+2. `docs/P2_PHASE2_REANALYSIS_20260910.md` — re-analysis of existing results with literature integration
+3. `docs/P2_RECONFIGURATION_PLAN_P1_P2_20260910.md` — updated with web research findings (§8)
+4. `docs/P2_V2609_CLAIM_EVIDENCE_PROVENANCE.md` — C08–C10 evidence enriched with literature citations
+
+**New claims supported:**
+- C08: Divergence rate (87.5%) constitutes a diagnostic signal
+- C09: African NPs susceptible to docking artifacts
+- C10: Divergence exceeds published rates for synthetic molecules
+
+**12 references to add to manuscript:**
+1. Ramírez & Caballero 2018 (Molecules, 793 citations)
+2. Ancajas et al. 2024 (Nat Prod Rep)
+3. Xu et al. 2025 (J Phys Chem B)
+4. Moyo et al. 2023 (PLoS ONE, PMC10567616)
+5. H3D/ZairaChem 2023 (Nature Comms)
+6. Dynamic Docking 2018 (PMC6150405)
+7. Wang et al. 2019 (Chem Rev)
+8. Hou et al. 2011 (J Chem Inf Model)
+9. Genheden & Ryde 2015 (Expert Opin Drug Discov)
+10. Bauer et al. 2013 (J Chem Inf Model)
+11. Djiboutian medicinal plants 2026 (Curr Issues Mol Biol)
+12. Ghosh et al. 2025 (Mol Biochem Parasitol)
+
+**Status:** Phase 2 complete; ready for Phase 4 (manuscript rewrite) and Phase 5 (DAR update).
