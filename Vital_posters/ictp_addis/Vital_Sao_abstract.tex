@@ -1,0 +1,45 @@
+\documentclass[12pt,a4paper]{article}
+\textwidth160mm
+\textheight247mm
+\oddsidemargin0cm
+\topmargin-0.5in
+\pagestyle{empty}
+\renewcommand{\baselinestretch}{1}
+\begin{document}
+	\begin{center}
+		% TITLE
+		{\large{\bf INTEGRATED COMPUTATIONAL APPROACHES FOR RESISTANCE-AWARE ANTIMALARIAL DRUG DISCOVERY: FROM CHEMICAL SPACE TO MOLECULAR DYNAMICS} }
+		% AUTHORS
+		\vskip0.5\baselineskip{\bf \underline{Myke Vital Sao Temgoua}$^{1}$, Jean-Pierre Tchapet Njafa$^{1}$, Penabei Samafou$^{2}$, Wilfred Fon Mbacham$^{3}$, and Serge Guy Nana Engo$^{1}$}
+		% AFFILIATION
+		\vskip0.5\baselineskip{\em$^{1}$Department of Physics, University of Yaound\'e I, Cameroon \\$^{2}$Universit\'e de Sherbrooke, Canada \\$^{3}$Department of Biochemistry, University of Yaound\'e I, Cameroon}\\
+		
+	\end{center}
+	
+	\noindent
+	% ABSTRACT BODY
+	Antimalarial drug resistance remains a critical challenge in sub-Saharan Africa, where \textit{Plasmodium falciparum} parasites develop resistance through target mutations in proteins such as PfDHFR, PfCRT, PfATP4, and PfClpP. This work presents an integrated computational pipeline combining chemical space exploration, molecular docking, resistance resilience scoring (RRS), molecular dynamics (MD) simulations, and machine learning to prioritize resistance-aware antimalarial candidates.
+	
+	We constructed a hybrid chemical library of 65,856 African-derived and synthetic compounds, achieving 92.6\% novelty beyond standard ECFP4 fingerprint coverage and 69.3\% scaffold recovery. Structure-based virtual screening against four validated malaria targets yielded 17 polypharmacology-oriented candidates classified by per-target RRS into resistance-resilient classes (A*: 6, B: 5, C: 5, D: 1), with 11.8\% exhibiting cross-target selectivity indices above 0.70 \cite{sao2026polypharm}. Molecular dynamics validation (OpenFF 2.2.0/CHARMM36m) of representative candidates across wild-type and mutant receptor states demonstrated stable binding trajectories at 310 K with GPU-accelerated production at 28 ns/day.
+	
+	Quantum-inspired topological representations (persistent homology, tensor network embeddings) were benchmarked against classical fingerprints, yielding ROC-AUC of 0.9475 for ECFP4 versus 0.8876 for hybrid models on 19,836 antimalarial compounds under scaffold-split validation \cite{sao2026quantum}. While quantum descriptors provided complementary signal, they did not surpass optimized classical baselines, supporting practical deployment of established methods. Pareto-guided Monte Carlo tree search generated multi-objective candidates balancing synthetic accessibility, resistance-informed similarity, and polypharmacology proxies, though random exploration outperformed guided search in scalar reward benchmarks (0.6724 vs. 0.6649) \cite{sao2026mcts}. Graph neural network evaluation (GIN, ChemBERTa) on the same panel confirmed ECFP4-RF superiority under scaffold splitting (0.8300 vs. 0.8047), with topological fusion (GIN-TFP) providing modest gains (0.8138) \cite{sao2026gnn}.
+	
+	This integrated framework demonstrates that resistance-aware prioritization, validated through MD simulations, can guide rational antimalarial discovery. The computational pipeline is openly accessible and directly applicable to other African-relevant infectious diseases. Future work includes experimental validation of prioritized candidates, expansion to additional resistance mechanisms, and integration with phenotypic screening data for mechanism-of-action elucidation.
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\begingroup
+	\renewcommand{\section}[2]{}
+	\begin{thebibliography}{0}
+		\setlength{\parskip}{0mm}
+		\setlength{\itemsep}{-0.3mm}
+		\small
+		\bibitem{sao2026polypharm} V. Sao et al., J. Chem. Inf. Model. (2026, in preparation).
+		\bibitem{sao2026quantum} V. Sao et al., Quantum-Inspired Molecular Representations for Antimalarial Discovery (2026, in preparation).
+		\bibitem{sao2026mcts} V. Sao et al., Pareto-Guided MCTS for Multi-Objective Drug Design (2026, in preparation).
+		\bibitem{sao2026gnn} V. Sao et al., Graph Neural Networks for Scaffold-Aware Activity Prediction (2026, in preparation).
+	\end{thebibliography}
+	\endgroup
+	
+	
+\end{document} 
