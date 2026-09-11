@@ -4,12 +4,14 @@
 **Canonical directory**: `Project2_Polypharmacology_MD_ValidationV2607/`
 **Manuscript target**: *J. Chem. Inf. Model.* (JCIM, ACS)
 **Author**: Myke Vital Sao Temgoua
-**Last refreshed**: 2026-08-30 (V2609 implementation checkpoint; canonical data unchanged)
+**Last refreshed**: 2026-09-11 (V2609C manuscript pushed; canonical data unchanged)
 
 **DAR update record — 29 Aug 2026:** Reconciled the editorial status to HOLD; added an explicit evidence-level/claim policy; preserved the PP-01 canonical multi-seed result with its PfCRT provenance limitation; and quarantined non-canonical ligand/grid runs from manuscript inference. No numerical result was changed by this update.
 
 **M1 authorization and launch record — 29 Aug 2026:** A targeted replicated-MD extension was authorized before implementation: four PP-01 pillar states (PfDHFR WT, PfCRT WT, PfDHFR N51I, PfCRT K76T), three independent replicates per state, 100 ns per replicate, 12 trajectories total. This is a robustness analysis of inter-replicate variability, not a validation of affinity or resistance. The versioned launcher is `scripts/p2_m1_replicated_md.sbatch`; the runbook is `docs/P2_M1_RUNBOOK_20260829.md`; output root is `results/m1_replicated_md_20260829/`; environment is `malaria_md`; GPU concurrency is capped at one task (`%1`). SLURM job **15671** was submitted after shell, Python, input-presence, and `sbatch --test-only` preflight checks passed. Results remain `NOT_COMPUTED` until production and post-production QC complete. Earlier failed submissions 15671, 15683, and 15695 were fail-closed before production (GMXRC nounset or invalid source-run paths) and are excluded from analysis. Audit execution du 30 août 2026 : les tentatives 15671/15683/15695 ont échoué en préproduction (GMXRC nounset / chemins sources invalides). Les tâches 15707_0/1/2 ont échoué à `grompp` avec `-maxwarn 0` sur un mot-clé inconnu `tc-integrator` (production.mdp, ligne 34) — `MPI_ABORT` avant `mdrun` ; le journal 15710 rapporte `CANCELLED at 2026-08-29T19:51:45`. Le `mdrun` de `PP-01_PfDHFR_WT/replicate_1` **tourne toujours** (PID 675626, dès le 29/08 19:52, progressé à ~6,98 M pas ~13,9 ns au 30/08 07:22, ~1,2 ns/h) ; SLURM ne le voit plus (accounting désactivé) mais le process survit. Les checkpoints continuent d'avancer. Les 11 autres réplicats restent en préparation/debut de production. Débit observé ~1,2 ns/h : pour 100 ns il faut ~83 h, or `#SBATCH --time=2-00:00:00` ne couvre que 48 h → la production ne pouvait pas atteindre 100 ns dans la fenêtre allouée. Le fichier `production.mdp` du sbatch actuel ne contient plus `tc-integrator` ; le `--time` a été porté à `4-00:00:00` (96 h). Voir `docs/P2_M1_EXECUTION_AUDIT_20260830.md`. **M1 = RUN INTERRUPTED / UNCONFIRMED ; 0/12 trajectoires complètes et QC-validées ; NOT_COMPUTED / NOT_REPORTABLE ; non intégré à V2609.**
-**Status**: **V2609 implementation in progress — canonical data frozen; author review required before submission**. The computational record is substantial, but the current evidence supports computational prioritisation only; it does not establish target engagement, affinity, or resistance resilience.
+**Phase 2 completion record — 11 Sep 2026:** Reconfiguration to "estimand-divergence" study complete. V2609C manuscript pushed (`3823b8ba8`). All Section 2 requirements from the reconfiguration plan verified against V2609C: (1) docking-RRS stability documented with PP-01/PP-15 multi-seed dispersion, score perturbation audit, threshold margins, target-balanced vs available-target class counts, and external panel RRS; (2) docking-MD concordance reported as 7/8 directional divergence with predeclared directional rule and exact denominator; (3) MM/GBSA recalibration table with trajectory/replica/frame counts, SD vs SEM convention, PBC treatment, QC status, canonical vs diagnostic status, and inter-replicate differences (PP-01 PfCRT K76A 7.75 kcal/mol); (4) PNS/ACSI demoted to secondary descriptors in SI; (5) DEKOIS/P1 cited as upstream context only. Claims C01–C23 verified present; forbidden claims F01–F08 verified absent. 12 new literature references integrated. No canonical numerical value was changed. M1 remains NOT_COMPUTED/NOT_REPORTABLE; full-panel MD-RRS remains NOT_COMPUTED by design.
+
+**Status**: **V2609C submitted to origin/master — canonical data frozen; author review required before JCIM submission**. The computational record is substantial, but the current evidence supports computational prioritisation only; it does not establish target engagement, affinity, or resistance resilience.
 
 > **Règle de workflow (permanente) : DAR avant manuscrit.** Toute modification de données, de résultats, de paramètres ou de protocole est tracée dans ce rapport AVANT toute édition du manuscrit ou du SM. Le manuscrit ne cite que des valeurs/statuts déjà reportés ici (source de vérité). En cas de divergence, le DAR fait foi et le manuscrit est corrigé ensuite. Cette règle s'applique à tous les projets (P1–P6) via leurs DAR respectifs et AGENTS.md.
 
@@ -355,19 +357,45 @@ Consensus RRS analysis (script `scripts/p2_gnina_consensus_rrs.py`, same frozen 
 
 Status: `COMPUTED_CONSENSUS_RRS_SENSITIVITY`. Interpretation: the near-proportional mutant/WT retention observed in the Vina external panel is reproduced by an independent CNN scoring function on identical poses — the retention-not-gain pattern is not an artefact of one scoring function. The moderate ligand-level rank correlation (ρ=0.558) and near-zero C59R/I164L mutant-level correlations bound the interpretation: consensus supports class-level retention, not per-mutant rank transfer. Vina-only remains the canonical estimand; no manuscript value is replaced.
 
-## 9. Manuscript status (26 Aug)
+## 9. Manuscript status (11 Sep 2026 — V2609C)
 
-**Current release status:** `READING_FINAL_AUTHOR`. The primary Set-C docking analysis, the separate parent-study MD cohort, and the bounded Set-C MD pilot have completed their declared production and QC gates. The optional witness job `15507_[0]` is not a prerequisite for the manuscript and remains non-blocking. K76A MM-GBSA retains the original canonical endpoint with an explicit Limitations caveat.
+**Current release status:** `V2609C_PUSHED` (commit `3823b8ba8`, 11 Sep 2026). Title: "Estimand Divergence as a Discovery Signal for African Antimalarial Natural Products". The manuscript has been restructured around the estimand-divergence framing per the reconfiguration plan (`docs/P2_RECONFIGURATION_PLAN_P1_P2_20260910.md`). All Phase 2 requirements verified against V2609C. Canonical data unchanged; no numerical result was added, removed, or altered.
 
-**28 Aug — robustness analyses integrated in manuscript (v2607 recompile clean: main 30 p., SM 16 p., 0 errors, 0 undefined refs):** (1) the pilot-scope MD-filter retention gate (7/12 gate rows pass docking RRS $\geq$ 80 % AND pilot MD-RRS < 100; PP-01 satisfies the two-target gate, PP-02 does not) was added to the Set-C MD pilot Results subsection and Discussion (role of structural follow-up), bounded by the saturated bound fraction and the 2.0 kcal/mol noise floor; (2) the Set-C bootstrap CI95 (class fractions A* 0.294 [0.118, 0.529], PfCRT retention CIs excluding 100, PfDHFR intervals wide) was added to the Discussion and as a new row in the robustness-transfer SI table; (3) SM Table S15 gained the MD-filter gate row. The GNINA CNN consensus (38/38 class A, 0 discordance, ρ=0.558) and external-docking replication were already integrated (Discussion + S15). No canonical value replaced; Vina-only remains the canonical estimand.
+**V2609C key specifications:**
+- Main: 31 pages, 0 errors, 0 undefined refs (full bibtex cycle)
+- SM: 18 pages, 0 errors
+- Cover letter: 1 page (September 11, 2026)
+- Bib file: `Project2_Polypharmacology_MD_Validation.bib`
+- External document: `\externaldocument[SM-]{Polypharmacology_MD_Validation_SM_V2609C}`
+- 27 files committed (V2609C tex/bib/table files + 3 updated docs)
+
+**Phase 2 verification against reconfiguration plan:**
+- §2.1 Docking-RRS stability: PP-01/PP-15 multi-seed (±0.05/±0.03 kcal/mol), 77.9% class stability, threshold margins, target-balanced vs available-target counts, external panel RRS — all in Results §1 + §7
+- §2.2 Docking-MD concordance: directional rule predeclared (Methods §Study design), 7/8 divergence with exact denominator (Results §6), no p-value from 8 rows — correctly descriptive
+- §2.3 MM/GBSA recalibration: protocol details (Methods §MD protocol), inter-replicate K76A 7.75 kcal/mol (Limitations), SD vs SEM convention — all present
+- §2.4 PNS/ACSI demotion: formulas/sensitivity in SI only, main text "post-selection descriptors" — done
+- §2.5 DEKOIS/P1 demotion: cited as "upstream companion context" — done
+
+**Claim matrix verification (V2609C vs `docs/P2_V2609_CLAIM_EVIDENCE_PROVENANCE.md`):**
+- C01–C07 (PRIMARY + CENTRAL): all traceable to canonical DAR values
+- C08–C10 (NOVEL): traceable to divergence data + literature citations
+- C11–C15 (SECONDARY): traceable with non-independence labels
+- C16–C19 (TECHNICAL): documented with QC status
+- C20 (P1 boundary): crosswalk complete in Methods
+- C21–C23 (NOT_COMPUTED/UNOBSERVED): remain explicit and unviolated
+- F01–F08 (forbidden claims): verified absent from all manuscript files
 
 **K76A MM-GBSA resolution (author decision, 28 August 2026):** The PP-01 PfCRT K76A endpoint uses the original 19-Aug value (−35.29 ± 1.17 kcal/mol, SD_prop, SEM 0.50) from the canonical trajectory (`20260815T185233Z/replicate_1`, 100 frames). An independent second replicate on a different trajectory (`20260825T063226Z/replicate_1`) produced −27.54 ± 1.89 kcal/mol after PBC-whole correction. The 7.75 kcal/mol inter-replicate difference is documented in the manuscript Limitations section and treated as evidence of inter-replicate sensitivity for this mutant state. The `FAILED_NUMERICAL_QC` status (BOND overflow in sander parsing) applies to the 25–26 Aug diagnostic runs on the second trajectory, not to the original canonical endpoint. The Submission Manifest has been updated to reflect this resolution.
 
-- **Manuscript**: `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex` (main) + `_SM_V2607.tex` (SI). Target: JCIM (ACS).
-- **Scientific-article refinement:** the title, abstract and Introduction now foreground docking-derived RRS as the primary estimand; ACSI/PNS and MD are presented as secondary analyses. The Discussion separates primary inference, robustness and limitations. This is an editorial refinement only; no numerical result or analysis population was changed.
-- 26 Aug revision: the main manuscript now foregrounds the primary docking-RRS estimand, presents ACSI/PNS and MD as secondary analyses, and keeps detailed tables in the SI. The Discussion separates primary inference, robustness, and limitations while retaining the primary RRS/MD evidence. The transferred material is included through `Secondary_Analyses_SI.tex` and the dedicated SI table sources. The current rigor pass separates target-balanced and coverage-sensitive RRS estimands, corrects the weakest-WT potency discriminator, and adds permutation/bootstrap uncertainty and PNS-imputation sensitivity.
+- **Manuscript**: `manuscript/LaTeX/V2609C/Polypharmacology_MD_Validation_V2609C.tex` (main) + `_SM_V2609C.tex` (SI). Target: JCIM (ACS).
 - All numbers in text/tables trace to JSON/CSV data files (manifests listed above).
-- Unit tests: `tests/` — 19 passed, 1 skipped in the current `qom` environment, including MD manifests, MM-GBSA aggregation, RRS class definitions, target coverage, regenerated statistical outputs, and lightweight robustness outputs.
+- Unit tests: `tests/` — 19 passed, 1 skipped in the current `malaria_md` environment.
+- 12 new literature references integrated from deep web search (8 databases, 47 sources).
+
+**Remaining before JCIM submission:**
+- Author-level read of all claims
+- Zenodo archive deposit and DOI
+- Verify public data/code availability under current ACS policy
 
 ## 9. Open items and 25 August reconciliation
 
