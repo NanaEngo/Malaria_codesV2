@@ -1,0 +1,27 @@
+%% WT pillar replicate consistency (PP-01_PfCRT_WT)
+%% Source (do not hand-edit): scripts/p2_wt_replicate_consistency.py
+%%   <- results/set_c_md/single_rerun_20260825/wt_replicate_consistency.json
+\begin{table}[htbp]
+\centering
+\caption{Endpoint replicate consistency for the PP-01 PfCRT wild-type pillar. Two independent
+\qty{10}{\nano\second} productions executed under the identical MDP and analysis chain
+(GB$^{\text{OBC2}}$ igb=5, \qty{0.15}{\molar} salt, \num{100} snapshots) are compared.
+Tabulated spreads are the within-trajectory SD and the SEM over stored snapshots;
+the manuscript-wide quoted uncertainty elsewhere is the SEM.
+The SEM is informational here because MD snapshots are temporally autocorrelated.
+The between-replicate offset ($|\Delta|=\qty{2.01}{\kcalmol}$) lies within one within-trajectory
+standard deviation of either run (inter-replicate mean $\qty{-29.61 \pm 1.42}{\kcalmol}$).
+Because the snapshots are temporally autocorrelated, the SEM does not quantify replicate-level uncertainty.
+The offset is therefore used as a conservative empirical noise floor of \qty{2.0}{\kcalmol} for interpreting
+single-replicate mutant--wild-type endpoint contrasts.}
+\label{tab:setc_wt_replicate_consistency}
+\small
+\begin{tabular}{l l S[table-format=-3.2] S[table-format=1.2] S[table-format=1.2]}
+\toprule
+Replicate & Production & {$\Delta G_{\mathrm{bind}}$ (\si{\kcalmol})} & {SD} & {SEM} \\
+\midrule
+R1 & production run 1 & -30.61 & 4.12 & 0.41 \\
+R2 & independent production run & -28.60 & 4.35 & 0.43 \\
+\bottomrule
+\end{tabular}
+\end{table}
