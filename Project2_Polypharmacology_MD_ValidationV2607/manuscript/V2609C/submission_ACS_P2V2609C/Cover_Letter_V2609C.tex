@@ -1,0 +1,62 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=2cm}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{siunitx}
+\sisetup{separate-uncertainty=true, range-phrase=--}
+\DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
+\DeclareSIUnit\angstrom{\text{\AA}}
+\singlespacing
+
+\begin{document}
+\emergencystretch=2em
+
+\begin{flushleft}
+\textbf{Myke Vital Sao Temgoua} \\
+Department of Physics, Faculty of Science \\
+University of Yaound\'{e} I \\
+P.O. Box 812, Yaound\'{e}, Cameroon \\
+\href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[1.5em]
+September 11, 2026
+\end{flushleft}
+
+\begin{flushleft}
+Prof.\ Kenneth M.\ Merz, Jr., Editor-in-Chief \\
+\textit{Journal of Chemical Information and Modeling} \\
+American Chemical Society
+\end{flushleft}
+
+\vspace{0.5em}
+
+\noindent Dear Prof.\ Merz,
+
+We submit our manuscript \textbf{``Estimand Divergence Between Static Docking and Short Molecular Dynamics as a Triage Filter for African Antimalarial Natural Products''} for consideration as an Article in the \textit{Journal of Chemical Information and Modeling} (JCIM).
+
+Using a curated collection derived from 396 African natural products and 454 synthetic antimalarials, we evaluated a multi-target docking framework across \num{136} wild-type and mutant receptor states of PfDHFR and PfCRT. On a primary candidate cohort ($n=\num{12}$), a novel Resistance-Resilience Score (RRS) provided a five-tier stratification decoupling predicted wild-type binding strength from mutant-state score retention. Explicit-solvent molecular dynamics (MD) simulations revealed a directional divergence in \qty{87.5}{\percent} (7/8) of matched candidate--target states, wherein dynamic pocket relaxation compensated for static grid-docking penalties. This structural stress test demonstrates that static docking scores and short MD trajectories provide complementary, non-equivalent triage metrics for natural product lead optimization.
+
+We present three major methodological contributions: (i) conceptualizing \textit{Estimand Divergence} between static docking RRS and explicit-solvent MD pose retention as a positive triage filter; (ii) establishing a denominator-unbiased RRS framework that excludes non-binding wild-type baselines ($|S_{\mathrm{WT}}| < \qty{5.0}{\kcalmol}$); and (iii) validating protocol robustness across an independent external sensitivity panel of 39 compounds (\num{312} docking complexes) confirmed by GNINA convolutional neural network (CNN) affinity scoring with \qty{100}{\percent} Class-A agreement. Grounded in the JCIM molecular dynamics reporting guidelines established by Soares et al. (2023), short explicit-solvent trajectories (10~ns) function effectively as secondary structural stress tests.
+
+Code, source data, analysis scripts, and model inputs are available on GitHub under an open-source licence; a permanent Zenodo snapshot will be archived upon publication. Statistics are reported with effect sizes, permutation $p$-values, bootstrap confidence intervals, and Bonferroni-Holm adjustments.
+
+\noindent\textbf{Suggested reviewers.}
+\begin{enumerate}
+  \item Dr.\ Fidele Ntie-Kang, University of Buea --- African natural-product computational discovery
+  \item Dr.\ Kelly Chibale, University of Cape Town --- antimalarial drug discovery
+  \item Dr.\ John D.\ Chodera, Memorial Sloan Kettering --- free-energy methods and MD best practices
+\end{enumerate}
+
+\noindent This manuscript is original, not under consideration elsewhere, and all co-authors have approved the submission.
+
+\vspace{1em}
+
+\noindent Sincerely,
+
+\vspace{1em}
+
+\noindent \textbf{Myke Vital Sao Temgoua} \\
+(on behalf of all co-authors)
+
+\end{document}

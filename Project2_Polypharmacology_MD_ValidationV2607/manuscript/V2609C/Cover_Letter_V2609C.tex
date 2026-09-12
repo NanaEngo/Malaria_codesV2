@@ -1,0 +1,66 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=1.8cm}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{enumitem}
+\setlist{itemsep=1pt, topsep=2pt, parsep=0pt}
+\usepackage{siunitx}
+\sisetup{separate-uncertainty=true, range-phrase=--}
+\DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
+\DeclareSIUnit\angstrom{\text{\AA}}
+\singlespacing
+
+\begin{document}
+\emergencystretch=2em
+
+\begin{flushleft}
+\textbf{Myke Vital Sao Temgoua} \\
+Department of Physics, Faculty of Science, University of Yaound\'{e} I, P.O. Box 812, Yaound\'{e}, Cameroon \\
+Email: \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[0.6em]
+September 12, 2026
+\end{flushleft}
+
+\begin{flushleft}
+Prof.\ Kenneth M.\ Merz, Jr., Editor-in-Chief \\
+\textit{Journal of Chemical Information and Modeling}, American Chemical Society
+\end{flushleft}
+
+\vspace{0.3em}
+
+\noindent Dear Prof.\ Merz,
+
+We submit our manuscript entitled \textbf{``Estimand Divergence Between Static Docking and Short Molecular Dynamics as a Triage Filter for African Antimalarial Natural Products''} for consideration as a research Article in the \textit{Journal of Chemical Information and Modeling}.
+
+Overcoming multi-target drug resistance in \textit{Plasmodium falciparum} is a central goal in antimalarial lead discovery. While virtual screening against target panels is widely used, static docking scores capture unrelaxed grid complementarity without accounting for dynamic pocket relaxation upon mutation. In this study, we evaluate a multi-target computational triage framework applied to 396 African natural products and 454 synthetic antimalarials across 136 wild-type and mutant structures of dihydrofolate reductase (PfDHFR) and the chloroquine resistance transporter (PfCRT).
+
+We define a Resistance-Resilience Score (RRS) to evaluate score retention across drug-resistant mutant panels while excluding non-binding wild-type baselines ($|S_{\mathrm{WT}}| < \qty{5.0}{\kcalmol}$). When primary candidates were evaluated in short explicit-solvent molecular dynamics simulations (\qty{10}{\nano\second}), we observed a directional divergence between static docking scores and trajectory pose retention in \qty{87.5}{\percent} (7/8) of matched comparisons. Rather than indicating docking failure, this mismatch reflects distinct physical estimands: unrelaxed grid complementarity ($\Delta G_{\mathrm{grid}}$) versus local dynamic accommodation ($\mathrm{MD\text{-}RRS}_{\mathrm{distance}}$). Following the molecular dynamics reporting guidelines of Soares et al.\ (2023), short explicit-solvent trajectories provide a valuable structural stress test to filter static grid artifacts prior to prospective assaying.
+
+The main contributions of this work include:
+\begin{enumerate}
+  \item Establishing \textit{estimand divergence} as a practical triage filter that combines rigid docking score retention with dynamic pocket relaxation.
+  \item Formulating a denominator-unbiased RRS scale that prevents score ratio inflation on weak wild-type binders.
+  \item Demonstrating protocol stability across an external 39-compound panel (\num{312} docking complexes) with \qty{100}{\percent} agreement under GNINA CNN affinity scoring.
+\end{enumerate}
+
+All code, configuration files, and datasets are publicly available on GitHub, with a permanent archive registered on Zenodo (\href{https://doi.org/10.5281/zenodo.19608875}{DOI: 10.5281/zenodo.19608875}). Statistical reporting includes effect sizes, permutation tests, bootstrap confidence intervals, and Bonferroni-Holm adjustments. This manuscript is original, has not been submitted elsewhere, and has been approved by all co-authors.
+
+\vspace{0.4em}
+\noindent\textbf{Suggested Reviewers:}
+\begin{enumerate}
+  \item \textbf{Dr.\ Fidele Ntie-Kang}, University of Buea (\href{mailto:fidele.ntie-kang@ubuea.cm}{fidele.ntie-kang@ubuea.cm}) --- Chemoinformatics of African natural products.
+  \item \textbf{Dr.\ Kelly Chibale}, University of Cape Town (\href{mailto:kelly.chibale@uct.ac.za}{kelly.chibale@uct.ac.za}) --- Antimalarial medicinal chemistry and polypharmacology.
+  \item \textbf{Dr.\ John D.\ Chodera}, Memorial Sloan Kettering Cancer Center (\href{mailto:john.chodera@choderalab.org}{john.chodera@choderalab.org}) --- Free-energy methods and MD reporting standards.
+\end{enumerate}
+
+\vspace{0.4em}
+\noindent Sincerely,
+
+\vspace{0.8em}
+
+\noindent \textbf{Myke Vital Sao Temgoua} \\
+(on behalf of all co-authors)
+
+\end{document}
