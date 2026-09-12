@@ -1,0 +1,19 @@
+%% Table S7: PNS PfCRT-centrality imputation sensitivity
+%% Source: results/pns_imputation_sensitivity.csv
+\begin{table}[htbp]
+\centering
+\caption{Sensitivity of the PNS ranking to the imputed PfCRT centrality. The reference value is the observed network-mean imputation ($C_{\mathrm{PfCRT}}=\num{0.151}$). Alternative values were zero, one-half, one-and-a-half, and twice the reference value. Spearman $\rho$ is calculated against the reference 17-candidate ranking; all candidates have two target entries in the PNS record. The ranking is sensitive to this network-data choice; target essentiality and biological polypharmacology were not assessed.}
+\label{tab:s7_pns_sensitivity}
+\scriptsize
+\begin{tabular}{l S[table-format=1.4] S[table-format=1.4] S[table-format=1.3] S[table-format=1.3] S[table-format=2.0]}
+\toprule
+Imputation & {$C_{\mathrm{PfCRT}}$} & {Spearman $\rho$} & {Minimum PNS} & {Maximum PNS} & {$n$} \\
+\midrule
+Zero & 0.0000 & 0.9716 & 0.300 & 5.147 & 17 \\
+One-half canonical & 0.0755 & 0.9975 & 0.674 & 5.573 & 17 \\
+Canonical network mean & 0.1510 & 1.0000 & 1.047 & 6.000 & 17 \\
+One-and-a-half canonical & 0.2265 & 0.9755 & 1.421 & 6.426 & 17 \\
+Twice canonical & 0.3020 & 0.9632 & 1.795 & 6.853 & 17 \\
+\bottomrule
+\end{tabular}
+\end{table}

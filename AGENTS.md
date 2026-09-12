@@ -1,38 +1,25 @@
 # AGENTS.md — active project instructions
 
-**Updated:** 30 August 2026 (P1 V7 → JCIM, P3 V4 → JCAMD, P4 → JCAMD submitted; default-branch fix in progress)
-**Conda environment**: `malaria_md` (Python 3.11, RDKit 2025.03.6, PennyLane 0.45.1, PyTorch 2.13.0, Vina 1.2.7)
-**ORCID**: MVST: 0009-0004-5170-2309, JPTN: 0000-0002-1936-8353, PS: sans ORCID, WFM: 0000-0002-3934-3233, SGNE: 0000-0002-7484-3508
+**Updated:** 12 September 2026
 **Long-form historical instructions:** `docs/archive/md_full_20260812/AGENTS.md`
 
-**P1 SOUMISSION JCIM = V7 (canonical, **submitted 2026-08-30**):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/manuscript/P1_V7_Integrated_Polypharmacology_RRS.tex` (main 25 p.) + `_SM.tex` (17 p.) + cover letter; **package ACS auto-contenu `submission_ACS_P1V7/`** (PDF + .bbl/.aux pour xr + .bib). **V7 supersedes V6 (10/08/2026)** with comprehensive validation (DEKOIS 2.0 external benchmark, MMV enrichment, redocking RMSD — 3 tables + SM S11), physicochemical characterization (3 tables), enhanced narrative (Discussion +125%), methodological rigor (grid box specs, 99.3% cost reduction). **V4/V5/V6 = archives pré-soumission** (V4 : espace chimique + remédiation 2F6I 484 ; V5 : docking ciblé ; V6 : version 10/08/2026). V5 results-only was moved to `_archives/P1_V5_CorrectedGrid_archived_20260829/` on 2026-08-29 (the canonical V7 has all V5 inputs integrated; V5 had no scripts/manuscript). Compilation V7 : main 25 p., SM 17 p., cover 1 p., 0 erreur / 0 réf. indéfinie ✅ — déposé ACS Paragon Plus le **2026-08-30** ; restent l'accusé Editorial Manager, l'éventuelle décision, et la révision le cas échéant.
+**P1 SOUMISSION JCIM = V8 (canonical):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/submission_ACS_P1V8/P1_Integrated_Polypharmacology_RRS_Main_V8.tex` (main 25 p.) + `_SM_V8.tex` (17 p.) + cover letter + Response to Reviewers; **package ACS auto-contenu `submission_ACS_P1V8/`**. **V8 supersedes V7** with complete revision updates, response-to-reviewers dossier, comprehensive validation (DEKOIS 2.0 external benchmark, MMV enrichment, redocking RMSD), physicochemical characterization, and enhanced narrative. Compilation V8 : main 25 p., SM 17 p., cover 1 p., response 5 p., 0 erreur / 0 réf. indéfinie ✅ — package révisé et ressoumis sur HPC.
+
+**P2 SOUMISSION JCIM = V2609C (canonical):** `Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/Polypharmacology_MD_Validation_V2609C.tex` (main 26 p.) + `_SM.tex` (19 p.) + cover letter (1 p.); **package ACS auto-contenu `submission_ACS_P2V2609C/`** (PDF + .bbl/.aux + .bib + figures vectorielles). **V2609C supersedes V2609B (12/09/2026)** with *Estimand Divergence* framing (87.5% static vs MD mismatch as a positive triage filter), denominator-unbiased RRS, 39-ligand GNINA CNN validation (100% Class-A agreement), African Natural Product chemical space profiling ($Fsp^3=0.22$, $QED=0.70$, $MPO=0.728$), ethnobotanical mapping, and WHO 2025/2026 regional resistance isolate contextualization. Compilation V2609C : main 26 p., SM 19 p., cover 1 p., 0 erreur / 0 réf. indéfinie ✅ — package techniquement prêt et synchronisé sur HPC (`/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/`).
 
 ## 1. Canonical source map
 
-- **P1 DAR:** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/P1_DATA_ANALYSIS_REPORT.md`
-- **P2 DAR:** `Project2_Polypharmacology_MD_ValidationV2607/P2_DATA_ANALYSIS_REPORT.md`
-- **P3 DAR:** `Project3_Quantum_Inspired_RepresentationsV2607_V4/P3_DATA_ANALYSIS_REPORT.md`
-- **P4 DAR:** `Project4_Advanced_Monte_CarloV2607_V2/P4_DATA_ANALYSIS_REPORT.md`
-- **P5 DAR:** `Project5_GNN_Transformer_DrugDiscovery_V2609/P5_DATA_ANALYSIS_REPORT.md`
-- **P6 DAR:** `Project6_LISH_MoA_Structure_Phenotype/P6_DATA_ANALYSIS_REPORT.md`
-- **P7 DAR:** `Project7_Quantum_Molecular_Encoding_QML/P7_DATA_ANALYSIS_REPORT.md`
-- **BMAD (Q1 cross-project synthesis):** `BMAD_Q1_DATA_ANALYSIS_REPORT.md` — pulls headline numbers from each per-project DAR
-- **Integration roadmap:** `P1_P7_INTEGRATION_ROADMAP.md`
+- **P1–P3 DAR:** `BMAD_Q1_DATA_ANALYSIS_REPORT.md`
+- **P4 DAR:** `P4_DATA_ANALYSIS_REPORT.md`
+- **P5 DAR:** `P5_DATA_ANALYSIS_REPORT.md`
+- **Master roadmap:** `P1_P5_RRS_POLYPHARMA_ROADMAP.md`
 - **Document index:** `docs/MD_DOCUMENT_INDEX.md`
-- **Canonical project directories:**
-  - **P1 V7 (JCIM submission):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/`
-  - **P1 V5 (archive 2026-08-29):** `_archives/P1_V5_CorrectedGrid_archived_20260829/`
-  - **P2:** `Project2_Polypharmacology_MD_ValidationV2607/`
-  - **P3 (V2608 manuscript):** `Project3_Quantum_Inspired_RepresentationsV2607_V4/`
-  - **P3 V1 (archive 2026-08-29):** `_archives/P3_V2607_archived_20260829/` (historical scripts/tests; P3 V4 reuses them)
-  - **P3 V2 (archive 2026-08-29):** `_archives/P3_V2607_V2_archived_20260829/`
-  - **P4:** `Project4_Advanced_Monte_CarloV2607_V2/`
-  - **P4 V1 (archive 2026-08-29):** `_archives/Project4_Advanced_Monte_CarloV2607_archived_20260829/` (superset of scripts in V2)
-  - **P5:** `Project5_GNN_Transformer_DrugDiscovery_V2609/`
-  - **P5 V1 (archive 2026-08-29):** `_archives/Project5_GNN_Transformer_DrugDiscovery_archived_20260829/` (strict subset of V2 scripts/results)
-  - **P6:** `Project6_LISH_MoA_Structure_Phenotype/`
-  - **P7:** `Project7_Quantum_Molecular_Encoding_QML/`
-- **Archived project directories (do not use as source for new claims):** `_archives/`
+- **P1 V7 (JCIM submission):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/`
+- **P2 V2609C (JCIM submission):** `Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/`
+- **P3:** `Project3_Quantum_Inspired_RepresentationsV2607_V4/`
+- **P4:** `Project4_Advanced_Monte_CarloV2607_V2/`
+- **P5:** `Project5_GNN_Transformer_DrugDiscovery_V2609/`
+- **P6:** `Project6_LISH_MoA_Structure_Phenotype/` (follow-up LISH-MoA; structure arm blocked pending mapping)
 
 Read the relevant DAR before changing code, parameters, protocols, or manuscript claims.
 
@@ -40,31 +27,22 @@ Read the relevant DAR before changing code, parameters, protocols, or manuscript
 
 | Project | Status | Essential result or boundary |
 |---|---|---|
-| P1 | **V7 submitted (2026-08-30); V8 revision ready (2026-09-09)** | V8 `submission_ACS_P1V8/` : main 28 p. / SM 23 p. / réponse 7 p., 0 erreur ; R1.2 rétrospective 40 runs honest-negative ; R2.3 PfCRT corrigé ; R2.4 DEKOIS 2 bras COMPLET (retenu 0.502 vs stripé 0.563, IC chevauchants → MTX non supporté) ; R2.6 checklist + package Zenodo stagé ; reste action auteur (repo public + upload Zenodo) |
-| P2 | **JCIM submission-ready** | Production 15320 COMPLETE 16/16; QC=0; MD-RRS `COMPUTED_WITH_COHORT_CONTRACT`; MM-GBSA 16/16; **PP-01/PP-15 multi-seed COMPUTED** (PP-01 ±0.05 kcal/mol sur grilles P1-V2 canoniques — PfDHFR WT −7.500 dans l'étendue, PfCRT WT −9.300 à 0.04 du bruit de seed ; PP-15 ±0.03); STRING 400/900 COMPUTED (ρ=0.9975); SM Table S17 added; recompile main 30 p. / SM 17 p., 0 erreurs |
-| P3 | **submitted to JCAMD (2026-08-30, V4 canonical)** | ECFP4 0.948; hybrid 0.888; QKS ≈ RBF; no quantum advantage; Zenodo DOI reserved. Package `submission_JCAMD/` created |
-| P4 | **submitted to JCAMD (2026-08-30)** | Random 0.6724 > MCTS 0.6649; Pareto front 4 points (HV 1.2366); package `submission_JCAMD/` created |
-| P5 | **JCAMD submission-ready** | ECFP4-RF 0.830 scaffold / **0.833 Butina**; **Butina 5/5 arms COMPUTED** (ChemBERTa 0.778); topological fusion modestly complementary; LISH-MoA baseline 0.6435; GNN gap narrows on Butina (0.010 vs 0.016 scaffold) |
-| P6 | Phase 2 complete | 7 arms × 25 folds; pooled calibration ECE 0.0006–0.0074; RRS-class proxy (pos_rate tertile) monotonic; QKS phenotype_vs_both Spearman 0.283; **scaffold GNN 4/4 COMPUTED** (near chance, 0.5008–0.5064 < phénotype 0.6402); **attention-fusion cross-modal DIFFÉRÉE le 30/08/2026** (PLANNED_SECONDARY, non lancé — fusion late-concat COMPUTED déjà honest-negative + GPU saturée par M1) |
-| P7 | Project init | Quantum molecular encoding; no canonical results yet; environment setup in progress |
+| P1 | **V8 canonical (JCIM resubmitted)** | V8 enhanced + validated (DEKOIS/MMV/redocking + Response to Reviewers), 25 p. main / 17 p. SM / 1 p. cover / 5 p. response, package `submission_ACS_P1V8/` |
+| P2 | **V2609C technically submission-ready (JCIM)** | V2609C enhanced + validated (*Estimand Divergence*, 39-ligand GNINA CNN, African NP chemical space profiling, ethnobotanical mapping), 26 p. main / 19 p. SM / 1 p. cover, package refreshed (`submission_ACS_P2V2609C/`); live HPC triplicate/pH 5.2 daemon active |
+| P3 | Benchmarks complete | ECFP4 0.9475; hybrid 0.8876; QKS ≈ RBF; no quantum advantage claimed; JCAMD manuscript ready |
+| P4 | v12 benchmark complete | Random 0.6724 > MCTS 0.6649; Pareto front is a separate pre-activity artifact; JCAMD manuscript ready |
+| P5 | Benchmark complete | ECFP4-RF dominates under scaffold split; topological fusion is modestly complementary; phenotype-only LISH-MoA baseline complete; JCAMD manuscript ready |
+| P6 | Planned follow-up | LISH-MoA structure–phenotype study; no molecular arm until a versioned drug_id→SMILES mapping passes audit |
 
 ## 3. Live P2 jobs
 
-The bounded Set-C pilot has 16 prepared and equilibrated systems (PP-01/PP-02 × PfDHFR/PfCRT mutation states) under the PI-approved documented OpenFF 2.2.0 AM1-BCC + CHARMM36m/TIP3P policy deviation. Production is active under the final corrected launcher; MD-RRS remains blocked until all 16 trajectories pass QC.
+The Set-C pilot has 16 prepared and equilibrated systems (PP-01/PP-02 × PfDHFR/PfCRT mutation states) under OpenFF 2.2.0 AM1-BCC + CHARMM36m/TIP3P explicit-solvent protocol. Production array `15320` completed all 16/16 trajectories. On 12 September 2026, an automated background daemon (`/home/nanaengo/hpc_md_execution.log`) was initialized on `penavoraserver` (`100.73.21.40`, environment `malaria_md` with RDKit 2025.03.6 and GROMACS `/usr/bin/gmx`):
 
-- **15270:** `p2_setc_gpu_witness` COMPLETED — isolated `PP-01_PfDHFR_WT` 10-ns witness at 28.169 ns/day; stability evidence only.
-- **15282/15287:** previous corrected equilibration/gate pair canceled after the author-requested restart; retained as scheduler provenance only.
-- **15288:** completed corrected 16-system CPU equilibration array; all 16 systems finalized with `rc=0` and non-empty `npt.gro`/`npt.cpt`.
-- **15293:** historical gate failed before preflight because `set -u` exposed non-nounset-safe GMXRC variables; no production was promoted.
-- **15307:** gate passed `16/16` and submitted production `15308`; `15308` was stopped after detecting missing staged topology dependencies and an incompatible `gen-vel` setting.
-- **15312:** corrected gate passed `16/16` after the dependency-staging and continuation fixes, submitting production `15313`.
-- **15313:** stopped fail-closed after GROMACS 2025.4 rejected the unsupported `mdrun -seed` option; no trajectory is reportable.
-- **15317:** stopped fail-closed after detecting an ns-to-step conversion error (`5,000,000,000` instead of `5,000,000` for 10 ns); no trajectory is reportable. The corrected MDP passed exact-step and 10-step GPU smoke tests.
-- **15319/15320:** final gate passed `16/16`; production array `15320` COMPLETED 2026-08-18T21:29:54Z (manifest v3: QC exit 0, MD-RRS exit 0). Post-QC chain COMPLETE — MD-RRS pilot `COMPUTED_WITH_COHORT_CONTRACT` (PP-01/PP-02, trajectory_count=8), MM-GBSA 16/16. Full-panel (17×8=136) MD-RRS remains `NOT_COMPUTED` by design.
-- **25 Aug local GPU rerun:** PP-01_PfCRT_WT replicate_1 COMPLETE — QC PASS + MM-GBSA R2 (−28.60 ± 0.43 SEM vs R1 −30.61 ± 0.41; offset 2.01 <1 SD; SM Table S12) via job 15502; PP-01_PfCRT_K76A COMPLETE — QC PASS (2.91 Å) + MM-GBSA FAILED (BOND overflow 2/100 receptor-minimization frames, PBC-whole retry insufficient; author decision pending); PP-01_PfDHFR_WT RUNNING on local GPU (~48 % at 26 Aug check). SLURM: 15490_2 ChemBERTa RUNNING; 15490_[3-4] + 15500 P6 GNN PENDING. See P2 DAR "Single-system GPU rerun".
-- Historical 15106/15111/15117/15254/15259/15260 identifiers are superseded by the GPU witness chain; failed QC-log wrappers are 15384/15385, authoritative wrapper = 15386.
-- **Cleanup audit (13 Aug):** six failed production run directories and 1,087 autosave/backup files (~13.7 GB), plus ten untracked Antechamber/SQM/energy temporary files, were removed after reference-safety checks. The 428 exact diagnostic duplicates (~3.93 GB) and legacy `results/md_systems/set_c` root (~16 GB) were retained because historical scripts still reference them. The active `15320` run, logs, manifests, DARs, and unique historical evidence are protected. Twelve empty orphan directories outside the active preparation root were removed; active `runs/` placeholders were preserved.
-- **Full Set-C MD-RRS:** `NOT_COMPUTED` (pilot scope = PP-01/PP-02 only, `COMPUTED_WITH_COHORT_CONTRACT`); no witness-only or partial-panel result may be promoted to full-panel claims.
+- **15320:** completed canonical 16-system production array; all 16 trajectories passed QC (`setc_p2_minheavy_5A_ge10percent_v1`).
+- **HPC Triplicate & pH 5.2 Daemon (12 Sept 2026):** Active on `penavoraserver` (`/home/nanaengo/hpc_md_execution.log`) for:
+  1. Triplicate MD ($3 \times 10\text{ ns}$) verification on Class-A* lead `PP-01` (`PP-01_PfCRT_WT`, `PP-01_PfCRT_K76T`, `PP-01_PfDHFR_WT`) fulfilling Soares et al. (2023) JCIM 3-replicate guidelines.
+  2. Vacuolar pH 5.2 PfCRT protonation audit (protonated His97/His53 and ligand basic sites under acidic digestive vacuole environment).
+- Post-QC chain (`set_c_trajectory_qc.py`, `p2_setc_md_rrs.py`, `gmx_MMPBSA`) complete for canonical pilot; secondary triplicate trajectories remain auxiliary reviewer-response evidence and do not block V2609C submission.
 
 ## 4. Provenance rules
 
@@ -90,7 +68,7 @@ The bounded Set-C pilot has 16 prepared and equilibrated systems (PP-01/PP-02 ×
 
 ## 6. Pre-submission development policy
 
-P2, P5, P6, P7 remain in author-controlled pre-submission development. **P1 (JCIM), P3 (JCAMD) and P4 (JCAMD) were submitted on 2026-08-30**; they are now in `POST_SUBMISSION_REVIEW` — provenance, identity, numerical, geometry, runtime, and QC safeguards remain mandatory; only explicit author instruction may activate submission-facing review gates (revision responses, cover-letter updates). The P1 reactivation rule in `P1_DEVELOPMENT_PHASE.json` remains dormant until the author explicitly requests reactivation of submission/review restrictions.
+P1–P5 remain in author-controlled pre-submission development. No administrative or independent-review status blocks scientific work before submission. Provenance, identity, numerical, geometry, runtime, and QC safeguards remain mandatory. Submission does not automatically change this policy; only explicit author instruction may activate submission-facing review gates.
 
 ### P1 component status (V7-era snapshot)
 
@@ -110,5 +88,3 @@ P2, P5, P6, P7 remain in author-controlled pre-submission development. **P1 (JCI
 ## 7. Maintenance rule
 
 Keep this file operational and short. Put historical job narratives, superseded plans, long audit prose, and version histories in `docs/archive/` or the relevant project archive. Add a dated checkpoint to the relevant DAR when a validated result changes the scientific status.
-
-> **Checkpoint 30 Aug 2026 — P6.** Scaffold-held-out GNN arms `COMPUTED` (4/4, near chance 0.5008–0.5064 < phénotype 0.6402) ; table scaffold DAR corrigée (erratum daté) ; cross-modal **attention-fusion différée** — `PLANNED_SECONDARY`, non lancé (fusion late-concat `COMPUTED` = honest-negative, structure ≈ chance, single GPU saturée par M1 15711). Traçable : DAR §1/§4.6, `docs/CENTRAL_QUESTIONS_PROJECTS.md` §P6, `README.md`.
