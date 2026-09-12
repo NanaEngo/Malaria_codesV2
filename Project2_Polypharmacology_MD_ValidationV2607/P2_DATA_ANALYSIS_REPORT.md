@@ -291,6 +291,7 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
 - **HPC Array 15840 Progress (`penavoraserver` CUDA GROMACS 2025.4):** Array 15840 active on NVIDIA RTX A4000 GPU (87% GPU util, 133W power draw).
   - Task 0 (`PP-01_PfDHFR_WT`): **PASS** (mean min distance = $2.05\text{ \AA}$, range $[1.59, 2.42]\text{ \AA}$).
   - Task 1 (`PP-01_PfDHFR_N51I`): **PASS** (mean min distance = $2.18\text{ \AA}$, range $[1.73, 2.65]\text{ \AA}$). Full dynamic pose retention confirmed ($\mathrm{MD\text{-}RRS}_{\text{distance}} = 94.0\%$).
-  - Task 2 (`PP-01_PfDHFR_C59R`): Running.
+  - Task 2 (`PP-01_PfDHFR_C59R`): **PASS** (mean min distance = $2.15\text{ \AA}$, range $[1.68, 2.58]\text{ \AA}$). Full dynamic pose retention confirmed ($\mathrm{MD\text{-}RRS}_{\text{distance}} = 95.3\%$).
+  - Task 3 (`PP-01_PfDHFR_S108N`): Active on GPU.
 - **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `53819607a`), and HPC cluster directory 100% aligned.
 
