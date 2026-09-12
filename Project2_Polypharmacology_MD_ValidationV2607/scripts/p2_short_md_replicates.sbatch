@@ -128,5 +128,5 @@ if [[ "${P2_SHORT_MD_WITNESS_ONLY:-0}" == "1" ]]; then
   printf '%s\n' "status=WITNESS_GROMPP_PASS" "md_rrs_status=NOT_COMPUTED" >> launch_context.txt
   exit 0
 fi
-gmx_mpi mdrun -deffnm short -ntomp 8 -nb gpu -pme gpu -bonded cpu -update cpu
+gmx_mpi mdrun -deffnm short -ntomp 8 -pin on -nb gpu -pme gpu -bonded gpu -update gpu
 printf '%s\n' "status=COMPLETED_REQUIRES_TRAJECTORY_QC" "md_rrs_status=NOT_COMPUTED" >> launch_context.txt
