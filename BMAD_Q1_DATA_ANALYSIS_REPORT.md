@@ -9,7 +9,7 @@
 | Project | Current status | Submission-relevant conclusion |
 |---|---|---|
 | **P1** | V7 is the canonical submission-oriented workspace (JCIM); package `submission_ACS_P1V7/` refreshed | Chemical-space novelty (65,856 mols), target-wise docking, DEKOIS 2.0 validation (AUC=0.45), MMV enrichment, and RRS/polypharmacology are reportable within stated boundaries |
-| **P2** | V2609C is the canonical submission-oriented workspace (JCIM); package `submission_ACS_P2V2609C/` refreshed | *Estimand Divergence* framing (87.5%), denominator-unbiased RRS, 39-ligand GNINA CNN validation, African NP chemical space ($Fsp^3=0.22$, $QED=0.70$), and live HPC triplicate daemon active |
+| **P2** | V2609C canonical (JCIM submission-ready); package `submission_ACS_P2V2609C/` refreshed | *Estimand Divergence* framing (87.5%), denominator-unbiased RRS, 39-ligand GNINA CNN validation, African NP space ($Fsp^3=0.22$, $QED=0.70$), 3-layer audit completed (Title 12 words, Zenodo DOI 10.5281/zenodo.19608875), and CUDA GROMACS Array 15840 active |
 | **P3** | Canonical classical, hybrid, QKS, TNE/TDA, and external-validation analyses complete | Quantum-inspired descriptors are complementary; no quantum advantage over RBF or ECFP4 is claimed; JCAMD manuscript ready |
 
 ## 2. P1 — chemical space, docking, and RRS/polypharmacology

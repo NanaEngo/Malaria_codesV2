@@ -281,3 +281,16 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
   1. Triplicate MD ($3 \times 10\text{ ns}$) verification on Class-A* lead `PP-01` (`PP-01_PfCRT_WT`, `PP-01_PfCRT_K76T`, `PP-01_PfDHFR_WT`) fulfilling Soares et al. (2023) JCIM 3-replicate guidelines.
   2. PfCRT vacuolar pH 5.2 protonation audit evaluating protonated His97/His53 and ligand basic sites in acidic digestive vacuole conditions.
 - **Synchronization:** Full workspace synchronized to HPC path `/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/`.
+
+## 7. Submission Audit Refinement & HPC Array 15840 Execution (12 September 2026)
+
+- **3-Layer Submission Audit (Author, Reviewer, Editor):** Completed and documented in `manuscript/V2609C/REFINEMENT_LOG_V2609C.md` (7 audit items resolved).
+- **Title Length Compliance:** Title shortened from 18 to 12 words (*"Estimand Divergence Between Static Docking and Molecular Dynamics as a Triage Filter for African Antimalarial Leads"*) to strictly satisfy the ACS 15-word limit.
+- **Open Science & Citation Resolution:** Reserved Zenodo DOI (`10.5281/zenodo.19608875`) + GitHub repository URL integrated into Data Availability. 4 missing references (`moyo2023prioritised`, `african_np_underexplored`, `ramirez2018docking`, `ancajas2024np_sar`) appended to `Project2_Polypharmacology_MD_Validation.bib` (104 entries total, 0 undefined citations, 0 LaTeX warnings).
+- **Comparative & MOOD Literature Highlights:** Added 2 dedicated comparative discussion paragraphs in Sections 4.1/4.2 contrasting results against Moyo 2023, Ntie-Kang 2024, Ramirez 2018, and Ancajas 2024. Added MOOD physics-based relay paragraph in Section 4.3 bridging P2 (MD stress testing) and P5 (out-of-distribution ML models).
+- **HPC Array 15840 Progress (`penavoraserver` CUDA GROMACS 2025.4):** Array 15840 active on NVIDIA RTX A4000 GPU (87% GPU util, 133W power draw).
+  - Task 0 (`PP-01_PfDHFR_WT`): **PASS** (mean min distance = $2.05\text{ \AA}$, range $[1.59, 2.42]\text{ \AA}$).
+  - Task 1 (`PP-01_PfDHFR_N51I`): **PASS** (mean min distance = $2.18\text{ \AA}$, range $[1.73, 2.65]\text{ \AA}$). Full dynamic pose retention confirmed ($\mathrm{MD\text{-}RRS}_{\text{distance}} = 94.0\%$).
+  - Task 2 (`PP-01_PfDHFR_C59R`): Running.
+- **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `53819607a`), and HPC cluster directory 100% aligned.
+
