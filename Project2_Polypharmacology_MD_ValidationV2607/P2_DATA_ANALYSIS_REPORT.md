@@ -288,10 +288,18 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
 - **Title Length Compliance:** Title shortened from 18 to 12 words (*"Estimand Divergence Between Static Docking and Molecular Dynamics as a Triage Filter for African Antimalarial Leads"*) to strictly satisfy the ACS 15-word limit.
 - **Open Science & Citation Resolution:** Reserved Zenodo DOI (`10.5281/zenodo.19608875`) + GitHub repository URL integrated into Data Availability. 4 missing references (`moyo2023prioritised`, `african_np_underexplored`, `ramirez2018docking`, `ancajas2024np_sar`) appended to `Project2_Polypharmacology_MD_Validation.bib` (104 entries total, 0 undefined citations, 0 LaTeX warnings).
 - **Comparative & MOOD Literature Highlights:** Added 2 dedicated comparative discussion paragraphs in Sections 4.1/4.2 contrasting results against Moyo 2023, Ntie-Kang 2024, Ramirez 2018, and Ancajas 2024. Added MOOD physics-based relay paragraph in Section 4.3 bridging P2 (MD stress testing) and P5 (out-of-distribution ML models).
+- **Complete Biophysical Audit for Class A* Lead PP-01 (8/8 Systems PASS):**
+  - `PP-01_PfDHFR_WT`: Mean min dist = $2.05\text{ \AA}$, MM-GBSA $\Delta G = -25.29 \pm 2.94\text{ kcal/mol}$.
+  - `PP-01_PfDHFR_N51I`: Mean min dist = $2.18\text{ \AA}$ ($\mathrm{MD\text{-}RRS}_d = 94.0\%$), MM-GBSA $\Delta G = -29.83 \pm 1.50\text{ kcal/mol}$ ($\mathrm{MMG\text{-}RRS} = 118.0\%$).
+  - `PP-01_PfDHFR_C59R`: Mean min dist = $2.15\text{ \AA}$ ($\mathrm{MD\text{-}RRS}_d = 95.3\%$), MM-GBSA $\Delta G = -26.56 \pm 1.91\text{ kcal/mol}$ ($\mathrm{MMG\text{-}RRS} = 105.0\%$).
+  - `PP-01_PfDHFR_S108N`: Mean min dist = $2.12\text{ \AA}$, MM-GBSA $\Delta G = -30.21 \pm 3.62\text{ kcal/mol}$ ($\mathrm{MMG\text{-}RRS} = 119.5\%$).
+  - `PP-01_PfDHFR_I164L`: Mean min dist = $2.24\text{ \AA}$, MM-GBSA $\Delta G = -26.13 \pm 2.34\text{ kcal/mol}$ ($\mathrm{MMG\text{-}RRS} = 103.3\%$).
+  - `PP-01_PfCRT_WT`: Mean min dist = $2.94\text{ \AA}$, MM-GBSA $\Delta G = -30.61 \pm 1.65\text{ kcal/mol}$ ($R2 = -28.60 \pm 0.43\text{ kcal/mol}$, noise floor $2.01\text{ kcal/mol}$).
+  - `PP-01_PfCRT_K76T`: Mean min dist = $3.02\text{ \AA}$, MM-GBSA $\Delta G = -29.51 \pm 2.65\text{ kcal/mol}$ ($\mathrm{MMG\text{-}RRS} = 96.4\%$).
+  - `PP-01_PfCRT_K76A`: Mean min dist = $2.91\text{ \AA}$, MM-GBSA $\Delta G = -35.29 \pm 1.17\text{ kcal/mol}$ ($\mathrm{MMG\text{-}RRS} = 115.3\%$).
+  - **Conclusion:** 100% pose retention across all 8 systems ($< 3.10\text{ \AA}$), confirming PP-01 as a resilient Class A* polypharmacological lead.
 - **HPC Array 15840 Progress (`penavoraserver` CUDA GROMACS 2025.4):** Array 15840 active on NVIDIA RTX A4000 GPU (87% GPU util, 133W power draw).
-  - Task 0 (`PP-01_PfDHFR_WT`): **PASS** (mean min distance = $2.05\text{ \AA}$, range $[1.59, 2.42]\text{ \AA}$).
-  - Task 1 (`PP-01_PfDHFR_N51I`): **PASS** (mean min distance = $2.18\text{ \AA}$, range $[1.73, 2.65]\text{ \AA}$). Full dynamic pose retention confirmed ($\mathrm{MD\text{-}RRS}_{\text{distance}} = 94.0\%$).
-  - Task 2 (`PP-01_PfDHFR_C59R`): **PASS** (mean min distance = $2.15\text{ \AA}$, range $[1.68, 2.58]\text{ \AA}$). Full dynamic pose retention confirmed ($\mathrm{MD\text{-}RRS}_{\text{distance}} = 95.3\%$).
-  - Task 3 (`PP-01_PfDHFR_S108N`): Active on GPU.
-- **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `53819607a`), and HPC cluster directory 100% aligned.
+  - Tasks 0–7 (PP-01 all WT/mutants): **PASS** (100% pose retention).
+  - Task 8 (`PP-02_PfDHFR_WT`): Active on GPU.
+- **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `70aa0e33d`), and HPC cluster directory 100% aligned.
 
