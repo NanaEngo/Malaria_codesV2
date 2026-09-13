@@ -1,73 +1,214 @@
-# P5 ZENODO DEPOSIT MANIFEST (GNN/Transformer Drug Discovery) - NOT PROOF OF PUBLICATION
-# Reserved DOI: 10.5281/zenodo.19608875 (shared programme DOI) - upload pending
-# Generated: 2026-08-08 | files: 67 | total bytes: 289,597,960
-# Status: reserved DOI; upload pending; reviewer-accessible code/data in GitHub
+# P5 ZENODO DEPOSIT MANIFEST (V2609) — NOT PROOF OF PUBLICATION
+# Reserved DOI : 10.5281/zenodo.19608875 (shared programme DOI) — upload pending
+# Generated    : 2026-09-13
+# Files        : 180  |  Total bytes: 65,045,526 (62.0 MB)
+# Status       : reserved DOI; upload pending; reviewer-accessible code/data in GitHub
+# Manuscript   : V2609 (canonical; supersedes V2608)
 # ============================================================
 
-     8,501  Project5_GNN_Transformer_DrugDiscovery/P5_ADVERSARIAL_AUDIT_MITIGATION.md
-     4,901  Project5_GNN_Transformer_DrugDiscovery/P5_PRESUBMISSION_AUDIT_20260808.md
-     5,350  Project5_GNN_Transformer_DrugDiscovery/README.md
-     8,541  Project5_GNN_Transformer_DrugDiscovery/manuscript/Bibliography_P5.bib
-    80,988  Project5_GNN_Transformer_DrugDiscovery/manuscript/Cover_Letter_P5_JoC.pdf
-     3,950  Project5_GNN_Transformer_DrugDiscovery/manuscript/Cover_Letter_P5_JoC.tex
-   743,405  Project5_GNN_Transformer_DrugDiscovery/manuscript/P5_manuscript_V2608.pdf
-    30,651  Project5_GNN_Transformer_DrugDiscovery/manuscript/P5_manuscript_V2608.tex
-       522  Project5_GNN_Transformer_DrugDiscovery/requirements.txt
-   151,238  Project5_GNN_Transformer_DrugDiscovery/results/figures/p5_auc_benchmark.png
-   216,121  Project5_GNN_Transformer_DrugDiscovery/results/figures/p5_learning_curves.png
-   151,839  Project5_GNN_Transformer_DrugDiscovery/results/figures/p5_salience.png
-    33,279  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TFP_random_ckpt.json
-    21,373  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TFP_random_results.csv
-     2,639  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TFP_random_salience.json
-     4,217  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TFP_scaffold_ckpt.json
-    30,489  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TFP_scaffold_curves.json
-     1,031  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TFP_scaffold_results.csv
-     2,632  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TFP_scaffold_salience.json
-    25,321  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TNE_random_ckpt.json
-    15,695  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TNE_random_results.csv
-     6,504  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TNE_random_salience.json
-     4,213  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TNE_scaffold_ckpt.json
-    26,676  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TNE_scaffold_curves.json
-     1,027  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TNE_scaffold_results.csv
-     6,501  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN-TNE_scaffold_salience.json
-     4,065  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN_random_ckpt.json
-    33,383  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN_random_curves.json
-       879  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN_random_results.csv
-     4,113  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN_scaffold_ckpt.json
-    33,323  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN_scaffold_curves.json
-       927  Project5_GNN_Transformer_DrugDiscovery/results/p5_GIN_scaffold_results.csv
-58,523,145  Project5_GNN_Transformer_DrugDiscovery/results/p5_canonical_panel.csv
-    11,390  Project5_GNN_Transformer_DrugDiscovery/results/p5_chemberta_random_ckpt.json
-     5,780  Project5_GNN_Transformer_DrugDiscovery/results/p5_chemberta_random_results.csv
-     4,262  Project5_GNN_Transformer_DrugDiscovery/results/p5_chemberta_scaffold_ckpt.json
-     8,144  Project5_GNN_Transformer_DrugDiscovery/results/p5_chemberta_scaffold_curves.json
-     1,076  Project5_GNN_Transformer_DrugDiscovery/results/p5_chemberta_scaffold_results.csv
-       377  Project5_GNN_Transformer_DrugDiscovery/results/p5_ecfp4rf_random_baseline.json
-       378  Project5_GNN_Transformer_DrugDiscovery/results/p5_ecfp4rf_scaffold_baseline.json
-226,335,419  Project5_GNN_Transformer_DrugDiscovery/results/p5_graphs.pt
-       442  Project5_GNN_Transformer_DrugDiscovery/results/p5_splits_info.json
-   296,878  Project5_GNN_Transformer_DrugDiscovery/results/p5_splits_random_5fold_seed0.npy
-   296,878  Project5_GNN_Transformer_DrugDiscovery/results/p5_splits_random_5fold_seed1.npy
-   296,878  Project5_GNN_Transformer_DrugDiscovery/results/p5_splits_random_5fold_seed2.npy
-   296,878  Project5_GNN_Transformer_DrugDiscovery/results/p5_splits_random_5fold_seed3.npy
-   296,878  Project5_GNN_Transformer_DrugDiscovery/results/p5_splits_random_5fold_seed4.npy
-   296,880  Project5_GNN_Transformer_DrugDiscovery/results/p5_splits_scaffold_5fold_seed0.npy
-   296,880  Project5_GNN_Transformer_DrugDiscovery/results/p5_splits_scaffold_5fold_seed1.npy
-   296,882  Project5_GNN_Transformer_DrugDiscovery/results/p5_splits_scaffold_5fold_seed2.npy
-   296,882  Project5_GNN_Transformer_DrugDiscovery/results/p5_splits_scaffold_5fold_seed3.npy
-   296,882  Project5_GNN_Transformer_DrugDiscovery/results/p5_splits_scaffold_5fold_seed4.npy
-    16,032  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_benchmark.py
-     1,588  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_benchmark.sbatch
-     9,321  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_chemberta.py
-       826  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_chemberta.sbatch
-     7,368  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_data.py
-       510  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_ecfp4rf.sbatch
-     9,443  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_ensemble.py
-     3,257  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_export_panel.py
-     4,188  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_figure.py
-     3,840  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_learning_curves.py
-     4,491  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_make_splits.py
-     5,762  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_models.py
-     1,936  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_run_all.sbatch
-     2,128  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_salience_figure.py
-     3,767  Project5_GNN_Transformer_DrugDiscovery/scripts/p5_sanity_ecfp4_rf.py
+# --- MANUSCRIPT PACKAGE (manuscript/V2609/) ---
+    955310  manuscript/V2609/Project5_GNN_Transformer_Antimalarial_main_V2609.pdf
+     38155  manuscript/V2609/Project5_GNN_Transformer_Antimalarial_main_V2609.tex
+    286418  manuscript/V2609/Project5_GNN_Transformer_Antimalarial_SM_V2609.pdf
+     11507  manuscript/V2609/Project5_GNN_Transformer_Antimalarial_SM_V2609.tex
+     16268  manuscript/V2609/Project5_GNN_Transformer_Antimalarial_V2609.bib
+    101002  manuscript/V2609/Cover_Letter_P5_JCAMD.pdf
+      4167  manuscript/V2609/Cover_Letter_P5_JCAMD.tex
+
+# --- CANONICAL PANEL & SPLITS (results/canonical_panel/) ---
+  58523145  results/canonical_panel/p5_canonical_panel.csv
+       496  results/canonical_panel/p5_splits_info.json
+
+# --- EXTERNAL TRANSFER PANEL — ChEMBL (results/public_chembl/) ---
+   1465866  results/public_chembl/p5_public_chembl_malaria_disjoint.csv
+   1496025  results/public_chembl/p5_public_chembl_malaria.csv
+      1441  results/public_chembl/p5_public_malaria_report.json
+       920  results/public_chembl/p5_public_chembl_malaria_provenance.json
+
+# --- PUBLICATION FIGURES (results/figures/) ---
+    164727  results/figures/p5_auc_benchmark.png
+    283806  results/figures/p5_learning_curves.png
+    151839  results/figures/p5_salience.png
+
+# --- NN-TANIMOTO DECILE ANALYSIS (results/nn_tanimoto_deciles_20260829/) ---
+      8471  results/nn_tanimoto_deciles_20260829/per_decile_means_all.csv
+     13770  results/nn_tanimoto_deciles_20260829/decile_summary_scaffold.json
+     11057  results/nn_tanimoto_deciles_20260829/decile_summary_random.json
+      1084  results/nn_tanimoto_deciles_20260829/decile_auc_scaffold_ChemBERTa.csv
+      1075  results/nn_tanimoto_deciles_20260829/decile_auc_scaffold_ECFP4_RF.csv
+      1023  results/nn_tanimoto_deciles_20260829/decile_auc_scaffold_GIN.csv
+      1061  results/nn_tanimoto_deciles_20260829/decile_auc_scaffold_GIN_TFP.csv
+      1060  results/nn_tanimoto_deciles_20260829/decile_auc_scaffold_GIN_TNE.csv
+       878  results/nn_tanimoto_deciles_20260829/decile_auc_random_ChemBERTa.csv
+       866  results/nn_tanimoto_deciles_20260829/decile_auc_random_ECFP4_RF.csv
+       827  results/nn_tanimoto_deciles_20260829/decile_auc_random_GIN.csv
+       856  results/nn_tanimoto_deciles_20260829/decile_auc_random_GIN_TFP.csv
+       857  results/nn_tanimoto_deciles_20260829/decile_auc_random_GIN_TNE.csv
+     14987  results/nn_tanimoto_deciles_20260829/audit.json
+
+# --- CALIBRATION (results/calibration_20260827/) ---
+      3095  results/calibration_20260827/calibration_summary.csv
+    421759  results/calibration_20260827/calibration_by_rrs_class.csv
+      7684  results/calibration_20260827/polypharma_subset_auc.csv
+       673  results/calibration_20260827/polypharma_available_reconstructed_AUC.csv
+      1834  results/calibration_20260827/polypharma_available_reconstructed_AUC.csv.manifest.json
+      7011  results/calibration_20260827/summary.json
+       192  results/calibration_20260827/reliability_canonical_random_ChemBERTa.json
+       195  results/calibration_20260827/reliability_canonical_random_GIN-TFP_native.json
+       199  results/calibration_20260827/reliability_canonical_random_GIN-TFP_permuted.json
+       196  results/calibration_20260827/reliability_canonical_random_GIN-TNE_native.json
+       198  results/calibration_20260827/reliability_canonical_random_GIN-TNE_permuted.json
+       191  results/calibration_20260827/reliability_canonical_random_GIN_native.json
+       193  results/calibration_20260827/reliability_canonical_scaffold_ChemBERTa.json
+       196  results/calibration_20260827/reliability_canonical_scaffold_GIN-TFP_native.json
+       198  results/calibration_20260827/reliability_canonical_scaffold_GIN-TFP_permuted.json
+       197  results/calibration_20260827/reliability_canonical_scaffold_GIN-TNE_native.json
+       200  results/calibration_20260827/reliability_canonical_scaffold_GIN-TNE_permuted.json
+       194  results/calibration_20260827/reliability_canonical_scaffold_GIN_native.json
+       185  results/calibration_20260827/reliability_novel_101_ChemBERTa.json
+       189  results/calibration_20260827/reliability_novel_101_GIN-TFP_native.json
+       190  results/calibration_20260827/reliability_novel_101_GIN-TFP_permuted.json
+       188  results/calibration_20260827/reliability_novel_101_GIN-TNE_native.json
+       190  results/calibration_20260827/reliability_novel_101_GIN-TNE_permuted.json
+       185  results/calibration_20260827/reliability_novel_101_GIN_native.json
+       185  results/calibration_20260827/reliability_novel_202_ChemBERTa.json
+       188  results/calibration_20260827/reliability_novel_202_GIN-TFP_native.json
+       191  results/calibration_20260827/reliability_novel_202_GIN-TFP_permuted.json
+       188  results/calibration_20260827/reliability_novel_202_GIN-TNE_native.json
+       191  results/calibration_20260827/reliability_novel_202_GIN-TNE_permuted.json
+       184  results/calibration_20260827/reliability_novel_202_GIN_native.json
+       183  results/calibration_20260827/reliability_novel_303_ChemBERTa.json
+       188  results/calibration_20260827/reliability_novel_303_GIN-TFP_native.json
+       190  results/calibration_20260827/reliability_novel_303_GIN-TFP_permuted.json
+       189  results/calibration_20260827/reliability_novel_303_GIN-TNE_native.json
+       189  results/calibration_20260827/reliability_novel_303_GIN-TNE_permuted.json
+       184  results/calibration_20260827/reliability_novel_303_GIN_native.json
+
+# --- BUTINA CLUSTERING (results/butina_cluster_20260829/) ---
+       510  results/butina_cluster_20260829/butina_partition_comparison.csv
+      5260  results/butina_cluster_20260829/butina_summary.json
+     72489  results/butina_cluster_20260829/butina_partition_comparison.png
+       653  results/butina_cluster_20260829/Table_Butina_Partition_Comparison.tex
+        83  results/butina_cluster_20260829/butina_cluster_sizes_seed0.csv
+        83  results/butina_cluster_20260829/butina_cluster_sizes_seed1.csv
+        83  results/butina_cluster_20260829/butina_cluster_sizes_seed2.csv
+        83  results/butina_cluster_20260829/butina_cluster_sizes_seed3.csv
+        83  results/butina_cluster_20260829/butina_cluster_sizes_seed4.csv
+       726  results/butina_cluster_20260829/audit.json
+
+# --- REPLICATION RECORDS (results/replication_records/) ---
+      1183  results/replication_records/p5_replication_stats.csv
+      1986  results/replication_records/p5_replication_stats.json
+       538  results/replication_records/p5_replication_verification.json
+      1988  results/replication_records/p5_GIN_replication_verification.json
+      3935  results/replication_records/p5_paired_bootstrap_ci_20260828.json
+      2888  results/replication_records/rp5_summary.json
+     77204  results/replication_records/scientific_audit_20260825.json
+       377  results/replication_records/p5_ecfp4rf_random_baseline.json
+       378  results/replication_records/p5_ecfp4rf_scaffold_baseline.json
+     33279  results/replication_records/p5_GIN-TFP_random_ckpt.json
+     21373  results/replication_records/p5_GIN-TFP_random_results.csv
+      2639  results/replication_records/p5_GIN-TFP_random_salience.json
+      4217  results/replication_records/p5_GIN-TFP_scaffold_ckpt.json
+     30489  results/replication_records/p5_GIN-TFP_scaffold_curves.json
+      1031  results/replication_records/p5_GIN-TFP_scaffold_results.csv
+      2632  results/replication_records/p5_GIN-TFP_scaffold_salience.json
+     25321  results/replication_records/p5_GIN-TNE_random_ckpt.json
+     15695  results/replication_records/p5_GIN-TNE_random_results.csv
+      6504  results/replication_records/p5_GIN-TNE_random_salience.json
+      4213  results/replication_records/p5_GIN-TNE_scaffold_ckpt.json
+     26676  results/replication_records/p5_GIN-TNE_scaffold_curves.json
+      1027  results/replication_records/p5_GIN-TNE_scaffold_results.csv
+      6501  results/replication_records/p5_GIN-TNE_scaffold_salience.json
+      4065  results/replication_records/p5_GIN_random_ckpt.json
+     34756  results/replication_records/p5_GIN_random_ckpt_replic.json
+     33383  results/replication_records/p5_GIN_random_curves.json
+       879  results/replication_records/p5_GIN_random_results.csv
+     22394  results/replication_records/p5_GIN_random_results_replic.csv
+      4113  results/replication_records/p5_GIN_scaffold_ckpt.json
+     35156  results/replication_records/p5_GIN_scaffold_ckpt_replic.json
+     37076  results/replication_records/p5_GIN_scaffold_ckpt_sens_h256_d01.json
+     39278  results/replication_records/p5_GIN_scaffold_ckpt_sens_h64_d02.json
+     33323  results/replication_records/p5_GIN_scaffold_curves.json
+       927  results/replication_records/p5_GIN_scaffold_results.csv
+     22690  results/replication_records/p5_GIN_scaffold_results_replic.csv
+     23500  results/replication_records/p5_GIN_scaffold_results_sens_h256_d01.csv
+     25078  results/replication_records/p5_GIN_scaffold_results_sens_h64_d02.csv
+     11390  results/replication_records/p5_chemberta_random_ckpt.json
+      3431  results/replication_records/p5_chemberta_random_ckpt_metrics.json
+      5780  results/replication_records/p5_chemberta_random_results.csv
+      4262  results/replication_records/p5_chemberta_scaffold_ckpt.json
+     14125  results/replication_records/p5_chemberta_scaffold_ckpt_metrics.json
+      8144  results/replication_records/p5_chemberta_scaffold_curves.json
+      1076  results/replication_records/p5_chemberta_scaffold_results.csv
+      7181  results/replication_records/p5_chemberta_scaffold_results_metrics.csv
+
+# --- BENCHMARK SCRIPTS (scripts/benchmarks/) ---
+     17470  scripts/benchmarks/p5_benchmark.py
+     13750  scripts/benchmarks/p5_chemberta.py
+      7566  scripts/benchmarks/p5_data.py
+      4953  scripts/benchmarks/p5_make_splits.py
+      5762  scripts/benchmarks/p5_models.py
+      9443  scripts/benchmarks/p5_ensemble.py
+      5177  scripts/benchmarks/p5_knn_ecfp4.py
+      4746  scripts/benchmarks/p5_logistic_ecfp4.py
+      6178  scripts/benchmarks/p5_ecfp4rf_scaffold_preds.py
+      3767  scripts/benchmarks/p5_sanity_ecfp4_rf.py
+      7091  scripts/benchmarks/p5_train_for_attribution.py
+      4967  scripts/benchmarks/p5_verify_gin_replication.py
+
+# --- ANALYSIS SCRIPTS (scripts/analysis/) ---
+     19905  scripts/analysis/p5_nn_tanimoto_deciles.py
+     13691  scripts/analysis/p5_public_benchmark.py
+     21483  scripts/analysis/p5_butina_cluster.py
+      5338  scripts/analysis/p5_calibration_posthoc.py
+      9284  scripts/analysis/p5_interpretability.py
+      4591  scripts/analysis/p5_figure.py
+      2128  scripts/analysis/p5_salience_figure.py
+      4589  scripts/analysis/p5_learning_curves.py
+     10819  scripts/analysis/generate_publication_figures.py
+      9432  scripts/analysis/p5_extended_analysis.py
+     21389  scripts/analysis/p5_extended_campaign.py
+     10469  scripts/analysis/p5_extended_chemberta.py
+      7778  scripts/analysis/p5_lish_moa_benchmark.py
+      8558  scripts/analysis/p5_lish_moa_prepare.py
+      2904  scripts/analysis/p5_lish_moa_compare.py
+      5916  scripts/analysis/p5_public_malaria_chembl.py
+      4169  scripts/analysis/p5_replicate_stats.py
+      3801  scripts/analysis/p5_replication_verification.py
+      8029  scripts/analysis/p5_scientific_audit.py
+      1712  scripts/analysis/p5_paired_ci_audit.py
+      4518  scripts/analysis/p5_polypharma_available_reconstruct.py
+      3257  scripts/analysis/p5_export_panel.py
+      2012  scripts/analysis/p5_check_malaria_datasets.py
+      6993  scripts/analysis/p5_butina_analysis.py
+      1475  scripts/analysis/p5_butina_merge_summary.py
+      2431  scripts/analysis/p5_butina_rebuild_summary.py
+      5386  scripts/analysis/build_zenodo_package.py
+      3808  scripts/analysis/p5_zenodo_finalize.sh
+
+# --- HPC SLURM LAUNCHERS (scripts/hpc_sbatch/) ---
+      1936  scripts/hpc_sbatch/p5_run_all.sbatch
+      1588  scripts/hpc_sbatch/p5_benchmark.sbatch
+      1912  scripts/hpc_sbatch/p5_extended_train.sbatch
+      1270  scripts/hpc_sbatch/p5_sensitivity_gnn.sbatch
+      1233  scripts/hpc_sbatch/p5_public_benchmark.sbatch
+       943  scripts/hpc_sbatch/p5_gin_replication.sbatch
+       927  scripts/hpc_sbatch/p5_gin_scaffold_replication.sbatch
+       956  scripts/hpc_sbatch/p5_extended_chemberta.sbatch
+       845  scripts/hpc_sbatch/p5_lish_moa_benchmark.sbatch
+       840  scripts/hpc_sbatch/p5_butina_chemberta.sbatch
+       826  scripts/hpc_sbatch/p5_chemberta.sbatch
+       800  scripts/hpc_sbatch/p5_butina_cluster.sbatch
+       733  scripts/hpc_sbatch/p5_extended_thresholds.sbatch
+       601  scripts/hpc_sbatch/p5_gnn_metrics.sbatch
+       559  scripts/hpc_sbatch/p5_public_chembl_build.sbatch
+       526  scripts/hpc_sbatch/p5_nn_tanimoto_deciles.sbatch
+       510  scripts/hpc_sbatch/p5_ecfp4rf.sbatch
+       459  scripts/hpc_sbatch/p5_knn_ecfp4.sbatch
+       447  scripts/hpc_sbatch/p5_replication.sbatch
+
+# --- OPEN RELEASE ITEMS ---
+# 1. Zenodo upload: files above must be packaged and uploaded to DOI 10.5281/zenodo.19608875
+# 2. Author metadata review: ORCID, affiliation, and contribution statement final check
+# 3. GitHub tagged release: create tag v2609 pointing to current HEAD

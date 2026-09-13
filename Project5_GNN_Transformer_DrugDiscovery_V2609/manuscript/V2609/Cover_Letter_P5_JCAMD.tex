@@ -1,0 +1,61 @@
+% ============================================================================
+% Cover Letter — Paper 5 (JCAMD / Springer)
+% Target: Journal of Computer-Aided Molecular Design (JCAMD)
+% ============================================================================
+\documentclass[11pt,a4paper]{letter}
+
+\usepackage[top=1.3cm,bottom=1.3cm,left=1.6cm,right=1.6cm]{geometry}
+\setlength{\parskip}{0.18em}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{siunitx}
+\sisetup{
+  detect-all           = true,
+  group-minimum-digits = 4,
+}
+
+\signature{Myke Vital Sao Temgoua \\ \small Corresponding Author}
+\address{%
+  University of Yaound\'{e} I \\
+  Department of Physics, Faculty of Science \\
+  P.O. Box 812, Yaound\'{e}, Cameroon \\
+  \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm}
+}
+
+\begin{document}
+
+\begin{letter}{%
+  The Editors \\
+  \textit{Journal of Computer-Aided Molecular Design} \\
+  Springer Nature
+}
+
+\opening{Dear Editors,}
+
+\noindent 13 September 2026
+
+We submit the manuscript entitled \textbf{``Deconstructing Out-of-Distribution Extrapolation in Molecular Deep Learning: Structural Complexity, Topological Rescue, and Conformal Triage on African Antimalarial Natural Product Scaffolds''} for consideration as a Research Article in the \textit{Journal of Computer-Aided Molecular Design}.
+
+Rather than offering another passive benchmark reporting fingerprint dominance, this study delivers a mechanistic explanation for graph neural network extrapolation failures and an actionable decision framework for computational virtual screening under out-of-distribution (OOD) shift. On a frozen panel of \num{19836} African antimalarial natural products and synthetic derivatives, evaluated across \num{25} fold--seed replicates per model, we establish three major contributions:
+
+First, we demonstrate that standard GNN performance drops sharply on stereochemically complex 3D polycyclic scaffolds ($Fsp^3 \ge 0.45$, ring count $\ge 4$, ROC AUC dropping to \num{0.768}), exposing the theoretical 1-WL Weisfeiler--Lehman graph expressivity bottleneck. Fusing persistent-homology topological feature projections (GIN--TFP) injects global structural shape invariants ($H_0, H_1$), recovering up to \qty{36}{\percent} of the extrapolation gap (\num{0.815} ROC AUC, a $+\num{0.047}$ gain over base GIN).
+
+Second, we convert these distance-resolved insights into an actionable Distance-Aware Conformal Triage Filter. By dynamically routing low-similarity candidates ($D_{\text{NN}} < 0.40$) to ECFP4--RF and mid-range candidates to GIN--TFP while monitoring calibration degradation ($\mathrm{ECE} > 0.08$), this triage protocol boosts prospective virtual screening precision by \textbf{+\qty{14.2}{\percent}} on a \num{22267}-molecule disjoint external ChEMBL transfer panel.
+
+Third, we establish a normative benchmark standard by proving that fold-independent weight restoration in molecular sequence transformers is mandatory to prevent artificial cross-fold information leakage during cross-validation.
+
+The work is original, is not under consideration elsewhere, has been approved by all authors, and the authors declare no competing financial interests.
+
+\vspace{0.4em}
+\noindent\textbf{Suggested International Reviewers:}
+\begin{enumerate}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
+    \item \textbf{Prof. Kelin Xia} (Nanyang Technological University, Singapore) --- Expert in topological deep learning, persistent homology, and molecular graph representations. Email: \texttt{xiakelin@ntu.edu.sg}
+    \item \textbf{Prof. Fidele Ntie-Kang} (University of Buea, Cameroon / Martin Luther University Halle-Wittenberg, Germany) --- Lead architect of the African Natural Products Database (ANPDB) and expert in natural product cheminformatics. Email: \texttt{fidele.ntie-kang@uni-halle.de}
+    \item \textbf{Prof. Carsten Eickhoff} (University of T\"ubingen, Germany) --- Expert in molecular representation benchmarking and out-of-distribution generalisation. Email: \texttt{c.eickhoff@uni-tuebingen.de}
+\end{enumerate}
+
+\vspace{0.3em}
+\closing{We thank you for your consideration.}
+
+\end{letter}
+\end{document}
