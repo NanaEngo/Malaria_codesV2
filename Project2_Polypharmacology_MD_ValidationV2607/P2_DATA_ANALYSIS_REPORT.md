@@ -299,7 +299,9 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
   - `PP-01_PfCRT_K76A`: Mean min dist = $2.91\text{ \AA}$, MM-GBSA $\Delta G = -35.29 \pm 1.17\text{ kcal/mol}$ ($\mathrm{MMG\text{-}RRS} = 115.3\%$).
   - **Conclusion:** 100% pose retention across all 8 systems ($< 3.10\text{ \AA}$), confirming PP-01 as a resilient Class A* polypharmacological lead.
 - **HPC Array 15840 Progress (`penavoraserver` CUDA GROMACS 2025.4):** Array 15840 active on NVIDIA RTX A4000 GPU (87% GPU util, 133W power draw).
-  - Tasks 0–7 (PP-01 all WT/mutants): **PASS** (100% pose retention).
-  - Task 8 (`PP-02_PfDHFR_WT`): Active on GPU.
-- **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `70aa0e33d`), and HPC cluster directory 100% aligned.
+  - Tasks 0–7 (PP-01 all WT/mutants): **PASS** (100% pose retention across all 8 systems).
+  - Task 8 (`PP-02_PfDHFR_WT`): **PASS** (mean min heavy-atom distance = $2.52\text{ \AA}$, bound fraction = $1.000$, MM-GBSA $\Delta G = -30.16 \pm 2.06\text{ kcal/mol}$).
+  - Task 9 (`PP-02_PfDHFR_N51I`): **PASS** (mean min heavy-atom distance = $1.82\text{ \AA}$, bound fraction = $1.000$, $85\%$ snapshots $< 2.0\text{ \AA}$, $\mathrm{MD\text{-}RRS}_d = 72.2\%$, MM-GBSA $\Delta G = -34.02 \pm 2.68\text{ kcal/mol}$, $\mathrm{MMG\text{-}RRS} = 112.8\%$).
+  - Task 10 (`PP-02_PfDHFR_C59R`): Active on GPU.
+- **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `9f0956ced`), and HPC cluster directory 100% aligned.
 
