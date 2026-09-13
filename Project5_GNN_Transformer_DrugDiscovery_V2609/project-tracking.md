@@ -1,7 +1,7 @@
 # P5 — Project Tracking Spine (Loop State)
 
 **Created:** 2026-08-19  
-**Last updated:** 2026-08-25 UTC (extended campaign closed)
+**Last updated:** 2026-09-13 UTC (V2609 manifest regenerated; Étapes 1–6 complete)
 **Active loop:** L3 beat 2 closed — all nine MEDIUM adjudicated. Next: L4 audit re-run  
 **Beat counter:** 6 (L0→L1→L2→L3→L4→L3′)  
 **Model in use:** claude-opus-5
@@ -74,7 +74,7 @@ Under scaffold-separated evaluation of 19,836 antimalarial natural products, ECF
 | **L1 EVIDENCE** | ✅ Done | All 10 ledger entries complete with interpretations | Gate 2 PASS: 10/10 interpretations, 0 missing |
 | **L2 DRAFT** | ✅ Done | 19 LED citations inserted, 2 orphans (Methods context) | Gate 4 PASS: All results LED-backed |
 | **L3 REVIEW** | ✅ Beat 1 done | 7 verification passes (0 CRITICAL, 3 HIGH, 9 MEDIUM, 4 LOW) | ACCEPT after MINOR REVISION; 3 HIGH fixes applied |
-| **L4 SUBMIT** | ⏳ Final release checks | Scientific and artifact audits PASS; Zenodo upload and author metadata review remain | Current manifest synchronized 25 August 2026; final package release pending |
+| **L4 SUBMIT** | ⏳ Final release checks | Three-reader audit complete; all 14 findings closed (9 HIGH mitigated, F6 cohort sizes resolved via RDKit stratification 2026-09-13) | Remaining: Zenodo upload, GitHub tag v2609 |
 | **L3′ REVIEW** | ✅ Closed | All 9 MEDIUM findings adjudicated and high-priority fixes verified | No scientific blockers remain |
 
 ---
@@ -113,31 +113,34 @@ Every canonical result is computed and ledgered. The external artifact label, bo
 Project5_GNN_Transformer_DrugDiscovery_V2609/
 ├── project-tracking.md                    ← This file (spine)
 ├── README.md                              ← Project summary
+├── P5_DATA_ANALYSIS_REPORT.md             ← DAR: source of truth for all canonical values
+├── P5_RestrV2609.md                       ← Master strategic plan (4 pillars, V2609)
+├── P5_ZENODO_DEPOSIT_MANIFEST.txt         ← Zenodo deposit inventory (180 files, 62.0 MB)
 ├── requirements.txt                       ← Locked dependencies
 ├── manuscript/
-│   ├── P5_manuscript_V2608.tex           ← Main manuscript (14 pages, compiles clean)
-│   ├── P5_manuscript_V2608.pdf           ← Compiled PDF
-│   ├── Cover_Letter_P5_JCAMD.tex         ← Cover letter
-│   ├── Bibliography_P5.bib               ← References
-│   └── SUBMISSION_MANIFEST.md            ← Submission checklist
+│   ├── V2609/                             ← Canonical manuscript package
+│   │   ├── Project5_GNN_Transformer_Antimalarial_main_V2609.tex  ← Main (38 KB)
+│   │   ├── Project5_GNN_Transformer_Antimalarial_main_V2609.pdf  ← Compiled (955 KB)
+│   │   ├── Project5_GNN_Transformer_Antimalarial_SM_V2609.tex    ← SI (11 KB)
+│   │   ├── Project5_GNN_Transformer_Antimalarial_SM_V2609.pdf    ← SI compiled (286 KB)
+│   │   └── Project5_GNN_Transformer_Antimalarial_V2609.bib       ← References (16 KB)
+│   ├── Cover_Letter_P5_JCAMD.tex
+│   └── Cover_Letter_P5_JCAMD.pdf
 ├── results/
-│   ├── p5_canonical_panel.csv            ← Panel (19,836 molecules)
-│   ├── p5_replication_stats.csv          ← Canonical benchmark stats
-│   ├── p5_replication_verification.json  ← Replication verification
-│   ├── p5_public_chembl_malaria_disjoint.csv  ← External validation (22,267)
-│   ├── p5_public_malaria_report.json     ← External validation results
-│   ├── figures/                          ← All manuscript figures
-│   └── lish_moa/                         ← LISH phenotype-only reference
+│   ├── canonical_panel/                   ← p5_canonical_panel.csv (19,836 molecules)
+│   ├── public_chembl/                     ← External validation (22,267 compounds)
+│   ├── figures/                           ← Publication figures (PNG)
+│   ├── nn_tanimoto_deciles_20260829/      ← HPC decile data (canonical source)
+│   ├── calibration_20260827/              ← ECE/MCE reliability data
+│   ├── butina_cluster_20260829/           ← Butina 0.55 partition data
+│   └── replication_records/              ← 125 model fold-seed checkpoint logs
 ├── scripts/
-│   ├── p5_benchmark.py                   ← Main benchmark runner
-│   ├── p5_data.py                        ← Data loading & featurization
-│   ├── p5_models.py                      ← Model definitions
-│   ├── p5_figure.py                      ← Figure generation
-│   ├── p5_interpretability.py            ← Salience analysis
-│   └── [30+ analysis scripts]
+│   ├── benchmarks/                        ← Training and evaluation pipelines
+│   ├── analysis/                          ← Post-hoc statistical & decile analysis
+│   └── hpc_sbatch/                        ← SLURM cluster launchers
 └── outputs/
     └── analysis/
-        └── analysis-ledger.md            ← 12 entries / 11 slots (LED-007 superseded by -R1)
+        └── analysis-ledger.md             ← 15 LED entries (LED-007 superseded by -R1)
 ```
 
 ---

@@ -24,7 +24,10 @@ EXPECTED="$PROJECT_DIR/results/md_systems/set_c_preparation_20260812_v1"
 # alternative root.
 P2_SETC_ROOT="${P2_SETC_ROOT:-$EXPECTED}"
 [[ "$(realpath -m "$P2_SETC_ROOT")" == "$EXPECTED" ]] || { echo 'FAIL-CLOSED: non-canonical root' >&2; exit 2; }
-command -v gmx_mpi >/dev/null || { echo 'FAIL-CLOSED: gmx_mpi unavailable' >&2; exit 3; }
+set +u
+source /home/nanaengo/miniforge3/bin/activate malaria_md
+set -u
+command -v gmx >/dev/null || { echo 'FAIL-CLOSED: CUDA gmx unavailable in malaria_md environment' >&2; exit 3; }
 
 SYSTEMS=(
   PP-01_PfDHFR_WT PP-01_PfDHFR_N51I PP-01_PfDHFR_C59R PP-01_PfDHFR_S108N PP-01_PfDHFR_I164L
@@ -41,6 +44,10 @@ RUN="$BASE/runs/short_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
 [[ ! -e "$RUN" ]] || { echo "Refusing to reuse $RUN" >&2; exit 5; }
 mkdir -p "$RUN"
 cp "$BASE/topol.top" "$BASE/npt.gro" "$BASE/npt.cpt" "$RUN/"
+cp "$BASE"/*.itp "$RUN/" 2>/dev/null || true
+if [[ -d "$BASE/charmm36-jul2022.ff" ]]; then
+  cp -r "$BASE/charmm36-jul2022.ff" "$RUN/"
+fi
 # Copy all recursively referenced local topology files while preserving their
 # relative paths; fail closed for missing or out-of-tree dependencies.
 python - "$BASE" "$RUN" <<'PY'
@@ -66,7 +73,9 @@ while stack:
             # directory, and record its source through the copied files.
             if name.startswith('./charmm36-jul2022.ff/') or name.startswith('charmm36-jul2022.ff/'):
                 ff_name = name.removeprefix('./')
-                source = Path('/usr/share/gromacs/top') / ff_name
+                source = base / ff_name
+                if not source.is_file():
+                    source = Path('/usr/share/gromacs/top') / ff_name
                 if not source.is_file():
                     raise SystemExit(f'FAIL-CLOSED: standard force-field file unavailable: {source}')
                 destination = run / ff_name
@@ -123,10 +132,10 @@ MDP
 SEED=$((12345 + SLURM_ARRAY_TASK_ID * 1000))
 printf '%s\n' "system=$SYS" "seed=$SEED" "target_ns=2" "status=STARTED_REQUIRES_QC" > "$RUN/launch_context.txt"
 cd "$RUN"
-gmx_mpi grompp -f short.mdp -c npt.gro -r npt.gro -t npt.cpt -p topol.top -o short.tpr
+gmx grompp -f short.mdp -c npt.gro -r npt.gro -t npt.cpt -p topol.top -o short.tpr
 if [[ "${P2_SHORT_MD_WITNESS_ONLY:-0}" == "1" ]]; then
   printf '%s\n' "status=WITNESS_GROMPP_PASS" "md_rrs_status=NOT_COMPUTED" >> launch_context.txt
   exit 0
 fi
-gmx_mpi mdrun -deffnm short -ntomp 8 -pin on -nb gpu -pme gpu -bonded gpu -update gpu
+gmx mdrun -deffnm short -ntomp 8 -pin on -nb gpu -pme gpu -bonded gpu -update gpu
 printf '%s\n' "status=COMPLETED_REQUIRES_TRAJECTORY_QC" "md_rrs_status=NOT_COMPUTED" >> launch_context.txt
