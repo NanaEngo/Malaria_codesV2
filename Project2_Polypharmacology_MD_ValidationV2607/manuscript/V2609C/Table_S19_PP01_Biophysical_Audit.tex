@@ -2,21 +2,21 @@
 \begin{table}[htbp]
 \centering
 \footnotesize
-\caption{Complete 8-system explicit-solvent molecular dynamics ($10\text{ ns}$) and MM-GBSA trajectory audit for the Class-A* pillar lead candidate \textbf{PP-01} across wild-type and resistant mutant states of \textit{Pf}DHFR and \textit{Pf}CRT. All eight systems passed the geometric trajectory-QC contract ($\text{bound fraction} = 1.000$, mean minimum distance $< 3.10\text{ \AA}$). MD distance RRS ($\mathrm{MD\text{-}RRS}_d$) measures local mean minimum heavy-atom distance retention relative to the corresponding wild-type anchor ($> 100\%$ indicates looser binding). MM-GBSA binding free energies ($\Delta G_{\mathrm{MMGBSA}}$) are computed over 100 frames ($\text{mean} \pm \text{SEM}$).}
+\caption{Complete eight-system explicit-solvent molecular dynamics (\qty{10}{\ns}) and MM-GBSA trajectory audit for the Class-A* lead candidate \textbf{PP-01} across wild-type and resistant mutant states of \textit{Pf}DHFR and \textit{Pf}CRT. All eight systems passed the geometric trajectory-QC contract ($\text{bound fraction} = \num{1.000}$, mean minimum heavy-atom distance $< \qty{3.10}{\angstrom}$). MD distance RRS ($\mathrm{MD\text{-}RRS}_d$) measures mean minimum heavy-atom distance retention relative to the corresponding wild-type anchor ($> \qty{100}{\percent}$ indicates looser binding). MM-GBSA binding free energies ($\Delta G_{\mathrm{MMGBSA}}$) are computed over \num{100} snapshots ($\text{mean} \pm \text{SD}_{\text{prop}}$).}
 \label{tab:s19_pp01_biophysical_audit}
 \begin{tabularx}{\textwidth}{@{}l l c S[table-format=-2.2] S[table-format=1.2] S[table-format=3.1] S[table-format=3.1]@{}}
 \toprule
-Target & System State & {Mean Min Dist (\si{\angstrom})} & {$\Delta G_{\mathrm{MMGBSA}}$ (\si{\kcalmol})} & {SEM} & {$\mathrm{MMG\text{-}RRS}$ (\%)} & {$\mathrm{MD\text{-}RRS}_d$ (\%)} \\
+Target & System State & {Mean Min Dist (\si{\angstrom})} & {$\Delta G_{\mathrm{MMGBSA}}$ (\si{\kcalmol})} & {SD$_{\text{prop}}$} & {$\mathrm{MMG\text{-}RRS}$ (\%)} & {$\mathrm{MD\text{-}RRS}_d$ (\%)} \\
 \midrule
-\textit{Pf}DHFR & Wild-Type (WT) & 2.05 & -25.29 & 2.94 & 100.0 & 100.0 \\
-\textit{Pf}DHFR & N51I & 2.18 & -29.83 & 1.50 & 118.0 & 94.0 \\
-\textit{Pf}DHFR & C59R & 2.15 & -26.56 & 1.91 & 105.0 & 95.3 \\
-\textit{Pf}DHFR & S108N & 2.12 & -30.21 & 3.62 & 119.5 & 96.7 \\
-\textit{Pf}DHFR & I164L & 2.24 & -26.13 & 2.34 & 103.3 & 91.5 \\
+\textit{Pf}DHFR & Wild-Type (WT) & 2.94 & -25.29 & 2.94 & 100.0 & 100.0 \\
+\textit{Pf}DHFR & N51I & 2.67 & -29.83 & 1.50 & 118.0 & 91.0 \\
+\textit{Pf}DHFR & C59R & 2.91 & -26.56 & 1.91 & 105.0 & 98.9 \\
+\textit{Pf}DHFR & S108N & 2.82 & -30.21 & 3.62 & 119.5 & 96.1 \\
+\textit{Pf}DHFR & I164L & 2.85 & -26.13 & 2.34 & 103.3 & 97.2 \\
 \midrule
 \textit{Pf}CRT & Wild-Type (WT) & 2.94 & -30.61 & 1.65 & 100.0 & 100.0 \\
-\textit{Pf}CRT & K76T & 3.02 & -29.51 & 2.65 & 96.4 & 97.4 \\
-\textit{Pf}CRT & K76A & 2.91 & -35.29 & 1.17 & 115.3 & 101.0 \\
+\textit{Pf}CRT & K76T & 3.02 & -29.51 & 2.65 & 96.4 & 102.7 \\
+\textit{Pf}CRT & K76A & 2.88 & -35.29 & 1.17 & 115.3 & 97.8 \\
 \bottomrule
 \end{tabularx}
 \end{table}
