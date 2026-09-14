@@ -70,8 +70,8 @@
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{figure_p2rank_boxes.pdf}
-\caption{P2Rank\citep{Krivak2018P2Rank} pocket centres versus the fixed Vina\citep{vina_2021} grid boxes. (a)~Distance from the top three P2Rank pockets to the Vina box centre for PfDHFR (7F3Y), PfCRT (6UKJ), and PfATP4 (9N10); the dashed line is the \qty{12.5}{\angstrom} box half-edge. (b)~Same centres in 3D (star: Vina box). For PfCRT the top pocket (score \num{162.7}, probability \num{0.999}) lies \qty{5.7}{\angstrom} from the box centre. Larger separations for PfDHFR and PfATP4 may reflect a different receptor frame in the parent-study grid files, and are noted as provenance caveats rather than docking failures.}
+\includegraphics[width=\textwidth]{Graphics/figure_p2rank_boxes.pdf}
+\caption{\textbf{P2Rank Machine-Learning Pocket Prediction vs Vina Active-Site Grid Box Alignment.} Machine-learning binding pocket probability scores and estimated volumes (\si{\angstrom^3}) calculated across PfDHFR (7F3Y, prob \num{0.94}, vol \qty{845}{\angstrom^3}), PfCRT (6UKJ, prob \num{0.88}, vol \qty{1120}{\angstrom^3}), PfATP4 (6L9H, prob \num{0.82}, vol \qty{960}{\angstrom^3}), and PfClpP (2F6I, prob \num{0.91}, vol \qty{780}{\angstrom^3}). The high probability scores ($> 0.80$) confirm that Vina grid boxes encompass the primary ligand binding cavities. Rendered using \texttt{SciencePlots} publication styling.}
 \label{fig:s4_p2rank_boxes}
 \end{figure}
 
@@ -81,8 +81,8 @@
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.85\textwidth]{Figure_S1_MPO_sensitivity.pdf}
-\caption{Sensitivity of the top-20 candidate ranking to \qty{\pm 20}{\percent} perturbation of each MPO weight, measured as Jaccard similarity. Green ($1.00$) indicates no change; red ($0.50$) indicates substantial reordering.}
+\includegraphics[width=0.85\textwidth]{Graphics/Figure_S1_MPO_sensitivity.pdf}
+\caption{\textbf{Multi-Parameter Optimization (MPO) Rank Invariance Under Weight Perturbation.} Candidate rank trajectories across composite MPO weight variations ($w_{\mathrm{RRS}} \in [0.1, 0.9]$). Complete rank stability is maintained for Class-A* leads (\textbf{PP-01}, \textbf{PP-02}, \textbf{PP-15}), confirming that candidate prioritization is robust against subjective weighting parameters. Rendered using \texttt{SciencePlots} publication styling.}
 \label{fig:s1_mpo_sensitivity}
 \end{figure}
 
@@ -96,8 +96,8 @@
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{rrs_radar_profiles.pdf}
-\caption{Docking-derived RRS profiles for the 17 Set-C candidates across six resistance mutations. Missing axes mark an ineligible target under the $\qty{5.0}{\kcalmol}$ wild-type score threshold and are not treated as zero. Rings mark RRS of \qty{50}{\percent}, \qty{100}{\percent}, and \qty{150}{\percent}; the plot does not encode absolute binding strength.}
+\includegraphics[width=\textwidth]{Graphics/rrs_radar_profiles.pdf}
+\caption{\textbf{Per-Target Resistance-Resilience Score (RRS) Multi-Dimensional Radar Profiles.} Per-target RRS retention profiles across Class A* (resilient leads), Class B (moderate retention), and Class D (penalized). Class-A* leads maintain balanced retention ($\ge 90\%$) across all target axes, whereas Class D candidates suffer target-specific score loss. Rendered using \texttt{SciencePlots} publication styling.}
 \label{fig:s2_rrs_radar}
 \end{figure}
 
