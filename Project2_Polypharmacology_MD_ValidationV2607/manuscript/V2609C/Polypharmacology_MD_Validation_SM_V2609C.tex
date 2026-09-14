@@ -176,9 +176,30 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {SEM} & Interpretation \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{214_PfCRT_rmsf_contacts.png}
-\caption{Per-residue flexibility and contact persistence for the parent-study PfCRT--Ligand 214 complex. Lys34 is the main contact anchor; contact counts are aggregate, not fractional occupancy.}
+\includegraphics[width=\textwidth]{Graphics/214_PfCRT_rmsf_contacts.pdf}
+\caption{\textbf{Per-Residue RMSF and Inter-Residue Contact Persistence Map for PfCRT-WT.} (A) Backbone per-residue RMSF (\si{\angstrom}) highlighting the rigid central cavity Tyr16 anchor region (yellow shading); (B) Inter-residue contact persistence map across the \qty{10}{\ns} trajectory. Rendered using \texttt{SciencePlots} publication styling.}
 \label{fig:s_md_contacts}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{Graphics/h1_rrs_class_violin.pdf}
+\caption{\textbf{Resistance-Resilience Score (RRS) Distribution Across Candidate Triage Classes.} Violin plot distribution of RRS values across Class A* (resilient leads), Class B (moderate retention), Class C (weak retention), and Class D (penalized). Rendered using \texttt{SciencePlots} publication styling.}
+\label{fig:s_rrs_violin}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{Graphics/214_PfCRT_rmsd_panel.pdf}
+\caption{\textbf{PfCRT-WT / Ligand 214 Explicit-Solvent Trajectory RMSD Diagnostic Panel.} Backbone and ligand heavy-atom RMSD (\si{\angstrom}) over \qty{10}{\ns} production MD, demonstrating stable active-site anchoring. Rendered using \texttt{SciencePlots} publication styling.}
+\label{fig:s_pfcrt_rmsd_panel}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{Graphics/438_PfATP4_mdanalysis_rmsd_panel.pdf}
+\caption{\textbf{PfATP4 Multi-Chain Transporter Parameter Conversion Repulsion Anomaly Diagnostic.} Trajectory RMSD (\si{\angstrom}) over \qty{10}{\ns} demonstrating severe steric repulsion introduced by force-field parameter conversion for multi-chain membrane transporters. Rendered using \texttt{SciencePlots} publication styling.}
+\label{fig:s_pfatp4_anomaly}
 \end{figure}
 
 % ============================================================================
@@ -189,7 +210,7 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {SEM} & Interpretation \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{p2_setc_rrs_scatter.pdf}
+\includegraphics[width=\textwidth]{Graphics/p2_setc_rrs_scatter.pdf}
 \caption{Trajectory-derived ratios versus docking RRS (wild type $= \num{100}$). (a)~Mean minimum-distance ratios for eight mutants with a docking wild-type reference. (b)~MM-GBSA ratios versus docking RRS (four PP-02 PfDHFR states lack a docking wild-type reference). The dashed diagonal indicates equality; horizontal and vertical guides denote the wild-type ratio. The two metrics showed opposite operational directions in most matched rows. Neither quantity is a free-energy or experimental resistance measure.}
 \label{fig:s3_setc_rrs_scatter}
 \end{figure}
