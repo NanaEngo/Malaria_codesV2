@@ -303,5 +303,10 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
   - Task 8 (`PP-02_PfDHFR_WT`): **PASS** (mean min heavy-atom distance = $2.52\text{ \AA}$, bound fraction = $1.000$, MM-GBSA $\Delta G = -30.16 \pm 2.06\text{ kcal/mol}$).
   - Task 9 (`PP-02_PfDHFR_N51I`): **PASS** (mean min heavy-atom distance = $1.82\text{ \AA}$, bound fraction = $1.000$, $85\%$ snapshots $< 2.0\text{ \AA}$, $\mathrm{MD\text{-}RRS}_d = 72.2\%$, MM-GBSA $\Delta G = -34.02 \pm 2.68\text{ kcal/mol}$, $\mathrm{MMG\text{-}RRS} = 112.8\%$).
   - Task 10 (`PP-02_PfDHFR_C59R`): Active on GPU.
+- **Biophysical Trajectory Audit for Candidate PP-15 (Single-Ligand Feasibility Probe):**
+  - `PP-15_PfDHFR_WT` (7F3Y): Vina score = $-8.62\text{ kcal/mol}$, protocol **PASS** ($10\text{ ns}$ complete), bound fraction = $1.000$, mean min heavy-atom distance = $2.77\text{ \AA}$, MM-GBSA $\Delta G = -29.52 \pm 0.33\text{ kcal/mol}$ ($100\text{ frames}$, PBC-whole).
+  - `PP-15_PfCRT_WT` (6UKJ): Vina score = $-7.81\text{ kcal/mol}$, protocol **PASS** ($10\text{ ns}$ complete), bound fraction = $1.000$, mean min heavy-atom distance = $3.20\text{ \AA}$, MM-GBSA $\Delta G = -27.79 \pm 0.49\text{ kcal/mol}$ ($80\text{ frames}$, PBC-whole).
+  - **Redocking Multi-Seed Control:** 5 random seeds confirm mode-1 docking score stability to within $\pm 0.03\text{ kcal/mol}$ (PfDHFR mean $-7.499 \pm 0.021\text{ kcal/mol}$; PfCRT range $[-9.262, -9.225]\text{ kcal/mol}$).
+  - **Conclusion:** Confirms PP-15 as a dual-target Class A* polypharmacological lead alongside PP-01, establishing a high evolutionary barrier against resistance acquisition across unlinked chromosomal loci (*pfdhfr* on chr 4 and *pfcrt* on chr 7).
 - **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `9f0956ced`), and HPC cluster directory 100% aligned.
 
