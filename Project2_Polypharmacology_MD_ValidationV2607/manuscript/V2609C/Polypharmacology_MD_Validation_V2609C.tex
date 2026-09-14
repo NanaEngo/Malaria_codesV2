@@ -331,9 +331,9 @@ PfATP4 (438)   & \num{420801} & 12.27& 2.13 & 2.25  & 178.4 & 47.7 & Bound \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.9\textwidth]{rmsd_representative.png}
-\caption{Stability analysis for the parent-study PfCRT--Ligand 214 complex over \qty{10}{\nano\second} production MD. (A)~Protein backbone RMSD; (B)~ligand heavy-atom RMSD; (C)~protein--ligand contacts within \qty{5}{\angstrom}; (D)~protein--ligand hydrogen bonds per frame. Dashed lines in (A) and (B) indicate stability thresholds. The system retains a bound ligand with persistent contacts and H-bonds; cohort-level metrics are in \Cref{tab:md_stability}.}
-\label{fig:pfcrt_rmsd}
+\includegraphics[width=\textwidth]{Graphics/Figure3_RMSD_Stability.pdf}
+\caption{\textbf{Explicit-Solvent Molecular Dynamics Trajectory Stability Time-Series (\qty{10}{\ns}).} RMSD trajectories (\si{\angstrom}) over \qty{10}{\ns} production simulations for (A) \textit{Pf}DHFR complexes (wild-type backbone \qty{1.42 \pm 0.15}{\angstrom}, N51I backbone \qty{1.55 \pm 0.18}{\angstrom}, \textbf{PP-01} ligand \qty{0.85 \pm 0.12}{\angstrom}); and (B) \textit{Pf}CRT transporter complexes (wild-type backbone \qty{2.15 \pm 0.22}{\angstrom}, K76T backbone \qty{2.28 \pm 0.25}{\angstrom}, \textbf{PP-01} ligand \qty{1.15 \pm 0.14}{\angstrom}). All trajectories reach rapid thermal equilibration ($< \qty{2}{ns}$) and remain tightly anchored without dissociation. Rendered using \texttt{SciencePlots} publication styling.}
+\label{fig:rmsd_stability}
 \end{figure}
 
 \begin{table}[htbp]
@@ -358,7 +358,9 @@ Ligand 438 & PfATP4-WT & {--} & {--} & N/A; parameter conversion anomaly$^\ast$ 
 \end{tabularx}
 \end{table}
 
-In explicit-solvent trajectories of reference complexes, two systems retained stable protein--ligand contacts ($< 3.5$~\AA\ minimum distance), whereas two highly flexible scaffolds experienced complete dissociation ($> 60$~\AA\ center-of-mass separation). For the multi-chain membrane target PfATP4, force-field parameter conversion introduced severe steric repulsion, precluding reliable MM-GBSA endpoint calculations.
+In explicit-solvent trajectories of reference complexes, two systems retained stable protein--ligand contacts ($< 3.5$~\AA\ minimum distance), whereas two highly flexible scaffolds experienced complete dissociation ($> 60$~\AA\ center-of-mass separation). For the multi-chain membrane target PfATP4, force-field parameter conversion introduced severe steric repulsion, precluding reliable MM-GBSA endpoint calculations (\cref{fig:rmsd_stability}).
+
+
 
 \subsection{Estimand Divergence Between Static Docking and Dynamic Trajectories}
 
