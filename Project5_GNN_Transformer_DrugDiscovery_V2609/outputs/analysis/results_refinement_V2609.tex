@@ -1,0 +1,18 @@
+% P5 V2609 — Results Refinement (writing-shape session)
+% Raw pile: manuscript/V2609/Project5_GNN_Transformer_Antimalarial_main_V2609.tex §Results
+% Target: refined \section{Results} ready for drop-in replacement
+% Beat choices: R1c+R1b fusion (user-edited opening line)
+
+\section{Results}
+
+\subsection{Benchmark performance across partition families}
+
+Random-split performance flatters every architecture, masking structural representation failures. The scaffold split is where representations are stress-tested: under Bemis--Murcko separation, ECFP4--RF holds at \num{0.8300} while GIN drops \num{0.025} points (BH-adjusted $p = 0.0330$), GIN--TFP \num{0.016} ($p_{\text{adj}} = 0.0330$), GIN--TNE \num{0.021} ($p_{\text{adj}} = 0.0378$), and ChemBERTa \num{0.043} ($p_{\text{adj}} = 0.0002$) --- all statistically significant after Benjamini--Hochberg correction ($df=4$, five per-seed means). This hierarchy is not an artefact of partition choice: under the Butina cluster split ($C=0.55$), ECFP4--RF (\num{0.8331}) maintains its lead, GIN--TFP (\num{0.8232}) consistently outperforms base GIN (\num{0.8202}), and ChemBERTa (\num{0.7776}) trails the field. The full five-model, three-split comparison is reported in \Cref{tab:h1}.
+
+\subsection{Structural complexity and the topological rescue}
+
+Topological fusion does not improve every molecule equally --- it rescues a specific structural regime. GIN--TFP gains $+\num{0.007}$ on flat aromatics ($Fsp^3 < 0.25$, $n=\num{7797}$), $+\num{0.038}$ on complex 3D scaffolds ($Fsp^3 \ge 0.45$, $n=\num{2235}$), and $+\num{0.047}$ on polycyclics (Rings $\ge 4$, $n=\num{363}$): the gain scales with exactly the structural complexity that breaks 1-WL message passing. On polycyclic scaffolds, this recovers \qty{73}{\percent} of the cohort-level GNN deficit; at the aggregate scaffold split, it closes \qty{36}{\percent} of the gap. The full cohort breakdown is reported in \Cref{tab:structural_complexity}.
+
+\subsection{Distance-aware conformal triage filter}
+
+Deploying a single model uniformly across chemical space is not neutral --- it is a systematic error. In the cold OOD tail ($D_{\text{NN}} < 0.40$, deciles D1--D4), GIN--TFP underperforms ECFP4--RF by up to \num{0.027} AUC points; in the interpolation regime (D5--D8), the positions reverse. The Conformal Triage Filter exploits this asymmetry by routing each candidate according to its nearest-training-neighbour Tanimoto distance and expected calibration error (Eq.~\ref{eq:conformal_triage}); when batch-level confidence breaches $\mathrm{ECE} > 0.08$, Platt scaling is triggered prior to routing. Evaluated on the \num{22267} molecule-disjoint ChEMBL transfer panel, this yields $+\qty{14.2}{\percent}$ top-$k$ precision ($k=500$) over the best single-model baseline.

@@ -74,7 +74,7 @@ Under scaffold-separated evaluation of 19,836 antimalarial natural products, ECF
 | **L1 EVIDENCE** | ✅ Done | All 10 ledger entries complete with interpretations | Gate 2 PASS: 10/10 interpretations, 0 missing |
 | **L2 DRAFT** | ✅ Done | 19 LED citations inserted, 2 orphans (Methods context) | Gate 4 PASS: All results LED-backed |
 | **L3 REVIEW** | ✅ Beat 1 done | 7 verification passes (0 CRITICAL, 3 HIGH, 9 MEDIUM, 4 LOW) | ACCEPT after MINOR REVISION; 3 HIGH fixes applied |
-| **L4 SUBMIT** | ⏳ Final release checks | Three-reader audit complete; all 14 findings closed (9 HIGH mitigated, F6 cohort sizes resolved via RDKit stratification 2026-09-13) | Remaining: Zenodo upload, GitHub tag v2609 |
+| **L4 SUBMIT** | ✅ Release checks done | Commit `b19bc2b8a`, tag `v2609` pushed to `github.com:NanaEngo/Malaria_codesV2.git` (2026-09-13) | Remaining: Zenodo upload to DOI 10.5281/zenodo.19608875 |
 | **L3′ REVIEW** | ✅ Closed | All 9 MEDIUM findings adjudicated and high-priority fixes verified | No scientific blockers remain |
 
 ---

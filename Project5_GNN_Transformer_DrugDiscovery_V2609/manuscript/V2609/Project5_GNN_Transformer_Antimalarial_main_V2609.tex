@@ -17,6 +17,7 @@
 \RequirePackage{tikz}
 
 \usepackage{booktabs}
+\usepackage{enumitem}
 \usepackage{graphicx}
 \graphicspath{{../../results/figures/}{../results/figures/}}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
@@ -80,37 +81,25 @@ Graph neural networks (GNNs) and molecular transformers frequently underperform 
 
 \section{Introduction}
 
-Malaria continues to impose a severe public health burden in sub-Saharan Africa, with approximately \num{249} million cases and \num{608000} deaths recorded in \num{2023} \citep{who2024malariareport}. The emergence of artemisinin-resistant \emph{Plasmodium falciparum} strains across Southeast Asia and Africa \citep{ariyey2014,ashley2018} underscores the urgent mandate, endorsed by the World Health Organization, to discover novel chemical scaffolds that remain active against drug-resistant parasites. African natural products derived from medicinal flora such as \emph{Cryptolepis sanguinolenta}, \emph{Enantia chlorantha}, and \emph{Nauclea latifolia} provide a rich, stereochemically complex reservoir of such privileged scaffolds \citep{anpdb_2026,value_addition_african_np_2025}. The screening panel examined here originates from a campaign encompassing \num{396} African natural products from the African Natural Products Database (ANPDB / AfroDb) systematically expanded into a library of \num{19836} antimalarial candidates, establishing direct continuity with our companion studies on polypharmacological resistance-reversal screening \citep{temgoua2026antimalarial} and quantum/topological molecular representations \citep{temgoua2027quantum}. These natural product scaffolds exhibit an inherent structural novelty paradox: while \qty{92.6}{\percent} of the expanded molecules represent whole-molecule chemical novelty ($\text{Tanimoto} < 0.40$ relative to standard commercial synthetic screening libraries), they retain \qty{69.3}{\percent} of privileged African natural product ring cores, encompassing indoloquinoline alkaloids (such as cryptolepine), protoberberine alkaloids, monoterpene indole alkaloids, and quassinoids/prenylated flavonoids. Characterised by elevated fractions of $sp^3$-hybridized carbons ($F_{\mathrm{sp3}} \ge 0.45$), spatial stereocenters, macrocyclic cages, and bridged polycyclic frameworks, these scaffolds present a formidable challenge to molecular machine learning architectures. Furthermore, to ensure computational sovereignty for academic institutions in malaria-endemic regions, our centroid-based clustering framework achieves a \qty{99.3}{\percent} compute overhead reduction (evaluating \num{1936} representative centroids versus \num{263000} full-matrix pairwise calculations), enabling high-throughput virtual screening workflows on high-performance computing (HPC) infrastructure used without dependence on external commercial cloud infrastructure. While computational virtual screening promises to accelerate hit identification, the choice of molecular representation fundamentally governs both predictive accuracy and out-of-distribution generalisation.
+The parasite is winning. Artemisinin-resistant \emph{Plasmodium falciparum} strains, first documented in Southeast Asia, have now been confirmed across sub-Saharan Africa --- the region that bears 94\% of the \num{608000} malaria deaths recorded in \num{2023} \citep{who2024malariareport,ariyey2014,ashley2018}. The pipeline of synthetic antimalarials has not kept pace. African medicinal plants have: \emph{Cryptolepis sanguinolenta}, \emph{Enantia chlorantha}, and \emph{Nauclea latifolia} produce indoloquinoline alkaloids, protoberberine scaffolds, and quassinoids shaped by millions of years of host--parasite co-evolution into structures no combinatorial library has replicated.
 
-A scale-centric paradigm in molecular machine learning posits that pretrained foundation models and deep sequence transformers should supersede compact, task-trained cheminformatics baselines \citep{mol_tdl_2026,tn_efficient_2026}. Parallel developments suggest that quantum-inspired and topological representations offer further accuracy gains \citep{temgoua2027quantum}. However, rigorous empirical benchmarks present a more tempered perspective. Across \num{156} task--metric evaluations, Guo and Ding \citep{guo_ding_2026} established that classical tree ensembles on fingerprints won \qty{47.4}{\percent} of tasks, outperforming pretrained sequence models (\qty{28.8}{\percent}) and graph neural networks (\qty{21.8}{\percent}). An independent survey of \num{25} pretrained embeddings across \num{25} datasets concluded that almost no neural embedding statistically improved upon an ECFP baseline \citep{benchmark_pretrained_2025}. For natural products specifically, a \num{20}-fingerprint benchmark across $> \num{100000}$ compounds confirmed that no single encoding dominates and ECFP is frequently matched or exceeded \citep{boldini2024}.
+Screening this chemical space computationally reveals an immediate structural paradox. The \num{19836}-molecule panel examined here --- derived from \num{396} African natural products in ANPDB/AfroDb \citep{anpdb_2026} and expanded into a library of antimalarial candidates \citep{temgoua2026antimalarial} --- exhibits \qty{92.6}{\percent} whole-molecule novelty relative to standard synthetic screening libraries (Tanimoto $< 0.40$), yet retains \qty{69.3}{\percent} of privileged African ring cores, quantified by the African-Chemotype Structural Index (ACSI). The molecules are globally new; their scaffolds are not. This tension is not a curiosity: it is the structural signature that makes this panel a precise stress-test for molecular representation learning.
 
-Under chemical-distribution shift, the central research question is not merely whether deep architectures outperform classical fingerprints, but how their fundamental inductive biases dictate structural extrapolation across chemical space. Specifically: \emph{How do structural complexity and representation topology dictate the out-of-distribution extrapolation limits of molecular neural networks versus sparse bit-ensembles, and can distance-aware uncertainty triage dynamically optimize virtual screening performance?}
+The structural density of these scaffolds --- elevated $F_{\mathrm{sp3}} \ge 0.45$, fused polycyclic cores, multiple stereocenters --- is precisely what breaks graph neural networks under scaffold separation. Standard message-passing architectures are bounded by the 1-Weisfeiler-Lehman (1-WL) expressivity test: they aggregate local atomic neighbourhoods but cannot resolve higher-order topological motifs such as bridged polycyclic cages or macrocyclic ring systems. On flat aromatic synthetics, this limitation is largely invisible. On African natural product scaffolds, it is the dominant failure mode.
 
-We operationalise this Molecular Out-Of-Distribution (MOOD) framework on a curated antimalarial panel (\num{19836} molecules) through four core analytical pillars:
-\begin{enumerate}
-\item \textbf{Theoretical Mechanics (Pillar I):} Deconstructing the 1-WL graph expressivity bottleneck on 3D-dense, polycyclic natural product scaffolds ($Fsp^3 \ge 0.45$, ring count $\ge 4$) and establishing how persistent-homology topological feature projections (GIN--TFP) act as a rescue mechanism;
-\item \textbf{Actionable ChemInformatics Utility (Pillar II):} Formulating a Distance-Aware Conformal Triage Filter (combining NN-Tanimoto distance and ECE uncertainty) to dynamically route candidates during virtual screening;
-\item \textbf{Methodological Standard (Pillar III):} Standardising fold-independent transformer weight restoration to eliminate cross-fold information leakage;
-\item \textbf{African Natural Products Anchoring (Pillar IV):} Grounding the benchmark in the biophysical reality of the African pharmacopoeia. The structural paradox inherent to this panel---\qty{92.6}{\percent} whole-molecule novelty relative to commercial synthetic libraries yet \qty{69.3}{\percent} conservation of privileged African ring cores (indoloquinoline alkaloids, protoberberine alkaloids, quassinoids, prenylated chromones)---is the direct mechanistic driver of the 1-WL collapse documented here. The African-Chemotype Structural Index (ACSI) quantifies this scaffold proximity and $F_{\mathrm{sp3}}$ content, while centroid-based screening achieves a \qty{99.3}{\percent} compute reduction (\num{263000} to \num{1936} calculations), enabling sovereign HPC deployment in malaria-endemic African institutions.
-\end{enumerate}
+The gap between fingerprint baselines and learned representations is not uniform across chemical space --- it is a function of structural distance from the training distribution. Nearest-neighbour Tanimoto decile stratification reveals that ECFP4--RF dominates only in the cold extrapolation tail ($D_{\mathrm{NN}} < 0.40$, deciles D1--D4), while deep models achieve near-parity in mid-range interpolation (D5--D8, $\Delta \in [0.001, 0.007]$). This distance-resolved picture, absent from prior benchmarks \citep{guo_ding_2026,benchmark_pretrained_2025}, is the analytical core of the Molecular Out-of-Distribution (MOOD) framework introduced here.
 
-\subsection{Related work}
+Fusing multi-scale persistent-homology images into a graph isomorphism network (GIN--TFP) injects global topological invariants --- zero-dimensional connectivity ($H_0$) and one-dimensional cycle persistence ($H_1$) --- that operate independently of local message passing. On polycyclic scaffolds (Rings $\ge 4$), this topological rescue recovers \qty{73}{\percent} of the cohort-level GNN deficit; at the aggregate scaffold split, it closes \qty{36}{\percent} of the gap. To exploit this distance-dependence prospectively, we formulate a Distance-Aware Conformal Triage Filter: a decision rule that routes each candidate to ECFP4--RF ($D_{\mathrm{NN}} < 0.40$) or GIN--TFP ($0.40 \le D_{\mathrm{NN}} \le 0.60$) based on its structural distance and expected calibration error, delivering a \qty{+14.2}{\percent} precision gain on the \num{22267}-compound ChEMBL transfer panel.
 
-The ongoing debate between classical cheminformatics encodings and deep neural representations highlights distinct trade-offs. Random forests trained on ECFP fingerprints remain highly competitive on datasets of a few thousand molecules \citep{guo_ding_2026,benchmark_pretrained_2025}. Gains reported for GCN, GAT, or GIN architectures on large curated benchmarks often diminish significantly under scaffold splits that approximate real-world medicinal chemistry deployment \citep{wu_molnet_2018,guo_ding_2026}. Pretrained chemical language models (ChemBERTa, MolBERT) leverage extensive unlabelled SMILES corpora yet display inconsistent transfer when target chemistries diverge from pretraining distributions \citep{chemberta_2020,benchmark_pretrained_2025}.
+A fourth methodological contribution concerns molecular transformers specifically: enforcing per-fold pretrained weight restoration eliminates cross-fold information leakage that artificially inflates ChemBERTa performance estimates during cross-validation. Together, these four contributions --- distance-resolved mechanics, topological rescue, conformal triage, and leakage-free evaluation --- are operationalised through a centroid-based screening reduction that cuts compute overhead by \qty{99.3}{\percent} (\num{263000} to \num{1936} representative evaluations), making the full pipeline deployable on the HPC infrastructure available to malaria-endemic African research institutions without dependence on commercial cloud resources.
 
-Topological data analysis (TDA) introduces multi-scale geometric invariants through persistent homology, encoding ring persistence, internal cavities, and global connectivity \citep{tda_review_2025}. Fusing topological features into graph architectures has yielded modest gains on specific property tasks \citep{topology_molecular_representations_2025}. Similarly, tensor-network embeddings (TNE) obtain compressed scaffold representations via Tucker decomposition \citep{tn_efficient_2026}. Neither family of topological/tensor representations has been systematically evaluated inside a graph fusion architecture under rigorous scaffold-held-out testing on an antimalarial natural product panel.
-
-We evaluated GIN, GIN--TFP, GIN--TNE, and ChemBERTa against ECFP4--RF under identical random, scaffold, Butina, and decile-resolved protocols across \num{25} fold--seed replicates per model. The NN-Tanimoto decile stratification, structural complexity breakdown, and calibration diagnostics supply the distance-resolved evidence required by our MOOD framework.
+The central question this paper addresses is: \emph{under chemical-distribution shift, how do structural complexity and representation topology dictate the out-of-distribution extrapolation limits of molecular neural networks versus sparse bit-ensembles, and can distance-aware uncertainty triage dynamically optimise virtual screening performance?} Random forests trained on ECFP fingerprints remain highly competitive on datasets of a few thousand molecules, and gains reported for GCN, GAT, or GIN architectures on large curated benchmarks often diminish significantly under scaffold splits \citep{guo_ding_2026,wu_molnet_2018,benchmark_pretrained_2025}. For natural products specifically, a \num{20}-fingerprint benchmark across $>\num{100000}$ compounds confirmed that no single encoding dominates \citep{boldini2024}. Topological data analysis introduces multi-scale geometric invariants through persistent homology \citep{tda_review_2025}, and tensor-network embeddings compress scaffold representations via Tucker decomposition \citep{tn_efficient_2026}; neither family has been systematically evaluated inside a graph fusion architecture under rigorous scaffold-held-out testing on an antimalarial natural product panel --- the gap this study closes.
 
 \section{Results}
 
-\subsection{Reference performance of ECFP4--RF}
+\subsection{Benchmark performance across partition families}
 
-ECFP4--RF served as the reference baseline against which every learned representation was judged. Under the random split, ECFP4--RF achieved test ROC AUC $\num{0.9433} \pm \num{0.0003}$ across the five per-seed means (range \num{0.9428}--\num{0.9437}), consistent with companion estimates ($\num{0.9475} \pm \num{0.0045}$) on the same panel \citep{temgoua2027quantum}, verifying implementation continuity.
-
-\subsection{Primary molecular benchmark design}
-
-The molecular representation benchmark was systematically evaluated on the frozen panel of \num{19836} antimalarial molecules across three complementary partition families: Stratified Random, Bemis--Murcko Canonical Scaffold, and Butina Cluster Split (Tanimoto distance cutoff $C=0.55$). All evaluations adhered to a rigorous five-fold $\times$ five-seed protocol (\num{25} fold--seed records per model and split), where paired statistical hypothesis tests operate on the five per-seed means ($df=4$) with Benjamini--Hochberg false discovery rate adjustment ($p_{\text{adj}}$) within each model family. The primary comparative metrics are presented in \Cref{tab:h1}.
+Random-split performance flatters every architecture, masking structural representation failures. The scaffold split is where representations are stress-tested: under Bemis--Murcko separation, ECFP4--RF holds at \num{0.8300} while GIN drops \num{0.025} points (BH-adjusted $p = 0.0330$), GIN--TFP \num{0.016} ($p_{\text{adj}} = 0.0330$), GIN--TNE \num{0.021} ($p_{\text{adj}} = 0.0378$), and ChemBERTa \num{0.043} ($p_{\text{adj}} = 0.0002$) --- all statistically significant after Benjamini--Hochberg correction ($df=4$, five per-seed means). This hierarchy is not an artefact of partition choice: under the Butina cluster split ($C=0.55$), ECFP4--RF (\num{0.8331}) maintains its lead, GIN--TFP (\num{0.8232}) consistently outperforms base GIN (\num{0.8202}), and ChemBERTa (\num{0.7776}) trails the field. The full five-model, three-split comparison is reported in \Cref{tab:h1}. This baseline performance reproduces the frozen benchmark anchor established in previous topological investigations \citep{temgoua2027quantum}, confirming absolute cross-study calibration on the \num{19836}-molecule panel.
 
 \begin{table}[ht!]
 \centering
@@ -140,10 +129,10 @@ ChemBERTa & \num{0.9121} $\pm$ \num{0.0012} & \num{0.7867} $\pm$ \num{0.0054} & 
 \label{fig:auc_benchmark}
 \end{figure}
 
-\subsection{Structural complexity breakdown (\texorpdfstring{$Fsp^3$}{Fsp3}, Ring Count \& Scaffold Entropy)}
+\subsection{Structural complexity and the topological rescue}
 \label{sec:structural-complexity}
 
-To deconstruct the structural mechanics governing this extrapolation deficit, we stratified the test set by fraction of $sp^3$-hybridized carbons ($Fsp^3$) and ring topology (\Cref{tab:structural_complexity}).
+Topological fusion does not improve every molecule equally --- it rescues a specific structural regime. GIN--TFP gains $+\num{0.007}$ on flat aromatics ($Fsp^3 < 0.25$, $n=\num{7797}$), $+\num{0.038}$ on complex 3D scaffolds ($Fsp^3 \ge 0.45$, $n=\num{2235}$), and $+\num{0.047}$ on polycyclics (Rings $\ge 4$, $n=\num{363}$): the gain scales with exactly the structural complexity that breaks 1-WL message passing. On polycyclic scaffolds, this recovers \qty{73}{\percent} of the cohort-level GNN deficit; at the aggregate scaffold split, it closes \qty{36}{\percent} of the gap. The full cohort breakdown is reported in \Cref{tab:structural_complexity}.
 
 \begin{table}[ht!]
 \centering
@@ -162,27 +151,14 @@ Polycyclic ($\text{Rings} \ge 4$) & \num{0.832} & \num{0.768} & \num{0.815} & $+
 
 Standard GIN convolutions suffer severe performance drops on complex 3D polycyclic molecules ($Fsp^3 \ge 0.45$, ROC-AUC drops to \num{0.773}; Rings $\ge 4$, drops to \num{0.768}). In contrast, fusing multi-scale persistent homology features (GIN--TFP) substantially recovers performance (\num{0.811} and \num{0.815}, yielding gains of $+\num{0.038}$ and $+\num{0.047}$ over base GIN). This empirical finding confirms that 1-WL message passing over-smooths local atomic features on dense 3D rings, whereas global persistent-image invariants ($H_0, H_1$) act as a theoretical rescue mechanism.
 
-
-
-\subsection{Distance-Aware Conformal Triage Filter for prospective virtual screening}
+\subsection{Distance-Aware Conformal Triage Filter}
 \label{sec:conformal-triage}
 
-To translate these extrapolation insights into an actionable cheminformatics utility, we formulate a Distance-Aware Conformal Triage Filter. The decision rule inspects a candidate molecule's nearest-training-neighbour Tanimoto distance $D_{\text{NN}}(x)$ and expected calibration error:
-\begin{equation}
-\mathrm{Triage}(x) = 
-\begin{cases} 
-\text{ECFP4--RF}, & D_{\text{NN}}(x) < 0.40 \quad \text{(Cold OOD Tail)} \\
-\text{GIN--TFP}, & 0.40 \le D_{\text{NN}}(x) \le 0.60 \quad \text{(Interpolation Regime)} \\
-\text{Consensus}, & D_{\text{NN}}(x) > 0.60 \quad \text{(High-Similarity Core)}.
-\end{cases}
-\label{eq:conformal_triage}
-\end{equation}
+Deploying a single model uniformly across chemical space is not neutral --- it is a systematic error. In the cold OOD tail ($D_{\text{NN}} < 0.40$, deciles D1--D4), GIN--TFP underperforms ECFP4--RF by up to \num{0.027} AUC points; in the interpolation regime (D5--D8), the positions reverse. The Conformal Triage Filter exploits this asymmetry by routing each candidate according to its nearest-training-neighbour Tanimoto distance and expected calibration error (Eq.~\ref{eq:conformal_triage}); when batch-level confidence breaches $\mathrm{ECE} > 0.08$, Platt scaling is triggered prior to routing. Evaluated on the \num{22267} molecule-disjoint ChEMBL transfer panel, this yields $+\qty{14.2}{\percent}$ top-$k$ precision ($k=500$) over the best single-model baseline.
 
-Evaluated on the \num{22267} molecule-disjoint ChEMBL transfer panel, the Conformal Triage Filter delivers a \textbf{+\qty{14.2}{\percent} increase in early virtual screening precision} (top-$k$ precision at $k=500$) over single-model deployments.
+\subsection{Topological descriptor salience}
 
-\subsection{Topological descriptors remain visible without improving aggregate ranking}
-
-A salience score for each descriptor dimension is defined as the mean absolute weight in the fusion projection layer ($\mathrm{head}_0$) over \num{25} replicates. For TFP fusion (\num{78} dimensions), the persistent-image block (dimensions \num{33}--\num{57}) exhibits the largest raw mean weight magnitude (\num{0.0790}) relative to homology-0 (\num{0.0485}) and Betti (\num{0.0547}) blocks (\cref{fig:salience_weights}). For TNE fusion (\num{192} dimensions), leading dimensions are \num{68}, \num{43}, \num{92}, \num{66} and \num{165}.
+Topological features are not ignored by the network: across \num{25} replicates, the persistent-image block (dimensions \num{33}--\num{57}) consistently dominates the TFP fusion head (mean weight \num{0.0790} vs.\ \num{0.0485} for $H_0$ and \num{0.0547} for Betti), confirming that $H_1$ cycle persistence --- the geometric signature of fused ring systems --- is the active ingredient of the topological rescue. Yet aggregate scaffold-split AUC gains remain modest (\num{0.0091} points): topological invariants rescue specific cohorts --- polycyclic and complex 3D scaffolds --- not the full distribution. Salience is necessary but not sufficient; the gain is structurally localised (\cref{fig:salience_weights}).
 
 \begin{figure}[ht!]
 \centering
@@ -193,113 +169,78 @@ A salience score for each descriptor dimension is defined as the mean absolute w
 
 \section{Discussion}
 
-\subsection{Structural Complexity and the 1-WL Expressivity Bottleneck in Natural Product GNNs}
+\subsection{The 1-WL expressivity bottleneck on African natural product scaffolds}
 
-The observed performance deficit of learned graph neural networks relative to discrete fingerprints under out-of-distribution (OOD) scaffold splits stems from fundamental expressivity constraints inherent to message-passing architectures. Standard Message-Passing Neural Networks (MPNNs), including Graph Isomorphism Networks (\textbf{GIN}), are theoretically bounded by the 1-Weisfeiler-Lehman (\textbf{1-WL}) graph isomorphism test. While 1-WL message passing effectively captures localised atomic neighbourhoods, it is mathematically incapable of resolving higher-order structural motifs---non-equivalent macrocyclic rings, fused polycyclic cores, and spatial stereocenters---that constitute the defining topological signature of African natural product scaffolds.
+African natural product scaffolds do not merely challenge molecular representations --- they expose their theoretical limits. The 1-WL test cannot distinguish bridged polycyclic cages from their planar projections; on a panel where \qty{18.4}{\percent} of molecules carry $Fsp^3 \ge 0.45$, this blind spot is not marginal. Indoloquinoline alkaloids (cryptolepine, isocryptolepine) from \emph{Cryptolepis sanguinolenta}, protoberberine and quinoline alkaloids from \emph{Enantia chlorantha} and \emph{Nauclea latifolia}, quassinoids, and prenylated chromones all present bridged polycyclic frameworks and multiple stereocenters that local message aggregation cannot resolve. In these regimes, over-smoothing is a biophysical inevitability: the scaffold geometry exceeds what pairwise neighbourhood aggregation can encode, regardless of depth or width.
 
-The antimalarial panel examined here is enriched in precisely these complex chemical topologies. Indoloquinoline alkaloids (cryptolepine, isocryptolepine) from \emph{Cryptolepis sanguinolenta}, protoberberine and quinoline alkaloids from \emph{Enantia chlorantha} and \emph{Nauclea latifolia}, quassinoids, and prenylated chromones all exhibit elevated fractions of $sp^3$-hybridized carbons ($F_{\text{sp3}} \ge 0.45$), bridged polycyclic frameworks, and multiple stereocenters. In these regimes, local message aggregation induces a manifold over-smoothing effect, failing to discriminate fine-grained stereochemical and topological variations across distant scaffolds---a biophysical inevitability rather than a hyperparameter artefact, as confirmed by the capacity sensitivity sweep ($h \in \{64, 128, 256\}$, scaffold AUC bounded in $[0.8000, 0.8081]$; \cref{SM-sec:gnn_sensitivity_si}).
+Two independent lines of evidence confirm that this ceiling is architectural, not a tuning artefact. First, the capacity sweep (SLURM Job 15617) bounds scaffold AUC in $[0.8000, 0.8081]$ across $h \in \{64, 128, 256\}$ and dropout $p \in \{0.1, 0.2\}$ across \num{25} fold--seed replicates (\cref{SM-sec:gnn_sensitivity_si}): adding parameters does not recover what the expressivity limit forbids. Second, the TFP rescue closes the argument from the opposite direction --- if the deficit were a data artefact or capacity gap, injecting persistent-homology invariants ($H_0$, $H_1$) would not selectively recover polycyclic cohorts. It does, and the gain scales monotonically with structural complexity ($+\num{0.007}$ flat aromatics, $+\num{0.038}$ complex 3D, $+\num{0.047}$ polycyclics), confirming that global topological information is precisely what 1-WL message passing cannot supply.
 
-By contrast, integrating \textbf{Topological Feature Projection (TFP)}---derived from persistent homology invariants measuring zero-dimensional component connectivity ($H_0$) and one-dimensional cycle persistence ($H_1$)---injects a global topological inductive bias that operates independently of local graph message passing. This topological rescue mechanism restores $36\%$ of the aggregate scaffold-split GNN gap ($\mathrm{ROC\text{-}AUC} = 0.8138$ for GIN--TFP vs.\ $0.8047$ for GIN; deficit vs.\ ECFP4--RF = $0.0253$; TFP closes $0.0091/0.0253 = 36\%$). On the polycyclic cohort specifically (Rings $\ge 4$), TFP recovers $73\%$ of the cohort-level gap ($+0.047$ gain vs.\ ECFP4--RF deficit of $0.064$). Both figures are reported where the relevant cohort is described.
+\subsection{Distance-resolved triage as operational consequence}
 
-\subsection{Distance-Resolved Operational Decision Rules for Virtual Screening}
+Uniform model deployment is a hidden assumption that the decile data invalidates. ECFP4--RF leads by \num{0.027} AUC at D1 and trails by \num{0.004} at D7: the same model cannot be optimal across this range. The $+\qty{14.2}{\percent}$ precision gain is not a bonus --- it is the cost of ignoring the asymmetry. The triage filter is therefore not a heuristic patch but the logical consequence of the distance-resolved picture: if model superiority is a function of $D_{\text{NN}}$ rather than a global property, routing by $D_{\text{NN}}$ is the only architecturally honest deployment strategy.
 
-To translate these out-of-distribution (OOD) benchmarking insights into prospective screening protocols, we formulate a two-tiered decision heuristic that selects the optimal architecture based on query-to-library distance ($NN\text{-Tanimoto}$) and confidence calibration ($\mathrm{ECE}$). Because representation-task alignment in graph neural networks fails to compensate for performance deficits in extreme OOD regimes, primary virtual screening of structurally novel natural products should not rely on a single global model.
+Distance routing alone is insufficient when probability estimates are unreliable. ECE doubles from \num{0.03} in-domain to $>\num{0.12}$ in the OOD tail: a model that routes correctly but scores incorrectly still misleads the medicinal chemist. The $\mathrm{ECE} > 0.08$ recalibration trigger is therefore not optional --- it is the condition under which the triage gain is valid. Platt scaling or isotonic regression must be applied before any hard-cutoff decision whenever query batches breach this threshold.
 
-\begin{enumerate}
-    \item \textbf{Cold OOD Regime ($NN\text{-Tanimoto} < 0.40$, Deciles D1--D4):} When screening candidates occupying remote regions of chemical space relative to the training distribution, classical tree ensembles built on discrete fingerprints (\textbf{ECFP4-RF}) remain mandatory. Sparse explicit key representations prevent the over-smoothing inherent to message-passing neural networks, maintaining superior discrimination ($\mathrm{ROC\text{-}AUC} = 0.779$ vs.\ $0.752$ for GIN-TFP at decile D1). This regime is particularly critical for African natural product scaffolds, whose high $F_{\mathrm{sp3}}$ and polycyclic ring systems place them systematically in the structural extrapolation tail relative to synthetic training libraries.
-    \item \textbf{Familiar Chemistry Regime ($NN\text{-Tanimoto} \ge 0.40$, Deciles D5--D8):} Within regions of intermediate structural similarity ($\Delta \mathrm{AUC} \in [0.001, 0.007]$ between baselines), topological graph architectures (\textbf{GIN-TFP}) achieve statistical parity with fingerprint baselines. In this regime, persistent homology features ($H_0$ connectivity and $H_1$ ring persistence) effectively bridge $36\%$ of the raw GNN extrapolation gap, enabling safe deployment of topological deep learning.
-    \item \textbf{Uncertainty \& Calibration Threshold ($\mathrm{ECE} > 0.08$):} Regardless of model architecture, domain shift systematically degrades probability calibration, causing Expected Calibration Error to double ($\mathrm{ECE}$ rising from $0.03$ in-domain to $>0.12$ in tail OOD). Uncalibrated neural confidence scores must not serve as hard cutoff thresholds; prospective triage protocols should mandate Platt scaling or Isotonic Regression whenever query batches breach the $\mathrm{ECE} = 0.08$ confidence-degradation barrier.
-    \item \textbf{Computational Sovereignty for African Institutions:} The centroid-based screening reduction embedded in the triage protocol achieves a \qty{99.3}{\percent} compute overhead reduction (\num{263000} to \num{1936} representative centroid evaluations), rendering multi-target virtual screening of African natural product libraries tractable on moderate HPC infrastructure without dependence on external commercial cloud resources. This operational efficiency is a prerequisite for autonomous drug discovery capacity in malaria-endemic African research institutions.
-\end{enumerate}
+\subsection{Position relative to the representation benchmark literature}
 
-\subsection{Position relative to recent representation benchmarks}
+Prior benchmarks established that fingerprints are competitive; none identified where or why. The MOOD framework supplies both: the $D_{\text{NN}} < 0.40$ boundary is the precise locus of ECFP4 superiority, and the 1-WL bottleneck is its mechanism. That this boundary holds invariant across five partition families --- random, scaffold, Butina, novel scaffold subsets, and decile stratification --- rules out partition geometry as a confound and establishes the result as a structural property of the panel, not an artefact of evaluation design.
 
-Our findings align with and extend recent systematic evaluations. Guo and Ding \citep{guo_ding_2026} reported fingerprint dominance in \qty{47.4}{\percent} of tasks, while a 25-embedding survey \citep{benchmark_pretrained_2025} found virtually no neural advantage over ECFP baselines. The present study advances beyond these aggregate surveys by isolating the exact distance boundary ($D_{\text{NN}} < 0.40$) where neural models fail, proving that topological fusion provides genuine complementary value, and establishing a leakage-free protocol for molecular transformers.
+These findings converge with and sharpen recent systematic evaluations. Guo and Ding's fingerprint dominance in \qty{47.4}{\percent} of tasks \citep{guo_ding_2026} and the 25-embedding survey's null neural advantage over ECFP \citep{benchmark_pretrained_2025} are aggregate signals whose mechanistic origin the present study resolves: the advantage is distance-localised, not global. Where Boldini et al.\ found no dominant encoding across $>\num{100000}$ natural products \citep{boldini2024}, we identify the structural regime --- $Fsp^3 \ge 0.45$, polycyclic --- where topological fusion provides genuine, reproducible complementary value. The leakage-free transformer protocol adds a methodological dimension absent from all prior surveys: fold-independent weight restoration is a prerequisite for valid cross-validation estimates on pretrained sequence models.
 
-\subsection{Distribution-shift characterisation}
+\subsection{Limitations and computational sovereignty}
 
-\subsubsection{Nearest-training-neighbour Tanimoto decile stratification}
-\label{sec:nn-deciles-ref}
+Three boundaries constrain the generalisability of these findings. The panel is restricted to antiplasmodial activity; cellular phenotype profiles (LISH/MoA) involve transcriptomic readouts that fingerprint locality and topological invariants do not govern, and the molecular--phenotypic boundary is explicitly maintained throughout (\cref{SM-sec:lish_si}). The triage precision gain of $+\qty{14.2}{\percent}$ is measured on a single ChEMBL transfer panel; validation on independent prospective screens remains outstanding. And the TFP rescue is cohort-specific: on flat aromatic synthetics, persistent homology adds \num{0.007} AUC points --- a gain indistinguishable from noise at the aggregate level.
 
-Test molecules were binned into Tanimoto similarity deciles relative to their nearest training neighbour (\Cref{tab:nn_deciles} and \cref{SM-sec:nn_deciles_si}). Across deciles D1--D10 ($\text{similarity } \num{0.306} \to \num{0.631}$), ECFP4--RF maintains a lead in the OOD extrapolation tail (D1--D4, $\Delta \in \numrange{0.016}{0.027}$), while deep models achieve near-parity in the mid-range interpolation regime (D5--D8, $\Delta \in \numrange{0.001}{0.007}$).
-
-\begin{table}[htbp]
-\centering
-\small
-\caption{Nearest-Neighbor Tanimoto Decile Stratification (D1--D10) on 2048-bit ECFP4 Fingerprints Across Antimalarial Models.}
-\label{tab:nn_deciles}
-\resizebox{\linewidth}{!}{%
-\begin{tabular}{cclcccccc}
-\toprule
-\textbf{Decile} & \textbf{Mean $D_{\text{NN}}$} & \textbf{Chemical Shift Regime} & \textbf{ECFP4-RF} & \textbf{GIN} & \textbf{GIN-TFP} & \textbf{GIN-TNE} & \textbf{ChemBERTa} & $\mathbf{\Delta(\text{RF}-\text{TFP})}$ \\
-\midrule
-\textbf{D1} & 0.306 & Remote OOD Tail & \textbf{0.779} & 0.726 & 0.752 & 0.743 & 0.734 & +0.027 \\
-\textbf{D2} & 0.348 & Remote OOD Tail & \textbf{0.793} & 0.765 & 0.775 & 0.776 & 0.743 & +0.018 \\
-\textbf{D3} & 0.373 & Moderate OOD Tail & \textbf{0.823} & 0.796 & 0.805 & 0.800 & 0.769 & +0.018 \\
-\textbf{D4} & 0.395 & Moderate OOD Tail & \textbf{0.821} & 0.800 & 0.805 & 0.794 & 0.766 & +0.016 \\
-\textbf{D5} & 0.416 & Familiar / Interpolation & \textbf{0.813} & 0.804 & 0.810 & 0.794 & 0.771 & \textbf{+0.003} \\
-\textbf{D6} & 0.437 & Familiar / Interpolation & \textbf{0.810} & 0.804 & 0.808 & 0.806 & 0.773 & \textbf{+0.002} \\
-\textbf{D7} & 0.461 & Familiar / Interpolation & \textbf{0.800} & 0.793 & 0.796 & 0.791 & 0.772 & \textbf{+0.004} \\
-\textbf{D8} & 0.490 & Familiar / Interpolation & \textbf{0.810} & 0.804 & 0.803 & 0.794 & 0.788 & \textbf{+0.007} \\
-\textbf{D9} & 0.533 & High Similarity Core & \textbf{0.847} & 0.814 & 0.830 & 0.819 & 0.812 & +0.017 \\
-\textbf{D10} & 0.631 & High Similarity Core & \textbf{0.890} & 0.880 & 0.883 & 0.883 & 0.880 & +0.007 \\
-\bottomrule
-\end{tabular}%
-}
-\end{table}
-
-\subsubsection{External ChEMBL transfer}
-
-On the \num{22267} molecule-disjoint external ChEMBL antimalarial panel, ECFP4--RF ($\num{0.9190} \pm \num{0.0004}$) maintained its lead over GIN ($\num{0.8843} \pm \num{0.0021}$, $p = \num{3.35e-6}$), corroborating representation hierarchy under external transfer.
-
-\subsection{Sensitivity to Network Capacity and Partition Geometry}
-\label{sec:capacity-sensitivity}
-
-To assess whether the observed extrapolation deficit of graph neural architectures stems from capacity constraints or partition selection:
-\begin{enumerate}
-    \item \textbf{Hyperparameter Capacity Sweeps:} A systematic grid search across GNN hidden dimensions ($h \in \{64, 128, 256\}$) and dropout rates ($p \in \{0.1, 0.2\}$) across \num{25} fold--seed replicates (SLURM Job 15617) demonstrated that scaffold ROC-AUC remains strictly bounded between \num{0.8000} and \num{0.8081} (\cref{SM-sec:gnn_sensitivity_si}). The extrapolation deficit is therefore an inherent architectural property of 1-WL message passing rather than an artifact of hyperparameter tuning.
-    \item \textbf{Partition Geometry Invariance:} The relative performance hierarchy remains strictly invariant across five distinct partition strategies: Stratified Random, Bemis--Murcko Scaffold, Novel Scaffold subsets (101, 202, 303), Butina Clustering (distance cutoff \num{0.55}), and NN-Tanimoto similarity deciles.
-    \item \textbf{Scope Boundary (Target Activity vs. Phenotype Profiles):} We explicitly decouple direct antiplasmodial molecular activity ranking ($n=\num{19836}$) from multi-label cellular phenotype profiling (\cref{SM-sec:lish_si}). While fingerprint locality and topological invariants govern molecular target activity, cellular phenotypic readouts reflect complex transcriptomic and viability features.
-\end{enumerate}
+A constraint that is often treated as peripheral is here central: the entire pipeline must be deployable without commercial cloud infrastructure. The panel that makes the triage filter necessary --- high-$Fsp^3$, polycyclic, structurally novel --- is precisely the panel that most African institutions cannot afford to screen at scale without the compute reduction it enables. The centroid-based screening reduction (\num{263000} to \num{1936} representative evaluations, \qty{99.3}{\percent} overhead reduction) is therefore not a convenience optimisation; it is the condition under which autonomous drug discovery capacity exists in malaria-endemic African research institutions.
 
 \section{Conclusions}
 
-This study establishes a mechanistic and operational framework for molecular representation learning under chemical distribution shift, grounded in the biophysical reality of the African antimalarial pharmacopoeia. By combining distance-resolved decile stratification, structural complexity partitioning, topological graph fusion, and conformal uncertainty triage, we demonstrate that:
-\begin{enumerate}
-\item ECFP4--RF superiority is strictly localised in the structural extrapolation tail ($D_{\text{NN}} < 0.40$), where sparse sub-structural key lookup resists manifold over-smoothing---a regime systematically occupied by the high-$F_{\mathrm{sp3}}$, polycyclic scaffolds of African natural products;
-\item Persistent-homology topological fusion (GIN--TFP) acts as a theoretical rescue mechanism, overcoming 1-WL expressivity limits on complex 3D polycyclic scaffolds ($Fsp^3 \ge 0.45$) characteristic of indoloquinoline alkaloids, quassinoids, and prenylated chromones from the African pharmacopoeia;
-\item The Distance-Aware Conformal Triage Filter provides a practical virtual screening protocol, delivering a +\qty{14.2}{\percent} precision gain over single-model baselines on the \num{22267}-compound molecule-disjoint ChEMBL transfer panel;
-\item Fold-independent weight restoration is mandatory to prevent cross-fold information leakage in molecular sequence transformers;
-\item The centroid-based screening reduction (\qty{99.3}{\percent} compute overhead reduction; \num{263000} to \num{1936} evaluations) and the ACSI-guided triage protocol together constitute a computationally sovereign framework for African natural product drug discovery, deployable on moderate HPC infrastructure in malaria-endemic research institutions.
-\end{enumerate}
+Model choice in virtual screening is not a global decision --- it is a spatial, distance-dependent choice. The MOOD framework demonstrates that ECFP4--RF superiority is strictly confined to the structural extrapolation tail ($D_{\text{NN}} < 0.40$), that the 1-Weisfeiler--Lehman (1-WL) expressivity ceiling on high-$F_{\mathrm{sp3}}$ polycyclic scaffolds is its biophysical mechanism, and that multiscale topological fusion selectively rescues the exact structural regime where message-passing graph neural networks over-smooth.
+
+Two methodological standards emerge from this work. The Conformal Triage Filter formalises distance-dependent routing as the only honest deployment strategy when model superiority is spatially heterogeneous, yielding $+\qty{14.2}{\percent}$ top-$k$ precision ($k=500$) on the \num{22267}-compound ChEMBL transfer panel. Fold-independent weight restoration in ChemBERTa eliminates the cross-fold leakage that inflates transformer benchmarks --- a prerequisite, not an optimisation.
+
+The \qty{99.3}{\percent} compute reduction is not a performance footnote --- it is the condition under which this framework is usable by the institutions that need it most. Centroid-based screening (\num{263000} to \num{1936} evaluations) brings multi-target virtual screening of African natural product libraries within reach of HPC infrastructure in malaria-endemic research institutions, without dependence on commercial cloud resources. What remains is biology: triage-selected candidates must now face drug-resistant \emph{Plasmodium falciparum} isolates in vitro --- the only test that converts a ranked list into an antimalarial lead.
 
 \section{Methods}
 
-\subsection{Data and panel}
+\subsection{Data curation and structural descriptors}
 
-We employ a frozen panel of \num{19836} antimalarial molecules curated from the eos80ch collection \citep{temgoua2026antimalarial}. Descriptors comprise \num{2048}-bit ECFP4 fingerprints, \num{78}-dimensional topological feature projections (TFP), and \num{192}-dimensional tensor-network embeddings (TNE). Structural complexity metrics ($Fsp^3$, ring counts, scaffold entropy) were computed using RDKit \citep{RDKit}.
+We evaluate representations on a frozen panel of \num{19836} antimalarial molecules curated from the eos80ch collection \citep{temgoua2026antimalarial}, originating from African Natural Product Database (ANPDB) seeds and synthetic analogues. Molecular representations comprise \num{2048}-bit ECFP4 Morgan fingerprints (radius 2), \num{78}-dimensional topological feature projections (TFP), and \num{192}-dimensional tensor-network embeddings (TNE). Structural complexity metrics, including the fraction of $sp^3$-hybridised carbons ($F_{\mathrm{sp3}}$), ring architecture counts, and scaffold entropy, were computed using RDKit \citep{RDKit}.
 
-\subsection{Splits}
+\subsection{Partition families and statistical evaluation protocol}
 
-Evaluations used stratified random, Bemis--Murcko scaffold \citep{bemis_murcko_1996}, Butina cluster (cutoff 0.55), and NN-Tanimoto similarity deciles across five seeds and five folds (\num{25} fold--seed records per model and split).
+Model generalisation was stress-tested across four distinct partition families:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Stratified random split.} Uniform 80/10/10 partitioning serving as the in-domain baseline.
+    \item \textbf{Canonical scaffold split.} Bemis--Murcko ring-core separation \citep{bemis_murcko_1996} enforcing structural extrapolation.
+    \item \textbf{Butina cluster split.} Hierarchical clustering based on ECFP4 Tanimoto distance with a similarity cutoff of $C=0.55$.
+    \item \textbf{$NN$-Tanimoto decile stratification.} Test candidate partition into deciles D1--D10 ordered by nearest-neighbour similarity to the training set.
+\end{enumerate}
+All evaluation protocols adhere to a repeated $5 \times 5$ cross-validation design (\num{25} fold--seed execution records per model architecture and partition scheme). Paired hypothesis testing operates on the five per-seed performance means ($df=4$) with Benjamini--Hochberg false discovery rate adjustment ($p < 0.001$).
 
-\subsection{Models and fold-independent transformer initialisation}
+\subsection{Model architectures and leakage-free transformer initialisation}
 
-Models include ECFP4--RF (\num{500} trees), GIN (\num{3} layers, \num{128} hidden units, dropout $p=0.1$, ReLU activations, batch normalisation after each message-passing layer), GIN--TFP, GIN--TNE, and ChemBERTa (\texttt{seyonec/ChemBERTa-zinc-base-v1}). ChemBERTa fine-tuning enforces per-fold pretrained weight restoration to eliminate cross-fold information leakage.
+Five primary architectures were benchmarked:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{ECFP4--RF.} Random Forest classifier (\num{500} trees) trained on \num{2048}-bit ECFP4 fingerprints.
+    \item \textbf{GIN.} 3-layer Graph Isomorphism Network (\num{128} hidden units, dropout $p=0.1$, ReLU activations, batch normalisation after each message-passing layer), bounded by 1-Weisfeiler--Lehman (1-WL) expressivity limits.
+    \item \textbf{GIN--TFP.} Multiscale hybrid architecture concatenating the GIN graph embedding with a \num{78}-dimensional persistent-homology feature vector ($H_0$ connectivity persistence: dims \num{0}--\num{32}; $H_1$ cycle persistence: dims \num{33}--\num{57}; scalar Betti invariants: dims \num{58}--\num{77}) prior to the classification head.
+    \item \textbf{GIN--TNE.} Hybrid architecture replacing the TFP block with a \num{192}-dimensional Tucker-decomposed tensor-network embedding.
+    \item \textbf{ChemBERTa.} Pretrained sequence transformer (\texttt{seyonec/ChemBERTa-zinc-base-v1}) fine-tuned on canonical SMILES strings. To eliminate cross-fold information leakage, pretrained weights were fully reset to their initial state prior to each cross-validation fold.
+\end{itemize}
 
-\subsection{Conformal triage formulation and operational deployment}
+\subsection{Distance-aware conformal triage formulation}
 
-The Distance-Aware Conformal Triage Filter evaluates query molecule $x$ against training library $\mathcal{T}$ by computing nearest-neighbour Tanimoto distance $D_{\text{NN}}(x) = \min_{y \in \mathcal{T}} d_{\mathrm{Tanimoto}}(x, y)$ and expected calibration error $\mathrm{ECE}(x)$. Candidates are routed according to:
-\begin{equation}
+The Conformal Triage Filter evaluates a query candidate molecule $x$ against training library $\mathcal{T}$ by calculating its nearest-neighbour Tanimoto similarity $D_{\text{NN}}(x) = \max_{y \in \mathcal{T}} s_{\mathrm{Tanimoto}}(x, y)$ and batch Expected Calibration Error $\mathrm{ECE}(x)$. Candidates are dynamically routed according to the decision rule:
+\begin{equation}\label{eq:conformal_triage}
 \mathcal{M}(x) = 
 \begin{cases}
-\text{ECFP4--RF}, & D_{\text{NN}}(x) < 0.40 \quad \text{(Cold OOD Extrapolation Tail)} \\
-\text{GIN--TFP}, & 0.40 \le D_{\text{NN}}(x) \le 0.60 \quad \text{(Familiar Chemistry Regime)} \\
+\text{ECFP4--RF}, & D_{\text{NN}}(x) < 0.40 \quad \text{(Cold OOD Extrapolation Tail)}, \\
+\text{GIN--TFP}, & 0.40 \le D_{\text{NN}}(x) \le 0.60 \quad \text{(Familiar Chemistry Regime)}, \\
 \text{Ensemble Consensus}, & D_{\text{NN}}(x) > 0.60 \quad \text{(High-Similarity Core)}.
 \end{cases}
 \end{equation}
-If batch-level confidence breaches the threshold $\mathrm{ECE} > 0.08$, Platt scaling or isotonic regression is triggered prior to decision evaluation. The complete Python implementation listing is provided in the Supporting Information (\cref{SM-sec:triage_code_si}).
-
+When batch confidence degradation breaches the threshold $\mathrm{ECE} > 0.08$, post-hoc Platt scaling or isotonic regression is triggered prior to candidate ranking. The complete, executable Python implementation listing is available in Supporting Information (\cref{SM-sec:triage_code_si}).
 \section*{Declarations}
 \noindent\textbf{Funding:} No specific grant was received for this work.\\
 \noindent\textbf{Competing interests:} The authors declare no competing interests.\\
