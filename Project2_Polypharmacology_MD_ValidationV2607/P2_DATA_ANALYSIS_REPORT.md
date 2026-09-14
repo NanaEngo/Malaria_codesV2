@@ -308,5 +308,15 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
   - `PP-15_PfCRT_WT` (6UKJ): Vina score = $-7.81\text{ kcal/mol}$, protocol **PASS** ($10\text{ ns}$ complete), bound fraction = $1.000$, mean min heavy-atom distance = $3.20\text{ \AA}$, MM-GBSA $\Delta G = -27.79 \pm 0.49\text{ kcal/mol}$ ($80\text{ frames}$, PBC-whole).
   - **Redocking Multi-Seed Control:** 5 random seeds confirm mode-1 docking score stability to within $\pm 0.03\text{ kcal/mol}$ (PfDHFR mean $-7.499 \pm 0.021\text{ kcal/mol}$; PfCRT range $[-9.262, -9.225]\text{ kcal/mol}$).
   - **Conclusion:** Confirms PP-15 as a dual-target Class A* polypharmacological lead alongside PP-01, establishing a high evolutionary barrier against resistance acquisition across unlinked chromosomal loci (*pfdhfr* on chr 4 and *pfcrt* on chr 7).
-- **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `9f0956ced`), and HPC cluster directory 100% aligned.
+- **Refinement Axis 4 — Publication-Grade ProLIF Heatmaps (`scripts/p2_prolif_heatmap_generator.py`):**
+  - Generated using `SciencePlots` styling: `manuscript/V2609C/Graphics/Figure4_ProLIF_Heatmaps.pdf` and `.png`.
+  - Panel A (PfCRT Tyr16 anchor): $\pi$--$\pi$ stacking 100% occupied across mutant states (K76T, K76A).
+  - Panel B (PfDHFR hotspots): Asp54 H-bond 100% occupied; Leu46 (99%) and Met55 (96%) hydrophobic contacts.
+- **Refinement Axis 3 — Receptor Model AF3/Boltz-1 Alignment (`scripts/p2_receptor_af3_benchmark.py`):**
+  - Backbone RMSD = $0.65\text{ \AA}$ ($< 1.0\text{ \AA}$ threshold).
+  - Pocket RMSD = $0.38\text{ \AA}$ ($< 0.50\text{ \AA}$ threshold).
+  - Confirms SWISS-MODEL homology structures and AlphaFold3 predictions are structurally concordant.
+- **Refinement Axis 1 — 50-ns MD Extension Setup (`scripts/p2_md_extension_50ns.sbatch`):**
+  - SLURM array script created and submitted for extended 50-ns production MD runs on GPU for `PP-01` and `PP-15` ($25,000,000\text{ steps}$ per system).
+- **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `bac730b64`), and HPC cluster directory 100% aligned.
 
