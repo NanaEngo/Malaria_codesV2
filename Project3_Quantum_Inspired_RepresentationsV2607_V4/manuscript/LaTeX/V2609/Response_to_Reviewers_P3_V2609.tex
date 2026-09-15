@@ -206,21 +206,19 @@ which are computational labels, not pooled experimental data.
 
 \item \textbf{ChEMBL label-source shift panel:} The manuscript's ChEMBL analysis (n=22,447) 
 uses a single homogeneity criterion: IC$_{50} \leq 10~\mu$M = active, $> 10~\mu$M = inactive. 
-While this pools multiple Plasmodium assays from ChEMBL 34, it represents a label-source 
+This pools multiple Plasmodium assays from ChEMBL 34 and represents a label-source 
 transfer test rather than rigorous endpoint-specific validation. We acknowledge this limitation 
-and have clarified that the ChEMBL analysis tests transferability to experimental labels 
-broadly, not performance on individual homogeneous endpoints (\Cref{M-sec:methods_dataset}).
+explicitly in the manuscript and Supporting Information: the pooled analysis tests transferability 
+to experimental labels broadly but does not provide assay-specific, homogeneous endpoint 
+benchmarking (\Cref{M-sec:methods_dataset}; Supporting Information, descriptor transfer section).
 \end{enumerate}
 
-The revised manuscript:
-\begin{itemize}[leftmargin=1.6em]
-\item Removes any pooled multi-target ChEMBL analysis or clearly labels it as 
-exploratory/preliminary
-\item Presents new endpoint-specific results in a table format: [Endpoint ID | Target | 
-$n$ | AUC$_{\text{ECFP4}}$ | AUC$_{\text{QKS}}$ | AUC$_{\text{Hybrid}}$ | $p$-value]
-\item Discussion acknowledges that descriptor performance is endpoint-dependent and 
-rejects claims of universal superiority
-\end{itemize}
+\textbf{Scope acknowledgment:} The current revision does not implement the requested endpoint-specific 
+ChEMBL benchmark (one assay ID, one target, one measurement type per endpoint). Implementing this 
+would require retrieving individual assay-level data, applying within-assay active/inactive definitions, 
+and reporting descriptor performance per assay—a substantive new analysis beyond the scope of this 
+revision. The pooled ChEMBL panel is therefore presented as exploratory label-source-shift analysis 
+only and makes no claim to address the endpoint-specific validation request.
 
 \paragraph{5. Validation Success Criterion.}
 The reviewer's proposed criterion is clear and we adopt it: \textit{``If there is at 
@@ -405,8 +403,10 @@ The main text (Section 3.7, ``Topological features and multi-target docking prof
 ``Multi-target docking data comprised 17,011 molecules docked against four Plasmodium 
 falciparum targets (PfDHFR, PfCRT, PfATP4, PfClpP) using AutoDock Vina with target-specific 
 grid configurations. Molecules were scored against each target and classified as binding if 
-$\Delta G \leq -7.0$ kcal mol$^{-1}$. Docking boxes, grid parameters, and validation metrics 
-are provided in the Supporting Information, Section on docking validation.''
+$\Delta G \leq -7.0$ kcal mol$^{-1}$. The data were obtained from the Tartarus external docking 
+repository (Tartarus, 2024), which provided 19,913 docked leads; 17,011 had complete four-target 
+profiles. Docking parameters (receptor preparation, grid specifications, exhaustiveness) are 
+documented in the Tartarus repository cited in the Supporting Information.''
 
 \textbf{Structural model clarification:} The Tartarus docking structures (PfDHFR/1SYH, 
 PfCRT/4LDE, PfATP4/6Y2F, PfClpP/2F6I) serve as an external chemoinformatic validation 
@@ -414,6 +414,11 @@ oracle—a descriptor stress test—and are distinct from the refined structural
 (PfDHFR/7F3Y, PfCRT/6UKJ, PfATP4/9N10) used for molecular dynamics and resistance-resilience 
 assessments in companion studies. The two structure sets serve different analytical purposes 
 and do not interact.
+
+\textbf{Data provenance note:} The docking dataset is an external validation resource used 
+to test descriptor information retention. It originates from the Tartarus repository, not 
+from P3-internal calculations. This external sourcing is now explicitly documented in the 
+Supporting Information.
 
 \subsubsection*{R2m.5 --- Page 8, Section 3.7: Missing SI Reference}
 \textbf{Issue:} One reference to supplementary material marked by ``??''
