@@ -1,0 +1,156 @@
+{
+  "project": "P4 — Pareto-guided MCTS for de novo antimalarial design (JCAMD submission)",
+  "manuscript_title": "Pareto-guided Monte Carlo tree search for multi-objective de novo antimalarial drug design",
+  "journal": "Journal of Computer-Aided Molecular Design (JCAMD)",
+  "publisher": "Springer Nature",
+  "version": "V2",
+  "submission_date": "2026-08-30",
+  "package_built": "2026-09-11",
+  "status": "staged_pending_upload",
+  "doi_reserved": "[TBD - needs reservation]",
+  "license": "CC BY 4.0 International",
+  "package_structure": {
+    "data": {
+      "description": "Fragment libraries, ScafVAE vocabulary, oracle specifications",
+      "key_files": [
+        "fragment_library_medium.csv",
+        "scafvae_vocabulary.txt",
+        "oracle_specifications.json"
+      ]
+    },
+    "results": {
+      "description": "Scalar benchmark (v12), Pareto optimization, ablation study",
+      "subdirectories": [
+        "benchmark_molecules_opt_v12/ (20-seed scalar benchmark, canonical)",
+        "pareto/ (Multi-objective Pareto front, HV=1.2366)",
+        "ablation_2exp5/ (2^5 factorial design, 160 runs)"
+      ]
+    },
+    "scripts": {
+      "description": "MCTS pipeline, oracles, baselines, benchmarks",
+      "key_files": [
+        "p4_mcts_agent.py (MCTS with PUCT)",
+        "p4_mcts_policy.py (ScafVAE policy)",
+        "p4_mcts_oracles.py (MPO, SYBA, RRS, PNS)",
+        "p4_mcts_benchmark.py (4-method benchmark)",
+        "p4_mcts_pareto.py (Pareto optimization)"
+      ]
+    },
+    "documentation": {
+      "description": "Supporting documentation - DAR, methods, results",
+      "files": [
+        "P4_DATA_ANALYSIS_REPORT.md",
+        "P4_METHODS_SUPPLEMENT.md",
+        "P4_RESULTS_SUMMARY.md"
+      ]
+    }
+  },
+  "key_findings": {
+    "headline": "MCTS does not outperform Random in scalar reward (honest-negative)",
+    "scalar_benchmark_v12": {
+      "random": "0.6724 ± 0.0056",
+      "mcts_scafvae": "0.6649 ± 0.0068",
+      "ga": "0.6453 ± 0.0124",
+      "greedy": "0.4278 ± 0.0000"
+    },
+    "statistical_tests": {
+      "mcts_vs_random": "t₁₉ = -4.97, p = 0.000085 (MCTS significantly worse)",
+      "mcts_vs_ga": "t₁₉ = 6.95, p < 0.0001 (MCTS better than GA)"
+    },
+    "pareto_optimization": {
+      "non_dominated_solutions": 4,
+      "hypervolume": 1.2366,
+      "note": "Pre-activity artifact with post-hoc SYBA recomputation"
+    },
+    "ablation_main_effects": {
+      "scafvae_policy": "+0.148",
+      "pareto_front": "+0.108",
+      "large_vocabulary": "+0.079",
+      "c_puct": "+0.034",
+      "temperature": "-0.012"
+    }
+  },
+  "methods": {
+    "mcts": {
+      "algorithm": "Monte Carlo Tree Search with PUCT selection",
+      "policy": "ScafVAE-informed fragment compatibility",
+      "temperature": "Annealing schedule",
+      "exploration": "Dirichlet noise"
+    },
+    "scafvae": {
+      "architecture": "Variational autoencoder on scaffolds",
+      "fingerprints": "Morgan (0.7 weight) + MACCS (0.3 weight)",
+      "vocabulary": "Medium fragment set"
+    },
+    "oracles": {
+      "mpo": "Multi-parameter optimization (P1-derived)",
+      "syba": "Synthetic accessibility score",
+      "rrs": "Resistance resilience score (P2-informed proxy)",
+      "pns": "Polypharmacology number score (P1-derived)",
+      "filters": "Lipinski, Veber, PAINS, Brenk (medchem library)"
+    },
+    "baselines": {
+      "random": "Uniform random SMILES generation",
+      "ga": "Genetic algorithm with crossover/mutation",
+      "greedy": "Deterministic greedy selection"
+    }
+  },
+  "software_requirements": {
+    "python": "3.11+",
+    "conda_environment": "malaria_md",
+    "key_packages": {
+      "rdkit": "2025.03.6",
+      "numpy": "2.2.1",
+      "pandas": "2.2.3",
+      "scipy": "1.15.1",
+      "pytorch": "2.13.0",
+      "pymoo": "0.6.1",
+      "datamol": "0.12.4",
+      "medchem": "2.0.5"
+    }
+  },
+  "benchmark_protocol": {
+    "budget": 2000,
+    "n_seeds": 20,
+    "statistical_test": "Paired t-test on per-seed means",
+    "multiplicity_correction": "Bonferroni (documented)",
+    "metrics": ["Mean reward", "Uniqueness", "Diversity (FCD)", "Validity"]
+  },
+  "checksums": {
+    "file": "sha256sums.txt",
+    "algorithm": "SHA-256"
+  },
+  "upload_workflow": [
+    "1. Reserve DOI on Zenodo",
+    "2. Verify all files present and checksums match",
+    "3. Upload to Zenodo deposit",
+    "4. Verify upload integrity",
+    "5. Publish deposit",
+    "6. Confirm DOI resolves",
+    "7. Insert DOI into manuscript",
+    "8. Make GitHub repository public"
+  ],
+  "related_projects": {
+    "p1": "Provides MPO and PNS oracles",
+    "p2": "Provides RRS-informed similarity proxy"
+  },
+  "citation": {
+    "dataset": "Sao Temgoua, M. V.; Tchapet Njafa, J.-P.; Samafou, P.; Fon Mbacham, W.; Nana Engo, S. G. (2026). P4 Reproducibility Package — JCAMD Submission [Data set]. Zenodo. https://doi.org/10.5281/zenodo.[TBD]",
+    "manuscript": "Sao Temgoua, M. V.; Tchapet Njafa, J.-P.; Samafou, P.; Fon Mbacham, W.; Nana Engo, S. G. Pareto-guided Monte Carlo tree search for multi-objective de novo antimalarial drug design. J. Comput. Aided Mol. Des. 2026 (submitted)"
+  },
+  "contact": {
+    "corresponding_author": "Myke Vital Sao Temgoua",
+    "email": "myke-vital.sao@facsciences-uy1.cm",
+    "orcid": "0009-0004-5170-2309",
+    "institution": "Department of Physics, Faculty of Science, University of Yaoundé I, Cameroon"
+  },
+  "notes": [
+    "Honest-negative scalar result: MCTS does not beat Random exploration",
+    "Pareto front provides transparent trade-off visualization",
+    "v12-activity benchmark is canonical (20 seeds, medium fragments)",
+    "QMC Tier 2 diagnostics identified issues; QMC energies not publication-grade",
+    "RRS and PNS are computational proxies, not direct biological measurements",
+    "SYBA values in Pareto front were recomputed post-hoc",
+    "DOI needs to be reserved on Zenodo before upload"
+  ]
+}
