@@ -1,0 +1,64 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2cm,top=1.5cm,bottom=1.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[hypertexnames=false,colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{xcolor}
+
+% Compact spacing
+\setlength{\parskip}{0.3em}
+\setlength{\parindent}{0pt}
+
+% Header formatting
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.3pt}
+\fancyhead[L]{\footnotesize Workshop on New Era of Physics to Address Local Needs}
+\fancyhead[R]{\footnotesize September 23--24, 2026}
+\setlength{\headheight}{14pt}
+
+% Title formatting
+\usepackage{titlesec}
+\titleformat{\section}{\normalsize\bfseries}{\thesection}{0.8em}{}
+\titlespacing*{\section}{0pt}{0.5em}{0.3em}
+
+\begin{document}
+
+\begin{center}
+{\Large\bfseries AI-Driven Computational Drug Discovery for Antimalarial Resistance: \\[0.2em] 
+Integrating Chemical Space Exploration, Molecular Dynamics, and Machine Learning}
+\vspace{0.25cm}
+
+{\normalsize\bfseries Sao Temgoua Myke Vital}\\[0.1em]
+{\small Faculty of Science, University of Yaoundé I $\cdot$ \texttt{myke-vital.sao@facsciences-uy1.cm}}
+\vspace{0.25cm}
+
+{\footnotesize\textit{Workshop on New Era of Physics to Address Local Needs} $\cdot$ University of Ngaoundéré, Cameroon $\cdot$ September 23--24, 2026}
+\end{center}
+
+\vspace{0.2cm}
+
+\section*{\small Abstract}
+
+Antimalarial drug resistance poses a critical threat to malaria control in Sub-Saharan Africa, with \textit{Plasmodium falciparum} resistance emerging across multiple drug classes. This talk presents an integrated computational drug discovery pipeline combining artificial intelligence, molecular dynamics, and quantum-inspired methods to identify resistance-circumventing antimalarial candidates, with emphasis on African natural product chemical space.
+
+\textbf{Chemical Space Exploration and Virtual Screening.} We established a chemically diverse library of 65,856 molecules through scaffold morphing and natural product hybridization, achieving 92.6\% novelty relative to existing fingerprint space. Structure-based virtual screening against four validated antimalarial targets (\textit{Pf}DHFR, \textit{Pf}CRT, \textit{Pf}ATP4, \textit{Pf}ClpP) identified 20 top-ranked candidates (MPO 0.515--0.550). External validation through DEKOIS 2.0 benchmarking, MMV enrichment, and redocking (RMSD $<$ 2.0~Å) confirmed protocol robustness. 
+
+\textbf{Resistance-Aware Polypharmacology and Molecular Dynamics.} We introduced a resistance retention score (RRS) framework for computational polypharmacology prioritization. Molecular dynamics simulations of 17 candidates across wild-type and mutant receptors (16 systems, 10~ns trajectories, OpenFF 2.2.0/CHARMM36m) revealed 87.5\% static-versus-dynamic divergence, a positive estimand divergence serving as computational triage rather than failure. Deep learning scoring (GNINA CNN) achieved 100\% Class-A agreement. African natural product profiling ($Fsp^3 = 0.22$, $QED = 0.70$, $MPO = 0.728$) provides regional context. 
+
+\textbf{Quantum-Inspired Representations.} Benchmarking topological fingerprints, network embeddings, and quantum kernels on 19,849 antimalarial-labeled compounds demonstrated equivalence rather than quantum advantage: ECFP4 achieved AUC 0.9475~$\pm$~0.0045 versus 0.8876 (hybrid) and 0.8385 (quantum kernels), with no statistical superiority over classical RBF kernels ($p = 0.374$). This honest-negative result establishes rigorous standards: quantum-inspired descriptors provide complementary but not superior information.
+
+\textbf{Deep Learning Under Distribution Shift.} Graph neural networks and transformers were benchmarked under scaffold-split validation. Classical ECFP4-random forest (AUC 0.8300~$\pm$~0.0023) outperformed all learned representations: ChemBERTa (0.7867), GIN (0.8047), and topological fusion (0.8138). Nearest-neighbor decile stratification revealed fingerprint advantage concentrates in out-of-distribution regions (deciles 1--9), with convergence at high similarity (decile 10: $\sim$0.88). External validation on 22,267 ChEMBL compounds confirmed this ordering. Topological fusion provides modest complementary signal but does not overcome generalization deficits at current scales, a second honest-negative result.
+
+\textbf{Methodological Contributions.} Two key advances emerge: (1) \textit{honest-negative reporting}---transparently documenting when advanced methods fail to outperform baselines provides essential guidance for method selection and computational resource allocation; (2) \textit{estimand divergence framing}, computational disagreement (static docking versus molecular dynamics) serves as an informative filter rather than indicating failure. The pipeline provides computational hypotheses for experimental validation, emphasizing African natural products and WHO-documented Central African resistance profiles.
+
+\textbf{Future Directions.} Experimental IC$_{50}$/EC$_{50}$ validation of top candidates, multi-target polypharmacology integration with advanced ML, and structure-phenotype fusion for mechanism-of-action prediction will advance translational impact for malaria-endemic regions.
+
+\vspace{0.2cm}
+
+{\footnotesize\textbf{Keywords:} Antimalarial drug discovery, polypharmacology, resistance retention score, molecular dynamics, graph neural networks, quantum-inspired representations, honest-negative reporting, African natural products}
+
+\end{document}
