@@ -1,14 +1,14 @@
 # P2 Data Analysis Report — active summary
 
 **Scope:** Resistance-aware polypharmacology of antimalarial leads (docking-RRS, PNS, ACSI, targeted MD, MM-GBSA, Set-C MD pilot, Estimand Divergence, African NP chemical space).
-**Updated:** 12 September 2026 (V2609C JCIM submission reframing + Estimand Divergence + African NP space + HPC triplicate daemon)
+**Updated:** 15 September 2026 (V2609C integrity + framing correction: 8 bib HOLDs, Zenodo reserved/future, ADR-0002 hedge, 102.8, siunitx; supersedes 12 Sept 2026 checkpoint)
 **Root:** `Project2_Polypharmacology_MD_ValidationV2607/`
 
 ## 1. Central question
 
 Does a multi-target, resistance-aware computational workflow (docking-derived RRS + PNS + ACSI) provide a discriminant triage of African natural products across drug-resistant mutant panels—and how does short explicit-solvent molecular dynamics structurally re-calibrate static docking predictions?
 
-**Bounded answer:** static grid docking ($\Delta G_{\mathrm{grid}}$) and short explicit-solvent MD pose retention ($\mathrm{MD\text{-}RRS}_{\mathrm{distance}}$) describe non-equivalent, complementary computational estimands (*Estimand Divergence* in 87.5% of matched mutant states). Short MD serves as an essential structural stress test filtering static grid artifacts prior to prospective biochemical testing.
+**Bounded answer:** static grid docking ($\Delta G_{\mathrm{grid}}$) and short explicit-solvent MD pose retention ($\mathrm{MD\text{-}RRS}_{\mathrm{distance}}$) describe non-equivalent, complementary computational estimands (*Estimand Divergence* in 7/8 matched mutant states, 95% Wilson CI 52.9–97.8%, $n=8$). Short single-replicate MD is reported as a secondary structural check flagging static grid artifacts for prospective assaying — a calibration signal, not a validated prediction (ADR-0002; see §8).
 
 ## 2. Primary cohort: Set-C docking (17 candidates, 136 systems)
 
@@ -274,7 +274,7 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
 
 ## 6. V2609C Manuscript Refinement & HPC Daemon Checkpoint (12 September 2026)
 
-- **Manuscript V2609C (JCIM submission-ready):** Re-framed with *Estimand Divergence* (87.5% static docking vs 10-ns MD pose retention mismatch as a positive structural stress-test filter), denominator-unbiased RRS framework ($|S_{\mathrm{WT}}| < 5.0\text{ kcal/mol}$), and Reviewer 3 defense matrix (DEKOIS 2.0 AUC=0.450, 39-ligand GNINA CNN 100% Class-A agreement, STRING imputation rank stability $\rho \ge 0.9681$).
+- **Manuscript V2609C (JCIM submission-ready, framing corrected per §8 / ADR-0002):** *Estimand Divergence* reported as protocol-local observation (7/8 matched mutant states, 95% Wilson CI 52.9–97.8%, $n=8$), denominator-unbiased RRS framework ($|S_{\mathrm{WT}}| < 5.0\text{ kcal/mol}$ eligibility rule applied, not novel), and Reviewer 3 defense matrix (DEKOIS 2.0 AUC=0.450, 39-ligand GNINA CNN 100% class-level agreement with no per-mutant rank transfer claimed, STRING imputation rank stability $\rho \ge 0.9681$).
 - **African Natural Product chemical space profiling:** Quantified via RDKit (`malaria_md` env): $MW = 271.9 \pm 69.3\text{ g/mol}$, $\text{LogP} = 2.84 \pm 0.82$, $Fsp^3 = 0.22 \pm 0.15$, $\text{QED} = 0.70 \pm 0.06$, $\text{MPO} = 0.728 \pm 0.021$. Ethnobotanical origins (prenylated chromones, isoflavonoids, indole alkaloids from *Cryptolepis sanguinolenta*, *Enantia chlorantha*, *Artemisia* sp.) and WHO 2025/2026 regional African resistance isolate contexts integrated into Sections 1, 2, and 4.
 - **ACS Submission Package `submission_ACS_P2V2609C/`:** Created self-contained submission folder containing main PDF (26 p.), SM PDF (19 p.), Cover Letter (1 p.), BibTeX database, `.aux`/`.bbl` cross-referencing files, and vector graphics.
 - **HPC Live Daemon (`penavoraserver` / `100.73.21.40`):** Automated runner (`/home/nanaengo/hpc_md_execution.log`) initialized for:
@@ -285,9 +285,9 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
 ## 7. Submission Audit Refinement & HPC Array 15840 Execution (12 September 2026)
 
 - **3-Layer Submission Audit (Author, Reviewer, Editor):** Completed and documented in `manuscript/V2609C/REFINEMENT_LOG_V2609C.md` (7 audit items resolved).
-- **Title Length Compliance:** Title shortened from 18 to 12 words (*"Estimand Divergence Between Static Docking and Molecular Dynamics as a Triage Filter for African Antimalarial Leads"*) to strictly satisfy the ACS 15-word limit.
-- **Open Science & Citation Resolution:** Reserved Zenodo DOI (`10.5281/zenodo.19608875`) + GitHub repository URL integrated into Data Availability. 4 missing references (`moyo2023prioritised`, `african_np_underexplored`, `ramirez2018docking`, `ancajas2024np_sar`) appended to `Project2_Polypharmacology_MD_Validation.bib` (104 entries total, 0 undefined citations, 0 LaTeX warnings).
-- **Comparative & MOOD Literature Highlights:** Added 2 dedicated comparative discussion paragraphs in Sections 4.1/4.2 contrasting results against Moyo 2023, Ntie-Kang 2024, Ramirez 2018, and Ancajas 2024. Added MOOD physics-based relay paragraph in Section 4.3 bridging P2 (MD stress testing) and P5 (out-of-distribution ML models).
+- **Title Length Compliance (corrected 15 Sept 2026):** Title shortened from 18 to 15 words (*"Estimand Divergence Between Static Docking and Molecular Dynamics as a Triage Filter for Antimalarial Leads"*) to satisfy the ACS 15-word limit; applied identically in main `\title{}`, header comment, SM title, and cover letter. The earlier "12 words" claim was a miscount.
+- **Open Science & Citation Resolution (corrected 15 Sept 2026, see §8):** Reserved Zenodo DOI (`10.5281/zenodo.19608875`) + GitHub repository URL in Data Availability with reserved/future wording. The 4 appended references (`moyo2023prioritised`, `african_np_underexplored`, `ramirez2018docking`, `ancajas2024np_sar`) **failed** independent DOI resolution and are quarantined under INTEGRITY HOLD (false DOIs stripped); dependent claims/paragraphs were removed from the manuscript until verified replacements land.
+- **Comparative & MOOD Literature Highlights (corrected 15 Sept 2026):** The 2 comparative discussion paragraphs built on the HOLD references were removed from the manuscript; the MOOD physics-based relay paragraph in Section 4.3 bridging P2 and P5 is retained.
 - **Complete Biophysical Audit for Class A* Lead PP-01 (canonical single-replicate recall; values from `results/set_c_md/mmgbsa_summary_pilot.csv` 19 Aug 2026 / Table S19 — NOT new triplicate endpoints):**
   - `PP-01_PfDHFR_WT`: Mean min dist = $2.94\text{ \AA}$, MM-GBSA $\Delta G = -25.29 \pm 2.94\text{ kcal/mol}$.
   - `PP-01_PfDHFR_N51I`: Mean min dist = $2.67\text{ \AA}$ ($\mathrm{MD\text{-}RRS}_d = 91.0\%$), MM-GBSA $\Delta G = -29.83 \pm 1.50\text{ kcal/mol}$ ($\mathrm{MMG\text{-}RRS} = 118.0\%$).
@@ -319,4 +319,15 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
 - **Refinement Axis 1 — 50-ns MD Extension Setup (`scripts/p2_md_extension_50ns.sbatch`):**
   - SLURM array script created and submitted for extended 50-ns production MD runs on GPU for `PP-01` and `PP-15` ($25,000,000\text{ steps}$ per system).
 - **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `bac730b64`), and HPC cluster directory 100% aligned.
+
+## 8. Integrity & framing correction (15 September 2026)
+
+- **Bibliography:** 8 added entries failed independent DOI resolution (wrong-paper or 404 DOIs stripped, INTEGRITY HOLD notes in `.bib`); Roux pages corrected to 128(49):12027–12029. Package stays SUBMISSION_NOT_AUTHORIZED until verified replacements land.
+- **Zenodo:** present-tense archive claim reverted to reserved/future in main + cover (DOI 404s).
+- **Framing (ADR-0002):** V2609C language bound to manifest — 7/8 always with Wilson CI 52.9–97.8% (n=8); PP-01 gate pass, PP-02 not promoted, PP-15 WT probe outside estimand; no evolutionary-barrier claim; WT-eligibility rule described as applied, not novel.
+- **V2609B:** 102.7 → 102.8 harmonized (main + Table S15).
+- **siunitx:** unified to `\qty`/`\num`/`\qtyrange` in main, SM, cover; `Table_S10` generated file untouched per its do-not-hand-edit header.
+- **Frozen package stale:** `submission_ACS_P2V2609C/` still holds the pre-hedge copy (novel/RRS language, HOLD-dependent ethnobotanical paragraph, SciencePlots filler, present-tense Zenodo) — refresh from canonical sources before any submission step.
+- **Builds:** main + SM + cover exit 0, 0 undefined citations.
+- **Re-audit resolution (15 Sept 2026, findings 4–9):** title fixed to 15 words across main/SM/cover (findings 4–5); STRING threshold range corrected to 0.9632–0.9975 with all three pair values stated, 1.0000 retained only for the imputation table where verified (finding 7); unsourced DEKOIS CI (0.37–0.53) removed, point estimate + EF kept (finding 8); all 8 HOLD keys excised from text and deleted from `.bib` (verified stand-ins: ferreira2023docking, polypharmacology_malaria_2026, roux2024mmgbsa; upstream provenance via SM Table S16); frozen package refreshed from canonical sources and recompiled green (finding 9). Finding 6 (affiliation regression) rejected on evidence: V2609C wording is identical to V2609B, and the claimed DAR wording exists nowhere in repo or DAR. `SUBMISSION_NOT_AUTHORIZED` retained until the excised keys are re-added with verified metadata or the text ships without them (current state: ships without them).
 
