@@ -1,0 +1,137 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                 P3 ZENODO UPLOAD — QUICK START GUIDE                     ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Reserved DOI: https://doi.org/10.5281/zenodo.19608875                  ║
+║  Status: Ready for upload                                                ║
+║  Time needed: 1.5-2 hours                                                ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 1: VERIFY PACKAGE (5 minutes)                                      ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  $ cd zenodo_package_P3/                                                 ║
+║  $ sha256sum -c sha256sums.txt                                           ║
+║  Expected: All files OK ✓                                                ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 2: ACCESS ZENODO (2 minutes)                                       ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  1. Open: https://zenodo.org/deposit/19608875                            ║
+║  2. Log in with your Zenodo account                                      ║
+║  3. Verify reserved DOI appears                                          ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 3: UPLOAD FILES (10-60 minutes)                                    ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  ▸ Drag entire zenodo_package_P3/ folder to Zenodo upload area          ║
+║  ▸ Wait for upload to complete                                           ║
+║  ▸ Verify ~15-25 files appear in file list                               ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 4: FILL METADATA (10 minutes)                                      ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Open: ZENODO_SETUP_GUIDE.md → "Metadata Template" section              ║
+║                                                                          ║
+║  Copy-paste into Zenodo:                                                 ║
+║  □ Upload type: Dataset                                                  ║
+║  □ Title: P3 Reproducibility Package...                                  ║
+║  □ Creators: All 5 authors with ORCIDs                                   ║
+║  □ Description: Complete reproducibility records...                      ║
+║  □ License: CC BY 4.0                                                    ║
+║  □ Keywords: antimalarial, quantum-inspired, ...                         ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 5: PRE-PUBLISH CHECK (5 minutes)                                   ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Verify:                                                                 ║
+║  ☑ All files uploaded                                                    ║
+║  ☑ All 5 author names correct                                            ║
+║  ☑ All ORCIDs correct                                                    ║
+║  ☑ Title matches manuscript                                              ║
+║  ☑ License is CC BY 4.0                                                  ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 6: PUBLISH (1 minute)                                              ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  1. Click green "Publish" button                                         ║
+║  2. Read warning: deposit is immutable after publish                     ║
+║  3. Confirm publication                                                  ║
+║                                                                          ║
+║  ⚠️  WARNING: Cannot edit files after publish!                           ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 7: VERIFY (15 minutes)                                             ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Test DOI resolution:                                                    ║
+║  $ curl -I https://doi.org/10.5281/zenodo.19608875                      ║
+║                                                                          ║
+║  Visit landing page:                                                     ║
+║  https://zenodo.org/records/19608875                                     ║
+║  ☑ Title correct                                                         ║
+║  ☑ Authors correct                                                       ║
+║  ☑ README renders as markdown                                            ║
+║                                                                          ║
+║  Download test:                                                          ║
+║  $ wget https://zenodo.org/.../sha256sums.txt                            ║
+║  $ sha256sum -c sha256sums.txt                                           ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 8: UPDATE MANUSCRIPT (10 minutes)                                  ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Add to Paper3_Quantum_InspiredV2609.tex:                                ║
+║                                                                          ║
+║    \section*{Data Availability}                                          ║
+║    All data available at Zenodo:                                         ║
+║    \url{https://doi.org/10.5281/zenodo.19608875}                        ║
+║                                                                          ║
+║  Add to Bibliography_Paper3.bib:                                         ║
+║                                                                          ║
+║    @misc{zenodo_p3,                                                      ║
+║      author = {Sao Temgoua, M. V. and ...},                              ║
+║      title = {P3 Reproducibility Package},                               ║
+║      year = 2026,                                                        ║
+║      doi = {10.5281/zenodo.19608875}                                     ║
+║    }                                                                     ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  DONE! ✓                                                                 ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Success criteria:                                                       ║
+║  ✓ DOI resolves                                                          ║
+║  ✓ Downloads work                                                        ║
+║  ✓ README renders                                                        ║
+║  ✓ Manuscript updated                                                    ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  NEED HELP?                                                              ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Read: ZENODO_SETUP_GUIDE.md (comprehensive 700-line guide)              ║
+║  Use:  UPLOAD_CHECKLIST.md (printable step-by-step)                     ║
+║  FAQ:  https://help.zenodo.org                                           ║
+║  Support: info@zenodo.org                                                ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  AUTHOR ORCIDs (for metadata):                                           ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  1. Sao Temgoua, M. V.      → 0009-0004-5170-2309                       ║
+║  2. Tchapet Njafa, J.-P.    → 0000-0002-1936-8353                       ║
+║  3. Samafou, P.             → (no ORCID)                                 ║
+║  4. Fon Mbacham, W.         → 0000-0002-3934-3233                       ║
+║  5. Nana Engo, S. G.        → 0000-0002-7484-3508                       ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+Created: 2026-09-15
+By: Kiro AI
+Status: Ready for upload

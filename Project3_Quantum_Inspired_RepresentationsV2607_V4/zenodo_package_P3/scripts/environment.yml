@@ -1,0 +1,17 @@
+name: malaria_md_p3
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - rdkit=2025.03.6
+  - numpy=2.2.1
+  - pandas=2.2.3
+  - scipy=1.15.1
+  - scikit-learn=1.6.1
+  - matplotlib=3.10.1
+  - gudhi=3.10.1
+  - pip
+  - pip:
+    - pennylane==0.45.1
+    - tensorly==0.8.1
