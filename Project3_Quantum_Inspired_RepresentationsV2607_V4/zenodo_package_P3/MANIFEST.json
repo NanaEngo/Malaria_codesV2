@@ -1,0 +1,160 @@
+{
+  "project": "P3 — Quantum-inspired molecular representations (JCAMD submission)",
+  "manuscript_title": "Quantum-inspired molecular representations for African antimalarial candidates: topological fingerprints, tensor network embeddings, and kernel methods",
+  "journal": "Journal of Computer-Aided Molecular Design (JCAMD)",
+  "publisher": "Springer Nature",
+  "version": "V4",
+  "submission_date": "2026-08-30",
+  "package_built": "2026-09-11",
+  "status": "staged_pending_upload",
+  "doi_reserved": "https://doi.org/10.5281/zenodo.19608875",
+  "license": "CC BY 4.0 International",
+  "package_structure": {
+    "data": {
+      "description": "Core datasets - molecular panel, activity labels, TFP, TNE representations",
+      "key_files": [
+        "p3_labels_production.csv (19,849 molecules with activity labels)",
+        "p3_tda_fingerprints.csv (TFP: 84 persistent homology features)",
+        "p3_tne_embeddings.csv (TNE: 192-dim Tucker embeddings, 13 failures)"
+      ]
+    },
+    "results": {
+      "description": "Benchmark results, external validation, regression analyses",
+      "key_files": [
+        "p3_hybrid_benchmark.csv (5-fold CV for 9 representations)",
+        "p3_qks_benchmark_v1.csv (Quantum kernel internal validation)",
+        "p3_chembl_external_validation.csv (External ChEMBL validation)",
+        "p3_tne_regression_summary.csv (Docking score regressions)",
+        "p3_tda_promiscuity_correlation.csv (TDA vs polypharmacology)"
+      ]
+    },
+    "scripts": {
+      "description": "Analysis pipelines - TDA, TNE, QKS, benchmarks",
+      "key_files": [
+        "p3_tda_pipeline.py (Topological fingerprint generation)",
+        "p3_tne_pipeline.py (Tensor network embeddings)",
+        "p3_qks_kernel.py (Quantum kernel computation)",
+        "p3_hybrid_benchmark.py (Main benchmark)",
+        "environment.yml (Conda environment specification)"
+      ]
+    },
+    "documentation": {
+      "description": "Supporting documentation - DAR, methods, results summary",
+      "files": [
+        "P3_DATA_ANALYSIS_REPORT.md",
+        "P3_METHODS_SUPPLEMENT.md",
+        "P3_RESULTS_SUMMARY.md"
+      ]
+    }
+  },
+  "key_findings": {
+    "headline": "No quantum-inspired representation outperforms ECFP4 under tested protocols",
+    "ecfp4_auc": 0.9475,
+    "hybrid_auc": 0.8876,
+    "quantum_kernel_vs_rbf": "0.7512 vs 0.7007 (p=0.0878, not significant)",
+    "external_validation": "Quantum worse than RBF on ChEMBL (0.817 vs 0.847, p=0.021)",
+    "tne_docking_correlation": {
+      "pfdhfr": "TNE R²=0.473 vs ECFP4 R²=0.461 (competitive)",
+      "pfatp4": "TNE R²=0.464 vs ECFP4 R²=0.578 (ECFP4 better)",
+      "pfcrt": "TNE R²=0.334 vs ECFP4 R²=0.517 (ECFP4 better)"
+    },
+    "tda_promiscuity": "Weak negative correlation (ρ=-0.17, p<0.001)"
+  },
+  "representations": {
+    "TFP": {
+      "name": "Topological Fingerprint",
+      "method": "Persistent homology (Vietoris-Rips filtration)",
+      "dimensions": 84,
+      "failures": 0,
+      "software": "Gudhi 3.10.1"
+    },
+    "TNE": {
+      "name": "Tensor Network Embedding",
+      "method": "Tucker decomposition",
+      "bond_dim": 8,
+      "tucker_ranks": [8, 8, 3],
+      "output_dim": 192,
+      "compression": "6.1x mean (range 1.9x-10.9x)",
+      "reconstruction_error": "mean=0.113, max=0.220",
+      "failures": 13,
+      "software": "tensorly 0.8.1"
+    },
+    "QKS": {
+      "name": "Quantum Kernel Score",
+      "method": "IQPEmbedding circuit on 8 qubits",
+      "hardware": "Classical simulation (PennyLane)",
+      "note": "Not run on real quantum hardware"
+    },
+    "ECFP4": {
+      "name": "Extended Connectivity Fingerprint",
+      "radius": 2,
+      "bits": 2048,
+      "software": "RDKit 2025.03.6"
+    }
+  },
+  "software_requirements": {
+    "python": "3.11+",
+    "conda_environment": "malaria_md",
+    "key_packages": {
+      "rdkit": "2025.03.6",
+      "numpy": "2.2.1",
+      "pandas": "2.2.3",
+      "scipy": "1.15.1",
+      "scikit-learn": "1.6.1",
+      "pennylane": "0.45.1",
+      "gudhi": "3.10.1",
+      "tensorly": "0.8.1",
+      "matplotlib": "3.10.1"
+    }
+  },
+  "panel_statistics": {
+    "total_molecules": 19849,
+    "valid_tda": 19849,
+    "valid_tne": 19836,
+    "tne_failures": 13,
+    "activity_source": "Computational predictions (P3 hybrid library)",
+    "chemical_diversity": "African natural product-inspired"
+  },
+  "validation_approach": {
+    "internal": "5-fold cross-validation with multiple seeds",
+    "external": "ChEMBL antimalarial dataset (label-shift test)",
+    "regression": "Docking scores on PfDHFR, PfATP4, PfCRT",
+    "statistical": "Paired t-tests, Spearman correlations"
+  },
+  "checksums": {
+    "file": "sha256sums.txt",
+    "algorithm": "SHA-256"
+  },
+  "upload_workflow": [
+    "1. Verify all files present and checksums match (sha256sum -c sha256sums.txt)",
+    "2. Upload to Zenodo deposit 19608875",
+    "3. Verify upload integrity (download and spot-check)",
+    "4. Publish deposit on Zenodo",
+    "5. Confirm DOI resolves: https://doi.org/10.5281/zenodo.19608875",
+    "6. Insert DOI into manuscript Data Availability section",
+    "7. Make GitHub repository public after DOI verification"
+  ],
+  "related_projects": {
+    "p1": "Chemical space exploration and polypharmacology (provides docking scores)",
+    "p5": "GNN/Transformer benchmark (uses same 19,836-molecule panel)"
+  },
+  "citation": {
+    "dataset": "Sao Temgoua, M. V.; Tchapet Njafa, J.-P.; Samafou, P.; Fon Mbacham, W.; Nana Engo, S. G. (2026). P3 Reproducibility Package — JCAMD Submission [Data set]. Zenodo. https://doi.org/10.5281/zenodo.19608875",
+    "manuscript": "Sao Temgoua, M. V.; Tchapet Njafa, J.-P.; Samafou, P.; Fon Mbacham, W.; Nana Engo, S. G. Quantum-inspired molecular representations for African antimalarial candidates. J. Comput. Aided Mol. Des. 2026 (submitted)"
+  },
+  "contact": {
+    "corresponding_author": "Myke Vital Sao Temgoua",
+    "email": "myke-vital.sao@facsciences-uy1.cm",
+    "orcid": "0009-0004-5170-2309",
+    "institution": "Department of Physics, Faculty of Science, University of Yaoundé I, Cameroon"
+  },
+  "notes": [
+    "Honest-negative results: quantum-inspired methods do not outperform ECFP4",
+    "Quantum kernels simulated on classical hardware (no quantum device)",
+    "Panel inherited from P1/P3 hybrid library with computational activity labels",
+    "TNE provides competitive performance on PfDHFR but not other targets",
+    "TDA shows weak but significant correlation with target promiscuity",
+    "External validation on ChEMBL shows label-shift sensitivity",
+    "DOI reserved on Zenodo but deposit not yet uploaded - awaiting author action"
+  ]
+}
