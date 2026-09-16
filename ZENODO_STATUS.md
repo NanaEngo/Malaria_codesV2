@@ -1,6 +1,6 @@
-# Zenodo Deposits Status — P1, P3, P4, P5
+# Zenodo Deposits Status — P1, P2, P3, P4, P5
 
-**Last updated**: 2026-09-11  
+**Last updated**: 2026-09-16  
 **Purpose**: Track Zenodo reproducibility deposits across all projects
 
 ---
@@ -9,7 +9,8 @@
 
 | Project | Journal | Manuscript Status | Zenodo DOI | Package Status |
 |---------|---------|-------------------|------------|----------------|
-| **P1** | JCIM | V8 revision ready (2026-09-09) | [10.5281/zenodo.22686176](https://doi.org/10.5281/zenodo.22686176) | ✅ **Ready for upload** |
+| **P1** | JCIM | V8 revision ready (2026-09-09) | [10.5281/zenodo.22696778](https://doi.org/10.5281/zenodo.22696778) ✅ **published** (verified HTTP 200, 2026-09-16) | ✅ **Uploaded** (commit ac00047c4; supersedes reserved 22686176) |
+| **P2** | JCIM | V2609C technically ready | ⚠️ **Needs reservation** | 🟡 **Scaffold only** (docs, no data, checksums pending — `zenodo_package_P2/`, 2026-09-16) |
 | **P3** | JCAMD | Submitted (2026-08-30) | [10.5281/zenodo.19608875](https://doi.org/10.5281/zenodo.19608875) | ✅ **Structured** (2026-09-11) |
 | **P4** | JCAMD | Submitted (2026-08-30) | ⚠️ **Needs reservation** | ✅ **Structured** (2026-09-11) |
 | **P5** | JCAMD | Pre-submission development | ⚠️ **Needs reservation** | ✅ **Structured** (2026-09-11) |
@@ -18,13 +19,25 @@
 
 ## P1 — Chemical Space & Polypharmacology
 
-**Status**: ✅ V8 package complete, ready for upload  
+**Status**: ✅ V8 package uploaded and public (2026-09-16)  
 **Location**: `Project1_Chem_space_antimalarial_V7_CorrectedGrid/zenodo_package_P1/`  
-**DOI**: https://doi.org/10.5281/zenodo.22686176 (reserved)  
+**DOI**: https://doi.org/10.5281/zenodo.22696778 (published; supersedes reserved 22686176)  
 **Files**: 218 files, ~4.4 MB  
 **Key result**: 17 candidates with RRS profiles, DEKOIS validation, PfCRT correction
 
-**Next action**: Upload to Zenodo (author decision pending)
+**Next action**: None (deposit public; DOI cited in V8 submission docs)
+
+---
+
+## P2 — Polypharmacology MD Validation
+
+**Status**: 🟡 Package scaffold only (docs, no data yet)  
+**Location**: `Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/zenodo_package_P2/`  
+**DOI**: ⚠️ Needs reservation  
+**Files**: 8 scaffolding docs (README, MANIFEST.json, guides); `sha256sums.txt` placeholder  
+**Key result**: Set-C MD-RRS pilot (16 systems), PP-15 multiseed, GNINA validation
+
+**Next action**: Reserve DOI → populate data → generate checksums → upload (author decision pending). Manuscript V2609C correctly states reserved/future — no text change needed.
 
 ---
 
