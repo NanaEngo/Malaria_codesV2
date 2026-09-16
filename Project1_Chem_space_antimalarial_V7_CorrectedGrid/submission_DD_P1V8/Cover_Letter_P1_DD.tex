@@ -1,0 +1,53 @@
+% ============================================================================
+% Cover Letter — Paper 1 V8 (RSC Digital Discovery)
+% Target: Digital Discovery (Royal Society of Chemistry), Full Paper
+% Note: P1 V8 was previously reviewed at JCIM (resubmission refused 16 Sept
+% 2026); the V8 revision already integrates external validation added in
+% response to peer review (DEKOIS 2.0, MMV enrichment, redocking RMSD).
+% ============================================================================
+\documentclass[11pt,a4paper]{letter}
+
+\usepackage[top=1.3cm,bottom=1.3cm,left=1.6cm,right=1.6cm]{geometry}
+\setlength{\parskip}{0.18em}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{siunitx}
+\sisetup{
+  detect-all           = true,
+  group-minimum-digits = 4,
+}
+
+\signature{Myke Vital Sao Temgoua \\ \small Corresponding Author}
+\address{%
+  University of Yaound\'{e} I \\
+  Department of Physics, Faculty of Science \\
+  P.O. Box 812, Yaound\'{e}, Cameroon \\
+  \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm}
+}
+
+\begin{document}
+
+\begin{letter}{%
+  The Editors \\
+  \textit{Digital Discovery} \\
+  Royal Society of Chemistry
+}
+
+\opening{Dear Editors,}
+
+\noindent 16 September 2026
+
+We submit the manuscript entitled \textbf{``Target breadth and mutation resilience in African-natural-product-inspired antimalarial chemotypes: a computational analysis''} for consideration as a Full Paper in \textit{Digital Discovery}.
+
+Drug-resistant malaria demands chemotypes that survive the pathogen's evolution, yet most virtual screening cascades rank compounds against a single static target snapshot. Our contribution is a high-throughput computational triage methodology, not another candidate list. From a scaffold-guided expansion of African natural product and synthetic antimalarial seeds into a \num{65856}-compound hybrid library (\qty{92.6}{\percent} whole-molecule novelty with \qty{69.3}{\percent} privileged-scaffold retention), we formulate a Resistance-aware Retention Score (RRS) that quantifies per-target affinity retention across wild-type and clinically observed mutant states of four \textit{Plasmodium falciparum} targets (PfDHFR, PfCRT, PfATP4, PfClpP). Multi-parameter optimisation distils the library to 17 mutation-resilient candidates, each validated by an external data-first chain: DEKOIS 2.0 benchmarking, MMV compound enrichment, and sub-\qty{2.0}{\angstrom} redocking RMSD on every target.
+
+This fits your scope on three counts: (i) a high-throughput computational methodology for molecular design, (ii) an advanced data workflow with full provenance, checksums, and machine-readable tables, and (iii) reproducible, reusable outputs for the community.
+
+\textbf{Data and code:} the complete deposit --- data, code, raw docking outputs, provenance records, checksum manifest --- is public on Zenodo under an MIT licence at \url{https://doi.org/10.5281/zenodo.22696778}. Editors and referees have immediate access; nothing is embargoed.
+
+The work is original, is not under consideration elsewhere, has been approved by all authors, and there are no conflicts to declare.
+
+\closing{We thank you for your consideration.}
+
+\end{letter}
+\end{document}

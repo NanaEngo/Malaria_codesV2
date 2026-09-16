@@ -1,0 +1,23 @@
+%% SM Table (label sm_retrospective_antimalarials) — Retrospective validation: RRS of five approved antimalarials
+%% Source: results/retrospective_approved_antimalarials_20260909/rrs_profiles.csv
+%% PfDHFR: MTX-stripped WT + mutants, raw 7F3Y frame, pocket-anchored grid.
+%% PfCRT: corrected 3D7-like LYS-76 WT + K76T/K76A, V2 cavity-anchored grid.
+\begin{table}[ht!]
+\centering
+\caption{Retrospective RRS profiles of five approved antimalarials against the PfDHFR (MTX-stripped wild-type and N51I/C59R/S108N/I164L mutants) and corrected PfCRT (LYS-76 wild-type and K76T/K76A mutants) panels. RRS is defined as in \Cref{sec:sm_rrs}: $\mathrm{RRS}_{i,m,t}=100|S_{\mathrm{Vina},i,m,t}|/|S_{\mathrm{Vina},i,WT,t}|$; blank cells mark wild-type non-binders ($|S_{\mathrm{Vina},i,WT,t}|<\qty{5}{\kilo\calorie\per\mole}$) for which no RRS is defined. The docking-RRS framework does not recover the clinically documented resistance signatures: pyrimethamine RRS is $\approx\qty{100}{\percent}$ on all four PfDHFR mutants and chloroquine RRS is $\approx\qty{99}{\percent}$ on PfCRT K76T/K76A, both within the pipeline-null spread of \qtyrange{99.4}{100.5}{\percent} (\Cref{sec:sm_val_redock_null}). Artemisinin and cipargamin show PfDHFR RRS values above \qty{100}{\percent} (mutant estimates more favorable than wild-type); chloroquine and lumefantrine are PfDHFR non-binders, consistent with their non-antifolate mechanisms. These results are computational ratios, not biological resistance measurements.}
+\label{tab:sm_retrospective_antimalarials}
+\small
+\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+Drug & \multicolumn{4}{c}{RRS$_{\mathrm{PfDHFR}}$ (\%)} & \multicolumn{2}{c}{RRS$_{\mathrm{PfCRT}}$ (\%)} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-7}
+ & N51I & C59R & S108N & I164L & K76T & K76A \\
+\midrule
+Artemisinin    & \num{113.5} & \num{118.0} & \num{113.8} & \num{114.0} & \num{100.0} & \num{100.0} \\
+Pyrimethamine  & \num{100.0} & \num{100.0} & \num{99.7}  & \num{100.0} & \num{100.2} & \num{100.1} \\
+Chloroquine    & \textemdash & \textemdash & \textemdash & \textemdash & \num{99.6}  & \num{98.8}  \\
+Lumefantrine   & \textemdash & \textemdash & \textemdash & \textemdash & \num{105.8} & \num{103.5} \\
+Cipargamin     & \num{115.1} & \num{112.7} & \num{114.6} & \num{114.6} & \num{99.5}  & \num{99.7}  \\
+\bottomrule
+\end{tabular}
+\end{table}
