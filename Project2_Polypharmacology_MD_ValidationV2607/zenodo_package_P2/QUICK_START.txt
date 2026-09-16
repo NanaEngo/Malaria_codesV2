@@ -1,0 +1,175 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                 P2 ZENODO UPLOAD — QUICK START GUIDE                     ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Reserved DOI: ⚠️  TO BE RESERVED                                        ║
+║  Status: Ready for upload after DOI reservation                          ║
+║  Time needed: 2-2.5 hours                                                ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 0: RESERVE DOI (10 minutes) — DO THIS FIRST!                      ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  1. Go to: https://zenodo.org                                            ║
+║  2. Click "New upload"                                                   ║
+║  3. Fill title: P2 Reproducibility Package — JCIM Submission...          ║
+║  4. Add all 5 authors (see ORCIDs below)                                 ║
+║  5. Click "Save" (do NOT upload files yet)                               ║
+║  6. Copy reserved DOI: 10.5281/zenodo.XXXXXXX                           ║
+║  7. Update MANIFEST.json and README.md with this DOI                     ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 1: VERIFY PACKAGE (5 minutes)                                      ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  $ cd zenodo_package_P2/                                                 ║
+║  $ sha256sum -c sha256sums.txt                                           ║
+║  Expected: All files OK ✓                                                ║
+║  $ du -sh .                                                              ║
+║  Expected: ~500 MB                                                       ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 2: ACCESS ZENODO (2 minutes)                                       ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  1. Open: https://zenodo.org/deposit/XXXXXXX (your reserved DOI)        ║
+║  2. Log in with your Zenodo account                                      ║
+║  3. Verify reserved DOI appears                                          ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 3: UPLOAD FILES (10-30 minutes for ~500 MB)                        ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  ▸ Drag entire zenodo_package_P2/ folder to Zenodo upload area          ║
+║    OR create ZIP and upload (for stability)                              ║
+║  ▸ Wait for upload to complete                                           ║
+║  ▸ Verify all files appear in file list                                  ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 4: FILL METADATA (10 minutes)                                      ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Open: ZENODO_SETUP_GUIDE.md → "Metadata Template" section              ║
+║                                                                          ║
+║  Copy-paste into Zenodo:                                                 ║
+║  □ Upload type: Dataset                                                  ║
+║  □ Title: P2 Reproducibility Package — JCIM Submission...                ║
+║  □ Creators: All 5 authors with ORCIDs                                   ║
+║  □ Description: Complete reproducibility records...                      ║
+║  □ License: CC BY 4.0                                                    ║
+║  □ Keywords: antimalarial, drug resistance, polypharmacology, ...        ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 5: PRE-PUBLISH CHECK (5 minutes)                                   ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Verify:                                                                 ║
+║  ☑ All files uploaded (~500 MB)                                          ║
+║  ☑ All 5 author names correct                                            ║
+║  ☑ All ORCIDs correct                                                    ║
+║  ☑ Title matches manuscript                                              ║
+║  ☑ License is CC BY 4.0                                                  ║
+║  ☑ Related identifiers added (P1, P3)                                    ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 6: PUBLISH (1 minute)                                              ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  1. Click green "Publish" button                                         ║
+║  2. Read warning: deposit is immutable after publish                     ║
+║  3. Confirm publication                                                  ║
+║                                                                          ║
+║  ⚠️  WARNING: Cannot edit files after publish!                           ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 7: VERIFY (15 minutes)                                             ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Test DOI resolution:                                                    ║
+║  $ curl -I https://doi.org/10.5281/zenodo.XXXXXXX                       ║
+║                                                                          ║
+║  Visit landing page:                                                     ║
+║  https://zenodo.org/records/XXXXXXX                                      ║
+║  ☑ Title correct                                                         ║
+║  ☑ Authors correct                                                       ║
+║  ☑ README renders as markdown                                            ║
+║                                                                          ║
+║  Download test:                                                          ║
+║  $ wget https://zenodo.org/.../sha256sums.txt                            ║
+║  $ sha256sum -c sha256sums.txt                                           ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 8: UPDATE MANUSCRIPT (10 minutes)                                  ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Add to Polypharmacology_MD_Validation_V2609C.tex:                       ║
+║                                                                          ║
+║    \section*{Data Availability}                                          ║
+║    All data available at Zenodo:                                         ║
+║    \url{https://doi.org/10.5281/zenodo.XXXXXXX}                         ║
+║                                                                          ║
+║  Add to bibliography:                                                    ║
+║                                                                          ║
+║    @misc{zenodo_p2,                                                      ║
+║      author = {Sao Temgoua, M. V. and ...},                              ║
+║      title = {P2 Reproducibility Package},                               ║
+║      year = 2026,                                                        ║
+║      doi = {10.5281/zenodo.XXXXXXX}                                      ║
+║    }                                                                     ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  STEP 9: CREATE GIT TAG (5 minutes)                                      ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  $ cd ~/Documents/GitHub/Malaria_codesV2                                 ║
+║  $ git tag -a p2-jcim-submission -m "P2 JCIM V2609C with Zenodo DOI"    ║
+║  $ git push origin p2-jcim-submission                                    ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  DONE! ✓                                                                 ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Success criteria:                                                       ║
+║  ✓ DOI reserved and resolves                                             ║
+║  ✓ Downloads work                                                        ║
+║  ✓ README renders                                                        ║
+║  ✓ Manuscript updated                                                    ║
+║  ✓ Git tag created                                                       ║
+║  ✓ AGENTS.md updated                                                     ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  KEY FINDINGS (for reference)                                            ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  ▸ 87.5% estimand divergence (static docking vs short MD)                ║
+║  ▸ 39-ligand external: 100% Class-A agreement (GNINA CNN)                ║
+║  ▸ African NP: Fsp3=0.22, QED=0.70, MPO=0.728                            ║
+║  ▸ MD pilot: 16 systems, 10 ns, no reproducible mutant weakening         ║
+║  ▸ MM-GBSA: 8/12 mutants show RRS > 100 (tighter than WT)               ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  NEED HELP?                                                              ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  Read: UPLOAD_INSTRUCTIONS.md (detailed P2-specific guide)               ║
+║  Use:  UPLOAD_CHECKLIST.md (printable step-by-step)                     ║
+║  Quick: ZENODO_P2_P5_QUICK_REFERENCE.md (workspace root)                 ║
+║  FAQ:  https://help.zenodo.org                                           ║
+║  Support: info@zenodo.org                                                ║
+║                                                                          ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║  AUTHOR ORCIDs (for metadata):                                           ║
+╠══════════════════════════════════════════════════════════════════════════╣
+║                                                                          ║
+║  1. Sao Temgoua, M. V.      → 0009-0004-5170-2309                       ║
+║  2. Tchapet Njafa, J.-P.    → 0000-0002-1936-8353                       ║
+║  3. Samafou, P.             → (no ORCID)                                 ║
+║  4. Fon Mbacham, W.         → 0000-0002-3934-3233                       ║
+║  5. Nana Engo, S. G.        → 0000-0002-7484-3508                       ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+Created: 2026-09-16
+By: Kiro AI
+Status: Ready for DOI reservation and upload
+
