@@ -1,0 +1,156 @@
+{
+ "date": "2026-09-16",
+ "arms": [
+  "ECFP4-RF",
+  "GIN",
+  "GIN-TFP",
+  "GIN-TNE",
+  "ChemBERTa"
+ ],
+ "records_per_arm": 25,
+ "screening": [
+  {
+   "arm": "ECFP4-RF",
+   "ef1": 1.3461,
+   "ef5": 1.3385,
+   "bedroc": 0.0001,
+   "p1": 0.999,
+   "p5": 0.9933,
+   "ef1_sd": 0.0027,
+   "ef5_sd": 0.0039,
+   "bedroc_sd": 0.0,
+   "p1_sd": 0.002,
+   "p5_sd": 0.0029
+  },
+  {
+   "arm": "GIN",
+   "ef1": 1.3243,
+   "ef5": 1.3119,
+   "bedroc": 0.0001,
+   "p1": 0.9828,
+   "p5": 0.9736,
+   "ef1_sd": 0.0234,
+   "ef5_sd": 0.0135,
+   "bedroc_sd": 0.0,
+   "p1_sd": 0.0174,
+   "p5_sd": 0.01
+  },
+  {
+   "arm": "GIN-TFP",
+   "ef1": 1.3189,
+   "ef5": 1.3119,
+   "bedroc": 0.0001,
+   "p1": 0.9788,
+   "p5": 0.9736,
+   "ef1_sd": 0.0374,
+   "ef5_sd": 0.0205,
+   "bedroc_sd": 0.0,
+   "p1_sd": 0.0277,
+   "p5_sd": 0.0152
+  },
+  {
+   "arm": "GIN-TNE",
+   "ef1": 1.3257,
+   "ef5": 1.3189,
+   "bedroc": 0.0001,
+   "p1": 0.9838,
+   "p5": 0.9788,
+   "ef1_sd": 0.0158,
+   "ef5_sd": 0.0143,
+   "bedroc_sd": 0.0,
+   "p1_sd": 0.0117,
+   "p5_sd": 0.0106
+  },
+  {
+   "arm": "ChemBERTa",
+   "ef1": 1.3175,
+   "ef5": 1.3037,
+   "bedroc": 0.0001,
+   "p1": 0.9778,
+   "p5": 0.9675,
+   "ef1_sd": 0.0267,
+   "ef5_sd": 0.0111,
+   "bedroc_sd": 0.0,
+   "p1_sd": 0.0198,
+   "p5_sd": 0.0083
+  }
+ ],
+ "conformal_nominal": 0.9,
+ "conformal": [
+  {
+   "arm": "ECFP4-RF",
+   "coverage_mean": 0.9063,
+   "coverage_sd": 0.0026,
+   "setsize_mean": 1.26,
+   "setsize_sd": 0.009
+  },
+  {
+   "arm": "GIN",
+   "coverage_mean": 0.9034,
+   "coverage_sd": 0.0017,
+   "setsize_mean": 1.274,
+   "setsize_sd": 0.017
+  },
+  {
+   "arm": "GIN-TFP",
+   "coverage_mean": 0.9021,
+   "coverage_sd": 0.0022,
+   "setsize_mean": 1.258,
+   "setsize_sd": 0.026
+  },
+  {
+   "arm": "GIN-TNE",
+   "coverage_mean": 0.9048,
+   "coverage_sd": 0.0034,
+   "setsize_mean": 1.276,
+   "setsize_sd": 0.022
+  },
+  {
+   "arm": "ChemBERTa",
+   "coverage_mean": 0.9046,
+   "coverage_sd": 0.0019,
+   "setsize_mean": 1.307,
+   "setsize_sd": 0.017
+  }
+ ],
+ "recalibration": [
+  {
+   "arm": "ECFP4-RF",
+   "ece_raw": 0.0805,
+   "ece_platt": 0.043,
+   "ece_iso": 0.0257,
+   "ece_raw_sd": 0.0108
+  },
+  {
+   "arm": "GIN",
+   "ece_raw": 0.0781,
+   "ece_platt": 0.0454,
+   "ece_iso": 0.0258,
+   "ece_raw_sd": 0.012
+  },
+  {
+   "arm": "GIN-TFP",
+   "ece_raw": 0.0903,
+   "ece_platt": 0.0447,
+   "ece_iso": 0.0254,
+   "ece_raw_sd": 0.0098
+  },
+  {
+   "arm": "GIN-TNE",
+   "ece_raw": 0.0898,
+   "ece_platt": 0.0419,
+   "ece_iso": 0.0266,
+   "ece_raw_sd": 0.0099
+  },
+  {
+   "arm": "ChemBERTa",
+   "ece_raw": 0.1276,
+   "ece_platt": 0.0447,
+   "ece_iso": 0.0251,
+   "ece_raw_sd": 0.0051
+  }
+ ],
+ "n_rescue": 39,
+ "n_reverse": 44,
+ "n_molecules_pooled": 19836
+}

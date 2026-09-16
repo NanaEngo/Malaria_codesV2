@@ -207,7 +207,7 @@
 
 ### Metadata Required
 
-- **Title:** Target breadth and mutation resilience in African-natural-product-inspired antimalarial chemotypes: a computational analysis
+- **Title:** Target breadth and mutation resilience in African-natural-product-inspired antimalarial chemotypes: docking-based resistance-resilience scoring
 - **Running Title:** Polypharmacology and mutation resilience in antimalarials
 - **Keywords:** African natural products; antimalarial discovery; polypharmacology; resistance resilience; molecular docking; chemical space; PfDHFR; PfCRT
 
