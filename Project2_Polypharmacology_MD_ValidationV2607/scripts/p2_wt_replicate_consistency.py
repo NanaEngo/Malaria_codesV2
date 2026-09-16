@@ -144,7 +144,7 @@ def main() -> None:
         r"\end{table}",
         "",
     ])
-    tex_path = ROOT / "manuscript/LaTeX/Table_S10_WT_Replicate_Consistency.tex"
+    tex_path = ROOT / "manuscript/V2609C/Table_S10_WT_Replicate_Consistency.tex"
     tex_path.write_text(tex)
 
     print(f"offset={offset:.2f} rep_mean={rep_mean:.2f} rep_sd={rep_sd:.2f} -> artifacts written")

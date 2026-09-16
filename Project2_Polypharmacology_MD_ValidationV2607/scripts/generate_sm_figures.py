@@ -2,8 +2,9 @@
 """Generate the retained P2 Supplementary Material figure:
     rrs_radar_profiles.pdf — per-compound RRS radar plots across six mutations.
 
-The historical VAE latent-space generator is retained below for provenance but
-is not called by the default entry point because that display belongs to Paper 1.
+The historical VAE latent-space generator is retained below for provenance but is
+not called by the default entry point because that display belongs to another
+project and is not part of the P2 package.
 
 Data sources:
     - P1 MCMC latent coordinates: Project1_Chem_space_antimalarial_V2_CorrectedGrid/p1_mcmc_generated.csv
@@ -27,7 +28,7 @@ import pandas as pd
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
 P1_ROOT = PROJECT_ROOT.parent / "Project1_Chem_space_antimalarial_V2_CorrectedGrid"
 P2_RESULTS = PROJECT_ROOT / "results"
-GRAPHICS_DIR = PROJECT_ROOT / "manuscript" / "Graphics"
+GRAPHICS_DIR = PROJECT_ROOT / "manuscript" / "V2609C" / "Graphics"
 
 # Ensure output directory exists
 GRAPHICS_DIR.mkdir(parents=True, exist_ok=True)

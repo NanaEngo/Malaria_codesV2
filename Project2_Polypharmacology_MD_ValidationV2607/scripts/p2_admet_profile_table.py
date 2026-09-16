@@ -11,7 +11,7 @@ traceable completion of Table S5.
 
 Outputs:
   results/admet_profile_setC_17.csv
-  manuscript/LaTeX/Table_S5_ADMET_CrossValidation.tex  (regenerated with values)
+  manuscript/V2609C/Table_S5_ADMET_CrossValidation.tex  (regenerated with values)
 """
 import csv, os, sys
 
@@ -24,7 +24,7 @@ P1 = '/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V4_Correct
 EOS = os.path.join(P1, 'eos7kpb_malaria_final_screening.csv')
 POLY = os.path.join(P2, 'results/candidate_selection/md_top20_candidates_polypharm.csv')
 OUT_CSV = os.path.join(P2, 'results/admet_profile_setC_17.csv')
-OUT_TEX = os.path.join(P2, 'manuscript/LaTeX/Table_S5_ADMET_CrossValidation.tex')
+OUT_TEX = os.path.join(P2, 'manuscript/V2609C/Table_S5_ADMET_CrossValidation.tex')
 
 END_POINTS = ['aq_sol', 'cyp3a4', 'caco_2', 'clint_h']
 LABELS = {
