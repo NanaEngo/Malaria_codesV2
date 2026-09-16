@@ -1,11 +1,13 @@
 # AGENTS.md — active project instructions
 
-**Updated:** 12 September 2026
+**Updated:** 16 September 2026
 **Long-form historical instructions:** `docs/archive/md_full_20260812/AGENTS.md`
 
 **P1 SOUMISSION JCIM = V8 (canonical):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/submission_ACS_P1V8/P1_Integrated_Polypharmacology_RRS_Main_V8.tex` (main 25 p.) + `_SM_V8.tex` (17 p.) + cover letter + Response to Reviewers; **package ACS auto-contenu `submission_ACS_P1V8/`**. **V8 supersedes V7** with complete revision updates, response-to-reviewers dossier, comprehensive validation (DEKOIS 2.0 external benchmark, MMV enrichment, redocking RMSD), physicochemical characterization, and enhanced narrative. Compilation V8 : main 25 p., SM 17 p., cover 1 p., response 5 p., 0 erreur / 0 réf. indéfinie ✅ — package révisé et ressoumis sur HPC. **Resoumission REFUSÉE par JCIM le 16 sept. 2026 — en quête d'une nouvelle revue** (piste : RSC Digital Discovery, périmètre criblage haut-débit compatible, DOI Zenodo public disponible).
 
 **P2 SOUMISSION JCIM = V2609C (canonical):** `Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/Polypharmacology_MD_Validation_V2609C.tex` (main 26 p.) + `_SM.tex` (19 p.) + cover letter (1 p.); **package ACS auto-contenu `submission_ACS_P2V2609C/`** (PDF + .bbl/.aux + .bib + figures vectorielles). **V2609C supersedes V2609B (12/09/2026)** with *Estimand Divergence* framing (87.5% static vs MD mismatch as a positive triage filter), denominator-unbiased RRS, 39-ligand GNINA CNN validation (100% Class-A agreement), African Natural Product chemical space profiling ($Fsp^3=0.22$, $QED=0.70$, $MPO=0.728$), ethnobotanical mapping, and WHO 2025/2026 regional resistance isolate contextualization. Compilation V2609C : main 26 p., SM 19 p., cover 1 p., 0 erreur / 0 réf. indéfinie ✅ — package techniquement prêt et synchronisé sur HPC (`/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/`).
+
+**Checkpoint 16 Sept 2026 — P2 V2609C git sync:** Commit `e3938fd61` (182 files) pushed to `origin/master`. Contents: V2609B + V2609C manuscript directories (TeX, PDFs, graphics, bib, submission packages), LaTeX compilation output, 8 updated figure/analysis scripts, and PP-01_PfDHFR_WT replicate 1 — 25ns MD result files (energy, backbone RMSD, ligand RMSD `.xvg` only; 2.8 GB trajectory excluded per `.gitignore`). V2609C package now version-controlled alongside HPC canonical source.
 
 ## 1. Canonical source map
 

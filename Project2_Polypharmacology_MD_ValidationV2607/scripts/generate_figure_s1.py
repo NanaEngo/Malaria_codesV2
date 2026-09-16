@@ -14,7 +14,7 @@ SCIENCE_STYLE = ['science', 'no-latex', 'grid']
 
 CSV_PATH = os.path.join(os.path.dirname(__file__),
                          "../results/candidate_selection/mpo_sensitivity_analysis.csv")
-OUT_DIR = os.path.join(os.path.dirname(__file__), "../manuscript/Graphics")
+OUT_DIR = os.path.join(os.path.dirname(__file__), "../manuscript/V2609C/Graphics")
 
 
 def main():
