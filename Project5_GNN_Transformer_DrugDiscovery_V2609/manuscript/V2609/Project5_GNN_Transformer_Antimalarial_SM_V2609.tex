@@ -129,6 +129,8 @@ Split & Model & {ECE} & {MCE} & {Brier} \\
 \end{tabular}
 \end{table}
 
+The $\mathrm{ECE} > 0.08$ trigger ships with a verified remedy. Fitting Platt scaling (Newton--IRLS sigmoid) and isotonic regression (PAVA) on one deterministic half of each scaffold test fold and evaluating ECE (\num{15} bins) on the other half gives, per arm (mean over \num{5} per-seed means): ECFP4--RF \num{0.0805} $\rightarrow$ \num{0.0430} $\rightarrow$ \textbf{\num{0.0257}}; GIN \num{0.0781} $\rightarrow$ \num{0.0454} $\rightarrow$ \textbf{\num{0.0258}}; GIN--TFP \num{0.0903} $\rightarrow$ \num{0.0447} $\rightarrow$ \textbf{\num{0.0254}}; GIN--TNE \num{0.0898} $\rightarrow$ \num{0.0419} $\rightarrow$ \textbf{\num{0.0266}}; ChemBERTa \num{0.1276} $\rightarrow$ \num{0.0447} $\rightarrow$ \textbf{\num{0.0251}} (raw $\rightarrow$ Platt $\rightarrow$ isotonic). Isotonic regression halves residual ECE versus Platt and cuts it $\approx$\numrange{3}{5}$\times$ versus raw for every arm; the eval-half raw values reproduce the pooled ordering (ChemBERTa worst). Source: \texttt{results/dd\_screening\_utility\_20260916/recalibration\_ece.csv}.
+
 \section{Light GNN hyperparameter sensitivity and capacity defense sweep}
 \label{sec:gnn_sensitivity_si}
 
@@ -204,6 +206,42 @@ ChemBERTa & \num{0.7776} \\
 \bottomrule
 \end{tabular}
 \end{table}
+\section{Screening-utility metrics, conformal validation, and rescue molecules}
+\label{sec:dd_utility_si}
+
+Three post-hoc secondary analyses (script \texttt{scripts/p5\_dd\_screening\_utility.py}, \num{16} September \num{2026}; no retraining; aggregation as mean over \num{5} per-seed means $\pm$ population SD) connect the benchmark to screening practice.
+
+\textit{Screening metrics are saturated by design.} Pooling each seed's five test folds into one ranked library, EF@\qty{1}{\percent} reaches \num{1.3461} $\pm$ \num{0.0027} (ECFP4--RF), \num{1.3243} $\pm$ \num{0.0234} (GIN), \num{1.3189} $\pm$ \num{0.0374} (GIN--TFP), \num{1.3257} $\pm$ \num{0.0158} (GIN--TNE), \num{1.3175} $\pm$ \num{0.0267} (ChemBERTa), with precision@\qty{1}{\percent} \numrange{0.978}{0.999} (\Cref{tab:s7_screening}). At $\approx\qty{74}{\percent}$ active prevalence the EF ceiling is $\approx\num{1.35}$: early-recognition metrics cannot discriminate arms on this panel, and BEDROC degenerates for the same reason (actives are the majority), so it is omitted rather than reported. The ChEMBL transfer panel is equally active-majority (\num{0.8605}); prospective low-hit-rate screening utility is therefore future work, not a claim. Source: \texttt{results/dd\_screening\_utility\_20260916/screening\_metrics.csv}.
+
+\begin{table}[h]
+\centering
+\caption{Post-hoc screening-utility metrics on the canonical scaffold split (per-seed pooled ranking; mean $\pm$ population SD over \num{5} seeds). EF is saturated against its prevalence-imposed ceiling ($\approx\num{1.35}$); arms are indistinguishable by design here.}
+\label{tab:s7_screening}
+\small
+\begin{tabular}{lcccc}
+\toprule
+Arm & EF@\qty{1}{\percent} & EF@\qty{5}{\percent} & Precision@\qty{1}{\percent} & Precision@\qty{5}{\percent} \\
+\midrule
+ECFP4--RF & \num{1.3461} $\pm$ \num{0.0027} & \num{1.3385} $\pm$ \num{0.0039} & \num{0.9990} $\pm$ \num{0.0020} & \num{0.9933} $\pm$ \num{0.0029} \\
+GIN & \num{1.3243} $\pm$ \num{0.0234} & \num{1.3119} $\pm$ \num{0.0135} & \num{0.9828} $\pm$ \num{0.0174} & \num{0.9736} $\pm$ \num{0.0100} \\
+GIN--TFP & \num{1.3189} $\pm$ \num{0.0374} & \num{1.3119} $\pm$ \num{0.0205} & \num{0.9788} $\pm$ \num{0.0277} & \num{0.9736} $\pm$ \num{0.0152} \\
+GIN--TNE & \num{1.3257} $\pm$ \num{0.0158} & \num{1.3189} $\pm$ \num{0.0143} & \num{0.9838} $\pm$ \num{0.0117} & \num{0.9788} $\pm$ \num{0.0106} \\
+ChemBERTa & \num{1.3175} $\pm$ \num{0.0267} & \num{1.3037} $\pm$ \num{0.0111} & \num{0.9778} $\pm$ \num{0.0198} & \num{0.9675} $\pm$ \num{0.0083} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textit{Conformal coverage is valid for all five routed arms.} Split-conformal sets at nominal \qty{90}{\percent} (even/odd calib--eval split per test fold, nonconformity $s = 1 - p_{\mathrm{true}}$) cover \num{0.9063} $\pm$ \num{0.0026} (ECFP4--RF), \num{0.9034} $\pm$ \num{0.0017} (GIN), \num{0.9021} $\pm$ \num{0.0022} (GIN--TFP), \num{0.9048} $\pm$ \num{0.0034} (GIN--TNE), \num{0.9046} $\pm$ \num{0.0019} (ChemBERTa), with mean set sizes \numrange{1.26}{1.31} (ChemBERTa largest at \num{1.307} $\pm$ \num{0.017}, consistent with its worst ECE). Coverage meets nominal for every arm, so the triage filter's ``conformal'' qualifier is empirically grounded. Source: \texttt{results/dd\_screening\_utility\_20260916/conformal\_coverage.csv}.
+
+\textit{Rescue is bidirectional.} Pooling mean predicted probabilities over all \num{25} records per arm, \num{39} active molecules flip from GIN-wrong ($p < \num{0.5}$) to TFP-right ($p \ge \num{0.7}$), while \num{44} flip the opposite way (\Cref{fig:rescue_mols}; SMILES and scores in \texttt{tfp\_rescue\_examples.csv} / \texttt{tfp\_reverse\_examples.csv}). The rescue is therefore a cohort-level asymmetry---the polycyclic/complex-3D gains of \cref{MAIN-tab:structural_complexity}---not cherry-picked proof; both directions are shown.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.95\linewidth]{figures/mol_rescue_top4.png}
+\caption{Top-\num{4} TFP-rescue actives (GIN $p < \num{0.5}$, GIN--TFP $p \ge \num{0.7}$; pooled over \num{25} fold--seed records). Panel indices and per-arm mean probabilities are shown; full lists in \texttt{results/dd\_screening\_utility\_20260916/tfp\_rescue\_examples.csv}.}
+\label{fig:rescue_mols}
+\end{figure}
+
 \section{Conformal Triage Filter implementation}
 \label{sec:triage_code_si}
 

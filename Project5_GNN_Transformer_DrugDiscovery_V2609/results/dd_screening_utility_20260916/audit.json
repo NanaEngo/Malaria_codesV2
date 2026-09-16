@@ -1,0 +1,7 @@
+{
+ "script": "scripts/p5_dd_screening_utility.py",
+ "protocol": "posthoc-no-retraining",
+ "aggregation": "mean over 5 per-seed means +/- population SD",
+ "conformal": "even/odd calib-eval split per test fold, s=1-p_true",
+ "bedroc_alpha": 20.0
+}
