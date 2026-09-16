@@ -4,6 +4,7 @@
 **Release:** V2609C  
 **Status:** `AUTHOR_REVIEW_REQUIRED; SUBMISSION_NOT_AUTHORIZED`  
 **Prepared:** 11 September 2026
+**Updated:** 16 September 2026 (post-freeze HPC readout: short-replicate array, M1 singleton, 25 ns cap; manuscript sources UNCHANGED)
 
 ## Canonical layout
 
@@ -33,7 +34,10 @@ The `Bibliography_*.bib`, generated `acs-*.bib`, `.aux`, `.bbl`, `.blg`, `.log`,
 - PP-01 PfCRT WT diagnostic: offset 2.01 kcal mol⁻¹; not applied to the dimensionless MD distance ratio.
 - PP-15: two WT feasibility endpoints outside the Set-C MD pilot; no mutant or RRS estimate.
 - Full-panel Set-C MD-RRS (17 × 8 = 136 planned comparisons): `NOT_COMPUTED` by design.
-- M1 replicated 100 ns campaign: `NOT_COMPUTED / NOT_REPORTABLE / NOT_INTEGRATED`.
+- M1 replicated 100 ns campaign: ABANDONED 16 Sept 2026 under the author-ordered 25 ns cap (scripts `git rm`'d; recoverable from history). Single surviving trajectory (PP-01 PfDHFR WT rep1, ~25.17 ns, 2517 frames) analyzed observation-only in DAR §9 (backbone 0.220/0.278, ligand 0.483/0.611 nm): `COMPUTED_SINGLETON / OBSERVATION_ONLY / NOT_INTEGRATED` — not in the manuscript.
+- Short-replicate array 15840 + relaunches 15851/15852 (12–16 Sept 2026, POST-FREEZE, not in the manuscript): 16/16 systems × 2 ns + 2/2 truncation redos complete; backbone RMSD 0.137–0.210 nm (no unfolding), ligand RMSD 0.13–0.67 nm, thermostats stable; two silent truncations caught and redone. Recorded in DAR §9 as auxiliary reviewer-response evidence only: `COMPUTED / OBSERVATION_ONLY / NOT_INTEGRATED`.
+- PP-02 DHFR I164L 2 ns ligand excursion: resolved 16 Sept via `mindist` (raw == PBC-whole: mean 0.199, max 0.247 nm, 0 frames > 0.5 nm) — in-pocket reorientation, exit/PBC hypothesis REJECTED (DAR §9).
+- PP-15 trajectory-QC gap: CLOSED 16 Sept (independent MDAnalysis re-computation reproduces Table S_pp15 exactly; machine-readable CSV in `results/pp15_md_20260828/`).
 
 ## Interpretation boundary
 
@@ -80,6 +84,7 @@ V2609C sources = ACTIVE
 V2609B = HISTORICAL ARCHIVE
 Set-C MD pilot = SECONDARY, SINGLE-REPLICATE, STRUCTURAL STRESS TEST
 Full-panel MD-RRS = NOT_COMPUTED
-M1 = NOT_COMPUTED / NOT_REPORTABLE / NOT_INTEGRATED
+M1 100ns campaign = ABANDONED (25ns cap); single 25ns trajectory = OBSERVATION_ONLY / NOT_INTEGRATED
+Short-replicate array (post-freeze) = COMPUTED / OBSERVATION_ONLY / NOT_INTEGRATED (reviewer-response auxiliary)
 Submission = AUTHOR REVIEW REQUIRED; NOT AUTHORIZED
 ```
