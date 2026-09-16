@@ -205,7 +205,7 @@ The \qty{35}{\percent} Vina and \qty{25}{\percent} DiffDock weights (combined \q
 The complete MPO methodology, including centroid-based screening workflow (\num{484} centroids $\rightarrow$ \num{76} optimization-worthy $\rightarrow$ \num{53} clusters $\rightarrow$ \num{19913} synthesizable leads), sensitivity analysis (\num{25} weight perturbations, Spearman $\rho = \num{0.792}$ for top-1000), and external validation (DEKOIS, MMV Malaria Box enrichment), is described in \Cref{M-sec:methods_funnel} and \Cref{sec:sm_mpo}.
 
 \section{Reproducibility and availability}\label{sec:sm_repro}
-The candidate manifest, docking and RRS tables, cross-metric matrix, scripts, receptor/ligand files, and run records are archived on Zenodo under an MIT license; the archival DOI will be provided upon assignment. The figures and derived tables are reproducible computational outputs; they do not substitute for independent structural or experimental validation.
+The candidate manifest, docking and RRS tables, cross-metric matrix, scripts, receptor/ligand files, and run records are archived on Zenodo under an MIT license at \url{https://doi.org/10.5281/zenodo.22696778}. The figures and derived tables are reproducible computational outputs; they do not substitute for independent structural or experimental validation.
 
 \section{Docking validation and protocol assessment}\label{sec:sm_validation}
 The docking protocol was validated using three complementary strategies: external benchmark validation (DEKOIS 2.0), positive-control enrichment (MMV Malaria Box), and pose reproduction accuracy (redocking of co-crystallized ligands; \Cref{M-sec:methods_dock_val}). Together they expose both the capabilities and the limits of the protocol.
@@ -246,7 +246,7 @@ The RRS ratios were recomputed as $\mathrm{RRS}=100|S_{\mathrm{Vina},i,m}|/|S_{\
 The neutral-within-null reading is consistent with an extended replication panel (39 ligands $\times$ 8 PfDHFR/PfCRT states, 312/312 finite records, prepared independently for this study), whose bootstrap RRS distribution of 100.45 [99.59, 101.32] brackets the corrected channel's null spread; in a score-perturbation sensitivity analysis, class assignments are stable to bounded \qty{\pm 1}{\kilo\calorie\per\mole} (unchanged in 212/272 records, 77.9\%).
 
 \section{Available machine-readable resources}\label{sec:sm_resources}
-The Zenodo deposit contains:
+The Zenodo deposit (\url{https://doi.org/10.5281/zenodo.22696778}) contains:
 \begin{itemize}
     \item the candidate manifest and canonical molecular identifiers;
     \item the complete target-wise Vina score matrix, ligand poses, and run records;
