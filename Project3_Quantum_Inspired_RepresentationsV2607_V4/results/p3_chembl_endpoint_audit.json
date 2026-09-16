@@ -1,0 +1,61 @@
+{
+  "audit_date": "2026-09-15",
+  "protocol": {
+    "organism": "Plasmodium falciparum",
+    "standard_types": [
+      "IC50",
+      "EC50",
+      "Ki"
+    ],
+    "standard_units": "nM",
+    "min_total_n": 500,
+    "min_per_class": 100,
+    "threshold": 6.5
+  },
+  "summary": {
+    "total_activities_queried": 82112,
+    "activities_after_filter": 67885,
+    "total_unique_assays": 5483,
+    "viable_endpoints_count": 3
+  },
+  "viable_endpoints": [
+    {
+      "assay_id": "CHEMBL1040692",
+      "description": "NOVARTIS: Inhibition of Plasmodium falciparum W2 (drug-resistant) proliferation in erythrocyte-based",
+      "target_chembl_id": "CHEMBL364",
+      "target_name": "Plasmodium falciparum",
+      "assay_type": "ORGANISM",
+      "standard_type": "EC50",
+      "total_n": 4570,
+      "n_active": 1742,
+      "n_inactive": 2828,
+      "balance": 0.62
+    },
+    {
+      "assay_id": "CHEMBL1040691",
+      "description": "NOVARTIS: Inhibition of Plasmodium falciparum 3D7 (drug-susceptible) proliferation in erythrocyte-ba",
+      "target_chembl_id": "CHEMBL364",
+      "target_name": "Plasmodium falciparum",
+      "assay_type": "ORGANISM",
+      "standard_type": "EC50",
+      "total_n": 4294,
+      "n_active": 1423,
+      "n_inactive": 2871,
+      "balance": 0.5
+    },
+    {
+      "assay_id": "CHEMBL4649964",
+      "description": "Calibr Malaria Delayed Death Assay SOP",
+      "target_chembl_id": "CHEMBL364",
+      "target_name": "Plasmodium falciparum",
+      "assay_type": "ORGANISM",
+      "standard_type": "IC50",
+      "total_n": 867,
+      "n_active": 124,
+      "n_inactive": 743,
+      "balance": 0.17
+    }
+  ],
+  "decision": "OPTION_2_NARROW_SCOPE",
+  "rationale": "Only 3 viable endpoints found (below threshold of 5). All are organism-level assays. Insufficient for robust endpoint-specific analysis."
+}

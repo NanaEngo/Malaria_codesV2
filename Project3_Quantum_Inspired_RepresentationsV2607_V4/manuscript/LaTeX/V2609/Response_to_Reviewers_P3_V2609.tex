@@ -213,12 +213,30 @@ to experimental labels broadly but does not provide assay-specific, homogeneous 
 benchmarking (\Cref{M-sec:methods_dataset}; Supporting Information, descriptor transfer section).
 \end{enumerate}
 
-\textbf{Scope acknowledgment:} The current revision does not implement the requested endpoint-specific 
-ChEMBL benchmark (one assay ID, one target, one measurement type per endpoint). Implementing this 
-would require retrieving individual assay-level data, applying within-assay active/inactive definitions, 
-and reporting descriptor performance per assay—a substantive new analysis beyond the scope of this 
-revision. The pooled ChEMBL panel is therefore presented as exploratory label-source-shift analysis 
-only and makes no claim to address the endpoint-specific validation request.
+\textbf{Scope acknowledgment and endpoint-specific feasibility audit:} The current revision does not 
+implement the requested endpoint-specific ChEMBL benchmark (one assay ID, one target, one measurement 
+type per endpoint). To evaluate feasibility, we conducted a systematic audit of ChEMBL \textit{Plasmodium 
+falciparum} activities using the following protocol criteria: (i)~standard measurement types IC$_{50}$, 
+EC$_{50}$, or $K_i$ with pchembl\_value in nM; (ii)~minimum n=500 compounds per endpoint; (iii)~minimum 
+100 compounds per class (active/inactive) using threshold pchembl\_value 6.5; (iv)~organism \textit{P. 
+falciparum}. The audit queried 82,112 total activities from ChEMBL, filtered to 67,885 with IC$_{50}$/EC$_{50}$/$K_i$ 
+measurements, across 5,483 unique assay IDs.
+
+\textbf{Result:} Only \textbf{3 viable endpoints} were identified meeting the protocol criteria:
+\begin{itemize}[leftmargin=1.6em]
+\item CHEMBL1040692: Novartis W2 (drug-resistant) screen, EC$_{50}$, n=4,570 (organism-level)
+\item CHEMBL1040691: Novartis 3D7 (drug-susceptible) screen, EC$_{50}$, n=4,294 (organism-level)
+\item CHEMBL4649964: Calibr delayed death assay, IC$_{50}$, n=867 (organism-level)
+\end{itemize}
+
+All three are whole-organism phenotypic screens (not target-specific biochemical assays), and two 
+derive from the same Novartis study (W2/3D7 strain pair), limiting independent validation. With only 
+3 endpoints below our threshold of $\geq$5 independent assays, and insufficient target-level diversity, 
+endpoint-specific analysis would not provide robust validation of descriptor generalizability across 
+diverse antimalarial targets. The pooled ChEMBL panel (n=22,447) is therefore retained as exploratory 
+label-source-shift analysis only and makes no claim to address endpoint-specific validation. The audit 
+demonstrates that this scope limitation reflects \textit{data availability constraints} in the ChEMBL 
+antimalarial corpus, not technical implementation difficulty.
 
 \paragraph{5. Validation Success Criterion.}
 The reviewer's proposed criterion is clear and we adopt it: \textit{``If there is at 

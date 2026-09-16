@@ -206,7 +206,7 @@ def audit_chembl_endpoints():
         'viable_endpoints': viable_endpoints
     }
     
-    output_file = '../results/p3_chembl_endpoint_audit.json'
+    output_file = './results/p3_chembl_endpoint_audit.json'
     with open(output_file, 'w') as f:
         json.dump(report, f, indent=2)
     
