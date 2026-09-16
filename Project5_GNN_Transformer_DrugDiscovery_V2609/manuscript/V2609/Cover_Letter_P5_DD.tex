@@ -1,0 +1,63 @@
+% ============================================================================
+% Cover Letter — Paper 5 (RSC Digital Discovery)
+% Target: Digital Discovery (Royal Society of Chemistry), Full Paper
+% ============================================================================
+\documentclass[11pt,a4paper]{letter}
+
+\usepackage[top=1.3cm,bottom=1.3cm,left=1.6cm,right=1.6cm]{geometry}
+\setlength{\parskip}{0.18em}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{siunitx}
+\sisetup{
+  detect-all           = true,
+  group-minimum-digits = 4,
+}
+
+\signature{Myke Vital Sao Temgoua \\ \small Corresponding Author}
+\address{%
+  University of Yaound\'{e} I \\
+  Department of Physics, Faculty of Science \\
+  P.O. Box 812, Yaound\'{e}, Cameroon \\
+  \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm}
+}
+
+\begin{document}
+
+\begin{letter}{%
+  The Editors \\
+  \textit{Digital Discovery} \\
+  Royal Society of Chemistry
+}
+
+\opening{Dear Editors,}
+
+\noindent 16 September 2026
+
+We submit the manuscript entitled \textbf{``Deconstructing Out-of-Distribution Extrapolation in Molecular Deep Learning: Structural Complexity, Topological Rescue, and Conformal Triage on African Antimalarial Natural Product Scaffolds''} for consideration as a Full Paper in \textit{Digital Discovery}.
+
+This study speaks directly to your journal's data-first mission. Rather than another passive benchmark reporting fingerprint dominance, we deliver a mechanistic explanation for graph neural network extrapolation failures and an actionable decision framework for virtual screening under distribution shift. On a frozen panel of \num{19836} African antimalarial natural products and synthetic derivatives, evaluated across \num{25} fold--seed replicates per model, we establish three contributions:
+
+First, we localise the ECFP4--RF advantage strictly to the structural extrapolation tail (nearest-neighbour similarity $< 0.40$) and identify its mechanism: the 1-Weisfeiler--Lehman expressivity ceiling of message-passing networks on high-$Fsp^3$ polycyclic scaffolds. Fusing persistent-homology topological features (GIN--TFP) recovers up to \qty{36}{\percent} of that gap.
+
+Second, we operationalise these dynamics as a Distance-Aware Conformal Triage Filter that routes candidates to the right model by distance regime, improving prospective screening precision by \textbf{+\qty{14.2}{\percent}} on a disjoint \num{22267}-molecule ChEMBL transfer panel.
+
+Third, we show that fold-independent weight restoration in molecular transformers is mandatory to prevent cross-fold leakage --- a reproducibility standard for the community.
+
+\textbf{Data and code:} all splits, predictions, and analysis scripts are archived on Zenodo (DOI \href{https://doi.org/10.5281/zenodo.19608875}{10.5281/zenodo.19608875}, record reserved pending upload completion) and GitHub (\url{https://github.com/taamangtchu/Project5_GNN_Transformer_DrugDiscovery}). Editors and referees will be given full access for peer review, and the DOI will be published before acceptance, per your data policy.
+
+The work is original, is not under consideration elsewhere, has been approved by all authors, and there are no conflicts to declare.
+
+\vspace{0.4em}
+\noindent\textbf{Suggested reviewers:}
+\begin{enumerate}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
+    \item \textbf{Prof. Kelin Xia} (Nanyang Technological University, Singapore) --- Topological deep learning, persistent homology, molecular graph representations. Email: \texttt{xiakelin@ntu.edu.sg}
+    \item \textbf{Prof. Fidele Ntie-Kang} (University of Buea, Cameroon / Martin Luther University Halle-Wittenberg, Germany) --- African Natural Products Database (ANPDB), natural product cheminformatics. Email: \texttt{fidele.ntie-kang@uni-halle.de}
+    \item \textbf{Prof. Carsten Eickhoff} (University of T\"ubingen, Germany) --- Molecular representation benchmarking, out-of-distribution generalisation. Email: \texttt{c.eickhoff@uni-tuebingen.de}
+\end{enumerate}
+
+\vspace{0.3em}
+\closing{We thank you for your consideration.}
+
+\end{letter}
+\end{document}
