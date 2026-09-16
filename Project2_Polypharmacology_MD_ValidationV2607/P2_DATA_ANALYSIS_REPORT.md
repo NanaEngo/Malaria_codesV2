@@ -347,3 +347,17 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
 - **25 ns cap decision (16 Sept 2026, author instruction):** 25 ns is judged sufficient sampling for the study's stability readouts — all targets above 25 ns are abandoned. Deleted (`git rm`, recoverable from git history): `scripts/p2_md_extension_50ns.sbatch` (50 ns, never submitted), `scripts/p2_m1_continue_100ns.sbatch` (100 ns continuation, ran once as job 15715), `scripts/p2_m1_replicated_md.sbatch` (100 ns target, produced the M1 runs below). Historical references to these scripts in `docs/P2_M1_*.md` and `docs/P2_DAR_OPERATIONAL_LOG.md` are left untouched as execution records. The 25 ns stop script (`scripts/p2_m1_stop_at_25ns.sbatch`) is retained as the cap instrument.
 - **M1 25 ns readout — PP-01_PfDHFR_WT replicate_1 (16 Sept 2026):** the sole surviving long trajectory (`results/m1_replicated_md_20260829/PP-01_PfDHFR_WT/replicate_1/production.xtc`, 2517 frames × 10 ps = 25.17 ns, `Finished mdrun` 30 Aug; jobs 15711_0 + 15715; the other 11 M1 replicate dirs are empty/prep-only — single-GPU guard + array-15840 monopoly). Same §9 protocol (groups 4/13, MOL0 40 atoms): backbone mean 0.220 / last 0.278 / max 0.333 nm (t ≈ 23.26 ns) — no unfolding; ligand mean 0.483 / last 0.611 / max 0.830 nm (t ≈ 19.70 ns), 1463/2517 frames above 0.5 nm — larger drift than the 2 ns PP-01 WT probe (mean 0.246 nm), characterizing pose mobility at longer sampling; energy T = 310.14 K, P = 1.20 bar, potential −4.338×10⁶ kJ/mol — nominal. Observation only: no MD-RRS or MM-GBSA computed, no endpoint promoted. Artifacts: `rmsd_backbone_25ns.xvg`, `rmsd_ligand_25ns.xvg`, `energy_25ns.xvg` in the run dir.
 
+## 10. HPC Daemon & Git Sync Checkpoint (16 September 2026)
+
+- **HPC Daemon status (read-only audit via DAR, no SSH from agent):** `penavoraserver` (`100.73.21.40`, CUDA GROMACS 2025.4, RTX A4000) daemon log at `/home/nanaengo/hpc_md_execution.log`.
+  - **Array 15840 (2 ns short replicates):** ✅ COMPLETE — 16/16 systems + 2/2 relaunches (jobs 15851, 15852). SLURM queue empty. No active jobs.
+  - **Triplicate MD (3 × 10 ns, Soares et al. guideline):** ⚠️ PARTIAL — only 1 surviving long trajectory (`PP-01_PfDHFR_WT replicate_1`, 25 ns). Other 11 M1 replicate dirs empty/prep-only (single-GPU guard + array-15840 monopoly). Does NOT satisfy Soares et al. ≥3-replicate requirement; no new MD-RRS or MM-GBSA endpoints promoted.
+  - **Vacuolar pH 5.2 PfCRT protonation audit:** 📋 PLANNED — protonated His97/His53 + ligand basic sites under acidic digestive vacuole conditions; no completion status logged.
+  - **25 ns cap:** ✅ APPLIED — author instruction (16 Sept). All 50 ns / 100 ns extension scripts deleted (`git rm`). Stop script `p2_m1_stop_at_25ns.sbatch` retained.
+  - **No new reportable endpoints** from any daemon activity since §9. All post-§7 outputs are exploratory stability/sanity readouts only.
+
+- **Git sync (16 Sept 2026, author session):**
+  - Commit `e3938fd61` (182 files) pushed: V2609B + V2609C manuscript directories, LaTeX compilation output, 8 updated figure/analysis scripts, PP-01_PfDHFR_WT replicate 1 25ns MD result files (`.xvg` only; 2.8 GB trajectory excluded per `.gitignore`).
+  - Commit `1cb926d95`: `*.zip` added to `.gitignore`; stale top-level `P2_DATA_ANALYSIS_REPORT.md` (27 Aug copy) deleted; canonical DAR at `Project2_.../P2_DATA_ANALYSIS_REPORT.md` retained.
+  - Working tree clean. Local `master` aligned with `origin/master` (`e3938fd61` → `1cb926d95`).
+
