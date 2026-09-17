@@ -1,4 +1,4 @@
-% Supporting Information for the Journal of Computer-Aided Molecular Design (JCAMD) / JCIM
+% Supporting Information for RSC Digital Discovery (V2609)
 \documentclass[11pt,a4paper]{article}
 
 \usepackage[margin=1in]{geometry}
@@ -9,13 +9,15 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{graphicx}
+\graphicspath{{figures/}}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage{microtype}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{siunitx}
 \sisetup{
   detect-all            = true,
-  group-minimum-digits  = 4,
+  group-minimum-digits  = 5,
+  retain-explicit-plus  = true,
   range-phrase          = {--},
   range-units           = single,
   separate-uncertainty  = true,
@@ -51,7 +53,7 @@
 \usepackage{xr}
 \externaldocument[MAIN-]{Project5_GNN_Transformer_Antimalarial_main_V2609}
 
-\title{Supporting Information: Out-of-distribution extrapolation in molecular deep learning: topological rescue and conformal triage for antimalarial scaffolds}
+\title{Supporting Information: Chemical distribution shift in antimalarial natural products: fingerprint dominance and localized topological complementarity in molecular representation learning}
 
 \author{Myke Vital Sao Temgoua \and Jean-Pierre Tchapet Njafa \and Penabei Samafou \and Wilfred Fon Mbacham \and Serge Guy Nana Engo}
 
@@ -70,7 +72,7 @@
 \section{Orthogonal LISH mechanism-of-action benchmark}
 \label{sec:lish_si}
 
-The molecular representations benchmarked in the main text (ECFP4, GIN, GIN--TFP, GIN--TNE, ChemBERTa) encode chemical structure. Whether those structural features capture pharmacological mechanism is tested here using the LISH mechanism-of-action (MoA) challenge \citep{lish_moa_2019}, which asks whether gene-expression and cell-viability readouts---phenotypic proxies of drug action---can predict MoA class. The public LISH release carries no versioned drug-to-SMILES mapping; the two benchmarks are structurally disjoint, and the LISH phenotype baseline cannot be compared to the molecular ROC-AUC figures in the main text. This section establishes an orthogonal pharmacological reference ceiling that any future structure-to-MoA model must exceed.
+The molecular representations benchmarked in the main text (ECFP4, GIN, GIN--TFP, GIN--TNE, ChemBERTa \citep{chemberta_2020}) encode chemical structure. Whether those structural features capture pharmacological mechanism is tested here using the LISH mechanism-of-action (MoA) challenge \citep{lish_moa_2019}, which asks whether gene-expression and cell-viability readouts---phenotypic proxies of drug action---can predict MoA class. The public LISH release carries no versioned drug-to-SMILES mapping; the two benchmarks are structurally disjoint, and the LISH phenotype baseline cannot be compared to the molecular ROC-AUC figures in the main text. This section establishes an orthogonal, phenotype-only reference baseline --- not a ceiling --- for future structure-to-MoA work: it quantifies what unweighted phenotype features alone achieve on the same fold grid, without implying that molecular representations must surpass it to demonstrate pharmacological value.
 
 \subsection{Data and preparation}
 
@@ -91,25 +93,25 @@ The scored endpoint comprises \num{206} MoA labels across \num{3289} drugs \cite
 \toprule
 Metric & With controls & Without controls & $\Delta$ \\
 \midrule
-Mean column-wise log loss & \num{0.02378} & \num{0.02389} & $+\num{0.00011}$ \\
-Macro-AUROC & \num{0.6435} & \num{0.6417} & $-\num{0.00177}$ \\
-Macro-AUPRC & \num{0.1428} & \num{0.1412} & $-\num{0.00152}$ \\
-Mean Brier score & \num{0.00374} & \num{0.00375} & $+\num{0.00001}$ \\
-Expected calibration error & \num{0.00376} & \num{0.00381} & $+\num{0.00005}$ \\
+Mean column-wise log loss & \num{0.02378} & \num{0.02389} & \num{+0.00011} \\
+Macro-AUROC & \num{0.6435} & \num{0.6417} & \num{-0.00177} \\
+Macro-AUPRC & \num{0.1428} & \num{0.1412} & \num{-0.00152} \\
+Mean Brier score & \num{0.00374} & \num{0.00375} & \num{+0.00001} \\
+Expected calibration error & \num{0.00376} & \num{0.00381} & \num{+0.00005} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The macro-AUROC of \num{0.6435} represents the ceiling that any future structure-based MoA predictor must surpass on the same fold grid. Approximately \qty{72}{\percent} of the \num{206} MoA labels retain discriminative signal under drug-grouped splits (\numrange{140}{155} labels per fold with sufficient test-set variation); the remainder are too rare for fold-level AUROC and are excluded from the macro average. Per-seed macro-AUROC is stable (\numrange{0.6398}{0.6465}), indicating no seed pathology. This baseline is deliberately weak---unweighted per-label logistic regression on phenotype features---so that any upstream molecular method that fails to exceed \num{0.6435} macro-AUROC on the same grid provides no evidence of pharmacological representation superiority.
+The macro-AUROC of \num{0.6435} is a phenotype-only reference baseline on this fold grid, not an upper bound that future structure-based MoA predictors must surpass. Approximately \qty{72}{\percent} of the \num{206} MoA labels retain discriminative signal under drug-grouped splits (\numrange{140}{155} labels per fold with sufficient test-set variation); the remainder are too rare for fold-level AUROC and are excluded from the macro average. Per-seed macro-AUROC is stable (\numrange{0.6398}{0.6465}), indicating no seed pathology. This baseline is deliberately weak---unweighted per-label logistic regression on phenotype features---so that any upstream molecular method that fails to exceed \num{0.6435} macro-AUROC on the same grid provides no evidence of pharmacological representation superiority.
 
 \section{Calibration metrics for the molecular benchmark}
 \label{sec:calibration_si}
 
-Predictive accuracy (ROC-AUC) and predictive reliability (calibration) are distinct properties: a model may rank compounds correctly yet assign poorly calibrated probabilities. Calibration metrics were computed from fold-level test predictions pooled across the extended campaign, yielding \num{99180} test records per configuration (five seeds $\times$ five folds, for each of four model families). ECE rises from approximately \num{0.03} on the random split to \numrange{0.07}{0.13} on the scaffold and novel-scaffold partitions for every model family (\Cref{tab:s2_calibration}). ChemBERTa exhibits the largest degradation under scaffold shift (ECE \numrange{0.12}{0.13}), consistent with its greater sensitivity to structural distribution shift (\Cref{MAIN-tab:h1}). This degradation is the empirical basis for the $\mathrm{ECE} > 0.08$ recalibration trigger in the Conformal Triage Filter (\cref{sec:triage_code_si}): when batch-level confidence breaches this threshold, post-hoc Platt scaling or isotonic regression must be applied before any hard-cutoff routing decision.
+Predictive accuracy (ROC-AUC) and predictive reliability (calibration) are distinct properties \citep{hanley1982rocauc,davis2006auprc,guo2017calibration,natoesci2017ece}: a model may rank compounds correctly yet assign poorly calibrated probabilities. Calibration metrics were computed from fold-level test predictions pooled across the extended campaign, yielding \num{99180} test records per configuration (five seeds $\times$ five folds, for each of four model families). ECE rises from $\approx\num{0.03}$ on the random split to \numrange{0.07}{0.13} on the scaffold and novel-scaffold partitions for every model family (\Cref{tab:s2_calibration}). ChemBERTa exhibits the largest degradation under scaffold shift (ECE \numrange{0.12}{0.13}), consistent with its greater sensitivity to structural distribution shift (\Cref{MAIN-tab:h1}). This degradation is the empirical motivation for the $\mathrm{ECE} \num{>0.08}$ recalibration guard proposed in the Distance-Aware Conformal Triage Filter (\cref{sec:triage_code_si}): when batch-level confidence breaches this threshold, post-hoc Platt scaling or isotonic regression is indicated before any hard-cutoff routing decision, on this panel and pending re-verification on any deployment distribution.
 
 \begin{table}[h]
 \centering
-\caption{Calibration metrics pooled across \num{25} fold--seed evaluations per configuration (\num{99180} test records each). ECE and MCE rise from the random split to the scaffold split for every model family; ChemBERTa exhibits the largest degradation (ECE \num{0.1225} under scaffold shift). All models exceed the $\mathrm{ECE} > 0.08$ threshold under scaffold splitting, confirming that post-hoc recalibration is mandatory in the OOD regime.}
+\caption{Calibration metrics pooled across \num{25} fold--seed evaluations per configuration (\num{99180} test records each). ECE and MCE rise from the random split to the scaffold split for every model family; ChemBERTa exhibits the largest degradation (ECE \num{0.1225} under scaffold shift). All models exceed the $\mathrm{ECE} \num{>0.08}$ threshold under scaffold splitting on this panel, supporting the use of post-hoc recalibration in the shifted regime.}
 \label{tab:s2_calibration}
 \small
 \begin{tabular}{l l S[table-format=1.4] S[table-format=1.4] S[table-format=1.5]}
@@ -129,26 +131,26 @@ Split & Model & {ECE} & {MCE} & {Brier} \\
 \end{tabular}
 \end{table}
 
-The $\mathrm{ECE} > 0.08$ trigger ships with a verified remedy. Fitting Platt scaling (Newton--IRLS sigmoid) and isotonic regression (PAVA) on one deterministic half of each scaffold test fold and evaluating ECE (\num{15} bins) on the other half gives, per arm (mean over \num{5} per-seed means): ECFP4--RF \num{0.0805} $\rightarrow$ \num{0.0430} $\rightarrow$ \textbf{\num{0.0257}}; GIN \num{0.0781} $\rightarrow$ \num{0.0454} $\rightarrow$ \textbf{\num{0.0258}}; GIN--TFP \num{0.0903} $\rightarrow$ \num{0.0447} $\rightarrow$ \textbf{\num{0.0254}}; GIN--TNE \num{0.0898} $\rightarrow$ \num{0.0419} $\rightarrow$ \textbf{\num{0.0266}}; ChemBERTa \num{0.1276} $\rightarrow$ \num{0.0447} $\rightarrow$ \textbf{\num{0.0251}} (raw $\rightarrow$ Platt $\rightarrow$ isotonic). Isotonic regression halves residual ECE versus Platt and cuts it $\approx$\numrange{3}{5}$\times$ versus raw for every arm; the eval-half raw values reproduce the pooled ordering (ChemBERTa worst). Source: \texttt{results/dd\_screening\_utility\_20260916/recalibration\_ece.csv}.
+The $\mathrm{ECE} \num{>0.08}$ trigger ships with a verified remedy. Fitting Platt scaling (Newton--IRLS sigmoid) and isotonic regression (PAVA) on one deterministic half of each scaffold test fold and evaluating ECE (\num{15} bins) on the other half gives, per arm (mean over \num{5} per-seed means): ECFP4--RF \num{0.0805} $\rightarrow$ \num{0.0430} $\rightarrow$ \textbf{\num{0.0257}}; GIN \num{0.0781} $\rightarrow$ \num{0.0454} $\rightarrow$ \textbf{\num{0.0258}}; GIN--TFP \num{0.0903} $\rightarrow$ \num{0.0447} $\rightarrow$ \textbf{\num{0.0254}}; GIN--TNE \num{0.0898} $\rightarrow$ \num{0.0419} $\rightarrow$ \textbf{\num{0.0266}}; ChemBERTa \num{0.1276} $\rightarrow$ \num{0.0447} $\rightarrow$ \textbf{\num{0.0251}} (raw $\rightarrow$ Platt $\rightarrow$ isotonic). Isotonic regression halves residual ECE versus Platt and cuts it $\approx$\,\numrange{3}{5}$\times$ versus raw for every arm; the eval-half raw values reproduce the pooled ordering (ChemBERTa worst).
 
 \section{Light GNN hyperparameter sensitivity and capacity defense sweep}
 \label{sec:gnn_sensitivity_si}
 
-A persistent objection to the GNN underperformance documented in the main text is that it may reflect suboptimal hyperparameter selection rather than a fundamental expressivity ceiling. A systematic capacity defense sweep (SLURM Job 15617) was executed on the canonical scaffold split with the same frozen \num{5}-fold $\times$ \num{5}-seed protocol. The base GIN architecture \citep{xu2019gin} was evaluated across hidden dimensions $h \in \{\num{64}, \num{128}, \num{256}\}$ and dropout rates $d \in \{\num{0.1}, \num{0.2}\}$, bracketing the canonical configuration ($h=\num{128}$, $d=\num{0.1}$) from both below and above. Each configuration produced \num{25} fold--seed records with finite AUC.
+A persistent objection to the GNN underperformance documented in the main text is that it may reflect suboptimal hyperparameter selection rather than an architectural constraint. A systematic GNN hyperparameter capacity sweep was executed on the canonical scaffold split with the same frozen \num{5}-fold $\times$ \num{5}-seed protocol. The base GIN architecture \citep{xu2019gin} was evaluated across hidden dimensions $h \in \{\num{64}, \num{128}, \num{256}\}$ and dropout rates $d \in \{\num{0.1}, \num{0.2}\}$, bracketing the canonical configuration ($h=\num{128}$, $d=\num{0.1}$) from both below and above. Each configuration produced \num{25} fold--seed records with finite AUC.
 
-As shown in \Cref{tab:s3_gnn_sensitivity}, mean scaffold ROC-AUC remains strictly bounded between \num{0.8000} and \num{0.8081}---a range of \num{0.0081} AUC points. The per-seed standard deviation (\numrange{0.0118}{0.0160}) exceeds the inter-configuration spread, indicating that performance variation is dominated by fold-level stochasticity, not capacity choices. All three configurations remain below the ECFP4--RF scaffold reference (\num{0.8300} $\pm$ \num{0.0023}); the gain from enlarging the GIN capacity is flat-to-negative, consistent with the honest-negative verdict. The extrapolation gap is therefore fundamentally constrained by the 1-WL expressivity limit rather than by hyperparameter under-tuning. The TFP rescue documented in the main text (\cref{MAIN-tab:structural_complexity}) confirms this interpretation from the opposite direction---if the deficit were a capacity artefact, injecting persistent-homology invariants ($H_0$, $H_1$) would not selectively recover polycyclic cohorts. It does, with gain scaling monotonically with structural complexity ($+\num{0.007}$ flat aromatics, $+\num{0.038}$ complex 3D, $+\num{0.047}$ polycyclics).
+As shown in \Cref{tab:s3_gnn_sensitivity}, mean scaffold ROC-AUC remains strictly bounded between \numrange{0.8000}{0.8081}---a range of \num{0.0081} AUC points. The per-seed standard deviation (\numrange{0.0118}{0.0160}) exceeds the inter-configuration spread, indicating that performance variation is dominated by fold-level stochasticity, not capacity choices. All three configurations remain below the ECFP4--RF scaffold reference (\num{0.8300} $\pm$ \num{0.0023}); the gain from enlarging the GIN capacity is flat-to-negative, consistent with the honest-negative verdict. The extrapolation gap is therefore not explained by hyperparameter under-tuning within the swept range, and is consistent with an architectural interpretation --- although a capacity sweep cannot prove a 1-WL expressivity limit as the unique cause. The GIN--TFP cohort gains documented in the main text (\cref{MAIN-tab:structural_complexity}) support this interpretation from the opposite direction: injecting persistent-homology invariants ($H_0$, $H_1$) yields a positive gain in every structural cohort (\num{+0.0143} flat aromatics, \num{+0.0125} complex 3D, \num{+0.0102} polycyclics), an association reported descriptively and quantified with paired seed-level tests and molecule-level bootstrap intervals in \cref{sec:cohort_stats_si}.
 
 \begin{table}[ht!]
 \centering
-\caption{GNN hyperparameter sensitivity (SLURM Job 15617) on the frozen scaffold split, \num{25} fold--seed replicates per configuration. Scaffold ROC-AUC is bounded in $[\num{0.8000}, \num{0.8081}]$; inter-configuration spread (\num{0.0081}) is smaller than per-seed variability (\numrange{0.0118}{0.0160}), proving architectural rather than parametric bounds. All configurations remain below ECFP4--RF (\num{0.8300} $\pm$ \num{0.0023}).}
+\caption{GNN hyperparameter sensitivity on the frozen scaffold split, \num{25} fold--seed replicates per configuration. Scaffold ROC-AUC is bounded in $[\num{0.8000}, \num{0.8081}]$; inter-configuration spread (\num{0.0081}) is smaller than per-seed variability (\numrange{0.0118}{0.0160}). All configurations remain below ECFP4--RF (\num{0.8300} $\pm$ \num{0.0023}).}
 \label{tab:s3_gnn_sensitivity}
 \begin{tabular}{lccc}
 \toprule
 Configuration & Mean ROC-AUC & Per-seed SD & Fold-level SD \\
 \midrule
-$h=64, d=0.2$ & \num{0.8081} & \num{0.0118} & \num{0.0386} \\
-$h=128, d=0.1$ (Canonical) & \num{0.8047} & \num{0.0141} & \num{0.0395} \\
-$h=256, d=0.1$ & \num{0.8000} & \num{0.0160} & \num{0.0370} \\
+$h=\num{64}$, $d=\num{0.2}$ & \num{0.8081} & \num{0.0118} & \num{0.0386} \\
+$h=\num{128}$, $d=\num{0.1}$ (Canonical) & \num{0.8047} & \num{0.0141} & \num{0.0395} \\
+$h=\num{256}$, $d=\num{0.1}$ & \num{0.8000} & \num{0.0160} & \num{0.0370} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -156,13 +158,13 @@ $h=256, d=0.1$ & \num{0.8000} & \num{0.0160} & \num{0.0370} \\
 \section{Nearest-training-neighbor Tanimoto decile stratification}
 \label{sec:nn_deciles_si}
 
-Test molecules were binned into \num{10} similarity deciles relative to their nearest training neighbour on ECFP4 fingerprints, as described in the main text (\cref{MAIN-sec:structural-complexity}). This stratification resolves the aggregate scaffold-split AUC into a distance-dependent profile. The structural paradox of the African NP panel---\qty{92.6}{\percent} whole-molecule novelty yet \qty{69.3}{\percent} conservation of privileged ring cores---manifests as a bimodal performance distribution: ECFP4--RF dominates in the cold extrapolation tail (D1--D4, NN-similarity $< 0.40$), where 1-WL over-smoothing degrades GNNs on high-$Fsp^3$ polycyclic scaffolds, while all five arms converge to near-parity in the high-similarity core (D9--D10, NN-similarity $> 0.53$). In the mid-range interpolation regime (D5--D8), topological fusion (GIN--TFP) partially recovers the deficit via persistent-homology invariants ($H_0$, $H_1$), closing the gap to $\Delta \in \numrange{0.001}{0.007}$---the regime where the ACSI paradox (globally novel molecules, locally conserved cores) provides sufficient training signal for learned representations to exploit topological features.
+Test molecules were binned into \num{10} similarity deciles relative to their nearest training neighbour on ECFP4 fingerprints, as described in the main text (\cref{MAIN-sec:structural-complexity}). This stratification resolves the aggregate scaffold-split AUC into a distance-dependent profile. The structural paradox of the African NP panel---\qty{92.6}{\percent} whole-molecule novelty yet \qty{69.3}{\percent} conservation of privileged ring cores---manifests as a bimodal performance distribution: ECFP4--RF shows its largest margins in the cold extrapolation tail (D1--D4, NN-similarity \num{<0.40}), the regime where GNN performance on high-$Fsp^3$ polycyclic scaffolds is most consistent with 1-WL expressivity limitations, while all five arms converge to near-parity in the high-similarity core (D9--D10, NN-similarity \num{>0.53}). In the mid-range interpolation regime (D5--D8), topological fusion (GIN--TFP) partially recovers the deficit via persistent-homology invariants ($H_0$, $H_1$), closing the gap to $\Delta \in$ \numrange{0.001}{0.007}---the regime where the ACSI paradox (globally novel molecules, locally conserved cores) provides sufficient training signal for learned representations to exploit topological features.
 
-Three regularities emerge from the decile-resolved profile (\Cref{tab:s5_nn_deciles}): (i) ECFP4--RF leads in every decile (D1--D10), confirming that the fingerprint advantage is a structural property localised in the OOD tail---the sparse bit-key encoding resists over-smoothing precisely where message-passing architectures saturate; (ii) the margin is non-monotone, collapsing from $\Delta = \num{0.053}$ at D1 to $\Delta = \num{0.001}$ at D7 before widening again at D9--D10, reflecting the transition from extrapolation to interpolation and back to high-similarity convergence; (iii) ChemBERTa tracks the GNN family in mid-range interpolation (D5--D8) but degrades in the OOD tail (D1--D4), consistent with its calibration degradation (\cref{sec:calibration_si}) and scaffold-split AUC deficit ($\Delta = -\num{0.043}$, \Cref{MAIN-tab:h1}).
+Three regularities emerge from the decile-resolved profile (\Cref{tab:s5_nn_deciles}): (i) ECFP4--RF leads in every decile (D1--D10), localising the fingerprint advantage in the OOD tail---the regime where sparse bit-key encodings and message-passing architectures diverge most; (ii) the margin is non-monotone, collapsing from $\Delta = \num{0.053}$ at D1 to a minimum of $\Delta = \num{0.001}$ at D6 before widening again at D9--D10, reflecting the transition from extrapolation to interpolation and back to high-similarity convergence; (iii) ChemBERTa tracks the GNN family in mid-range interpolation (D5--D8) but degrades in the OOD tail (D1--D4), consistent with its calibration degradation (\cref{sec:calibration_si}) and scaffold-split AUC deficit ($\Delta = \num{-0.043}$, \Cref{MAIN-tab:h1}).
 
 \begin{table}[h]
 \centering
-\caption{Decile-resolved ROC-AUC across nearest-neighbour Tanimoto similarity bins (D1--D10) on the frozen scaffold split, averaged over \num{25} fold--seed replicates. Bold: leading model per decile. The margin collapses from $\Delta = \num{0.053}$ at D1 to $\Delta = \num{0.001}$ at D7, localising the fingerprint advantage in the OOD extrapolation tail.}
+\caption{Decile-resolved ROC-AUC across nearest-neighbour Tanimoto similarity bins (D1--D10) on the frozen scaffold split, averaged over \num{25} fold--seed replicates. Bold: leading model per decile. The margin collapses from $\Delta = \num{0.053}$ at D1 to a minimum of $\Delta = \num{0.001}$ at D6, localising the fingerprint advantage in the OOD extrapolation tail.}
 \label{tab:s5_nn_deciles}
 \small
 \begin{tabular}{ccccccc}
@@ -186,9 +188,9 @@ D10 & \num{0.631} & \textbf{\num{0.890}} & \num{0.880} & \num{0.883} & \num{0.88
 \section{Butina cluster split benchmark details}
 \label{sec:butina_si}
 
-The canonical Bemis--Murcko scaffold split assigns individual ring cores to train/test partitions, but structurally similar scaffolds may leak across the boundary via shared molecular features. The Butina cluster split \citep{butina1999} eliminates this within-scaffold similarity leakage: Murcko scaffolds are hierarchically clustered at Tanimoto distance cutoff \num{0.55}, and entire clusters are assigned to five folds per seed so that test clusters are entirely absent from training. This provides a third independent partition family (random $\rightarrow$ scaffold $\rightarrow$ Butina) for evaluating model hierarchy invariance---each partition type has different leakage properties, so an ordering that holds across all three cannot be attributed to any single partitioning scheme.
+The canonical Bemis--Murcko scaffold split assigns individual ring cores to train/test partitions, but structurally similar scaffolds may leak across the boundary via shared molecular features, a failure mode documented across widely used molecular benchmarks by recent leakage-aware splitting audits \citep{joeres2025datasail,joeres2026datasailaddendum}. The Butina cluster split \citep{butina1999} reduces this within-scaffold similarity overlap at the chosen cutoff: Murcko scaffolds are hierarchically clustered at Tanimoto distance cutoff \num{0.55}, and entire clusters are assigned to five folds per seed so that test clusters are entirely absent from training. This provides a third independent partition family (random $\rightarrow$ scaffold $\rightarrow$ Butina) for evaluating model hierarchy invariance---each partition type has different leakage properties, so an ordering that holds across all three cannot be attributed to any single partitioning scheme.
 
-The model ordering observed under canonical scaffold splitting is preserved under Butina splitting (\Cref{tab:s6_butina}): ECFP4--RF (\num{0.8331}) dominates, GIN--TFP (\num{0.8232}) outperforms base GIN (\num{0.8202}), and ChemBERTa (\num{0.7776}) trails. This invariance across three partition families---random (ECFP4--RF \num{0.9433}, best), scaffold (ECFP4--RF \num{0.8300}, best), and Butina (ECFP4--RF \num{0.8331}, best)---confirms that the performance hierarchy is a structural property of the panel, not an artefact of evaluation design. The Butina split, which eliminates within-cluster similarity leakage entirely, reproduces the same hierarchy, providing indirect evidence that residual scaffold-split leakage \citep{bash2025umap} does not materially alter the model ordering.
+The model ordering observed under canonical scaffold splitting is preserved under Butina splitting (\Cref{tab:s6_butina}): ECFP4--RF (\num{0.8331}) dominates, GIN--TFP (\num{0.8232}) outperforms base GIN (\num{0.8202}), and ChemBERTa (\num{0.7776}) trails. This invariance across three partition families---random (ECFP4--RF \num{0.9433}, best), scaffold (ECFP4--RF \num{0.8300}, best), and Butina (ECFP4--RF \num{0.8331}, best)---indicates that the performance hierarchy is a structural property of the panel, not an artefact of evaluation design. The Butina split, which reduces within-cluster similarity overlap under the chosen cutoff, reproduces the same hierarchy, providing indirect evidence that residual scaffold-split similarity overlap \citep{bash2025umap} does not materially alter the model ordering on this panel.
 
 \begin{table}[h]
 \centering
@@ -206,12 +208,12 @@ ChemBERTa & \num{0.7776} \\
 \bottomrule
 \end{tabular}
 \end{table}
-\section{Screening-utility metrics, conformal validation, and rescue molecules}
+\section{Screening-utility metrics, conformal validation, and TFP-vs-GIN prediction flips}
 \label{sec:dd_utility_si}
 
-Three post-hoc secondary analyses (script \texttt{scripts/p5\_dd\_screening\_utility.py}, \num{16} September \num{2026}; no retraining; aggregation as mean over \num{5} per-seed means $\pm$ population SD) connect the benchmark to screening practice.
+Three post-hoc secondary analyses (no retraining; aggregation as mean over \num{5} per-seed means $\pm$ population SD) connect the benchmark to screening practice.
 
-\textit{Screening metrics are saturated by design.} Pooling each seed's five test folds into one ranked library, EF@\qty{1}{\percent} reaches \num{1.3461} $\pm$ \num{0.0027} (ECFP4--RF), \num{1.3243} $\pm$ \num{0.0234} (GIN), \num{1.3189} $\pm$ \num{0.0374} (GIN--TFP), \num{1.3257} $\pm$ \num{0.0158} (GIN--TNE), \num{1.3175} $\pm$ \num{0.0267} (ChemBERTa), with precision@\qty{1}{\percent} \numrange{0.978}{0.999} (\Cref{tab:s7_screening}). At $\approx\qty{74}{\percent}$ active prevalence the EF ceiling is $\approx\num{1.35}$: early-recognition metrics cannot discriminate arms on this panel, and BEDROC degenerates for the same reason (actives are the majority), so it is omitted rather than reported. The ChEMBL transfer panel is equally active-majority (\num{0.8605}); prospective low-hit-rate screening utility is therefore future work, not a claim. Source: \texttt{results/dd\_screening\_utility\_20260916/screening\_metrics.csv}.
+\textit{Screening metrics are saturated by design.} Pooling each seed's five test folds into one ranked library, EF@\qty{1}{\percent} reaches \num{1.3461} $\pm$ \num{0.0027} (ECFP4--RF), \num{1.3243} $\pm$ \num{0.0234} (GIN), \num{1.3189} $\pm$ \num{0.0374} (GIN--TFP), \num{1.3257} $\pm$ \num{0.0158} (GIN--TNE), \num{1.3175} $\pm$ \num{0.0267} (ChemBERTa), with precision@\qty{1}{\percent} \numrange{0.978}{0.999} (\Cref{tab:s7_screening}). At $\approx\qty{74}{\percent}$ active prevalence the EF ceiling is $\approx\num{1.35}$: early-recognition metrics cannot discriminate arms on this panel, and BEDROC degenerates for the same reason (actives are the majority), so it is omitted rather than reported. The ChEMBL transfer panel is equally active-majority (\num{0.8605}); prospective low-hit-rate screening utility is therefore future work, not a claim.
 
 \begin{table}[h]
 \centering
@@ -231,21 +233,21 @@ ChemBERTa & \num{1.3175} $\pm$ \num{0.0267} & \num{1.3037} $\pm$ \num{0.0111} & 
 \end{tabular}
 \end{table}
 
-\textit{Conformal coverage is valid for all five routed arms.} Split-conformal sets at nominal \qty{90}{\percent} (even/odd calib--eval split per test fold, nonconformity $s = 1 - p_{\mathrm{true}}$) cover \num{0.9063} $\pm$ \num{0.0026} (ECFP4--RF), \num{0.9034} $\pm$ \num{0.0017} (GIN), \num{0.9021} $\pm$ \num{0.0022} (GIN--TFP), \num{0.9048} $\pm$ \num{0.0034} (GIN--TNE), \num{0.9046} $\pm$ \num{0.0019} (ChemBERTa), with mean set sizes \numrange{1.26}{1.31} (ChemBERTa largest at \num{1.307} $\pm$ \num{0.017}, consistent with its worst ECE). Coverage meets nominal for every arm, so the triage filter's ``conformal'' qualifier is empirically grounded. Source: \texttt{results/dd\_screening\_utility\_20260916/conformal\_coverage.csv}.
+\textit{Conformal coverage is valid for all five routed arms.} Split-conformal sets at nominal \qty{90}{\percent} (even/odd calib--eval split per test fold, nonconformity $s = 1 - p_{\mathrm{true}}$) cover \num{0.9063} $\pm$ \num{0.0026} (ECFP4--RF), \num{0.9034} $\pm$ \num{0.0017} (GIN), \num{0.9021} $\pm$ \num{0.0022} (GIN--TFP), \num{0.9048} $\pm$ \num{0.0034} (GIN--TNE), \num{0.9046} $\pm$ \num{0.0019} (ChemBERTa), with mean set sizes \numrange{1.26}{1.31} (ChemBERTa largest at \num{1.307} $\pm$ \num{0.017}, consistent with its worst ECE). Coverage meets nominal for every arm on this panel, supporting the split-conformal construction as a pooled diagnostic; it does not by itself validate prospective deployment.
 
-\textit{Rescue is bidirectional.} Pooling mean predicted probabilities over all \num{25} records per arm, \num{39} active molecules flip from GIN-wrong ($p < \num{0.5}$) to TFP-right ($p \ge \num{0.7}$), while \num{44} flip the opposite way (\Cref{fig:rescue_mols}; SMILES and scores in \texttt{tfp\_rescue\_examples.csv} / \texttt{tfp\_reverse\_examples.csv}). The rescue is therefore a cohort-level asymmetry---the polycyclic/complex-3D gains of \cref{MAIN-tab:structural_complexity}---not cherry-picked proof; both directions are shown.
+\textit{Prediction flips are bidirectional.} Pooling mean predicted probabilities over all \num{25} records per arm, \num{39} active molecules flip from GIN-wrong ($p$ \num{<0.5}) to TFP-right ($p$ \num{>=0.7}), while \num{44} flip the opposite way (\Cref{fig:rescue_mols}; full SMILES and score lists are archived on Zenodo, see Data availability in the main text). These flips are therefore consistent with a cohort-level asymmetry---the polycyclic/complex-3D gains of \cref{MAIN-tab:structural_complexity}---not cherry-picked proof; both directions are shown.
 
 \begin{figure}[ht!]
 \centering
-\includegraphics[width=0.95\linewidth]{figures/mol_rescue_top4.png}
-\caption{Top-\num{4} TFP-rescue actives (GIN $p < \num{0.5}$, GIN--TFP $p \ge \num{0.7}$; pooled over \num{25} fold--seed records). Panel indices and per-arm mean probabilities are shown; full lists in \texttt{results/dd\_screening\_utility\_20260916/tfp\_rescue\_examples.csv}.}
+\includegraphics[width=0.95\linewidth]{mol_rescue_top4.png}
+\caption{Top-\num{4} TFP-vs-GIN prediction-flip actives (GIN $p$ \num{<0.5}, GIN--TFP $p$ \num{>=0.7}; pooled over \num{25} fold--seed records). Panel indices and per-arm mean probabilities are shown; full lists are archived on Zenodo (see Data availability in the main text).}
 \label{fig:rescue_mols}
 \end{figure}
 
 \section{Conformal Triage Filter implementation}
 \label{sec:triage_code_si}
 
-The Python implementation below specifies the decision rule of the Distance-Aware Conformal Triage Filter (main text, \cref{MAIN-eq:conformal_triage}). The filter routes each query molecule to the optimal predictor based on nearest-neighbour Tanimoto similarity ($D_{\mathrm{NN}}$) to the training set. ECFP4--RF dominates in the cold-OOD tail (D1--D4, $D_{\mathrm{NN}} < 0.40$) where 1-WL over-smoothing degrades GNNs on high-$Fsp^3$ polycyclic scaffolds; GIN--TFP persistent-homology projections recover 3D ring topology in mid-range interpolation (D5--D8). Three routing branches correspond to the three structural regimes identified in the decile analysis (\cref{sec:nn_deciles_si}), with a calibration guard triggering post-hoc recalibration when $\mathrm{ECE} > 0.08$. This threshold was validated on the \num{22267}-compound ChEMBL transfer panel (\qty{+14.2}{\percent} virtual screening precision; \cref{sec:calibration_si}).
+The Python specification below states the decision rule of the Distance-Aware Conformal Triage Filter (main text, \cref{MAIN-eq:conformal_triage}). The filter routes each query molecule to a predictor based on nearest-neighbour Tanimoto similarity ($D_{\mathrm{NN}}$) to the training set. ECFP4--RF shows its largest margins in the cold-OOD tail (D1--D4, $D_{\mathrm{NN}}\num{<0.40}$), the regime where GNN performance on high-$Fsp^3$ polycyclic scaffolds is most consistent with 1-WL expressivity limitations; GIN--TFP persistent-homology projections improve GIN performance most in mid-range interpolation (D5--D8). Three routing branches correspond to the three structural regimes identified in the decile analysis (\cref{sec:nn_deciles_si}), with a calibration guard that raises a warning when an optional batch ECE value exceeds the stated threshold ($\mathrm{ECE} \num{>0.08}$ by default), matching the prose rule. This listing is a reproducible research specification of the decision rule rather than validated deployment software: its thresholds were informed by the calibration and decile analyses of the present panel, and no prospective virtual-screening precision gain is claimed or established here.
 
 \begin{lstlisting}
 import numpy as np
@@ -253,20 +255,27 @@ from rdkit import Chem
 from rdkit.Chem import AllChem, DataStructs
 
 def conformal_triage_filter(query_mol, train_fps, model_rf,
-                            model_gin_tfp, ece_threshold=0.08):
+                            model_gin_tfp, ece_threshold=0.08,
+                            batch_ece=None):
     """
-    Distance-Aware Conformal Triage Filter for Prospective Virtual
-    Screening of African Natural Product Scaffolds.
+    Distance-Aware Conformal Triage Filter: research specification of
+    a distance- and calibration-aware routing rule for virtual
+    screening of African natural product scaffolds.
 
-    Routes each query molecule to the optimal predictor based on
+    Routes each query molecule to a predictor based on
     nearest-neighbour Tanimoto similarity (d_nn) to the training set.
-    ECFP4-RF dominates in the cold-OOD tail (D1-D4, d_nn < 0.40)
-    where 1-WL message-passing degrades GNNs on high-Fsp3 polycyclic
-    scaffolds; GIN-TFP persistent-homology projections (H_0, H_1)
-    recover 3D ring topology in mid-range interpolation (D5-D8).
-    ECE > 0.08 triggers post-hoc Platt scaling before routing.
-    Validated on 22,267-compound ChEMBL transfer panel (+14.2%
-    virtual screening precision).
+    ECFP4-RF is selected in the cold-OOD tail (D1-D4, d_nn < 0.40),
+    where GNN performance is most consistent with 1-WL message-passing
+    limitations on high-Fsp3 polycyclic scaffolds; GIN-TFP
+    persistent-homology projections (H_0, H_1) are selected in
+    mid-range interpolation (D5-D8). An optional batch-level ECE value
+    (batch_ece) is compared against ece_threshold (default 0.08) to
+    raise a calibration warning indicating that post-hoc recalibration
+    (Platt scaling or isotonic regression) is indicated before ranking.
+
+    Research specification: thresholds are informed by the calibration
+    and decile analyses of the present panel; no prospective
+    virtual-screening precision gain is established here.
     """
     # 1. Compute Nearest-Neighbor Tanimoto similarity (d_nn)
     #    D_NN(x) = max_{y in T} s_Tanimoto(x, y)
@@ -276,19 +285,18 @@ def conformal_triage_filter(query_mol, train_fps, model_rf,
 
     # 2. Decision routing based on structural distance
     if d_nn < 0.40:
-        # Cold OOD Tail (D1-D4): ECFP4-RF sparse bit-keys resist 1-WL
-        # over-smoothing on high-Fsp3 PNA scaffolds (Fsp3>=0.45, rings>=4)
+        # Cold OOD Tail (D1-D4): route to ECFP4-RF (largest observed
+        # ECFP4 margins on high-Fsp3 PNA scaffolds, Fsp3>=0.45, rings>=4)
         selected_model = "ECFP4-RF"
         pred_prob = model_rf.predict_proba(q_fp)
     elif 0.40 <= d_nn <= 0.60:
-        # Mid-range Interpolation (D5-D8): GIN-TFP persistent-homology
-        # projections (H_0 connectivity + H_1 cycle persistence) restore
-        # 3D polycyclic topology (quassinoids, chromones, alkaloids)
+        # Mid-range Interpolation (D5-D8): route to GIN-TFP
+        # (persistent-homology projections: H_0 connectivity + H_1
+        # cycle persistence)
         selected_model = "GIN-TFP"
         pred_prob = model_gin_tfp.predict(query_mol)
     else:
-        # High-Similarity Core (D9-D10): Ensemble consensus; ECE < 0.08
-        # confirms reliable calibration in this interpolation-dominant regime
+        # High-Similarity Core (D9-D10): ensemble consensus
         selected_model = "Consensus-Ensemble"
         pred_prob = 0.5 * (model_rf.predict_proba(q_fp) +
                            model_gin_tfp.predict(query_mol))
@@ -297,11 +305,37 @@ def conformal_triage_filter(query_mol, train_fps, model_rf,
         "selected_model": selected_model,
         "d_nn_similarity": d_nn,
         "predicted_activity_prob": pred_prob,
-        "calibration_warning": d_nn < 0.40  # ECE > 0.08 expected in OOD tail
+        "calibration_warning": (batch_ece is not None
+                                and batch_ece > ece_threshold)
     }
 \end{lstlisting}
 
 \bibliographystyle{unsrtnat}
 \bibliography{Project5_GNN_Transformer_Antimalarial_V2609}
+
+
+\section{Structural-complexity cohorts: recomputed statistics and uncertainty}
+\label{sec:cohort_stats_si}
+
+The structural-complexity cohort values in the main text (\Cref{MAIN-tab:structural_complexity}) were recomputed (2026-09-17) directly from the archived canonical scaffold-split per-fold predictions under a predeclared per-seed estimand: for each seed, the seed's five disjoint fold-test sets are pooled (one prediction per molecule, labels verified against the frozen panel) and the cohort ROC-AUC is computed on that pool; the reported value is the mean $\pm$ SD over the five per-seed AUCs. The pipeline was validated by reproducing the whole-panel canonical scaffold anchors (ECFP4--RF \num{0.8300}, GIN \num{0.8047}, GIN--TFP \num{0.8138}) within the predeclared gate of $\pm$\num{0.01} (maximum deviation \num{0.008}). Earlier published cohort values lacked an archived producer script and numeric artifact and are superseded; the recomputation protocol, gates, and artifacts are documented in the P5 data-analysis report and operational log.
+
+\Cref{tab:s6_cohort_stats} reports the per-cohort values, seed-level paired $t$-tests ($df=\num{4}$, two-sided) for GIN--TFP minus GIN, and 95\% molecule-level bootstrap intervals ($B=\num{2000}$, shared resample across arms and seeds). The GIN--TFP gain is replication-consistent (positive in 5/5 seeds on flat aromatics) but small; on the small polycyclic cohort ($n=\num{363}$) both the seed-level test and the bootstrap interval are inconclusive (the interval includes zero).
+
+\begin{table}[h]
+\centering
+\caption{Recomputed structural-complexity cohorts (primary per-seed estimand) with seed-level paired $t$-tests and 95\% molecule-level bootstrap intervals for the GIN--TFP $-$ GIN contrast.}
+\label{tab:s6_cohort_stats}
+\begin{tabular}{lcccc}
+\toprule
+Cohort & ECFP4--RF & GIN & GIN--TFP & GIN--TFP $-$ GIN \\
+\midrule
+Flat Aromatic & \num{0.7624} $\pm$ \num{0.0206} & \num{0.7488} $\pm$ \num{0.0153} & \num{0.7631} $\pm$ \num{0.0214} & \num{+0.0143} [CI \numrange{0.0088}{0.0201}], $p_t=\num{0.012}$ \\
+Complex 3D & \num{0.8457} $\pm$ \num{0.0052} & \num{0.7963} $\pm$ \num{0.0202} & \num{0.8088} $\pm$ \num{0.0173} & \num{+0.0125} [CI \numrange{0.0040}{0.0206}], $p_t=\num{0.358}$ \\
+Polycyclic & \num{0.7768} $\pm$ \num{0.0291} & \num{0.7162} $\pm$ \num{0.0270} & \num{0.7264} $\pm$ \num{0.0454} & \num{+0.0102} [CI \numrange{-0.0112}{0.0306}], $p_t=\num{0.729}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Interpretation boundaries: cohort AUCs are computed on approximately \qty{74}{\percent}-prevalence panels with class imbalance varying across cohorts; the polycyclic cohort contains only \num{147} actives, so its seed-level variability is large. These molecule-level intervals complement and do not replace the seed-level ($df=\num{4}$) inference of the primary benchmark.
 
 \end{document}

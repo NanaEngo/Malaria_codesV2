@@ -12,6 +12,7 @@
 \sisetup{
   detect-all           = true,
   group-minimum-digits = 4,
+  retain-explicit-plus = true,
 }
 
 \signature{Myke Vital Sao Temgoua \\ \small Corresponding Author}
@@ -32,25 +33,25 @@
 
 \opening{Dear Editors,}
 
-\noindent 16 September 2026
+\noindent 17 September 2026
 
-We submit the manuscript entitled \textbf{``Out-of-distribution extrapolation in molecular deep learning: topological rescue and conformal triage for antimalarial scaffolds''} for consideration as a Full Paper in \textit{Digital Discovery}.
+We submit the manuscript entitled \textbf{``Chemical distribution shift in antimalarial natural products: fingerprint dominance and localized topological complementarity in molecular representation learning''} for consideration as a Full Paper in \textit{Digital Discovery}.
 
-This study speaks directly to your journal's data-first mission. Rather than another passive benchmark reporting fingerprint dominance, we deliver a mechanistic explanation for graph neural network extrapolation failures and an actionable decision framework for virtual screening under distribution shift. On a frozen panel of \num{19836} African antimalarial natural products and synthetic derivatives, evaluated across \num{25} fold--seed replicates per model, we establish three contributions:
+This study speaks directly to your journal's data-first mission: rather than another passive benchmark reporting fingerprint dominance, we deliver a distance-resolved characterisation of where classical fingerprint baselines and learned representations diverge under chemical distribution shift. On a frozen panel of \num{19836} African antimalarial natural products and synthetic derivatives, evaluated across \num{25} fold--seed replicates per model, we establish three contributions:
 
-First, we localise the ECFP4--RF advantage strictly to the structural extrapolation tail (nearest-neighbour similarity $< 0.40$) and identify its mechanism: the 1-Weisfeiler--Lehman expressivity ceiling of message-passing networks on high-$Fsp^3$ polycyclic scaffolds. Fusing persistent-homology topological features (GIN--TFP) recovers up to \qty{36}{\percent} of that gap.
+First, we localise the ECFP4--RF advantage: nearest-neighbour Tanimoto decile stratification shows the largest margins in the structural extrapolation tail (similarity \num{<0.40}), narrowing sharply --- without reversing --- in mid-range interpolation. Across structural cohorts, fusing persistent-homology topological features (GIN--TFP) yields a small, replication-consistent gain over base GIN, recovering \qty{36}{\percent} of the aggregate scaffold-split deficit; this localized topological complementarity is reported descriptively and is compatible with, but does not isolate, a 1-Weisfeiler--Lehman expressivity limitation of message-passing networks.
 
-Second, we operationalise these dynamics as a Distance-Aware Conformal Triage Filter that routes candidates to the right model by distance regime, improving prospective screening precision by \textbf{+\qty{14.2}{\percent}} on a disjoint \num{22267}-molecule ChEMBL transfer panel.
+Second, we propose a Distance-Aware Conformal Triage Filter as a testable operational hypothesis: its post-hoc split-conformal coverage meets the nominal \qty{90}{\percent} target on the five routed arms, and isotonic recalibration cuts residual expected calibration error \numrange{3}{5}-fold. We state explicitly that no prospective virtual-screening precision gain is claimed; prospective validation on an independent low-prevalence library is reserved for future work.
 
-Third, we show that fold-independent weight restoration in molecular transformers is mandatory to prevent cross-fold leakage --- a reproducibility standard for the community.
+Third, we show that fold-independent weight restoration in molecular transformers reduces the risk of cross-fold information transfer during cross-validation --- a reproducibility safeguard we recommend for transformer benchmarks.
 
-\textbf{Data and code:} all splits, predictions, and analysis scripts are archived on Zenodo (DOI \href{https://doi.org/10.5281/zenodo.19608875}{10.5281/zenodo.19608875}, record reserved pending upload completion) and GitHub (\url{https://github.com/taamangtchu/Project5_GNN_Transformer_DrugDiscovery}). Editors and referees will be given full access for peer review, and the DOI will be published before acceptance, per your data policy.
+\textbf{Data and code:} all splits, predictions, and analysis scripts are archived on Zenodo (DOI \href{https://doi.org/10.5281/zenodo.19608875}{10.5281/zenodo.19608875}, record reserved pending upload completion) and GitHub (\url{https://github.com/NanaEngo/Malaria_codesV2}). Editors and referees will be given full access for peer review, and the DOI will be published before acceptance, per your data policy.
 
-The work is original, is not under consideration elsewhere, has been approved by all authors, and there are no conflicts to declare. A TOC graphic (\texttt{figures/graphical\_abstract.jpg}) is uploaded alongside the manuscript files.
+The work is original, is not under consideration elsewhere, has been approved by all authors, and there are no conflicts to declare. A TOC graphic (\texttt{figures/graphical\_abstract.jpg}) accompanies the submission.
 
 \vspace{0.4em}
 \noindent\textbf{Suggested reviewers:}
-\begin{enumerate}\setlength{\itemsep}{1pt}\setlength{\parskip}{0pt}
+\begin{enumerate}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
     \item \textbf{Prof. Kelin Xia} (Nanyang Technological University, Singapore) --- Topological deep learning, persistent homology, molecular graph representations. Email: \texttt{xiakelin@ntu.edu.sg}
     \item \textbf{Prof. Fidele Ntie-Kang} (University of Buea, Cameroon / Martin Luther University Halle-Wittenberg, Germany) --- African Natural Products Database (ANPDB), natural product cheminformatics. Email: \texttt{fidele.ntie-kang@uni-halle.de}
     \item \textbf{Prof. Carsten Eickhoff} (University of T\"ubingen, Germany) --- Molecular representation benchmarking, out-of-distribution generalisation. Email: \texttt{c.eickhoff@uni-tuebingen.de}
