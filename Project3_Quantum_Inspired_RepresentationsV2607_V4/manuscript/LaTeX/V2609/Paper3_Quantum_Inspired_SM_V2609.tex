@@ -379,14 +379,14 @@ QK kernel matrix (per fold, $n=19{,}849$) & \SI{817}{\second} & $n^2/2$ pairs & 
 
 
 \section{Effect sizes for pairwise AUC comparisons}
-\label{sec:effect_sizes}
+\label{SM-sec:effect_sizes}
 
 Cohen's $d$ effect sizes for pairwise AUC comparisons against ECFP4 are reported in \cref{tab:effect_sizes}. These estimates use the \num{19836}-molecule classical benchmark (Random Forest, 5-fold stratified cross-validation) and are intended to complement, not replace, the fold-level uncertainty estimates.
 
 \begin{table}[ht!]
 	\centering
 	\caption{Effect sizes for pairwise AUC comparisons against ECFP4 baseline (19,849 molecules, 5-fold stratified CV). Cohen's $d$ quantifies the magnitude of difference; $>0.8$ indicates large effect.}
-	\label{tab:effect_sizes}
+	\label{SM-tab:effect_sizes}
 	\begin{tabularx}{\textwidth}{l S[table-format=1.3] S[table-format=+1.3] S[table-format=+1.2] l S[table-format=1.4] S[table-format=1.3]}
 		\toprule
 		Method & {AUC} & {$\Delta$AUC} & {Cohen's $d$} & {Effect} & {$p$-value} & {Power} \\
@@ -528,7 +528,7 @@ The MLP underperforms RF by $\Delta$AUC = $-0.061$, consistent with the broader 
 We used quantum-kernel density as a complementary applicability-domain diagnostic alongside classical fingerprint similarity. The density score $\rho(x)$ describes proximity to the empirical seed space in the simulated feature space; it is presented as a descriptive diagnostic rather than a validated applicability-domain metric.
 
 \subsection{Comparison with existing tools}
-\label{sec:si_tartarus_docking}
+\label{SM-sec:si_tartarus_docking}
 
 To assess information retention after TNE compression, we analysed Tartarus docking scores \citep{tartarus_2024}: the full docking dataset comprised \num{19913} primary leads docked against four targets (PfDHFR/1SYH, PfCRT/4LDE, PfATP4/6Y2F, PfClpP/2F6I) using AutoDock Vina with target-specific grid configurations; of these, \num{17011} molecules had complete docking profiles across all four targets and were used for polypharmacology analyses. These data served as an external chemoinformatic validation oracle to test descriptor information retention; detailed docking parameters (receptor preparation, grid specifications, exhaustiveness) are provided in the Tartarus repository \citep{tartarus_2024}.
 
@@ -684,9 +684,9 @@ Linear & 0.537 & 0.544 & {$p<\num{0.001}$} \\
 \end{table}
 
 \subsection{H$_1$--RRS association is size-mediated}
-\label{sec:tda_rrs}
+\label{SM-sec:tda_rrs}
 
-The Spearman correlation between H$_1$ count and resistance-resilience scores (RRS) \citep{temgoua2026tb} was examined in two cohorts: (i)~an expanded cohort of $n = \num{494}$ compounds with complete H$_1$ and continuous RRS profiles (used for the cross-paper analysis in \cref{fig:h1_rrs}), and (ii)~a subset of $N = \num{77}$ compounds with validated per-target RRS classification (used for the H$_1$--RRS association in \cref{sec:tda_rrs}). In the expanded cohort ($n = \num{494}$), H$_1$ count showed a weak unadjusted association with continuous RRS (Spearman $\rho = \num{0.2399}$, $p = \num{6.76e-8}$), but the partial association was null after controlling for molecular weight, ring count, fraction sp$^3$, and H$_0$ count ($\rho_{\text{partial}} = \num{0.0329}$, $p = \num{0.4668}$). In the validated subset ($N = \num{77}$), the raw correlation was $\rho = \num{0.312}$ ($p = \num{0.006}$) but dropped to $\rho_{\text{partial}} = \num{0.033}$ ($p = \num{0.47}$) after the same adjustment. Both analyses converge on the same conclusion: the H$_1$--RRS association is mediated by molecular complexity rather than topological structure per se. This result does not support a direct H$_1$--RRS association but is consistent with the broader finding that topological complexity correlates with binding promiscuity (\cref{M-sec:tda_promiscuity}).
+The Spearman correlation between H$_1$ count and resistance-resilience scores (RRS) \citep{temgoua2026tb} was examined in two cohorts: (i)~an expanded cohort of $n = \num{494}$ compounds with complete H$_1$ and continuous RRS profiles (used for the cross-paper analysis in \cref{fig:h1_rrs}), and (ii)~a subset of $N = \num{77}$ compounds with validated per-target RRS classification (used for the H$_1$--RRS association in \cref{SM-sec:tda_rrs}). In the expanded cohort ($n = \num{494}$), H$_1$ count showed a weak unadjusted association with continuous RRS (Spearman $\rho = \num{0.2399}$, $p = \num{6.76e-8}$), but the partial association was null after controlling for molecular weight, ring count, fraction sp$^3$, and H$_0$ count ($\rho_{\text{partial}} = \num{0.0329}$, $p = \num{0.4668}$). In the validated subset ($N = \num{77}$), the raw correlation was $\rho = \num{0.312}$ ($p = \num{0.006}$) but dropped to $\rho_{\text{partial}} = \num{0.033}$ ($p = \num{0.47}$) after the same adjustment. Both analyses converge on the same conclusion: the H$_1$--RRS association is mediated by molecular complexity rather than topological structure per se. This result does not support a direct H$_1$--RRS association but is consistent with the broader finding that topological complexity correlates with binding promiscuity (\cref{M-sec:tda_promiscuity}).
 
 \bibliographystyle{unsrtnat}
 \bibliography{Bibliography_Paper3}

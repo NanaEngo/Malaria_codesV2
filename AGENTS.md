@@ -29,7 +29,7 @@ Read the relevant DAR before changing code, parameters, protocols, or manuscript
 |---|---|---|
 | P1 | **V8 canonical (JCIM resubmission REFUSED 16 Sept 2026 — seeking new venue)** | V8 enhanced + validated (DEKOIS/MMV/redocking + Response to Reviewers), 25 p. main / 17 p. SM / 1 p. cover / 5 p. response, package `submission_ACS_P1V8/`; Zenodo DOI public 10.5281/zenodo.22696778 |
 | P2 | **V2609C technically submission-ready (JCIM)** | V2609C enhanced + validated (*Estimand Divergence*, 39-ligand GNINA CNN, African NP chemical space profiling, ethnobotanical mapping), 26 p. main / 19 p. SM / 1 p. cover, package refreshed (`submission_ACS_P2V2609C/`); live HPC triplicate/pH 5.2 daemon active |
-| P3 | Benchmarks complete | ECFP4 0.9475; hybrid 0.8876; QKS ≈ RBF; no quantum advantage claimed; JCAMD manuscript ready |
+| P3 | **V2609 submission package ready (JCAMD)** | ECFP4 0.9475; hybrid 0.8876; QKS ≈ RBF; no quantum advantage claimed; 18 p. main / 19 p. SM / 11 p. response, package `Project3_Quantum_Inspired_RepresentationsV2607_V4/manuscript/LaTeX/V2609/sn-article-template/P3_V2609_JCAMD_Submission.zip` (3.6 MB, 27 files) |
 | P4 | v12 benchmark complete | Random 0.6724 > MCTS 0.6649; Pareto front is a separate pre-activity artifact; JCAMD manuscript ready |
 | P5 | Benchmark complete | ECFP4-RF dominates under scaffold split; topological fusion is modestly complementary; phenotype-only LISH-MoA baseline complete; JCAMD manuscript ready |
 | P6 | Planned follow-up | LISH-MoA structure–phenotype study; no molecular arm until a versioned drug_id→SMILES mapping passes audit |
@@ -61,7 +61,7 @@ The Set-C pilot has 16 prepared and equilibrated systems (PP-01/PP-02 × PfDHFR/
 
 - **P1 V7 is the designated JCIM submission workspace**; V4/V5/V6 evidence feeds V7 only through the documented integration (validation tables, physicochemical characterization); no silent merging of unlabelled exploratory outputs.
 - **P1 V4 — Remédiation 2F6I/PfClpP TERMINÉE (09-10/08):** 484 = 458 PASS + 1 PENDING (171) + 15 exclusions boron (AD4) + 5 DOCKED_GATE_FAILED + 5 EMBED_FAILURE; artefact `results/pfclpp_2f6i_484_final_accounting.{csv,json}` + dossier prêt-à-signer `PFCLPP_2F6I_484_INDEPENDENT_REVIEW_DOSSIER.md`; registre `PENDING_INDEPENDENT_REVIEW` (réactivation à la demande de l'auteur).
-- P3 canonical sources are `Paper3_Quantum_InspiredV2608.tex` and `Paper3_Quantum_Inspired_SM_V2608.tex`; older versions are archived inside the P3 manuscript directory.
+- **P3 V2609 Springer Nature submission package (JCAMD):** Complete Springer template conversion in `Project3_Quantum_Inspired_RepresentationsV2607_V4/manuscript/LaTeX/V2609/sn-article-template/` with `sn-article.tex` (main 18 p.), `sn-article-SM.tex` (SI 19 p.), `Response_to_Reviewers.tex` (11 p.), bidirectional xr-hyper cross-references, 12 figures, package `P3_V2609_JCAMD_Submission.zip` (3.6 MB, 27 files); **V2609 supersedes V2608** with Springer sn-jnl class compliance, resolved cross-references, complete figure integration, and submission-ready package (16 Sept 2026).
 - P4 manuscript prose must distinguish v12 scalar benchmark from the historical pre-activity Pareto front and must not present Tier 2 QMC diagnostics as validated energies.
 - P5 manuscript prose must retain the honest-negative scaffold result and must not claim universal GNN/Transformer inferiority.
 - Zenodo remains `reserved / upload pending` until the upload and DOI are verified.

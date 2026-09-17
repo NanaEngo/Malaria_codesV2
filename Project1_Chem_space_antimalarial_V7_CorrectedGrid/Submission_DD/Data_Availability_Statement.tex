@@ -1,0 +1,224 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{xcolor}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+\title{\textbf{Data Availability Statement} \\[0.5em]
+{\large Target breadth and mutation resilience in African-natural-product-inspired antimalarial chemotypes: a computational analysis}}
+
+\author{
+Myke Vital Sao Temgoua, Jean-Pierre Tchapet Njafa, Penabei Samafou, \\
+Wilfred Fon Mbacham, Serge Guy Nana Engo
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Summary}
+
+All data, code, computational protocols, and materials necessary to reproduce the results presented in this manuscript are publicly available through a permanent Zenodo repository under an open-source MIT license. This ensures complete computational reproducibility and supports open science practices.
+
+\section*{Primary Data Repository}
+
+\subsection*{Zenodo Deposit}
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Repository:} Zenodo (CERN-hosted permanent repository)
+\item \textbf{DOI:} \url{https://doi.org/10.5281/zenodo.22696778}
+\item \textbf{License:} MIT License (Open Source Initiative approved)
+\item \textbf{Accessibility:} Publicly accessible without registration or fees
+\item \textbf{Preservation:} Permanent archival with version control
+\item \textbf{Verification:} SHA256 checksums for all files
+\end{itemize}
+
+\section*{Repository Contents}
+
+The Zenodo deposit contains the following computational materials organized in a versioned directory structure:
+
+\subsection*{1. Source Code and Scripts}
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Chemical-space generation:} Python scripts for hybrid library construction, SMILES variational autoencoder, K-means clustering, centroid selection, and novelty analysis
+\item \textbf{Docking workflows:} AutoDock Vina configuration files, grid specifications, Meeko ligand preparation scripts, and geometric quality-control filters
+\item \textbf{RRS analysis:} Per-target resistance-resilience score computation, classification algorithms, and wild-type binding-threshold filters
+\item \textbf{Statistical analysis:} Spearman correlation scripts, Bonferroni correction, permutation tests, power analysis calculations
+\item \textbf{Validation protocols:} DEKOIS 2.0 enrichment analysis, MMV Malaria Box screening, redocking RMSD calculations, retrospective antimalarial panel evaluation
+\item \textbf{Visualization:} Figure generation scripts for chemical-space coverage, RRS profiles, cross-metric relationships, and target-wise distributions
+\end{itemize}
+
+\subsection*{2. Input Data}
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Seed libraries:} 396 African natural product SMILES, 454 synthetic antimalarial SMILES with source annotations
+\item \textbf{Receptor structures:} Prepared PDB files for PfDHFR (7F3Y), PfCRT (6UKJ corrected to LYS-76), PfClpP (2F6I), and PfATP4 (9N10)
+\item \textbf{Ligand structures:} SMILES strings and 3D coordinates for all 17 Set-C candidates in canonical and protonation states
+\item \textbf{Mutation definitions:} Receptor coordinate files for PfDHFR mutants (N51I, C59R, S108N, I164L) and PfCRT mutants (K76T, K76A)
+\item \textbf{Validation datasets:} DEKOIS 2.0 PfDHFR panel (40 actives, 1200 decoys), MMV Malaria Box subset, reference ligand coordinates for redocking
+\item \textbf{Retrospective panel:} Structures for artemisinin, pyrimethamine, chloroquine, lumefantrine, and cipargamin
+\end{itemize}
+
+\subsection*{3. Computational Protocols}
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Grid specifications:} Complete AutoDock Vina grid box centers, dimensions, and exhaustiveness parameters for all four targets
+\item \textbf{Docking parameters:} Meeko ligand preparation settings, protonation-state assignment rules, PDBQT conversion protocols
+\item \textbf{Quality gates:} Geometric pose-quality criteria (centroid position, anchor distance, box containment)
+\item \textbf{RRS definitions:} Wild-type binding thresholds, eligibility criteria, classification boundaries (A*, A, B, C, D)
+\item \textbf{Multi-seed protocol:} Seed values, exhaustiveness settings, and convergence criteria for sensitivity analysis
+\item \textbf{Null controls:} Pipeline-null protocol for PfCRT K76T/K76A signal assessment
+\end{itemize}
+
+\subsection*{4. Raw Computational Outputs}
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Docking poses:} Complete PDBQT files for all candidate--target pairs (68 wild-type, 102 mutant-panel)
+\item \textbf{Vina score logs:} Raw scoring-function outputs for every docking run with mode ranks and RMSD values
+\item \textbf{Cluster assignments:} K-means cluster labels and centroid coordinates for the 65,856-molecule library
+\item \textbf{Fingerprint matrices:} Morgan fingerprint bit vectors for novelty and scaffold-similarity calculations
+\item \textbf{RRS matrices:} Per-candidate, per-target, per-mutant score ratios and classification assignments
+\item \textbf{Validation metrics:} ROC curves, AUC values, enrichment factors, redocking RMSD distributions
+\end{itemize}
+
+\subsection*{5. Machine-Readable Tables}
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Candidate manifest:} Complete Set-C roster with SMILES, identifiers, MPO scores, and source annotations (CSV, JSON)
+\item \textbf{Vina matrix:} $17 \times 4$ scoring table with target-specific wild-type estimates (CSV, JSON)
+\item \textbf{RRS profiles:} Per-candidate mutant-panel results with eligibility flags and class assignments (CSV, JSON)
+\item \textbf{Cross-metric data:} PNS, ACSI, wild-type scores, favorable-target counts, and correlation statistics (CSV, JSON)
+\item \textbf{Physicochemical properties:} Lipinski/Veber descriptors, QED values, and ADMET predictions (CSV, JSON)
+\item \textbf{Validation datasets:} DEKOIS actives/decoys, MMV screening results, redocking reference coordinates (CSV, JSON)
+\end{itemize}
+
+\subsection*{6. Documentation}
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{README files:} Installation instructions, software dependencies, execution workflows
+\item \textbf{Data dictionary:} Column definitions, unit specifications, controlled vocabularies
+\item \textbf{Provenance records:} Software versions (Python, RDKit, AutoDock Vina, Open Babel), execution timestamps, hardware specifications
+\item \textbf{File manifest:} SHA256 checksums for all deposited files with verification scripts
+\item \textbf{License file:} Full text of MIT License covering all repository contents
+\end{itemize}
+
+\section*{Software and Dependencies}
+
+All computational work was performed using open-source software. The specific versions used are documented in the Zenodo repository:
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Python:} 3.11 (conda environment specification included)
+\item \textbf{RDKit:} 2025.03.6 (cheminformatics toolkit)
+\item \textbf{AutoDock Vina:} 1.2.7 (molecular docking)
+\item \textbf{Meeko:} 0.5.0 (ligand preparation)
+\item \textbf{Open Babel:} 3.1.1 (molecular format conversion)
+\item \textbf{NumPy, Pandas, Matplotlib, Seaborn:} Standard scientific Python stack (versions in requirements.txt)
+\item \textbf{scikit-learn:} Clustering and machine learning utilities
+\item \textbf{SELFIES:} 2.1.1 (molecular string representation)
+\end{itemize}
+
+\section*{Reproducibility Instructions}
+
+The Zenodo repository includes complete step-by-step instructions for:
+
+\begin{enumerate}[leftmargin=*]
+\item Environment setup (conda YAML file provided)
+\item Downloading and verifying all input files (SHA256 checksums)
+\item Executing the complete workflow from seed libraries to final results
+\item Regenerating all manuscript figures and tables
+\item Running validation protocols (DEKOIS, MMV, redocking)
+\item Reproducing statistical analyses and cross-metric correlations
+\end{enumerate}
+
+\section*{External Database Sources}
+
+The following public databases were used to construct the seed libraries and validation sets. All accessions and retrieval dates are documented:
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{ZINC15:} Commercially available compound library (\url{https://zinc15.docking.org/})
+\item \textbf{ENAMINE-REAL:} Synthesizable compound space (\url{https://enamine.net/compound-libraries/real-compounds})
+\item \textbf{African Natural Products Database (AfroDB):} Curated natural product collection
+\item \textbf{RCSB Protein Data Bank:} Target structures 7F3Y, 6UKJ, 2F6I, 9N10 (\url{https://www.rcsb.org/})
+\item \textbf{DEKOIS 2.0:} Demanding evaluation kits for objective in silico screening (\url{http://www.dekois.com/})
+\item \textbf{MMV Malaria Box:} Medicines for Malaria Venture compound collection (\url{https://www.mmv.org/})
+\item \textbf{ChEMBL:} Bioactivity database for approved antimalarials (\url{https://www.ebi.ac.uk/chembl/})
+\end{itemize}
+
+\section*{Data Usage and Citation}
+
+All data and code in the Zenodo repository are released under the MIT License, which permits:
+
+\begin{itemize}[leftmargin=*]
+\item Free use, modification, and distribution
+\item Commercial and non-commercial applications
+\item Derivative works with attribution
+\end{itemize}
+
+Users of these materials should cite:
+
+\begin{quote}
+Sao Temgoua, M.V.; Tchapet Njafa, J.-P.; Samafou, P.; Mbacham, W.F.; Nana Engo, S.G. \textit{Target breadth and mutation resilience in African-natural-product-inspired antimalarial chemotypes: a computational analysis}. \emph{ChemRxiv}, 2026. DOI: \url{https://doi.org/10.26434/chemrxiv.15006437/v4}
+
+Data and code repository: \url{https://doi.org/10.5281/zenodo.22696778}
+\end{quote}
+
+\section*{Contact for Data Inquiries}
+
+For questions regarding data access, interpretation, or technical issues with the repository:
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Corresponding Author:} Myke Vital Sao Temgoua
+\item \textbf{Email:} \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm}
+\item \textbf{Institution:} Department of Physics, University of Yaoundé I, Cameroon
+\end{itemize}
+
+\section*{Long-Term Preservation}
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Zenodo commitment:} CERN guarantees data preservation for the lifetime of CERN (minimum 20+ years)
+\item \textbf{Redundancy:} Multiple backup copies maintained by CERN infrastructure
+\item \textbf{Format stability:} All files use non-proprietary, widely-supported formats (CSV, JSON, PDB, PDBQT, TXT, PDF)
+\item \textbf{Version control:} Immutable DOI ensures consistent access to the exact version used in this publication
+\item \textbf{Migration plan:} CERN commits to format migration if technology changes
+\end{itemize}
+
+\section*{Compliance and Ethics}
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{No human subjects:} This is a computational study with no human participants
+\item \textbf{No animal experiments:} All work is in silico
+\item \textbf{No biological materials:} No wet-lab experiments were performed
+\item \textbf{Public data only:} All seed compounds and protein structures are from public databases
+\item \textbf{No proprietary data:} All computational results are original work by the authors
+\item \textbf{Open science principles:} Full transparency and reproducibility prioritized
+\end{itemize}
+
+\section*{Acknowledgment}
+
+The authors acknowledge Zenodo and CERN for providing permanent, open-access data hosting infrastructure that enables reproducible computational research. We thank the open-source software communities (RDKit, AutoDock, Python scientific stack) whose tools made this work possible.
+
+\vspace{1em}
+
+\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\textbf{For immediate access to all data and code:} \\[0.5em]
+\Large\url{https://doi.org/10.5281/zenodo.22696778}
+\end{center}
+
+\noindent\rule{\textwidth}{0.4pt}
+
+\end{document}
