@@ -1,48 +1,60 @@
-# P2 — polypharmacology, RRS, and MD triage (V2609)
+# P2 manuscript — release index
 
-**Status checkpoint (30 August 2026):** docking/RRS/ACSI/PNS analysis complete; Set-C pilot COMPLETE (16/16 trajectories PASS-QC); post-production chain COMPLETE (manifest v3, qc_exit_code=0, md_rrs_exit_code=0); pilot MD-RRS COMPUTED_WITH_COHORT_CONTRACT (PP-01/PP-02 → Class A over PfCRT;PfDHFR); Set-C MM-GBSA computed 16/16. Full-panel (17×8=136-row) MD-RRS remains NOT_COMPUTED by design. The V2609 LaTeX release is maintained separately from the immutable V2607 source files. The current manuscript framing is computational triage and interpretation calibration, not biological validation. See `docs/P2_V2609_IMPLEMENTATION_PLAN.md`, `docs/P2_V2609_NARRATIVE_PIVOT_PLAN.md`, and `docs/P2_V2609_MD_AUDIT_MATRIX.md`.
+## Canonical release: V2609C
 
-**Roadmap:** `P1_P5_RRS_POLYPHARMA_ROADMAP.md`
+- **Target journal:** *Journal of Chemical Information and Modeling* (ACS)
+- **Main manuscript:** `V2609C/Polypharmacology_MD_Validation_V2609C.tex`
+- **Supporting Information:** `V2609C/Polypharmacology_MD_Validation_SM_V2609C.tex`
+- **Cover letter:** `V2609C/Cover_Letter_V2609C.tex`
+- **Bibliography:** `V2609C/Project2_Polypharmacology_MD_Validation.bib`
+- **Manifest:** `V2609C/SUBMISSION_MANIFEST_V2609C.md`
+- **Graphics:** `V2609C/Graphics/`
 
-## Scientific design
+`V2609C/` is the only active manuscript source directory. Its source files, tables, bibliography, graphics, and release manifest form the canonical package. PDFs are generated release products; auxiliary files and logs are disposable build artefacts and must not be edited by hand.
 
-- Canonical Set-C cohort: **17 polypharmacology-oriented candidates**.
-- Docking panel: **136 WT/mutant systems** for PfDHFR and PfCRT.
-- Per-target RRS excludes non-binding WT denominators (`|ΔG_WT| < 5.0 kcal mol⁻¹`).
-- Canonical target-balanced RRS classes: **A*:1, A:1, B:4, C:5, D:1** (12 complete two-target candidates); available-target sensitivity classes: **A*:5, A:1, B:5, C:5, D:1** (17 candidates).
-- ACSI mean: **0.543**; high-ACSI candidates: **2/17**.
-- Primary target-balanced PNS–RRS: ρ=−0.2098, permutation p=0.5144, Bonferroni-adjusted p=1.0000 (n=12); the 17-candidate coverage-sensitive estimate is ρ=−0.5588, adjusted p=0.0667.
+## Historical release: V2609B
 
-The four historical parent-lead MD systems are a separate evidence stream, not Set-C validation. Only PfCRT–214 has an interpretable historical MM-GBSA estimate; the 4GM2-labelled system is not structural PfClpP validation because 4GM2 is PfClpR.
+`V2609B/` contains the retained V2609B manuscript, Supporting Information, cover letter, tables, bibliography, graphics, and compiled release products. It is an archive for provenance and comparison, not an active source for new claims. Its archive manifest is `V2609B/SUBMISSION_MANIFEST_V2609B.md`.
 
-## Current Set-C MD status
+Older V2607/V2609 variants, displaced source files, and generated leftovers are retained under `../docs/archive/manuscript/` and are not submission sources.
 
-The bounded pilot contains 16 prepared systems (PP-01/PP-02 × PfDHFR/PfCRT mutation states) using OpenFF 2.2.0 AM1-BCC ligand parameters with CHARMM36m/TIP3P. The policy deviation from CGenFF is explicit and PI-approved in the manifests.
+## Scientific scope
 
-- **15259/15260:** CPU witness and dependent QC were stopped after a partial 858-ps trajectory; the output is non-canonical.
-- **15262:** mixed GPU/CPU benchmark passed at 19.816 ns/day without fatal or LINCS errors.
-- **15270:** clean GPU witness completed one 10-ns trajectory; it is stability evidence only.
-- **15319/15320:** final gate passed 16/16; production `15320` completed all 16 serial runs at exactly 5,000,000 steps / 10 ns with GPU PP/PME offload. The previous failed launchers remain non-canonical; the authoritative post-production chain subsequently passed QC for all 16 trajectories and produced the bounded pilot MD-RRS output.
-- **Pilot MD-RRS contract:** `PP-01/PP-02` × 8 states = 16 QC rows; use `--cohort-mode pilot`, which writes `results/set_c_md/md_rrs_pilot_PP01_PP02.csv` and cannot overwrite the full-cohort output. Aggregate QC passed for all 16 terminal trajectories (authority wrapper output 15386; failed attempts p2_setc_qc_rrs_15384/15385 are superseded).
-- **Full-panel MD-RRS:** `NOT_COMPUTED`; the separate full contract requires 17 candidates × 8 states = 136 PASS-QC rows.
-- **PlasmoDB annotation:** stable target IDs and mutation context are recorded in `results/plasmodb_target_annotation.csv` and SM Table S7; no pathway enrichment is claimed. PlasmoDB record retrieval is evidenced, but no directly scripted WDK REST client is currently part of the workflow.
-- **GitHub tool register:** verified current/available applications, effective-use evidence, licenses, and integration priorities are recorded in `P2_GITHUB_TOOL_REGISTER_20260812.md`.
-- **GNINA status:** executable available (`v1.3.2`), but the preserved ligand-438 attempt produced an empty output file (0 bytes); therefore no GNINA score or pose is reportable for P2. The generalized 17 × 4 consensus claim is withdrawn pending a new complete, non-empty manifest.
-- Legacy 15106/15111/15117 jobs are superseded.
-- **Cleanup audit (13 August):** failed run directories, 1,087 autosave/backup files (~13.7 GB), and ten untracked Antechamber/SQM/energy temporary files were removed after reference-safety checks. Exact diagnostic duplicates and the legacy `results/md_systems/set_c` root were retained because historical scripts reference them. Active production and canonical evidence are protected.
+The canonical manuscript reports a computational-prioritisation and interpretation-calibration study, not an experimental validation study. The Set-C cohort contains 17 candidates and 136 PfDHFR/PfCRT docking systems. Docking-derived RRS, ACSI, and PNS are separate estimands:
 
-## Canonical locations
+- **RRS:** target-specific retention of empirical AutoDock Vina score under six mutant states. The primary analysis uses 12 candidates with eligible WT scores for both PfDHFR and PfCRT; five PfCRT-only candidates form a coverage-limited sensitivity set.
+- **ACSI:** a cohort-normalised chemical-space descriptor relative to the declared reference fingerprints and molecular descriptors.
+- **PNS:** a STRING-centrality-weighted WT docking-score ranking. PfCRT centrality is imputed and evaluated by sensitivity analysis; PNS is not a target-essentiality or polypharmacology measurement.
 
-- Immutable V2607 source manuscript: `manuscript/LaTeX/Polypharmacology_MD_Validation_V2607.tex`
-- Active V2609 main manuscript: `manuscript/LaTeX/Polypharmacology_MD_Validation_V2609.tex`
-- Active V2609 Supporting Information: `manuscript/LaTeX/Polypharmacology_MD_Validation_SM_V2609.tex`
-- Active V2609 cover letter: `manuscript/LaTeX/Cover_Letter_V2609.tex`
-- Docking/RRS/ACSI/PNS data: `results/`
-- Set-C preparation and post-production runbooks: `results/set_c_md/`
-- Implementation plan: `docs/P2_V2609_IMPLEMENTATION_PLAN.md`
-- Narrative pivot: `docs/P2_V2609_NARRATIVE_PIVOT_PLAN.md`
-- Markdown audit matrix: `docs/P2_V2609_MD_AUDIT_MATRIX.md`
+The parent-study MD cohort contains four WT complexes. A secondary 16-system Set-C pilot (PP-01/PP-02) has trajectory QC and MM-GBSA outputs but is not merged into the primary docking-RRS analysis. The seven-of-eight directional difference is a protocol-local observation that docking-score retention and short-MD local geometry are not interchangeable; it is not a general failure rate, an affinity estimate, or a biological resistance signal.
 
-## Evidence boundary
+## Reproducibility entry points
 
-Docking-RRS is not MD-RRS. The bounded PP-01/PP-02 pilot MD-RRS is reportable only within its declared pilot contract because trajectory hashes, PASS QC, the predeclared rule, and cohort provenance are complete. The full 17-candidate MD-RRS remains not computed and is not claimed.
+Run from the Project2 directory:
+
+```bash
+conda run -n malaria_md python scripts/p2_rigorous_audit.py
+conda run -n malaria_md python -m pytest tests -q
+```
+
+The rigorous audit regenerates the compact RRS, ACSI, PNS, and cross-metric outputs listed in `results/README.md`. Its inferential outputs are descriptive because the candidate cohort was selected before the audit.
+
+## Evidence and reporting boundaries
+
+- Vina scores are docking scores, not binding free energies.
+- RRS is not a biochemical resistance measurement.
+- The A*/A potency discriminator uses the weakest eligible WT target, not a strongest-target anchor.
+- Class D is the residual class in which no available mutant RRS reaches 80%; it is not defined by an unsupported 60% cutoff.
+- The five PfCRT-only candidates are never described as equivalent to complete two-target candidates.
+- MM-GBSA values are system-specific endpoint diagnostics with within-trajectory variation, not thermodynamic confidence intervals.
+- Full-panel MD-RRS remains `NOT_COMPUTED`; the pilot is single-replicate and secondary.
+- No target engagement, pathway mechanism, clinical efficacy, or resistance circumvention is claimed.
+
+## Supporting documentation
+
+- `../P2_DATA_ANALYSIS_REPORT.md` — active data-analysis report and provenance summary.
+- `../results/README.md` — result-file inventory and evidence boundaries.
+- `../docs/Methods/` — detailed MD and MM-GBSA protocol notes.
+- `../docs/P2_V2609_MD_AUDIT_MATRIX.md` — archive and cleanup policy.
+
+If a narrative file disagrees with a machine-readable audit output, the output and the current V2609C source must be reconciled before release.

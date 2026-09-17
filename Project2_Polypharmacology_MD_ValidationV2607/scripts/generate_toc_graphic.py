@@ -7,7 +7,7 @@ The graphic summarises the paper's pipeline:
     African NP compounds ──> set-C docking/RRS + 4-system parent-lead MD
     ──> RRS / ACSI / PNS metrics ──> Resistance classification (A*–D)
 
-Output: PDF (and PNG) saved to manuscript/LaTeX/Graphics/
+Output: PDF (and PNG) saved to manuscript/V2609C/Graphics/
 """
 
 import os
@@ -47,7 +47,7 @@ plt.rcParams.update({
 
 # ── Output paths ────────────────────────────────────────────────────────────
 SCRIPT_DIR = Path(__file__).resolve().parent
-OUTPUT_DIR = SCRIPT_DIR.parent / "manuscript" / "LaTeX" / "Graphics"
+OUTPUT_DIR = SCRIPT_DIR.parent / "manuscript" / "V2609C" / "Graphics"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── Figure setup ────────────────────────────────────────────────────────────

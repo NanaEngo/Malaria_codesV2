@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Generates RRS radar plots for the 17 Set-C candidates.
-Saves to Project2_Polypharmacology_MD_ValidationV2607/manuscript/Graphics/rrs_radar_profiles.pdf
+Saves to Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/Graphics/rrs_radar_profiles.pdf
 """
 
 import os
@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 # Paths
 BASE = os.path.dirname(os.path.abspath(__file__))
 CSV_PATH = os.path.join(BASE, '..', 'results', 'c_rrs_classification.csv')
-OUT_PDF = os.path.join(BASE, '..', 'manuscript', 'Graphics', 'rrs_radar_profiles.pdf')
+OUT_PDF = os.path.join(BASE, '..', 'manuscript', 'V2609C', 'Graphics', 'rrs_radar_profiles.pdf')
 os.makedirs(os.path.dirname(OUT_PDF), exist_ok=True)
 
 # Load data
