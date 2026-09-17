@@ -325,6 +325,7 @@ The structural-complexity cohort values in the main text (\Cref{MAIN-tab:structu
 \centering
 \caption{Recomputed structural-complexity cohorts (primary per-seed estimand) with seed-level paired $t$-tests and 95\% molecule-level bootstrap intervals for the GIN--TFP $-$ GIN contrast.}
 \label{tab:s6_cohort_stats}
+\resizebox{\linewidth}{!}{%
 \begin{tabular}{lcccc}
 \toprule
 Cohort & ECFP4--RF & GIN & GIN--TFP & GIN--TFP $-$ GIN \\
@@ -334,6 +335,7 @@ Complex 3D & \num{0.8457} $\pm$ \num{0.0052} & \num{0.7963} $\pm$ \num{0.0202} &
 Polycyclic & \num{0.7768} $\pm$ \num{0.0291} & \num{0.7162} $\pm$ \num{0.0270} & \num{0.7264} $\pm$ \num{0.0454} & \num{+0.0102} [CI \numrange{-0.0112}{0.0306}], $p_t=\num{0.729}$ \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
 Interpretation boundaries: cohort AUCs are computed on approximately \qty{74}{\percent}-prevalence panels with class imbalance varying across cohorts; the polycyclic cohort contains only \num{147} actives, so its seed-level variability is large. These molecule-level intervals complement and do not replace the seed-level ($df=\num{4}$) inference of the primary benchmark.
