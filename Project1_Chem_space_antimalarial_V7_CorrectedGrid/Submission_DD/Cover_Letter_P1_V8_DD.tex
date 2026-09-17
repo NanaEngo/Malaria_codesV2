@@ -1,0 +1,99 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{top=1in,bottom=1in,left=1in,right=1in}
+\usepackage{enumitem}
+\setlist{itemsep=2pt, topsep=3pt, parsep=1pt}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{siunitx}
+\sisetup{separate-uncertainty=true, range-phrase=--}
+\DeclareSIUnit\angstrom{\text{\AA}}
+
+\begin{document}
+
+\begin{flushleft}
+\textbf{Myke Vital Sao Temgoua} \\
+Department of Physics, Faculty of Science \\
+University of Yaound\'{e} I \\
+P.O. Box 812, Yaound\'{e}, Cameroon \\
+\href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm} \\[1em]
+\today
+\end{flushleft}
+
+\begin{flushleft}
+Prof.\ Al\'{a}n Aspuru-Guzik, Editor-in-Chief \\
+\textit{Digital Discovery} \\
+Royal Society of Chemistry
+\end{flushleft}
+
+\vspace{0.5em}
+
+\noindent Dear Prof.\ Aspuru-Guzik,
+
+We submit the manuscript \textbf{``Target breadth and mutation resilience in African-natural-product-inspired antimalarial chemotypes: a computational analysis''} for consideration as a Research Article in \textit{Digital Discovery}.
+
+\vspace{0.3em}
+
+\noindent\textbf{Context and Prior Submission.}
+We believe the work aligns strongly with \textit{Digital Discovery}'s focus on data-driven discovery, computational methods development, and open science practices. We have formatted the manuscript to meet \textit{Digital Discovery}'s article class requirements while preserving all scientific content and validation results.
+
+\vspace{0.3em}
+
+\noindent\textbf{Scientific Contribution.}
+This work addresses a methodological challenge in computational antimalarial discovery: evaluating target breadth and mutation resilience as distinct, complementary properties when prioritizing drug candidates from African natural-product-inspired chemical space. Our approach maintains clear boundaries between computational evidence and biological activity claims---a distinction critical for reproducible hypothesis generation in data-driven drug discovery.
+
+The workflow integrates three computational layers:
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Chemical-space expansion:} A hybrid library of \num{65856} molecules generated from \num{396} African natural products and \num{454} synthetic antimalarial compounds, yielding \num{19913} computationally prioritized synthesizable candidates (\qty{92.6}{\percent} structurally novel, \qty{69.3}{\percent} scaffold recovery).
+
+\item \textbf{Target-anchored docking:} A 17-member polypharmacology-oriented cohort was evaluated against four mechanistically diverse antimalarial targets (PfDHFR, PfCRT, PfClpP, PfATP4) using AutoDock Vina with target-specific structural anchors. All \num{68} candidate--target pairs passed geometric quality criteria, generating a complete $\num{17}\times\num{4}$ scoring matrix.
+
+\item \textbf{Per-target resistance-resilience scoring (RRS):} Mutation resilience was quantified separately for PfDHFR (N51I, C59R, S108N, I164L) and PfCRT (K76T, K76A) mutant panels. The cohort yielded seven A*, four B, and six C RRS profiles (range \qtyrange{73.2}{115.6}{\percent}). Non-binding wild-type targets were excluded from RRS denominators to prevent artifactual ratios---a design choice that distinguishes this framework from pooled-target approaches.
+\end{enumerate}
+
+\vspace{0.3em}
+
+\noindent\textbf{Validation and Reproducibility.}
+The docking protocol was validated through three complementary approaches: (i)~external DEKOIS~2.0 benchmark demonstrating near-chance enrichment for PfDHFR (ROC-AUC \num{0.45}), constraining interpretation of absolute scores while preserving relative within-target rankings; (ii)~MMV Malaria Box enrichment showing strong performance for the consensus protocol (ROC-AUC \numrange{0.924}{1.000}); and (iii)~successful redocking of reference ligands (RMSD \qty{<2.0}{\angstrom} for four of five ligands). A retrospective panel of five approved antimalarials against the same mutant sets reproduced the null character of the corrected PfCRT channel, confirming that docking-derived RRS values require experimental validation before informing resistance-circumvention claims.
+
+Complete computational reproducibility is ensured through our Zenodo deposit (\url{https://doi.org/10.5281/zenodo.22696778}, MIT license), which contains: source code, candidate manifests, receptor and ligand files, grid configurations, raw docking poses, RRS protocols, and machine-readable tables with SHA256 verification. This addresses \textit{Digital Discovery}'s emphasis on open data and reproducible workflows.
+
+\vspace{0.3em}
+
+\noindent\textbf{Significance for Digital Discovery Readership.}
+This work offers several contributions relevant to the journal's scope:
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{Computational accessibility:} The centroid-based library reduction achieves \qty{99.3}{\percent} cost reduction (from \numrange{2600}{5300} CPU-hours to under 20 CPU-hours for the four-target panel), making systematic multi-target and mutation-panel screening accessible to research groups with limited computational infrastructure---particularly relevant for endemic-region institutions where \qty{94}{\percent} of malaria cases occur.
+
+\item \textbf{Methodological framework:} The separation of target breadth from mutation resilience, combined with target-specific evidence reporting rather than uncalibrated cross-target averaging, provides a reusable template for hypothesis generation in resistance-challenged therapeutic areas.
+
+\item \textbf{African natural product chemistry:} This underexplored chemical space is systematically characterized with quantitative novelty metrics and scaffold-retention analysis, contributing to diversity-oriented drug discovery beyond established synthetic compound libraries.
+
+\item \textbf{Data-driven rigor:} Statistical power analysis, Bonferroni correction, permutation tests, and explicit null controls demonstrate how computational hypotheses can be generated with transparent uncertainty quantification.
+\end{enumerate}
+
+\vspace{0.3em}
+
+\noindent\textbf{Evidence Boundaries.}
+We emphasize that this study does not claim experimental affinity measurements, confirmed simultaneous target engagement, biological resistance circumvention, or measured IC\textsubscript{50}/EC\textsubscript{50} values. The manuscript produces: (a)~four-target docking profiles from which polypharmacology hypotheses can be generated; (b)~per-target RRS values summarizing docking-score ratios on mutation panels; and (c)~exploratory cross-metric associations quantified with appropriate statistical correction. These layers are kept separate rather than conflated, making the resulting hypotheses experimentally falsifiable.
+
+\vspace{0.3em}
+
+\noindent\textbf{Author Contributions and Declarations.}
+This manuscript is original work, is not under consideration elsewhere, and has been approved by all co-authors. We declare no competing financial interests. No external funding was received for this computational study. AI-assisted tools were used during code development and data-analysis scripting; all output was reviewed and edited by the authors, who take full responsibility for the content.
+
+We believe this work exemplifies \textit{Digital Discovery}'s mission to advance data-driven methods in chemistry and molecular sciences through rigorous computational workflows and open science practices. We would be pleased to provide any additional information or clarification you may require.
+
+\vspace{0.5em}
+
+\noindent Sincerely,
+
+\vspace{0.5em}
+
+\noindent \textbf{Myke Vital Sao Temgoua} \\
+\noindent (on behalf of all co-authors)
+
+\end{document}
