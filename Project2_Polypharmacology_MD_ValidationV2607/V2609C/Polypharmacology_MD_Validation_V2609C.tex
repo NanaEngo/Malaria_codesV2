@@ -24,11 +24,13 @@
 \usepackage{tikz}
 \usepackage{rotating}
 \usepackage[table]{xcolor}
-\captionsetup{labelfont=bf,font={footnotesize,it}}
+\usepackage[labelfont=bf,textfont={footnotesize,it}]{caption}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+%\captionsetup{labelfont=bf,font={footnotesize,it}}
 
 % Units and SI
 \usepackage[
-  group-minimum-digits = 4,
+  group-minimum-digits = 5,
   per-mode             = symbol,
   range-phrase         = {--},
   range-units          = single,
@@ -74,7 +76,7 @@
 \author{Penabei Samafou}
 \affiliation[Sherbrooke]{Department of Medical Imaging and Radiation Sciences, Universit\'e de Sherbrooke, Sherbrooke, QC, Canada}
 
-\author{Wilfred Fon Mbacham}
+\author{Fon Wilfred Mbacham}
 \affiliation[UY1Biochem]{Department of Biochemistry, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}
 
 \author{Serge Guy Nana Engo}
@@ -135,7 +137,7 @@ Drug resistance remains the principal threat to malaria control in Africa. An es
 
 African natural products are an underexplored antimalarial chemical space: rigid polycyclic frameworks, macrocyclic systems, and rare functional groups challenge scoring functions calibrated on synthetic drug-like molecules~\citep{ferreira2023docking}. Under a single-drug--multi-target framing, simultaneous retention of binding across multiple key parasite targets is hypothesized to raise the mutational barrier to treatment failure~\citep{polypharmacology_malaria_2026}, and natural products are attractive starting points because their stereochemical complexity supports activity across distinct protein classes~\citep{polypharmacology_malaria_2026,value_addition_african_np_2025}. However, static docking grid scores capture only rigid pocket complementarity and often fail to account for side-chain reorganization or solvent-mediated accommodation upon mutation~\citep{ferreira2023docking,soares2023mdreport}.
 
-The upstream library used for this study was generated with generative molecular methods and dual-filter consensus docking (AutoDock Vina~\citep{vina_2021} and DiffDock-L~\citep{diffdock_2023}), yielding \num{65856} candidate molecules from 396 African natural products and 454 synthetic drugs (upstream library record; Supporting Information Table~S16). We selected the candidate panel against a receptor set spanning established resistance determinants and mechanistically distinct parasite processes: PfDHFR (dihydrofolate reductase, PDB 7F3Y) and PfCRT (chloroquine resistance transporter, PDB 6UKJ) represent clinically established resistance-associated contexts; PfATP4 (sodium efflux pump, PDB 9N10) probes ion homeostasis; and PfClpR (PDB 4GM2) represents a proteostasis-related target. This panel provides a mechanistic cross-section to evaluate whether resistance-aware prioritization remains informative across distinct target classes.
+The upstream library used for this study was generated with generative molecular methods and dual-filter consensus docking (AutoDock Vina~\citep{vina_2021} and DiffDock-L~\citep{diffdock_2023}), yielding \num{65856} candidate molecules from 396 African natural products and 454 synthetic drugs (upstream library record; Supporting Information \cref{SM-tab:s16_p1_context}). We selected the candidate panel against a receptor set spanning established resistance determinants and mechanistically distinct parasite processes: PfDHFR (dihydrofolate reductase, PDB 7F3Y) and PfCRT (chloroquine resistance transporter, PDB 6UKJ) represent clinically established resistance-associated contexts; PfATP4 (sodium efflux pump, PDB 9N10) probes ion homeostasis; and PfClpR (PDB 4GM2) represents a proteostasis-related target. This panel provides a mechanistic cross-section to evaluate whether resistance-aware prioritization remains informative across distinct target classes.
 
 Specifically, this study addresses a central research question: \textit{Does a multi-target, resistance-aware computational workflow (docking-derived RRS + PNS + ACSI) provide a discriminant triage of African natural products across drug-resistant mutant panels---and how does short explicit-solvent molecular dynamics structurally re-calibrate static docking predictions?}
 
@@ -149,7 +151,7 @@ To answer this question, we present three methodological components: (i) reporti
 
 \subsection{Study design}
 
-The primary analysis is docking-score retention (RRS) for the 12 Set-C candidates that have eligible PfDHFR and PfCRT wild-type scores. RRS is the operational baseline against which the central comparison---the directional divergence between docking-RRS and short-MD structural retention---is tested. We therefore distinguish the primary docking-RRS analysis from the central divergence comparison, secondary structural-retention diagnostics, technical validation, and unobserved biological quantities. The 16-system Set-C MD pilot provides the matched-row comparison for the divergence signal; the five PfCRT-only candidates and the four-complex parent-study MD check are reported separately as secondary analyses. They address different coverage and sampling questions and are not combined with the primary RRS classes. The parent-study MD systems are not among the 17 Set-C candidates and do not validate the Set-C ranking.
+The primary analysis is docking-score retention (RRS) for the 12 Set-C candidates that have eligible PfDHFR and PfCRT wild-type scores. RRS is the operational baseline against which the central comparison(the directional divergence between docking-RRS and short-MD structural retention) is tested. We therefore distinguish the primary docking-RRS analysis from the central divergence comparison, secondary structural-retention diagnostics, technical validation, and unobserved biological quantities. The 16-system Set-C MD pilot provides the matched-row comparison for the divergence signal; the five PfCRT-only candidates and the four-complex parent-study MD check are reported separately as secondary analyses. They address different coverage and sampling questions and are not combined with the primary RRS classes. The parent-study MD systems are not among the 17 Set-C candidates and do not validate the Set-C ranking.
 
 \begin{figure}[htbp]
 \centering
@@ -158,7 +160,7 @@ The primary analysis is docking-score retention (RRS) for the 12 Set-C candidate
 \label{fig:study_workflow}
 \end{figure}
 
-Library provenance and source-class counts follow the upstream library record (Supporting Information Table~S16). Primary candidates were prioritized using multi-parameter optimization (MPO $\ge \num{0.70}$, retaining \num{19913} primary leads), predicted synthetic accessibility (SYBA $> \num{0}$), predicted selectivity index (SI $> \num{10}$), target coverage across at least two docking receptors, and scaffold diversity ($\le 3$ compounds per Bemis--Murcko scaffold). This selection yielded the Set-C candidate panel ($n=\num{17}$), which includes one previously named consensus lead (Ligand 87, PfDHFR). Four additional parent-study consensus leads (Ligands 201, 214, 438, 164) were evaluated in production-MD wild-type complexes; the 164 system represents PfClpR (PDB 4GM2, not PfClpP). Five approved antimalarial drugs (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) served as reference controls (\cref{tab:system_breakdown}). Class frequencies are conditional on these filters and should not be extrapolated to the full library.
+Library provenance and source-class counts follow the upstream library record (Supporting Information \cref{SM-tab:s16_p1_context}). Primary candidates were prioritized using multi-parameter optimization (MPO $\ge \num{0.70}$, retaining \num{19913} primary leads), predicted synthetic accessibility (SYBA $> \num{0}$), predicted selectivity index (SI $> \num{10}$), target coverage across at least two docking receptors, and scaffold diversity ($\le 3$ compounds per Bemis--Murcko scaffold). This selection yielded the Set-C candidate panel ($n=\num{17}$), which includes one previously named consensus lead (Ligand 87, PfDHFR). Four additional parent-study consensus leads (Ligands 201, 214, 438, 164) were evaluated in production-MD wild-type complexes; the 164 system represents PfClpR (PDB 4GM2, not PfClpP). Five approved antimalarial drugs (artemisinin, pyrimethamine, chloroquine, lumefantrine, cipargamin) served as reference controls (\cref{tab:system_breakdown}). Class frequencies are conditional on these filters and should not be extrapolated to the full library.
 
 \begin{table}[htbp]
 \centering
@@ -206,7 +208,7 @@ No mutant crystal structures were available; homology models were generated with
 
 \subsection{Docking protocol assessment}
 
-The docking protocol follows the upstream library workflow (Supporting Information Table~S16): AutoDock Vina 1.2.7~\citep{vina_2021} with exhaustiveness \num{64} against grids centered on the corrected V2 binding-site coordinates of PfDHFR (7F3Y), PfCRT (6UKJ~\citep{Kim2019PfCRT}), PfATP4 (9N10), and the historically labelled PfClpR/4GM2 entry (not PfClpP). P2Rank~\citep{Krivak2018P2Rank} pocket predictions were compared with the grid centers as a boundary audit of these fixed boxes (\cref{SM-fig:s4_p2rank_boxes}).
+The docking protocol follows the upstream library workflow (Supporting Information \cref{SM-tab:s16_p1_context}): AutoDock Vina 1.2.7~\citep{vina_2021} with exhaustiveness \num{64} against grids centered on the corrected V2 binding-site coordinates~\citep{Temgoua2026} of PfDHFR (7F3Y), PfCRT (6UKJ~\citep{Kim2019PfCRT}), PfATP4 (9N10), and the historically labelled PfClpR/4GM2 entry (not PfClpP). The V2 grid specification represents the post-review refinement from the companion study, including the critical PfCRT K76→LYS restoration for wild-type reference state and P2Rank-validated binding-site centers. P2Rank~\citep{Krivak2018P2Rank} pocket predictions were compared with the grid centers as a boundary audit of these fixed boxes (\cref{SM-fig:s4_p2rank_boxes}).
 
 Parent-study enrichment benchmarks (V2 grids) are summarized here and tabulated in full in the Supporting Information (\cref{SM-tab:s1_docking_validation}). On the MMV Malaria Box consensus (Vina+DiffDock), ROC-AUC was \num{0.924} (PfDHFR), \num{0.971} (PfCRT), and \num{1.000} (PfATP4). In contrast, DEKOIS 2.0 enrichment for PfDHFR with Vina alone was null (ROC-AUC \num{0.450}, $\mathrm{EF}_{5\,\%} = \num{0.00}$), indicating that score-based recovery of known actives is protocol- and library-dependent. Redocking was considered accurate when heavy-atom RMSD was $<$ \qty{2.0}{\angstrom} relative to the crystal pose; the MTX redock attempt was a clear failure (RMSD $\approx$ \qty{30}{\angstrom}). AutoDock Vina was used for all reported Set-C scores; GNINA yielded no usable score for this panel. Docking scores are empirical scoring approximations that are sensitive to the scoring function and protocol~\citep{ferreira2023docking,sadybekov2023computational,kittelson2026docking}; they should not be treated as binding free energies.
 
@@ -226,7 +228,7 @@ MPO-weight sensitivity and single-source ADMET-AI predictions were used descript
 
 \subsection{Docking-derived resistance-retention score definition}\label{sec:rrs_formula}
 
-All 17 candidates were docked against each wild-type and mutant structure using AutoDock Vina 1.2.7 with exhaustiveness \num{64}. The 136 systems were ranked with empirical Vina scores rather than calibrated binding free energies. Grid boxes were centered on the co-crystallized ligand position with \qty{25}{\angstrom} dimensions, matching the audited V2 configuration files.
+All 17 candidates were docked against each wild-type and mutant structure using AutoDock Vina 1.2.7 with exhaustiveness \num{64}. The 136 systems were ranked with empirical Vina scores rather than calibrated binding free energies. Grid boxes were centered on the co-crystallized ligand position with \qty{25}{\angstrom} dimensions, matching the audited V2 configuration files~\citep{Temgoua2026}.
 
 For target $t$, let $s_{\mathrm{Vina},i,\mathrm{WT},t}$ and $s_{\mathrm{Vina},i,m,t}$ denote the signed Vina scores. Candidates with $|s_{\mathrm{Vina},i,\mathrm{WT},t}| < \qty{5.0}{\kcalmol}$ are excluded from that target's score-retention analysis. The target-specific resistance-retention score (RRS) is
 \begin{equation}
@@ -371,7 +373,7 @@ A single-ligand feasibility probe (\textbf{PP-15}, outside the 16-system Set-C M
 
 \begin{table}[htbp]
 \centering
-\caption{Set-C pilot endpoint summaries (exploratory; not used to assign RRS classes). $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots $\pm$ SD$_{\mathrm{prop}}$ (within-trajectory SD, not SEM or replicate-level uncertainty). The PP-01 PfCRT K76A endpoint (\qty{-35.29}{\kcalmol}) carries a \qty{7.75}{\kcalmol} inter-replicate sensitivity (second trajectory \qty{-27.54}{\kcalmol}; Supporting Information) and supports no resilience claim. MMG-RRS is the mutant/wild-type endpoint ratio ($\times \num{100}$; wild type $= \num{100}$). Docking RRS is shown for comparison (n/a: no wild-type docking reference for PP-02 PfDHFR). Single-replicate summaries are within-protocol contrasts only.}\label{tab:mmgbsa_setc}
+\caption{Set-C pilot endpoint summaries (exploratory; not used to assign RRS classes). $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots $\pm$ SD$_{\mathrm{prop}}$ (within-trajectory SD, not SEM or replicate-level uncertainty). The PP-01 PfCRT K76A endpoint (\qty{-35.29}{\kcalmol}) carries a \qty{7.75}{\kcalmol} inter-replicate sensitivity (second trajectory \qty{-27.54}{\kcalmol}; \cref{SM-tab:s19_k76a_replicate}) and supports no resilience claim. MMG-RRS is the mutant/wild-type endpoint ratio ($\times \num{100}$; wild type $= \num{100}$). Docking RRS is shown for comparison (n/a: no wild-type docking reference for PP-02 PfDHFR). Single-replicate summaries are within-protocol contrasts only.}\label{tab:mmgbsa_setc}
 \scriptsize
 \begin{tabular}{@{}l l l S[table-format=-2.2] S[table-format=1.2] S[table-format=3.1] S[table-format=3.2]@{}}
 \toprule
@@ -411,7 +413,7 @@ The 39-ligand docking sensitivity panel produced \num{312} finite docking scores
 
 The Resistance-Resilience Score (RRS) stratifies the primary candidate cohort ($n=\num{12}$) into five tiers (A*--D) decoupling wild-type binding strength from mutant-state score retention. Under the declared protocol, multi-seed dispersion remained within $\pm\qty{0.05}{\kcalmol}$ (PP-01 and PP-15 across PfDHFR and PfCRT), and \qty{77.9}{\percent} of class assignments were invariant to $\pm\qty{1.0}{\kcalmol}$ score perturbations.
 
-Protocol robustness was tested on an external 39-compound sensitivity panel (\num{312} docking complexes; \cref{SM-tab:s15_robustness_transfer}). GNINA CNN cross-scoring showed \qty{100}{\percent} class-level agreement with Vina, with no per-mutant rank transfer claimed (per-mutant $\rho$ near zero for C59R/I164L). On the DEKOIS 2.0 PfDHFR benchmark, Vina ROC-AUC was \num{0.450} ($\mathrm{EF}_{5\,\%} = \num{0.00}$) — chance level, cautioning against treating RRS as a calibrated predictor outside the primary cohort; MD is reported as a parallel structural check, not a validation of docking classes.
+Protocol robustness was tested on an external 39-compound sensitivity panel (\num{312} docking complexes; \cref{SM-tab:s15_robustness_transfer}). GNINA CNN cross-scoring showed \qty{100}{\percent} class-level agreement with Vina, with no per-mutant rank transfer claimed (per-mutant $\rho$ near zero for C59R/I164L). On the DEKOIS 2.0 PfDHFR benchmark, Vina ROC-AUC was \num{0.450} ($\mathrm{EF}_{5\,\%} = \num{0.00}$)  chance level, cautioning against treating RRS as a calibrated predictor outside the primary cohort; MD is reported as a parallel structural check, not a validation of docking classes.
 
 Our candidates originate from African natural-product chemical space, without claiming ethnobotanical validation. The panel's drug-likeness ($\mathrm{QED} = \num{0.70 \pm 0.06}$) and synthetic accessibility ($\mathrm{SYBA} = \num{36.6 \pm 23.4}$) are consistent with actionable synthetic feasibility; confirmation requires prospective experiment.
 
@@ -438,7 +440,7 @@ ProLIF interaction fingerprints across all 16 QC-PASS trajectories (\num{100} sn
 
 RRS, ACSI, and PNS show non-significant pairwise associations on the primary cohort ($n=\num{12}$; $\rho \in [-0.41, -0.21], p_{\text{adj}} > 0.50$; \cref{tab:crossmetric}), consistent with distinct ranking dimensions. Controlling for molecular weight and scaffold frequency gives a moderate partial PNS--RRS association ($\rho_{\mathrm{partial}} = -0.6154$).
 
-STRING threshold sensitivity (confidence cutoffs 400, 700, 900) showed PNS rank stability ($\rho$ \numrange{0.9632}{0.9975}; 400-vs-700 \num{0.9975}, 700-vs-900 \num{0.9681}, 400-vs-900 \num{0.9632}), indicating threshold choice does not alter ranking within this panel — distinct from the PfCRT-centrality imputation sensitivity (Supporting Information).
+STRING threshold sensitivity (confidence cutoffs 400, 700, 900) showed PNS rank stability ($\rho$ \numrange{0.9632}{0.9975}; 400-vs-700 \num{0.9975}, 700-vs-900 \num{0.9681}, 400-vs-900 \num{0.9632}), indicating threshold choice does not alter ranking within this panel distinct from the PfCRT-centrality imputation sensitivity (Supporting Information \cref{SM-tab:s7_pns_sensitivity}).
 
 Machine learning models degrade on out-of-distribution natural product scaffolds; explicit-solvent MD evaluates dynamic stability without reliance on training distributions, providing a complementary check when model confidence drops.
 
@@ -452,7 +454,7 @@ Within a single-drug--multi-target framing \citep{polypharmacology_malaria_2026}
 
 \begin{enumerate}
     \item \textbf{Receptor models:} mutant structures are homology models (quality criteria in Methods), not experimental structures.
-    \item \textbf{Timescale and replication:} per JCIM guidelines \citep{soares2023mdreport}, the \qty{10}{\ns} single-replicate pilot is a structural stress test, not a converged free energy or residence-time measurement. The PP-01 PfCRT K76A endpoint (\qty{-35.29}{\kcalmol}) differs by \qty{7.75}{\kcalmol} from a second trajectory (\qty{-27.54}{\kcalmol}; Supporting Information), exceeding the \qty{2.01}{\kcalmol} WT noise floor; no endpoint resilience claim is made for K76A.
+    \item \textbf{Timescale and replication:} per JCIM guidelines \citep{soares2023mdreport}, the \qty{10}{\ns} single-replicate pilot is a structural stress test, not a converged free energy or residence-time measurement. The PP-01 PfCRT K76A endpoint (\qty{-35.29}{\kcalmol}) differs by \qty{7.75}{\kcalmol} from a second trajectory (\qty{-27.54}{\kcalmol}; \cref{SM-tab:s19_k76a_replicate}), exceeding the \qty{2.01}{\kcalmol} WT noise floor; no endpoint resilience claim is made for K76A.
     \item \textbf{Sample size:} primary two-target cohort $n=\num{12}$, plus 5 single-target candidates and a 39-ligand external panel.
     \item \textbf{Protonation:} preparations at physiological pH; PfCRT dynamics in the acidic digestive vacuole (pH~\num{5.2}) may differ.
 \end{enumerate}
@@ -475,7 +477,7 @@ Myke Vital Sao Temgoua: Methodology, software, formal analysis, investigation, d
 
 \section*{Data Availability}
 
-Docking results, metric outputs, analysis scripts, and source-data records are available at \url{https://github.com/NanaEngo/Malaria_codesV2} under the MIT licence. A versioned snapshot will additionally be archived on Zenodo concurrent with publication (reserved DOI: \url{10.5281/zenodo.19608875}). Large parent-study trajectories are excluded; conclusions are restricted to the trajectory-derived summaries reported above.
+Docking results, metric outputs, analysis scripts, and source-data records are publicly archived on Zenodo under the MIT licence at \href{https://doi.org/10.5281/zenodo.22829031}{DOI: 10.5281/zenodo.22829031}. Large parent-study trajectories are excluded; conclusions are restricted to the trajectory-derived summaries reported above.
 
 
 \section*{Competing Interests}

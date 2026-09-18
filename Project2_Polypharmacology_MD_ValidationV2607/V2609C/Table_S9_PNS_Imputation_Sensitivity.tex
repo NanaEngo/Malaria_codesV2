@@ -1,12 +1,15 @@
-%% Table S7: PNS PfCRT-centrality imputation sensitivity
-%% Source: results/pns_imputation_sensitivity.csv
+%% Table S7: PNS PfCRT-centrality imputation sensitivity and STRING threshold sensitivity
+%% Source: results/pns_imputation_sensitivity.csv, results/string_threshold_sensitivity_20260829/
 \begin{table}[htbp]
 \centering
-\caption{Sensitivity of the PNS ranking to the imputed PfCRT centrality. The reference value is the observed network-mean imputation ($C_{\mathrm{PfCRT}}=\num{0.151}$). Alternative values were zero, one-half, one-and-a-half, and twice the reference value. Spearman $\rho$ is calculated against the reference 17-candidate ranking; all candidates have two target entries in the PNS record. The ranking is sensitive to this network-data choice; target essentiality and biological polypharmacology were not assessed.}
+\caption{Sensitivity of the PNS ranking to the imputed PfCRT centrality and STRING network threshold. The reference PfCRT centrality is the observed network-mean imputation ($C_{\mathrm{PfCRT}}=\num{0.151}$ at threshold 700). Alternative centrality values were zero, one-half, one-and-a-half, and twice the reference value. STRING confidence thresholds (400, 700, 900) showed rank stability ($\rho$ \numrange{0.9632}{0.9975}). The ranking is sensitive to network-data choices; target essentiality and biological polypharmacology were not assessed.}
 \label{tab:s7_pns_sensitivity}
 \scriptsize
+
 \begin{tabular}{l S[table-format=1.4] S[table-format=1.4] S[table-format=1.3] S[table-format=1.3] S[table-format=2.0]}
 \toprule
+\multicolumn{6}{c}{\textbf{PfCRT Centrality Imputation (STRING threshold 700)}} \\
+\midrule
 Imputation & {$C_{\mathrm{PfCRT}}$} & {Spearman $\rho$} & {Minimum PNS} & {Maximum PNS} & {$n$} \\
 \midrule
 Zero & 0.0000 & 0.9716 & 0.300 & 5.147 & 17 \\
@@ -14,6 +17,20 @@ One-half canonical & 0.0755 & 0.9975 & 0.674 & 5.573 & 17 \\
 Canonical network mean & 0.1510 & 1.0000 & 1.047 & 6.000 & 17 \\
 One-and-a-half canonical & 0.2265 & 0.9755 & 1.421 & 6.426 & 17 \\
 Twice canonical & 0.3020 & 0.9632 & 1.795 & 6.853 & 17 \\
+\bottomrule
+\end{tabular}
+
+\vspace{1em}
+
+\begin{tabular}{l c S[table-format=1.4] S[table-format=1.3]}
+\toprule
+\multicolumn{4}{c}{\textbf{STRING Confidence Threshold (canonical PfCRT imputation)}} \\
+\midrule
+Comparison & {$n$} & {Spearman $\rho$} & {Top-5 Jaccard} \\
+\midrule
+400 vs 700 & 17 & 0.9975 & 1.000 \\
+700 vs 900 & 17 & 0.9681 & 0.667 \\
+400 vs 900 & 17 & 0.9632 & 0.667 \\
 \bottomrule
 \end{tabular}
 \end{table}
