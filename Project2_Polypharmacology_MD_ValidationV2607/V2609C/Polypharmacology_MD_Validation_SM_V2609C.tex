@@ -13,8 +13,10 @@
 \usepackage{lmodern}
 \usepackage{amsmath, amsfonts, amssymb}
 \usepackage{booktabs, tabularx, array, multirow}
+\usepackage{pdflscape}  % For landscape pages
 \usepackage[table]{xcolor}
-\captionsetup{labelfont=bf,font={footnotesize,it}}
+\usepackage[labelfont=bf,textfont={footnotesize,it}]{caption}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage[
   group-minimum-digits = 4,
   per-mode             = symbol,
@@ -42,7 +44,7 @@
 
 \graphicspath{{Graphics/}}
 
-\title{Supporting Information for \\ ``Estimand Divergence Between Static Docking and Molecular Dynamics \\ as a Triage Filter for Antimalarial Leads''}
+\title{``Estimand Divergence Between Static Docking and Molecular Dynamics \\ as a Triage Filter for Antimalarial Leads''}
 \author{Myke Vital Sao Temgoua}
 \affiliation[UY1Phys]{Department of Physics, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}
 \email{myke-vital.sao@facsciences-uy1.cm}
@@ -257,7 +259,7 @@ The canonical Set-C pilot comprises 16 MM--GBSA endpoints: 12 mutant systems and
 \small
 \caption{PP-01 PfCRT K76A inter-replicate endpoint sensitivity. The canonical endpoint and a second reportable trajectory are shown with their propagated within-trajectory SD and frame-level SEM. The difference is a diagnostic measure of inter-replicate sensitivity, not a confidence interval for affinity or a biological resistance effect.}
 \label{tab:s19_k76a_replicate}
-\small
+\scriptsize
 \begin{tabular}{@{}ll S[table-format=-2.2] S[table-format=1.2] S[table-format=1.2] r@{}}
 \toprule
 Trajectory & Status & {$\Delta G_{\mathrm{bind}}$ (\si{\kcalmol})} & {SD$_{\mathrm{prop}}$} & {SEM} & {Frames} \\

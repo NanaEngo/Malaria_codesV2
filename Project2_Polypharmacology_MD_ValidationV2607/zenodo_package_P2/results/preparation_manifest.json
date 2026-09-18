@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-28T15:05:58.512090+00:00",
+  "cohort_id": "P2_SET_C_POLYPHARM_17",
+  "preparation_policy": "DOCUMENTED_DEVIATION_OPENFF_2_2_AM1BCC",
+  "deviation": {
+    "declared": true,
+    "field": "ligand_force_field",
+    "canonical_requirement": "CGenFF",
+    "actual": "OpenFF 2.2.0 (AM1-BCC)",
+    "reason": "cgenff/cgenff_charmm2gmx is a licensed ParamChem binary not installable via pip/conda (verified 2026-08-09). OpenFF 2.2.0 (AM1-BCC via AmberTools) is used instead, with the deviation declared in every forcefield manifest. See results/set_c_md/set_c_preparation_remediation_20260809.md.",
+    "approved": true,
+    "approval_context": "auto-approved documented workaround requested by PI 2026-08-09"
+  },
+  "systems_requested": 1,
+  "systems_prepared": 1,
+  "records": [
+    {
+      "system": "PP-15_PfCRT_WT",
+      "set_c_id": "PP-15",
+      "target": "PfCRT",
+      "mutation": "WT",
+      "receptor": "PfCRT_WT_K76.pdb",
+      "topology_sha256": "200aabbc49308e0609763f6e20dca61e531113378688a669bb3861e23b497132",
+      "coordinates_sha256_at_prep": "0d23d187d7d66b5c2f2b1c13e2c79dc46e3261b4bf4f1aa830c4d57f7e82f5d6",
+      "pose_frame_rmsd_nm": 0.0,
+      "n_atoms_complex": 238260,
+      "status": "PREPARED_AWAITING_EQUILIBRATION"
+    }
+  ],
+  "next_step": "run p2_setc_equilibrate.sbatch (EM/NVT/NPT) then finalise manifests"
+}
