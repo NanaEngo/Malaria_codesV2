@@ -10,6 +10,7 @@
 \usepackage{multirow}
 \usepackage{graphicx}
 \graphicspath{{figures/}}
+\usepackage[labelfont=bf,textfont={footnotesize,it}]{caption}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage{microtype}
 \usepackage[numbers,sort&compress]{natbib}
@@ -55,7 +56,7 @@
 
 \title{Supporting Information: Chemical distribution shift in antimalarial natural products: fingerprint dominance and localized topological complementarity in molecular representation learning}
 
-\author{Myke Vital Sao Temgoua \and Jean-Pierre Tchapet Njafa \and Penabei Samafou \and Wilfred Fon Mbacham \and Serge Guy Nana Engo}
+\author{Myke Vital Sao Temgoua \and Jean-Pierre Tchapet Njafa \and Penabei Samafou \and Fon Wilfred Fon Mbacham \and Serge Guy Nana Engo}
 
 \date{}
 
@@ -235,12 +236,12 @@ ChemBERTa & \num{1.3175} $\pm$ \num{0.0267} & \num{1.3037} $\pm$ \num{0.0111} & 
 
 \textit{Conformal coverage is valid for all five routed arms.} Split-conformal sets at nominal \qty{90}{\percent} (even/odd calib--eval split per test fold, nonconformity $s = 1 - p_{\mathrm{true}}$) cover \num{0.9063} $\pm$ \num{0.0026} (ECFP4--RF), \num{0.9034} $\pm$ \num{0.0017} (GIN), \num{0.9021} $\pm$ \num{0.0022} (GIN--TFP), \num{0.9048} $\pm$ \num{0.0034} (GIN--TNE), \num{0.9046} $\pm$ \num{0.0019} (ChemBERTa), with mean set sizes \numrange{1.26}{1.31} (ChemBERTa largest at \num{1.307} $\pm$ \num{0.017}, consistent with its worst ECE). Coverage meets nominal for every arm on this panel, supporting the split-conformal construction as a pooled diagnostic; it does not by itself validate prospective deployment.
 
-\textit{Prediction flips are bidirectional.} Pooling mean predicted probabilities over all \num{25} records per arm, \num{39} active molecules flip from GIN-wrong ($p$ \num{<0.5}) to TFP-right ($p$ \num{>=0.7}), while \num{44} flip the opposite way (\Cref{fig:rescue_mols}; full SMILES and score lists are archived on Zenodo, see Data availability in the main text). These flips are therefore consistent with a cohort-level asymmetry---the polycyclic/complex-3D gains of \cref{MAIN-tab:structural_complexity}---not cherry-picked proof; both directions are shown.
+\textit{Prediction flips are bidirectional.} Pooling mean predicted probabilities over all \num{25} records per arm, \num{39} active molecules flip from GIN-wrong ($p$ \num{<0.5}) to TFP-right ($p$ \num{>=0.7}), while \num{44} flip the opposite way (\Cref{fig:rescue_mols}; full SMILES and score lists are archived on Zenodo (\url{https://doi.org/10.5281/zenodo.22787438}), see Data availability in the main text). These flips are therefore consistent with a cohort-level asymmetry---the polycyclic/complex-3D gains of \cref{MAIN-tab:structural_complexity}---not cherry-picked proof; both directions are shown.
 
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=0.95\linewidth]{mol_rescue_top4.png}
-\caption{Top-\num{4} TFP-vs-GIN prediction-flip actives (GIN $p$ \num{<0.5}, GIN--TFP $p$ \num{>=0.7}; pooled over \num{25} fold--seed records). Panel indices and per-arm mean probabilities are shown; full lists are archived on Zenodo (see Data availability in the main text).}
+\caption{Top-\num{4} TFP-vs-GIN prediction-flip actives (GIN $p$ \num{<0.5}, GIN--TFP $p$ \num{>=0.7}; pooled over \num{25} fold--seed records). Panel indices and per-arm mean probabilities are shown; full lists are archived on Zenodo (\url{https://doi.org/10.5281/zenodo.22787438}).}
 \label{fig:rescue_mols}
 \end{figure}
 

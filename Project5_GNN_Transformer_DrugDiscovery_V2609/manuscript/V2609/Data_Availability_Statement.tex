@@ -1,0 +1,240 @@
+% Data Availability Statement for P5 (Digital Discovery submission)
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{enumitem}
+
+\title{Data Availability Statement\\[0.5em]
+\large Chemical distribution shift in antimalarial natural products:\\
+fingerprint dominance and localized topological complementarity\\
+in molecular representation learning}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Data Availability Statement}
+
+All data and computational resources supporting the findings of this study are publicly available through Zenodo, ensuring complete reproducibility and compliance with FAIR principles (Findable, Accessible, Interoperable, Reusable).
+
+\subsection*{Primary Data Repository}
+
+\textbf{Zenodo Deposit:} All computational artifacts, including molecular datasets, trained models, analysis scripts, and complete results, are archived at:
+
+\begin{center}
+\url{https://doi.org/10.5281/zenodo.22787438}
+\end{center}
+
+\noindent \textbf{License:} Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+\noindent The Zenodo deposit includes:
+
+\begin{itemize}[leftmargin=*,itemsep=0.5em]
+\item \textbf{Molecular panel} (\texttt{data/p5\_panel\_19836.csv}): Complete SMILES strings, canonical identifiers, and binary activity labels for all 19,836 molecules in the benchmark panel, derived from 396 African natural products (ANPDB/AfroDb) and 454 synthetic antimalarials.
+
+\item \textbf{Chemical splits} (\texttt{data/p5\_splits/}): Frozen train/test indices for all evaluation partitions (random, canonical scaffold, three novel scaffold variants, Butina cluster $C=0.55$) across 5 folds and 5 random seeds, enabling exact replication of all reported metrics.
+
+\item \textbf{Pre-computed graph representations} (\texttt{data/p5\_graph\_cache.pkl}): PyTorch Geometric molecular graphs with node features (atom type, degree, hybridization, aromaticity) and edge indices for all 19,836 molecules, eliminating the need to reconstruct graph topology.
+
+\item \textbf{Benchmark results} (\texttt{results/}): Complete performance records including:
+\begin{itemize}
+\item Per-fold predictions for all 25 fold--seed combinations per model (ECFP4-RF, GIN, GIN-TFP, GIN-TNE, ChemBERTa) under random and scaffold splits
+\item Aggregated statistics (\texttt{p5\_replication\_stats.csv}) with per-seed means, population standard deviations, and Benjamini--Hochberg corrected $p$-values
+\item External validation on molecule-disjoint ChEMBL panel (22,267 compounds, \texttt{p5\_public\_chembl\_malaria\_disjoint.csv})
+\end{itemize}
+
+\item \textbf{Extended robustness campaign} (\texttt{results/extended\_campaign\_20260825/}): Secondary analyses comprising 625 fold--seed records across 25 configurations, including descriptor permutation tests, salience stability matrices, and novel scaffold partition families.
+
+\item \textbf{Distribution-shift analyses} (\texttt{results/nn\_tanimoto\_deciles\_20260829/}): Nearest-neighbour Tanimoto similarity stratification with per-decile AUC values for all models, demonstrating distance-resolved performance gradients across the chemical distribution shift spectrum.
+
+\item \textbf{Calibration records} (\texttt{results/calibration\_20260827/}): Expected calibration error (ECE), maximum calibration error (MCE), and Brier scores for all 30 configurations (25 GNN-family + 5 ChemBERTa) under pooled test predictions, plus isotonic recalibration parameters.
+
+\item \textbf{Butina scaffold-cluster benchmark} (\texttt{results/butina\_cluster\_20260829/}): Stricter chemical-extrapolation test with per-fold predictions, cluster assignments, and summary statistics for all five arms.
+
+\item \textbf{Training scripts} (\texttt{scripts/}): Python implementations of all model architectures (GIN, GIN-TFP, GIN-TNE, ChemBERTa), baseline methods (ECFP4-RF, kNN, logistic regression), and analysis pipelines with command-line interfaces for reproducibility.
+
+\item \textbf{Computational environment} (\texttt{scripts/environment.yml}): Complete conda environment specification (Python 3.11, PyTorch 2.13.0, PyTorch Geometric 2.8.0, Transformers 5.14.1, RDKit 2025.03.6, scikit-learn 1.5.1) with pinned dependency versions.
+
+\item \textbf{Documentation} (\texttt{documentation/}): Data Analysis Report (\texttt{P5\_DATA\_ANALYSIS\_REPORT.md}) documenting complete computational provenance, including job identifiers, execution timestamps, quality-control gates, and evidence status labels for all reported results.
+
+\item \textbf{Integrity verification} (\texttt{sha256sums.txt}): SHA256 checksums for all files in the deposit, enabling cryptographic verification of data integrity.
+\end{itemize}
+
+%\subsection*{Version Control Repository}
+%
+%The complete project repository, including manuscript source files, analysis scripts, and developmental history, is maintained on GitHub:
+%
+%\begin{center}
+%\url{https://github.com/NanaEngo/Malaria_codesV2}
+%\end{center}
+%
+%\noindent Specific files relevant to this study are located in:
+%
+%\begin{itemize}[leftmargin=*]
+%\item \texttt{Project5\_GNN\_Transformer\_DrugDiscovery\_V2609/}
+%\end{itemize}
+%
+%\noindent The GitHub repository provides:
+%\begin{itemize}[leftmargin=*,itemsep=0.3em]
+%\item Full version history with timestamped commits documenting all computational decisions
+%\item Issue tracking and developmental annotations
+%\item Integration with continuous workflow documentation
+%\item Live synchronization with working computational environment
+%\end{itemize}
+
+\subsection*{Upstream Data Sources}
+
+The molecular panel derives from:
+
+\begin{enumerate}[leftmargin=*,itemsep=0.5em]
+\item \textbf{African Natural Products Database (ANPDB):} 396 African natural product structures from \url{https://african-compounds.org/anpdb/} (accessed January 2026). ANPDB is a freely accessible repository of natural products from African medicinal plants, providing SMILES strings, structural descriptors, and ethnopharmacological annotations.
+
+\item \textbf{AfroDb:} Supplementary African natural product structures from \url{https://africancompounds.org/} (accessed January 2026), providing additional coverage of traditional African medicinal chemistry scaffolds.
+
+\item \textbf{ChEMBL antimalarial compounds:} 454 synthetic antimalarial molecules with reported \emph{Plasmodium falciparum} activity (ChEMBL release 33, accessed February 2026), retrieved via ChEMBL web services (\url{https://www.ebi.ac.uk/chembl/}).
+
+\item \textbf{External validation panel:} 22,447 unique compounds from ChEMBL with reported antimalarial activity against \emph{P. falciparum}, filtered to 22,267 molecule-disjoint structures after removing 180 exact canonical-SMILES overlaps with the training panel (\texttt{p5\_public\_chembl\_malaria\_disjoint.csv}).
+\end{enumerate}
+
+\noindent All molecular structures underwent canonical SMILES standardization, tautomer normalization, and stereochemistry retention using RDKit (version 2025.03.6) with documented processing pipelines archived in the Zenodo deposit.
+
+\subsection*{Model Checkpoints and Weights}
+
+Due to file size constraints (trained model checkpoints: $\sim$8 GB), full model weights are available upon request from the corresponding author (\texttt{myke-vital.sao@facsciences-uy1.cm}). The Zenodo deposit includes:
+
+\begin{itemize}[leftmargin=*,itemsep=0.3em]
+\item Training hyperparameters and architecture specifications for exact replication
+\item Random seed values ensuring deterministic weight initialization
+\item Per-fold training logs with epoch-level loss and validation metrics
+\item Final per-fold test predictions (probability scores) enabling metric recomputation without retraining
+\end{itemize}
+
+\noindent Alternatively, researchers may retrain all models using the provided scripts and frozen chemical splits, which will reproduce the reported results within expected stochastic variation (mean AUC differences $<0.002$ across independent training runs with identical seeds).
+
+\subsection*{Software Dependencies}
+
+All computational analyses were conducted in the \texttt{malaria\_md} conda environment with the following core dependencies:
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+\item Python 3.11.5
+\item PyTorch 2.13.0 (CUDA 12.1)
+\item PyTorch Geometric 2.8.0
+\item Transformers 5.14.1 (Hugging Face)
+\item RDKit 2025.03.6
+\item scikit-learn 1.5.1
+\item NumPy 1.26.4
+\item Pandas 2.2.2
+\item SciPy 1.13.0
+\end{itemize}
+
+\noindent The complete environment specification with all transitive dependencies is provided in \texttt{scripts/environment.yml} within the Zenodo deposit.
+
+\subsection*{Computational Resources}
+
+All computations were performed on the following infrastructure:
+
+\begin{itemize}[leftmargin=*,itemsep=0.3em]
+\item \textbf{CPU-based analyses:} High-performance computing cluster with Intel Xeon processors (16--32 cores per node, 64--128 GB RAM)
+\item \textbf{GPU-accelerated training:} NVIDIA A4000 and RTX 4090 GPUs (16--24 GB VRAM) for GNN and Transformer model training
+\item \textbf{Operating system:} Linux (Ubuntu 22.04 LTS)
+\item \textbf{Job scheduling:} SLURM workload manager for distributed training and evaluation
+\end{itemize}
+
+\noindent Typical wall-clock times are documented in the Data Analysis Report, enabling researchers to estimate computational requirements for replication.
+
+\subsection*{Data Access and Reuse}
+
+\textbf{No restrictions:} All data and code are released under CC BY 4.0, permitting unrestricted reuse with attribution. Researchers may:
+
+\begin{itemize}[leftmargin=*,itemsep=0.3em]
+\item Reproduce all reported results using the archived splits and scripts
+\item Extend the benchmark to additional models or molecular representations
+\item Apply the trained models to new antimalarial screening campaigns
+\item Adapt the evaluation framework to other therapeutic areas or chemical libraries
+\end{itemize}
+
+\subsection*{Data Format Specifications}
+
+\begin{itemize}[leftmargin=*,itemsep=0.3em]
+\item \textbf{Molecular structures:} CSV files with canonical SMILES strings (UTF-8 encoding)
+\item \textbf{Activity labels:} Binary classification (0 = inactive, 1 = active) based on upstream data sources
+\item \textbf{Chemical splits:} JSON files with integer indices mapping to panel rows
+\item \textbf{Graph representations:} PyTorch Geometric \texttt{Data} objects serialized via \texttt{torch.save}
+\item \textbf{Predictions:} CSV files with per-molecule probability scores and class labels
+\item \textbf{Metrics:} JSON summaries with floating-point performance statistics
+\item \textbf{Checksums:} SHA256 hashes in BSD-style format (\texttt{sha256sum} compatible)
+\end{itemize}
+
+\subsection*{Provenance and Quality Control}
+
+The Data Analysis Report (\texttt{P5\_DATA\_ANALYSIS\_REPORT.md}) provides complete computational provenance:
+
+\begin{itemize}[leftmargin=*,itemsep=0.3em]
+\item SLURM job identifiers for all distributed computations
+\item Execution timestamps and wall-clock durations
+\item Quality-control gate results (fold completeness, finite metric verification)
+\item Evidence status labels (\texttt{COMPUTED}, \texttt{COMPUTED\_SECONDARY}, \texttt{NOT\_COMPUTED})
+\item Frozen input hashes preventing silent data substitution
+\item Audit trails for all secondary analyses and post-hoc extensions
+\end{itemize}
+
+\noindent This granular provenance enables independent verification of computational integrity and facilitates debugging during replication attempts.
+
+\subsection*{Contact Information}
+
+For questions regarding data access, replication protocols, or model weights:
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+\item \textbf{Corresponding author:} Myke Vital Sao Temgoua (\texttt{myke-vital.sao@facsciences-uy1.cm})
+%\item \textbf{GitHub issues:} \url{https://github.com/NanaEngo/Malaria_codesV2/issues}
+\item \textbf{Zenodo contact:} Via Zenodo messaging system for deposit-specific inquiries
+\end{itemize}
+
+\subsection*{Long-Term Preservation}
+
+The Zenodo deposit ensures long-term preservation through:
+
+\begin{itemize}[leftmargin=*,itemsep=0.3em]
+\item Permanent DOI assignment with guaranteed resolution
+\item CERN-hosted infrastructure with institutional backing
+\item Multiple geographic replicas for disaster resilience
+\item Integration with DataCite metadata registry
+\item Compliance with funding-agency open-data mandates
+\end{itemize}
+
+\subsection*{Related Datasets}
+
+This study is part of an integrated antimalarial drug discovery program. Related datasets include:
+
+\begin{itemize}[leftmargin=*,itemsep=0.3em]
+\item \textbf{P1:} Chemical space exploration and multi-target docking (Zenodo DOI: \url{https://doi.org/10.5281/zenodo.22696778})
+\item \textbf{P3:} Quantum-inspired molecular representations (Zenodo DOI: \url{https://doi.org/10.5281/zenodo.22768267})
+\item \textbf{P2:} Molecular dynamics validation of polypharmacology (Zenodo DOI: \url{https://doi.org/10.5281/zenodo.22829031})
+\end{itemize}
+
+\noindent Cross-project integration is documented in the repository file \texttt{P1\_P7\_INTEGRATION\_ROADMAP.md}.
+
+\subsection*{Compliance Statement}
+
+This Data Availability Statement complies with:
+
+\begin{itemize}[leftmargin=*,itemsep=0.2em]
+\item Royal Society of Chemistry data-sharing policies
+\item FAIR data principles (Findable, Accessible, Interoperable, Reusable)
+\item ORCID author identification requirements (all co-authors have registered ORCIDs)
+\item Open Science best practices for computational chemistry and machine learning
+\end{itemize}
+
+%\vspace{1em}
+%\noindent \textbf{Version:} V2609 (September 2026)\\
+%\textbf{Last updated:} \today
+
+\end{document}
