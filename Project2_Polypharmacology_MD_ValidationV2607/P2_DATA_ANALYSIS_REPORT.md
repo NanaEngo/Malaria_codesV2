@@ -1,7 +1,7 @@
 # P2 Data Analysis Report — active summary
 
 **Scope:** Resistance-aware polypharmacology of antimalarial leads (docking-RRS, PNS, ACSI, targeted MD, MM-GBSA, Set-C MD pilot, Estimand Divergence, African NP chemical space).
-**Updated:** 16 September 2026 (§9 array-15840 readout + full HPC coherence audit: multiseed attribution fix, failed-array provenance note; supersedes 15 Sept 2026 checkpoint)
+**Updated:** 28 September 2026 (provenance-gap fix: 28 Aug secondary bootstrap `rrs_polypharma_secondary_20260828` documented + RUN3 class-A interval transcription corrected; supersedes the 16 Sept 2026 header)
 **Root:** `Project2_Polypharmacology_MD_ValidationV2607/`
 
 ## 1. Central question
@@ -237,7 +237,17 @@ Post-processing only (no new MD). Script: `Project2_Polypharmacology_MD_Validati
 
 - **RUN1 — MM-GBSA ΔΔG ± SD (R8).** Mutant-minus-wild-type ΔG per compound+target with propagated SD (√ΣSD²): 12 mutants; **0** show significantly weaker binding at 95% CI; **1** significantly tighter; max |ΔΔG| = 5.37 kcal/mol. Machine-readable table: `mmgbsa_ddeltaG_pilot.csv`. Confirms the retention-not-gain reading of the >100% ratios.
 - **RUN2 — Partial Spearman PNS–RRS controlling MW + Murcko-scaffold prevalence (R9).** n = 12 complete-two-target set: raw ρ(PNS,RRS) = −0.2098 → **partial ρ = −0.6154** after conditioning on molecular weight and scaffold prevalence. The association strengthens under controls ⇒ it is not a size/scaffold artifact. Honest label: companion-study TDA topology values are not available locally; this uses the manuscript's own docking RRS (complete-two-target mean).
-- **RUN3 — Cohort-level bootstrap, B = 10⁴ (R3).** Class-fraction CI95 over n = 17: A* [0.118, 0.529], A [0.118, 0.529], B [0.118, 0.529], C [0.118, 0.529], D [0.000, 0.176]. Fraction of the 12 MMG mutant ratios above 100%: point 0.667, CI95 [0.417, 0.917]. The docking CSV carries a single Vina score per system (no replicate dimension), so no score-level σ exists; only cohort-level resampling is reported, explicitly labeled.
+- **RUN3 — Cohort-level bootstrap, B = 10⁴ (R3).** Class-fraction CI95 over n = 17: A* [0.118, 0.529], A [0.000, 0.176], B [0.118, 0.529], C [0.118, 0.529], D [0.000, 0.176]. *(Correction 28-09-2026: the class-A interval was previously transcribed as [0.118, 0.529]; the artifact value in `lightweight_runs_summary.json` is [0.000, 0.176] — the JSON keys are sorted, so "A" precedes "A*". See the 28 Aug secondary-bootstrap section below.)* Fraction of the 12 MMG mutant ratios above 100%: point 0.667, CI95 [0.417, 0.917]. The docking CSV carries a single Vina score per system (no replicate dimension), so no score-level σ exists; only cohort-level resampling is reported, explicitly labeled.
+
+## RRS/polypharma secondary bootstrap and MD-filter gate (28 August 2026; documented 28-09-2026)
+
+**Provenance gap closed:** the post-processing run `scripts/p2_rrs_polypharma_secondary_20260828.py` (executed 28 Aug 2026) was absent from this DAR, the BMAD summary, and the results README. It is now documented here. Status `COMPUTED_SECONDARY`; boundary recorded in the manifest: secondary post-processing, no canonical value replaced, MD gate pilot-scope only. No manuscript claim is promoted from any of its outputs.
+
+- **Outputs:** `results/rrs_polypharma_secondary_20260828/{secondary_summary.json, md_filter_gate.csv}`; bootstrap B = 10,000, seed 42, 95% CI (plain-Python RNG, distinct stream from the 25 Aug numpy RUN3).
+- **RUN1 — Set-C cohort bootstrap (pooled available-target estimand, `RRS_class`):** class fractions over n = 17: A* 0.294 [0.118, 0.529]; A 0.059 [0.000, 0.176]; B 0.294 [0.118, 0.529]; C 0.294 [0.118, 0.529]; D 0.059 [0.000, 0.176] — consistent with the 25 Aug RUN3 cohort-level bootstrap (hence the RUN3 class-A correction above). Pooled per-mutant retention: N51I 74.71 [67.22, 85.16]; C59R 73.69 [67.38, 82.09]; S108N 75.28 [67.70, 85.80]; I164L 76.77 [68.92, 88.15] (n = 12 each, PfDHFR-eligible); K76T 85.41 [81.00, 90.35]; K76A 86.98 [83.12, 90.90] (n = 17 each). Target means: PfDHFR 75.11 [68.00, 85.27] (n = 12); PfCRT 86.19 [82.43, 90.45] (n = 17). Descriptive only: this pooled estimand is distinct from the primary per-target classification and must not be quoted as a primary result.
+- **RUN1b — external-panel bootstrap:** 39 ligands, mean RRS 100.45 [99.59, 101.34], Class-A fraction 0.974 [0.923, 1.000]. Consistent with the §8 external summary; its bootstrap artifact `external_vs_primary_bootstrap_20260828.json` reports the interval as [99.59, 101.32] — the two runs differ only by RNG stream.
+- **RUN2 — MD-filter retention gate (pilot scope PP-01/PP-02 only):** 12 candidate×target gate rows (docking gate: target-mean RRS ≥ 80; MD gate: pilot MD_RRS_d < 100); 7/12 pass both filters; only PP-01 passes on ≥ 2 targets (PfCRT, PfDHFR) and is labeled "polypharma-promoted" at pilot scope. **Boundary:** this promotion label is a post-hoc exploratory gate concept, not a predeclared estimand, and is used nowhere in the manuscript; the four PP-02 PfDHFR rows have no docking WT reference and fail the docking gate by construction. Full-panel (17 × 8) MD-RRS remains NOT_COMPUTED by design.
+- **Manuscript impact:** none. The class-fraction intervals duplicate the lightweight RUN3 output already in the audit trail (R3); per-target retention CIs are new descriptive context only. No number in the main text, SM, or the tables of this report changes. Guard tests: `tests/test_rrs_polypharma_secondary.py`.
 
 ## Single-system GPU rerun — PP-01_PfCRT_WT replicate_1 (COMPLETE; QC PASS + MM-GBSA, 26 August 2026)
 
@@ -280,7 +290,7 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
 - **HPC Live Daemon (`penavoraserver` / `100.73.21.40`):** Automated runner (`/home/nanaengo/hpc_md_execution.log`) initialized for:
   1. Triplicate MD ($3 \times 10\text{ ns}$) verification on Class-A* lead `PP-01` (`PP-01_PfCRT_WT`, `PP-01_PfCRT_K76T`, `PP-01_PfDHFR_WT`) fulfilling Soares et al. (2023) JCIM 3-replicate guidelines.
   2. PfCRT vacuolar pH 5.2 protonation audit evaluating protonated His97/His53 and ligand basic sites in acidic digestive vacuole conditions.
-- **Synchronization:** Full workspace synchronized to HPC path `/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/`.
+- **Synchronization:** Full workspace synchronized to HPC path `/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/` — *(Topology note 28-09-2026: the workspace and this "HPC path" are the same single tree on penavoraserver; see AGENTS.md §0.)*
 
 ## 7. Submission Audit Refinement & HPC Array 15840 Execution (12 September 2026)
 
@@ -317,7 +327,7 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
   - Pocket RMSD = $0.38\text{ \AA}$ ($< 0.50\text{ \AA}$ threshold).
   - Confirms SWISS-MODEL homology structures and AlphaFold3 predictions are structurally concordant.
 - **Refinement Axis 1 — 50-ns MD Extension Setup (`scripts/p2_md_extension_50ns.sbatch`) — SUPERSEDED & REMOVED 16 Sept 2026:** the script was prepared but **never submitted** (no `p2_md_50ns_*` logs, no `ext50_*` run dirs, no `production_50ns*` files on HPC — the earlier "created and submitted" wording is corrected here). Per the 25 ns-cap decision (§9), the file was deleted (`git rm`; recoverable from git history).
-- **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `bac730b64`), and HPC cluster directory 100% aligned.
+- **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `bac730b64`), and HPC cluster directory 100% aligned — *(single-tree topology; the "local" and "HPC" labels denote the same tree, see AGENTS.md §0)*.
 
 ## 8. Integrity & framing correction (15 September 2026)
 
