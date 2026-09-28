@@ -20,6 +20,7 @@ recorded under results/figures/figure_provenance_20260928.json.
 """
 from __future__ import annotations
 
+import csv
 import json
 from pathlib import Path
 
@@ -195,6 +196,49 @@ def fig_rmsd_214_438() -> None:
           "results/md_results/438_PfATP4_backbone_rmsd.xvg")
 
 
+def fig_prolif() -> None:
+    """Figure 4: ProLIF occupancy from the real IFP CSVs (16 systems)."""
+    rows = list(csv.DictReader((RES / "prolif_ifp_20260827" / "ifp_PP-01_PfCRT_K76T.csv").open()))
+    _ = rows  # header sanity; full pass below
+    import glob
+    recs = []
+    for f in sorted(glob.glob(str(RES / "prolif_ifp_20260827" / "ifp_*.csv"))):
+        recs.extend(csv.DictReader(open(f)))
+    pfcrt_states = [(c, m) for c in ("PP-01", "PP-02") for m in ("WT", "K76T", "K76A")]
+    tyr = []
+    for c, m in pfcrt_states:
+        occ = [float(r["occupancy"]) for r in recs
+               if r["set_c_id"] == c and r["target"] == "PfCRT" and r["mutation"] == m
+               and r["protein_resname"] == "TYR" and r["protein_resnr"] == "16"]
+        tyr.append(max(occ) if occ else 0.0)
+    dhfr_res = [("ASP", "54", "Asp54"), ("LEU", "46", "Leu46"),
+                ("MET", "55", "Met55"), ("ILE", "14", "Ile14")]
+    dhfr = []
+    for rn, num, _ in dhfr_res:
+        occ = [float(r["occupancy"]) for r in recs
+               if r["target"] == "PfDHFR" and r["protein_resname"] == rn
+               and r["protein_resnr"] == num]
+        dhfr.append(max(occ) if occ else 0.0)
+    fig, axes = plt.subplots(1, 2, figsize=(9, 3.2))
+    axes[0].bar(range(len(pfcrt_states)), [v * 100 for v in tyr],
+                color="#4c72b0", edgecolor="black", linewidth=0.6)
+    axes[0].set_xticks(range(len(pfcrt_states)),
+                       [f"{c}\n{m}" for c, m in pfcrt_states], fontsize=7)
+    axes[0].set_ylim(0, 105)
+    axes[0].set_ylabel("Occupancy (%)")
+    axes[0].set_title("(A) PfCRT Tyr16 contact occupancy", fontweight="bold", fontsize=9)
+    axes[1].bar(range(len(dhfr_res)), [v * 100 for v in dhfr],
+                color="#c44e52", edgecolor="black", linewidth=0.6)
+    axes[1].set_xticks(range(len(dhfr_res)), [lbl for _, _, lbl in dhfr_res], fontsize=8)
+    axes[1].set_ylim(0, 105)
+    axes[1].set_title("(B) PfDHFR hotspot contacts (max across systems)",
+                      fontweight="bold", fontsize=9)
+    fig.tight_layout()
+    _save(fig, "Figure4_ProLIF_Heatmaps",
+          "results/prolif_ifp_20260827/ifp_*.csv (ProLIF 2.2.1, 100 frames/system)"
+          " — VdWContact/Hydrophobic/H-Bond types only")
+
+
 def main() -> None:
     fig_crossmetric()
     fig_rmsd_main()
@@ -202,6 +246,7 @@ def main() -> None:
     fig_radar()
     fig_rmsf_214()
     fig_rmsd_214_438()
+    fig_prolif()
     out = RES / "figures" / "figure_provenance_20260928.json"
     out.write_text(json.dumps(manifest, indent=2))
     print(f"Manifest: {out}")

@@ -1,22 +1,23 @@
 # P2 manuscript — release index
 
-## Canonical release: V2609C
+## Single canonical release: V2609C
 
-- **Target journal:** *Journal of Chemical Information and Modeling* (ACS)
-- **Main manuscript:** `V2609C/Polypharmacology_MD_Validation_V2609C.tex`
-- **Supporting Information:** `V2609C/Polypharmacology_MD_Validation_SM_V2609C.tex`
-- **Cover letter:** `V2609C/Cover_Letter_V2609C.tex`
-- **Bibliography:** `V2609C/Project2_Polypharmacology_MD_Validation.bib`
-- **Manifest:** `V2609C/SUBMISSION_MANIFEST_V2609C.md`
-- **Graphics:** `V2609C/Graphics/`
+The project tree contains **exactly one** V2609C directory: `manuscript/V2609C/`. On 28 September 2026, the duplicate root-level `V2609C/` snapshot (stale pre-remediation figures), the superseded `V2609B/` and `manuscript/V2609B/` trees, the stray `LaTeX/V2609C/` PDFs, and the accidentally nested `Project2_Polypharmacology_MD_ValidationV2607/` directory were all removed. Nothing unique was lost: the only exclusive content of the root snapshot (`ChemRxiv_version/`, conversion tooling, and fix-log notes) was relocated into `manuscript/V2609C/` first, and the V2609B tree remains retrievable from git history (`git show <pre-2026-09-28 commit>:Project2_Polypharmacology_MD_ValidationV2607/V2609B/...`).
 
-`V2609C/` is the only active manuscript source directory. Its source files, tables, bibliography, graphics, and release manifest form the canonical package. PDFs are generated release products; auxiliary files and logs are disposable build artefacts and must not be edited by hand.
+- **Main manuscript:** `manuscript/V2609C/Polypharmacology_MD_Validation_V2609C.tex`
+- **Supporting Information:** `manuscript/V2609C/Polypharmacology_MD_Validation_SM_V2609C.tex`
+- **Cover letter:** `manuscript/V2609C/Cover_Letter_V2609C.tex`
+- **Bibliography:** `manuscript/V2609C/Project2_Polypharmacology_MD_Validation.bib`
+- **Manifest:** `manuscript/V2609C/SUBMISSION_MANIFEST_V2609C.md`
+- **ACS submission package:** `manuscript/V2609C/submission_ACS_P2V2609C/`
+- **ChemRxiv conversion (secondary preprint):** `manuscript/V2609C/ChemRxiv_version/`
+- **Graphics:** `manuscript/V2609C/Graphics/`
 
-## Historical release: V2609B
+`manuscript/V2609C/` is the only active manuscript source directory. Its source files, tables, bibliography, graphics, and release manifest form the canonical package. PDFs are generated release products; auxiliary files and logs are disposable build artefacts and must not be edited by hand.
 
-`V2609B/` contains the retained V2609B manuscript, Supporting Information, cover letter, tables, bibliography, graphics, and compiled release products. It is an archive for provenance and comparison, not an active source for new claims. Its archive manifest is `V2609B/SUBMISSION_MANIFEST_V2609B.md`.
+## Historical releases
 
-Older V2607/V2609 variants, displaced source files, and generated leftovers are retained under `../docs/archive/manuscript/` and are not submission sources.
+V2609B (superseded 12 September 2026) and the duplicate V2609C snapshot are no longer present in the working tree; retrieve them from git history when a provenance comparison is required. Older V2607/V2609 variants and displaced leftovers remain under `docs/archive/manuscript/` (local archive, untracked) and are not submission sources.
 
 ## Scientific scope
 
@@ -52,9 +53,9 @@ The rigorous audit regenerates the compact RRS, ACSI, PNS, and cross-metric outp
 
 ## Supporting documentation
 
-- `../P2_DATA_ANALYSIS_REPORT.md` — active data-analysis report and provenance summary.
-- `../results/README.md` — result-file inventory and evidence boundaries.
-- `../docs/Methods/` — detailed MD and MM-GBSA protocol notes.
-- `../docs/P2_V2609_MD_AUDIT_MATRIX.md` — archive and cleanup policy.
+- `P2_DATA_ANALYSIS_REPORT.md` — active data-analysis report and provenance summary.
+- `results/README.md` — result-file inventory and evidence boundaries.
+- `docs/Methods/` — detailed MD and MM-GBSA protocol notes.
+- `docs/P2_V2609_MD_AUDIT_MATRIX.md` — archive and cleanup policy.
 
-If a narrative file disagrees with a machine-readable audit output, the output and the current V2609C source must be reconciled before release.
+If a narrative file disagrees with a machine-readable audit output, the output and the current `manuscript/V2609C` source must be reconciled before release.

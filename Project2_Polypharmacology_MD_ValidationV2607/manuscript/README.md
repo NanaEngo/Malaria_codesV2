@@ -1,22 +1,23 @@
 # P2 manuscript — release index
 
-## Canonical release: V2609C
+## Single canonical release: V2609C
 
-- **Target journal:** *Journal of Chemical Information and Modeling* (ACS)
+The project tree contains **exactly one** V2609C directory: `V2609C/`. On 28 September 2026, the duplicate root-level `V2609C/` snapshot (stale pre-remediation figures), the superseded `V2609B/` and `manuscript/V2609B/` trees, the stray `LaTeX/V2609C/` PDFs, and the accidentally nested `Project2_Polypharmacology_MD_ValidationV2607/` directory were all removed. Nothing unique was lost: the only exclusive content of the root snapshot (`ChemRxiv_version/`, conversion tooling, and fix-log notes) was relocated into `V2609C/` first, and the V2609B tree remains retrievable from git history (`git show <pre-2026-09-28 commit>:Project2_Polypharmacology_MD_ValidationV2607/V2609B/...`).
+
 - **Main manuscript:** `V2609C/Polypharmacology_MD_Validation_V2609C.tex`
 - **Supporting Information:** `V2609C/Polypharmacology_MD_Validation_SM_V2609C.tex`
 - **Cover letter:** `V2609C/Cover_Letter_V2609C.tex`
 - **Bibliography:** `V2609C/Project2_Polypharmacology_MD_Validation.bib`
 - **Manifest:** `V2609C/SUBMISSION_MANIFEST_V2609C.md`
+- **ACS submission package:** `V2609C/submission_ACS_P2V2609C/`
+- **ChemRxiv conversion (secondary preprint):** `V2609C/ChemRxiv_version/`
 - **Graphics:** `V2609C/Graphics/`
 
 `V2609C/` is the only active manuscript source directory. Its source files, tables, bibliography, graphics, and release manifest form the canonical package. PDFs are generated release products; auxiliary files and logs are disposable build artefacts and must not be edited by hand.
 
-## Historical release: V2609B
+## Historical releases
 
-`V2609B/` contains the retained V2609B manuscript, Supporting Information, cover letter, tables, bibliography, graphics, and compiled release products. It is an archive for provenance and comparison, not an active source for new claims. Its archive manifest is `V2609B/SUBMISSION_MANIFEST_V2609B.md`.
-
-Older V2607/V2609 variants, displaced source files, and generated leftovers are retained under `../docs/archive/manuscript/` and are not submission sources.
+V2609B (superseded 12 September 2026) and the duplicate V2609C snapshot are no longer present in the working tree; retrieve them from git history when a provenance comparison is required. Older V2607/V2609 variants and displaced leftovers remain under `../docs/archive/manuscript/` (local archive, untracked) and are not submission sources.
 
 ## Scientific scope
 
@@ -26,18 +27,18 @@ The canonical manuscript reports a computational-prioritisation and interpretati
 - **ACSI:** a cohort-normalised chemical-space descriptor relative to the declared reference fingerprints and molecular descriptors.
 - **PNS:** a STRING-centrality-weighted WT docking-score ranking. PfCRT centrality is imputed and evaluated by sensitivity analysis; PNS is not a target-essentiality or polypharmacology measurement.
 
-The parent-study MD cohort contains four WT complexes. A secondary 16-system Set-C pilot (PP-01/PP-02) has trajectory QC and MM-GBSA outputs but is not merged into the primary docking-RRS analysis. The seven-of-eight directional difference is a protocol-local observation that docking-score retention and short-MD local geometry are not interchangeable; it is not a general failure rate, an affinity estimate, or a biological resistance signal.
+The parent-study MD cohort contains four WT complexes. A secondary 16-system Set-C pilot (PP-01/PP-02) has trajectory QC and MM-GBSA outputs but is not merged into the primary docking-RRS analysis. The seven-of-eight directional difference is a protocol-local observation that docking-score retention and short-MD geometry are not interchangeable; it is not a general failure rate, an affinity estimate, or a biological resistance signal.
 
 ## Reproducibility entry points
 
-Run from the Project2 directory:
+Run from the `manuscript/` directory:
 
 ```bash
-conda run -n malaria_md python scripts/p2_rigorous_audit.py
-conda run -n malaria_md python -m pytest tests -q
+conda run -n malaria_md python ../../scripts/p2_rigorous_audit.py
+conda run -n malaria_md python -m pytest ../../tests -q
 ```
 
-The rigorous audit regenerates the compact RRS, ACSI, PNS, and cross-metric outputs listed in `results/README.md`. Its inferential outputs are descriptive because the candidate cohort was selected before the audit.
+The rigorous audit regenerates the compact RRS, ACSI, PNS, and cross-metric outputs listed in `../../results/README.md`. Its inferential outputs are descriptive because the candidate cohort was selected before the audit.
 
 ## Evidence and reporting boundaries
 
@@ -52,9 +53,9 @@ The rigorous audit regenerates the compact RRS, ACSI, PNS, and cross-metric outp
 
 ## Supporting documentation
 
-- `../P2_DATA_ANALYSIS_REPORT.md` — active data-analysis report and provenance summary.
-- `../results/README.md` — result-file inventory and evidence boundaries.
-- `../docs/Methods/` — detailed MD and MM-GBSA protocol notes.
-- `../docs/P2_V2609_MD_AUDIT_MATRIX.md` — archive and cleanup policy.
+- `../../P2_DATA_ANALYSIS_REPORT.md` — active data-analysis report and provenance summary.
+- `../../results/README.md` — result-file inventory and evidence boundaries.
+- `../../docs/Methods/` — detailed MD and MM-GBSA protocol notes.
+- `../../docs/P2_V2609_MD_AUDIT_MATRIX.md` — archive and cleanup policy.
 
-If a narrative file disagrees with a machine-readable audit output, the output and the current V2609C source must be reconciled before release.
+If a narrative file disagrees with a machine-readable audit output, the output and the current `V2609C` source must be reconciled before release.
