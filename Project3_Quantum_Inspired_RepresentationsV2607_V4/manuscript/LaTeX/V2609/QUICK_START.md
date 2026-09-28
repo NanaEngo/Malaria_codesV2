@@ -9,7 +9,7 @@
 ### 1. Fix LaTeX Compilation (30 min)
 
 ```bash
-cd /home/vital/Documents/GitHub/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/manuscript/LaTeX/V2609
+cd /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/manuscript/LaTeX/V2609
 
 # Main (run all 4 commands)
 pdflatex Paper3_Quantum_InspiredV2609.tex

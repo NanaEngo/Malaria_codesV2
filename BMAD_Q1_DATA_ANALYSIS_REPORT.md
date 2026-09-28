@@ -1,46 +1,55 @@
 # BMAD Q1 Data Analysis Report — active summary
 
 **Scope:** P1–P3 only. P4 and P5 have dedicated DARs.
-**Updated:** 12 September 2026
+**Updated:** 28 September 2026 (P1 §2/§6/§7 re-synced to the P1 V8 canonical state — V8 numbers, September R2 controls, executive-table refresh; plus the earlier P2 §3 re-sync — class-table correction, cross-metric estimand fix, GNINA timeline, checkpoint index; corrections flagged inline)
 **Long-form history:** `docs/archive/md_full_20260812/BMAD_Q1_DATA_ANALYSIS_REPORT.md`
 
 ## 1. Executive status
 
 | Project | Current status | Submission-relevant conclusion |
 |---|---|---|
-| **P1** | V7 is the canonical submission-oriented workspace (JCIM); package `submission_ACS_P1V7/` refreshed | Chemical-space novelty (65,856 mols), target-wise docking, DEKOIS 2.0 validation (AUC=0.45), MMV enrichment, and RRS/polypharmacology are reportable within stated boundaries |
-| **P2** | V2609C canonical (JCIM submission-ready); package `submission_ACS_P2V2609C/` refreshed | *Estimand Divergence* framing (87.5%), denominator-unbiased RRS, 39-ligand GNINA CNN validation, African NP space ($Fsp^3=0.22$, $QED=0.70$), 3-layer audit completed (Title 12 words, Zenodo DOI 10.5281/zenodo.19608875), and CUDA GROMACS Array 15840 active |
+| **P1** | V8 canonical (JCIM resubmission REFUSED 16 Sept 2026 — seeking new venue, e.g. RSC Digital Discovery; package `submission_ACS_P1V8/`, DD cover in `submission_DD_P1V8/`) | V8: corrected PfCRT channel (RRS 99.1–100.6 %), RRS classes 7 A*/4 B/6 C/0 D, pipeline-null control, retrospective approved-drug control, two-arm DEKOIS (MTX-retained vs stripped, both null); Zenodo DOI public 10.5281/zenodo.22696778 |
+| **P2** | V2609C canonical (JCIM submission-ready); package `submission_ACS_P2V2609C/` refreshed | *Estimand Divergence* framing (87.5%), denominator-unbiased RRS, 39-ligand GNINA CNN validation, African NP space ($Fsp^3=0.22$, $QED=0.70$), 3-layer audit completed (15-word title — the earlier “12 words” was a miscount, fixed 15 Sept; reserved Zenodo DOI 10.5281/zenodo.19608875, upload pending), and CUDA GROMACS array 15840 COMPLETE (exploratory 2 ns readout, no endpoints promoted) |
 | **P3** | Canonical classical, hybrid, QKS, TNE/TDA, and external-validation analyses complete | Quantum-inspired descriptors are complementary; no quantum advantage over RBF or ECFP4 is claimed; JCAMD manuscript ready |
 
 ## 2. P1 — chemical space, docking, and RRS/polypharmacology
 
-### Canonical findings
+> **Canonical layer:** the authoritative P1 narrative is `Project1_Chem_space_antimalarial_V7_CorrectedGrid/P1_DATA_ANALYSIS_REPORT.md` (V8, updated 10 September 2026; this file supersedes earlier V4–V7 snapshots). This section is an index-level mirror for cross-project readers; in any conflict the P1 DAR wins.
 
-- The P1 chemical-space library contains **65,856 molecules**; **92.6%** are ECFP4-unreachable from the seed space and scaffold recovery is **69.3%**.
-- The V4 2F6I/PfClpP remediation accounts for all **484** centroid attempts: **458 PASS**, **1 PENDING**, **15 protocol exclusions** for unsupported boron chemistry, **5 DOCKED_GATE_FAILED**, and **5 EMBED_FAILURE**. This is a provenance/remediation result, not experimental validation.
-- V5 contains **68/68 finite target-wise Vina records** for 17 candidates × 4 targets. Scores remain target-specific and are not averaged as a common affinity scale.
-- The V5 mutant pilot contains **136/136 finite docking scores** for PfDHFR/PfCRT. It is exploratory and must not replace the canonical P2 RRS table.
-- V7 integrates the exact 17-member cohort by canonical SMILES and supersedes V6 (validated 11/08/2026: DEKOIS/MMV/redocking tables, physicochemical characterization, ORCID ×5 collected). The submission package is numerically audited; independent structural review remains a provenance item, not an experimental result.
+### Canonical findings (V8, corrected PfCRT channel)
+
+- The P1 chemical-space library contains **65,856 unique molecules → 19,913 prioritised candidates** (MPO ≥ 0.70, SYBA > 0, SI > 10); the historical V4-era descriptors (92.6% ECFP4-unreachable, 69.3% scaffold recovery) remain the chemical-space novelty evidence.
+- Docking: **68/68 candidate–target pairs** pass the geometric gate across 17 candidates × 4 targets (scores −12.01 to −4.63 kcal mol⁻¹); target-specific, never averaged as a common affinity scale.
+- **PfCRT channel corrected (R2.3):** re-docked on the 3D7-like LYS-76 receptor with the cavity-anchored V2 grid — K76T/K76A produce no detectable score change (RRS 99.1–100.6 %) and the **pipeline-null control (R2.5)** gives the same distribution (99.4–100.5 %), so class boundaries are placed relative to the null. *(Correction 28-09-2026: this section previously displayed only the superseded V5-layer records — no PfCRT channel correction, no null control, no September controls; the V8 canonical numbers above are those of the P1 DAR and the V8 manuscript.)*
+- **RRS classification on the corrected channel (null-anchored): 7 A\*, 4 B, 6 C, 0 D** (range 73.2–115.6 %). Favourability: within-target medians PfDHFR −5.92, PfCRT −8.06, PfClpP −6.02, PfATP4 −6.38 kcal mol⁻¹; N_fav–RRS ρ = +0.714 (permutation p = 0.0019) with the power limitation reported (R2.1); PNS–RRS ρ = −0.714 and RRS–|S_WT| ρ = +0.691 (Bonferroni α = 0.017, n = 17); ACSI–RRS ρ = −0.190 (n.s.).
+- **September reviewer-driven controls (R1.2, R2.3, R2.4) — COMPLETE, machine-readable in `zenodo_package_P1/results/`:** retrospective docking of five approved antimalarials (negative recovery of clinical signatures, `retrospective_approved_antimalarials_20260909/`); PfCRT V2-grid re-dock (`pfcrt_redock_v2grid_20260909/`); two-arm DEKOIS MTX-retained vs MTX-stripped — both arms null for blockade, reported as a negative result (`dekois_mtxstripped_20260909/`). *(Correction 28-09-2026: these controls existed only in the P1 DAR and V8 manuscript; they were absent from this summary.)*
+- V4 2F6I/PfClpP remediation (historical): all **484** centroid attempts accounted (458 PASS, 1 PENDING, 15 boron exclusions, 5 DOCKED_GATE_FAILED, 5 EMBED_FAILURE) — provenance/remediation result, not experimental validation.
+- **Submission status:** V7 was validated 11/08/2026 and superseded by **V8** (response-to-reviewers dossier); the 16 Sept 2026 JCIM resubmission was **REFUSED** — a new venue is being sought (RSC Digital Discovery candidate, DD cover letter already assembled in `submission_DD_P1V8/`). The Zenodo deposit is **public**: DOI 10.5281/zenodo.22696778 (verified 16 Sept, supersedes reserved 22686176).
 
 ### Evidence boundaries
 
 - Docking scores support prioritisation hypotheses, not measured binding or activity.
-- RRS is per target and excludes non-binding WT denominators (`|ΔG_WT| < 5.0 kcal mol⁻¹`).
-- V5 and P2 RRS layers use different receptor/preparation/execution provenance and are not interchangeable.
+- RRS is per target and excludes non-binding WT denominators (`|ΔG_WT| < 5.0 kcal mol⁻¹`); class boundaries are anchored to the pipeline-null control, not to raw thresholds alone.
+- The P1 V5 mutant-pilot layer (historical) and the P2 RRS layers use different receptor/preparation/execution provenance and are not interchangeable; the V5 workspace itself no longer exists in-tree (V4/V5/V7 evidence feeds V8 only through the documented integration).
 - No IC₅₀/EC₅₀, target engagement, resistance circumvention, or biological polypharmacology is claimed without experimental evidence.
 
 ## 3. P2 — canonical RRS/polypharmacology source layer
 
-The canonical Set-C cohort contains **17 polypharmacology-oriented candidates** and **136 WT/mutant docking systems**. Per-target RRS classification is:
+> **Canonical layer:** the authoritative P2 narrative is `Project2_Polypharmacology_MD_ValidationV2607/P2_DATA_ANALYSIS_REPORT.md` (updated 28 September 2026). This section is an index-level mirror for cross-project readers; in any conflict the P2 DAR wins.
+
+The canonical Set-C cohort contains **17 polypharmacology-oriented candidates** and **136 WT/mutant docking systems**. Primary RRS classification (target-balanced complete two-target panel, n = 12):
 
 | Class | Count |
 |---|---:|
-| A* | 6 |
-| B | 5 |
+| A* | 1 |
+| A | 1 |
+| B | 4 |
 | C | 5 |
 | D | 1 |
 
-Canonical cross-metric results (n=17) are: PNS–RRS ρ=−0.559, p=0.020 (not significant after Bonferroni α=0.017); ACSI–RRS ρ=−0.132, p=0.613; RRS–ΔG_WT ρ=−0.433, p=0.082. ACSI mean is **0.543**, with **2/17 (11.8%)** above 0.70. These are docking-derived computational relationships.
+Available-target sensitivity classification (17/17; the five PfCRT-only candidates are not evidence-equivalent to the two-target set): A* 5, A 1, B 5, C 5, D 1. *(Correction 28-09-2026: this section previously displayed a single-class table "A*: 6, B: 5, C: 5, D: 1" inherited from the superseded pre-rigorous-audit layer; the primary/available-target split above matches the canonical `c_rrs_classification.csv`.)*
+
+Canonical cross-metric results (primary n = 12): PNS–RRS ρ = −0.2098 (permutation p = 0.5144; coverage-sensitive n = 17 variant ρ = −0.5588, p = 0.0222, adjusted p = 0.0667 — exploratory because target coverage is unequal); ACSI–RRS ρ = −0.4056 (p = 0.1922); RRS–weakest-eligible-WT-anchor ρ = −0.1661 (p = 0.6038). ACSI mean is **0.543**, with **2/17 (11.8%)** above 0.70. *(Correction 28-09-2026: the previously displayed values (ρ = −0.559/−0.132/−0.433 against a Bonferroni α = 0.017) mixed the coverage-sensitive and complete-two-target estimands; the canonical values are those above, per the `p2_rigorous_audit.py` re-analysis.)* These are docking-derived computational relationships.
 
 Historical parent-lead MD remains separate: only PfCRT–214 has an interpretable MM-GBSA estimate (−18.25 ± 0.40 kcal mol⁻¹); dissociated systems and the 4GM2/PfClpR-labelled system are not promoted as PfClpP validation.
 
@@ -64,33 +73,31 @@ GROMACS ran at 310.15 K with GPU flags `-nb gpu -pme gpu -bonded cpu -update cpu
 
 Superseded / non-canonical: intermediate failed arrays `15308`, `15313`, `15317`; historical identifiers 15106/15111/15117/15254/15259/15260/15270/15274; the 20260819 re-run attempt logged in `logs/p2_setc_qc_rrs_15386.log` failed on an MDAnalysis API incompatibility (`XTCReader.timespan`) and is non-canonical — the authoritative QC/MD-RRS outputs are those of the completed chain above.
 
-### Set-C production history — superseded gates (13 August 2026)
+### 13 Aug storage cleanup (compressed 28-09-2026)
 
-The 16-system equilibration array `15288` completed all tasks with `rc=0` in the **canonical preparation root** `results/md_systems/set_c_preparation_20260812_v1/` — all 16 systems produced `npt.gro` and `npt.cpt` there (verified: 16/16 present). The legacy root `results/md_systems/set_c/` contains only 1 `npt.gro` (PP-01_PfDHFR_I164L) and is non-canonical; the production workflow reads equilibrated inputs exclusively from the preparation root. Multiple intermediate production attempts (`15308`, `15313`, `15317`) were stopped due to workflow defects (missing topology staging, `continuation`/`gen_vel` conflict, `mdrun -seed` rejection, ns-to-step conversion error). All defects were corrected and validated. The final production array `15320` passed the `15319` gate with 16/16 preflight and is now **13/16 complete** (see checkpoint above). Historical gate identifiers are retained as non-canonical scheduler provenance.
+Failed run directories from `15308`/`15313`/`15317`, 1,087 autosave/backup files (~13.7 GB), and the 17 Aug comprehensive cleanup (non-canonical preparation/witness/diagnostic dirs, `HPC_ready/`, `models/aizynthfinder/`, misplaced trajectories, LaTeX build artifacts; project 51 → 39 GB) were removed under the approved safe-cleanup scope. Canonical `set_c_preparation_20260812_v1`, parent-MD evidence `MD_systems/`, runbooks, manifests, logs, and DARs were protected.
 
-### P2 storage and provenance cleanup audit — 13 August 2026
+### 12 Aug scope decisions (compressed 28-09-2026)
 
-### Safe cleanup checkpoint — 13 August 2026
+- Pilot MD-RRS is a **two-candidate pilot** (PP-01/PP-02 × 8 states, cohort id `P2_SET_C_MD_RRS_PILOT_PP01_PP02`); the full-cohort contract (17 × 8 = 136 rows) is never silently replaced and remains NOT_COMPUTED.
+- PlasmoDB/VEuPathDB stable IDs are target annotations only (PfDHFR `PF3D7_0417200`, PfCRT `PF3D7_0709000`, PfATP4 `PF3D7_1211900`, PfClpP `PF3D7_0307400`, PfClpR `PF3D7_1436800`); no pathway-enrichment claim.
+- LigandExplorer job `15272` (commit `d47eea0d033bb2127ee6836445554881c59edc8e`): fail-closed audit found ligand-box JSON artefacts for `7F3Y` (4) and `6UKJ` (2) only → `COMPLETED_PARTIAL_REQUIRES_MANUAL_REVIEW`; auxiliary, no claim. Record: `results/ligandexplorer_annotation_20260812/annotation_manual_review.md`.
 
-The six failed production run directories from `15308`, `15313`, and `15317` were removed under the approved safe-cleanup scope; their logs and manifests remain preserved. A second cleanup removed only **1,087 editor/GROMACS autosave or backup files** (`#...#`, `.bak`, `.backup`, `*~`; approximately **13.7 GB**) outside the active `15320` run, plus ten untracked Antechamber/SQM/energy temporary files. These artifacts were not referenced by the active workflow and do not contain canonical results.
+### Set-C MD readout (secondary, honest-negative)
 
-On 17 August 2026, a comprehensive cleanup removed: (i) all non-canonical `set_c*` preparation/witness/gap-pilot/diagnostic directories (19 directories, ~11.5 GB), retaining only the canonical `set_c_preparation_20260812_v1` (19 GB); (ii) the `diagnostic_md_20260809/` directory (2.7 GB, 428 duplicate files — historical diagnostic launcher superseded); (iii) non-canonical `set_c_md` pilot/preflight/benchmark directories from superseded jobs (15308/15313/15317, ~56 MB); (iv) 40 non-canonical log files from stopped jobs; (v) misplaced trajectory files at project root and in `scripts/` (~4.7 GB); (vi) `HPC_ready/` directory (3.0 GB, old parent-MD packages); (vii) `models/aizynthfinder/` (754 MB, unreferenced); (viii) non-canonical P1 V4 remediation artifacts (65 MB); and (ix) LaTeX build artifacts (~274 MB). The active `15320` run, canonical preparation root, canonical historical parent-MD evidence (`MD_systems/`), runbooks, manifests, logs, and DARs remain protected. Project total is now 39 GB (down from 51 GB); disk usage is 63% (293/492 GB).
+Short-MD geometry and single-replicate MM-GBSA do **not** reproduce the docking-RRS direction: docking predicted weaker mutant scores for all 8 mutant states with a docking WT reference, while 7 of the 8 matched MD comparisons diverged (the *Estimand Divergence* observation; 7/8 = 87.5%, 95% Wilson CI 52.9–97.8%, n = 8, protocol-local per ADR-0002). No mutant shows a reproducible weaker-binding signature within 10 ns; MM-GBSA ratios > 100% are read as retention, not gain; PP-01 PfCRT K76A carries a 7.75 kcal/mol inter-replicate sensitivity; the WT replicate offset (2.01 kcal/mol) is the empirical inter-replicate noise floor. Full values: P2 DAR §4–§5 and manuscript Tables S8/S19.
 
-### P2 implementation decision — pilot MD-RRS and PlasmoDB annotation (12 August 2026)
+### Checkpoints 25 Aug – 16 Sept 2026 (index; full narratives in the P2 DAR)
 
-The next MD-RRS implementation is explicitly a **two-candidate pilot**, not a 17-candidate validation: PP-01 and PP-02 × PfDHFR/PfCRT mutation states = **16 systems and 16 QC rows**. The full-cohort contract remains separately defined as 17 candidates × 8 states = 136 systems/rows and is not being silently replaced. Pilot outputs must use a distinct cohort identifier and output path (`P2_SET_C_MD_RRS_PILOT_PP01_PP02`; `md_rrs_pilot_PP01_PP02.csv`) and must never overwrite the canonical full-cohort output.
+- **25–26 Aug:** R1–R10 adversarial mitigations; lightweight robustness runs (ΔΔG ± SD, partial Spearman control, cohort bootstrap); PP-01_PfCRT_WT replicate_1 GPU rerun (R2 pillar: R1 −30.61 vs R2 −28.60, offset 2.01 kcal/mol → noise floor); PP-01_PfCRT_K76A rerun (MM-GBSA BOND overflow; frame-880 lineage FAILED_NUMERICAL_QC; repaired-whole −27.54 ± 1.89 reportable as diagnostic only).
+- **27–29 Aug:** robustness/transfer audit (LOCO, ±1 kcal/mol perturbations, ChEMBL feasibility = no independent RRS replication); external 39-ligand × 8-state docking replication (array 15605 + declared repairs, 312/312 records, 38/38 Class A, mean RRS 100.45); P2Rank pocket audit (exploratory); ProLIF IFP 16/16 (manuscript Figure 4); PP-01/PP-15 multi-seed redocking (dispersion ≤ 0.05 kcal/mol); STRING 400/700/900 sensitivity (ρ 0.9632–0.9975); 28 Aug secondary bootstrap + MD-filter gate (`results/rrs_polypharma_secondary_20260828/`, COMPUTED_SECONDARY, documented 28 Sept — see P2 DAR); RRS threshold-margin analysis (Table S18).
+- **12–16 Sept:** V2609B → V2609C calibration (ADR-0002 framing; denominator-unbiased RRS; African NP chemical-space profiling; ethnobotanical mapping; 15-word title; INTEGRITY HOLD resolutions; ACS package refreshed and diff-verified); HPC array 15840 (2 ns exploratory replicates, 16/16 + relaunches 15851/15852; stability readout only — no endpoints promoted); M1 25 ns PP-01_PfDHFR_WT replicate (observation only); **triplicate Soares expectation NOT satisfied** (single surviving 25 ns trajectory; no new MD-RRS/MM-GBSA endpoints); 25 ns cap decision (50/100 ns extension scripts removed); vacuolar pH 5.2 PfCRT audit PLANNED; git sync `e3938fd61` + `1cb926d95`.
 
-PlasmoDB/VEuPathDB stable 3D7 identifiers are added as target annotations only: PfDHFR `PF3D7_0417200`, PfCRT `PF3D7_0709000`, PfATP4 `PF3D7_1211900`, PfClpP `PF3D7_0307400`, and PfClpR `PF3D7_1436800`. This annotation documents target identity and mutation context; no PlasmoDB pathway-enrichment test is claimed because the study does not provide an independent multi-gene target set or an appropriate enrichment background. A dynamic pharmacophore occupancy analysis remains optional and cannot be reported before trajectory QC.
+### GNINA status timeline (reconciled 28-09-2026)
 
-**Independent structural annotation branch — LigandExplorer (12 August 2026):** job `15272` ran the local LigandExplorer checkout with the GNN backend on CPU to annotate ligands present in the four accepted receptor structures (`2F6I`, `7F3Y`, `6UKJ`, `9N10`). `4GM2` was intentionally excluded because it is PfClpR rather than active PfClpP. The resolved LigandExplorer commit is `d47eea0d033bb2127ee6836445554881c59edc8e`. The process returned 0, but the fail-closed audit found valid ligand-box JSON artefacts for `7F3Y` (4) and `6UKJ` (2), and no ligand-box artefact for `2F6I` or `9N10`; the run is therefore `COMPLETED_PARTIAL_REQUIRES_MANUAL_REVIEW`, not a complete panel annotation. The output JSONs encode spatial ligand-box data and emitted category labels, not standalone calibrated classification probabilities, activity, or confidence estimates. This branch does not alter candidate selection, docking scores, docking-RRS, MD, or MD-RRS. The versioned runner is `Project2_Polypharmacology_MD_ValidationV2607/scripts/p2_ligandexplorer_annotation.py`; the manual-review record is `results/ligandexplorer_annotation_20260812/annotation_manual_review.md`. No manuscript claim is promoted from this auxiliary result.
-
-### P2 GitHub tool register and existing-use audit — 12 August 2026
-
-The verified application register is maintained in `Project2_Polypharmacology_MD_ValidationV2607/P2_GITHUB_TOOL_REGISTER_20260812.md`. It records the distinction between installed software, executed workflows, and reportable results. GNINA is available as v1.3.2 (binary hash recorded in the P2 tool register), but the preserved ligand-438 attempt wrote an empty output file (0 bytes) and produced no reportable CNN score or pose. The generalized manuscript statement describing GNINA over the full 17 × 4 panel is therefore withdrawn until a complete non-empty output manifest is independently produced. PlasmoDB has already been used for stable target identifiers and mutation context (`results/plasmodb_target_annotation.csv`, Table S7), including the PfClpP/PfClpR identity boundary. A directly scripted WDK REST client has not been evidenced and is not required for the current four-target annotation. No pathway-enrichment analysis is performed or claimed. ProLIF and PLIP are the recommended next auxiliary tools, but only after QC-PASS trajectories or a predeclared static-pose subset, respectively; neither changes docking-RRS or authorizes incomplete MD-RRS promotion.
-
-### P2 manuscript scientific revision checkpoint — 13 August 2026
-
-The P2 manuscript was revised to present a scientific article centred on target-level resistance-aware prioritisation rather than an operational report. The Introduction and Discussion now distinguish docking-derived polypharmacology, PNS network weighting, ACSI chemical-space positioning, docking-RRS, trajectory stability, and MoA-level biological claims. Ryszkiewicz 2026, Trapotsi 2022, Sentinel 2025, and Blake 2025 are used as methodological context rather than as validation of the present predictions. The null correlation results are framed as absence of evidence in the sampled cohort, not as orthogonality, independence, or equivalence. The four-target rationale and the PfClpR/PfClpP identity boundary are explicit. The incomplete Set-C MD pilot remains excluded from the article; no MD-RRS is reported. Internal job identifiers, file-level failure narratives, and the unproductive Monte Carlo note were removed from the scientific prose. Main, Supporting Information, and cover letter recompiled successfully on 13 August 2026 with no fatal LaTeX errors or undefined references.
+- **12 Aug:** the generalized 17 × 4-panel GNINA statement was **withdrawn** — the preserved ligand-438 attempt produced an empty output (0 bytes); the tool register (`P2_GITHUB_TOOL_REGISTER_20260812.md`) is a historical HPC-era record not present in the current repository snapshot.
+- **28 Aug:** bounded post-processing re-scoring of the external replication panel (39 ligands × 8 states = 312 poses, `results/robustness_transfer_20260827/gnina_consensus_20260828/`) completed: 312/312 finite CNN scores, **100% class-level agreement** with the frozen Vina estimand (38/38 eligible Class A; ligand-level ρ = 0.558; per-mutant rank transfer not claimed — Table S15; Vina-only remains canonical).
+- Different scopes; **no full-panel Set-C GNINA claim exists**.
 
 ## 4. P3 — quantum-inspired representations
 
@@ -116,7 +123,7 @@ The P3 external arm will compare ECFP4, TFP, TNE, and an explicitly labelled opt
 
 | Result layer | Source evidence | Status |
 |---|---|---|
-| P1 V5 target-wise Vina | `Project1_Chem_space_antimalarial_V5_CorrectedGrid/results/` | finite raw records; exploratory where labelled |
+| P1 V8 canonical (docking/RRS, corrected PfCRT channel) | `Project1_Chem_space_antimalarial_V7_CorrectedGrid/` (workspace; V8 sources in `submission_ACS_P1V8/`), machine-readable archive `zenodo_package_P1/` (DOI 10.5281/zenodo.22696778) | canonical V8; V4/V5/V7 layers are historical inputs and the V5 workspace no longer exists in-tree |
 | P2 canonical RRS/ACSI/PNS | `Project2_Polypharmacology_MD_ValidationV2607/results/c_rrs_classification.csv`, `c_acsi_scores.csv`, `c_pns_ranking.csv` | canonical docking-derived |
 | P2 Set-C production | `Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c_preparation_20260812_v1/` | 16/16 production trajectories completed; post-production chain COMPLETE; MD-RRS COMPUTED_WITH_COHORT_CONTRACT; MM-GBSA Set-C 16/16 |
 | P3 external validation | `Project3_Quantum_Inspired_RepresentationsV2607/results/` | canonical/external sensitivity outputs |
@@ -131,7 +138,7 @@ The P3 external arm will compare ECFP4, TFP, TNE, and an explicitly labelled opt
 
 ## 7. Next actions
 
-- **P1 (V7):** complete funding items and final author read-through for V7; package `submission_ACS_P1V7/` verified auto-contained (main 25 p. / SM 17 p. / cover 1 p., 0 undefined refs, 12/08/2026).
-- **P2:** production `15320` completed 16/16 (all PP-01 × 8 + PP-02 DhFR × 5 finished; PP-02_PfDHFR_I164L running; PP-02_PfCRT × 3 queued). ETA for full completion: ~Aug 18, 17:00 UTC. Next: run trajectory QC + MD-RRS wrapper only after all 16 trajectories pass declared QC contract. No MD-RRS claim permitted before complete PASS QC.
+- **P1 (V8):** V8 canonical after the 16 Sept JCIM resubmission refusal; package `submission_ACS_P1V8/` verified (main 25 p. / SM 17 p. / cover 1 p. / response 5 p., 0 undefined refs) + Digital Discovery cover in `submission_DD_P1V8/`; Zenodo DOI public (10.5281/zenodo.22696778). Next: venue selection and format adaptation (RSC Digital Discovery candidate); no re-docking planned — all three September R2 controls are complete.
+- **P2:** V2609C submission-ready (JCIM; package `submission_ACS_P2V2609C/` refreshed and diff-verified 16 Sept). No open compute item: the triplicate expectation is closed by the 25 ns cap author decision, the pH 5.2 audit remains planned, and daemon readouts (array 15840, M1 25 ns) are exploratory with no promotable endpoints. Next: any new endpoint requires a P2 DAR entry before any manuscript change.
 - **P3:** preserve the honest-negative external validation framing and complete repository deposit preparation.
 - **All:** keep this summary short; place detailed job narratives and superseded decisions in the archive.

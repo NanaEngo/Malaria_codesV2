@@ -30,6 +30,7 @@ Les scores Vina, RRS, ACSI, PNS, MD-RRS et MM-GBSA représentent des estimands d
 | `pns_imputation_sensitivity.json` | Métadonnées de sensibilité PNS |
 | `p2_rigorous_audit_manifest.json` | Manifest de régénération des sorties |
 | `lightweight_robustness/` | Sensibilités locales RRS : seuils WT, leave-one-mutant-out et perturbation bornée des scores |
+| `rrs_polypharma_secondary_20260828/` | Bootstrap RRS secondaire (Set-C + panel externe, B=10k, seed 42) et gate de rétention MD (scope pilote PP-01/PP-02) ; `COMPUTED_SECONDARY`, aucun claim primaire — voir DAR §« RRS/polypharma secondary bootstrap » |
 
 ## Audit de déblocage des résultats existants
 

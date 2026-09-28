@@ -223,7 +223,7 @@ Project7_Quantum_Molecular_Encoding_QML/
 
 ### 1. Clone Repository
 ```bash
-cd /home/vital/Documents/GitHub/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML
+cd /home/nanaengo/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML
 ```
 
 ### 2. Create Conda Environment

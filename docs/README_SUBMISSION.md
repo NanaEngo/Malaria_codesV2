@@ -20,7 +20,7 @@
 - P2 docking-RRS must not be rewritten as MD-RRS beyond the pilot scope (PP-01/PP-02 Class A over PfCRT;PfDHFR, 8 trajectories, rule `setc_p2_minheavy_5A_ge10percent_v1`); full-panel (17×8=136) MD-RRS is NOT_COMPUTED by design.
 - P5 V2608 manuscript: fold-independent transformer initialization is required for valid cross-validation; honest-negative scaffold result stands; no GNN/Transformer universally underperform claim.
 - Exploratory, pending, failed, and historical outputs remain labelled.
-- P1 V7 is the submission-oriented P1 workspace (supersedes V6 on 11/08/2026); V6/V4/V5 are evidence/remediation layers.
+- P1 V8 is the canonical P1 manuscript (V7 superseded 10/09/2026; JCIM resubmission refused 16/09/2026 — new venue sought); V6/V4/V5 are historical evidence/remediation layers (V5 workspace removed from the tree; git history retains its records).
 
 ## Data availability
 

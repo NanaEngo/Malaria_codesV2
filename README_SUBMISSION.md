@@ -19,7 +19,7 @@
 - Consult the relevant DAR before changing a submission-facing claim.
 - P2 docking-RRS must not be rewritten as MD-RRS until production `15320` completes and all 16 trajectories pass QC.
 - Exploratory, pending, failed, and historical outputs remain labelled.
-- P1 V7 is the submission-oriented P1 workspace (supersedes V6 on 11/08/2026); V6/V4/V5 are evidence/remediation layers.
+- P1 V8 is the canonical P1 manuscript (V7 superseded 10/09/2026; JCIM resubmission refused 16/09/2026 — new venue sought); V6/V4/V5 are historical evidence/remediation layers (V5 workspace removed from the tree; git history retains its records).
 
 ## Data availability
 

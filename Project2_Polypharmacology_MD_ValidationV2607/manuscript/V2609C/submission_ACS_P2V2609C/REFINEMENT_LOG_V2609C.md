@@ -37,7 +37,7 @@ A comprehensive multi-perspective audit (**Author, Reviewer, Editor**) was condu
 - [x] **Graphical Abstract:** `\tocentry{}` present and self-contained with TikZ workflow diagram.
 - [x] **CRediT Taxonomy:** All 9 standard CRediT roles explicitly mapped across 5 co-authors.
 - [x] **Data Availability:** GitHub URL + Zenodo DOI (`10.5281/zenodo.19608875`) included with reserved/future wording (corrected 15 Sept).
-- [x] **Provenance:** Frozen package `submission_ACS_P2V2609C/` refreshed from canonical sources 15 Sept (re-audit §5) and recompiled green. HPC sync status unverified from this workspace.
+- [x] **Provenance:** Frozen package `submission_ACS_P2V2609C/` refreshed from canonical sources 15 Sept (re-audit §5) and recompiled green. HPC sync status unverified from this workspace. *(Resolved 28-09-2026: verified in place — the workspace IS the HPC tree, penavoraserver `/home/nanaengo/Malaria_codesV2`; see AGENTS.md §0.)*
 
 ---
 
@@ -99,4 +99,4 @@ Independent DOI resolution against `Project2_Polypharmacology_MD_Validation.bib`
 - **Frozen package refreshed** from canonical sources and recompiled
   (main/SM/cover exit 0, 0 undefined). Provenance checklist item above
   is now satisfied for the file copy; HPC sync remains unverified from
-  this workspace.
+  this workspace *(resolved 28-09-2026: single-tree topology — nothing to sync; see AGENTS.md §0)*.

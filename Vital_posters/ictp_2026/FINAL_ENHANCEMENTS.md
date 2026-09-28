@@ -167,12 +167,12 @@ The 72.62pt overflow is:
 ## 8. Files Modified
 
 ### Main Poster
-- **File:** `/home/vital/Documents/GitHub/Malaria_codesV2/Vital_ictp_poster/main.tex`
+- **File:** `/home/nanaengo/Malaria_codesV2/Vital_ictp_poster/main.tex`
 - **Changes:** 2 text blocks enhanced (Challenge, Impact & Open Science)
 - **Compilation:** XeLaTeX (successful)
 
 ### Documentation
-- **File:** `/home/vital/Documents/GitHub/Malaria_codesV2/Vital_ictp_poster/FINAL_ENHANCEMENTS.md` (this file)
+- **File:** `/home/nanaengo/Malaria_codesV2/Vital_ictp_poster/FINAL_ENHANCEMENTS.md` (this file)
 - **Purpose:** Complete record of final enhancements
 
 ---

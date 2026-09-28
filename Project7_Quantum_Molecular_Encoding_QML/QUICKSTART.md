@@ -106,7 +106,7 @@ python scripts/p7_qmse_hybrid.py \
 
 ```bash
 # Create conda environment
-cd /home/vital/Documents/GitHub/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML
+cd /home/nanaengo/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML
 conda env create -f environment.yml
 
 # Activate
@@ -227,7 +227,7 @@ F1: 0.XX
 **Solution:**
 ```bash
 # Ensure you're in the P7 directory
-cd /home/vital/Documents/GitHub/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML
+cd /home/nanaengo/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML
 
 # Check if qmse_lib exists
 ls -la scripts/qmse_lib/

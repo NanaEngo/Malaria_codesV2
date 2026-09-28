@@ -136,7 +136,7 @@ zenodo_package_PX/
 ### Step 1: Run Build Script
 
 ```bash
-cd /home/vital/Documents/GitHub/Malaria_codesV2
+cd /home/nanaengo/Malaria_codesV2
 bash scripts/build_zenodo_packages_batch.sh
 ```
 

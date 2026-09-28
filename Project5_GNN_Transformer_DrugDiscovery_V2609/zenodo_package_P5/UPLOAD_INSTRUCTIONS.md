@@ -200,7 +200,7 @@ All data and analysis scripts supporting this study are available at Zenodo:
 After Zenodo DOI is confirmed working:
 
 ```bash
-cd ~/Documents/GitHub/Malaria_codesV2
+cd /home/nanaengo/Malaria_codesV2
 git tag -a p5-jcamd-submission -m "P5 JCAMD submission with Zenodo DOI 10.5281/zenodo.XXXXXXX"
 git push origin p5-jcamd-submission
 ```
