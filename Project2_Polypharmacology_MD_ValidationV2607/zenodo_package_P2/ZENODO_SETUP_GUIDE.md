@@ -13,7 +13,7 @@
 # 0. Reserve DOI first (see Step 0 below)
 
 # 1. Verify package integrity
-cd ~/Documents/GitHub/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/zenodo_package_P2
+cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/zenodo_package_P2
 sha256sum -c sha256sums.txt
 # Expected: All files OK ✅
 
@@ -100,7 +100,7 @@ After reservation, update these files:
 ### ✅ Verify Package Structure
 
 ```bash
-cd ~/Documents/GitHub/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/zenodo_package_P2
+cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/zenodo_package_P2
 
 # Check all required directories exist
 ls -d data/ results/ scripts/ documentation/
@@ -420,7 +420,7 @@ File: `manuscript/V2609C/references.bib`
 ### Create Git Tag
 
 ```bash
-cd ~/Documents/GitHub/Malaria_codesV2
+cd /home/nanaengo/Malaria_codesV2
 git tag -a p2-jcim-submission -m "P2 JCIM V2609C submission with Zenodo DOI 10.5281/zenodo.XXXXXXX"
 git push origin p2-jcim-submission
 ```

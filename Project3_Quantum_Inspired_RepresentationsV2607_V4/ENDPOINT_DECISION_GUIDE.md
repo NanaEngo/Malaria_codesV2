@@ -121,7 +121,7 @@
 ## Recommended Script to Run NOW
 
 ```bash
-cd /home/vital/Documents/GitHub/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4
+cd /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4
 
 # Activate environment with chembl_webresource_client
 conda activate malaria_md  # or your P3 environment

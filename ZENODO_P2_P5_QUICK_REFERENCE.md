@@ -172,7 +172,7 @@ zenodo_package_P5/
 ### After Upload Complete
 
 ```bash
-cd ~/Documents/GitHub/Malaria_codesV2
+cd /home/nanaengo/Malaria_codesV2
 
 # P2
 git tag -a p2-jcim-submission -m "P2 JCIM V2609C with Zenodo DOI 10.5281/zenodo.XXXXXXX"

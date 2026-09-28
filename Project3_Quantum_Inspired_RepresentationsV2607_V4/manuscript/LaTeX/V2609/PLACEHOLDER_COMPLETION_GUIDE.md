@@ -24,7 +24,7 @@
 The reviewer saw "??" in the PDF because LaTeX cross-references weren't resolved during compilation. This requires multiple passes:
 
 ```bash
-cd /home/vital/Documents/GitHub/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/manuscript/LaTeX/V2609
+cd /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/manuscript/LaTeX/V2609
 
 # Main manuscript
 pdflatex Paper3_Quantum_InspiredV2609.tex

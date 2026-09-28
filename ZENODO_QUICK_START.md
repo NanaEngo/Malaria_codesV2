@@ -8,7 +8,7 @@
 ## 1. Build All Packages (One Command)
 
 ```bash
-cd /home/vital/Documents/GitHub/Malaria_codesV2
+cd /home/nanaengo/Malaria_codesV2
 bash scripts/build_zenodo_packages_batch.sh
 ```
 
@@ -116,7 +116,7 @@ All data and analysis scripts are available at Zenodo:
 
 ### Create Git tags
 ```bash
-cd /home/vital/Documents/GitHub/Malaria_codesV2
+cd /home/nanaengo/Malaria_codesV2
 
 # P3
 git tag -a p3-jcamd-submission -m "P3 JCAMD submission with Zenodo DOI"

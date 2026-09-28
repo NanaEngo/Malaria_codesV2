@@ -15,7 +15,7 @@ This document lists all files created to support the Zenodo upload process for P
 ## Master Planning Documents
 
 ### 1. ZENODO_P2_P5_UPLOAD_PLAN.md
-- **Location**: `/home/vital/Documents/GitHub/Malaria_codesV2/`
+- **Location**: `/home/nanaengo/Malaria_codesV2/`
 - **Purpose**: Comprehensive upload workflow for both P2 and P5
 - **Content**:
   - Step-by-step upload process
@@ -25,7 +25,7 @@ This document lists all files created to support the Zenodo upload process for P
   - Timeline and checklist
 
 ### 2. ZENODO_P2_P5_QUICK_REFERENCE.md
-- **Location**: `/home/vital/Documents/GitHub/Malaria_codesV2/`
+- **Location**: `/home/nanaengo/Malaria_codesV2/`
 - **Purpose**: Fast-access reference guide
 - **Content**:
   - At-a-glance project comparison
@@ -36,7 +36,7 @@ This document lists all files created to support the Zenodo upload process for P
   - Timeline estimates
 
 ### 3. ZENODO_P2_P5_FILES_CREATED.md
-- **Location**: `/home/vital/Documents/GitHub/Malaria_codesV2/`
+- **Location**: `/home/nanaengo/Malaria_codesV2/`
 - **Purpose**: This document — inventory of all created files
 - **Content**:
   - Complete file listing

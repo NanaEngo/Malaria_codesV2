@@ -184,7 +184,7 @@ All data and analysis scripts supporting this study are available at Zenodo:
 ## 🏷️ Git Tags (After All Uploads Complete)
 
 ```bash
-cd /home/vital/Documents/GitHub/Malaria_codesV2
+cd /home/nanaengo/Malaria_codesV2
 
 # P3
 git tag -a p3-jcamd-submission -m "P3 JCAMD submission with Zenodo DOI 10.5281/zenodo.19608875"

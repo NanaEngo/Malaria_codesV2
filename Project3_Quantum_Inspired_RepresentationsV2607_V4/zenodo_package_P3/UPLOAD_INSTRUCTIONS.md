@@ -151,7 +151,7 @@ After Zenodo DOI is confirmed working:
 3. Click **"Change repository visibility"** → **"Make public"**
 4. Create a release tag:
    ```bash
-   cd ~/Documents/GitHub/Malaria_codesV2
+   cd /home/nanaengo/Malaria_codesV2
    git tag -a p3-jcamd-submission -m "P3 JCAMD submission with Zenodo DOI 10.5281/zenodo.19608875"
    git push origin p3-jcamd-submission
    ```

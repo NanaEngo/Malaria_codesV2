@@ -170,7 +170,7 @@ All data and analysis scripts supporting this study are available at Zenodo:
 ### 4.2 Create Git Tags
 
 ```bash
-cd /home/vital/Documents/GitHub/Malaria_codesV2
+cd /home/nanaengo/Malaria_codesV2
 
 # P2
 git tag -a p2-jcim-submission -m "P2 JCIM V2609C submission with Zenodo DOI 10.5281/zenodo.XXXXXXX"

@@ -11,7 +11,7 @@
 
 ```bash
 # 1. Verify package integrity
-cd ~/Documents/GitHub/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/zenodo_package_P3
+cd /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/zenodo_package_P3
 sha256sum -c sha256sums.txt
 # Expected: All files OK ✅
 
@@ -46,7 +46,7 @@ zip -r zenodo_p3_upload.zip zenodo_package_P3/
 ### ✅ Verify Package Structure
 
 ```bash
-cd ~/Documents/GitHub/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/zenodo_package_P3
+cd /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/zenodo_package_P3
 
 # Check all required directories exist
 ls -d data/ results/ scripts/ documentation/
@@ -175,7 +175,7 @@ find zenodo_package_P3/ -type f | wc -l
 
 1. Create ZIP locally:
    ```bash
-   cd ~/Documents/GitHub/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4
+   cd /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4
    zip -r zenodo_p3_upload.zip zenodo_package_P3/
    ```
 2. Upload `zenodo_p3_upload.zip` to Zenodo
@@ -639,7 +639,7 @@ Add Zenodo status to AGENTS.md:
 **After Zenodo DOI verification:**
 
 ```bash
-cd ~/Documents/GitHub/Malaria_codesV2
+cd /home/nanaengo/Malaria_codesV2
 
 # Create P3 release tag
 git tag -a p3-v2609-jcamd -m "P3 V2609 JCAMD revision with Zenodo DOI 10.5281/zenodo.19608875"
@@ -690,7 +690,7 @@ under tested protocols, but quantum methods provide valuable interpretive insigh
 | **Zenodo deposit** | https://zenodo.org/deposit/19608875 |
 | **Published DOI** | https://doi.org/10.5281/zenodo.19608875 |
 | **Zenodo support** | info@zenodo.org |
-| **Package location** | `~/Documents/GitHub/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/zenodo_package_P3/` |
+| **Package location** | `/home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/zenodo_package_P3/` |
 
 ### Essential Commands
 

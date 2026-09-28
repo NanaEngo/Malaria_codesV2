@@ -84,7 +84,7 @@
 
 ### Check P2 Package Structure
 ```bash
-cd /home/vital/Documents/GitHub/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/zenodo_package_P2
+cd /home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/zenodo_package_P2
 
 # List all files
 ls -la
@@ -101,7 +101,7 @@ du -sh .
 
 ### Check P5 Package Structure
 ```bash
-cd /home/vital/Documents/GitHub/Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery_V2609/zenodo_package_P5
+cd /home/nanaengo/Malaria_codesV2/Project5_GNN_Transformer_DrugDiscovery_V2609/zenodo_package_P5
 
 # List all files
 ls -la
