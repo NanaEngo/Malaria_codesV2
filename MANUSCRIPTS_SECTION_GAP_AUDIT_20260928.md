@@ -91,6 +91,7 @@ Aucun des deux manuscrits ne promet de validation expérimentale ; les cadrages 
 | ProLIF / Figure 4 | Données dans le main (§ l.428, Figure 4) ; le SM n'a **pas** de section ProLIF détaillée (occupances par système) | 🟡 | Optionnel : table d'occupances par système en SM pour la réponse aux relecteurs |
 | Réparation PfCRT 114–122 & audit AF3/Boltz (Axis 3) | Présents dans le DAR uniquement ; **absents du SM** (choix assumé witness-only, mais utile en annexe de réponse) | 🟡 | Annexe de réponse aux relecteurs, pas besoin dans le SM soumis |
 | Data availability | DOI Zenodo réservé 10.5281/zenodo.19608875, wording « reserved/future » correct — **l'upload reste à faire** avant soumission | 🟠 | Uploader le package `zenodo_package_P2/` puis basculer le wording en présent public |
+| Conversion ChemRxiv (`ChemRxiv_version/`) | **TROUVÉ 28-09** : la conversion héritée du snapshot racine périmé embarquait la légende P2Rank empoisonnée (`6L9H`, probs 0.94/0.88/0.82/0.91) et les figures synthétiques d'avant-remédiation | 🔴→✅ | **CORRIGÉ 28-09** : `convert_to_chemrxiv.py` réécrit (préambules article figés avec ORCIDs réels + corps réassemblé depuis le canonique ; constructs achemso traduits ; chemins portables) ; Main 15 p. + SM 16 p., 0 erreur / 0 indéfini ; sondes d'intégrité propres (0 `6L9H`, 0.999 présent, keywords, wording ProLIF corrigé) |
 
 ## 5. Conformité transversale (les deux manuscrits)
 

@@ -391,3 +391,11 @@ Duplicate manuscript trees identified and removed from the working tree:
 - `manuscript/README.md` and `README.md` rewritten to declare `manuscript/V2609C/` as the single canonical tree (the root README previously pointed at a now-deleted path).
 
 **Result:** exactly one V2609C directory (`manuscript/V2609C/`); active documentation updated. No unique content was destroyed: every removed path is either byte-identical to a retained copy or retrievable from git history.
+### 12bis. ChemRxiv preprint regeneration from the consolidated canonical tree (28 September 2026)
+
+The `ChemRxiv_version/` conversion inherited from the stale root snapshot carried the poisoned P2Rank legend (`6L9H`, probabilities 0.94/0.88/0.82/0.91) and pre-remediation synthetic figures. The conversion was regenerated from the consolidated canonical tree:
+
+- **`convert_to_chemrxiv.py` rewritten.** Frozen article-class preambles (real ORCID iDs, caption/natbib/hyperref, ORCID icon) + body reassembled from the current canonical ACS sources; achemso constructs translated (`tocentry` dropped, `acknowledgement`/`suppinfo` -> plain sections, `unsrtnat` style injected, `\keywords` re-injected after the abstract). Paths resolved relative to the script (`/home/vital/...` hard-coding removed; Python 3.13 regex-template escapes fixed).
+- **Canonical main fixes required for any build**: `\num{\times}` -> `$\times$` in the ProLIF paragraph (my own 27-09 caption edit introduced a siunitx error in the ACS main; the ChemRxiv probe exposed it) and explicit `hyperref` loading (the achemso conditional load is not guaranteed on this distribution). ACS main now 26 pp., 0 errors / 0 undefined.
+- **Builds**: ChemRxiv Main 15 pp. + SM 16 pp., 0 errors / 0 undefined citations; integrity probes clean (0 `6L9H`, 0.999 present, keywords present, all six PfCRT systems / 100% TYR16 wording propagated, Acknowledgements + Supporting Information sections present).
+- **Note**: four root narrative documents (`AUDIT_MITIGATIONS_P2_20260824.md`, `Bibliography_Paper2.bib.txt`, `IMPLEMENTATIONS_P2_LOG_20260825.md`, `P2_Sugg.md`) disappeared from the working tree outside this session and were restored from HEAD; no content changed.

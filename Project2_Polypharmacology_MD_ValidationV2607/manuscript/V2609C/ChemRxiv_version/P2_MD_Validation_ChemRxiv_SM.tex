@@ -55,17 +55,13 @@
 
 \title{Supporting Information: Estimand Divergence Between Static Docking and Molecular Dynamics as a Triage Filter for Antimalarial Leads}
 
-\author{Myke Vital Sao Temgoua \and Jean-Pierre Tchapet Njafa \and Penabei Samafou \and Fon Wilfred Mbacham \and Serge Guy Nana Engo}
+\author{Myke Vital Sao Temgoua \and Jean-Pierre Tchapet Njafa \and Penabei Samafou \and Wilfred Fon Mbacham \and Serge Guy Nana Engo}
 
 \date{}
 
 \begin{document}
 
-%{\centering\Large\bfseries Supporting Information\\[0.5em]
-%Estimand Divergence Between Static Docking and Molecular Dynamics as a Triage Filter for Antimalarial Leads\par}
-%\vspace{1.5em}
 \maketitle
-
 
 % ============================================================================
 % 1. Docking validation and receptor models
@@ -78,7 +74,7 @@
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/figure_p2rank_boxes.pdf}
-\caption{\textbf{P2Rank pocket prediction vs.\ Vina grid-box alignment.} Pocket probability scores and volumes (\si{\angstrom^3}) for PfDHFR (7F3Y, prob \num{0.94}, vol \qty{845}{\angstrom^3}), PfCRT (6UKJ, prob \num{0.88}, vol \qty{1120}{\angstrom^3}), PfATP4 (6L9H, prob \num{0.82}, vol \qty{960}{\angstrom^3}), and PfClpP (2F6I, prob \num{0.91}, vol \qty{780}{\angstrom^3}).}
+\caption{\textbf{P2Rank pocket prediction vs.\ Vina grid-box alignment.} Top P2Rank pocket probabilities compared with the fixed Vina grid-box centers: PfDHFR (7F3Y, prob \num{0.972}; top pockets \numrange{25.5}{40.1}\,\si{\angstrom} from the box center), PfCRT (6UKJ, prob \num{0.999}; top pocket \qty{5.7}{\angstrom} from the box center --- the sole concordant case, corroborating the docking box), PfATP4 (9N10, prob \num{0.663}; top pockets \numrange{23}{46}\,\si{\angstrom} away, a frame/provenance caveat rather than a refutation), and PfClpP (2F6I, prob \num{0.299}; no Vina grid exists for this receptor). Left panel: top-3 pocket-to-box-center distances; 6UKJ highlighted as concordant. Source: \texttt{results/p2rank\_boxes\_20260827/} (P2Rank 2.5.1 predictions CSV; no volume field is present in the artifact).}
 \label{fig:s4_p2rank_boxes}
 \end{figure}
 
@@ -104,13 +100,13 @@
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/rrs_radar_profiles.pdf}
-\caption{\textbf{Per-target RRS radar profiles.} RRS retention profiles for Class A*, Class B, and Class D candidates.}
+\caption{\textbf{Per-mutant RRS profiles.} Docking RRS per mutant state for representative complete-two-target candidates (PP-01, A*; PP-15, A; PP-07, B; PP-14, D) on the \textit{Pf}DHFR (N51I/C59R/S108N/I164L) and \textit{Pf}CRT (K76T/K76A) channels, from \texttt{c\_rrs\_classification.csv}.}
 \label{fig:s2_rrs_radar}
 \end{figure}
 
-\input{Table_S12_RRS_By_Target.tex}
-
 \input{Table_S11_RRS_Threshold_Sensitivity.tex}
+
+\input{Table_S12_RRS_By_Target.tex}
 
 \noindent Varying the wild-type eligibility threshold from \qty{4.0}{\kcalmol} to \qty{5.0}{\kcalmol} left class counts unchanged. Raising retention thresholds from \qty{70}{\percent}/\qty{80}{\percent} to \qty{80}{\percent}/\qty{90}{\percent} increased Class~D from 1 to 9. These cut-offs are operational triage rules for this panel, not calibrated resistance categories.
 
@@ -118,11 +114,11 @@
 % 4. Network, cohort scope, PNS, estimands, and scope boundaries
 % ============================================================================
 
+\input{Table_S8_Cohort_Estimands.tex}
+
 \input{Table_S9_PNS_Imputation_Sensitivity.tex}
 
 \input{Secondary_Analyses_SI.tex}
-
-\input{Table_S8_Cohort_Estimands.tex}
 
 \input{Table_S13_Evidence_Scope.tex}
 
@@ -184,28 +180,28 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {SEM} & Interpretation \\
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/214_PfCRT_rmsf_contacts.pdf}
-\caption{\textbf{Per-residue RMSF and contact persistence for PfCRT-WT.} (A) Backbone per-residue RMSF (\si{\angstrom}); the Tyr16 anchor region is shaded yellow. (B) Inter-residue contact persistence across the \qty{10}{\ns} trajectory.}
+\caption{\textbf{Parent-study PfCRT-WT (ligand 214) diagnostics.} (A) Per-residue backbone RMSF from the canonical \qty{10}{\ns} trajectory (\texttt{gmx rmsf}; the Tyr16 anchor region is retained in the shaded band). (B) Backbone radius of gyration over the production run. Source: \texttt{results/md\_results/214\_PfCRT\_\{rmsf,gyrate\}.xvg}.}
 \label{fig:s_md_contacts}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/h1_rrs_class_violin.pdf}
-\caption{\textbf{RRS distribution across triage classes.} Violin plot of RRS values for Classes A*, B, C, and D.}
+\caption{\textbf{RRS distribution across triage classes.} Violin plot of per-candidate RRS (pooled available-target estimand, \texttt{c\_rrs\_classification.csv}) for Classes A* ($n=\num{5}$), A ($n=\num{1}$), B ($n=\num{5}$), C ($n=\num{5}$), and D ($n=\num{1}$); black points show individual candidates.}
 \label{fig:s_rrs_violin}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/214_PfCRT_rmsd_panel.pdf}
-\caption{\textbf{PfCRT-WT / Ligand 214 trajectory RMSD diagnostics.} Backbone and ligand heavy-atom RMSD (\si{\angstrom}) over \qty{10}{\ns} production MD.}
+\caption{\textbf{Parent-study PfCRT-WT (ligand 214) backbone RMSD.} Backbone RMSD over the \qty{10}{\ns} production run (mean \qty{0.34}{\nm}, final-window \qty{0.39}{\nm}); the complex remains stable. Source: \texttt{results/md\_results/214\_PfCRT\_backbone\_rmsd.xvg}.}
 \label{fig:s_pfcrt_rmsd_panel}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/438_PfATP4_mdanalysis_rmsd_panel.pdf}
-\caption{\textbf{PfATP4 parameter-conversion anomaly diagnostic.} Trajectory RMSD (\si{\angstrom}) over \qty{10}{\ns} showing steric repulsion from force-field conversion for the multi-chain membrane transporter.}
+\caption{\textbf{Parent-study PfATP4-WT (ligand 438) backbone RMSD.} Backbone RMSD drifts from \qty{\sim 0.3}{\nm} to \qty{\sim 1.5}{\nm} over the \qty{10}{\ns} run, consistent with the documented force-field conversion corruption of the multi-chain membrane transporter (no interpretable MM-GBSA endpoint is claimed for this system). Source: \texttt{results/md\_results/438\_PfATP4\_backbone\_rmsd.xvg}.}
 \label{fig:s_pfatp4_anomaly}
 \end{figure}
 
@@ -264,13 +260,13 @@ The canonical Set-C pilot comprises 16 MM--GBSA endpoints: 12 mutant systems and
 \small
 \caption{PP-01 PfCRT K76A inter-replicate endpoint sensitivity. The canonical endpoint and a second reportable trajectory are shown with their propagated within-trajectory SD and frame-level SEM. The difference is a diagnostic measure of inter-replicate sensitivity, not a confidence interval for affinity or a biological resistance effect.}
 \label{tab:s19_k76a_replicate}
-\scriptsize
+\small
 \begin{tabular}{@{}ll S[table-format=-2.2] S[table-format=1.2] S[table-format=1.2] r@{}}
 \toprule
 Trajectory & Status & {$\Delta G_{\mathrm{bind}}$ (\si{\kcalmol})} & {SD$_{\mathrm{prop}}$} & {SEM} & {Frames} \\
 \midrule
-Canonical trajectory & Reportable, 2026-08-19 & -35.29 & 1.17 & 0.50 & 100 \\
-Diagnostic second trajectory & Reportable; PBC-whole correction & -27.54 & 1.89 & 0.28 & 100 \\
+Canonical & Reportable; 2026-08-19 & -35.29 & 1.17 & 0.50 & 100 \\
+Second (diagnostic) & Reportable; PBC-whole & -27.54 & 1.89 & 0.28 & 100 \\
 \midrule
 \multicolumn{6}{@{}l@{}}{\textbf{Absolute inter-replicate difference: \qty{7.75}{\kcalmol}.}} \\
 \bottomrule
@@ -300,9 +296,9 @@ PfCRT (6UKJ) & -7.81 & PASS; \qty{10}{\ns} complete & -27.79 & 0.49 & \num{1.000
 % 8. Robustness and context
 % ============================================================================
 
-\input{Table_S16_P1_Context.tex}
-
 \input{Table_S15_Robustness_Transfer.tex}
+
+\input{Table_S16_P1_Context.tex}
 
 \input{Table_S17_Multi_Seed_Redocking.tex}
 
@@ -316,17 +312,15 @@ PfCRT (6UKJ) & -7.81 & PASS; \qty{10}{\ns} complete & -27.79 & 0.49 & \num{1.000
 
 \section*{Use of Artificial Intelligence}
 
-During the preparation of this manuscript, the authors utilized AI-based coding assistants to support code review, provide structured text suggestions, and perform consistency checks. The authors designed all analyses, maintained full control over the scientific interpretation, and verified all computational results and quantitative claims against the original source records. The tools do not hold authorship; the authors remain fully accountable for all content in this supporting information.
+During the preparation of this manuscript in September 2026, the authors utilized AI-based coding assistants to support code review, provide structured text suggestions, and perform consistency checks. The authors designed all analyses, maintained full control over the scientific interpretation, and verified all computational results and quantitative claims against the original source records. The tools do not hold authorship; the authors remain fully accountable for all content in this supporting information.
 
 \section*{Acknowledgements}
 
 No AI tool was used to generate unverified scientific content for this supporting information. All quantitative claims were verified by the authors against the source records.
 
-% ============================================================================
-% BIBLIOGRAPHY
-% ============================================================================
-
 \bibliographystyle{unsrtnat}
 \bibliography{P2_V2609C_bibliography}
+
+\end{document}
 
 \end{document}

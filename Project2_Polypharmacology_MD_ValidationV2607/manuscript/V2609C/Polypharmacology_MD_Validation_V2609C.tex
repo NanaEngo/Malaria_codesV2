@@ -7,9 +7,9 @@
 \documentclass[journal=jcisd8,manuscript=article,layout=traditional]{achemso}
 % journal=jcisd8 selects the official ACS/JCIM layout, section-numbering
 % policy (sections unnumbered per JCIM house style), and achemso.bst-based
-% numbered-superscript citation style; hyperref enables colored hyperlinks
-% via achemso's own conditional hyperref loading (do not \usepackage{hyperref}
-% separately -- achemso already requires it internally under this option).
+% numbered-superscript citation style; hyperref is loaded explicitly below
+% (achemso's conditional hyperref loading is not guaranteed across TeX
+% distributions) and must precede cleveref.
 
 % Fonts and encoding
 \usepackage[T1]{fontenc}
@@ -40,7 +40,8 @@
 \DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
 \DeclareSIUnit\barpressure{\mathrm{bar}}
 
-% Cross-referencing - load after achemso/hyperref
+% Cross-referencing - hyperref first, then cleveref (mandatory order)
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage{cleveref}
 % SM cross-refs (labels SM-* live in the supplementary document)
 \usepackage{xr}
@@ -425,7 +426,7 @@ This pattern is consistent with docking limitations for stereochemically complex
 
 The Class-A* lead \textbf{PP-01} illustrates this across its eight-system panel (\cref{SM-tab:s19_pp01_biophysical_audit}). Static docking assigned score penalties to \textit{Pf}DHFR C59R ($RRS = \qty{85.5}{\percent}$) and \textit{Pf}CRT K76T ($RRS = \qty{92.5}{\percent}$), while \qty{10}{\ns} trajectories retained poses (\qty{100}{\percent} QC-PASS, bound fraction \num{1.000}): mean minimum heavy-atom distances \qty{2.91}{\angstrom} (C59R; $\mathrm{MD\text{-}RRS}_d = \qty{98.9}{\percent}$) and \qty{3.02}{\angstrom} (K76T; $\mathrm{MD\text{-}RRS}_d = \qty{102.8}{\percent}$), with MM-GBSA endpoints \qty{-26.56 \pm 1.91}{\kcalmol} (C59R) and \qty{-29.51 \pm 2.65}{\kcalmol} (K76T). This shows geometric pose retention, not thermodynamic resilience proof: the K76A endpoint carries a \qty{7.75}{\kcalmol} inter-replicate sensitivity, so no MM-GBSA-derived resilience claim is made for K76A. Biological resistance conclusions require experimental validation.
 
-ProLIF interaction fingerprints across all 16 QC-PASS trajectories (\num{100} snapshots per system) show a sparse conserved contact network (\cref{fig:prolif_heatmaps}). \textit{Pf}CRT Tyr16 maintained \qty{100}{\percent} contact occupancy in all six PfCRT systems (PP-01/PP-02 \num{\times} WT/K76T/K76A); \textit{Pf}DHFR Asp54, Leu46, Met55, and Ile14 reached full occupancy across the PP-01/PP-02 states. This contact pattern is compatible with pose retention but does not establish a general mechanism.
+ProLIF interaction fingerprints across all 16 QC-PASS trajectories (\num{100} snapshots per system) show a sparse conserved contact network (\cref{fig:prolif_heatmaps}). \textit{Pf}CRT Tyr16 maintained \qty{100}{\percent} contact occupancy in all six PfCRT systems (PP-01/PP-02 $\times$ WT/K76T/K76A); \textit{Pf}DHFR Asp54, Leu46, Met55, and Ile14 reached full occupancy across the PP-01/PP-02 states. This contact pattern is compatible with pose retention but does not establish a general mechanism.
 
 \begin{figure}[htbp]
 \centering

@@ -7,9 +7,9 @@
 \documentclass[journal=jcisd8,manuscript=article,layout=traditional]{achemso}
 % journal=jcisd8 selects the official ACS/JCIM layout, section-numbering
 % policy (sections unnumbered per JCIM house style), and achemso.bst-based
-% numbered-superscript citation style; hyperref enables colored hyperlinks
-% via achemso's own conditional hyperref loading (do not \usepackage{hyperref}
-% separately -- achemso already requires it internally under this option).
+% numbered-superscript citation style; hyperref is loaded explicitly below
+% (achemso's conditional hyperref loading is not guaranteed across TeX
+% distributions) and must precede cleveref.
 
 % Fonts and encoding
 \usepackage[T1]{fontenc}
@@ -40,7 +40,8 @@
 \DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
 \DeclareSIUnit\barpressure{\mathrm{bar}}
 
-% Cross-referencing - load after achemso/hyperref
+% Cross-referencing - hyperref first, then cleveref (mandatory order)
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage{cleveref}
 % SM cross-refs (labels SM-* live in the supplementary document)
 \usepackage{xr}
@@ -206,7 +207,7 @@ No mutant crystal structures were available; homology models were generated with
 
 \subsection{Docking protocol assessment}
 
-The docking protocol follows the upstream library workflow (Supporting Information Table~S16): AutoDock Vina 1.2.7~\citep{vina_2021} with exhaustiveness \num{64} against grids centered on the corrected V2 binding-site coordinates of PfDHFR (7F3Y), PfCRT (6UKJ~\citep{Kim2019PfCRT}), PfATP4 (9N10), and the historically labelled PfClpR/4GM2 entry (not PfClpP). P2Rank~\citep{Krivak2018P2Rank} pocket predictions were compared with the grid centers as a boundary audit of these fixed boxes (\cref{SM-fig:s4_p2rank_boxes}).
+The docking protocol follows the upstream library workflow (Supporting Information Table~S16): AutoDock Vina 1.2.7~\citep{vina_2021} with exhaustiveness \num{64} against grids centered on the corrected V2 binding-site coordinates~\citep{Temgoua2026} of PfDHFR (7F3Y), PfCRT (6UKJ~\citep{Kim2019PfCRT}), PfATP4 (9N10), and the historically labelled PfClpR/4GM2 entry (not PfClpP). The V2 grid specification represents the post-review refinement from the companion study, including the critical PfCRT K76→LYS restoration for wild-type reference state and P2Rank-validated binding-site centers. P2Rank~\citep{Krivak2018P2Rank} pocket predictions were compared with the grid centers as a boundary audit of these fixed boxes (\cref{SM-fig:s4_p2rank_boxes}).
 
 Parent-study enrichment benchmarks (V2 grids) are summarized here and tabulated in full in the Supporting Information (\cref{SM-tab:s1_docking_validation}). On the MMV Malaria Box consensus (Vina+DiffDock), ROC-AUC was \num{0.924} (PfDHFR), \num{0.971} (PfCRT), and \num{1.000} (PfATP4). In contrast, DEKOIS 2.0 enrichment for PfDHFR with Vina alone was null (ROC-AUC \num{0.450}, $\mathrm{EF}_{5\,\%} = \num{0.00}$), indicating that score-based recovery of known actives is protocol- and library-dependent. Redocking was considered accurate when heavy-atom RMSD was $<$ \qty{2.0}{\angstrom} relative to the crystal pose; the MTX redock attempt was a clear failure (RMSD $\approx$ \qty{30}{\angstrom}). AutoDock Vina was used for all reported Set-C scores; GNINA yielded no usable score for this panel. Docking scores are empirical scoring approximations that are sensitive to the scoring function and protocol~\citep{ferreira2023docking,sadybekov2023computational,kittelson2026docking}; they should not be treated as binding free energies.
 
@@ -226,7 +227,7 @@ MPO-weight sensitivity and single-source ADMET-AI predictions were used descript
 
 \subsection{Docking-derived resistance-retention score definition}\label{sec:rrs_formula}
 
-All 17 candidates were docked against each wild-type and mutant structure using AutoDock Vina 1.2.7 with exhaustiveness \num{64}. The 136 systems were ranked with empirical Vina scores rather than calibrated binding free energies. Grid boxes were centered on the co-crystallized ligand position with \qty{25}{\angstrom} dimensions, matching the audited V2 configuration files.
+All 17 candidates were docked against each wild-type and mutant structure using AutoDock Vina 1.2.7 with exhaustiveness \num{64}. The 136 systems were ranked with empirical Vina scores rather than calibrated binding free energies. Grid boxes were centered on the co-crystallized ligand position with \qty{25}{\angstrom} dimensions, matching the audited V2 configuration files~\citep{Temgoua2026}.
 
 For target $t$, let $s_{\mathrm{Vina},i,\mathrm{WT},t}$ and $s_{\mathrm{Vina},i,m,t}$ denote the signed Vina scores. Candidates with $|s_{\mathrm{Vina},i,\mathrm{WT},t}| < \qty{5.0}{\kcalmol}$ are excluded from that target's score-retention analysis. The target-specific resistance-retention score (RRS) is
 \begin{equation}
@@ -281,7 +282,7 @@ These secondary, post-selection comparisons test whether docking-derived RRS ali
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{Graphics/cross_metric_correlation.pdf}
-\caption{\textbf{Cross-metric Spearman correlations.} No significant inter-metric correlation across the primary cohort ($n=\num{12}$; $\rho \in [-0.41, -0.21], p_{\mathrm{adj}} > 0.50$), consistent with distinct ranking dimensions rather than redundant signals.}
+\caption{\textbf{Cross-metric Spearman correlations.} Complete two-target panel ($n=\num{12}$): PNS--RRS $\rho=-\num{0.2098}$, ACSI--RRS $\rho=-\num{0.4056}$, ACSI--PNS $\rho=-\num{0.3007}$, RRS--weakest-WT-anchor $\rho=-\num{0.1661}$; none significant after Bonferroni correction ($p_{\mathrm{adj}} \geq \num{0.51}$; \num{100000} permutations, seed \num{42}). Values from \texttt{cross\_metric\_statistical\_audit.json}.}
 \label{fig:crossmetric}
 \end{figure}
 
@@ -332,7 +333,7 @@ PfATP4 (438)   & \num{420801} & 12.27& 2.13 & 2.25  & 178.4 & 47.7 & Bound \\
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/Figure3_RMSD_Stability.pdf}
-\caption{\textbf{Pose retention and thermal equilibration.} Explicit-solvent RMSD time-series (\qty{10}{\ns}) for \textbf{PP-01} across wild-type and mutant panels. (A) \textit{Pf}DHFR complexes: backbone \qty{1.42 \pm 0.15}{\angstrom} (WT) and \qty{1.55 \pm 0.18}{\angstrom} (N51I); ligand heavy-atom anchoring \qty{0.85 \pm 0.12}{\angstrom}. (B) \textit{Pf}CRT complexes: \qty{2.15 \pm 0.22}{\angstrom} (WT) and \qty{2.28 \pm 0.25}{\angstrom} (K76T); ligand \qty{1.15 \pm 0.14}{\angstrom}. No ligand dissociation (\qty{<3.5}{\angstrom} minimum heavy-atom distance) was observed at single-replicate scope.}
+\caption{\textbf{Pose retention and thermal equilibration (canonical R1 trajectories).} Explicit-solvent backbone (solid) and ligand-after-backbone-fit (dashed/dotted) RMSD time-series (\qty{10}{\ns}) for \textbf{PP-01}, computed with \texttt{gmx rms} (PBC-whole reconstruction; fit group = Backbone; RMS groups = Backbone / MOL\num{0}). (A) \textit{Pf}DHFR: backbone \qty{0.203 \pm 0.024}{\nm} (WT), \qty{0.193 \pm 0.029}{\nm} (N51I); ligand \qty{0.613 \pm 0.240}{\nm} and \qty{0.519 \pm 0.190}{\nm}. (B) \textit{Pf}CRT: backbone \qty{0.241 \pm 0.048}{\nm} (WT), \qty{0.211 \pm 0.039}{\nm} (K76T); ligand \qty{0.357 \pm 0.113}{\nm} and \qty{0.581 \pm 0.155}{\nm}. All trajectories pass the geometric QC gate (mean minimum heavy-atom distance \numrange{2.7}{3.2}\,\si{\angstrom}, bound fraction \num{1.000}); ligand RMSD reflects in-pocket mobility, not dissociation.}
 \label{fig:rmsd_stability}
 \end{figure}
 
@@ -371,7 +372,7 @@ A single-ligand feasibility probe (\textbf{PP-15}, outside the 16-system Set-C M
 
 \begin{table}[htbp]
 \centering
-\caption{Set-C pilot endpoint summaries (exploratory; not used to assign RRS classes). $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots $\pm$ SD$_{\mathrm{prop}}$ (within-trajectory SD, not SEM or replicate-level uncertainty). The PP-01 PfCRT K76A endpoint (\qty{-35.29}{\kcalmol}) carries a \qty{7.75}{\kcalmol} inter-replicate sensitivity (second trajectory \qty{-27.54}{\kcalmol}; Supporting Information) and supports no resilience claim. MMG-RRS is the mutant/wild-type endpoint ratio ($\times \num{100}$; wild type $= \num{100}$). Docking RRS is shown for comparison (n/a: no wild-type docking reference for PP-02 PfDHFR). Single-replicate summaries are within-protocol contrasts only.}\label{tab:mmgbsa_setc}
+\caption{Set-C pilot endpoint summaries (exploratory; not used to assign RRS classes). $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots $\pm$ SD$_{\mathrm{prop}}$ (within-trajectory SD, not SEM or replicate-level uncertainty). The PP-01 PfCRT K76A endpoint (\qty{-35.29}{\kcalmol}) carries a \qty{7.75}{\kcalmol} inter-replicate sensitivity (second trajectory \qty{-27.54}{\kcalmol}; \cref{SM-tab:s19_k76a_replicate}) and supports no resilience claim. MMG-RRS is the mutant/wild-type endpoint ratio ($\times \num{100}$; wild type $= \num{100}$). Docking RRS is shown for comparison (n/a: no wild-type docking reference for PP-02 PfDHFR). Single-replicate summaries are within-protocol contrasts only.}\label{tab:mmgbsa_setc}
 \scriptsize
 \begin{tabular}{@{}l l l S[table-format=-2.2] S[table-format=1.2] S[table-format=3.1] S[table-format=3.2]@{}}
 \toprule
@@ -425,12 +426,12 @@ This pattern is consistent with docking limitations for stereochemically complex
 
 The Class-A* lead \textbf{PP-01} illustrates this across its eight-system panel (\cref{SM-tab:s19_pp01_biophysical_audit}). Static docking assigned score penalties to \textit{Pf}DHFR C59R ($RRS = \qty{85.5}{\percent}$) and \textit{Pf}CRT K76T ($RRS = \qty{92.5}{\percent}$), while \qty{10}{\ns} trajectories retained poses (\qty{100}{\percent} QC-PASS, bound fraction \num{1.000}): mean minimum heavy-atom distances \qty{2.91}{\angstrom} (C59R; $\mathrm{MD\text{-}RRS}_d = \qty{98.9}{\percent}$) and \qty{3.02}{\angstrom} (K76T; $\mathrm{MD\text{-}RRS}_d = \qty{102.8}{\percent}$), with MM-GBSA endpoints \qty{-26.56 \pm 1.91}{\kcalmol} (C59R) and \qty{-29.51 \pm 2.65}{\kcalmol} (K76T). This shows geometric pose retention, not thermodynamic resilience proof: the K76A endpoint carries a \qty{7.75}{\kcalmol} inter-replicate sensitivity, so no MM-GBSA-derived resilience claim is made for K76A. Biological resistance conclusions require experimental validation.
 
-ProLIF interaction fingerprints across all 16 QC-PASS trajectories (\num{100} snapshots per system) show a sparse conserved contact network (\cref{fig:prolif_heatmaps}). \textit{Pf}CRT Tyr16 maintained \qty{100}{\percent} occupancy in five of six mutant trajectories; \textit{Pf}DHFR Leu46/Met55 (PP-01) and Leu40/Ile14 (PP-02) showed near-total persistence across all four mutant states. This contact pattern is compatible with pose retention but does not establish a general mechanism.
+ProLIF interaction fingerprints across all 16 QC-PASS trajectories (\num{100} snapshots per system) show a sparse conserved contact network (\cref{fig:prolif_heatmaps}). \textit{Pf}CRT Tyr16 maintained \qty{100}{\percent} contact occupancy in all six PfCRT systems (PP-01/PP-02 $\times$ WT/K76T/K76A); \textit{Pf}DHFR Asp54, Leu46, Met55, and Ile14 reached full occupancy across the PP-01/PP-02 states. This contact pattern is compatible with pose retention but does not establish a general mechanism.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/Figure4_ProLIF_Heatmaps.pdf}
-\caption{\textbf{Conserved hotspot anchors.} ProLIF interaction fingerprint occupancy (\num{100} snapshots/system). (A) \textit{Pf}CRT Tyr16: \qty{96}{--}\qty{100}{\percent} $\pi$--$\pi$ stacking and hydrophobic persistence across six mutant states; (B) \textit{Pf}DHFR hotspots (Asp54, Leu46, Met55, Ile14): \qty{89}{--}\qty{100}{\percent} persistence across five states.}
+\caption{\textbf{Conserved hotspot anchors.} ProLIF interaction-fingerprint occupancy (\num{100} snapshots/system; hydrophobic, van der Waals, and hydrogen-bond contact types). (A) \textit{Pf}CRT Tyr16 contact occupancy per system: \qty{100}{\percent} in all six PfCRT systems. (B) \textit{Pf}DHFR hotspot contacts (Asp54, Leu46, Met55, Ile14): maximum occupancy across the PP-01/PP-02 states. Source: \texttt{results/prolif\_ifp\_20260827/}.}
 \label{fig:prolif_heatmaps}
 \end{figure}
 
@@ -438,7 +439,7 @@ ProLIF interaction fingerprints across all 16 QC-PASS trajectories (\num{100} sn
 
 RRS, ACSI, and PNS show non-significant pairwise associations on the primary cohort ($n=\num{12}$; $\rho \in [-0.41, -0.21], p_{\text{adj}} > 0.50$; \cref{tab:crossmetric}), consistent with distinct ranking dimensions. Controlling for molecular weight and scaffold frequency gives a moderate partial PNS--RRS association ($\rho_{\mathrm{partial}} = -0.6154$).
 
-STRING threshold sensitivity (confidence cutoffs 400, 700, 900) showed PNS rank stability ($\rho$ \numrange{0.9632}{0.9975}; 400-vs-700 \num{0.9975}, 700-vs-900 \num{0.9681}, 400-vs-900 \num{0.9632}), indicating threshold choice does not alter ranking within this panel — distinct from the PfCRT-centrality imputation sensitivity (Supporting Information).
+STRING threshold sensitivity (confidence cutoffs 400, 700, 900) showed PNS rank stability ($\rho$ \numrange{0.9632}{0.9975}; 400-vs-700 \num{0.9975}, 700-vs-900 \num{0.9681}, 400-vs-900 \num{0.9632}), indicating threshold choice does not alter ranking within this panel — distinct from the PfCRT-centrality imputation sensitivity (\cref{SM-tab:s7_pns_sensitivity}).
 
 Machine learning models degrade on out-of-distribution natural product scaffolds; explicit-solvent MD evaluates dynamic stability without reliance on training distributions, providing a complementary check when model confidence drops.
 
@@ -452,7 +453,7 @@ Within a single-drug--multi-target framing \citep{polypharmacology_malaria_2026}
 
 \begin{enumerate}
     \item \textbf{Receptor models:} mutant structures are homology models (quality criteria in Methods), not experimental structures.
-    \item \textbf{Timescale and replication:} per JCIM guidelines \citep{soares2023mdreport}, the \qty{10}{\ns} single-replicate pilot is a structural stress test, not a converged free energy or residence-time measurement. The PP-01 PfCRT K76A endpoint (\qty{-35.29}{\kcalmol}) differs by \qty{7.75}{\kcalmol} from a second trajectory (\qty{-27.54}{\kcalmol}; Supporting Information), exceeding the \qty{2.01}{\kcalmol} WT noise floor; no endpoint resilience claim is made for K76A.
+    \item \textbf{Timescale and replication:} per JCIM guidelines \citep{soares2023mdreport}, the \qty{10}{\ns} single-replicate pilot is a structural stress test, not a converged free energy or residence-time measurement. The PP-01 PfCRT K76A endpoint (\qty{-35.29}{\kcalmol}) differs by \qty{7.75}{\kcalmol} from a second trajectory (\qty{-27.54}{\kcalmol}; \cref{SM-tab:s19_k76a_replicate}), exceeding the \qty{2.01}{\kcalmol} WT noise floor; no endpoint resilience claim is made for K76A.
     \item \textbf{Sample size:} primary two-target cohort $n=\num{12}$, plus 5 single-target candidates and a 39-ligand external panel.
     \item \textbf{Protonation:} preparations at physiological pH; PfCRT dynamics in the acidic digestive vacuole (pH~\num{5.2}) may differ.
 \end{enumerate}
