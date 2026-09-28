@@ -371,3 +371,11 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
   - Commit `1cb926d95`: `*.zip` added to `.gitignore`; stale top-level `P2_DATA_ANALYSIS_REPORT.md` (27 Aug copy) deleted; canonical DAR at `Project2_.../P2_DATA_ANALYSIS_REPORT.md` retained.
   - Working tree clean. Local `master` aligned with `origin/master` (`e3938fd61` → `1cb926d95`).
 
+## 11. Manuscript audit fixes (28 September 2026)
+
+DAR-to-manuscript coverage audit (`MANUSCRIPTS_SECTION_GAP_AUDIT_20260928.md` at repo root) triggered three V2609C fixes; no canonical value changed:
+
+1. **SM `\input` ordering realigned.** Three intra-section swaps restore ascending file/label order (S11↔S12 in the RRS section; S8→S9 with `Secondary_Analyses_SI.tex` moved after both in the network/estimands section; S15↔S16 in the robustness section). Labels, cross-references, and content unchanged; the file-name ↔ rendered-number mismatch noted in the audit is reduced (remaining label-number drift is historical and resolved by `xr`).
+2. **SM Figure S4 (P2Rank) caption corrected to artifact values.** The previous caption (probabilities 0.94/0.88/0.82/0.91, PDB "6L9H", volumes) contradicted the artifact `results/p2rank_boxes_20260827/` (real top-pocket probabilities: 7F3Y 0.972, 6UKJ 0.999, 9N10 0.663, 2F6I 0.299; no volume field exists in the predictions CSV). The old caption inverted the PfClpP conclusion. New caption states the artifact values, the 5.7 Å PfCRT concordance, and the PfATP4 frame caveat. Main text is number-free on this audit and needed no change.
+3. **Bibliography: companion-preprint citation restored (`Temgoua2026`).** The 15 Sept removal (`temgoua2026chemrxiv`, DOI probe 404) is superseded: the versioned DOI `10.26434/chemrxiv.15007167/v1` now resolves (Crossref API HTTP 200, posted 2026-08-07; the ChemRxiv landing page serves 403 to automated clients, which explains the earlier false negative). Entry re-added under the key cited by main ×2 + Table S0 ×1, with the verification note inline. Builds: main 26 pp. + SM 22 pp., 0 errors / 0 undefined citations; `submission_ACS_P2V2609C/` refreshed (tex, bib, PDFs, bbl).
+
