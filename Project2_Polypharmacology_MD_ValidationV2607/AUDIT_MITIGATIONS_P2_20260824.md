@@ -109,3 +109,18 @@ Recompile main ×2 : err=0, overfull=0 ; PDF 28 pages, pages_with_XObject=7/7, r
 | R3/3 Bootstrap classes | B=10⁴ sur n=17 : A* [0.118,0.529], B [0.118,0.529], C [0.118,0.529], D [0.000,0.176] ; fraction mutants MMG>100 % : 0.667 IC95 [0.417,0.917] ; pas de σ par score (CSV single-score → bootstrap cohorte uniquement, étiqueté honnête) |
 
 Script: `scripts/lightweight_runs_20260825.py`; sorties: `results/lightweight_robustness/{mmgbsa_ddeltaG_pilot.csv, partial_corr_input_table.csv, lightweight_runs_summary.json}`.
+
+---
+
+## Addendum 2026-09-28 — R4 : confrontation rétrospective ChEMBL (partiellement déchargée)
+
+La promesse R4 (IC50 quadruple PfDHFR) n'avait **jamais été appliquée au LaTeX V2609C** (0 occurrence IC50/SPR/MST avant le 28/09). Traitement effectué le 28/09/2026 par confrontation **rétrospective** (Option A) :
+
+- Curation ChEMBL target `CHEMBL1939` : 28 composés avec IC50 WT+quad (24 avec double ; triple complet), souches entières non-isogènes (TM4/8.2 / K1CB1 / Csl-2 / Vl/S) — **ce n'est pas de l'IC50 enzymatique**.
+- Docking 112/112 (Vina 1.2.7, exh. 64, boîte V2, seed 42) ; analyse 3 génotypes : ρ = 0.19/−0.04/−0.13 (p = 0.375/0.853/0.504) ; concordance direction 10/24, 9/28, **8/28** (binomial 0.271/0.044/0.018) ; pyrimethamine (919×) et cycloguanil (145×) mal prédits à tous les génotypes.
+- Lecture honnête : ΔΔG Vina statique ne reproduit **pas** les fold-shifts publiés → cohérent avec DEKOIS AUC 0.45 et la thèse *estimand divergence* ; **ne valide pas les classes RRS** (estimands différents).
+- Insertion V2609C : Methods §« Retrospective confrontation... », Results §« Retrospective comparison... », Discussion ¶ + Limitation 5 + Data Availability ; SM Table S20 ; réf. `zdrazil2024chembl`. Compilation : main 28 p. / SM 22 p., 0 erreur / 0 référence indéfinie (overfull 41.5 pt de fin de document **préexistant** au HEAD, identique).
+- Sorties figées : `results/chembl_r4_validation_20260928/` (inputs+provenance, receptors, ligands, docking_scores.csv, analysis/, manifest.json) ; script `scripts/p2_chembl_r4_validation_20260928.py`.
+- **Reste ouvert (R4 prospectif)** : IC50 enzymatique quad sur matériel PP-01, SPR/MST PfCRT — non fait, bloqué sur matériel composé ; la limitation 5 du manuscrit le déclare explicitement.
+
+Packages `submission_ACS_P2V2609C/` et miroir ChemRxiv **non régénérés** (PDF main/SM modifiés) — régénération à la demande.

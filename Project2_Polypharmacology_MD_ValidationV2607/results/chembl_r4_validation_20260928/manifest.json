@@ -1,0 +1,35 @@
+{
+  "stages": {
+    "build": {
+      "ts": "2026-09-28T16:27:26Z",
+      "script_sha256": "ead86adf4fe6edb2da1794df26a6d434dee0a38d3c77d08580cf79e107747efd",
+      "wt_input": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/set_c_preparation_20260812_v1/PP-01_PfDHFR_WT/receptor_fixed.pdb",
+      "wt_sha256": "4313235be163688c176363a82b0243fb404ba7fd20f519366350228379b4947e",
+      "box": {
+        "center_x": -1.696,
+        "center_y": -6.841,
+        "center_z": -62.139,
+        "size_x": 25.0,
+        "size_y": 25.0,
+        "size_z": 25.0
+      },
+      "exhaustiveness": 64,
+      "seed": 42,
+      "note": "combo mutants built from the paper's WT receptor (chains A+B) by side-chain substitution; no loop modelling, no minimization (ponytail: docking-level model)"
+    },
+    "ligands": {
+      "ts": "2026-09-28T16:20:14Z",
+      "script_sha256": "84963f510f5d96c129f88b6f0e7fd78be5f8c4743b7d9c85d32b092dddac5def",
+      "ok": 28,
+      "failed": []
+    },
+    "dock": {
+      "ts": "2026-09-28T16:54:16Z",
+      "script_sha256": "1cb0b4943a95ad01a53f5bb83b0ad7291ddc8d68e99e64a483dcb5224e2db31f",
+      "n_jobs": 112,
+      "n_scores": 112,
+      "n_failed": 0,
+      "wall_min": 0.0
+    }
+  }
+}
