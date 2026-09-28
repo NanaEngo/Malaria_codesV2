@@ -1,10 +1,10 @@
 # Audit des manquements par section — Manuscrits P1 V8 & P2 V2609C (main + SM/SI)
 
-**Date :** 28 septembre 2026
-**Périmètre :** conformité section par section des deux manuscrits canoniques —
+* **Date :** 28 septembre 2026
+* **Périmètre :** conformité section par section des deux manuscrits canoniques —
 `Project1_Chem_space_antimalarial_V7_CorrectedGrid/submission_ACS_P1V8/` (main 25 p. + SM 17 p.) et
 `Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/` (main 26 p. + SM 19 p.).
-**Méthode :** lecture ciblée des sources `.tex` (sections vérifiées par grep/ligne), croisement avec
+* **Méthode :** lecture ciblée des sources `.tex` (sections vérifiées par grep/ligne), croisement avec
 les DAR (`P1_DATA_ANALYSIS_REPORT.md` V8 ; `P2_DATA_ANALYSIS_REPORT.md` 28-09-2026), les artefacts
 résultats et les exigences éditoriales JCIM/ACS. C'est un audit de **rigueur et de complétude
 documentaire** — il ne remplace ni la relecture auteur ni la revue indépendante.
@@ -18,7 +18,7 @@ documentaire** — il ne remplace ni la relecture auteur ni la revue indépendan
 | Manuscrit | État | Manquements |
 |---|---|---|
 | **P1 V8** (main + SM) | Techniquement solide ; **1 incohérence de cohorte à corriger en SM**, quelques écarts mineurs | 1 🔴 · 3 🟠 · 4 🟡 |
-| **P2 V2609C** (main + SM) | Le plus abouti des deux ; **aucun manquement majeur**, essentiellement de la cosmétique de numérotation SM | 0 🔴 · 2 🟠 · 4 🟡 |
+| **P2 V2609C** (main + SM) | Le plus abouti des deux ; 1 manquement majeur trouvé et corrigé le 28-09 (légende P2Rank contradictoire avec l'artefact), + bib `Temgoua2026` restaurée | 1 🔴✅ · 2 🟠 (1✅) · 4 🟡 |
 
 Aucun des deux manuscrits ne promet de validation expérimentale ; les cadrages honest-negative
 (ADR-0002 côté P2, null-anchoring côté P1) sont correctement appliqués.
@@ -82,7 +82,9 @@ Aucun des deux manuscrits ne promet de validation expérimentale ; les cadrages 
 | Section (ligne) | Constat | Sévérité | Action |
 |---|---|:---:|---|
 | Tables S0–S19 (`\input` l.67–304) | Contenu : validation docking, homology QC, ADMET, ACSI weights, RRS by target, seuils, imputation PNS, cohort estimands, evidence scope, panel scope, K76A réplicat, P1 context, robustness transfer, multi-seed, margin sensitivity, PP-01 biophysical audit — **couverture alignée DAR** | ✅ | — |
-| Ordre des `\input` | L'ordre d'inclusion n'est **pas monotone** (S12 avant S11, S9 avant S8, S16 avant S15, S19 en fin) : la numérotation **rendue** ne correspond plus aux **noms de fichiers** ; les `xr` du main résolvent par label (pas de « ?? »), mais un relecteur qui cherche « Table S15 » par nom de fichier se perdra | 🟠 | Avant resoumission : soit réordonner les `\input` pour réaligner nom fichier ↔ numéro rendu, soit ajouter une table de correspondance en tête de SM |
+| Ordre des `\input` | L'ordre d'inclusion n'est **pas monotone** (S12 avant S11, S9 avant S8, S16 avant S15, S19 en fin) : la numérotation **rendue** ne correspond plus aux **noms de fichiers** ; les `xr` du main résolvent par label (pas de « ?? »), mais un relecteur qui cherche « Table S15 » par nom de fichier se perdra | 🟠→✅ | **CORRIGÉ 28-09** : trois inversions intra-section réordonnées (S11↔S12, S8→S9 avec Secondary_Analyses après les deux, S15↔S16) ; recompilé 0 erreur / 0 indéfini |
+| Légende Figure S4 (P2Rank) | **TROUVÉ 28-09** : la légende affichait prob 0.94/0.88/0.82/0.91 + PDB « 6L9H » + « volumes » — valeurs sans source contredisant l'artefact (`results/p2rank_boxes_20260827/` : 0.972/0.999/0.663/0.299, aucun champ volume dans le CSV) ; pour PfClpP la conclusion était **inversée** | 🔴→✅ | **CORRIGÉ 28-09** : légende réécrite sur les valeurs artefact (concordance PfCRT 5.7 Å, caveat 9N10, pas de grille 2F6I) |
+| Bib `Temgoua2026` | **TROUVÉ 28-09** : clé citée ×3 (main ×2 + Table S0) mais absente de la bib (introduite par la session distante) ; le HOLD du 15-09 était un faux négatif — le DOI versionné `10.26434/chemrxiv.15007167/v1` résout (Crossref 200, posté 07-08) | 🟠→✅ | **CORRIGÉ 28-09** : entrée restaurée avec note de vérification ; main 26 p. + SM 22 p., 0 erreur / 0 indéfini |
 | PP-15 (l.275–281, `tab:s_pp15`) | Section présente : MM-GBSA −29.52 ± 0.33 / −27.79 ± 0.49, multiseed 0.03 kcal/mol, écart 0.04 du score PfCRT WT expliqué honnêtement | ✅ | — |
 | WT replicate consistency (l.250, Table S10) | Offset 2.01 kcal/mol, caveat autocorrélation correct | ✅ | — |
 | ProLIF / Figure 4 | Données dans le main (§ l.428, Figure 4) ; le SM n'a **pas** de section ProLIF détaillée (occupances par système) | 🟡 | Optionnel : table d'occupances par système en SM pour la réponse aux relecteurs |
@@ -105,9 +107,8 @@ Aucun des deux manuscrits ne promet de validation expérimentale ; les cadrages 
 ## Plan d'action priorisé (consolidé)
 
 1. 🔴 **P1 SM l.141** — étiqueter/recalculer la sensibilité cross-métrique (cohorte P1 n = 17 vs stats P2 n = 12). *Effort : 30 min.*
-2. 🟠 **P2 SM** — réaligner l'ordre des `\input` avec la numérotation des tables (ou table de correspondance). *Effort : 1 h + recompile.*
+2. ~~🟠 **P2 SM** — réaligner l'ordre des `\input`~~ **FAIT 28-09** (3 swaps intra-section, recompile 0 erreur) ; **+ fix 🔴 légende P2Rank S4 sur valeurs artefact ; + bib `Temgoua2026` restaurée (DOI ChemRxiv /v1 résout, Crossref 200 — lève le HOLD du 15-09)**.
 3. 🟠 **P2** — upload Zenodo (19608875) + bascule du wording Data Availability. *Effort : 1 h.*
 4. 🟠 **P1** — finaliser funding/ORCID ; citer les artefacts d'ancrage de grilles en SM ; préparer le portage Digital Discovery (template RSC).
 5. 🟡 Cosmétiques : « footprint expanding » (P1 intro), annexes de réponse (25 ns M1, AF3/Boltz, ProLIF par système), vérification Use-of-AI côté P2 au format final.
 
-*Audit généré par Buffy (session du 28-09-2026) ; toutes les vérifications citées sont reproductibles par grep sur les sources listées.*

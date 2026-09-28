@@ -72,7 +72,7 @@
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/figure_p2rank_boxes.pdf}
-\caption{\textbf{P2Rank pocket prediction vs.\ Vina grid-box alignment.} Pocket probability scores and volumes (\si{\angstrom^3}) for PfDHFR (7F3Y, prob \num{0.94}, vol \qty{845}{\angstrom^3}), PfCRT (6UKJ, prob \num{0.88}, vol \qty{1120}{\angstrom^3}), PfATP4 (6L9H, prob \num{0.82}, vol \qty{960}{\angstrom^3}), and PfClpP (2F6I, prob \num{0.91}, vol \qty{780}{\angstrom^3}).}
+\caption{\textbf{P2Rank pocket prediction vs.\ Vina grid-box alignment.} Top P2Rank pocket probabilities compared with the fixed Vina grid-box centers: PfDHFR (7F3Y, prob \num{0.972}; top pockets \numrange{25.5}{40.1}\,\si{\angstrom} from the box center), PfCRT (6UKJ, prob \num{0.999}; top pocket \qty{5.7}{\angstrom} from the box center --- the sole concordant case, corroborating the docking box), PfATP4 (9N10, prob \num{0.663}; top pockets \numrange{23}{46}\,\si{\angstrom} away, a frame/provenance caveat rather than a refutation), and PfClpP (2F6I, prob \num{0.299}; no Vina grid exists for this receptor). Left panel: top-3 pocket-to-box-center distances; 6UKJ highlighted as concordant. Source: \texttt{results/p2rank\_boxes\_20260827/} (P2Rank 2.5.1 predictions CSV; no volume field is present in the artifact).}
 \label{fig:s4_p2rank_boxes}
 \end{figure}
 
@@ -102,9 +102,9 @@
 \label{fig:s2_rrs_radar}
 \end{figure}
 
-\input{Table_S12_RRS_By_Target.tex}
-
 \input{Table_S11_RRS_Threshold_Sensitivity.tex}
+
+\input{Table_S12_RRS_By_Target.tex}
 
 \noindent Varying the wild-type eligibility threshold from \qty{4.0}{\kcalmol} to \qty{5.0}{\kcalmol} left class counts unchanged. Raising retention thresholds from \qty{70}{\percent}/\qty{80}{\percent} to \qty{80}{\percent}/\qty{90}{\percent} increased Class~D from 1 to 9. These cut-offs are operational triage rules for this panel, not calibrated resistance categories.
 
@@ -112,11 +112,11 @@
 % 4. Network, cohort scope, PNS, estimands, and scope boundaries
 % ============================================================================
 
+\input{Table_S8_Cohort_Estimands.tex}
+
 \input{Table_S9_PNS_Imputation_Sensitivity.tex}
 
 \input{Secondary_Analyses_SI.tex}
-
-\input{Table_S8_Cohort_Estimands.tex}
 
 \input{Table_S13_Evidence_Scope.tex}
 
@@ -294,9 +294,9 @@ PfCRT (6UKJ) & -7.81 & PASS; \qty{10}{\ns} complete & -27.79 & 0.49 & \num{1.000
 % 8. Robustness and context
 % ============================================================================
 
-\input{Table_S16_P1_Context.tex}
-
 \input{Table_S15_Robustness_Transfer.tex}
+
+\input{Table_S16_P1_Context.tex}
 
 \input{Table_S17_Multi_Seed_Redocking.tex}
 
