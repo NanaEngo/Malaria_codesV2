@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "status": "JUNCTION_REPAIR_ENSEMBLE_COMPLETED",
+  "created_utc": "2026-08-18T21:58:49.824406+00:00",
+  "method": "restrained OpenMM relaxation (position restraints on core, harmonic C-N restraints at 1.33 A on junctions 113-114 and 122-123; L-BFGS minimize + 2000 steps at 10 K)",
+  "input_graft": "results/md_systems/pfcrt_colabfold_gpu_ensemble_grafted_20260811/graft_audit.json",
+  "counts": {
+    "total": 15,
+    "passing": 15
+  },
+  "selection_rule": "highest mean loop pLDDT (heavy-only) among geometry-passing candidates",
+  "selected_candidate": "candidate_model_03_seed_001",
+  "selected_plddt_heavy": 55.173972602739724,
+  "selected_output_sha256": "6a670e2015df46e9569c7b982c7a28498700c5c95fe17221f6558aa3a062adb8",
+  "scientific_interpretation": "GEOMETRY_REPAIR_WITNESS_ONLY",
+  "boundary": "junction repair only; loop sequence NKKGNSKER preserved; no Set-C, no binding/affinity, no RRS, no mutation study",
+  "candidates": [
+    {
+      "candidate": "candidate_model_01_seed_000",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 44.086575342465764,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.8218152344436707,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_01_seed_000/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_01_seed_001",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 47.53232876712329,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.7516075431524625,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_01_seed_001/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_01_seed_002",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 47.829178082191774,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.7836804974076577,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_01_seed_002/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_02_seed_000",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 46.001643835616434,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.79688466901588,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_02_seed_000/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_02_seed_001",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 45.991917808219185,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.879895705436846,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_02_seed_001/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_02_seed_002",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 46.4472602739726,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.796815906500508,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_02_seed_002/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_03_seed_000",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 54.28753424657535,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.757341971071309,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_03_seed_000/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_03_seed_001",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 55.173972602739724,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.755357381975251,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_03_seed_001/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_03_seed_002",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 55.01931506849315,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.7814494315817977,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_03_seed_002/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_04_seed_000",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 49.260821917808215,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.8287083036052025,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_04_seed_000/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_04_seed_001",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 50.33013698630137,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.7696491130709644,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_04_seed_001/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_04_seed_002",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 50.9886301369863,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.7630911264504308,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_04_seed_002/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_05_seed_000",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 50.14945205479452,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.7074644205677876,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_05_seed_000/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_05_seed_001",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 51.82054794520549,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.7918164912041457,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_05_seed_001/repaired.pdb"
+    },
+    {
+      "candidate": "candidate_model_05_seed_002",
+      "status": "PASS_GEOMETRY",
+      "loop_plddt_mean_heavy_only": 51.012191780821915,
+      "anchor_fit_rmsd_A": null,
+      "min_loop_core_dist_A": 2.8184465142081727,
+      "core_clash_screen_pass": true,
+      "all_peptide_bonds_in_range": true,
+      "sequence_114_122": "NKKGNSKER",
+      "output": "/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_05_seed_002/repaired.pdb"
+    }
+  ]
+}

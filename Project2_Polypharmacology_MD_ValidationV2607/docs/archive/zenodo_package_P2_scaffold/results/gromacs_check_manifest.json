@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "status": "GROMACS_CANONICAL_POLICY_CHECK_PASS",
+  "created_utc": "2026-08-18T22:03:11.055641+00:00",
+  "input_model": "results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_03_seed_001/repaired.pdb",
+  "input_sha256": "6a670e2015df46e9569c7b982c7a28498700c5c95fe17221f6558aa3a062adb8",
+  "forcefield": "charmm36-jul2022 (CHARMM36m), TIP3P",
+  "pdb2gmx": {
+    "rc": 0,
+    "chains": 1,
+    "residues": 359,
+    "atoms_after_h": 5936,
+    "start_terminus": "VAL47 NH2",
+    "end_terminus": "ASN405 COOH",
+    "internal_split": false,
+    "total_charge_e": 11.0,
+    "his_protonation": "HISE for 97, 123, 180, 273",
+    "warning": "net charge (neutralized by ions at solvation step)"
+  },
+  "grompp": {
+    "rc": 0,
+    "maxwarn": 1,
+    "note": "non-zero total charge 11.0 e (standard; ions added during solvation)"
+  },
+  "mdrun_em": {
+    "rc": 0,
+    "converged_steps": 48,
+    "potential_energy_kj_mol": -8743.209,
+    "max_force_kj_mol_nm": 873.19,
+    "error_markers": [],
+    "protocol": "steepest descent, 100 steps, PME, Verlet, no constraints"
+  },
+  "scientific_interpretation": "CANONICAL_POLICY_TOPOLOGY_CHECK_PASS",
+  "boundary": "topology/EM technical check only; not a production MD, not a binding/affinity/RRS result, not Set-C"
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "status": "CANONICAL_MD_WITNESS_PASS",
+  "created_utc": "2026-08-18T22:41:27.999603+00:00",
+  "input_model": "results/md_systems/pfcrt_junction_repair_ensemble_20260818/candidate_model_03_seed_001/repaired.pdb",
+  "input_sha256": null,
+  "forcefield": "charmm36-jul2022 (CHARMM36m), TIP3P, NA/CL 0.15 M",
+  "pipeline": "pdb2gmx -> editconf -> solvate -> genion (neutral, 0.15 M) -> EM -> NVT(100 ps) -> NPT(100 ps)",
+  "system": {
+    "residues": 359,
+    "chains": 1,
+    "water_and_ions": "solvated cubic box (d=1.0 nm), ions added"
+  },
+  "em": {
+    "rc": 0,
+    "converged": true,
+    "note": "see step7_em.out"
+  },
+  "nvt": {
+    "rc": 0,
+    "steps": 50000,
+    "duration_ps": 100,
+    "performance_ns_per_day": 9.92,
+    "temperature_target_k": 310.15
+  },
+  "npt": {
+    "rc": 0,
+    "steps": 50000,
+    "duration_ps": 100,
+    "performance_ns_per_day": 9.69,
+    "temperature_k": {
+      "mean": 310.18,
+      "min": 308.22,
+      "max": 312.24
+    },
+    "pressure_bar": {
+      "mean": -7.24,
+      "min": -284.2,
+      "max": 225.7,
+      "note": "short 100 ps window; fluctuations expected, no divergence"
+    },
+    "density_kg_m3": {
+      "mean": 1020.8,
+      "min": 999.1,
+      "max": 1024.7
+    },
+    "constr_rmsd": "~3e-6 (stable)",
+    "error_markers": 0
+  },
+  "scientific_interpretation": "CANONICAL_POLICY_MD_STABILITY_WITNESS_PASS",
+  "boundary": "technical stability witness only (100 ps NVT + 100 ps NPT); not production MD, not binding/affinity/RRS, not Set-C; pressure equilibration not fully converged in 100 ps"
+}
