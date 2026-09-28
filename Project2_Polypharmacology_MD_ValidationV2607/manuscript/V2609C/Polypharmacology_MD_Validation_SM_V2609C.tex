@@ -98,7 +98,7 @@
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/rrs_radar_profiles.pdf}
-\caption{\textbf{Per-target RRS radar profiles.} RRS retention profiles for Class A*, Class B, and Class D candidates.}
+\caption{\textbf{Per-mutant RRS profiles.} Docking RRS per mutant state for representative complete-two-target candidates (PP-01, A*; PP-15, A; PP-07, B; PP-14, D) on the \textit{Pf}DHFR (N51I/C59R/S108N/I164L) and \textit{Pf}CRT (K76T/K76A) channels, from \texttt{c\_rrs\_classification.csv}.}
 \label{fig:s2_rrs_radar}
 \end{figure}
 
@@ -178,28 +178,28 @@ Ligand & Target & {$\Delta G_{\mathrm{bind}}$} & {SEM} & Interpretation \\
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/214_PfCRT_rmsf_contacts.pdf}
-\caption{\textbf{Per-residue RMSF and contact persistence for PfCRT-WT.} (A) Backbone per-residue RMSF (\si{\angstrom}); the Tyr16 anchor region is shaded yellow. (B) Inter-residue contact persistence across the \qty{10}{\ns} trajectory.}
+\caption{\textbf{Parent-study PfCRT-WT (ligand 214) diagnostics.} (A) Per-residue backbone RMSF from the canonical \qty{10}{\ns} trajectory (\texttt{gmx rmsf}; the Tyr16 anchor region is retained in the shaded band). (B) Backbone radius of gyration over the production run. Source: \texttt{results/md\_results/214\_PfCRT\_\{rmsf,gyrate\}.xvg}.}
 \label{fig:s_md_contacts}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/h1_rrs_class_violin.pdf}
-\caption{\textbf{RRS distribution across triage classes.} Violin plot of RRS values for Classes A*, B, C, and D.}
+\caption{\textbf{RRS distribution across triage classes.} Violin plot of per-candidate RRS (pooled available-target estimand, \texttt{c\_rrs\_classification.csv}) for Classes A* ($n=\num{5}$), A ($n=\num{1}$), B ($n=\num{5}$), C ($n=\num{5}$), and D ($n=\num{1}$); black points show individual candidates.}
 \label{fig:s_rrs_violin}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/214_PfCRT_rmsd_panel.pdf}
-\caption{\textbf{PfCRT-WT / Ligand 214 trajectory RMSD diagnostics.} Backbone and ligand heavy-atom RMSD (\si{\angstrom}) over \qty{10}{\ns} production MD.}
+\caption{\textbf{Parent-study PfCRT-WT (ligand 214) backbone RMSD.} Backbone RMSD over the \qty{10}{\ns} production run (mean \qty{0.34}{\nm}, final-window \qty{0.39}{\nm}); the complex remains stable. Source: \texttt{results/md\_results/214\_PfCRT\_backbone\_rmsd.xvg}.}
 \label{fig:s_pfcrt_rmsd_panel}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/438_PfATP4_mdanalysis_rmsd_panel.pdf}
-\caption{\textbf{PfATP4 parameter-conversion anomaly diagnostic.} Trajectory RMSD (\si{\angstrom}) over \qty{10}{\ns} showing steric repulsion from force-field conversion for the multi-chain membrane transporter.}
+\caption{\textbf{Parent-study PfATP4-WT (ligand 438) backbone RMSD.} Backbone RMSD drifts from \qty{\sim 0.3}{\nm} to \qty{\sim 1.5}{\nm} over the \qty{10}{\ns} run, consistent with the documented force-field conversion corruption of the multi-chain membrane transporter (no interpretable MM-GBSA endpoint is claimed for this system). Source: \texttt{results/md\_results/438\_PfATP4\_backbone\_rmsd.xvg}.}
 \label{fig:s_pfatp4_anomaly}
 \end{figure}
 

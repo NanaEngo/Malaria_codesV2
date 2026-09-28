@@ -281,7 +281,7 @@ These secondary, post-selection comparisons test whether docking-derived RRS ali
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\textwidth]{Graphics/cross_metric_correlation.pdf}
-\caption{\textbf{Cross-metric Spearman correlations.} No significant inter-metric correlation across the primary cohort ($n=\num{12}$; $\rho \in [-0.41, -0.21], p_{\mathrm{adj}} > 0.50$), consistent with distinct ranking dimensions rather than redundant signals.}
+\caption{\textbf{Cross-metric Spearman correlations.} Complete two-target panel ($n=\num{12}$): PNS--RRS $\rho=-\num{0.2098}$, ACSI--RRS $\rho=-\num{0.4056}$, ACSI--PNS $\rho=-\num{0.3007}$, RRS--weakest-WT-anchor $\rho=-\num{0.1661}$; none significant after Bonferroni correction ($p_{\mathrm{adj}} \geq \num{0.51}$; \num{100000} permutations, seed \num{42}). Values from \texttt{cross\_metric\_statistical\_audit.json}.}
 \label{fig:crossmetric}
 \end{figure}
 
@@ -332,7 +332,7 @@ PfATP4 (438)   & \num{420801} & 12.27& 2.13 & 2.25  & 178.4 & 47.7 & Bound \\
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{Graphics/Figure3_RMSD_Stability.pdf}
-\caption{\textbf{Pose retention and thermal equilibration.} Explicit-solvent RMSD time-series (\qty{10}{\ns}) for \textbf{PP-01} across wild-type and mutant panels. (A) \textit{Pf}DHFR complexes: backbone \qty{1.42 \pm 0.15}{\angstrom} (WT) and \qty{1.55 \pm 0.18}{\angstrom} (N51I); ligand heavy-atom anchoring \qty{0.85 \pm 0.12}{\angstrom}. (B) \textit{Pf}CRT complexes: \qty{2.15 \pm 0.22}{\angstrom} (WT) and \qty{2.28 \pm 0.25}{\angstrom} (K76T); ligand \qty{1.15 \pm 0.14}{\angstrom}. No ligand dissociation (\qty{<3.5}{\angstrom} minimum heavy-atom distance) was observed at single-replicate scope.}
+\caption{\textbf{Pose retention and thermal equilibration (canonical R1 trajectories).} Explicit-solvent backbone (solid) and ligand-after-backbone-fit (dashed/dotted) RMSD time-series (\qty{10}{\ns}) for \textbf{PP-01}, computed with \texttt{gmx rms} (PBC-whole reconstruction; fit group = Backbone; RMS groups = Backbone / MOL\num{0}). (A) \textit{Pf}DHFR: backbone \qty{0.203 \pm 0.024}{\nm} (WT), \qty{0.193 \pm 0.029}{\nm} (N51I); ligand \qty{0.613 \pm 0.240}{\nm} and \qty{0.519 \pm 0.190}{\nm}. (B) \textit{Pf}CRT: backbone \qty{0.241 \pm 0.048}{\nm} (WT), \qty{0.211 \pm 0.039}{\nm} (K76T); ligand \qty{0.357 \pm 0.113}{\nm} and \qty{0.581 \pm 0.155}{\nm}. All trajectories pass the geometric QC gate (mean minimum heavy-atom distance \numrange{2.7}{3.2}\,\si{\angstrom}, bound fraction \num{1.000}); ligand RMSD reflects in-pocket mobility, not dissociation.}
 \label{fig:rmsd_stability}
 \end{figure}
 
