@@ -10,7 +10,7 @@
 ### Step 1: Create Conda Environment
 
 ```bash
-cd /home/vital/Documents/GitHub/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML
+cd /home/nanaengo/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML
 
 # Create environment (includes PyTorch, PennyLane, Qiskit, RDKit)
 conda env create -f environment.yml
@@ -311,7 +311,7 @@ conda activate malaria_qml_hybrid
 
 **Solution:**
 ```bash
-cd /home/vital/Documents/GitHub/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML
+cd /home/nanaengo/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML
 python scripts/test_hybrid_implementation.py
 ```
 

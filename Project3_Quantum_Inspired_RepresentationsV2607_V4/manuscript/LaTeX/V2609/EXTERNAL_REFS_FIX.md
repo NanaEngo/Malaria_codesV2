@@ -295,7 +295,7 @@ P3's Response tried to use non-existent labels:
 ## Final Verification Commands
 
 ```bash
-cd ~/Documents/GitHub/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/manuscript/LaTeX/V2609
+cd /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/manuscript/LaTeX/V2609
 
 # Verify main manuscript has labels
 grep "\\\\label{sec:" Paper3_Quantum_InspiredV2609.tex

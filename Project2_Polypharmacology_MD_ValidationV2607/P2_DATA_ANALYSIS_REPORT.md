@@ -1,7 +1,7 @@
 # P2 Data Analysis Report — active summary
 
 **Scope:** Resistance-aware polypharmacology of antimalarial leads (docking-RRS, PNS, ACSI, targeted MD, MM-GBSA, Set-C MD pilot, Estimand Divergence, African NP chemical space).
-**Updated:** 16 September 2026 (§9 array-15840 readout + full HPC coherence audit: multiseed attribution fix, failed-array provenance note; supersedes 15 Sept 2026 checkpoint)
+**Updated:** 28 September 2026 (provenance-gap fix: 28 Aug secondary bootstrap `rrs_polypharma_secondary_20260828` documented + RUN3 class-A interval transcription corrected; supersedes the 16 Sept 2026 header)
 **Root:** `Project2_Polypharmacology_MD_ValidationV2607/`
 
 ## 1. Central question
@@ -237,7 +237,17 @@ Post-processing only (no new MD). Script: `Project2_Polypharmacology_MD_Validati
 
 - **RUN1 — MM-GBSA ΔΔG ± SD (R8).** Mutant-minus-wild-type ΔG per compound+target with propagated SD (√ΣSD²): 12 mutants; **0** show significantly weaker binding at 95% CI; **1** significantly tighter; max |ΔΔG| = 5.37 kcal/mol. Machine-readable table: `mmgbsa_ddeltaG_pilot.csv`. Confirms the retention-not-gain reading of the >100% ratios.
 - **RUN2 — Partial Spearman PNS–RRS controlling MW + Murcko-scaffold prevalence (R9).** n = 12 complete-two-target set: raw ρ(PNS,RRS) = −0.2098 → **partial ρ = −0.6154** after conditioning on molecular weight and scaffold prevalence. The association strengthens under controls ⇒ it is not a size/scaffold artifact. Honest label: companion-study TDA topology values are not available locally; this uses the manuscript's own docking RRS (complete-two-target mean).
-- **RUN3 — Cohort-level bootstrap, B = 10⁴ (R3).** Class-fraction CI95 over n = 17: A* [0.118, 0.529], A [0.118, 0.529], B [0.118, 0.529], C [0.118, 0.529], D [0.000, 0.176]. Fraction of the 12 MMG mutant ratios above 100%: point 0.667, CI95 [0.417, 0.917]. The docking CSV carries a single Vina score per system (no replicate dimension), so no score-level σ exists; only cohort-level resampling is reported, explicitly labeled.
+- **RUN3 — Cohort-level bootstrap, B = 10⁴ (R3).** Class-fraction CI95 over n = 17: A* [0.118, 0.529], A [0.000, 0.176], B [0.118, 0.529], C [0.118, 0.529], D [0.000, 0.176]. *(Correction 28-09-2026: the class-A interval was previously transcribed as [0.118, 0.529]; the artifact value in `lightweight_runs_summary.json` is [0.000, 0.176] — the JSON keys are sorted, so "A" precedes "A*". See the 28 Aug secondary-bootstrap section below.)* Fraction of the 12 MMG mutant ratios above 100%: point 0.667, CI95 [0.417, 0.917]. The docking CSV carries a single Vina score per system (no replicate dimension), so no score-level σ exists; only cohort-level resampling is reported, explicitly labeled.
+
+## RRS/polypharma secondary bootstrap and MD-filter gate (28 August 2026; documented 28-09-2026)
+
+**Provenance gap closed:** the post-processing run `scripts/p2_rrs_polypharma_secondary_20260828.py` (executed 28 Aug 2026) was absent from this DAR, the BMAD summary, and the results README. It is now documented here. Status `COMPUTED_SECONDARY`; boundary recorded in the manifest: secondary post-processing, no canonical value replaced, MD gate pilot-scope only. No manuscript claim is promoted from any of its outputs.
+
+- **Outputs:** `results/rrs_polypharma_secondary_20260828/{secondary_summary.json, md_filter_gate.csv}`; bootstrap B = 10,000, seed 42, 95% CI (plain-Python RNG, distinct stream from the 25 Aug numpy RUN3).
+- **RUN1 — Set-C cohort bootstrap (pooled available-target estimand, `RRS_class`):** class fractions over n = 17: A* 0.294 [0.118, 0.529]; A 0.059 [0.000, 0.176]; B 0.294 [0.118, 0.529]; C 0.294 [0.118, 0.529]; D 0.059 [0.000, 0.176] — consistent with the 25 Aug RUN3 cohort-level bootstrap (hence the RUN3 class-A correction above). Pooled per-mutant retention: N51I 74.71 [67.22, 85.16]; C59R 73.69 [67.38, 82.09]; S108N 75.28 [67.70, 85.80]; I164L 76.77 [68.92, 88.15] (n = 12 each, PfDHFR-eligible); K76T 85.41 [81.00, 90.35]; K76A 86.98 [83.12, 90.90] (n = 17 each). Target means: PfDHFR 75.11 [68.00, 85.27] (n = 12); PfCRT 86.19 [82.43, 90.45] (n = 17). Descriptive only: this pooled estimand is distinct from the primary per-target classification and must not be quoted as a primary result.
+- **RUN1b — external-panel bootstrap:** 39 ligands, mean RRS 100.45 [99.59, 101.34], Class-A fraction 0.974 [0.923, 1.000]. Consistent with the §8 external summary; its bootstrap artifact `external_vs_primary_bootstrap_20260828.json` reports the interval as [99.59, 101.32] — the two runs differ only by RNG stream.
+- **RUN2 — MD-filter retention gate (pilot scope PP-01/PP-02 only):** 12 candidate×target gate rows (docking gate: target-mean RRS ≥ 80; MD gate: pilot MD_RRS_d < 100); 7/12 pass both filters; only PP-01 passes on ≥ 2 targets (PfCRT, PfDHFR) and is labeled "polypharma-promoted" at pilot scope. **Boundary:** this promotion label is a post-hoc exploratory gate concept, not a predeclared estimand, and is used nowhere in the manuscript; the four PP-02 PfDHFR rows have no docking WT reference and fail the docking gate by construction. Full-panel (17 × 8) MD-RRS remains NOT_COMPUTED by design.
+- **Manuscript impact:** none. The class-fraction intervals duplicate the lightweight RUN3 output already in the audit trail (R3); per-target retention CIs are new descriptive context only. No number in the main text, SM, or the tables of this report changes. Guard tests: `tests/test_rrs_polypharma_secondary.py`.
 
 ## Single-system GPU rerun — PP-01_PfCRT_WT replicate_1 (COMPLETE; QC PASS + MM-GBSA, 26 August 2026)
 
@@ -280,7 +290,7 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
 - **HPC Live Daemon (`penavoraserver` / `100.73.21.40`):** Automated runner (`/home/nanaengo/hpc_md_execution.log`) initialized for:
   1. Triplicate MD ($3 \times 10\text{ ns}$) verification on Class-A* lead `PP-01` (`PP-01_PfCRT_WT`, `PP-01_PfCRT_K76T`, `PP-01_PfDHFR_WT`) fulfilling Soares et al. (2023) JCIM 3-replicate guidelines.
   2. PfCRT vacuolar pH 5.2 protonation audit evaluating protonated His97/His53 and ligand basic sites in acidic digestive vacuole conditions.
-- **Synchronization:** Full workspace synchronized to HPC path `/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/`.
+- **Synchronization:** Full workspace synchronized to HPC path `/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/` — *(Topology note 28-09-2026: the workspace and this "HPC path" are the same single tree on penavoraserver; see AGENTS.md §0.)*
 
 ## 7. Submission Audit Refinement & HPC Array 15840 Execution (12 September 2026)
 
@@ -317,7 +327,7 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
   - Pocket RMSD = $0.38\text{ \AA}$ ($< 0.50\text{ \AA}$ threshold).
   - Confirms SWISS-MODEL homology structures and AlphaFold3 predictions are structurally concordant.
 - **Refinement Axis 1 — 50-ns MD Extension Setup (`scripts/p2_md_extension_50ns.sbatch`) — SUPERSEDED & REMOVED 16 Sept 2026:** the script was prepared but **never submitted** (no `p2_md_50ns_*` logs, no `ext50_*` run dirs, no `production_50ns*` files on HPC — the earlier "created and submitted" wording is corrected here). Per the 25 ns-cap decision (§9), the file was deleted (`git rm`; recoverable from git history).
-- **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `bac730b64`), and HPC cluster directory 100% aligned.
+- **Repository Alignment:** Local workspace, GitHub `origin/master` (commit `bac730b64`), and HPC cluster directory 100% aligned — *(single-tree topology; the "local" and "HPC" labels denote the same tree, see AGENTS.md §0)*.
 
 ## 8. Integrity & framing correction (15 September 2026)
 
@@ -361,3 +371,31 @@ Production COMPLETE, QC PASS — MM-GBSA failed (diagnostic below). This run doe
   - Commit `1cb926d95`: `*.zip` added to `.gitignore`; stale top-level `P2_DATA_ANALYSIS_REPORT.md` (27 Aug copy) deleted; canonical DAR at `Project2_.../P2_DATA_ANALYSIS_REPORT.md` retained.
   - Working tree clean. Local `master` aligned with `origin/master` (`e3938fd61` → `1cb926d95`).
 
+## 11. Manuscript audit fixes (28 September 2026)
+
+DAR-to-manuscript coverage audit (`MANUSCRIPTS_SECTION_GAP_AUDIT_20260928.md` at repo root) triggered three V2609C fixes; no canonical value changed:
+
+1. **SM `\input` ordering realigned.** Three intra-section swaps restore ascending file/label order (S11↔S12 in the RRS section; S8→S9 with `Secondary_Analyses_SI.tex` moved after both in the network/estimands section; S15↔S16 in the robustness section). Labels, cross-references, and content unchanged; the file-name ↔ rendered-number mismatch noted in the audit is reduced (remaining label-number drift is historical and resolved by `xr`).
+2. **SM Figure S4 (P2Rank) caption corrected to artifact values.** The previous caption (probabilities 0.94/0.88/0.82/0.91, PDB "6L9H", volumes) contradicted the artifact `results/p2rank_boxes_20260827/` (real top-pocket probabilities: 7F3Y 0.972, 6UKJ 0.999, 9N10 0.663, 2F6I 0.299; no volume field exists in the predictions CSV). The old caption inverted the PfClpP conclusion. New caption states the artifact values, the 5.7 Å PfCRT concordance, and the PfATP4 frame caveat. Main text is number-free on this audit and needed no change.
+3. **Bibliography: companion-preprint citation restored (`Temgoua2026`).** The 15 Sept removal (`temgoua2026chemrxiv`, DOI probe 404) is superseded: the versioned DOI `10.26434/chemrxiv.15007167/v1` now resolves (Crossref API HTTP 200, posted 2026-08-07; the ChemRxiv landing page serves 403 to automated clients, which explains the earlier false negative). Entry re-added under the key cited by main ×2 + Table S0 ×1, with the verification note inline. Builds: main 26 pp. + SM 22 pp., 0 errors / 0 undefined citations; `submission_ACS_P2V2609C/` refreshed (tex, bib, PDFs, bbl).
+4. **Manuscript figures regenerated from artifacts (synthetic-figure remediation).** Two superseded "figure suite" scripts contained **hardcoded/invented data** (invented P2Rank probabilities and a "6L9H" PDB; RMSD time-series generated from exponential/gaussian formulas with `np.random`; an RRS radar with a PfATP4/PfClpP mutant axis that does not exist in the Set-C estimand; a cross-metric matrix with values contradicting the canonical audit JSON) and were writing directly into `manuscript/V2609C/Graphics/`. Actions: both scripts moved to `_archives/deprecated_hardcoded_figures/`; the S4 P2Rank figure regenerated from `results/p2rank_boxes_20260827/out/*_predictions.csv` via `scripts/p2_figure_p2rank_boxes.py`; the S3 scatter regenerated from the pilot CSVs via `scripts/generate_md_dock_rrs_scatter.py`; and a new trusted generator `scripts/p2_regenerate_artifact_figures.py` regenerates the remaining figures from canonical artifacts only: cross-metric bars (`cross_metric_statistical_audit.json`, complete_two_target_12), main RMSD figure from **real `gmx rms` curves** computed on the canonical R1 trajectories (PBC-whole; fit=Backbone; RMS=Backbone/MOL0; outputs in `results/figures/rmsd_real/`: backbone 0.193–0.241 nm, ligand-after-fit 0.357–0.613 nm), violin + per-mutant radar from `c_rrs_classification.csv`, and parent-study 214/438 backbone panels from the real `results/md_results/*.xvg`. Provenance manifest: `results/figures/figure_provenance_20260928.json`. All affected captions rewritten to the artifact values; builds main 26 pp. + SM 21 pp., 0 errors / 0 undefined citations; package refreshed.
+
+## 12. Tree consolidation — single V2609C (28 September 2026)
+
+Duplicate manuscript trees identified and removed from the working tree:
+
+- **Root `V2609C/`** — stale snapshot (12:13 sync; still contained the poisoned `6L9H` P2Rank legend and pre-remediation synthetic figures; the canonical remediated copies superseded it at 13:55–14:10). Its exclusive content was preserved first: `ChemRxiv_version/` (conversion of the same remediated sources), `convert_to_chemrxiv.py`, and 7 fix-log notes were `git mv`-ed into `manuscript/V2609C/`.
+- **`V2609B/` and `manuscript/V2609B/`** — superseded release (55 tracked files each; verified byte-identical); retrievable from git history.
+- **`LaTeX/V2609C/`** — stray stale PDF pair; the tracked `manuscript/LaTeX/V2609C/` PDFs (already deleted in the working tree before the rebase) were purged from the index as well.
+- **Nested `Project2_Polypharmacology_MD_ValidationV2607/` directory** — empty directory skeleton (Aug 27); removed. Also purged: duplicate `P2_Sugg_old.md` (byte-identical to `P2_Sugg.md`), stray root `Polypharmacology_MD_Validation_V2607.pdf/aux/log/out` build artefacts (the PDF was tracked; regenerable from the V2607 archive).
+- `manuscript/README.md` and `README.md` rewritten to declare `manuscript/V2609C/` as the single canonical tree (the root README previously pointed at a now-deleted path).
+
+**Result:** exactly one V2609C directory (`manuscript/V2609C/`); active documentation updated. No unique content was destroyed: every removed path is either byte-identical to a retained copy or retrievable from git history.
+### 12bis. ChemRxiv preprint regeneration from the consolidated canonical tree (28 September 2026)
+
+The `ChemRxiv_version/` conversion inherited from the stale root snapshot carried the poisoned P2Rank legend (`6L9H`, probabilities 0.94/0.88/0.82/0.91) and pre-remediation synthetic figures. The conversion was regenerated from the consolidated canonical tree:
+
+- **`convert_to_chemrxiv.py` rewritten.** Frozen article-class preambles (real ORCID iDs, caption/natbib/hyperref, ORCID icon) + body reassembled from the current canonical ACS sources; achemso constructs translated (`tocentry` dropped, `acknowledgement`/`suppinfo` -> plain sections, `unsrtnat` style injected, `\keywords` re-injected after the abstract). Paths resolved relative to the script (`/home/vital/...` hard-coding removed; Python 3.13 regex-template escapes fixed).
+- **Canonical main fixes required for any build**: `\num{\times}` -> `$\times$` in the ProLIF paragraph (my own 27-09 caption edit introduced a siunitx error in the ACS main; the ChemRxiv probe exposed it) and explicit `hyperref` loading (the achemso conditional load is not guaranteed on this distribution). ACS main now 26 pp., 0 errors / 0 undefined.
+- **Builds**: ChemRxiv Main 15 pp. + SM 16 pp., 0 errors / 0 undefined citations; integrity probes clean (0 `6L9H`, 0.999 present, keywords present, all six PfCRT systems / 100% TYR16 wording propagated, Acknowledgements + Supporting Information sections present).
+- **Note**: four root narrative documents (`AUDIT_MITIGATIONS_P2_20260824.md`, `Bibliography_Paper2.bib.txt`, `IMPLEMENTATIONS_P2_LOG_20260825.md`, `P2_Sugg.md`) disappeared from the working tree outside this session and were restored from HEAD; no content changed.

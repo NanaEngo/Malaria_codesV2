@@ -1,0 +1,59 @@
+{
+  "per_genotype": {
+    "double": {
+      "n_paired": 24,
+      "spearman_rho_log2fold_vs_ddG": 0.1896,
+      "spearman_p": 0.375,
+      "direction_agreement": "10/24",
+      "direction_agreement_fraction": 0.417,
+      "binomial_p_one_sided": 0.2706,
+      "known_dhfr_inhibitors_subset": {
+        "n": 2,
+        "names": [
+          "PYRIMETHAMINE",
+          "CYCLOGUANIL"
+        ],
+        "rho": null,
+        "p": null,
+        "direction_agreement": "0/2"
+      }
+    },
+    "triple": {
+      "n_paired": 28,
+      "spearman_rho_log2fold_vs_ddG": -0.0367,
+      "spearman_p": 0.853,
+      "direction_agreement": "9/28",
+      "direction_agreement_fraction": 0.321,
+      "binomial_p_one_sided": 0.0436,
+      "known_dhfr_inhibitors_subset": {
+        "n": 2,
+        "names": [
+          "PYRIMETHAMINE",
+          "CYCLOGUANIL"
+        ],
+        "rho": null,
+        "p": null,
+        "direction_agreement": "0/2"
+      }
+    },
+    "quad": {
+      "n_paired": 28,
+      "spearman_rho_log2fold_vs_ddG": -0.1317,
+      "spearman_p": 0.5043,
+      "direction_agreement": "8/28",
+      "direction_agreement_fraction": 0.286,
+      "binomial_p_one_sided": 0.0178,
+      "known_dhfr_inhibitors_subset": {
+        "n": 2,
+        "names": [
+          "PYRIMETHAMINE",
+          "CYCLOGUANIL"
+        ],
+        "rho": null,
+        "p": null,
+        "direction_agreement": "0/2"
+      }
+    }
+  },
+  "boundary": "ChEMBL whole-parasite growth IC50 in DHFR-genotyped strains (not enzyme IC50); strains differ in genetic background; descriptive comparison only."
+}

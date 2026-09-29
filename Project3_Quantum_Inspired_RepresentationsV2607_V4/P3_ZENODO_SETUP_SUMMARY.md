@@ -73,7 +73,7 @@ zenodo_package_P3/
 ### Step 1: Verify Package (5 minutes)
 
 ```bash
-cd ~/Documents/GitHub/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/zenodo_package_P3
+cd /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/zenodo_package_P3
 
 # Check all files present
 ls -la
@@ -99,7 +99,7 @@ sha256sum -c sha256sums.txt
 **Alternative if drag-drop doesn't work:**
 ```bash
 # Create ZIP file
-cd ~/Documents/GitHub/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4
+cd /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4
 zip -r zenodo_p3_upload.zip zenodo_package_P3/
 
 # Upload zenodo_p3_upload.zip via Zenodo web interface
@@ -259,7 +259,7 @@ Compile and verify citation works.
 
 ```bash
 # Navigate to package
-cd ~/Documents/GitHub/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/zenodo_package_P3
+cd /home/nanaengo/Malaria_codesV2/Project3_Quantum_Inspired_RepresentationsV2607_V4/zenodo_package_P3
 
 # Verify checksums
 sha256sum -c sha256sums.txt

@@ -191,7 +191,7 @@ Reduction: 43%
 
 ## 🔐 Repository
 
-**Location**: `/home/vital/Documents/GitHub/Malaria_codesV2/Project1_Chem_space_antimalarial_V7_CorrectedGrid`  
+**Location**: `/home/nanaengo/Malaria_codesV2/Project1_Chem_space_antimalarial_V7_CorrectedGrid`  
 **Latest Commit**: 25e46a9a4 (2026-09-09)  
 **Files**: 51 changed, 5161 insertions(+), 292 deletions(-)  
 **Status**: Private (will make public Day 3)

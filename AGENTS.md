@@ -1,13 +1,19 @@
 # AGENTS.md — active project instructions
 
-**Updated:** 16 September 2026
+**Updated:** 17 September 2026
 **Long-form historical instructions:** `docs/archive/md_full_20260812/AGENTS.md`
 
-**P1 SOUMISSION JCIM = V8 (canonical):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/submission_ACS_P1V8/P1_Integrated_Polypharmacology_RRS_Main_V8.tex` (main 25 p.) + `_SM_V8.tex` (17 p.) + cover letter + Response to Reviewers; **package ACS auto-contenu `submission_ACS_P1V8/`**. **V8 supersedes V7** with complete revision updates, response-to-reviewers dossier, comprehensive validation (DEKOIS 2.0 external benchmark, MMV enrichment, redocking RMSD), physicochemical characterization, and enhanced narrative. Compilation V8 : main 25 p., SM 17 p., cover 1 p., response 5 p., 0 erreur / 0 réf. indéfinie ✅ — package révisé et ressoumis sur HPC. **Resoumission REFUSÉE par JCIM le 16 sept. 2026 — en quête d'une nouvelle revue** (piste : RSC Digital Discovery, périmètre criblage haut-débit compatible, DOI Zenodo public disponible).
+**P1 SOUMISSION JCIM = V8 (canonical):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/submission_ACS_P1V8/P1_Integrated_Polypharmacology_RRS_Main_V8.tex` (main 25 p.) + `_SM_V8.tex` (17 p.) + cover letter + Response to Reviewers; **package ACS auto-contenu `submission_ACS_P1V8/`**. **V8 supersedes V7** with complete revision updates, response-to-reviewers dossier, comprehensive validation (DEKOIS 2.0 external benchmark, MMV enrichment, redocking RMSD), physicochemical characterization, and enhanced narrative. Compilation V8 : main 25 p., SM 17 p., cover 1 p., response 5 p., 0 erreur / 0 réf. indéfinie ✅ — package révisé, archivé dans l'arbre unique (voir §0). **Resoumission REFUSÉE par JCIM le 16 sept. 2026 — en quête d'une nouvelle revue** (piste : RSC Digital Discovery, périmètre criblage haut-débit compatible, DOI Zenodo public disponible).
 
-**P2 SOUMISSION JCIM = V2609C (canonical):** `Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/Polypharmacology_MD_Validation_V2609C.tex` (main 26 p.) + `_SM.tex` (19 p.) + cover letter (1 p.); **package ACS auto-contenu `submission_ACS_P2V2609C/`** (PDF + .bbl/.aux + .bib + figures vectorielles). **V2609C supersedes V2609B (12/09/2026)** with *Estimand Divergence* framing (87.5% static vs MD mismatch as a positive triage filter), denominator-unbiased RRS, 39-ligand GNINA CNN validation (100% Class-A agreement), African Natural Product chemical space profiling ($Fsp^3=0.22$, $QED=0.70$, $MPO=0.728$), ethnobotanical mapping, and WHO 2025/2026 regional resistance isolate contextualization. Compilation V2609C : main 26 p., SM 19 p., cover 1 p., 0 erreur / 0 réf. indéfinie ✅ — package techniquement prêt et synchronisé sur HPC (`/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/`).
+**P2 SOUMISSION JCIM = V2609C (canonical):** `Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/Polypharmacology_MD_Validation_V2609C.tex` (main 26 p.) + `_SM.tex` (19 p.) + cover letter (1 p.); **package ACS auto-contenu `submission_ACS_P2V2609C/`** (PDF + .bbl/.aux + .bib + figures vectorielles). **V2609C supersedes V2609B (12/09/2026)** with *Estimand Divergence* framing (87.5% static vs MD mismatch as a positive triage filter), denominator-unbiased RRS, 39-ligand GNINA CNN validation (100% Class-A agreement), African Natural Product chemical space profiling ($Fsp^3=0.22$, $QED=0.70$, $MPO=0.728$), ethnobotanical mapping, and WHO 2025/2026 regional resistance isolate contextualization. Compilation V2609C : main 26 p., SM 19 p., cover 1 p., 0 erreur / 0 réf. indéfinie ✅ — package techniquement prêt, résidant au chemin canonique de l'arbre unique (`/home/nanaengo/Malaria_codesV2/Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/`, voir §0).
 
 **Checkpoint 16 Sept 2026 — P2 V2609C git sync:** Commit `e3938fd61` (182 files) pushed to `origin/master`. Contents: V2609B + V2609C manuscript directories (TeX, PDFs, graphics, bib, submission packages), LaTeX compilation output, 8 updated figure/analysis scripts, and PP-01_PfDHFR_WT replicate 1 — 25ns MD result files (energy, backbone RMSD, ligand RMSD `.xvg` only; 2.8 GB trajectory excluded per `.gitignore`). V2609C package now version-controlled alongside HPC canonical source.
+
+**Checkpoint 17 Sept 2026 — P5 V2609 Digital Discovery claim-calibration:** Commit `46926a4bd` on `master` (**not pushed**). Editorial-only pass applying the unchecked 16-Sept mitigation items to `manuscript/V2609/` (main, SM, DD cover letter) + README/project-tracking sync + operational-log checkpoint: residual `+14.2%` prospective claim removed; "topological rescue" → localized topological complementarity (association-only 1-WL wording); Conformal Triage Filter framed as testable hypothesis; SM SI `calibration_warning` fixed to `batch_ece > ece_threshold`; decile directionality corrected (margin narrows, no reversal); exact `p_adj` range replaces `p<0.001`; SLURM IDs removed; LISH "ceiling" → phenotype-only reference baseline; Declarations env corrected to locked requirements; both provisional bib entries verified against sources (Praski/Adamczyk/Czech arXiv:2508.06199; Chikwaro et al., *All Life* 19(1), 10.1080/26895293.2026.2634576). Recompiled: main 13 p., SM 8 p., DD cover 1 p., 0 erreur / 0 réf. indéfinie. **Remaining author gates:** Zenodo upload + DOI verification (10.5281/zenodo.19608875, reserved — do not present as public); rebuild `submission_package_P5V2609.zip` (contains pre-calibration PDFs); ACSI seed–scaffold mapping check (`P5_THREE_READINGS_20260916.md`); visual PDF read-through; GitHub tag after final approval.
+
+## 0. Topologie d'exécution — arbre unique (clarifié 28-09-2026)
+
+Il n'existe **qu'un seul arbre de travail** : `/home/nanaengo/Malaria_codesV2` sur `penavoraserver` (`100.73.21.40`) — c'est à la fois le poste de travail local et le « HPC » (RTX A4000, GROMACS CUDA) désigné dans les narratives de jobs. Les mentions historiques de « synchronisation locale → HPC » et les chemins obsolètes `/home/vital/Documents/GitHub/Malaria_codesV2` (ancien poste) désignent tous cet arbre unique ; les enregistrements de jobs historiques ne sont pas re-édités. La synchronisation inter-sites passe exclusivement par Git (`origin/master`).
 
 ## 1. Canonical source map
 
@@ -16,7 +22,7 @@
 - **P5 DAR:** `P5_DATA_ANALYSIS_REPORT.md`
 - **Master roadmap:** `P1_P5_RRS_POLYPHARMA_ROADMAP.md`
 - **Document index:** `docs/MD_DOCUMENT_INDEX.md`
-- **P1 V7 (JCIM submission):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/`
+- **P1 V8 (canonical; directory name V7_CorrectedGrid):** `Project1_Chem_space_antimalarial_V7_CorrectedGrid/` — packages `submission_ACS_P1V8/` + `submission_DD_P1V8/`, dépôt Zenodo public 10.5281/zenodo.22696778 (l'ancien workspace V5 a été supprimé de l'arbre ; ses enregistrements restent dans l'historique git)
 - **P2 V2609C (JCIM submission):** `Project2_Polypharmacology_MD_ValidationV2607/manuscript/V2609C/`
 - **P3:** `Project3_Quantum_Inspired_RepresentationsV2607_V4/`
 - **P4:** `Project4_Advanced_Monte_CarloV2607_V2/`
@@ -33,7 +39,7 @@ Read the relevant DAR before changing code, parameters, protocols, or manuscript
 | P2 | **V2609C technically submission-ready (JCIM)** | V2609C enhanced + validated (*Estimand Divergence*, 39-ligand GNINA CNN, African NP chemical space profiling, ethnobotanical mapping), 26 p. main / 19 p. SM / 1 p. cover, package refreshed (`submission_ACS_P2V2609C/`); live HPC triplicate/pH 5.2 daemon active |
 | P3 | **V2609 submission package ready (JCAMD)** | ECFP4 0.9475; hybrid 0.8876; QKS ≈ RBF; no quantum advantage claimed; 18 p. main / 19 p. SM / 11 p. response, package `Project3_Quantum_Inspired_RepresentationsV2607_V4/manuscript/LaTeX/V2609/sn-article-template/P3_V2609_JCAMD_Submission.zip` (3.6 MB, 27 files) |
 | P4 | v12 benchmark complete | Random 0.6724 > MCTS 0.6649; Pareto front is a separate pre-activity artifact; JCAMD manuscript ready |
-| P5 | Benchmark complete | ECFP4-RF dominates under scaffold split; topological fusion is modestly complementary; phenotype-only LISH-MoA baseline complete; JCAMD manuscript ready |
+| P5 | **V2609 DD claim-calibration applied (commit `46926a4bd`); target journal now RSC Digital Discovery** | ECFP4-RF dominates under scaffold split; topological fusion is modestly complementary (descriptive); phenotype-only LISH-MoA baseline complete; remaining gates: Zenodo upload/DOI, package rebuild, ACSI mapping check, visual read |
 | P6 | Planned follow-up | LISH-MoA structure–phenotype study; no molecular arm until a versioned drug_id→SMILES mapping passes audit |
 
 ## 3. Live P2 jobs
@@ -61,7 +67,7 @@ The Set-C pilot has 16 prepared and equilibrated systems (PP-01/PP-02 × PfDHFR/
 
 ## 5. Manuscript and submission boundaries
 
-- **P1 V7 is the designated JCIM submission workspace**; V4/V5/V6 evidence feeds V7 only through the documented integration (validation tables, physicochemical characterization); no silent merging of unlabelled exploratory outputs.
+- **P1 V8 est le manuscrit canonique P1** (ressoumission JCIM refusée le 16 sept. 2026 — nouvelle revue recherchée, piste RSC Digital Discovery) ; il réside dans le répertoire `Project1_Chem_space_antimalarial_V7_CorrectedGrid/` (nom historique). Les couches V4/V5/V6 n'alimentent V8 que par l'intégration documentée (tables de validation, caractérisation physicochimique) ; **le workspace V5 n'existe plus dans l'arbre** (ses enregistrements restent dans l'historique git) ; aucun merging silencieux de sorties exploratoires non étiquetées.
 - **P1 V4 — Remédiation 2F6I/PfClpP TERMINÉE (09-10/08):** 484 = 458 PASS + 1 PENDING (171) + 15 exclusions boron (AD4) + 5 DOCKED_GATE_FAILED + 5 EMBED_FAILURE; artefact `results/pfclpp_2f6i_484_final_accounting.{csv,json}` + dossier prêt-à-signer `PFCLPP_2F6I_484_INDEPENDENT_REVIEW_DOSSIER.md`; registre `PENDING_INDEPENDENT_REVIEW` (réactivation à la demande de l'auteur).
 - **P3 V2609 Springer Nature submission package (JCAMD):** Complete Springer template conversion in `Project3_Quantum_Inspired_RepresentationsV2607_V4/manuscript/LaTeX/V2609/sn-article-template/` with `sn-article.tex` (main 18 p.), `sn-article-SM.tex` (SI 19 p.), `Response_to_Reviewers.tex` (11 p.), bidirectional xr-hyper cross-references, 12 figures, package `P3_V2609_JCAMD_Submission.zip` (3.6 MB, 27 files); **V2609 supersedes V2608** with Springer sn-jnl class compliance, resolved cross-references, complete figure integration, and submission-ready package (16 Sept 2026).
 - P4 manuscript prose must distinguish v12 scalar benchmark from the historical pre-activity Pareto front and must not present Tier 2 QMC diagnostics as validated energies.
@@ -72,7 +78,7 @@ The Set-C pilot has 16 prepared and equilibrated systems (PP-01/PP-02 × PfDHFR/
 
 P1–P5 remain in author-controlled pre-submission development. No administrative or independent-review status blocks scientific work before submission. Provenance, identity, numerical, geometry, runtime, and QC safeguards remain mandatory. Submission does not automatically change this policy; only explicit author instruction may activate submission-facing review gates.
 
-### P1 component status (V7-era snapshot)
+### P1 component status (snapshot V7 — historique ; état canonique : P1 V8, voir `P1_DATA_ANALYSIS_REPORT.md`)
 
 | Composant | Statut | Résultat clé |
 |-----------|:------:|:-------------|
