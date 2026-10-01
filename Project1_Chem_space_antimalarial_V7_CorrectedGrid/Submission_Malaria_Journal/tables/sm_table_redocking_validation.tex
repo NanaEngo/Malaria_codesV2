@@ -1,0 +1,25 @@
+% SM Table: Redocking Validation
+% Generated from V4/V5 validation content, adapted for V8
+% Package refresh: 2026-08-12
+
+\begin{table}[ht!]
+\centering
+\caption{Redocking validation: reproduction of co-crystallized ligand poses. \textit{Redocking assesses whether AutoDock Vina can reproduce experimentally determined binding poses. RMSD \qty{<2.0}{\angstrom} indicates successful pose reproduction. Methotrexate (MTX) failed due to grid center positioning near NADPH cofactor rather than the folate binding site, illustrating target-specific limitations.}}
+\label{tab:sm_redocking_validation}
+\small
+\begin{tabular}{llccp{6cm}}
+\toprule
+\textbf{Target} & \textbf{PDB} & \textbf{Ligand} & \textbf{RMSD (\si{\angstrom})} & \textbf{Result} \\
+\midrule
+PfDHFR & 7F3Y & MTX (methotrexate) & \qty{\sim 30}{\angstrom} & Failed (grid centered on NADPH) \\
+PfDHFR & 7F3Y & P218 (pyrimethamine) & \num{1.42} & Success \\
+PfCRT & 6UKJ & Y01 (proxy ligand) & \num{1.78} & Success \\
+PfClpP & 2F6I & Peptide fragment & \num{1.65} & Success \\
+PfATP4 & 9N10 & ADP (cofactor) & \num{1.23} & Success \\
+\midrule
+\multicolumn{5}{l}{\textit{Success rate: \num{4}/\num{5} alignable ligands (\qty{80}{\percent})}} \\
+\bottomrule
+\multicolumn{5}{p{14cm}}{
+\noindent\textbf{Notes:} Redocking performed using AutoDock Vina with the same grid parameters as virtual screening. RMSD calculated as heavy-atom deviation between top-scoring docked pose and co-crystallized ligand. MTX redocking failed because the grid was centered on the NADPH cofactor binding site (\qty{\sim 12}{\angstrom} from folate pocket), not the MTX binding site; this illustrates target-specific validation requirements. PfCRT Y01 is a membrane-cavity proxy ligand (not a validated inhibitor). Success criterion: RMSD \qty{<2.0}{\angstrom}.}
+\end{tabular}
+\end{table}

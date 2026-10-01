@@ -1,6 +1,6 @@
 % Definition du chemin des styles particuliers
 \makeatletter\def\input@path{
-	{./Chapters/}{./Graphics/}
+	{./Chapters/}{./Graphics/}{./Macros}
 }\makeatother%% Define some paths
 
 \documentclass[12pt,a4paper,oneside,openany]{book}
@@ -12,8 +12,14 @@
 \usepackage{amsmath,amsfonts,amssymb,mathtools,graphicx,textcomp,xcolor,colortbl,color,
 	caption,floatrow,hyperref,geometry,enumerate,fancyhdr,multirow,here,longtable,
 	csquotes,setspace,physics,svg,array, here, textalpha, tabularx, lscape}
-	
+
 \usepackage{cleveref}
+\crefname{chapter}{Chapter}{Chapters}
+\Crefname{chapter}{Chapter}{Chapters}
+\crefname{section}{Section}{Sections}
+\Crefname{section}{Section}{Sections}
+\crefname{subsection}{Section}{Sections}
+\Crefname{subsection}{Section}{Sections}
 \usepackage[affil-it]{authblk}
 
 \usepackage{pgfkeys,tikz,tikzpagenodes,booktabs}
@@ -28,6 +34,14 @@
 \bibliography{Bib_thesis_SAO.bib}
 % Pour la gestion des chiffres et unités
 \usepackage[detect-all=true, group-minimum-digits=4]{siunitx}
+% Le package physics définit \qty comme un délimiteur extensible. siunitx recommande
+% ce renommage pour rendre \qty{nombre}{unité} opérationnel dans les chapitres de résultats.
+\AtBeginDocument{\RenewCommandCopy\qty\SI}
+% Unités additionnelles utilisées dans le chapitre de résultats
+\DeclareSIUnit{\kcalmol}{kcal\,mol^{-1}}
+\DeclareSIUnit{\ang}{\text{\AA}}
+\DeclareSIUnit{\ns}{ns}
+\DeclareSIUnit{\gmol}{g\,mol^{-1}}
 
 % Pour la gestion des légendes des tableaux et figures
 \usepackage[labelfont=bf,textfont={footnotesize,it}]{caption}

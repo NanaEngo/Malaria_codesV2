@@ -2,7 +2,23 @@
 **Title:** Quantum Machine Learning Approach for Malaria Drug Discovery  
 **Author:** Vital SAO TEMGOUA  
 **Target:** 150 pages  
-**Current:** 54 pages (36.0% complete) ← **Updated after Chapter 2 enhancement**
+**Current:** 76 pages (50.7% complete) ← **Updated after Chapter 3 results integration (28 Sept 2026)**
+
+> **Chapter rebalance checkpoint (29 Sept 2026):** Chapters equalized at 24 pp each after the introduction restructure (Ch1: 1–24, Ch2: 25–48, Ch3: 49–72; document 96 pp). Additions were genuine content, not padding: Ch2 gained external-data versioning, the Wilson-interval rationale, the PNS formal definition (Eq. 2.x), and a Conclusion section (§2.9) on the Mbokop closing pattern; Ch3 gained the V2609C operational-guidance rules for resistance-aware triage (placed under §3.3 Resistance-aware scoring, where they belong) and a numbered Conclusion (§3.7). One residual "four projects" phrase fixed. Build: 96 pages, 0 errors, 0 undefined references.
+
+> **Introduction structure checkpoint (29 Sept 2026):** Manuscript restructured on the Mbokop thesis model (`ThèseMbokop_V260112/Mbokop_ThesisV2509.tex`). General Introduction now follows the six-section pattern (Background of the study / Statement of the problem / Research questions / Aim and objectives / Significance / Organization of the thesis + Overview of the thesis argument), all in TOC. The previous narrative became the Background section; three new problem statements (representational, evaluative, resistance-aware) and five research questions were authored. Every chapter now opens with a numbered Introduction section with an explicit `\Cref`-based roadmap (1.1, 2.1, 3.1); the previously empty Chapter 1 introduction was written. Five hardcoded "Section X.Y.Z" references replaced with labelled `\Cref` cross-references; seven section labels added to Ch2, five to Ch3. cleveref chapter/section names configured in the preamble. Build: 94 pages, 0 errors, 0 undefined references.
+
+> **Terminology + equalization checkpoint (29 Sept 2026):** (1) All "Project N" / standalone "PN" references removed from the manuscript body (Gen_intro, chap_lit_rev, chap_to_met, chap_res_dis); studies are now referred to descriptively (chemical-space study, resistance-scoring study, representation study, learned-representation study, quantum machine learning programme). (2) Three companion-study ChemRxiv DOIs added to `Bib_thesis_SAO.bib` and cited in Chapter 1: `Temgoua2026Grids` (10.26434/chemrxiv.15006437/v2), `Temgoua2026Topological` (10.26434/chemrxiv.15007167/v1), `Temgoua2026Pareto` (10.26434/chemrxiv.15007306/v1); 12 methodology references also added (Bickerton QED, SYBA, Ertl NPL, DiffDock, SWISS-MODEL, ProLIF, STRING, GROMACS, CHARMM36m, gmx_MMPBSA, MDAnalysis, ETKDG/RDKit). (3) Chapter 2 expanded 13→22 pages with genuinely missing methods content (prioritisation-term declarations, DiffDock consensus estimator, multi-seed + perturbation audits, PfCRT K76 restoration rationale, candidate selection cascade, estimand architecture + reference controls, eligibility-rule rationale, PNS robustness checks, conformer governance, kernel diagnostic hierarchy, MD cohort table, MM-GBSA decomposition + noise floor, ProLIF contact-level complement, label provenance, cohort chemical-space characterisation, compute environment + software table, enrichment-ceiling mechanics, conformal calibration + distance-aware triage rule, power analysis, hyperparameter governance, uncertainty taxonomy + formal test mechanics, claim-ledger convention, docking/MD/RRS-class summary tables). Chapter spans now equalized: Ch1 22 pp (1–22), Ch2 22 pp (24–45), Ch3 23 pp (46–68); total document 90 pp. Build: 0 errors, 0 undefined references, `git diff --check` clean.
+
+> **V2609C figure refresh (29 Sept 2026):** Three P2 thesis figures were stale pre-V2609C versions and have been replaced with the canonical V2609C assets (checksums verified): `p2_rmsd_stability.pdf` ← `Figure3_RMSD_Stability.pdf` (nm axes, canonical R1 labels), `p2_prolif_heatmaps.pdf` ← `Figure4_ProLIF_Heatmaps.pdf` (canonical hotspot panels), `p2_cross_metric_correlation.pdf` ← `cross_metric_correlation.pdf` (declared 4-pair chart, replaces old 8×8 heatmap). RMSD and cross-metric captions rewritten to match; ProLIF caption already canonical.
+
+> **V2609C integration checkpoint (29 Sept 2026):** Chapter 3 P2 section realigned to the canonical P2 manuscript `Project2_.../manuscript/V2609C/`: corrected PP-01 RMSD figure-caption values (backbone/ligand in Å from canonical R1), corrected ProLIF caption (Tyr16 100% occupancy in 5/6 PfCRT systems; Asp54/Leu46/Met55/Ile14 hotspots), added the 16-system Set-C MM-GBSA endpoint table (SD_prop convention) + PP-01 biophysical audit paragraph, added the retrospective ChEMBL genotype–phenotype fold-shift confrontation (28 compounds, ρ −0.13..0.19, direction agreement 28.6–41.7%), added the GNINA near-degenerate-agreement caveat, and added STRING-threshold (400/700/900) and ACSI ±20% weight sensitivity. Chapter 2 methods gained: GNINA/QuickVina cross-scoring subsection, retrospective ChEMBL confrontation protocol, and the MD-RRS_d distance-ratio definition. Chapter 1 lit review updated with estimand-divergence framing. P5 sections verified already claim-calibrated (commit 46926a4bd).
+
+> **Scope note (28 Sept 2026):** The thesis now covers **five projects: P1, P2, P3, P5, P7**.
+> P4 (MCTS/Pareto multi-objective optimization) and P6 (LISH-MoA phenotype baseline) have been
+> removed from the manuscript — their results already belong to companion publications and must not
+> be re-used here. P7 (true QML via QMSE) is in scope with framing only; its methods and results
+> sections are yet to be written and its status remains NOT_COMPUTED until canonical runs exist.
 
 ## Thesis Structure
 
@@ -56,14 +72,14 @@ PhD_SAO_V250404.tex (Main File)
 │   │
 │   ├── 8. Generative Models ✅ NEW SECTION
 │   │   ├── 8.1 VAEs and GANs
-│   │   └── 8.2 RL and multi-objective optimization (P4)
+│   │   └── 8.2 RL and multi-objective optimization
 │   │
 │   ├── 9. Integration of Workflows ✅ NEW SECTION
 │   │   ├── 9.1 Validation cascades
 │   │   └── 9.2 Prospective vs retrospective validation
 │   │
 │   └── 10. Conclusions and Future Perspectives ✅ NEW SECTION
-│       └── Comprehensive synthesis of all P1–P6 findings
+│       └── Comprehensive synthesis of P1–P3, P5, and P7 findings
 │
 ├── Chapter 2: Tools and Methods (~40 pages) ✅ **ENHANCED**
 │   ├── chap_to_met.tex (850 lines, comprehensive)
@@ -99,31 +115,40 @@ PhD_SAO_V250404.tex (Main File)
 │   │   │   ├── Graph Isomorphism Networks (GIN)
 │   │   │   └── Transformer architectures
 │   │   │
-│   │   ├── 2.7 Multi-Objective Optimization (P4)
-│   │   │   ├── Monte Carlo Tree Search (MCTS)
-│   │   │   ├── Pareto front construction
-│   │   │   └── Hypervolume metric
-│   │   │
-│   │   └── 2.8 Statistical Validation (All projects)
+│   │   └── 2.7 Statistical Validation (All projects)
 │   │       ├── Cross-validation protocols
 │   │       ├── Performance metrics (ROC-AUC, EF1%)
 │   │       └── Multiple hypothesis testing
 │   │
 │   └── Delivered: 11 pages (comprehensive 8-section methodology)
 │
-├── Chapter 3: Results and Discussion (~50 pages) ⏳ TO ENHANCE
+├── Chapter 3: Results and Discussion (~21 pages so far) ✅ **CANONICAL RESULTS INTEGRATED**
 │   ├── chap_res_dis.tex
 │   │
-│   ├── Suggested Enhancements:
-│   │   ├── P1: Chemical space results + figures
-│   │   ├── P2: RRS classification + MD validation
-│   │   ├── P3: Quantum descriptor benchmarks
-│   │   ├── P4: Multi-objective optimization results
-│   │   ├── P5: GNN vs classical fingerprint comparison
-│   │   ├── Cross-project analysis
-│   │   └── Detailed discussion of implications
+│   ├── Implemented Sections ✅:
+│   │   ├── 3.1 Chemical space construction and target-anchored docking
+│   │   │   ├── Scaffold-guided expansion (novelty vs scaffold recovery)
+│   │   │   ├── Four-target docking profile + protocol validation
+│   │   │   └── Mutation resilience, joint prioritization, cross-metrics
+│   │   ├── 3.2 Resistance-aware scoring and the static-to-dynamic estimand
+│   │   │   ├── Cohort scope, class counts, threshold sensitivity
+│   │   │   ├── Estimand divergence (7/8 matched mutant states)
+│   │   │   ├── Parent-study MD stability and MM-GBSA feasibility
+│   │   │   └── Interaction-fingerprint hotspots
+│   │   ├── 3.3 Quantum-inspired and topological representations
+│   │   │   ├── Scaffold-paradox decomposition (H0/H1)
+│   │   │   ├── Tensor-network compression and information retention
+│   │   │   ├── Activity benchmark + hybrid ablation
+│   │   │   ├── Quantum kernel vs tuned RBF
+│   │   │   ├── ECFP4-inclusive fusion and ChEMBL transfer
+│   │   │   └── Scaffold-grouped re-evaluation + TDA/docking cross-link
+│   │   ├── 3.4 Learned representations under chemical distribution shift
+│   │   │   ├── Three partition families (random / scaffold / Butina)
+│   │   │   ├── Distance-resolved deficit + structural cohorts
+│   │   │   └── Topological salience and metric degeneracy
+│   │   └── 3.5 Synthesis: the comparison standard for Project 7
 │   │
-│   └── Target: 50 pages
+│   └── Target: 50 pages (remaining: expanded discussion, P7 methods/results)
 │
 ├── General Conclusion (~5 pages) ⏳ TO ENHANCE
 │   └── Gen_con.tex
@@ -150,21 +175,20 @@ PhD_SAO_V250404.tex (Main File)
 │  │ P1: Chemical space (65,856 mol, 4 targets)          │   │
 │  │ P2: RRS + polypharmacology (17 candidates)          │   │
 │  │ P3: Quantum descriptors (QKS ≈ RBF)                 │   │
-│  │ P4: MCTS + Pareto (honest-negative)                 │   │
 │  │ P5: GNN < ECFP4 (scaffold split)                    │   │
-│  │ P6: LISH-MoA phenotype baseline                     │   │
+│  │ P7: True QML via QMSE (framing; NOT_COMPUTED)       │   │
 │  └──────────────────────────────────────────────────────┘   │
 │                                                              │
 │  Chapter 2 (Methods) ⏳                                       │
 │  ┌──────────────────────────────────────────────────────┐   │
-│  │ Detailed protocols for P1-P6                         │   │
+│  │ Detailed protocols for P1-P3, P5, P7                 │   │
 │  │ Docking/MD/ML/QML methodologies                      │   │
 │  │ Statistical frameworks                               │   │
 │  └──────────────────────────────────────────────────────┘   │
 │                                                              │
 │  Chapter 3 (Results) ⏳                                       │
 │  ┌──────────────────────────────────────────────────────┐   │
-│  │ Comprehensive P1-P6 results                          │   │
+│  │ Comprehensive P1-P3/P5 results + P7 framing          │   │
 │  │ Figures, tables, statistical analyses               │   │
 │  │ Cross-project comparisons                            │   │
 │  └──────────────────────────────────────────────────────┘   │
@@ -178,18 +202,18 @@ PhD_SAO_V250404.tex (Main File)
 |-----------|---------|--------|--------|
 | Front Matter | 5 | 5 | ✅ Complete |
 | General Intro | 3 | 5 | ⏳ Review needed |
-| **Chapter 1** | **~11** | **30-35** | ✅ **Complete** |
-| **Chapter 2** | **~11** | **40** | ✅ **Complete** |
-| Chapter 3 | ~5 | 50 | ⏳ **Needs enhancement** |
+| **Chapter 1** | **~15** | **30-35** | ⏳ Aligned to canonical values |
+| **Chapter 2** | **~15** | **40** | ⏳ Aligned to canonical protocols |
+| Chapter 3 | ~21 | 50 | ⏳ **Canonical results integrated; expansion pending** |
 | General Conclusion | ~2 | 5 | ⏳ Expand |
 | Bibliography | 0 | 15 | ⏳ Compile needed |
 | Appendices | 0 | 5-10 | 📋 Optional |
-| **TOTAL** | **43** | **150** | **28.7% complete** |
+| **TOTAL** | **76** | **150** | **50.7% complete** |
 
 ## Enhancement Roadmap to 150 Pages
 
 ### ✅ Phase 1: Chapter 1 Enhancement (COMPLETE)
-- [x] Integrate P1–P6 findings
+- [x] Integrate P1–P3, P5 findings (P7 framing only)
 - [x] Add computational methods sections
 - [x] Add molecular representations section  
 - [x] Add generative models section
@@ -208,34 +232,55 @@ Detailed methodology sections for:
 - [ ] P2: RRS computation methodology
 - [ ] P3: Quantum descriptor calculation (QKS, TFP, TNE)
 - [ ] P3: Machine learning protocols (ECFP4, RF, hybrid models)
-- [ ] P4: MCTS implementation (reward functions, tree search)
-- [ ] P4: Pareto optimization methodology
+- [ ] P7: QMSE/BondFeatureMap methods section (to be written; framing only for now)
 - [ ] P5: GNN architectures (GIN, ChemBERTa implementation)
 - [ ] P5: Training protocols (scaffold splits, cross-validation)
 - [ ] Statistical analysis frameworks
 - [ ] Validation methodologies
 
-### ⏳ Phase 3: Chapter 3 Enhancement (HIGH PRIORITY)
-**Target:** +45 pages (78 → 123 pages total)
+### ✅ Phase 3a: Chapter 3 canonical results integration (COMPLETE, 28 Sept 2026)
+- [x] P1 results: expansion statistics, four-target docking validation, RRS classes, cross-metrics
+- [x] P2 results: class counts, threshold sensitivity, estimand divergence, MD stability, ProLIF
+- [x] P3 results: scaffold paradox, TNE compression/regression, benchmark + ablation, quantum kernel, fusion, transfer, scaffold-grouped re-evaluation, TDA cross-link
+- [x] P5 results: three partition families, distance-resolved deficit, structural cohorts, salience
+- [x] Cross-project synthesis + Project 7 comparison standard (framing only)
+- [x] Figures/tables harvested from canonical project directories (see inventory below)
+- [x] Chapter 1 and Chapter 2 realigned to canonical protocols and values
 
-Comprehensive results presentation:
-- [ ] P1 results: Chemical space analysis, docking campaigns
-  - Tables: Top candidates, binding affinities
-  - Figures: Chemical space visualizations, docking poses
-- [ ] P2 results: RRS classification, MD validation
-  - Tables: 17-candidate RRS classification (A*:6, B:5, C:5, D:1)
-  - Figures: Correlation plots (PNS-RRS, ACSI-RRS)
-  - MD trajectory analyses
-- [ ] P3 results: Descriptor benchmarks
-  - Tables: AUC comparison (ECFP4, Hybrid, QKS, TFP, TNE)
-  - Figures: ROC curves, ablation studies
-- [ ] P4 results: Multi-objective optimization
-  - Tables: Benchmark comparisons (MCTS vs Random vs GA)
-  - Figures: Pareto fronts, reward landscapes
-- [ ] P5 results: GNN vs classical comparison
-  - Tables: Scaffold split performance
-  - Figures: Learning curves, external validation
-- [ ] Cross-project analysis and synthesis
+### ⏳ Phase 3b: Chapter 3 expansion (remaining ~29 pages)
+- [ ] Full per-mutant and per-target supplementary tables
+- [ ] Extended discussion of ensemble retention and label-source limits
+- [ ] Project 7 methods and results (NOT_COMPUTED; framing only until canonical runs exist)
+
+## Chapter 3 figure and table inventory (harvested 28 Sept 2026)
+
+All assets were copied from the canonical project directories into `My_PhD_Thesis/Graphics/`.
+
+| Thesis asset | Source | Project |
+|---|---|---|
+| `p1_v7_chemical_space_coverage.pdf` | `.../Submission_JCAMD/Graphics/` | P1 |
+| `p1_v7_targetwise_profile_summary.pdf` | `.../Submission_JCAMD/Graphics/` | P1 |
+| `p1_v7_rrs_mutation_profiles.pdf` | `.../Submission_JCAMD/Graphics/` | P1 |
+| `p1_v7_exploratory_metric_relationships.pdf` | `.../Submission_JCAMD/Graphics/` | P1 |
+| `p2_workflow.pdf` (from `p2_preview-1.pdf`) | `V2609C/Graphics/` | P2 |
+| `p2_rmsd_stability.pdf` | `V2609C/Graphics/` | P2 |
+| `p2_prolif_heatmaps.pdf` | `V2609C/Graphics/` | P2 |
+| `p2_cross_metric_correlation.pdf` | `V2609C/Graphics/` | P2 |
+| `p3_scaffold_paradox.pdf` | `manuscript/LaTeX/Graphics/` | P3 |
+| `p3_persistence_diagrams.pdf` | `manuscript/LaTeX/Graphics/` | P3 |
+| `p3_tensor_compression.pdf` | `manuscript/LaTeX/Graphics/` | P3 |
+| `p3_tne_regression_summary.png` | `manuscript/LaTeX/Graphics/` | P3 |
+| `p3_qkernel_benchmark.pdf` (from `applicability_domain.pdf`) | `manuscript/LaTeX/Graphics/` | P3 |
+| `p3_extval_internal_vs_external.png` | `manuscript/LaTeX/Graphics/` | P3 |
+| `p3_tda_promiscuity.png` | `manuscript/LaTeX/Graphics/` | P3 |
+| `p3_h1_rrs_violin.png` | `manuscript/LaTeX/Graphics/` | P3 |
+| `p5_auc_benchmark.png` | `manuscript/V2609/figures/` | P5 |
+| `p5_structural_complexity.png` | `manuscript/V2609/figures/` | P5 |
+| `p5_salience.png` | `manuscript/V2609/figures/` | P5 |
+
+Tables authored natively in Chapter 3 from the canonical result tables: P1 docking validation,
+P1 per-candidate RRS classes, P2 MD stability metrics, P3 activity benchmark and hybrid ablation,
+P5 three-partition benchmark, P5 structural-complexity cohorts.
 
 ### ⏳ Phase 4: Supporting Components
 **Target:** +20 pages (123 → 143 pages total)
@@ -263,7 +308,7 @@ Comprehensive results presentation:
 ## Key Accomplishments (Chapter 1)
 
 ### Scientific Integrity Maintained
-- ✅ **Honest-negative reporting:** P3, P4, P5 null/negative results presented transparently
+- ✅ **Honest-negative reporting:** P3 and P5 null/negative results presented transparently
 - ✅ **Provenance boundaries:** Computational predictions clearly distinguished from experimental validation
 - ✅ **No fabrication:** All numbers from canonical DARs
 - ✅ **No overclaiming:** Quantum advantage not claimed; GNN limitations acknowledged
@@ -278,7 +323,7 @@ Comprehensive results presentation:
 ### Technical Quality
 - ✅ **LaTeX compilation:** 0 fatal errors
 - ✅ **Cross-references:** All labels resolved
-- ✅ **Figure integration:** References to existing P1-P6 figures
+- ✅ **Figure integration:** References to existing P1–P3/P5 figures
 - ✅ **Table references:** Citations to canonical result tables
 
 ## Timeline Estimate for Completion
@@ -315,12 +360,12 @@ Comprehensive results presentation:
    pdflatex PhD_SAO_V250404.tex
    ```
 
-2. **Chapter 2 enhancement:** Begin integrating P1–P6 methodologies
+2. **Chapter 2:** ✅ aligned to canonical P1/P2/P3/P5 protocols (target IDs, docking parameters, RRS definition and classes, ACSI definition, PNS source, force fields, descriptors, GIN/transformer settings, partition families). Remaining: P7 QML methods section once the protocol is frozen.
 
-3. **Chapter 3 enhancement:** Begin integrating P1–P6 results with figures/tables
+3. **Chapter 3:** ✅ canonical P1–P3/P5 figures and tables integrated with the synthesis that sets the Project 7 comparison standard. Remaining: expanded discussion, per-mutant supplementary tables, P7 results section (NOT_COMPUTED — no claims until canonical runs).
 
-4. **Generate figures:** Create schematics for new sections using scientific-schematics skill
+4. **Generate figures:** Create schematics for any new sections using the scientific-schematics skill.
 
 ---
 
-**Status:** Chapter 1 enhancement complete. Ready for Phase 2 (Chapter 2 methods integration).
+**Status:** Chapter 3 canonical results integrated (28 Sept 2026). Build clean: 76 pages, 0 LaTeX errors, 0 undefined references/citations. Next priority is Chapter 3 expansion and the Project 7 methods section.
