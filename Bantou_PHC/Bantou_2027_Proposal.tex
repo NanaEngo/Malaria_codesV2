@@ -1,0 +1,678 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french,english]{babel}
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+% Custom colors
+\definecolor{darkblue}{RGB}{0,51,102}
+\definecolor{lightgray}{RGB}{240,240,240}
+
+% Section formatting
+\usepackage{titlesec}
+\titleformat{\section}{\Large\bfseries\color{darkblue}}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries\color{darkblue}}{\thesubsection}{1em}{}
+
+% Header and footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\footnotesize Bantou 2027 — ANP Drug Discovery}
+\lhead{\footnotesize PHC Program}
+\cfoot{\thepage}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=darkblue,
+    filecolor=darkblue,      
+    urlcolor=darkblue,
+    citecolor=darkblue
+}
+
+\title{\textbf{Hybrid Quantum-Classical Machine Learning for\\
+African Natural Products Drug Discovery:\\
+A Computational Framework for Antimalarial Development}}
+
+\author{
+    \textbf{Programme PHC BANTOU 2027}\\[0.5em]
+    \normalsize France-Cameroon Scientific Cooperation\\[1em]
+    \normalsize \textit{Franco-Cameroonian Joint Research Proposal}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent
+African natural products (ANPs) represent a vast, structurally complex chemical space with unique antimalarial potential, yet they remain underexplored by conventional drug discovery methods. This Franco-Cameroonian collaborative project proposes to develop and validate hybrid quantum-classical machine learning architectures specifically designed to capture the stereochemical and three-dimensional structural complexity of ANPs that classical fingerprints miss. Building on five completed computational studies (chemical space exploration, molecular dynamics validation, quantum-inspired representations, Monte Carlo optimization, and graph neural networks), we will implement true quantum machine learning methods to address the scaffold generalization bottleneck observed in classical models. The project integrates computational chemistry, quantum computing, machine learning, and ethnobotanical knowledge to prioritize ANP-derived antimalarial candidates while ensuring computational accessibility for African research institutions. Our approach honors the cultural heritage of traditional African medicine and creates a sustainable framework for ANP-based drug discovery with direct relevance to malaria-endemic regions.
+
+\vspace{0.5em}
+\noindent\textbf{Keywords:} African Natural Products, Antimalarial Drug Discovery, Quantum Machine Learning, Molecular Encoding, Computational Chemistry, Franco-Cameroonian Collaboration
+\end{abstract}
+
+\clearpage
+\tableofcontents
+\clearpage
+
+\section{Scientific Background and Rationale}
+
+\subsection{The Malaria Challenge in Africa}
+
+Malaria remains a devastating public health burden in sub-Saharan Africa, accounting for over 95\% of global malaria cases and deaths. The emergence of resistance to frontline antimalarial drugs (chloroquine, pyrimethamine-sulfadoxine, artemisinin-based combination therapies) threatens decades of progress in malaria control. Novel antimalarial scaffolds with multi-target mechanisms are urgently needed to circumvent resistance evolution and provide sustainable therapeutic options for malaria-endemic populations.
+
+\subsection{African Natural Products: An Underexplored Resource}
+
+African natural products offer several unique advantages for antimalarial drug discovery:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Structural Complexity:} ANPs possess high molecular complexity (Fsp³ $>$ 0.5, multiple stereocenters, polycyclic scaffolds) that distinguish them from typical synthetic drug-like compounds (Fsp³ $\sim$ 0.3--0.4).
+    
+    \item \textbf{Ethnobotanical Heritage:} Traditional African medicine has documented antimalarial use of plants such as \textit{Cryptolepis sanguinolenta}, \textit{Enantia chlorantha}, \textit{Nauclea latifolia}, and \textit{Artemisia annua} for centuries, providing evidence-based starting points for scientific investigation.
+    
+    \item \textbf{Evolutionary Polypharmacology:} Secondary metabolites in ANPs evolved to interact with multiple biological targets, offering inherent multi-target activity that may slow resistance development.
+    
+    \item \textbf{Chemical Diversity:} ANPs span diverse chemical families including indole alkaloids, prenylated flavonoids, quassinoids, and sesquiterpene lactones, expanding chemical space beyond conventional screening libraries.
+\end{itemize}
+
+\subsection{Computational Limitations of Classical Methods}
+
+Our preliminary work (Projects P1--P5, described below) has revealed fundamental limitations of classical computational methods when applied to ANPs:
+
+\begin{enumerate}[leftmargin=1.5em]
+    \item \textbf{Static Docking Failures (P1/P2):} Molecular docking on rigid protein structures cannot capture ANP conformational flexibility, leading to 87.5\% disagreement between docking scores and molecular dynamics-derived binding affinities.
+    
+    \item \textbf{Loss of Stereochemistry (P3):} Classical fingerprints (ECFP4) and quantum-inspired methods encode flattened molecular representations, losing critical stereochemical and three-dimensional information that defines ANP bioactivity.
+    
+    \item \textbf{Scaffold Generalization Bottleneck (P5):} Graph neural networks (GNNs) based on 1-Weisfeiler-Lehman (1-WL) message passing fail on ANP scaffold splits (AUC = 0.649 vs. ECFP4-RF baseline 0.689), unable to distinguish stereoisomers or capture non-local structural patterns in high-Fsp³ molecules.
+\end{enumerate}
+
+\subsection{Quantum Machine Learning as a Solution}
+
+Hybrid quantum-classical machine learning offers a principled approach to overcome these limitations by:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Direct Structural Encoding:} Quantum molecular state encoding (QMSE) preserves bond orders, stereochemistry (E/Z, R/S), and 3D topology through quantum circuit representations in $2^n$ Hilbert space.
+    
+    \item \textbf{Non-Local Feature Learning:} Quantum feature extractors (QFE) capture long-range structural correlations beyond k-hop GNN neighborhoods, addressing the 1-WL expressivity bottleneck.
+    
+    \item \textbf{Computational Efficiency:} Quantum kernel transfer (QKT) enables accurate predictions on large datasets after quantum pre-training on small ANP-rich subsets, making the method accessible to resource-limited African laboratories.
+\end{itemize}
+
+\subsection{Franco-Cameroonian Complementarity}
+
+This collaboration leverages unique complementary expertise:
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{French Team:} Advanced computational infrastructure, quantum computing access (IBM Quantum, cloud-based NISQ devices), machine learning expertise, and established computational chemistry pipelines.
+    
+    \item \textbf{Cameroonian Team:} Ethnobotanical knowledge, access to ANP compound libraries, traditional medicine expertise, botanical specimen identification, and direct connection to malaria-endemic populations informing translational priorities.
+\end{itemize}
+
+Together, we will create a sustainable ANP drug discovery pipeline that honors African cultural heritage while advancing quantum computing applications in medicinal chemistry.
+
+\section{Preliminary Work: Projects P1--P5 Foundation}
+
+Our team has completed five computational studies that establish the scientific foundation and reveal the computational challenge that P7 (this proposal) addresses.
+
+\subsection{Project P1: Chemical Space Exploration (Completed)}
+
+\textbf{Objective:} Generate and characterize a hybrid ANP-synthetic compound library for antimalarial screening.
+
+\textbf{Methods:}
+\begin{itemize}
+    \item 396 African natural product seeds from ANPDB/AfroDb databases
+    \item Enumeration protocol: scaffold hopping, ring expansion/contraction, bioisosteric replacement
+    \item Final library: 65,856 compounds with 69.3\% scaffold conservation of ANP privileged cores
+\end{itemize}
+
+\textbf{Key Results:}
+\begin{itemize}
+    \item 92.6\% of library molecules unreachable by ECFP4 similarity search (Tanimoto $<$ 0.7)
+    \item Top-20 candidates (Set A) selected by multi-parameter optimization (MPO 0.515--0.550)
+    \item All candidates show selectivity index $>$ 10 (antimalarial vs. cytotoxicity)
+    \item External validation: DEKOIS 2.0 benchmark, MMV enrichment, redocking RMSD $<$ 2.0 Å
+\end{itemize}
+
+\textbf{Status:} Manuscript V8 submitted to \textit{Journal of Chemical Information and Modeling} (JCIM), resubmission pending after editorial decision. Zenodo DOI: 10.5281/zenodo.22696778.
+
+\subsection{Project P2: Molecular Dynamics Validation (Completed)}
+
+\textbf{Objective:} Validate docking predictions through all-atom molecular dynamics simulations.
+
+\textbf{Methods:}
+\begin{itemize}
+    \item 16 protein-ligand systems: PP-01/PP-02 × PfDHFR/PfCRT × wild-type/mutant
+    \item OpenFF 2.2.0 AM1-BCC force field + CHARMM36m/TIP3P explicit solvent
+    \item 25 ns production trajectories with MM-PBSA binding free energy calculations
+\end{itemize}
+
+\textbf{Key Results:}
+\begin{itemize}
+    \item 87.5\% estimand divergence: docking scores do not predict MD-derived $\Delta G_{\text{bind}}$
+    \item Divergence attributed to ANP conformational flexibility and solvation effects
+    \item Class A* candidates (PP-01, PP-06, PP-15) show broad target profiles and mutation resilience
+    \item GNINA CNN validation: 100\% agreement on Class-A ligand ranking
+\end{itemize}
+
+\textbf{Status:} Manuscript V2609C technically ready for JCIM submission. Main text 26 pages, SI 19 pages, submission package complete.
+
+\subsection{Project P3: Quantum-Inspired Representations (Completed)}
+
+\textbf{Objective:} Evaluate quantum-inspired encodings (quantum kernels, topological features) for ANP activity prediction.
+
+\textbf{Methods:}
+\begin{itemize}
+    \item Quantum kernel states (QKS) from ECFP4 features mapped to RBF/Matern/polynomial kernels
+    \item Topological fingerprints (TFP) and topological neural encodings (TNE) via persistent homology
+    \item Benchmark dataset: 19,849 molecules with antimalarial activity labels
+\end{itemize}
+
+\textbf{Key Results — Honest Negative:}
+\begin{itemize}
+    \item \textbf{No quantum advantage:} QKS $\approx$ RBF kernel (0.8876 vs. 0.8819), both underperform ECFP4-RF baseline (0.9475)
+    \item Topological features (H$_0$, H$_1$ Betti numbers) capture ANP ring topology but insufficient for full activity prediction
+    \item \textbf{Root cause:} Quantum-inspired methods encode \textit{flattened classical fingerprints}, losing ANP stereochemistry and 3D structure
+\end{itemize}
+
+\textbf{Status:} Manuscript V2609 ready for \textit{Journal of Computer-Aided Molecular Design} (JCAMD) submission. 18-page main text, 19-page SI, response to reviewers complete.
+
+\subsection{Project P4: Monte Carlo Exploration (Completed)}
+
+\textbf{Objective:} Compare random sampling vs. Monte Carlo tree search (MCTS) for multi-objective optimization.
+
+\textbf{Key Results:}
+\begin{itemize}
+    \item Random sampling (AUC 0.6724) outperforms MCTS (0.6649) on scaffold-based benchmark
+    \item Pre-activity Pareto front artifacts distinguished from validated v12 scalar benchmark
+    \item Manuscript ready for JCAMD submission
+\end{itemize}
+
+\subsection{Project P5: Graph Neural Networks (Completed)}
+
+\textbf{Objective:} Evaluate GNN architectures for ANP activity prediction and scaffold generalization.
+
+\textbf{Methods:}
+\begin{itemize}
+    \item GNN architectures (GCN, GAT, GraphSAGE) with LISH-MoA phenotypic features
+    \item Scaffold split using Bemis-Murcko decomposition (external validation)
+\end{itemize}
+
+\textbf{Key Results — The Scaffold Generalization Bottleneck:}
+\begin{itemize}
+    \item \textbf{Random split:} GNN performs competitively (AUC $\sim$ 0.85)
+    \item \textbf{Scaffold split:} GNN underperforms (0.649) vs. ECFP4-RF baseline (0.689)
+    \item \textbf{Root cause:} 1-WL message passing cannot distinguish stereoisomers, cis/trans configurations, or ring fusions in high-Fsp³ ANPs
+    \item Topological fusion provides modest complementarity but does not overcome the bottleneck
+\end{itemize}
+
+\textbf{Status:} Manuscript ready for JCAMD submission.
+
+\subsection{Summary: The P1--P5 → P7 Trajectory}
+
+Projects P1--P5 systematically reveal that:
+\begin{enumerate}
+    \item ANPs possess unique structural complexity (high Fsp³, stereocenters, 3D topology)
+    \item Classical methods (ECFP4, GNNs) lose critical ANP structural information
+    \item Quantum-inspired approaches (P3) do not solve the problem because they encode classical features
+    \item \textbf{True quantum machine learning with direct molecular encoding is needed} (P7)
+\end{enumerate}
+
+\section{Proposed Research: Project P7}
+
+\subsection{Central Hypothesis}
+
+\textbf{Can hybrid quantum-classical machine learning architectures capture the three-dimensional structural complexity of African natural products that classical fingerprints and quantum-inspired methods miss, thereby improving antimalarial activity prediction and scaffold generalization?}
+
+\subsection{Specific Aims}
+
+\subsubsection{Aim 1: Quantum Molecular State Encoding (QMSE) for ANPs}
+
+\textbf{Objective:} Develop quantum circuit representations that preserve ANP stereochemistry, bond topology, and 3D geometry.
+
+\textbf{Approach:}
+\begin{itemize}
+    \item Implement BondOrderMatrix encoding: bond orders (1/1.5/2/3), stereochemistry (E/Z: negative bond order; R/S: negative diagonal)
+    \item Coulomb matrix encoding for 3D geometry (atomic distances, nuclear charges)
+    \item Map molecular features to quantum states in $2^n$ Hilbert space via variational quantum circuits
+\end{itemize}
+
+\textbf{Validation:}
+\begin{itemize}
+    \item Kernel target alignment: Does quantum kernel $K(A,B)$ correlate with structural similarity better than ECFP4 Tanimoto?
+    \item Feature attribution: Which ANP structural features (stereocenters, ring fusions, macrocycles) drive quantum vs. classical predictions?
+\end{itemize}
+
+\textbf{Success Criterion:} Quantum kernel shows statistically significant higher target alignment on ANP-rich datasets (P1 Set A, n=20; P3 benchmark ANP subset) vs. ECFP4.
+
+\subsubsection{Aim 2: Hybrid Quantum-Classical Architectures}
+
+\textbf{Objective:} Design three architectures balancing quantum expressivity and computational feasibility.
+
+\textbf{Architecture 1: Quantum Feature Extractor (QFE)}
+\begin{itemize}
+    \item Input: Molecular graph or fingerprint
+    \item Quantum layer: Trainable parametrized quantum circuit (PQC) with entangling gates
+    \item Classical layer: Feedforward neural network for activity prediction
+    \item Training: End-to-end backpropagation with PQC parameter optimization
+\end{itemize}
+
+\textbf{Architecture 2: Quantum Graph Neural Network (Q-GNN)}
+\begin{itemize}
+    \item GNN message passing for local features (k-hop neighborhoods)
+    \item Quantum layer processes global graph embedding in $2^n$ Hilbert space
+    \item Captures non-local ANP structural patterns beyond 1-WL expressivity
+    \item Addresses P5 scaffold generalization bottleneck
+\end{itemize}
+
+\textbf{Architecture 3: Quantum Kernel Transfer (QKT)}
+\begin{itemize}
+    \item Stage 1: Quantum kernel on small ANP-rich dataset (P1 Set A, n=20) — $O(n^2)$ = 190 kernel entries
+    \item Stage 2: Transfer learned features to classical neural network
+    \item Stage 3: Fine-tune on large dataset (P3 benchmark, n=19,849) — $O(n)$ inference
+    \item Computational efficiency: Enables CPU-only inference for African laboratories
+\end{itemize}
+
+\subsubsection{Aim 3: ANP-Stratified Evaluation}
+
+\textbf{Objective:} Determine for which ANP structural classes quantum enhancement provides advantage, equivalence, or no benefit.
+
+\textbf{Approach:}
+\begin{itemize}
+    \item Compute African-Chemotype Structural Index (ACSI) for all molecules: weighted score combining Fsp³, stereocenter count, ring complexity, botanical origin
+    \item Stratify P3 benchmark (19,849 molecules) into ACSI quartiles: Q1 (most ANP-like) → Q4 (least ANP-like)
+    \item Compare QML vs. ECFP4-RF performance within each quartile
+\end{itemize}
+
+\textbf{Hypothesis:}
+\begin{itemize}
+    \item Q1 (high ACSI): Quantum advantage (ANPs defeat classical methods)
+    \item Q2--Q3 (intermediate): Gradient across quartiles
+    \item Q4 (low ACSI): Quantum equivalence (ECFP4 sufficient for flat aromatics)
+\end{itemize}
+
+\textbf{Interpretation:} Quantum circuits excel on ANP complexity, not universally on all molecules.
+
+\subsubsection{Aim 4: Scaffold Generalization Validation}
+
+\textbf{Objective:} Overcome the P5 scaffold generalization bottleneck using quantum non-local representations.
+
+\textbf{Approach:}
+\begin{itemize}
+    \item Bemis-Murcko scaffold split (train/test with distinct scaffolds)
+    \item External validation dataset: 10,000 molecules stratified by ANP classes
+    \item Compare Q-GNN vs. P5 baselines (GNN 0.649, ECFP4-RF 0.689)
+\end{itemize}
+
+\textbf{Success Criterion:} Q-GNN achieves AUC $>$ 0.70 on scaffold split, statistically significant improvement (paired t-test, p $<$ 0.05).
+
+\textbf{Honest-Negative Commitment:} If Q-GNN $\leq$ P5 baselines, we will identify which ANP structural features quantum enhancement captures vs. misses, publishing results regardless of outcome direction.
+
+\section{Methodology}
+
+\subsection{Data and Software}
+
+\textbf{Datasets:}
+\begin{itemize}
+    \item P1 Set A (20 ANP-enriched candidates)
+    \item P3 benchmark (19,849 molecules with activity labels)
+    \item External validation (10,000 stratified by ANP classes)
+    \item Ethnobotanical annotations: traditional use, botanical families, geographic origin
+\end{itemize}
+
+\textbf{Software Stack:}
+\begin{itemize}
+    \item Quantum computing: Qiskit, PennyLane, IBM Quantum (cloud access)
+    \item Machine learning: PyTorch, scikit-learn, PyTorch Geometric
+    \item Molecular modeling: RDKit, OpenFF, GROMACS (MD simulations)
+    \item Data processing: Python, pandas, NumPy, SciPy
+\end{itemize}
+
+\subsection{Quantum Hardware and Simulation}
+
+\textbf{Development Phase:}
+\begin{itemize}
+    \item Classical quantum simulators (statevector, density matrix)
+    \item Small circuits (n $\leq$ 20 qubits) for algorithmic validation
+\end{itemize}
+
+\textbf{Production Phase:}
+\begin{itemize}
+    \item IBM Quantum cloud access (127-qubit Eagle processors)
+    \item NISQ-compatible circuits with error mitigation (readout, dynamical decoupling)
+    \item Hybrid quantum-classical optimization (COBYLA, SPSA, Adam)
+\end{itemize}
+
+\subsection{Statistical Framework}
+
+Following P4's distinct estimand framework, we separate three outcomes:
+
+\textbf{Estimand 1: Quantum vs. Classical Accuracy}
+\begin{itemize}
+    \item Metric: $\Delta$AUC = AUC$_{\text{QML}}$ - AUC$_{\text{ECFP4}}$
+    \item Statistical test: Paired t-test across 5-fold CV, $\alpha$ = 0.05
+    \item Interpretation:
+    \begin{itemize}
+        \item Advantage: $\Delta$AUC $\geq$ 0.01, p $<$ 0.05
+        \item Equivalence: $|\Delta\text{AUC}|$ $<$ 0.01 or p $>$ 0.05
+        \item Underperformance: $\Delta$AUC $<$ -0.01, p $<$ 0.05
+    \end{itemize}
+\end{itemize}
+
+\textbf{Estimand 2: ANP Structural Encoding Fidelity}
+\begin{itemize}
+    \item Metric: Kernel target alignment stratified by ACSI quartiles
+    \item Test: Gradient analysis Q1 → Q4
+    \item Interpretation: High alignment in Q1 (ANP-rich) $\Rightarrow$ quantum captures ANP complexity
+\end{itemize}
+
+\textbf{Estimand 3: Scaffold Generalization Capacity}
+\begin{itemize}
+    \item Metric: AUC on Bemis-Murcko scaffold split
+    \item Baseline: P5 GNN 0.649, ECFP4-RF 0.689
+    \item Interpretation: AUC $>$ 0.70 $\Rightarrow$ quantum overcomes 1-WL bottleneck
+\end{itemize}
+
+\section{Work Plan and Timeline}
+
+\subsection{Year 1 Activities (2027)}
+
+\subsubsection{Phase 1: QMSE Development (Months 1--4)}
+\begin{itemize}
+    \item Implement BondOrderMatrix and Coulomb matrix encodings
+    \item Test on P1 Set A (n=20) with leave-one-out cross-validation
+    \item Compute kernel target alignment vs. ECFP4
+    \item \textbf{Mobility 1 (France → Cameroon, 2 weeks):} Joint algorithm development, ANP metadata annotation
+\end{itemize}
+
+\subsubsection{Phase 2: Hybrid Architecture Training (Months 5--8)}
+\begin{itemize}
+    \item Train QFE, Q-GNN, QKT on P3 benchmark (19,849 molecules)
+    \item ACSI-stratified evaluation (quartile analysis)
+    \item Hyperparameter optimization on NISQ hardware
+    \item \textbf{Mobility 2 (Cameroon → France, 2 weeks):} Quantum hardware access, joint training experiments
+\end{itemize}
+
+\subsubsection{Phase 3: External Validation (Months 9--11)}
+\begin{itemize}
+    \item Scaffold split validation (10,000 molecules)
+    \item Compare Q-GNN vs. P5 baselines
+    \item Feature attribution and interpretability analysis
+    \item \textbf{Mobility 3 (France → Cameroon, 1 week):} Results presentation, manuscript preparation
+\end{itemize}
+
+\subsubsection{Phase 4: Dissemination (Month 12)}
+\begin{itemize}
+    \item Manuscript preparation for high-impact computational chemistry journal
+    \item Code repository release (GitHub) with documentation
+    \item Workshop: \textit{"Quantum Machine Learning for African Drug Discovery"}
+    \item \textbf{Mobility 4 (Joint, Conference):} Present results at international conference (ACS, EuroQCI, or regional computational chemistry meeting)
+\end{itemize}
+
+\subsection{Deliverables}
+
+\textbf{Scientific Outputs:}
+\begin{enumerate}
+    \item Peer-reviewed manuscript: \textit{"Hybrid Quantum-Classical Machine Learning for African Natural Products: Overcoming the Scaffold Generalization Bottleneck"}
+    \item Open-source software package: \texttt{qml-anp} (Python, documented, BSD license)
+    \item Benchmark dataset: ANP-stratified antimalarial activity dataset with ACSI annotations
+    \item Technical report: Quantum hardware performance comparison (IBM Quantum vs. simulators)
+\end{enumerate}
+
+\textbf{Training Outcomes:}
+\begin{enumerate}
+    \item 2 PhD students (1 French, 1 Cameroonian) trained in quantum machine learning
+    \item 1 postdoctoral researcher trained in ANP computational chemistry
+    \item Joint supervision framework established for future collaborations
+\end{enumerate}
+
+\textbf{Capacity Building:}
+\begin{enumerate}
+    \item Workshop materials: Tutorials on quantum computing for molecular modeling
+    \item Computational infrastructure roadmap for Cameroonian institutions
+    \item Network connections: French-Cameroonian quantum computing working group
+\end{enumerate}
+
+\section{Budget Justification}
+
+\subsection{French Team Budget (€7,500)}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrr}
+\toprule
+\textbf{Item} & \textbf{Cost (€)} & \textbf{Details} \\
+\midrule
+Mobility 1: France → Cameroon & 1,800 & Airfare + 14 days per diem (2 researchers) \\
+Mobility 2: Cameroon → France & 1,800 & Airfare + 14 days per diem (2 researchers) \\
+Mobility 3: France → Cameroon & 1,200 & Airfare + 7 days per diem (2 researchers) \\
+Mobility 4: Joint Conference & 1,500 & Conference registration + travel (2 researchers) \\
+Computing resources & 800 & IBM Quantum cloud credits, GPU hours \\
+Workshop materials & 400 & Training documentation, tutorial datasets \\
+\midrule
+\textbf{Total} & \textbf{7,500} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Cameroonian Team Budget (€7,500)}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrr}
+\toprule
+\textbf{Item} & \textbf{Cost (€)} & \textbf{Details} \\
+\midrule
+Mobility 1: Reception in Cameroon & 1,200 & Per diem + local transport (2 French researchers) \\
+Mobility 2: Cameroon → France & 1,800 & Airfare + 14 days per diem (2 researchers) \\
+Mobility 3: Reception in Cameroon & 900 & Per diem + local transport (2 French researchers) \\
+Mobility 4: Joint Conference & 1,500 & Conference registration + travel (2 researchers) \\
+ANP database access & 800 & Licensing fees (ANPDB, AfroDb), data curation \\
+Ethnobotanical consultation & 700 & Traditional medicine expert fees, field surveys \\
+Workshop hosting & 600 & Venue, materials, participant support \\
+\midrule
+\textbf{Total} & \textbf{7,500} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Expected Impact and Broader Significance}
+
+\subsection{Scientific Impact}
+
+\begin{enumerate}
+    \item \textbf{First true quantum ML for ANPs:} Move beyond quantum-inspired to genuine quantum computing applications in African natural product chemistry
+    
+    \item \textbf{Honest assessment framework:} Establish standards for reporting quantum advantage, equivalence, and limitations in molecular ML
+    
+    \item \textbf{Scaffold generalization solution:} Address the 1-WL GNN bottleneck that limits classical methods on complex natural products
+    
+    \item \textbf{Computational accessibility:} QKT enables ANP screening on modest resources (CPU-only), democratizing quantum ML for African laboratories
+\end{enumerate}
+
+\subsection{Translational Impact}
+
+\begin{enumerate}
+    \item \textbf{Antimalarial drug development:} Prioritize ANP-derived candidates for experimental validation (IC$_{50}$, resistance profiling)
+    
+    \item \textbf{Traditional medicine validation:} Provide computational evidence supporting ethnobotanical knowledge of antimalarial plants
+    
+    \item \textbf{Sustainable drug discovery:} Create framework for ongoing ANP exploration using African botanical resources
+    
+    \item \textbf{Regional health impact:} Focus on compounds with activity against African \textit{Plasmodium} strains and resistance profiles
+\end{enumerate}
+
+\subsection{Capacity Building Impact}
+
+\begin{enumerate}
+    \item \textbf{Quantum computing expertise in Africa:} Train next generation of African quantum researchers with direct application to local health priorities
+    
+    \item \textbf{Franco-Cameroonian network:} Establish sustained collaboration beyond single project (PhD co-supervision, joint grants, student exchanges)
+    
+    \item \textbf{Infrastructure development:} Provide roadmap for computational chemistry and quantum computing capabilities in Cameroonian institutions
+    
+    \item \textbf{Regional dissemination:} Workshop materials and software package available for pan-African adoption
+\end{enumerate}
+
+\subsection{Cultural and Ethical Dimensions}
+
+\begin{enumerate}
+    \item \textbf{Honoring traditional knowledge:} Explicit acknowledgment of ethnobotanical heritage and traditional medicine practitioners
+    
+    \item \textbf{Equitable collaboration:} Joint authorship, co-supervision, and shared intellectual property following Nagoya Protocol principles
+    
+    \item \textbf{Benefit sharing:} If ANP-derived candidates advance to development, mechanisms for benefit sharing with source communities
+    
+    \item \textbf{Open science:} Code, data, and methods openly shared to enable global participation in ANP drug discovery
+\end{enumerate}
+
+\section{Risk Management}
+
+\subsection{Technical Risks}
+
+\textbf{Risk 1: Quantum hardware limitations (NISQ noise)}
+\begin{itemize}
+    \item Mitigation: Extensive simulator validation, error mitigation protocols, hybrid quantum-classical fallback
+    \item Contingency: Focus on QKT (fewer quantum operations) if full Q-GNN training infeasible on current hardware
+\end{itemize}
+
+\textbf{Risk 2: Quantum equivalence outcome (no advantage over ECFP4)}
+\begin{itemize}
+    \item Mitigation: Following P3 precedent, equivalence is a valid scientific result; focus on identifying \textit{when} quantum helps vs. when classical methods suffice
+    \item Impact: Still publishable (honest-negative framework), still provides value to field
+\end{itemize}
+
+\textbf{Risk 3: Computational resource constraints}
+\begin{itemize}
+    \item Mitigation: Prioritize QKT (low computational cost), use cloud quantum resources, optimize circuit depth
+    \item Contingency: Scale down external validation dataset if full 10K sample infeasible
+\end{itemize}
+
+\subsection{Logistical Risks}
+
+\textbf{Risk 4: Travel restrictions or delays}
+\begin{itemize}
+    \item Mitigation: Build buffer time into mobility schedule, alternative dates for key exchanges
+    \item Contingency: Virtual collaboration tools (weekly video meetings, shared compute clusters, Git-based workflows)
+\end{itemize}
+
+\textbf{Risk 5: Data access or licensing issues}
+\begin{itemize}
+    \item Mitigation: Confirm ANP database access before project start, allocate budget for licensing
+    \item Contingency: Use publicly available datasets (ChEMBL, PubChem) with ANP filters if proprietary access unavailable
+\end{itemize}
+
+\section{Dissemination and Sustainability}
+
+\subsection{Publications and Presentations}
+
+\begin{enumerate}
+    \item Primary manuscript: High-impact computational chemistry or ML journal (\textit{JCIM}, \textit{JCAMD}, \textit{npj Computational Materials}, \textit{Digital Discovery})
+    \item Conference presentations: ACS Fall Meeting, EuroQCI Quantum Computing for Chemistry workshop, African computational chemistry conferences
+    \item Preprint: arXiv or ChemRxiv for rapid dissemination and community feedback
+\end{enumerate}
+
+\subsection{Open Science Commitments}
+
+\begin{enumerate}
+    \item Code: GitHub repository with BSD license, continuous integration, documentation
+    \item Data: Zenodo deposition with DOI (activity data, ACSI annotations, trained model weights)
+    \item Reproducibility: Container images (Docker/Singularity) for full pipeline reproduction
+    \item Tutorial: Jupyter notebooks demonstrating QMSE encoding and QKT workflow
+\end{enumerate}
+
+\subsection{Long-Term Collaboration}
+
+This PHC Bantou project establishes the foundation for:
+\begin{itemize}
+    \item PhD co-supervision programs (joint degrees, sandwich programs)
+    \item Follow-on proposals: Horizon Europe, ANR-MINRESI bilateral calls, African Union research grants
+    \item Experimental validation partnerships: Synthesis and bioassay of top-ranked ANP candidates
+    \item Regional network expansion: Collaboration with other African quantum computing initiatives (South Africa NQI, Egypt QCI)
+\end{itemize}
+
+\section{Team Composition and Expertise}
+
+\subsection{French Team}
+
+\textbf{Principal Investigator (Name, Institution):}
+\begin{itemize}
+    \item Expertise: Quantum machine learning, computational chemistry, molecular modeling
+    \item Role: Overall project coordination, quantum algorithm development, manuscript preparation
+    \item Relevant publications: [P1--P5 manuscripts, quantum computing methods papers]
+\end{itemize}
+
+\textbf{Co-Investigators:}
+\begin{itemize}
+    \item Quantum computing specialist: IBM Quantum access, circuit optimization, error mitigation
+    \item Machine learning expert: Neural network architectures, hyperparameter tuning, feature attribution
+    \item Computational chemist: Molecular dynamics, docking, QSAR modeling
+\end{itemize}
+
+\textbf{PhD Student/Postdoc (1):}
+\begin{itemize}
+    \item Profile: Computational chemistry or physics background, interest in quantum ML
+    \item Training: Quantum computing, ANP drug discovery, Franco-African collaboration skills
+\end{itemize}
+
+\subsection{Cameroonian Team}
+
+\textbf{Principal Investigator (Name, Institution):}
+\begin{itemize}
+    \item Expertise: Natural products chemistry, ethnobotany, traditional medicine
+    \item Role: ANP database curation, ethnobotanical validation, local coordination
+    \item Relevant experience: [African natural products research, antimalarial compound screening]
+\end{itemize}
+
+\textbf{Co-Investigators:}
+\begin{itemize}
+    \item Ethnobotanist: Traditional antimalarial plant knowledge, botanical specimen identification
+    \item Computational chemist: Molecular modeling, cheminformatics, database management
+    \item Public health specialist: Malaria epidemiology, resistance patterns in Cameroon
+\end{itemize}
+
+\textbf{PhD Student (1):}
+\begin{itemize}
+    \item Profile: Chemistry or biology background, strong computational interest
+    \item Training: Quantum machine learning, computational drug discovery, manuscript writing
+\end{itemize}
+
+\section{Alignment with PHC Bantou Priorities}
+
+This proposal strongly aligns with the PHC Bantou program objectives:
+
+\begin{enumerate}
+    \item \textbf{Excellence in scientific cooperation:} Merges cutting-edge quantum computing with urgent African health challenge (malaria), leveraging complementary French-Cameroonian strengths
+    
+    \item \textbf{New collaborations:} Establishes novel partnership in quantum ML for natural products, expanding beyond traditional chemistry-only or computation-only collaborations
+    
+    \item \textbf{Young researcher participation:} Central role for PhD students and postdocs (4 mobilities, hands-on training, co-authorship on publications)
+    
+    \item \textbf{Structuring and valorization:} Creates sustainable framework (open-source tools, training materials, joint supervision) with clear translational path (antimalarial drug candidates)
+    
+    \item \textbf{European integration:} Aligns with Horizon Europe priorities (quantum technologies, global health, digital infrastructure) and potential for follow-on EU proposals
+    
+    \item \textbf{Computational accessibility:} QKT method explicitly designed for resource-limited settings, ensuring results benefit African laboratories beyond this specific collaboration
+\end{enumerate}
+
+\section{Conclusion}
+
+This Franco-Cameroonian collaboration addresses a critical scientific challenge (antimalarial drug discovery from African natural products) using frontier computational methods (hybrid quantum-classical machine learning) while building sustainable research capacity in Africa. By moving beyond quantum-inspired approaches to genuine quantum computing applications, we will determine when and how quantum enhancement benefits structurally complex natural products that defeat classical methods.
+
+Our approach is grounded in rigorous preliminary work (Projects P1--P5), follows honest-negative reporting standards (quantum advantage, equivalence, or limitation are all valid outcomes), and prioritizes computational accessibility for African laboratories. The project honors traditional African medicine knowledge, creates opportunities for young Franco-Cameroonian researchers, and establishes the foundation for long-term collaboration in quantum computing for health applications.
+
+We respectfully request PHC Bantou support to launch this innovative partnership and advance quantum machine learning for African natural product drug discovery.
+
+\vspace{1em}
+\noindent\textit{Acknowledgment: This project will be supported by the "PHC BANTOU" program, funded by the French Ministry for Europe and Foreign Affairs (MEAE), the French Ministry for Higher Education, Research and Space (MESRE), and the Cameroonian Ministry for Scientific Research and Innovation (MINRESI).}
+
+\end{document}

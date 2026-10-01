@@ -1,3 +1,466 @@
 \chapter{Results and Discussion}\label{Chap:3}
 
-\section*{Introduction}
+\section{Introduction}\label{sec:ch3_intro}
+
+This chapter reports the experimental results of the four completed studies of this thesis and closes with the synthesis that motivates the quantum machine learning programme. The chemical-space study constructs an African-natural-product-inspired hybrid library and characterizes it by target-anchored docking against four mechanistically distinct antimalarial proteins. The resistance-scoring study converts the docking campaign into a resistance-aware scoring framework, stress-tests that framework with explicit-solvent molecular dynamics, and confronts the static estimand with published genotype-resolved inhibition data. The representation study asks whether the topological and quantum-inspired descriptors that motivate the thesis add predictive value over an extended-connectivity fingerprint baseline. The learned-representation study extends the same comparison to graph networks and transformers under chemical distribution shift.
+
+The four studies share one library, one label source, and one evaluation philosophy. That shared substrate makes the chapter a single argument rather than four independent reports. The argument runs as follows: the chemical space is genuinely novel while remaining scaffold-anchored; docking-derived resistance metrics separate candidate chemotypes but are estimand-bound; and every representation tested here, whether topological, tensor-compressed, kernel-based, or learned, is diagnostically informative while failing to improve on ECFP4 for activity prediction. The honest-negative result of the two representation studies is therefore not a side observation of this thesis; it is the empirical baseline against which true quantum machine learning, the subject of the quantum machine learning programme, must be judged.
+
+Throughout, computational predictions are kept explicitly separate from biological activity. Docking scores are empirical scoring-function outputs, activity labels are machine-learning predictions rather than assay measurements, and resistance classes are operational categories computed from score ratios. Where a result cannot support the interpretation a reader might expect, that boundary is stated at the point of the result rather than in a closing caveat.
+
+The chapter is organised as follows. \Cref{sec:res_chemspace} reports the construction of the hybrid library and the target-anchored docking campaign: the scaffold-guided expansion and its novelty statistics, the four-target docking profile with protocol validation, the mutation-resilience analysis, and the joint prioritization with the cross-metric information content. \Cref{sec:res_rrs} presents the resistance-aware scoring results: the framework scope and descriptor characterization, the class counts and protocol reproducibility, the static-to-dynamic estimand divergence that forms the central result, the trajectory-derived endpoints, the distinct information carried by the three ranking dimensions, and the retrospective ChEMBL confrontation that bounds the static estimand from experimental data. \Cref{sec:res_representations} evaluates the quantum-inspired and topological representations: the topological decomposition of the scaffold paradox, the tensor-compression behaviour, the activity benchmark with its hybrid ablation, the quantum kernel against its tuned classical comparator, the fusion and transfer analyses, and the scaffold-grouped re-evaluation with the docking cross-link. \Cref{sec:res_learned} extends the comparison to learned representations under chemical distribution shift: the three partition families, the localization of the deficit in the structural extrapolation tail, and the topological salience that separates what a descriptor uses from what it contributes. \Cref{sec:res_synthesis} closes the chapter with the synthesis that states, on the basis of the results reported here, the comparison standard the quantum machine learning programme must meet.
+
+\section{Chemical space construction and target-anchored docking}\label{sec:res_chemspace}
+
+\subsection{Scaffold-guided expansion produced a novel but scaffold-anchored library}
+
+The library was assembled from \num{396} African natural products and \num{454} synthetic antimalarial compounds and expanded by two complementary routes. A similarity search through the Cheese API retrieved \num{100} analogues per seed from ZINC15/ENAMINE-REAL using Morgan fingerprints (radius \num{2}, \num{2048} bits) at a Tanimoto threshold of \num{0.7}, and STONED-SELFIES generated a further \num{100} variants per seed through single-character SELFIES mutations over an alphabet of \num{50}. Generated structures were PAINS-filtered, validated with RDKit and Open Babel, and deduplicated on canonical SMILES, yielding a hybrid library of \num{65856} unique molecules, of which \qty{94.1}{\percent} remain Lipinski-compliant.
+
+The library is not merely large; it occupies space that the seeds do not. In a \num{5000}-molecule novelty sample, \qty{92.6}{\percent} of the expanded molecules had a maximum whole-molecule Tanimoto similarity below \num{0.4} to the African natural-product seed set, while \qty{69.3}{\percent} of the annotated seed scaffolds (\num{70} of \num{101}) were recovered in the expanded library. Maximum scaffold similarity consistently exceeded maximum whole-molecule similarity (mean \num{0.379} against \num{0.206}), which locates the novelty in the peripheral substituents rather than in the ring systems. \Cref{fig:res_chemspace} shows the resulting coverage and the scaffold retention that accompanies it. This asymmetry is the structural motif that recurs in the representation study, where persistent homology is used to decompose it.
+
+Multi-parameter optimization combined docking-derived scores, DiffDock confidence, QED, an ADMET composite, and a Lipinski penalty. The \num{484} centroids obtained by $k$-means on a \num{64}-dimensional SMILES-VAE latent representation were reduced to \num{76} centroids above the optimization threshold, mapped to \num{53} clusters and expanded to \num{40481} molecules, of which \num{19913} survived synthetic-accessibility and MPO filtering. Centroid-based sampling cut the docking campaign from \num{263424} to \num{1936} calculations, a \qty{99.3}{\percent} reduction that brings an estimated \numrange{2600}{5300} CPU-hours of exhaustive docking below \num{20} CPU-hours while retaining the \qty{69.3}{\percent} scaffold recovery. That figure is a computational-cost statement, not a claim of active-compound retention; a retention experiment against known actives would be required to make the stronger claim.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.86\textwidth]{p1_v7_chemical_space_coverage.pdf}
+	\caption[Chemical space coverage of the hybrid library]{Coverage of the hybrid library relative to the African natural-product seed set. Whole-molecule novelty (\qty{92.6}{\percent} of a \num{5000}-molecule sample below a Tanimoto similarity of \num{0.4}) coexists with scaffold retention (\qty{69.3}{\percent}; \num{70} of \num{101} annotated seed scaffolds). The gap between whole-molecule and scaffold similarity distributions defines the scaffold paradox analysed topologically in the representation study.}
+	\label{fig:res_chemspace}
+\end{figure}
+
+\subsection{Target-anchored docking across four mechanistically distinct proteins}
+
+Four protein targets were chosen to span independent resistance-relevant vulnerabilities rather than to provide four equivalent binding sites. \emph{Pf}DHFR (PDB 7F3Y, methotrexate copy A702) anchors the antifolate axis; \emph{Pf}CRT is derived from the 6UKJ cryo-EM structure of the 7G8 isoform and was corrected to a 3D7-like wild-type receptor by restoring lysine at position \num{76}, where the deposited structure carries the K76T resistance substitution; the corrected receptor was audited by P2Rank, whose top pocket scored \num{162.7} at probability \num{0.999} with its centre \qty{5.7}{\ang} from the docking grid centre. \emph{Pf}ClpP (PDB 2F6I, chain-A Ser252/His223/Asp219 catalytic triad) represents proteostasis, and \emph{Pf}ATP4 (PDB 9N10, D451 phosphorylation-loop region and DPPR hinge) represents ion homeostasis. The \emph{Pf}CRT pocket is a proxy cavity and the \emph{Pf}ATP4 region is mechanism-motivated: neither carries a co-crystallized small-molecule inhibitor, so the panel is a gradient of structural confidence, not a set of four validated binding sites.
+
+Ligands were standardized with Open Babel and converted to the PDBQT format with Meeko. Docking used target-specific cubic boxes: \num{25} \AA\ edge length for \emph{Pf}DHFR and \emph{Pf}CRT, \num{20} \AA\ for \emph{Pf}ClpP, and \num{24} \AA\ for \emph{Pf}ATP4. All \num{68} candidate--target pairs formed by the \num{17}-member polypharmacology-oriented Set-C cohort passed the geometric pose-quality gate, which requires a rank-1 centroid inside the box, at least one atom within \qty{10}{\ang} of the target anchor, and at least \qty{90}{\percent} of ligand atoms inside the padded box. Score ranges were \numrange{-6.35}{-4.86} kcal\,mol$^{-1}$ for \emph{Pf}DHFR, \numrange{-12.01}{-6.37} kcal\,mol$^{-1}$ for the corrected \emph{Pf}CRT receptor, \numrange{-7.03}{-5.05} kcal\,mol$^{-1}$ for \emph{Pf}ClpP and \numrange{-7.57}{-4.63} kcal\,mol$^{-1}$ for \emph{Pf}ATP4. The most favourable estimate in the cohort was PP-03 in the \emph{Pf}CRT cavity at \qty{-12.01}{\kcalmol}; PP-13 led the \emph{Pf}ATP4 region at \qty{-7.57}{\kcalmol}. Because Vina scoring functions are not calibrated across heterogeneous pockets, no cross-target arithmetic mean was computed; target breadth is read from the pattern of per-target evidence. The cohort was \qty{100}{\percent} Lipinski- and Veber-compliant with a mean QED of \num{0.703}.
+
+The docking protocol itself was assessed before any cohort-level interpretation, and the assessment is deliberately mixed. Redocking of co-crystallized reference ligands reproduced the crystal pose for four of five alignable ligands (heavy-atom RMSD below \qty{2.0}{\ang}; \qty{80}{\percent} success), with at least one successful reproduction for each of the three targets used in the primary analysis. The single failure was the \emph{Pf}DHFR reference ligand methotrexate, at an RMSD of approximately \qty{30}{\ang}, because the \emph{Pf}DHFR grid is centred on the NADPH-adjacent site rather than the catalytic methotrexate pocket. Enrichment against the MMV Malaria Box under the dual-filter consensus gave ROC-AUC values of \num{0.924} (\emph{Pf}DHFR), \num{0.971} (\emph{Pf}CRT) and \num{1.000} (\emph{Pf}ATP4). Against the external DEKOIS~2.0 panel for \emph{Pf}DHFR, however, Vina alone reached only \num{0.450} (95\% CI \numrange{0.37}{0.53}) with $\mathrm{EF}_{5\%}$ of \num{0.00}. A controlled two-arm comparison on the identical DEKOIS panel gave overlapping results whether the retained methotrexate was present (\num{0.502}) or stripped (\num{0.563}), so cofactor steric blockade does not explain the near-chance enrichment. \Cref{tab:res_p1_validation} summarizes these checks.
+
+\begin{table}[htbp]
+	\centering
+	\caption[Docking protocol validation]{Validation of the target-anchored docking protocol. Redocking assesses pose reproduction; MMV Malaria Box and DEKOIS~2.0 assess enrichment. The DEKOIS result constrains absolute Vina scores for \emph{Pf}DHFR but does not invalidate within-target rankings or the mutant-to-wild-type ratios used by the resistance-resilience score, which are computed on the same receptor.}
+	\label{tab:res_p1_validation}
+	\small
+	\begin{tabularx}{\textwidth}{l l c X}
+		\toprule
+		Check & Target & Result & Interpretation \\
+		\midrule
+		Redocking & \emph{Pf}DHFR & 1 of 2 (MTX $\approx$ \qty{30}{\ang}) & Grid centred on NADPH-adjacent site \\
+		Redocking & \emph{Pf}CRT & 1 of 1 & Crystal pose reproduced \\
+		Redocking & \emph{Pf}ClpP & RMSD \qty{1.65}{\ang} & Peptide-fragment pose \\
+		Redocking & \emph{Pf}ATP4 & RMSD \qty{1.23}{\ang} & ADP cofactor pose \\
+		MMV (dual filter) & \emph{Pf}DHFR & ROC-AUC \num{0.924} & 399 actives / 399 negatives \\
+		MMV (dual filter) & \emph{Pf}CRT & ROC-AUC \num{0.971} & Score-stratified labels \\
+		MMV (dual filter) & \emph{Pf}ATP4 & ROC-AUC \num{1.000} & Score-stratified labels \\
+		DEKOIS~2.0 (Vina only) & \emph{Pf}DHFR & ROC-AUC \num{0.450} [\num{0.37}, \num{0.53}] & 40 actives / \num{1200} property-matched decoys \\
+		DEKOIS two-arm control & \emph{Pf}DHFR & \num{0.502} vs \num{0.563} (MTX retained vs stripped) & Cofactor blockade not the cause \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+\subsection{Mutation resilience is target-specific and independent of target breadth}
+
+The resistance-resilience score (RRS) is defined per target and per mutation as the magnitude of the mutant Vina score divided by the magnitude of the wild-type Vina score for the same candidate and receptor, expressed as a percentage and written here as $\mathrm{RRS}_{i,m,t}$ (\Cref{eq:rrs}). Candidates whose wild-type score magnitude falls below \qty{5.0}{\kcalmol} are excluded from that target's denominator rather than assigned a surrogate value, which prevents near-zero denominators from inflating the ratio. Only targets satisfying the wild-type binding criterion contribute to a candidate's mean. Classes are assigned from retention thresholds, with Class~A* additionally requiring a wild-type anchor of at least \qty{7.0}{\kcalmol}: the cohort resolved into seven A*, four B and six C profiles, spanning \numrange{73.2}{115.6}\% of wild-type score magnitude (\Cref{tab:res_p1_rrs}).
+
+Two features of \Cref{tab:res_p1_rrs} deserve emphasis because they constrain how the ranking may be used. First, five candidates received their classification from the \emph{Pf}CRT mutant panel alone because their \emph{Pf}DHFR wild-type scores in the separate mutation panel fell below the binding threshold. PP-11 is the clearest case: it is Class A* on the corrected \emph{Pf}CRT channel at a mean RRS of \qty{100.0}{\percent} while remaining a \emph{Pf}DHFR non-binder in the mutation panel, which shows that breadth and resilience are separable properties and that pooling them would conflate binding and non-binding states. Second, several mutant ratios exceed \qty{100}{\percent}, most prominently PP-15 on \emph{Pf}DHFR (\numrange{112.7}{131.8}\% across four mutants). Such values mean that the mutant docking estimate is more favourable than the wild-type estimate on the same receptor; they are scoring-function ratios and carry no implication of biological gain of function.
+
+The corrected \emph{Pf}CRT channel requires its own caution. Under the 3D7-like LYS-76 receptor and the cavity-anchored grid, the K76T and K76A substitutions produced no detectable change in Vina scores for any candidate (RRS \numrange{99.1}{100.6}\%), and a pipeline-null control in which the wild-type receptor was processed through the mutation pipeline without a mutation gave the same distribution (\numrange{99.4}{100.5}\%). The \qty{80}{\percent} and \qty{70}{\percent} class boundaries are therefore finer than the null uncertainty on this channel, and \emph{Pf}CRT RRS values near \qty{100}{\percent} are neutral within the null rather than evidence of active resistance circumvention.
+
+\begin{table}[htbp]
+	\centering
+	\caption[Per-target resistance-resilience scores]{Per-target resistance-resilience scores for the \num{17}-member Set-C cohort, expressed as percentages of the corresponding wild-type Vina score magnitude. Em dashes mark wild-type non-binders ($|S_{\mathrm{Vina},i,\mathrm{WT},t}| < \qty{5}{\kcalmol}$), excluded from the denominator. $\mathrm{RRS}_{\mathrm{mean}}$ is the candidate mean over all eligible target--mutation ratios. Classes are operational categories (A*: wild-type anchor $\geq \qty{7}{\kcalmol}$ and all available RRS $\geq \qty{80}{\percent}$; B: all $\geq \qty{70}{\percent}$ but not all $\geq \qty{80}{\percent}$; C: at least one $\geq \qty{80}{\percent}$ without meeting A/A* or B; D: none $\geq \qty{80}{\percent}$), not biological resistance phenotypes.}
+	\label{tab:res_p1_rrs}
+	\small
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{@{}l c cccc cc r@{}}
+		\toprule
+		Candidate & Class & \multicolumn{4}{c}{$\mathrm{RRS}_{\emph{Pf}\mathrm{DHFR}}$ (\%)} & \multicolumn{2}{c}{$\mathrm{RRS}_{\emph{Pf}\mathrm{CRT}}$ (\%)} & $\mathrm{RRS}_{\mathrm{mean}}$ (\%) \\
+		\cmidrule(lr){3-6}\cmidrule(lr){7-8}
+		& & N51I & C59R & S108N & I164L & K76T & K76A & \\
+		\midrule
+		PP-01 & A* & \num{86.4} & \num{85.5} & \num{87.6} & \num{83.9} & \num{99.8} & \num{99.9} & \num{90.5} \\
+		PP-02 & A* & --- & --- & --- & --- & \num{100.2} & \num{100.0} & \num{100.1} \\
+		PP-03 & C & \num{68.1} & \num{68.3} & \num{65.8} & \num{69.0} & \num{100.0} & \num{100.0} & \num{78.5} \\
+		PP-04 & C & \num{68.8} & \num{66.9} & \num{68.8} & \num{73.5} & \num{99.9} & \num{100.4} & \num{79.7} \\
+		PP-05 & A* & --- & --- & --- & --- & \num{100.0} & \num{100.1} & \num{100.1} \\
+		PP-06 & A* & --- & --- & --- & --- & \num{100.0} & \num{100.0} & \num{100.0} \\
+		PP-07 & B & \num{71.8} & \num{71.8} & \num{72.4} & \num{72.2} & \num{99.7} & \num{99.9} & \num{81.3} \\
+		PP-08 & C & \num{62.1} & \num{62.1} & \num{67.2} & \num{66.3} & \num{99.6} & \num{100.1} & \num{76.2} \\
+		PP-09 & B & \num{70.6} & \num{73.0} & \num{75.8} & \num{76.5} & \num{99.8} & \num{100.0} & \num{82.6} \\
+		PP-10 & B & \num{76.0} & \num{76.4} & \num{75.7} & \num{75.8} & \num{100.1} & \num{100.2} & \num{84.0} \\
+		PP-11 & A* & --- & --- & --- & --- & \num{100.0} & \num{100.0} & \num{100.0} \\
+		PP-12 & C & \num{75.2} & \num{66.1} & \num{62.9} & \num{72.5} & \num{100.0} & \num{100.0} & \num{79.5} \\
+		PP-13 & A* & --- & --- & --- & --- & \num{99.1} & \num{99.4} & \num{99.3} \\
+		PP-14 & C & \num{62.2} & \num{65.5} & \num{68.0} & \num{64.9} & \num{99.9} & \num{100.0} & \num{76.8} \\
+		PP-15 & A* & \num{123.2} & \num{112.7} & \num{125.9} & \num{131.8} & \num{100.1} & \num{100.1} & \num{115.6} \\
+		PP-16 & B & \num{72.9} & \num{74.7} & \num{73.7} & \num{75.9} & \num{100.6} & \num{99.6} & \num{82.9} \\
+		PP-17 & C & \num{59.3} & \num{61.2} & \num{59.5} & \num{58.9} & \num{100.1} & \num{100.1} & \num{73.2} \\
+		\bottomrule
+	\end{tabular}%
+	}
+\end{table}
+
+\subsection{Joint prioritization and the information content of network descriptors}
+
+Reading breadth and resilience together produces a smaller and more informative shortlist than either metric alone. Counting a target as favourable when its Vina estimate falls at or below that target's median across the cohort (per-target medians: \emph{Pf}DHFR \num{-5.92}, \emph{Pf}CRT \num{-8.06}, \emph{Pf}ClpP \num{-6.02}, \emph{Pf}ATP4 \num{-6.38} kcal\,mol$^{-1}$), six candidates were favourable on all four targets, and five of those (PP-15, PP-05, PP-06, PP-11 and PP-13) additionally carried A* classifications. PP-15 combines the highest mean RRS in the cohort (\qty{115.6}{\percent}) with \num{4}/\num{4} target favourability and resilience distributed across both mutation panels. PP-06 combines \num{4}/\num{4} target favourability with the most favourable \emph{Pf}ClpP cavity score in the cohort (\qty{-7.03}{\kcalmol}). These are computational hypotheses for assay follow-up, not hits.
+
+The cross-metric analysis is important for the thesis because it establishes what chemical-space and network descriptors can and cannot stand in for. On the \num{17}-member cohort, the polypharmacology network similarity correlated negatively with mean RRS ($\rho = -0.714$, $p = 0.0013$), RRS correlated positively with mean wild-type score magnitude ($\rho = +0.691$, $p = 0.0021$), and the number of favourable targets correlated positively with mean RRS ($\rho = +0.714$, $p = 0.0013$); all three survive a Bonferroni threshold of $\alpha = \num{0.017}$ for three tests. The African-chemotype structural index showed no such association ($\rho = -0.190$, $p = 0.465$), so natural-product character does not predict mutation resilience. \Cref{fig:res_crossmetrics} displays these relationships. The power boundary must be reported with them: at $n = \num{17}$ a two-sided Spearman test reaches \qty{80}{\percent} power only for $|\rho| \geq \num{0.62}$, and at the Bonferroni-corrected threshold the power to detect $\rho = \num{0.5}$ is approximately \num{0.37}. The surviving associations are consistent with moderate effects; the absence of an ACSI--RRS association is not evidence of equivalence.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.95\textwidth]{p1_v7_exploratory_metric_relationships.pdf}
+	\caption[Exploratory relationships between resistance resilience and network or chemical-space descriptors]{Exploratory relationships between resistance resilience and the secondary ranking descriptors for the \num{17}-member cohort, coloured by operational RRS class. The polypharmacology network similarity and the mean wild-type score magnitude both track mean RRS after Bonferroni correction, whereas the African-chemotype structural index does not. These are descriptive source-panel associations and do not establish causality, biological activity, or resistance protection.}
+	\label{fig:res_crossmetrics}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.95\textwidth]{p1_v7_targetwise_profile_summary.pdf}
+	\caption[Target-wise docking profile of the Set-C cohort]{Target-wise docking profile of the \num{17}-member Set-C cohort. Because AutoDock Vina scores are not calibrated across dissimilar pockets, breadth is summarized as the count of targets at or below each target's within-cohort median rather than as a cross-target average. The within-target threshold is a prioritization device, not an affinity cutoff.}
+	\label{fig:res_targetwise}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.95\textwidth]{p1_v7_rrs_mutation_profiles.pdf}
+	\caption[Mutation-resilience profiles]{Per-target mutation-resilience profiles for the Set-C cohort. Values are ratios of Vina-score magnitudes relative to the declared wild-type denominator; blank cells mark wild-type non-binders excluded from the denominator. The classes are computational operational categories, not biological resistance phenotypes.}
+	\label{fig:res_p1_rrs}
+\end{figure}
+
+\section{Resistance-aware scoring and the static-to-dynamic estimand}\label{sec:res_rrs}
+
+\subsection{Framework scope and descriptor characterization}
+
+The resistance-scoring study works on the same upstream library and hardens it into a resistance-aware workflow whose layers are deliberately kept separate. A docking campaign of \num{136} protein--ligand systems was constructed from the \num{17} Set-C candidates docked against five \emph{Pf}DHFR states (wild type plus N51I, C59R, S108N and I164L) and three \emph{Pf}CRT states (wild type plus K76T and K76A). No mutant crystal structure was available, so homology models were generated with SWISS-MODEL from the wild-type templates 7F3Y and 6UKJ and retained only when QMEAN exceeded \num{-4.0}, GMQE exceeded \num{0.7}, Ramachandran-favoured residues exceeded \qty{95}{\percent} and backbone RMSD was below \qty{1.5}{\ang}; all six models met these thresholds. \Cref{fig:res_p2_workflow} shows the resulting two-estimand structure of the study.
+
+The candidate cohort sits in a compact, moderately polar region of chemical space: mean molecular weight \qty{271.9 \pm 69.3}{\gmol}, mean LogP \num{2.84 \pm 0.82}, mean QED \num{0.70 \pm 0.06}, mean fraction of $sp^3$-hybridized carbons \num{0.22 \pm 0.15} and \num{0.6 \pm 0.9} stereocentres per scaffold, with a mean MPO score of \num{0.728 \pm 0.021} and SYBA synthetic accessibility of \num{36.6 \pm 23.4}. These values describe the sources from which the panel was drawn, including prenylated chromones, flavonoid derivatives and indole alkaloids from African medicinal flora; they are not ethnobotanical validation of any candidate.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.98\textwidth]{p2_workflow.pdf}
+	\caption[Integrated resistance-aware triage framework]{Integrated resistance-aware polypharmacology and molecular-dynamics triage framework of the resistance-scoring study. Static multi-target docking feeds the resistance-resilience score, the African-chemotype structural index and the polypharmacology network similarity; \qty{10}{\ns} explicit-solvent molecular dynamics then runs as a secondary structural check. Docking-derived and trajectory-derived quantities are distinct estimands and are never combined into a single score.}
+	\label{fig:res_p2_workflow}
+\end{figure}
+
+\subsection{Resistance classes depend on the cohort definition, and the protocol is reproducible}
+
+Restricting the primary analysis to the \num{12} candidates with eligible \emph{Pf}DHFR and \emph{Pf}CRT wild-type scores yields class counts of A*:\num{1}, A:\num{1}, B:\num{4}, C:\num{5} and D:\num{1}, with mean target-specific RRS of \num{75.1} for \emph{Pf}DHFR (\num{12} candidates) and \num{86.2} for \emph{Pf}CRT (\num{17} candidates). Classifying all \num{17} candidates on their eligible targets raises the counts to A*:\num{5}, A:\num{1}, B:\num{5}, C:\num{5} and D:\num{1}, but the five \emph{Pf}CRT-only compounds are not comparable with the two-target set. Reporting both is the honest option; collapsing them into a single headline count would hide the coverage difference. The class assignment is robust to the declared thresholds but not to stricter ones: moving the wild-type eligibility threshold from \qty{4.0}{\kcalmol} to \qty{5.0}{\kcalmol} leaves the counts unchanged, whereas raising the retention thresholds from \qty{70}{\percent}/\qty{80}{\percent} to \qty{80}{\percent}/\qty{90}{\percent} increases Class~D from \num{1} to \num{9}.
+
+Protocol reproducibility was quantified rather than asserted. Multi-seed redocking dispersion was $\pm \qty{0.05}{\kcalmol}$ for PP-01 on \emph{Pf}DHFR, $\pm \qty{0.04}{\kcalmol}$ for PP-01 on \emph{Pf}CRT and $\pm \qty{0.03}{\kcalmol}$ for PP-15, and \qty{77.9}{\percent} of class assignments remained unchanged under a bounded $\pm \qty{1}{\kcalmol}$ score perturbation. An independent \num{39}-ligand sensitivity panel produced \num{312} finite docking scores with a bootstrap mean RRS of \num{100.45} (95\% CI \numrange{99.59}{101.32}) and a Class-A fraction of \num{0.974} (CI \numrange{0.923}{1.000}); GNINA convolutional-neural-network cross-scoring agreed with Vina on \qty{100}{\percent} of class assignments, with no per-mutant rank transfer claimed (per-mutant rank correlations are near zero for C59R and I164L). Because almost the whole sensitivity panel falls in Class~A (bootstrap Class-A fraction \num{0.974}), this agreement is close to degenerate: it constrains gross class assignment only, not ranking quality. Together these checks establish protocol-level consistency, not pose accuracy or binding fidelity.
+
+\subsection{Static docking and short molecular dynamics disagree in a consistent direction}
+
+The central P2 result is that two quantities one might treat as interchangeable are not. Static grid docking evaluates unrelaxed steric complementarity, while a \qty{10}{\ns} explicit-solvent trajectory samples local side-chain reorganization, hydrogen-bond rearrangement and solvent shielding. Trajectory-based retention is summarised by a distance ratio, $\mathrm{MD\text{-}RRS}_{d} = \num{100} \times \langle d_{\min} \rangle_{\mathrm{mut}} / \langle d_{\min} \rangle_{\mathrm{WT}}$, computed on the mean minimum heavy-atom protein--ligand distance; values at or below \qty{100}{\percent} indicate pose retention at least as tight as the wild-type endpoint, not increased affinity. Across the \num{16}-system Set-C pilot (PP-01 and PP-02 across the \emph{Pf}DHFR and \emph{Pf}CRT wild-type and mutant states), all \num{16} trajectories passed the geometric contact-stability threshold of a minimum protein--ligand distance below \qty{3.5}{\ang}. Among the eight mutant states with an eligible wild-type docking baseline, static docking predicted reduced score retention (RRS below \qty{100}{\percent}) while explicit-solvent relaxation retained poses in \qty{87.5}{\percent} of matched comparisons (7 of 8; 95\% Wilson CI \numrange{52.9}{97.8}\%; \Cref{fig:res_p2_rmsd}). At single-replicate scope this is a protocol-local calibration signal, not a demonstrated mechanism, and it is reported as such.
+
+The Class-A* lead PP-01 illustrates the pattern across its eight-system panel (\Cref{tab:res_p2_setc}). Static docking penalised \emph{Pf}DHFR C59R (docking RRS \qty{85.5}{\percent}) and \emph{Pf}CRT K76T (docking RRS \qty{92.5}{\percent}), yet both trajectories retained their poses with bound fraction \num{1.000}, mean minimum heavy-atom distances of \qty{2.91}{\ang} ($\mathrm{MD\text{-}RRS}_d = \qty{98.9}{\percent}$) and \qty{3.02}{\ang} ($\mathrm{MD\text{-}RRS}_d = \qty{102.8}{\percent}$), and MM-GBSA endpoints of \qty{-26.56 \pm 1.91}{\kcalmol} and \qty{-29.51 \pm 2.65}{\kcalmol} respectively. This is geometric pose retention, not thermodynamic proof: the K76A endpoint carries a \qty{7.75}{\kcalmol} inter-replicate sensitivity, so no MM-GBSA-derived resilience claim is made for K76A.
+
+\begin{table}[htbp]
+	\centering
+	\caption[Set-C pilot endpoint summaries]{Set-C pilot endpoint summaries for the \num{16} matched systems of the resistance-scoring study (exploratory; not used to assign RRS classes). $\Delta G_{\mathrm{bind}}$ is the mean over \num{100} snapshots $\pm$ the propagated within-trajectory standard deviation, which is not a replicate-level uncertainty estimate. MMG-RRS is the mutant-over-wild-type endpoint ratio ($\times\num{100}$; wild type $= \num{100}$) and docking RRS is shown for comparison (n/a: no eligible wild-type docking reference for PP-02 on \emph{Pf}DHFR). The PP-01 \emph{Pf}CRT K76A endpoint (\qty{-35.29}{\kcalmol}) carries a \qty{7.75}{\kcalmol} inter-replicate sensitivity (second trajectory \qty{-27.54}{\kcalmol}) and supports no resilience claim. Single-replicate summaries are within-protocol contrasts only.}
+	\label{tab:res_p2_setc}
+	\small
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{@{}l l l r r r r@{}}
+		\toprule
+		Candidate & Target & State & $\Delta G_{\mathrm{bind}}$ (\si{\kcalmol}) & SD$_{\mathrm{prop}}$ & MMG-RRS (\%) & Docking RRS (\%) \\
+		\midrule
+		PP-01 & \emph{Pf}CRT & K76A & \num{-35.29} & \num{1.17} & \num{115.3} & \num{90.86} \\
+		PP-01 & \emph{Pf}CRT & K76T & \num{-29.51} & \num{2.65} & \num{96.4} & \num{92.47} \\
+		PP-01 & \emph{Pf}CRT & WT & \num{-30.61} & \num{1.65} & \num{100.0} & {--} \\
+		PP-01 & \emph{Pf}DHFR & C59R & \num{-26.56} & \num{1.91} & \num{105.0} & \num{85.47} \\
+		PP-01 & \emph{Pf}DHFR & I164L & \num{-26.13} & \num{2.34} & \num{103.3} & \num{83.87} \\
+		PP-01 & \emph{Pf}DHFR & N51I & \num{-29.83} & \num{1.50} & \num{118.0} & \num{86.40} \\
+		PP-01 & \emph{Pf}DHFR & S108N & \num{-30.21} & \num{3.62} & \num{119.5} & \num{87.60} \\
+		PP-01 & \emph{Pf}DHFR & WT & \num{-25.29} & \num{2.94} & \num{100.0} & {--} \\
+		PP-02 & \emph{Pf}CRT & K76A & \num{-24.53} & \num{1.27} & \num{97.8} & \num{94.62} \\
+		PP-02 & \emph{Pf}CRT & K76T & \num{-30.45} & \num{1.38} & \num{121.4} & \num{87.91} \\
+		PP-02 & \emph{Pf}CRT & WT & \num{-25.08} & \num{2.56} & \num{100.0} & {--} \\
+		PP-02 & \emph{Pf}DHFR & C59R & \num{-28.85} & \num{1.88} & \num{95.7} & n/a \\
+		PP-02 & \emph{Pf}DHFR & I164L & \num{-31.06} & \num{1.52} & \num{103.0} & n/a \\
+		PP-02 & \emph{Pf}DHFR & N51I & \num{-34.02} & \num{2.68} & \num{112.8} & n/a \\
+		PP-02 & \emph{Pf}DHFR & S108N & \num{-27.09} & \num{1.55} & \num{89.8} & n/a \\
+		PP-02 & \emph{Pf}DHFR & WT & \num{-30.16} & \num{2.06} & \num{100.0} & {--} \\
+		\bottomrule
+	\end{tabular}%
+	}
+\end{table}
+
+A single-ligand feasibility probe outside the Set-C estimand, PP-15 on wild-type \emph{Pf}DHFR and \emph{Pf}CRT, completed both \qty{10}{\ns} trajectories with \qty{100}{\percent} quality-control pass, bound fraction \num{1.000}, mean minimum heavy-atom distances of \qty{2.77}{\ang} and \qty{3.20}{\ang}, and MM-GBSA endpoints of \qty{-29.52 \pm 0.33}{\kcalmol} and \qty{-27.79 \pm 0.49}{\kcalmol}. No mutant or RRS estimate is derived from this probe and no dual-target resilience claim is made from it.
+
+\subsection{Trajectory-derived endpoints are informative only where the complex stays bound}
+
+Endpoint free-energy estimation depends on the ligand remaining in the pocket, which is not guaranteed. Of the four non-overlapping parent-study wild-type complexes simulated for \qty{10}{\ns}, two dissociated and two remained bound (\Cref{tab:res_p2_md}). Only the \emph{Pf}CRT--214 complex produced an interpretable MM-GBSA endpoint (\qty{-18.25 \pm 0.40}{\kcalmol} over \num{101} stored snapshots, minimum distance \qty{3.19}{\ang}, \num{78} persistent contacts). The \emph{Pf}ClpR-labelled 164 system and the \emph{Pf}DHFR 201 system separated beyond \qty{60}{\ang} with zero contact persistence and were excluded, and the \emph{Pf}ATP4 438 system was excluded because multi-chain membrane-transporter parameterization introduced force-field conversion artifacts. Reporting the two dissociations is essential to interpreting the estimand-divergence result: a prediction of retained binding can only be tested where a bound state exists to test.
+
+\begin{table}[htbp]
+	\centering
+	\caption[Parent-study MD stability metrics]{Production molecular-dynamics stability metrics for the four non-overlapping parent-study wild-type complexes (\qty{10}{\ns}, PBC-unwrapped trajectories). These compounds are not among the \num{17} Set-C candidates and do not validate the Set-C ranking. MM-GBSA endpoints are reported only for complexes that remained bound; the \emph{Pf}ATP4 system was excluded because force-field conversion for the multi-chain transporter introduced artifacts.}
+	\label{tab:res_p2_md}
+	\small
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{@{}l r c c c c l@{}}
+		\toprule
+		System & Atoms & BB RMSD (\AA) & Lig. RMSD (\AA) & Min. dist. (\AA) & Contacts & Interpretation \\
+		\midrule
+		\emph{Pf}ClpR-labelled 164 & \num{43035} & \num{1.31} & \num{1.11} & \num{67.42} & \num{0.0} & Unbound \\
+		\emph{Pf}DHFR 201 & \num{134153} & \num{3.05} & \num{1.70} & \num{78.21} & \num{0.0} & Unbound \\
+		\emph{Pf}CRT 214 & \num{76920} & \num{4.47} & \num{2.45} & \num{3.19} & \num{78.1} & Bound; $\Delta G_{\mathrm{bind}} = \qty{-18.25 \pm 0.40}{\kcalmol}$ \\
+		\emph{Pf}ATP4 438 & \num{420801} & \num{12.27} & \num{2.13} & \num{2.25} & \num{178.4} & Bound; endpoint excluded (conversion artifact) \\
+		\bottomrule
+	\end{tabular}%
+	}
+\end{table}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{p2_rmsd_stability.pdf}
+	\caption[Pose retention and thermal equilibration]{Pose retention and thermal equilibration for the PP-01 systems of the resistance-scoring study over \qty{10}{\ns} (canonical R1 trajectories). Explicit-solvent backbone (solid) and ligand-after-backbone-fit (dashed/dotted) RMSD time-series computed with \texttt{gmx rms} after PBC-whole reconstruction (fit group: backbone); axes in nm. Panel~(A), \emph{Pf}DHFR: backbone RMSD \qty{0.203 \pm 0.024}{\nm} (WT) and \qty{0.193 \pm 0.029}{\nm} (N51I); ligand \qty{0.613 \pm 0.240}{\nm} and \qty{0.519 \pm 0.190}{\nm}. Panel~(B), \emph{Pf}CRT: backbone \qty{0.241 \pm 0.048}{\nm} (WT) and \qty{0.211 \pm 0.039}{\nm} (K76T); ligand \qty{0.357 \pm 0.113}{\nm} and \qty{0.581 \pm 0.155}{\nm}. All four trajectories pass the geometric quality-control gate (mean minimum heavy-atom distance \numrange{2.7}{3.2}\,\si{\ang}, bound fraction \num{1.000}); ligand RMSD reflects in-pocket mobility, not dissociation. No ligand dissociation was observed at single-replicate scope.}
+	\label{fig:res_p2_rmsd}
+\end{figure}
+
+The interaction fingerprint of the \num{16} quality-control-passed trajectories provides a structural counterpart to the geometric result. Across \num{100} snapshots per system, \emph{Pf}CRT Tyr16 maintained \qty{100}{\percent} contact occupancy in five of six \emph{Pf}CRT systems (PP-01 and PP-02 against wild type, K76T and K76A), and the \emph{Pf}DHFR hotspot contacts Asp54, Leu46, Met55 and Ile14 reached full occupancy across the PP-01 and PP-02 states (\Cref{fig:res_p2_prolif}). A sparse conserved contact network of this kind is compatible with pose retention, but it does not establish a general mechanism, and the inter-replicate sensitivity of the K76A endpoint (\qty{7.75}{\kcalmol} between two trajectories, against a wild-type thermal noise floor of \qty{2.01}{\kcalmol}) is a reminder that endpoint energies at this scope are not resilience measurements.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{p2_prolif_heatmaps.pdf}
+	\caption[Conserved hotspot anchors]{Conserved hotspot anchors in the explicit-solvent trajectories (ProLIF interaction-fingerprint occupancy over hydrophobic, van der Waals and hydrogen-bond contact types, \num{100} snapshots per system). Panel~(A): \emph{Pf}CRT Tyr16 maintains \qty{100}{\percent} contact occupancy in five of six \emph{Pf}CRT systems. Panel~(B): \emph{Pf}DHFR hotspot contacts (Asp54, Leu46, Met55, Ile14) reach maximum occupancy across the PP-01 and PP-02 states. Contact persistence is compatible with pose retention but does not by itself establish a mechanism.}
+	\label{fig:res_p2_prolif}
+\end{figure}
+
+\subsection{The three ranking dimensions carry distinct information}
+
+Within the two-target set, none of the three pairwise Spearman associations reached significance after Bonferroni correction: polypharmacology network similarity against RRS gave $\rho = -0.2098$ (adjusted $p = \num{1.0000}$), the African-chemotype structural index against RRS gave $\rho = -0.4056$ (adjusted $p = \num{0.5766}$), and RRS against the weakest wild-type score gave $\rho = -0.1661$ (adjusted $p = \num{1.0000}$; \Cref{fig:res_p2_crossmetric}). On all \num{17} candidates the polypharmacology association strengthened to $\rho = -0.5588$ (adjusted $p = \num{0.0667}$), though unequal target coverage limits interpretation; controlling for molecular weight and scaffold frequency gives a moderate partial association of $\rho_{\mathrm{partial}} = -0.6154$. The descriptor constructions are robust to their declared arbitrary choices: recomputing the network ranking at STRING confidence cutoffs of \num{400}, \num{700} and \num{900} leaves the polypharmacology ranks nearly unchanged (rank correlations \numrange{0.9632}{0.9975} across cutoff pairs), and varying any African-chemotype weight by $\pm\qty{20}{\percent}$ preserves the ranking with Spearman correlations of \numrange{0.9167}{0.9804} and top-five Jaccard overlaps of \numrange{0.6667}{1.0000}. These checks address ranking stability against a network-data or weighting choice, not biological target importance. The important negative result is that RRS, the African-chemotype structural index and the polypharmacology network similarity are not redundant with one another at this cohort size, so resistance-aware ranking cannot be replaced by a chemical-space descriptor. The failure of that claim to reach significance, however, must not be read as equivalence.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.85\textwidth]{p2_cross_metric_correlation.pdf}
+	\caption[Cross-metric correlations]{Cross-metric Spearman correlations on the complete two-target set ($n = \num{12}$): PNS--RRS $\rho = -0.2098$, ACSI--RRS $\rho = -0.4056$, ACSI--PNS $\rho = -0.3007$ and RRS--weakest-WT-anchor $\rho = -0.1661$; none is significant after Bonferroni correction (adjusted $p \geq \num{0.51}$; \num{100000} permutations, seed \num{42}). The absence of significant inter-metric association is consistent with distinct ranking dimensions rather than redundant signals. With \num{12} observations these intervals are wide and the tests are descriptive.}
+	\label{fig:res_p2_crossmetric}
+\end{figure}
+
+\subsection{Static score differences fail a retrospective phenotype check}
+
+As an external, purely retrospective test of the static docking estimand, the resistance-scoring study confronted rigid-receptor score differences with published genotype-resolved inhibition data. A curated ChEMBL panel for \emph{Pf}DHFR (target CHEMBL1939) contains \num{28} compounds with paired wild-type and quadruple-mutant (N51I/C59R/S108N/I164L) IC$_{50}$ measurements, \num{24} of which also carry paired double-mutant (C59R/S108N) values, with triple-mutant (C59R/S108N/I164L) pairs complete for all \num{28}. The compounds were docked against wild-type, double, triple and quadruple \emph{Pf}DHFR receptors under the declared Vina protocol, with mutant receptors generated by in-silico side-chain replacement on unchanged backbone coordinates (\num{112} of \num{112} docking jobs completed), and the score difference $\Delta\Delta G = s_{\mathrm{mut}} - s_{\mathrm{WT}}$ was compared with the published fold-shift $\log_2(\mathrm{IC}_{50,\mathrm{mut}}/\mathrm{IC}_{50,\mathrm{WT}})$ by Spearman rank correlation, direction agreement and an exact binomial test against chance agreement.
+
+The confrontation is negative at every genotype. Spearman correlation between $\Delta\Delta G$ and the $\log_2$ fold-shift reached \num{0.19} ($p = \num{0.375}$, $n = \num{24}$) for the double mutant, $-\num{0.04}$ ($p = \num{0.853}$, $n = \num{28}$) for the triple mutant and $-\num{0.13}$ ($p = \num{0.504}$, $n = \num{28}$) for the quadruple mutant, with direction agreement of \num{10}/\num{24} (\qty{41.7}{\percent}), \num{9}/\num{28} (\qty{32.1}{\percent}) and \num{8}/\num{28} (\qty{28.6}{\percent}) respectively. For the triple and quadruple genotypes the agreement rate departs from chance toward systematic disagreement (exact binomial $p = \num{0.044}$ and $p = \num{0.018}$ unadjusted; \num{0.132} and \num{0.054} after Bonferroni correction), and the reference antifolates pyrimethamine (\num{919}-fold shift) and cycloguanil (\num{145}-fold shift) were mispredicted in direction at every genotype. Mutant scores averaged slightly more favourable than wild-type scores (mean $\Delta\Delta G$ \numrange{-0.19}{-0.12}\,\si{\kcalmol}, with \numrange{68}{79}\,\% of compounds below zero), a systematic offset smaller than the $\pm\qty{1}{\kcalmol}$ score sensitivity of the protocol itself.
+
+Two boundaries fix what the result means. The reference measurements are whole-parasite growth IC$_{50}$ values from DHFR-genotyped but non-isogenic strains, so the comparison audits the static $\Delta\Delta G$ estimand against a phenotype-level reference, not enzyme-level binding; and the Set-C candidates are not part of the panel, so the result neither validates nor invalidates their RRS tiers. Its role in this chapter is to bound the docking estimand from experimental data, independently of the chance-level DEKOIS enrichment: a single rigid-grid score difference does not estimate phenotype-level resistance, which is the conclusion the docking--MD divergence reaches from the computational side.
+
+\subsection{Operational guidance for resistance-aware triage}
+
+The results of the resistance-scoring study condense into four operational rules for any pipeline that ranks compounds against mutation panels, and they are stated here as rules because each one is the direct consequence of a result reported above rather than of a general principle.
+
+The first rule is that rigid-receptor score differences must not be used alone to rank resistance variants. The static $\Delta\Delta G$ estimand failed both external checks reported in this chapter: it recovered known actives at chance level on the enrichment benchmark, and its agreement with published genotype-resolved fold-shifts ranged from below chance to indistinguishable from chance at every genotype. A score with these two boundaries may still be a useful triage input, but a ranking built solely on it inherits both failures at once.
+
+The second rule is that disagreement between static docking and short explicit-solvent dynamics should be treated as a flag for experimental follow-up, not as evidence against either method. The disagreement observed here was consistent in direction across matched mutant states, yet it arises from non-equivalent estimands: the grid score evaluates an unrelaxed receptor, the trajectory samples local relaxation. Neither is wrong, and the states where they disagree are precisely the states where an experiment is most informative.
+
+The third rule is that the three ranking dimensions of the workflow should be reported as separate descriptive columns rather than combined into a single index. None of the pairwise associations reached significance at the available cohort size, so a composite index would impose weighting assumptions that the data cannot support; the weights would be arbitrary, and the composite would inherit the interpretive limits of its weakest component while hiding them from the user.
+
+The fourth rule is that the wild-type eligibility gate must be enforced before any ratio-based score is computed. Excluding weak wild-type baselines prevents the artificial score inflation analysed in the methods, and the gate's declared threshold should be reported with any score that depends on it, because the coverage of the analysis, which candidates are scoreable at all, is a consequence of the gate rather than of the data.
+
+\section{Quantum-inspired and topological representations}\label{sec:res_representations}
+
+\subsection{The scaffold paradox has a topological decomposition}
+
+The representation study evaluates three descriptors that are proposed to capture features classical fingerprints miss: a persistent-homology topological fingerprint (TFP), a Tucker-compressed tensor network embedding (TNE) and a simulated quantum kernel score (QKS). The representation analyses use a primary panel of \num{19849} molecules, of which \num{19836} have complete TNE embeddings; binary activity labels come from the Ersilia eos80ch model at a threshold of \num{0.5}, giving \qty{74.2}{\percent} active and \qty{25.8}{\percent} inactive.
+
+The library statistics of the chemical-space study reappear here as a topological question. Persistent homology resolves the apparent conflict between \qty{92.6}{\percent} whole-molecule Tanimoto distinction and \qty{69.3}{\percent} scaffold recovery by separating the two homology dimensions: $H_1$ features, which encode ring topology, are conserved between seed and expanded sets (mean $H_1$ count \num{3.61}), whereas $H_0$ features, which encode connectivity, diverge. The decomposition is independently corroborated by scaffold-only Tanimoto similarity (\num{0.379}) being \num{1.84} times higher than whole-molecule similarity (\num{0.206}). \Cref{fig:res_paradox} shows the two persistence distributions. The mechanistic reading is that single-character SELFIES mutations permute side chains and functional groups while preserving cyclic cores; the contribution of the analysis is to measure that property with a topology-aware quantity rather than to discover it.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.62\textwidth]{p3_scaffold_paradox.pdf}
+	\caption[Scaffold paradox resolution by persistent homology]{Resolution of the scaffold paradox by persistent homology. Panel~(A): $H_1$ persistence distributions for seed natural products and structurally expanded candidates, showing conserved ring topology. Panel~(B): $H_0$ persistence distributions, showing diverging connectivity. Together the two panels account for the \qty{92.6}{\percent} whole-molecule Tanimoto distinction alongside \qty{69.3}{\percent} scaffold recovery.}
+	\label{fig:res_paradox}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.85\textwidth]{p3_persistence_diagrams.pdf}
+	\caption[Persistence diagrams of the molecular graph filtration]{Representative persistence diagrams underlying the topological fingerprint. Vietoris--Rips persistence was computed up to homology dimension two on weighted molecular graphs whose edge weights are $w_{ij} = d_{ij}(1 + Z_i Z_j / 100)$, so that interactions involving heavier atoms contribute more strongly. The primary activity analysis uses a \num{78}-feature vector combining homology summaries, persistence-image and Betti-curve components.}
+	\label{fig:res_persistence}
+\end{figure}
+
+\subsection{Compression retains docking-relevant information on the derivation panel}
+
+Tucker decomposition at bond dimension $d = \num{8}$ compresses each molecular tensor to a \num{192}-element core, which at a mean of \num{39} atoms corresponds to a \num{6.1}-fold compression of the real-atom representation with a mean relative reconstruction error of \num{0.113}. Compression is not uniform across chemical space: molecules with common ring systems compress better (mean reconstruction error \num{0.098}) than structurally atypical molecules (\num{0.137}), and the atom-coordinate factor matrix correlates with molecular volume ($\rho = \num{0.71}$). In a $k = \num{484}$ $k$-means analysis, TNE produced a higher Silhouette coefficient (\num{0.35}) than ECFP4 (\num{0.18}) or the VAE latent representation (\num{0.229}). \Cref{fig:res_tne} shows the compression behaviour and its regression against docking scores.
+
+Whether that cluster separation translates into predictive information was tested directly. In cross-validated regression against Tartarus docking scores, TNE reached $R^2 = \num{0.473}$ for \emph{Pf}DHFR against \num{0.461} for ECFP4, while ECFP4 was stronger for \emph{Pf}ATP4 and \emph{Pf}CRT. This is a genuine retention-of-information result, and it is bounded in the same sentence: the regression uses the same molecular set from which the embeddings were derived, so it demonstrates information retention on the derivation panel rather than generalisation to novel compounds.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.85\textwidth]{p3_tensor_compression.pdf}
+	\caption[Tensor network compression behaviour]{Compression behaviour of the Tucker tensor network embedding. The \num{192}-element core retains docking-score-predictive information on the derivation panel, reaching $R^2 = \num{0.473}$ for \emph{Pf}DHFR against \num{0.461} for ECFP4, while ECFP4 remains stronger for \emph{Pf}ATP4 and \emph{Pf}CRT. Reconstruction error increases for structurally atypical molecules, so compression quality is chemical-space dependent.}
+	\label{fig:res_tne}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.85\textwidth]{p3_tne_regression_summary.png}
+	\caption[Tensor network embedding versus docking score]{Cross-validated regression of docking scores on molecular representations. The tensor network embedding is competitive with ECFP4 on \emph{Pf}DHFR but not on the remaining targets. Because embeddings and regression endpoint come from the same molecular set, this quantifies information retention rather than prospective transfer.}
+	\label{fig:res_tne_reg}
+\end{figure}
+
+\subsection{ECFP4 remains the strongest descriptor and the hybrid does not close the gap}
+
+The activity-prediction benchmark is the decisive test, and its result is negative for every quantum-inspired representation (\Cref{tab:res_p3_benchmark}). On the \num{19836}-molecule complete-embedding set under 5-fold stratified cross-validation, ECFP4 reached the highest area under the receiver operating characteristic curve (\num{0.948}), followed by the atom-pair (\num{0.940}), binding-pattern (\num{0.939}), functional-class (\num{0.918}), MACCS (\num{0.905}) and 2D-pharmacophore (\num{0.896}) fingerprints. The \num{78}-feature topological fingerprint reached \num{0.876} and the tensor network embedding \num{0.722}. The quantum kernel score, evaluated by support-vector machine on the full representation panel ($n = \num{19849}$) with a precomputed six-qubit kernel, reached \num{0.823}; because it uses a different panel and classifier it is reported alongside but not as a like-for-like random-forest comparison.
+
+The hybrid descriptor concatenating TFP, TNE and the quantum kernel principal components reached \num{0.888} $\pm$ \num{0.007}, significantly below ECFP4 ($p < \num{0.0001}$) yet above every standalone quantum-inspired descriptor. The ablation is the informative part: removing the quantum kernel components costs \num{0.040} AUC, removing TFP costs \num{0.014}, and removing TNE slightly improves the hybrid (\num{+0.011}), consistent with the low standalone TNE score. The hybrid's measurable contribution is therefore concentrated in the quantum kernel components, and the configuration is not recommended over ECFP4 for primary screening on this panel. One further caveat belongs with the table: the hybrid hyperparameters were selected on a \num{200}-molecule development subset that was not held out from the final evaluation, so \num{0.888} should be read as an upper bound rather than an unbiased estimate.
+
+\begin{table}[htbp]
+	\centering
+	\caption[Activity prediction and hybrid ablation]{Activity-prediction performance and hybrid ablation in the descriptor benchmark. Fingerprint, TFP, TNE and hybrid rows use the complete-embedding intersection ($n = \num{19836}$) under 5-fold stratified random-forest cross-validation ($\num{200}$ trees). The quantum kernel row comes from the full representation panel ($n = \num{19849}$) under 5-fold support-vector-machine cross-validation with a precomputed six-qubit kernel and is not a like-for-like comparison, so no $\Delta$AUC against ECFP4 is assigned to it. All activity labels are model predictions, not experimental measurements.}
+	\label{tab:res_p3_benchmark}
+	\small
+	\begin{tabular}{l c c c c}
+		\toprule
+		Method & AUC & Accuracy & F1 & $\Delta$AUC vs.\ ECFP4 \\
+		\midrule
+		ECFP4 (baseline) & \num{0.948} & \num{0.896} & \num{0.931} & --- \\
+		Atom pair & \num{0.940} & \num{0.888} & \num{0.927} & \num{-0.008} \\
+		Binding pattern & \num{0.939} & \num{0.889} & \num{0.928} & \num{-0.009} \\
+		FCFP4 & \num{0.918} & \num{0.869} & \num{0.914} & \num{-0.029} \\
+		MACCS & \num{0.905} & \num{0.863} & \num{0.909} & \num{-0.043} \\
+		Pharmacophore & \num{0.896} & \num{0.854} & \num{0.904} & \num{-0.052} \\
+		TFP (persistent homology) & \num{0.876} & \num{0.838} & \num{0.897} & \num{-0.072} \\
+		TNE ($d = \num{8}$) & \num{0.722} & \num{0.756} & \num{0.857} & \num{-0.226} \\
+		Quantum kernel (SVM, $n = \num{19849}$) & \num{0.823} & \num{0.819} & \num{0.886} & --- \\
+		Hybrid (TFP + TNE + quantum kernel) & \num{0.888} & \num{0.843} & \num{0.900} & \num{-0.060} \\
+		\midrule
+		\multicolumn{5}{l}{\emph{Ablation (hybrid minus one component):}} \\
+		Hybrid $-$ TFP & \num{0.874} & \num{0.837} & \num{0.895} & \num{-0.014} \\
+		Hybrid $-$ TNE & \num{0.899} & \num{0.850} & \num{0.903} & \num{+0.011} \\
+		Hybrid $-$ quantum kernel & \num{0.847} & \num{0.820} & \num{0.887} & \num{-0.040} \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\subsection{The quantum kernel is a well-behaved kernel, not a quantum advantage}
+
+The most consequential result for this thesis is the kernel comparison. Against a gamma-tuned radial basis function (RBF) baseline, the six-qubit quantum kernel showed no detectable difference internally: at $n = \num{5000}$ the comparison gave $p = \num{0.419}$, and at $n = \num{19849}$ it gave $p = \num{0.060}$ (quantum \num{0.823 \pm 0.008} against RBF \num{0.829 \pm 0.007}, paired $t = \num{-2.59}$). The quantum kernel did significantly outperform a linear kernel ($p \leq \num{0.0006}$), so the kernel is not uninformative; it is simply indistinguishable from a well-tuned classical kernel. The geometry of the two kernels differs sharply: kernel--target alignment was \num{0.622 \pm 0.013} for the quantum kernel against \num{0.145 \pm 0.006} for RBF, a fourfold geometric advantage that translated into a $\Delta$AUC of \num{-0.006} (\Cref{fig:res_qkernel}). Kernel alignment is therefore not a proxy for classification performance on this task, and a favourable Hilbert-space geometry does not by itself justify a quantum claim.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.85\textwidth]{p3_qkernel_benchmark.pdf}
+	\caption[Quantum kernel benchmark at two panel sizes]{Quantum kernel benchmark. Panel~(A): per-fold AUC for the quantum kernel and the gamma-tuned RBF baseline at $n = \num{19849}$ and $n = \num{5000}$; the two overlap at every fold. Panel~(B): kernel--target alignment per fold, where the quantum kernel reaches \num{0.622 \pm 0.013} against \num{0.145 \pm 0.006} for RBF, yet this geometric advantage does not translate into classification performance ($\Delta$AUC $= \num{-0.006}$).}
+	\label{fig:res_qkernel}
+\end{figure}
+
+\subsection{Fusing representations into ECFP4 adds nothing, and transfer exposes fragility}
+
+The hybrid of \Cref{tab:res_p3_benchmark} combines the quantum-inspired descriptors with one another and excludes ECFP4, so it cannot show whether they carry information the fingerprint lacks. The ECFP4-inclusive fusion was therefore tested directly. A stacked ensemble combining per-representation random forests through logistic regression over out-of-fold probabilities, the variant least exposed to feature dilution, reached \num{0.9473 \pm 0.0043} against \num{0.9475 \pm 0.0045} for ECFP4 alone (paired $t = \num{-2.29}$, $p = \num{0.084}$). Fusions that mixed feature blocks directly were worse: concatenation reached \num{0.9073} ($\Delta = \num{-0.040}$, $p < \num{0.0001}$) and per-block feature selection \num{0.8958} ($\Delta = \num{-0.052}$). Because the deficit grew as the \num{2048}-bit fingerprint was displaced further, the mechanism is dilution of a sparse fingerprint rather than interference between representations. For this endpoint, TFP and TNE add no predictive information to ECFP4.
+
+Transfer to a ChEMBL~34 label-source-shift panel (\num{22447} antimalarials, IC$_{50} \leq 10$ $\mu$M active) separated representations that look similar internally. ECFP4 reached \num{0.960 \pm 0.004}, slightly above its internal value; TFP reached \num{0.864}, the TFP${}+{}$TNE hybrid \num{0.800} and TNE \num{0.645}. Under the same shift the quantum kernel fell below RBF (\num{0.817} against \num{0.847}; corrected-resampled $p = \num{0.021}$, BH $q = \num{0.021}$). Retaining the \num{351} embedding failures (\qty{1.6}{\percent}) as zero-vector penalties or dropping them for the \num{22096} complete cases did not change the ranking (ECFP4 \num{0.960}, TFP \num{0.861}, TNE \num{0.644}, TFP${}+{}$TNE \num{0.798}), so the ordering is not driven by embedding failures (\Cref{fig:res_extval}). This panel is independent of the eos80ch label source but molecule-level disjointness from the primary panel was not established, so the analysis is a transferability assessment rather than an independent hold-out validation.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.85\textwidth]{p3_extval_internal_vs_external.png}
+	\caption[Internal versus ChEMBL label-source-shift performance]{Internal versus ChEMBL label-source-shift performance in the descriptor benchmark. Descriptor methods were evaluated with random forests and kernel methods with support-vector machines, so the two families are shown descriptively rather than as a direct model-to-model comparison. The tensor network embedding loses the most under the label-source shift, while the topological fingerprint transfers with a smaller deficit.}
+	\label{fig:res_extval}
+\end{figure}
+
+\subsection{The benchmark describes interpolation, and the topological signal cross-links to docking}
+
+Two further descriptor-benchmark results bound the interpretation of every AUC reported above. First, the panel is scaffold-poor for its size: \num{19836} molecules resolve to \num{632} Bemis--Murcko scaffolds, or \num{324} once atom identity is stripped, a mean of \num{31} molecules per scaffold, with benzene alone forming the core of \num{1661} of them (\qty{8.4}{\percent}). Random cross-validation therefore places analogues of the same scaffold on both sides of most fold boundaries, and the reported AUCs describe interpolation within analogue series. Repeating the benchmark with folds grouped by scaffold so that no scaffold appears in both training and test sets costs every descriptor between \num{0.086} and \num{0.196} AUC: ECFP4 falls from \num{0.9485} to \num{0.8224} (2.5--97.5 percentile of repeat means \num{0.8122}--\num{0.8298}), TFP from \num{0.8691} to \num{0.7253} and TNE from \num{0.7205} to \num{0.6342}. The comparative conclusion survives, with ECFP4 strongest and TNE weakest under either split, but the ordering in between does not fully survive: MACCS overtakes FCFP4 and TFP overtakes the pharmacophore fingerprint, which loses \num{0.196}. Performance within scaffolds therefore does not predict transferability across them.
+
+Second, topological features do connect to the docking evidence of the chemical-space study, weakly. Across \num{17011} molecules docked against the four targets, the $H_0$ count ($\rho = -0.248$, $p < 10^{-137}$), $H_0$ entropy ($\rho = -0.243$) and $H_1$ entropy ($\rho = -0.190$) correlate negatively with the number of targets bound at $\Delta G \leq \qty{-7.0}{\kcalmol}$ (\Cref{fig:res_promiscuity}). Lower values of these features are associated with more targets meeting the threshold. Because the endpoint is a docking-derived count and the associations are weak in magnitude, the result is hypothesis-generating rather than a mechanistic polypharmacology rule. The related association between $H_1$ count and resistance-resilience score is size-mediated: after controlling for molecular size and structural covariates it does not support an independent topological predictor (\Cref{fig:res_h1rrs}).
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.85\textwidth]{p3_tda_promiscuity.png}
+	\caption[Topological features and multi-target docking profiles]{Topological features against multi-target docking profiles ($N = \num{17011}$ molecules docked against four \emph{P.~falciparum} targets). Persistence-derived features correlate negatively but weakly with the number of targets meeting the $\Delta G \leq \qty{-7.0}{\kcalmol}$ threshold. The endpoint is a docking-derived count, so this is a hypothesis-generating association rather than a mechanistic polypharmacology rule.}
+	\label{fig:res_promiscuity}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.80\textwidth]{p3_h1_rrs_violin.png}
+	\caption[$H_1$ persistence against resistance class]{Distribution of $H_1$ cycle persistence across resistance-resilience classes. The apparent association between topological complexity and resistance resilience is size-mediated and does not survive control for molecular size and structural covariates, so $H_1$ persistence is not an independent topological predictor of the resistance-resilience score.}
+	\label{fig:res_h1rrs}
+\end{figure}
+
+\section{Learned representations under chemical distribution shift}\label{sec:res_learned}
+
+\subsection{Under scaffold separation, ECFP4 with a random forest still wins}
+
+The learned-representation study extends the representation comparison to graph neural networks and a SMILES transformer on the same frozen \num{19836}-molecule panel, using \num{25} fold--seed replicates per model and three partition families (\Cref{tab:res_p5_benchmark}). The partition family determines the apparent model ranking. Under stratified random splitting, ECFP4--RF reaches \num{0.9433} and ChemBERTa \num{0.9121}, and every architecture is within a few points of the fingerprint. Under Bemis--Murcko scaffold separation the ranking is unchanged but the deficits become statistically resolvable: ECFP4--RF reaches \num{0.8300} while the graph isomorphism network reaches \num{0.8047} ($\Delta = \num{-0.025}$, BH-adjusted $p = \num{0.0330}$), GIN--TFP \num{0.8138} ($\Delta = \num{-0.016}$, adjusted $p = \num{0.0330}$), GIN--TNE \num{0.8090} ($\Delta = \num{-0.021}$, adjusted $p = \num{0.0378}$) and ChemBERTa \num{0.7867} ($\Delta = \num{-0.043}$, adjusted $p = \num{0.0002}$). The Butina cluster split at $C = \num{0.55}$ reproduces the same hierarchy with ECFP4--RF at \num{0.8331} and ChemBERTa lowest at \num{0.7776}. \Cref{fig:res_p5_auc} shows the random-versus-scaffold contrast; the gap between the two panels is the quantity that matters, not either AUC alone.
+
+\begin{table}[htbp]
+	\centering
+	\caption[Primary representation benchmark]{Primary representation benchmark of the learned-representation study across three partition families. Values are mean test ROC-AUC across five per-seed means (each seed averaging five fold evaluations, \num{25} fold--seed records per model and split). Scaffold-split differences are evaluated against ECFP4--RF with two-tailed paired $t$-tests ($df = \num{4}$) and Benjamini--Hochberg adjustment. Activity labels are model predictions on a frozen panel.}
+	\label{tab:res_p5_benchmark}
+	\small
+	\begin{tabularx}{\textwidth}{l c c X c}
+		\toprule
+		Model & Random & Scaffold & $\Delta$ vs.\ ECFP4 (adjusted $p$) & Butina \\
+		\midrule
+		ECFP4--RF (baseline) & \num{0.9433} & \textbf{\num{0.8300}} & --- & \textbf{\num{0.8331}} \\
+		GIN & \num{0.9098} & \num{0.8047} & \num{-0.025} (\num{0.0330}) & \num{0.8202} \\
+		GIN--TFP (topological fusion) & \num{0.9084} & \num{0.8138} & \num{-0.016} (\num{0.0330}) & \num{0.8232} \\
+		GIN--TNE (tensor fusion) & \num{0.8918} & \num{0.8090} & \num{-0.021} (\num{0.0378}) & \num{0.8191} \\
+		ChemBERTa & \num{0.9121} & \num{0.7867} & \num{-0.043} (\num{0.0002}) & \num{0.7776} \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.85\textwidth]{p5_auc_benchmark.png}
+	\caption[Representation performance under random and scaffold splits]{Molecular representation performance under random and Bemis--Murcko scaffold splits in the learned-representation study (\num{25} fold--seed replicates per model). Classical ECFP4--RF maintains the highest discrimination under scaffold separation. The collapse of every model between the two panels, rather than the ordering within either panel, is the result that matters for prospective screening.}
+	\label{fig:res_p5_auc}
+\end{figure}
+
+\subsection{The gap is localized in the structural extrapolation tail}
+
+Aggregate AUCs hide where the deficit occurs. Stratifying test compounds by the Tanimoto similarity of their nearest training neighbour shows that the ECFP4--RF advantage is largest in the structural extrapolation tail (nearest-neighbour similarity below \num{0.40}, deciles D1--D4), reaching up to \num{0.053} AUC for the weakest model and \num{0.027} for GIN--TFP, and narrows sharply, without reversing, to \num{0.001}--\num{0.007} in mid-range interpolation (D5--D8). Model choice is therefore a spatial decision rather than a global one on this panel, which is the observation that motivates the distance-aware routing hypothesis discussed below.
+
+Stratifying by structural complexity sharpens the picture and also disciplines it (\Cref{tab:res_p5_cohorts}). Fusing multi-scale persistent-homology images into the graph network (GIN--TFP) yields a positive gain over the base GIN in every cohort: \num{+0.0143} on flat aromatics ($F_{sp^3} < \num{0.25}$, $n = \num{7797}$), \num{+0.0125} on complex three-dimensional scaffolds ($F_{sp^3} \geq \num{0.45}$, $n = \num{2235}$) and \num{+0.0102} on polycyclics (Rings $\geq \num{4}$, $n = \num{363}$). The gain is directionally consistent but does not increase monotonically with structural complexity, and on the small polycyclic cohort its bootstrap interval includes zero. Base GIN shows its largest deficit against ECFP4--RF precisely on the stereochemically rich cohorts (\num{0.0494} on complex three-dimensional scaffolds and \num{0.0606} on polycyclics, against \num{0.0136} on flat aromatics), and topological fusion partially recovers that deficit, closing \qty{17}{\percent} of the cohort-level gap on polycyclics and \qty{36}{\percent} at the aggregate scaffold split. The honest reading is that global persistent-image invariants supply information complementary to one-Weisfeiler--Lehman-bounded message passing, without the benchmark isolating that as the unique cause (\Cref{fig:res_p5_complexity}).
+
+\begin{table}[htbp]
+	\centering
+	\caption[Performance by structural-complexity cohort]{Learned-representation benchmark performance stratified by structural complexity on the frozen \num{19836}-molecule panel (\num{0} parse failures). Cohort values were recomputed from archived canonical scaffold-split predictions under a predeclared per-seed estimand (mean $\pm$ SD over five seeds). The final column gives the paired seed-level Cohen's $d$ and the 95\% molecule-level bootstrap interval of the GIN--TFP gain over GIN; the polycyclic interval includes zero. Cohort-level gains are descriptive statistics of this panel.}
+	\label{tab:res_p5_cohorts}
+	\small
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{l c c c l}
+		\toprule
+		Cohort & ECFP4--RF & GIN & GIN--TFP & Gain vs.\ GIN \\
+		\midrule
+		Flat aromatic ($F_{sp^3} < \num{0.25}$; $n = \num{7797}$) & \num{0.7624} & \num{0.7488} & \num{0.7631} & \num{+0.0143} ($d = \num{1.96}$; CI \numrange{0.0088}{0.0201}) \\
+		Complex 3D ($F_{sp^3} \geq \num{0.45}$; $n = \num{2235}$) & \num{0.8457} & \num{0.7963} & \num{0.8088} & \num{+0.0125} ($d = \num{0.46}$; CI \numrange{0.0040}{0.0206}) \\
+		Polycyclic (Rings $\geq \num{4}$; $n = \num{363}$) & \num{0.7768} & \num{0.7162} & \num{0.7264} & \num{+0.0102} ($d = \num{0.17}$; CI \numrange{-0.0112}{0.0306}) \\
+		\bottomrule
+	\end{tabular}%
+	}
+\end{table}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.95\textwidth]{p5_structural_complexity.png}
+	\caption[Structural-complexity cohorts]{Performance by structural-complexity cohort in the learned-representation study under the recomputed per-seed estimand (per-seed points, mean $\pm$ SD over five seeds). The GIN--TFP gain over GIN is positive in every cohort, with bootstrap 95\% intervals annotated per panel, but it does not increase with structural complexity and the polycyclic interval includes zero. Base GIN shows its largest deficit against ECFP4--RF on the stereochemically rich cohorts.}
+	\label{fig:res_p5_complexity}
+\end{figure}
+
+A hyperparameter capacity sweep bounds the alternative explanation that the graph deficit is a tuning artifact: across hidden widths of \num{64}, \num{128} and \num{256} and dropout probabilities of \num{0.1} and \num{0.2}, scaffold-split AUC remained within \numrange{0.8000}{0.8081} over \num{25} fold--seed replicates. Adding parameters does not close the gap to ECFP4--RF, which is consistent with an architectural rather than a tuning explanation.
+
+\subsection{Topological salience and the limits of what a benchmark can claim}
+
+The fused network does use the topological block. Across the \num{25} replicates the persistent-image block (dimensions \numrange{33}{57}) carries the largest mean projection-weight magnitude in the fusion head, \num{0.0790} against \num{0.0485} for the $H_0$ block and \num{0.0547} for the Betti block (\Cref{fig:res_salience}). This salience is reported descriptively: the aggregate scaffold-split gain from topological fusion remains \num{0.0091} AUC points, so high projection weight is not evidence of importance. Salience and contribution must be measured separately, and here they diverge.
+
+Two further boundaries belong to the learned-representation result itself. First, the early-recognition metrics that a virtual-screening audience would expect are degenerate on this panel: at approximately \qty{74}{\percent} active prevalence, $\mathrm{EF}_{1\%}$ saturates at \numrange{1.32}{1.35} against a prevalence-imposed ceiling of approximately \num{1.35}, and precision@\qty{1}{\percent} lies between \num{0.978} and \num{0.999}. No prospective precision claim is therefore supported, including for the distance-aware triage rule, which is proposed as a testable operational hypothesis: on this panel split-conformal coverage across the five routed arms meets the nominal \qty{90}{\percent} target (\numrange{0.902}{0.906}, mean set size \numrange{1.26}{1.31}) and post-hoc isotonic recalibration reduces residual scaffold-split expected calibration error by a factor of \numrange{3}{5} (from \numrange{0.08}{0.13} to approximately \num{0.025}), but prospective evaluation on an independent low-prevalence library is reserved for future work. Second, the centroid-based screening reduction that makes the pipeline deployable (from \numrange{263000}{1936} representative evaluations, a \qty{99.3}{\percent} overhead reduction, with mean pairwise Tanimoto similarity between centroids of \num{0.32}) is a compute statement, not a performance statement.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.85\textwidth]{p5_salience.png}
+	\caption[Topological descriptor salience]{Mean projection salience of descriptor blocks in the topological and tensor fusion heads of the learned-representation study. The persistent-image dimensions carry the largest mean weight magnitude, yet the corresponding aggregate scaffold-split gain remains \num{0.0091} AUC points, so salience is not evidence of predictive contribution.}
+	\label{fig:res_salience}
+\end{figure}
+
+\section{Synthesis: what the representations do and do not provide}\label{sec:res_synthesis}
+
+Read as one argument, the four studies converge on a single answer to the question that titles this thesis. The chemical space is genuinely novel and scaffold-anchored; docking-derived resistance metrics separate candidate chemotypes and identify a shortlist of testable hypotheses; and every representation proposed as an alternative or complement to classical fingerprints, whether persistent-homology, tensor-compressed, kernel-based, graph-based or sequence-based, is diagnostically informative while adding no detectable predictive performance over ECFP4.
+
+The four results that carry that conclusion are quantitative and mutually reinforcing. Adding topological and tensor representations to ECFP4 as a stacked ensemble changed AUC by \num{-0.0002} under a test whose power is limited ($p = \num{0.084}$), and feature-level fusions were worse than ECFP4 alone. The quantum kernel was indistinguishable from a gamma-tuned RBF kernel internally ($p = \num{0.060}$) and lower than it under a ChEMBL label-source shift (\num{0.817} against \num{0.847}), despite a fourfold higher kernel--target alignment. Graph networks and a molecular transformer remained below ECFP4--RF under scaffold, Butina and decile-stratified partitions, with the deficit localized in the low-similarity extrapolation tail and not attributable to model capacity. Persistent homology did not predict mutation resilience once molecular size was controlled. The complementary role the topological descriptors do play is diagnostic rather than predictive: they decompose the scaffold paradox, expose compression behaviour and expose where a learned model's advantage disappears.
+
+That conclusion is the standing baseline for the quantum machine learning programme, which is the only part of this thesis that uses genuine quantum machine learning. The programme encodes molecular structure directly into parameterized quantum circuits through quantum-embedded similarity estimation and bond-order and bond-feature maps, to be evaluated on near-term quantum hardware. Its status is \textsc{not computed}: no canonical runs exist, and no result from it is reported here. What the completed projects supply is the comparison standard. A quantum model on this library must be measured against the same frozen panel, the same scaffold-grouped partitions, the same label source and the same multiplicity correction as ECFP4--RF, and must be compared against a tuned classical kernel rather than an untuned one, because the one clear lesson of the descriptor benchmark is that kernel---target alignment and Hilbert-space expressivity do not translate into classification performance. The representational bottlenecks this thesis documents are real: dictionaries that describe local atom environments saturate the available label signal on a scaffold-poor panel, hybrid descriptors dilute a sparse fingerprint, and topological invariants are informative about structure without being predictive about activity. Whether quantum feature maps escape those bottlenecks is an empirical question, and the honest-negative record assembled in this chapter is the reason the question can be asked without assuming the answer.
+
+\section{Conclusion}\label{sec:ch3_conclusion}
+
+This chapter established the empirical foundation of the thesis through four linked studies. A hybrid library of \num{65856} African-natural-product-inspired molecules is \qty{92.6}{\percent} Tanimoto-distinct from its seeds while retaining \qty{69.3}{\percent} of their scaffolds, and a centroid-reduced docking campaign against four mechanistically distinct targets shows that mutation resilience and target breadth are separable properties whose ratio-based classes are neutral within a pipeline-null control on the corrected \emph{Pf}CRT channel. Explicit-solvent molecular dynamics retained poses where static docking predicted penalties in \num{7} of \num{8} matched mutant states, establishing that docking-derived and trajectory-derived quantities are non-equivalent estimands at single-replicate scope, and trajectory endpoint estimation succeeded only where the complex remained bound. A retrospective confrontation with published genotype-resolved \emph{Pf}DHFR fold-shifts bounded the same docking estimand from the experimental side, with direction agreement of only \numrange{28.6}{41.7}\,\% between rigid-receptor $\Delta\Delta G$ and observed resistance shifts, so the static score is treated throughout as a triage input rather than a resistance measurement. Across topological, tensor-compressed, kernel-based, graph-based and sequence-based representations, ECFP4 with a random forest remained the strongest descriptor, no fusion improved on it, and the quantum kernel matched but did not beat a tuned classical kernel. These boundaries, together with the diagnostic value of persistent homology for generative-model assessment, define the comparison standard that the quantum machine learning programme must meet.

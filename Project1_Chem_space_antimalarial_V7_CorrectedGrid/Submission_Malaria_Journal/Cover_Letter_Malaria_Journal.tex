@@ -1,0 +1,79 @@
+% Cover Letter for Malaria Journal
+\documentclass[11pt,a4paper]{letter}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{hyperref}
+
+\signature{Myke Vital Sao Temgoua\\
+On behalf of all authors}
+
+\address{Myke Vital Sao Temgoua\\
+Department of Physics\\
+Faculty of Science\\
+University of Yaoundé I\\
+P.O. Box 812\\
+Yaoundé, Cameroon\\
+Email: myke-vital.sao@facsciences-uy1.cm}
+
+\begin{document}
+
+\begin{letter}{Editor-in-Chief\\
+Malaria Journal\\
+BioMed Central}
+
+\opening{Dear Editor,}
+
+We submit for consideration in \emph{Malaria Journal} our manuscript titled \textbf{``Target breadth and mutation resilience in African-natural-product-inspired antimalarial chemotypes: a computational analysis''} as an original research article.
+
+\textbf{Manuscript scope and significance}
+
+This work addresses a central challenge in antimalarial drug discovery: how to prioritize chemotypes that combine target breadth with mutation resilience while remaining computationally accessible to research groups in endemic regions. We present an integrated workflow that connects African-natural-product-inspired chemical-space expansion to target-anchored docking against four mechanistically distinct \emph{Plasmodium falciparum} proteins (PfDHFR, PfCRT, PfClpP, PfATP4) and per-target resistance-resilience analysis across clinically relevant mutant panels. By keeping these evidence layers separate rather than collapsing them into a single composite score, the workflow generates experimentally testable hypotheses about chemotype utility without conflating computational estimates with biological activity.
+
+The study is particularly relevant to \emph{Malaria Journal}'s scope for several reasons:
+
+\begin{enumerate}
+\item \textbf{Endemic-region research capacity}: The centroid-based library reduction achieves 99.3\% computational-cost reduction, making systematic multi-target and mutation-panel screening accessible to groups with limited infrastructure while retaining 69.3\% scaffold recovery from African natural-product seeds.
+
+\item \textbf{African natural-product chemical space}: The 65\,856-molecule hybrid library combines 396 African natural products with 454 synthetic antimalarial compounds, yielding 19\,913 computationally prioritized candidates with 92.6\% whole-molecule novelty (Tanimoto $<$ 0.4 to seed set).
+
+\item \textbf{Mutation-resilience framework}: Per-target resistance-resilience scores (RRS) quantify docking-score retention across PfDHFR (N51I, C59R, S108N, I164L) and PfCRT (K76T, K76A) mutant panels, excluding non-binding wild-type baselines to prevent artifactual resilience claims. The framework correctly reports neutral-within-null findings where no mutant signal is detected, strengthening confidence in genuine A* classifications.
+
+\item \textbf{Honest-negative results}: The DEKOIS~2.0 near-chance enrichment (PfDHFR AUC 0.45) and the approved-drug retrospective (pyrimethamine and chloroquine RRS indistinguishable from null) constrain interpretation of absolute docking scores while preserving relative within-target rankings—an evidence boundary appropriate for hypothesis-generation studies.
+
+\item \textbf{Experimentally actionable hypotheses}: Five priority candidates (PP-15, PP-05, PP-06, PP-11, PP-13) combine favorable four-target profiles with A* mutation-resilience classification, defining a focused experimental follow-up tier for biochemical assays, mutant-panel validation, and molecular-dynamics refinement.
+\end{enumerate}
+
+\textbf{Contribution to malaria drug discovery}
+
+Where recent machine-learning and structure-based approaches have focused on potency prediction from single-target datasets, our workflow prioritizes multi-target engagement and mutation tolerance as distinct, complementary properties. The target panel spans mechanistically unrelated antimalarial vulnerabilities (folate metabolism, chloroquine-resistance transporter, proteostasis, ion homeostasis), testing whether African-natural-product-inspired chemotypes distribute across pathway, transporter, proteostasis, and ion-regulation hypotheses. This breadth aligns with recent experimental polypharmacology screens identifying multi-target engagement as promising for resistance management, while the per-target RRS framework extends conventional resistance-mutation docking by excluding non-binding baselines and preserving target-specific evidence quality.
+
+\textbf{Limitations and scope}
+
+We emphasize that this is a hypothesis-generating study. Docking scores are empirical scoring-function outputs calibrated neither across heterogeneous binding sites nor against experimental free energies. PfCRT is represented by a corrected proxy cavity, and PfATP4 by mechanism-motivated regions without co-crystallized inhibitors. No IC$_{50}$/EC$_{50}$ measurements were performed. The resulting candidate profiles propose which chemotypes, targets, and mutant panels should be tested next; they do not claim biological potency, target engagement, or resistance circumvention. This scope is appropriate for computational antimalarial discovery and aligns with \emph{Malaria Journal}'s publication of method-development and hypothesis-generation studies that advance accessible, African-centered research capacity.
+
+\textbf{Data availability and reproducibility}
+
+All data, code, machine-readable tables, raw docking outputs, and provenance records are archived on Zenodo under an MIT license at \url{https://doi.org/10.5281/zenodo.22696778}. The deposit includes file-level checksum manifests, enabling full computational reproduction.
+
+\textbf{Article Processing Charge (APC) waiver request}
+
+The corresponding author is based in Cameroon, a country classified under BioMed Central's APC waiver policy. We respectfully request a full APC waiver for this submission. All computational work was conducted using institutional resources; no specific external funding was available for this study. An APC waiver would enable dissemination of this work through \emph{Malaria Journal}'s open-access platform, maximizing accessibility to researchers in endemic regions who may benefit from the centroid-based library reduction and per-target mutation-resilience framework.
+
+\textbf{Author contributions and competing interests}
+
+M.V.S.T. and S.G.N.E. designed the integrated study. M.V.S.T. and J.-P.T.N. developed the chemical-space and docking analyses. P.S. and W.F.M. contributed to target biology and resistance interpretation. All authors reviewed and approved the manuscript. We declare no competing financial interests.
+
+\textbf{Why Malaria Journal?}
+
+We chose \emph{Malaria Journal} for its unambiguous scope match (antimalarial discovery, resistance, African research capacity), fast decision timeline (median 9 days to first decision), strong impact factor (3.7), and commitment to supporting endemic-region research through APC waivers. After two desk rejections from journals requiring methodological novelty as a gate, \emph{Malaria Journal}'s focus on biological and public-health significance provides the appropriate venue for this hypothesis-generation study.
+
+We believe this work will interest \emph{Malaria Journal}'s readership—particularly researchers in endemic regions seeking accessible computational workflows, groups exploring African-natural-product chemical space, and experimentalists prioritizing multi-target, mutation-resilient candidates for follow-up assays. We look forward to your editorial decision and, if appropriate, constructive peer review.
+
+\closing{Sincerely,}
+
+\end{letter}
+
+\end{document}

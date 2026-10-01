@@ -1,0 +1,297 @@
+===============================================================================
+MALARIA JOURNAL SUBMISSION PACKAGE — P1 V8 ANTIMALARIAL POLYPHARMACOLOGY
+===============================================================================
+
+Package Created: 28 September 2026
+Package Directory: Submission_Malaria_Journal/
+Status: ✅ COMPLETE — Ready for submission
+
+===============================================================================
+CORE SUBMISSION FILES (3 PDFs)
+===============================================================================
+
+1. P1_Integrated_Polypharmacology_RRS_Main_MalJ.pdf
+   - Main manuscript
+   - 18 pages, 1.8 MB
+   - Structured abstract (Background/Methods/Results/Conclusions)
+   - Abbreviations section (20+ terms)
+   - Background section (renamed from Introduction)
+   - Expanded Conclusions (6 paragraphs)
+   - 5 figures, 3 tables, 52 citations
+   - 0 compilation errors
+
+2. P1_Integrated_Polypharmacology_RRS_SM_MalJ.pdf
+   - Supporting Information
+   - 13 pages, 665 KB
+   - 12 sections, 5 figures, 8 tables
+   - 10 cross-references to main text
+   - 0 compilation errors
+
+3. Cover_Letter_Malaria_Journal.pdf
+   - Cover letter with APC waiver request
+   - 3 pages, 137 KB
+   - Manuscript scope and significance
+   - Malaria Journal fit justification
+   - Cameroon APC waiver eligibility
+   - 0 compilation errors
+
+===============================================================================
+LATEX SOURCE FILES (3 + 1 bibliography)
+===============================================================================
+
+4. P1_Integrated_Polypharmacology_RRS_Main_MalJ.tex
+   - Main manuscript source
+   - Compiles cleanly with pdflatex + bibtex
+
+5. P1_Integrated_Polypharmacology_RRS_SM_MalJ.tex
+   - Supporting Information source
+   - Compiles cleanly with 2x pdflatex
+
+6. Cover_Letter_Malaria_Journal.tex
+   - Cover letter source
+   - Compiles cleanly with 2x pdflatex
+
+7. Sao_Chim_Space.bib
+   - Bibliography database
+   - 52 citations, all resolved
+
+===============================================================================
+FIGURES (10 total: 5 main + 5 SI)
+===============================================================================
+
+Graphics/ directory:
+8.  p1_v7_toc_graphic.pdf (TOC graphic, main abstract)
+9.  p1_v7_rrs_mutation_profiles.pdf (Figure 1, main)
+10. p1_v7_exploratory_metric_relationships.pdf (Figure 2, main)
+11. p1_v7_targetwise_profile_summary.pdf (Figure 3, main)
+12. p1_v7_chemical_space_coverage.pdf (Figure S1, SI)
+    [Plus 5 additional SI figures not listed individually]
+
+===============================================================================
+TABLES (11 total: 3 main + 8 SI)
+===============================================================================
+
+tables/ directory:
+13. sm_table_vina_distributions.tex (Table S1, per-target medians)
+14. sm_table_physicochemical.tex (Table S2, Set-C properties)
+15. sm_table_admet_summary.tex (Table S3, ADMET profile)
+16. sm_table_druglikeness.tex (Table S4, RRS class definitions)
+17. sm_table_wt_mutant_scores.tex (Table S5, WT/mutant scores)
+18. sm_table_retrospective_antimalarials.tex (Table S6, approved drugs)
+19. sm_table_pns_sensitivity.tex (Table S7, PNS imputation)
+20. sm_table_validation_datasets.tex (validation summary)
+    [Plus 3 additional inline tables in main text]
+
+===============================================================================
+DOCUMENTATION (6 files)
+===============================================================================
+
+21. README_SUBMISSION_PACKAGE.md
+    - Complete package documentation
+    - Compilation instructions
+    - Format compliance verification
+    - APC waiver information
+
+22. SUBMISSION_READY_SUMMARY.md
+    - Submission readiness confirmation
+    - File inventory and metrics
+    - Submission instructions
+    - Strategic context and rationale
+
+23. STRATEGIC_RATIONALE.md
+    - Supervisor's venue recommendation analysis
+    - Malaria Journal vs. other venues
+    - Positioning after JCIM rejection
+
+24. ADAPTATION_CHECKLIST.md
+    - Malaria Journal format requirements
+    - Adaptation tasks completed
+    - Time estimates
+
+25. PACKAGE_MANIFEST.txt
+    - This file
+    - Complete file listing
+
+26. .gitignore (if present)
+    - LaTeX auxiliary files exclusion
+
+===============================================================================
+AUTOMATION SCRIPTS (2 Python files)
+===============================================================================
+
+27. adapt_manuscript_malaria_journal.py
+    - Automated main manuscript adaptation
+    - Structured abstract conversion
+    - Abbreviations section insertion
+    - Conclusions expansion
+    - Introduction → Background rename
+
+28. adapt_si_malaria_journal.py
+    - Automated SI adaptation
+    - Journal reference updates
+    - Cross-reference preservation
+
+===============================================================================
+KEY ADAPTATIONS FROM JCAMD V8
+===============================================================================
+
+ABSTRACT:
+  - FROM: Single paragraph (350 words)
+  - TO: Structured (Background/Methods/Results/Conclusions)
+  - WHY: Malaria Journal requirement for research articles
+
+ABBREVIATIONS:
+  - FROM: Not present
+  - TO: Comprehensive section after Keywords (20+ terms)
+  - WHY: Malaria Journal requirement
+
+SECTION TITLE:
+  - FROM: Introduction
+  - TO: Background
+  - WHY: Malaria Journal standard nomenclature
+
+CONCLUSIONS:
+  - FROM: 1 brief paragraph (~150 words)
+  - TO: 6 comprehensive paragraphs (~1,200 words)
+  - WHY: Malaria Journal expects substantive conclusions
+
+PAGE COUNT:
+  - JCAMD: 16 pages (main)
+  - Malaria Journal: 18 pages (main)
+  - Difference: +2 pages due to expanded Conclusions
+
+COVER LETTER:
+  - FROM: Generic submission letter
+  - TO: Malaria Journal-specific with APC waiver request
+  - Emphasis: Endemic-region accessibility, African NP space, honest negatives
+
+===============================================================================
+COMPILATION INSTRUCTIONS
+===============================================================================
+
+Main Manuscript:
+  cd Submission_Malaria_Journal/
+  pdflatex P1_Integrated_Polypharmacology_RRS_Main_MalJ.tex
+  bibtex P1_Integrated_Polypharmacology_RRS_Main_MalJ
+  pdflatex P1_Integrated_Polypharmacology_RRS_Main_MalJ.tex
+  pdflatex P1_Integrated_Polypharmacology_RRS_Main_MalJ.tex
+
+Supporting Information:
+  pdflatex P1_Integrated_Polypharmacology_RRS_SM_MalJ.tex
+  pdflatex P1_Integrated_Polypharmacology_RRS_SM_MalJ.tex
+
+Cover Letter:
+  pdflatex Cover_Letter_Malaria_Journal.tex
+  pdflatex Cover_Letter_Malaria_Journal.tex
+
+Expected Time: <30 seconds total on standard hardware
+
+===============================================================================
+VERIFICATION CHECKLIST
+===============================================================================
+
+✅ All PDFs generated (3/3)
+✅ All figures present and compile (10/10)
+✅ All tables present and load (11/11)
+✅ All citations resolved (52/52)
+✅ No compilation errors (0 errors across all files)
+✅ Structured abstract formatted correctly
+✅ Abbreviations section present
+✅ Introduction renamed to Background
+✅ Conclusions expanded to 6 paragraphs
+✅ Cross-references inline (no dynamic \Cref{SM-...})
+✅ Zenodo DOI publicly accessible (10.5281/zenodo.22696778)
+✅ APC waiver request in cover letter
+✅ All author ORCID iDs present
+✅ Corresponding author information correct
+✅ LaTeX source files available
+✅ Documentation complete
+
+===============================================================================
+SUBMISSION INFORMATION
+===============================================================================
+
+Journal: Malaria Journal (BioMed Central)
+Submission URL: https://malariajournal.biomedcentral.com/
+Article Type: Research
+
+Expected Timeline:
+  - Editorial screening: 1-3 days
+  - Reviewer assignment: 3-7 days
+  - First decision: 9 days (median)
+
+APC Waiver: Full waiver requested (Cameroon corresponding author)
+
+Corresponding Author:
+  Name: Myke Vital Sao Temgoua
+  Email: myke-vital.sao@facsciences-uy1.cm
+  ORCID: 0009-0004-5170-2309
+  Institution: University of Yaoundé I, Cameroon
+
+===============================================================================
+PACKAGE STATISTICS
+===============================================================================
+
+Total Files: 28+ (excluding auxiliary LaTeX files)
+Total PDFs: 3 (2.6 MB combined)
+Total Pages: 34 (18 main + 13 SI + 3 cover)
+Total Figures: 10 (5 main + 5 SI)
+Total Tables: 11 (3 main + 8 SI)
+Total Citations: 52
+Total Word Count: ~15,700 (main + SI + cover)
+
+Adaptation Time:
+  - Script development: ~30 minutes
+  - Automated execution: ~2 minutes
+  - Verification: ~30 minutes
+  - Total: ~1 hour (vs. 4-6 hours manual)
+
+Compilation Time: <30 seconds total
+
+===============================================================================
+NEXT ACTIONS
+===============================================================================
+
+1. FINAL CO-AUTHOR REVIEW
+   - Circulate PDFs to all authors for approval
+   - Verify all author contributions accurate
+   - Confirm all affiliations correct
+
+2. SUBMISSION DECISION
+   Option A: Submit to Malaria Journal immediately
+   Option B: Monitor JCAMD outcome first (if still pending)
+   Option C: Wait for co-author final approval
+
+3. IF SUBMITTING
+   - Follow submission instructions in SUBMISSION_READY_SUMMARY.md
+   - Upload 3 PDFs to Malaria Journal portal
+   - Complete submission form with metadata
+   - Confirm APC waiver request
+   - Track submission status
+
+4. POST-SUBMISSION MONITORING
+   - Check portal for editor decision
+   - Respond promptly to revision requests
+   - Prepare responses to reviewer comments if needed
+
+===============================================================================
+CONTACT INFORMATION
+===============================================================================
+
+For package questions: See README_SUBMISSION_PACKAGE.md
+For submission questions: Contact corresponding author
+For technical issues: Check LaTeX log files in Submission_Malaria_Journal/
+
+===============================================================================
+PACKAGE VERSION
+===============================================================================
+
+Package ID: MalJ-P1-V8-Final
+Created: 28 September 2026
+Based on: JCAMD V8 submission package
+Git branch: master
+Git commit: [To be recorded after final commit]
+
+===============================================================================
+END OF MANIFEST
+===============================================================================
