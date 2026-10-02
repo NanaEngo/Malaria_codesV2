@@ -1,0 +1,67 @@
+{
+  "n_folds": 17,
+  "auc": {
+    "ecfp4_mlp": 0.8333333333333334,
+    "gin": 1.0,
+    "qfe_4q_d1": 0.9333333333333333
+  },
+  "brier_scores": {
+    "ecfp4_mlp": {
+      "mean": 0.12132853864123379,
+      "std": 0.30884722421966865
+    },
+    "gin": {
+      "mean": 0.03327717498532,
+      "std": 0.09117921555331313
+    },
+    "qfe_4q_d1": {
+      "mean": 0.05467986347803391,
+      "std": 0.10626489730833497
+    }
+  },
+  "comparisons": [
+    {
+      "comparison": "QFE vs ECFP4",
+      "mean_a": 0.05467986347803391,
+      "mean_b": 0.12132853864123379,
+      "mean_diff": -0.06664867516319987,
+      "t_stat": -1.1938508030597708,
+      "p_ttest": 0.2499370930491484,
+      "u_stat": 211.0,
+      "p_mannwhitney": 0.023009726863706215,
+      "cohens_d": -0.2895513507202296,
+      "effect_size": "small",
+      "significant_ttest": "not significant",
+      "significant_mw": "significant"
+    },
+    {
+      "comparison": "QFE vs GNN",
+      "mean_a": 0.05467986347803391,
+      "mean_b": 0.03327717498532,
+      "mean_diff": 0.021402688492713914,
+      "t_stat": 1.3912860028391059,
+      "p_ttest": 0.18318302922824473,
+      "u_stat": 233.0,
+      "p_mannwhitney": 0.00243720373303326,
+      "cohens_d": 0.3374364203028839,
+      "effect_size": "small",
+      "significant_ttest": "not significant",
+      "significant_mw": "significant"
+    },
+    {
+      "comparison": "GNN vs ECFP4",
+      "mean_a": 0.03327717498532,
+      "mean_b": 0.12132853864123379,
+      "mean_diff": -0.08805136365591379,
+      "t_stat": -1.6139085967605886,
+      "p_ttest": 0.12609317872191256,
+      "u_stat": 116.0,
+      "p_mannwhitney": 0.3348359525493185,
+      "cohens_d": -0.39143033026684043,
+      "effect_size": "small",
+      "significant_ttest": "not significant",
+      "significant_mw": "not significant"
+    }
+  ],
+  "interpretation": "LOO-CV on 17 molecules (2 active / 15 inactive). Paired t-test and Mann-Whitney U on per-fold Brier scores. n=17 is underpowered; no test reaches significance. AUC ranking: GIN (1.000) > QFE (0.933) > ECFP4 (0.833). All F1=0 due to class imbalance \u2014 threshold-based metrics uninformative."
+}

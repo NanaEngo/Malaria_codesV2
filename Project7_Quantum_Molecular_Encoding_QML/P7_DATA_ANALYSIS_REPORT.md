@@ -114,21 +114,110 @@ K(A, B) = |⟨0|U_B† U_A|0⟩|²
 
 ## 6. Results Summary
 
-**Status:** Project initialized 28 August 2026. No canonical results yet.
+### ── CHECKPOINT 02 October 2026 — Phase 0–3B COMPLETE ──
 
-### Phase 1: P1 Set A Proof-of-Concept (20 candidates)
+All Phase 0–3 steps executed on server (`malaria_qml_hybrid` env, CPU).
+Data frozen, scripts versioned, canonical results recorded below.
 
-| Metric | QML (BondOrderMatrix + RZZ) | ECFP4-RBF | Status |
-|---|---|---|---|
-| AUC (LOO-CV) | NOT_COMPUTED | NOT_COMPUTED | PENDING_INPUTS |
-| Accuracy | NOT_COMPUTED | NOT_COMPUTED | PENDING_INPUTS |
-| F1 | NOT_COMPUTED | NOT_COMPUTED | PENDING_INPUTS |
-| Kernel target alignment | NOT_COMPUTED | N/A | PENDING_INPUTS |
+---
 
-**Circuit parameters:** NOT_COMPUTED  
-**Provenance:** NOT_COMPUTED
+### Phase 0: Environment (02 Oct 2026)
 
-### Phase 2: P3 Benchmark (19,849 molecules)
+| Package | Version | Status |
+|---|---|---|
+| Python | 3.10.21 | OK |
+| PennyLane | 0.42.3 | OK |
+| PyTorch | 2.13.0 | OK |
+| RDKit | 2025.03.3 | OK |
+| scikit-learn | 1.7.1 | OK |
+| Qiskit | 1.2.4 | OK |
+| PyTorch Geometric | — | SKIP (optional; GNN implemented without PyG) |
+
+Directories created: `data/{p1_set_a,p3_benchmark,external,splits,provenance}`,
+`results/{phase1_proof_of_concept,phase2_benchmark,phase3_scaffold}`, `models/{phase1,2,3}`.
+
+---
+
+### Phase 1: Data Extraction & ANP Annotation (02 Oct 2026)
+
+**P1 Set A** (`data/p1_set_a/p1_set_a_17_candidates.csv`):
+- Source: P2 Set C (17 polypharmacology candidates, used as proof-of-concept cohort)
+- n = 17 | Active = 2 | Inactive = 15
+- sha256: `f96a12c3d03c34d4ff961889c11af2a1...`
+- Script: `scripts/p7_normalize_p1_set_a.py`
+
+**P3 Benchmark** (`data/p3_benchmark/p3_benchmark_19849.csv`):
+- Source: `Project3/zenodo_package_P3/data/p3_labels_production.csv`
+- n = 19,849 | Active = 15,063 (75.9%) | Inactive = 4,786 (24.1%)
+- sha256: `04d6caa8cffd3af5d2e47afac6e8b732...`
+- Splits: `data/splits/p3_5fold_splits.json` (StratifiedKFold, 5-fold, seed=42)
+- Script: `scripts/p7_extract_p3_benchmark.py`
+
+**ANP Metadata** (`data/p1_set_a/p1_set_a_17_candidates_anp_metadata.csv`):
+- Fsp³: mean = 0.217, range [0.000, 0.600]
+- ACSI: mean = 0.213, range [0.088, 0.371] (synthetic reference, approximate)
+- ANP class: 16 Synthetic, 1 Simple phenolic
+- Stereocenters: 10 total; Macrocycles: 0
+- Script: `scripts/p7_compute_anp_metadata.py`
+
+**Data Manifest** (`data/provenance/data_manifest.json`): all 4 files hashed and frozen.
+
+---
+
+### Phase 1 PoC: Baseline Models on P1 Set A — LOO-CV (02 Oct 2026)
+
+| Method | AUC | Accuracy | F1 | Brier Score | Status |
+|---|---|---|---|---|---|
+| **ECFP4-MLP** | **0.833** | 0.882 | 0.000 | 0.121 ± 0.309 | COMPUTED |
+| **GIN (3-layer)** | **1.000** | 0.882 | 0.000 | 0.033 ± 0.091 | COMPUTED |
+| **QFE (4-qubit, depth 1, RZZ)** | **0.933** | 0.824 | 0.000 | 0.055 ± 0.106 | COMPUTED |
+
+**Notes:**
+- F1 = 0 for all methods: 15/17 inactive creates a degenerate threshold decision; all models predict < 0.5 for most samples. AUC (rank-based) is the informative metric.
+- GIN AUC = 1.0: perfect ranking on 17 molecules with minimal training set (n=16 per fold); likely overfitting — interpret with extreme caution.
+- QFE quantum gradients: mean ‖∇θL‖ = 4.23 (range 0.13–22.4); no barren plateau detected.
+
+**Circuit parameters (QFE):**
+- Backend: `default.qubit` (PennyLane statevector simulator)
+- Qubits: 4 | Layers: 1 | Entangling: RZZ (IsingZZ)
+- Encoder: ECFP4(2048) → Linear(128) → Linear(4) → Tanh → ×π
+- Variational: θ_sq ∈ ℝ^{1×4×2}, θ_ent ∈ ℝ^{1×3}
+- Runtime: 338.9s (CPU, 17 LOO folds)
+
+Scripts:
+- `scripts/p7_baseline_ecfp4_mlp.py`
+- `scripts/p7_baseline_gnn.py` (pure PyTorch GIN, no PyG required)
+- `scripts/p7_arch1_quantum_feature_extractor.py`
+
+Results files:
+- `results/phase1_proof_of_concept/ecfp4_mlp_loo_{results,summary}.*`
+- `results/phase1_proof_of_concept/gnn_loo_{results,summary}.*`
+- `results/phase1_proof_of_concept/qfe_4q_d1_loo_{results,summary,gradient_norms}.*`
+
+---
+
+### Phase 3B: Statistical Comparison (02 Oct 2026)
+
+| Comparison | Δ Brier | t-stat | p (t-test) | p (MW) | Cohen's d | Effect |
+|---|---|---|---|---|---|---|
+| QFE vs ECFP4 | −0.067 | −1.194 | 0.250 | 0.023 | −0.290 | small |
+| QFE vs GNN | +0.021 | +1.391 | 0.183 | 0.002 | +0.337 | small |
+| GNN vs ECFP4 | −0.088 | −1.614 | 0.126 | 0.335 | −0.391 | small |
+
+**Interpretation:** n = 17 is underpowered. No comparison reaches paired t-test significance (all p > 0.05). Mann-Whitney U gives QFE vs ECFP4 p = 0.023, but this is not corrected for multiplicity and should not be interpreted as evidence of a real effect on this dataset.
+
+**Decision gate (Phase 3.4):**
+- QFE AUC / ECFP4 AUC = 0.933 / 0.833 = **1.12 ≥ 0.80** → **PASS**
+- Gradients propagate (‖∇θL‖ > 10⁻⁶) → **PASS**
+
+Script: `scripts/p7_phase1_statistical_tests.py`
+Figure: `results/phase1_proof_of_concept/comparison_boxplot.png`
+
+---
+
+### Phase 2: P3 Benchmark (19,849 molecules) — PENDING
+
+Awaiting Phase 4 execution per server plan.
 
 | Method | AUC (5-fold CV) | Status | Source |
 |---|---|---|---|
@@ -137,34 +226,20 @@ K(A, B) = |⟨0|U_B† U_A|0⟩|²
 | Hybrid RF | 0.8876 ± 0.0065 | CANONICAL | P3 DAR |
 | QKS (PennyLane) | 0.8385 | CANONICAL | P3 external pilot |
 | **P7 Methods** | | | |
-| QML (BondOrderMatrix + RZZ, depth 1) | NOT_COMPUTED | PENDING_INPUTS | — |
-| QML (CoulombMatrix + RXX, depth 2) | NOT_COMPUTED | PENDING_INPUTS | — |
-| QML (Optimized, ablation) | NOT_COMPUTED | PENDING_INPUTS | — |
+| QFE (best config from Phase 3) | NOT_COMPUTED | PENDING | — |
 
-**Ablation study:** NOT_COMPUTED  
-**Statistical tests:** NOT_COMPUTED  
-**Provenance:** NOT_COMPUTED
-
-### Phase 3: External Validation (10K sampled from 122K asexual)
+### Phase 3: External Validation — PENDING
 
 | Metric | QML | ECFP4 | Status |
 |---|---|---|---|
-| AUC (scaffold test split) | NOT_COMPUTED | NOT_COMPUTED | PENDING_INPUTS |
-| Scaffold generalization | NOT_COMPUTED | NOT_COMPUTED | PENDING_INPUTS |
-| Activity cliff detection | NOT_COMPUTED | NOT_COMPUTED | PENDING_INPUTS |
+| AUC (scaffold split) | NOT_COMPUTED | NOT_COMPUTED | PENDING |
 
-**Provenance:** NOT_COMPUTED
+### Hardware Validation (IBM Quantum) — PENDING
 
-### Hardware Validation (IBM Quantum)
-
-| Backend | Qubits | Gate fidelity | Shots | Job ID | Status |
-|---|---|---|---|---|---|
-| Aer statevector | — | Exact | — | — | PENDING |
-| ibm_fez | TBD | TBD | 10,000 | NOT_COMPUTED | PENDING |
-| ibm_pittsburgh | TBD | TBD | 10,000 | NOT_COMPUTED | PENDING |
-
-**Noise mitigation:** NOT_COMPUTED  
-**Fidelity analysis:** NOT_COMPUTED
+| Backend | Status |
+|---|---|
+| Aer statevector | PENDING |
+| ibm_fez / ibm_pittsburgh | PENDING |
 
 ## 7. Evidence Boundaries and Limitations
 
@@ -217,42 +292,30 @@ K(A, B) = |⟨0|U_B† U_A|0⟩|²
 
 ## 9. Next Actions
 
-**Immediate (Week 1-2):**
-1. ✅ Create P7 directory structure and README
-2. ✅ Create P7 DAR template (this file)
-3. ⏳ Set up Python environment (`environment.yml`, install dependencies)
-4. ⏳ Clone and install `quantum-molecular-encodings` library locally
-5. ⏳ Extract P1 Set A (20 candidates) to `data/p1_set_a_20_candidates.csv`
-6. ⏳ Extract P3 benchmark (19,849) to `data/p3_benchmark_19849.csv` with activity labels
-7. ⏳ Verify P3 5-fold splits and save to `data/splits/p3_5fold_splits.json`
-8. ⏳ Implement baseline: ECFP4-RBF SVM on P1 Set A (LOO-CV)
-9. ⏳ Unit tests: `test_p7_encoding.py`, `test_p7_circuits.py`
+**Completed (Phase 0–3B, 02 Oct 2026):**
+1. ✅ Phase 0: Environment verified, directory structure created
+2. ✅ Phase 1.1: P1 Set A normalized (17 mol, 2 active / 15 inactive)
+3. ✅ Phase 1.2: P3 benchmark extracted (19,849 mol) + 5-fold splits
+4. ✅ Phase 1.3: ANP metadata computed (Fsp³, ACSI, ANP class)
+5. ✅ Phase 1.4: Data manifest frozen (SHA-256 provenance)
+6. ✅ Phase 2.1: ECFP4-MLP baseline LOO-CV (AUC = 0.833)
+7. ✅ Phase 2.2: GIN baseline LOO-CV (AUC = 1.000)
+8. ✅ Phase 3A: QFE 4-qubit depth-1 RZZ LOO-CV (AUC = 0.933, no barren plateau)
+9. ✅ Phase 3B: Statistical comparison — decision gate PASS (ratio 1.12 ≥ 0.80)
 
-**Short-term (Week 3-4):**
-10. ⏳ Implement P7 Phase 1: QML on P1 Set A (BondOrderMatrix, RZZ, depth 1)
-11. ⏳ Compare to ECFP4 baseline, compute paired t-test
-12. ⏳ If Phase 1 successful, proceed to Phase 2 ablation study
-13. ⏳ Document all results in this DAR with provenance
-
-**Medium-term (Week 5-8):**
-14. ⏳ Phase 2: P3 benchmark cohort, compare to P3 canonical baselines
-15. ⏳ Ablation study: matrix type, entangling layer, circuit depth
-16. ⏳ Statistical tests: paired t-tests, ANOVA, kernel target alignment
-17. ⏳ Update DAR with canonical results (CANONICAL or HONEST_NEGATIVE)
-
-**Long-term (Week 9-11):**
-18. ⏳ Phase 3: External validation (scaffold split, 10K sample)
-19. ⏳ IBM Quantum hardware runs (if Phase 2 shows promise)
-20. ⏳ Manuscript drafting (JCIM format, follow P1–P3 structure)
-21. ⏳ Thesis integration (Chapter 3.5, Chapter 4.7)
+**Next (Phase 4 — P3 Benchmark):**
+10. ⏳ Run QFE (and ablation variants) on P3 benchmark (19,849 mol, 5-fold CV)
+11. ⏳ Compare to P3 canonical baselines (ECFP4 0.9475, Hybrid 0.8876, QKS 0.8385)
+12. ⏳ Ablation: qubit count (4/6/8), depth (1/2), entangling (RZZ/CNOT/none)
+13. ⏳ Phase 5: External validation (scaffold split, 10K sample)
+14. ⏳ Phase 6: IBM Quantum hardware runs (if Phase 4 shows promise)
+15. ⏳ Manuscript drafting (JCIM format)
 
 ## 10. Maintenance Rule
 
 Keep this DAR operational and short. Long narratives, superseded plans, and detailed job logs go to `docs/archive/` or `results/*/provenance_manifest.json`. Add a dated checkpoint when a validated result changes the scientific status.
 
-**Status checkpoints will be added here as work progresses.**
-
 ---
 
-**Last updated:** 28 August 2026  
-**Next update:** After Phase 1 (P1 Set A) completion or when first canonical result is computed
+**Last updated:** 02 October 2026 — Phase 0–3B checkpoint  
+**Previous update:** 28 August 2026 (project initialization)

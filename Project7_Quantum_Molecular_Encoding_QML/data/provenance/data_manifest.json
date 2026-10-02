@@ -1,23 +1,50 @@
 {
-  "timestamp": "2026-08-31T11:19:22.337190",
-  "script": "p7_data_preparation.py",
-  "datasets": {
+  "created": "2026-10-02T08:26:52.590959+00:00",
+  "p7_root": "/home/myke_vital/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML",
+  "entries": {
     "p1_set_a": {
-      "file": "p1_set_a_20_candidates.csv",
+      "label": "P1 Set A \u2014 17 candidates (P2 Set C)",
+      "path": "data/p1_set_a/p1_set_a_17_candidates.csv",
+      "size_kb": 3.69,
+      "sha256": "f96a12c3d03c34d4ff961889c11af2a11f133f711967b519c8101164ff5fec6b",
+      "status": "PRESENT",
       "n_molecules": 17,
-      "source": "Project1_Chem_space_antimalarial_V7_CorrectedGrid",
-      "columns": [
-        "molecule_id",
-        "candidate_id",
-        "canonical_smiles",
-        "v5_source_smiles",
-        "p2_source_rank",
-        "p2_source_smiles",
-        "p2_source_sha256",
-        "cohort_id",
-        "activity",
-        "smiles"
-      ]
+      "n_active": 2,
+      "n_inactive": 15,
+      "source": "data/p1_set_a_20_candidates.csv"
+    },
+    "p1_set_a_anp": {
+      "label": "P1 Set A \u2014 ANP metadata",
+      "path": "data/p1_set_a/p1_set_a_17_candidates_anp_metadata.csv",
+      "size_kb": 5.68,
+      "sha256": "b7d7c859362a5adf0b91a7c2436adb531968d9b3a48e25ee126c02b359c613dc",
+      "status": "PRESENT"
+    },
+    "p3_benchmark": {
+      "label": "P3 benchmark \u2014 19,849 molecules",
+      "path": "data/p3_benchmark/p3_benchmark_19849.csv",
+      "size_kb": 929.31,
+      "sha256": "04d6caa8cffd3af5d2e47afac6e8b7326f7b25f494ce675dec7c5849cf25ff35",
+      "status": "PRESENT",
+      "n_molecules": 19849,
+      "n_active": 15063,
+      "n_inactive": 4786,
+      "source": "Project3_Quantum_Inspired_RepresentationsV2607_V4/zenodo_package_P3/data/p3_labels_production.csv"
+    },
+    "p3_splits": {
+      "label": "P3 5-fold stratified CV splits (seed=42)",
+      "path": "data/splits/p3_5fold_splits.json",
+      "size_kb": 1400.53,
+      "sha256": "ba949799f7987616e8c5a571f95f508558c3c5305e81009b8afcef98ec7e4fbe",
+      "status": "PRESENT"
     }
-  }
+  },
+  "provenance_rules": [
+    "Inputs frozen before execution",
+    "SHA-256 hashes computed at extraction time",
+    "P1 Set A = P2 Set C (17 molecules, 2 active / 15 inactive)",
+    "P3 benchmark = p3_labels_production.csv (19,849 molecules)",
+    "P3 splits: StratifiedKFold(n_splits=5, seed=42) \u2014 NOT scaffold-split",
+    "P1 Set A / P2 MD Set B / P2 Set C remain disjoint"
+  ]
 }
