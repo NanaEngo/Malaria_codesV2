@@ -1,63 +1,192 @@
-name: malaria_qml_hybrid
-channels:
-  - conda-forge
-  - pytorch
-  - defaults
-dependencies:
-  # Python
-  - python=3.10
-  
-  # Core scientific stack
-  - numpy>=1.24.0
-  - pandas>=2.0.0
-  - scipy>=1.10.0
-  - scikit-learn>=1.3.0
-  
-  # Chemistry
-  - rdkit>=2023.3.1
-  
-  # Deep learning (PyTorch)
-  - pytorch>=2.1.0
-  - torchvision>=0.16.0
-  - cpuonly  # or use cuda if GPU available
-  
-  # Visualization
-  - matplotlib>=3.7.0
-  - seaborn>=0.12.0
-  
-  # Utilities
-  - tqdm
-  - joblib
-  
-  # Testing
-  - pytest>=7.4
-  - pytest-cov
-  
-  # Pip dependencies
-  - pip
-  - pip:
-      # Quantum computing (Qiskit)
-      - qiskit>=1.0.0
-      - qiskit-aer>=0.13.0
-      - qiskit-ibm-runtime>=0.18.0
-      
-      # Hybrid QML (PennyLane)
-      - pennylane>=0.34.0
-      - pennylane-qiskit>=0.34.0
-      
-      # Graph neural networks (for Architecture 2)
-      - torch-geometric>=2.4.0
-      - torch-scatter>=2.1.0
-      - torch-sparse>=0.6.0
-
+# =============================================================================
+# P7 Quantum Molecular Encoding — Conda Environment Specification
+# =============================================================================
+# 
+# Purpose: Complete environment for quantum molecular encoding experiments
+# Platform: Linux x86_64 (tested on Ubuntu/CentOS)
+# Python: 3.10
+# 
 # Installation:
-# 1. conda env create -f environment.yml
-# 2. conda activate malaria_qml_hybrid
-# 3. python -c "import pennylane as qml; import torch; print(f'PennyLane {qml.__version__}, PyTorch {torch.__version__}')"
+#   conda env create -f environment.yml
+#   conda activate malaria_qml_hybrid
 #
-# For GPU support, replace 'cpuonly' with:
-#   - pytorch-cuda=11.8  # or pytorch-cuda=12.1 for newer CUDA
+# Verification:
+#   python -c "import pennylane, qiskit, rdkit; print('All imports successful')"
 #
-# Optional: Install QMSE library
-# 4. cd scripts/qmse_lib && pip install -e .
+# Last updated: 31 August 2026
+# =============================================================================
 
+name: malaria_qml_hybrid
+
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+
+dependencies:
+  # -------------------------------------------------------------------------
+  # Core Python & System Libraries
+  # -------------------------------------------------------------------------
+  - python=3.10.21
+  - pip=25.0.0
+  
+  # -------------------------------------------------------------------------
+  # Scientific Computing Stack
+  # -------------------------------------------------------------------------
+  - numpy=2.2.6
+  - scipy=1.15.2
+  - pandas=2.3.3
+  - scikit-learn=1.7.2
+  
+  # -------------------------------------------------------------------------
+  # Molecular Cheminformatics
+  # -------------------------------------------------------------------------
+  - rdkit=2026.03.5              # Molecular graph processing, SMILES, fingerprints
+  
+  # -------------------------------------------------------------------------
+  # Deep Learning (PyTorch)
+  # -------------------------------------------------------------------------
+  - pytorch=2.13.0               # PyTorch for hybrid quantum-classical models
+  - torchvision=0.28.0           # Vision utilities (if needed for visualizations)
+  - cpuonly                      # CPU-only build (change to cuda if GPU available)
+  
+  # -------------------------------------------------------------------------
+  # Visualization & Plotting
+  # -------------------------------------------------------------------------
+  - matplotlib=3.10.9            # Core plotting
+  - matplotlib-base=3.10.9
+  - seaborn=0.13.2               # Statistical visualizations
+  - pillow=12.3.0                # Image processing
+  
+  # -------------------------------------------------------------------------
+  # Utilities
+  # -------------------------------------------------------------------------
+  - tqdm=4.70.0                  # Progress bars
+  - sympy=1.14.0                 # Symbolic mathematics (required by PyTorch)
+  - joblib=1.5.3                 # Parallel processing
+  
+  # -------------------------------------------------------------------------
+  # Jupyter (Optional — for interactive notebooks)
+  # -------------------------------------------------------------------------
+  - jupyter=1.1.1                # Jupyter notebook support
+  - ipykernel=6.31.0             # IPython kernel
+  
+  # -------------------------------------------------------------------------
+  # PyPI-only Packages (installed via pip)
+  # -------------------------------------------------------------------------
+  - pip:
+      # Quantum Computing Frameworks
+      - pennylane==0.42.3        # Quantum ML framework (primary)
+      - pennylane-lightning==0.42.0  # Fast quantum simulator
+      - pennylane-qiskit==0.42.0     # Qiskit plugin for PennyLane
+      - qiskit==1.2.4            # IBM Qiskit for circuit construction
+      - qiskit-aer==0.16.0       # Aer simulators for Qiskit
+      - qiskit-ibm-runtime==0.29.0   # IBM Quantum runtime (if hardware access)
+      
+      # Visualization Support
+      - cairosvg==2.9.0          # SVG to PNG conversion (circuit diagrams)
+      
+      # Additional Scientific Computing
+      - autograd==1.9.1          # Automatic differentiation (PennyLane dependency)
+      - autoray==0.7.2           # Array abstraction layer (PennyLane dependency)
+      
+      # Cryptography (for quantum runtime authentication)
+      - cryptography>=50.0.0
+      
+      # HTTP/API utilities (for cloud quantum backends)
+      - requests>=2.34.0
+      - websocket-client>=1.9.0
+
+# =============================================================================
+# Installation Notes
+# =============================================================================
+#
+# GPU Support (Optional):
+#   If you have CUDA-capable GPU, replace `cpuonly` with:
+#     - pytorch-cuda=12.9  (or appropriate CUDA version)
+#   This can speed up quantum circuit simulation for large systems.
+#
+# IBM Quantum Hardware Access:
+#   To use IBM quantum computers (not simulated):
+#   1. Create IBM Quantum account: https://quantum.ibm.com/
+#   2. Get API token from dashboard
+#   3. Configure in script:
+#        from qiskit_ibm_runtime import QiskitRuntimeService
+#        QiskitRuntimeService.save_account(token='YOUR_TOKEN')
+#
+# Qiskit Version Compatibility:
+#   - qiskit 1.2.4 is the latest stable (as of Aug 2026)
+#   - qiskit-aer 0.16.0 is compatible
+#   - If errors occur, pin to qiskit==1.0.0 + qiskit-aer==0.14.0
+#
+# PennyLane Device Selection:
+#   - default.qubit: CPU-based statevector simulator (exact, no noise)
+#   - lightning.qubit: Fast C++ simulator (10-100× faster)
+#   - qiskit.aer: Use Qiskit's Aer simulator backend
+#   - For true quantum hardware: qiskit.ibmq (requires IBM account)
+#
+# Memory Requirements:
+#   - Statevector simulation: 2^n qubits × 16 bytes (complex128)
+#   - 20 qubits: ~16 MB
+#   - 25 qubits: ~512 MB
+#   - 30 qubits: ~16 GB
+#   - 35 qubits: ~512 GB (not feasible on most systems)
+#
+# Troubleshooting:
+#   If conda hangs during installation:
+#     conda config --set solver libmamba
+#     conda env create -f environment.yml --solver libmamba
+#
+#   If pip packages fail:
+#     conda activate malaria_qml_hybrid
+#     pip install pennylane qiskit qiskit-aer pennylane-qiskit cairosvg
+#
+#   If import errors persist:
+#     python -c "import sys; print(sys.path)"  # Check Python path
+#     pip list | grep -E "(pennylane|qiskit)"  # Verify installations
+#
+# =============================================================================
+# Server Deployment Considerations
+# =============================================================================
+#
+# SLURM Cluster:
+#   - Request CPU-only or GPU nodes depending on pytorch build
+#   - Memory: At least 32 GB for 25-30 qubit circuits
+#   - Time: Allow 1-2 hours for full 17×17 kernel computation
+#
+# Singularity/Docker:
+#   - Base image: continuumio/miniconda3:latest
+#   - Build from this environment.yml
+#   - Example Dockerfile:
+#       FROM continuumio/miniconda3:latest
+#       COPY environment.yml /tmp/
+#       RUN conda env create -f /tmp/environment.yml
+#       RUN echo "conda activate malaria_qml_hybrid" >> ~/.bashrc
+#       SHELL ["conda", "run", "-n", "malaria_qml_hybrid", "/bin/bash", "-c"]
+#
+# SSH Server Deployment:
+#   1. Upload environment.yml to server:
+#        scp environment.yml user@server:/path/to/project/
+#   2. SSH into server:
+#        ssh user@server
+#   3. Create environment:
+#        cd /path/to/project
+#        conda env create -f environment.yml
+#   4. Activate and verify:
+#        conda activate malaria_qml_hybrid
+#        python -c "import pennylane, qiskit, rdkit; print('Success!')"
+#   5. Run scripts:
+#        python scripts/p7_quantum_kernel_simple.py
+#
+# =============================================================================
+# Version History
+# =============================================================================
+#
+# v1.0 (31 Aug 2026): Initial environment for P7 quantum molecular encoding
+#   - PennyLane 0.42.3 (quantum ML framework)
+#   - Qiskit 1.2.4 (circuit construction)
+#   - RDKit 2026.03.5 (molecular processing)
+#   - PyTorch 2.13.0 (hybrid VQC training)
+#   - All dependencies verified on Ubuntu 22.04 LTS
+#
+# =============================================================================
