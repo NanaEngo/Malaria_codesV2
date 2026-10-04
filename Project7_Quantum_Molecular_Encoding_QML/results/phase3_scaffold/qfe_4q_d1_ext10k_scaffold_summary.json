@@ -1,0 +1,73 @@
+{
+  "method": "QFE-4q-depth1-rzz",
+  "phase": "Phase 5 \u2014 external validation (scaffold split)",
+  "script": "scripts/p7_phase5_qfe_ext.py",
+  "timestamp": "2026-10-03T22:10:00.466592",
+  "execution": {
+    "backend": "default.qubit",
+    "device": "cpu",
+    "total_time_sec": 16035.524,
+    "training_time_sec": 16002.268
+  },
+  "data": {
+    "source_65k": "../Project3_Quantum_Inspired_RepresentationsV2607_V4/results/eos80ch_malaria_final_activity.csv",
+    "source_p3_excluded": "data/p3_benchmark/p3_benchmark_19849.csv",
+    "n_ext_pool": 45943,
+    "n_subsample": 10000,
+    "n_active": 5830,
+    "n_inactive": 4170,
+    "subsample_sha256": "b64931f9e1fb74e7e6e8451581f7b39706b94759a52bd7dbce9b4c39d53dc29b",
+    "seed": 42,
+    "activity_threshold": 0.5,
+    "split_strategy": "Bemis-Murcko scaffold split (20% test, rare scaffolds prioritised)"
+  },
+  "scaffold_split": {
+    "n_unique_scaffolds": 5130,
+    "n_train": 8000,
+    "n_test": 2000,
+    "scaffold_overlap_between_train_test": 0,
+    "pct_novel_scaffolds_in_test": 100.0
+  },
+  "hyperparameters": {
+    "n_qubits": 4,
+    "n_layers": 1,
+    "entangling": "rzz",
+    "fp_size": 2048,
+    "epochs": 80,
+    "lr": 0.003,
+    "patience": 15,
+    "batch_size": 16
+  },
+  "results": {
+    "auc": 0.783119,
+    "brier": 0.261132,
+    "accuracy": 0.7305,
+    "f1": 0.694963,
+    "precision": 0.733572,
+    "recall": 0.660215,
+    "n_train": 8000,
+    "n_test": 2000
+  },
+  "gradient_norms": {
+    "mean": 0.261197,
+    "std": 0.898842,
+    "min": 0.0,
+    "max": 14.549107,
+    "pct_below_1e6": 8.24,
+    "barren_plateau_risk": true
+  },
+  "phase4_references": {
+    "QFE_4q_P3_subsample_cv5": {
+      "auc": 0.8474,
+      "auc_std": 0.0129
+    },
+    "ECFP4_RBF_P3_canonical": {
+      "auc": 0.9475,
+      "auc_std": 0.0045
+    },
+    "ECFP4_RBF_P3_local_cv5": {
+      "auc": 0.8693,
+      "auc_std": 0.0265
+    }
+  }
+}
