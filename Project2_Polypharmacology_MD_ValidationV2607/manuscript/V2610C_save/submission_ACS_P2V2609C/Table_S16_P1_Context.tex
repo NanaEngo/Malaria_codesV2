@@ -1,0 +1,18 @@
+% Table S16: upstream workflow context and independence boundary
+\begin{table}[htbp]
+\centering
+\scriptsize
+\caption{Upstream workflow context used to define the Set-C cohort. The upstream library and parts of the docking provenance overlap with the present analysis; these records therefore provide provenance and methodological context, not an independent validation set.}
+\label{tab:s16_p1_context}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth} >{\raggedright\arraybackslash}p{0.30\textwidth} X}
+\toprule
+Contextual record & Use in this study & Interpretation boundary \\
+\midrule
+Redocking and enrichment benchmarks & Document the fixed grid protocol and general pose-reproduction behaviour & Do not validate mutant-state score retention or RRS \\
+Physicochemical and drug-likeness profiles & Describe the source library and the filtered PP-01--PP-17 cohort; 17/17 SMILES identities were reconciled & Shared candidate identity and workflow provenance preclude independent-replication claims; properties are not activity measurements \\
+Chemical-space and scaffold analyses & Describe the origin and structural diversity of the source library & Set-C is a filtered prioritization cohort, not a representative sample of the source library \\
+MPO sensitivity & Document the selection procedure and its local sensitivity & Does not test RRS, trajectory geometry, or network-weighted ranking \\
+Shared candidates and workflow provenance & Explicitly define the relationship between the upstream record and the present Set-C analysis & The present study is not an independent validation of the upstream workflow \\
+\bottomrule
+\end{tabularx}
+\end{table}

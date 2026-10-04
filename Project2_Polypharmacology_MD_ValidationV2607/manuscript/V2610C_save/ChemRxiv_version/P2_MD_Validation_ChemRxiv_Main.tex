@@ -1,15 +1,12 @@
 %% ============================================================================
-%% Paper 2: Estimand Divergence: Static Docking Versus Dynamics for Antimalarial Triage (9 words, JCIM preferably <=12)
-%% Target: Journal of Chemical Information and Modeling (JCIM)
+%% Paper 2: Estimand Divergence: Static Docking Versus Dynamics for Antimalarial Triage
+%% ChemRxiv Preprint Version (converted from JCIM achemso format)
 %% Article source — September 2026 (V2609C: literature-integrated reframing)
 %% ============================================================================
 
-\documentclass[journal=jcisd8,manuscript=article,layout=traditional]{achemso}
-% journal=jcisd8 selects the official ACS/JCIM layout, section-numbering
-% policy (sections unnumbered per JCIM house style), and achemso.bst-based
-% numbered-superscript citation style; hyperref is loaded explicitly below
-% (achemso's conditional hyperref loading is not guaranteed across TeX
-% distributions) and must precede cleveref.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
 
 % Fonts and encoding
 \usepackage[T1]{fontenc}
@@ -19,12 +16,25 @@
 % Mathematics
 \usepackage{amsmath, amsfonts, amssymb, mathtools}
 
-% Figures and tables (achemso already requires graphicx, caption, float)
+% Figures and tables
+\usepackage{graphicx}
 \usepackage{booktabs, tabularx, array, multirow, longtable}
 \usepackage{tikz}
+
+% ORCID icon defined locally for the article class
+\providecommand{\textorcid}{%
+	\begin{tikzpicture}[baseline=0.0ex,line width=0.6,scale=0.65]
+		\fill[rounded corners=0.5,fill=green!60!black,draw=green!50!black] (0,0) circle (0.65ex);
+		\node[white,font=\bfseries\sffamily\tiny] at (0,0) {iD};
+	\end{tikzpicture}%
+}
+
 \usepackage{rotating}
 \usepackage[table]{xcolor}
-\captionsetup{labelfont=bf,font={footnotesize,it}}
+\usepackage[labelfont=bf,textfont={footnotesize,it}]{caption}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
 
 % Units and SI
 \usepackage[
@@ -40,12 +50,11 @@
 \DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
 \DeclareSIUnit\barpressure{\mathrm{bar}}
 
-% Cross-referencing - hyperref first, then cleveref (mandatory order)
-\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
-\usepackage{cleveref}
+% Cross-referencing
+\usepackage[nameinlink,noabbrev]{cleveref}
 % SM cross-refs (labels SM-* live in the supplementary document)
 \usepackage{xr}
-\externaldocument[SM-]{Polypharmacology_MD_Validation_SM_V2609C}
+\externaldocument[SM-]{P2_MD_Validation_ChemRxiv_SM}
 
 % cleveref names
 \crefname{table}{Table}{Tables}
@@ -60,63 +69,43 @@
 \graphicspath{{Graphics/}}
 
 % ============================================================================
-% AUTHOR INFORMATION
+% TITLE AND AUTHOR INFORMATION
 % ============================================================================
 
 \title{Estimand Divergence: Static Docking Versus Dynamics for Antimalarial Triage}
 
-\author{Myke Vital Sao Temgoua}
-\affiliation[UY1Phys]{Department of Physics, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}
-\email{myke-vital.sao@facsciences-uy1.cm}
-
-\author{Jean-Pierre Tchapet Njafa}
-\affiliation[UY1Phys]{Department of Physics, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}
-
-\author{Penabei Samafou}
-\affiliation[Sherbrooke]{Department of Medical Imaging and Radiation Sciences, Universit\'e de Sherbrooke, Sherbrooke, QC, Canada}
-
-\author{Fon Wilfred Mbacham}
-\affiliation[UY1Biochem]{Department of Biochemistry, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}
-
-\author{Serge Guy Nana Engo}
-\affiliation[UY1Phys]{Department of Physics, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}
-
-\keywords{malaria, drug resistance, molecular dynamics, molecular docking, MM-GBSA, African natural products, resistance mutations, antimalarial leads, estimand divergence}
+\date{}
 
 % ============================================================================
 % BEGIN DOCUMENT
 % ============================================================================
 
 \begin{document}
-\emergencystretch=12em
-\sloppy
 
-\maketitle
+{\centering\Large\bfseries Estimand Divergence: Static Docking Versus Dynamics for Antimalarial Triage\par}
+\vspace{1em}
+{\centering
+	Myke Vital Sao Temgoua\href{https://orcid.org/0009-0004-5170-2309}{\textsuperscript{\textorcid}}\footnotemark[1]$^{1}$,
+	Jean-Pierre Tchapet Njafa\href{https://orcid.org/0000-0002-1936-8353}{\textsuperscript{\textorcid}}$^{1}$,
+	Penabei Samafou\href{https://orcid.org/0000-0002-9683-7678}{\textsuperscript{\textorcid}}$^{2}$,
+	Fon Wilfred Mbacham\href{https://orcid.org/0000-0002-3934-3233}{\textsuperscript{\textorcid}}$^{3}$,
+	Serge Guy Nana Engo\href{https://orcid.org/0000-0002-7484-3508}{\textsuperscript{\textorcid}}$^{1}$\\[0.5em]
+	{\small $^{1}$Department of Physics, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}\\
+	{\small $^{2}$Department of Medical Imaging and Radiation Sciences, Universit\'e de Sherbrooke, Sherbrooke, QC, Canada}\\
+	{\small $^{3}$Department of Biochemistry, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}\par}
+
+\footnotetext[1]{Corresponding author: \texttt{myke-vital.sao@facsciences-uy1.cm}}
 
 % ============================================================================
 % GRAPHICAL TABLE OF CONTENTS (mandatory for ACS/JCIM submission)
 % ============================================================================
-\begin{tocentry}
-\begin{tikzpicture}[x=1.0cm,y=0.7cm]
-% Background
-\fill[blue!3,rounded corners=4pt] (-0.8,-1.2) rectangle (8.8,2.2);
-% Pipeline boxes
-\node[draw,thick,rounded corners=3pt,fill=blue!12,minimum width=1.8cm,minimum height=0.8cm,font=\footnotesize\bfseries,align=center] (np) at (0,0.5) {African\\NPs};
-\node[draw,thick,rounded corners=3pt,fill=orange!12,minimum width=1.8cm,minimum height=0.8cm,font=\footnotesize\bfseries,align=center] (dock) at (3,0.5) {Docking\\136 systems};
-\node[draw,thick,rounded corners=3pt,fill=green!12,minimum width=1.8cm,minimum height=0.8cm,font=\footnotesize\bfseries,align=center] (rrs) at (6,0.5) {RRS\\Classes};
-% MD branch
-\node[draw,thick,rounded corners=3pt,fill=red!8,minimum width=1.8cm,minimum height=0.6cm,font=\footnotesize\bfseries,align=center] (md) at (4.5,-0.7) {MD Stress\\Test};
-% Arrows
-\draw[->,thick,blue!50] (np) -- (dock);
-\draw[->,thick,orange!50] (dock) -- (rrs);
-\draw[->,thick,red!40] (dock.south) -- (md);
-% Numbers
-\node[font=\tiny,text=blue!60,anchor=south] at (0,1.3) {65,856};
-\node[font=\tiny,text=orange!60,anchor=south] at (3,1.3) {17 candidates};
-\node[font=\tiny,text=green!60,anchor=south] at (6,1.3) {A*,A,B,C,D};
-\node[font=\tiny,text=red!50,anchor=north] at (4.5,-1.1) {Estimand Divergence (7/8, protocol-local)};
-\end{tikzpicture}
-\end{tocentry}
+
+
+% ============================================================================
+% ABSTRACT
+
+
+% ============================================================================
 
 % ============================================================================
 % ABSTRACT
@@ -207,9 +196,9 @@ No mutant crystal structures were available for the panel; the six mutant struct
 
 \subsection{Docking protocol assessment}
 
-The docking protocol follows the upstream library workflow (see Supporting Information \cref{SM-tab:s16_p1_context}): AutoDock Vina 1.2.7~\citep{vina_2021} with exhaustiveness \num{64} against grids centered on the binding-site coordinates~\citep{Temgoua2026} of PfDHFR (7F3Y), PfCRT (6UKJ~\citep{Kim2019PfCRT}), PfATP4 (9N10), and the historically labelled PfClpR/4GM2 entry (not PfClpP). These grid specifications represent the post-review refinement from the companion study~\citep{Temgoua2026}, including the critical PfCRT K76→LYS restoration for the wild-type reference state and P2Rank-validated binding-site centers. P2Rank~\citep{Krivak2018P2Rank} pocket predictions were compared with the grid centers as a boundary audit of these fixed boxes (\cref{SM-fig:s4_p2rank_boxes}).
+The docking protocol follows the upstream library workflow (see Supporting Information \cref{SM-tab:s16_p1_context}): AutoDock Vina 1.2.7~\citep{vina_2021} with exhaustiveness \num{64} against grids centered on the corrected V2 binding-site coordinates~\citep{Temgoua2026} of PfDHFR (7F3Y), PfCRT (6UKJ~\citep{Kim2019PfCRT}), PfATP4 (9N10), and the historically labelled PfClpR/4GM2 entry (not PfClpP). The V2 grid specification represents the post-review refinement from the companion study, including the critical PfCRT K76→LYS restoration for wild-type reference state and P2Rank-validated binding-site centers. P2Rank~\citep{Krivak2018P2Rank} pocket predictions were compared with the grid centers as a boundary audit of these fixed boxes (\cref{SM-fig:s4_p2rank_boxes}).
 
-Parent-study enrichment benchmarks (grids from \citealt{Temgoua2026}) are summarized here and tabulated in full in the Supporting Information (\cref{SM-tab:s1_docking_validation}). On the MMV Malaria Box consensus (Vina+DiffDock), ROC-AUC was \num{0.924} (PfDHFR), \num{0.971} (PfCRT), and \num{1.000} (PfATP4). In contrast, DEKOIS 2.0 enrichment for PfDHFR with Vina alone was null (ROC-AUC \num{0.450}, $\mathrm{EF}_{5\,\%} = \num{0.00}$), indicating that score-based recovery of known actives is protocol- and library-dependent. Redocking was considered accurate when heavy-atom RMSD was $<$ \qty{2.0}{\angstrom} relative to the crystal pose; the MTX redock attempt was a clear failure (RMSD $\approx$ \qty{30}{\angstrom}). AutoDock Vina was used for all reported Set-C scores; GNINA pose scoring yielded no usable score for the Set-C panel (the secondary 39-compound panel below uses GNINA CNN affinity rescoring). Docking scores are empirical scoring approximations that are sensitive to the scoring function and protocol~\citep{ferreira2023docking,sadybekov2023computational,kittelson2026docking}; they should not be treated as binding free energies.
+Parent-study enrichment benchmarks (V2 grids) are summarized here and tabulated in full in the Supporting Information (\cref{SM-tab:s1_docking_validation}). On the MMV Malaria Box consensus (Vina+DiffDock), ROC-AUC was \num{0.924} (PfDHFR), \num{0.971} (PfCRT), and \num{1.000} (PfATP4). In contrast, DEKOIS 2.0 enrichment for PfDHFR with Vina alone was null (ROC-AUC \num{0.450}, $\mathrm{EF}_{5\,\%} = \num{0.00}$), indicating that score-based recovery of known actives is protocol- and library-dependent. Redocking was considered accurate when heavy-atom RMSD was $<$ \qty{2.0}{\angstrom} relative to the crystal pose; the MTX redock attempt was a clear failure (RMSD $\approx$ \qty{30}{\angstrom}). AutoDock Vina was used for all reported Set-C scores; GNINA pose scoring yielded no usable score for the Set-C panel (the secondary 39-compound panel below uses GNINA CNN affinity rescoring). Docking scores are empirical scoring approximations that are sensitive to the scoring function and protocol~\citep{ferreira2023docking,sadybekov2023computational,kittelson2026docking}; they should not be treated as binding free energies.
 
 \subsection{Secondary docking calibration}
 
@@ -219,7 +208,7 @@ A secondary Tartarus cross-docking analysis used QuickVina on the primary-lead p
 
 As an external, purely retrospective check of the static $\Delta\Delta G$ estimand, we curated IC$_{50}$ records for \textit{Pf}DHFR (ChEMBL target CHEMBL1939~\citep{zdrazil2024chembl}) by assay description, which encodes the DHFR genotype. The curated set contains 28 compounds with paired wild-type and quadruple-mutant (N51I/C59R/S108N/I164L) measurements; 24 of them also carry paired double-mutant (C59R/S108N) measurements, and triple-mutant (C59R/S108N/I164L) pairs are complete for all 28. Assay identifiers, raw records, and provenance are frozen with the analysis and described in Data Availability. These are whole-parasite growth IC$_{50}$ values from DHFR-genotyped strains with distinct genetic backgrounds (wild-type TM4/8.2, double-mutant K1CB1, triple-mutant Csl-2, quadruple-mutant Vl/S), not isogenic recombinant-enzyme measurements. We therefore use them descriptively as a phenotype-level reference, not as a binding-affinity ground truth. This genotype-resolved curation differs from the upstream activity-transfer panel audited in the Supporting Information (\cref{SM-tab:s15_robustness_transfer}), which carries compound-level activity labels without genotype pairing.
 
-The 28 compounds were docked against the wild-type, double, triple, and quadruple \textit{Pf}DHFR states with the declared Vina protocol (AutoDock Vina 1.2.7, exhaustiveness \num{64}, fixed \textit{Pf}DHFR box from \citealt{Temgoua2026}, single seed \num{42}; \num{112}/\num{112} jobs completed). Double, triple, and quadruple receptors were generated from the wild-type coordinates by in silico side-chain replacement with backbone coordinates unchanged, then prepared identically under the same protocol. For each genotype, $\Delta\Delta G = s_{\mathrm{mutant}} - s_{\mathrm{WT}}$ was compared with the published fold-shift $\log_2(\mathrm{IC}_{50,\mathrm{mut}}/\mathrm{IC}_{50,\mathrm{WT}})$ using Spearman rank correlation, direction agreement (both quantities positive or both negative), and an exact binomial probability of the observed departure from chance agreement (\cref{SM-tab:s20_chembl_foldshift}).
+The 28 compounds were docked against the wild-type, double, triple, and quadruple \textit{Pf}DHFR states with the declared Vina protocol (AutoDock Vina 1.2.7, exhaustiveness \num{64}, fixed V2 \textit{Pf}DHFR box, single seed \num{42}; \num{112}/\num{112} jobs completed). Double, triple, and quadruple receptors were generated from the wild-type coordinates by in silico side-chain replacement with backbone coordinates unchanged, then prepared identically under the same protocol. For each genotype, $\Delta\Delta G = s_{\mathrm{mutant}} - s_{\mathrm{WT}}$ was compared with the published fold-shift $\log_2(\mathrm{IC}_{50,\mathrm{mut}}/\mathrm{IC}_{50,\mathrm{WT}})$ using Spearman rank correlation, direction agreement (both quantities positive or both negative), and an exact binomial probability of the observed departure from chance agreement (\cref{SM-tab:s20_chembl_foldshift}).
 
 \subsection{African Natural Product chemical space and structural descriptors}
 
@@ -233,7 +222,7 @@ MPO-weight sensitivity and single-source ADMET-AI predictions were used descript
 
 \subsection{Docking-derived resistance-retention score definition}\label{sec:rrs_formula}
 
-All 17 candidates were docked against each wild-type and mutant structure using AutoDock Vina 1.2.7 with exhaustiveness \num{64}. The 136 systems were ranked with empirical Vina scores rather than calibrated binding free energies. Grid boxes were centered on the co-crystallized ligand position with \qty{25}{\angstrom} dimensions, matching the audited configuration files from the companion study~\citep{Temgoua2026}.
+All 17 candidates were docked against each wild-type and mutant structure using AutoDock Vina 1.2.7 with exhaustiveness \num{64}. The 136 systems were ranked with empirical Vina scores rather than calibrated binding free energies. Grid boxes were centered on the co-crystallized ligand position with \qty{25}{\angstrom} dimensions, matching the audited V2 configuration files~\citep{Temgoua2026}.
 
 For target $t$, let $s_{\mathrm{Vina},i,\mathrm{WT},t}$ and $s_{\mathrm{Vina},i,m,t}$ denote the signed Vina scores. Candidates with $|s_{\mathrm{Vina},i,\mathrm{WT},t}| < \qty{5.0}{\kcalmol}$ are excluded from that target's score-retention analysis. The target-specific resistance-retention score (RRS) is
 \begin{equation}
@@ -524,21 +513,18 @@ Docking results, metric outputs, analysis scripts, and source-data records are p
 
 The authors declare no competing interests.
 
-\begin{acknowledgement}
+\section*{Acknowledgements}
 Computational resources were provided by the penavoraserver cluster (ThinkStation P720, \qty{128}{\giga\byte} RAM, \num{48} cores). We acknowledge the SWISS-MODEL server and the GROMACS development team. This research received no specific grant from any funding agency.
 
-During the preparation of this manuscript in September 2026, the authors utilized AI tools to support code review, provide structured text suggestions, and perform consistency checks. The authors designed all analyses, maintained full control over the scientific interpretation, and rigorously verified all computational results and quantitative claims against the original source records.
-\end{acknowledgement}
+During the preparation of this manuscript, the authors utilized AI tools to support code review, provide structured text suggestions, and perform consistency checks. The authors designed all analyses, maintained full control over the scientific interpretation, and rigorously verified all computational results and quantitative claims against the original source records.
 
-
-\begin{suppinfo}
+\section*{Supporting Information}
 Docking enrichment and homology-model quality tables; P2Rank box audit; MPO, ADMET, and ACSI sensitivity; RRS radar profiles and threshold sensitivity; PNS imputation and Tartarus calibration; cohort and evidence-scope tables; PlasmoDB identifiers; parent-study and Set-C pilot MD/MM-GBSA summaries; robustness and upstream-workflow-context tables; retrospective ChEMBL genotype--phenotype fold-shift table (PDF).
-\end{suppinfo}
 
 % ============================================================================
 % BIBLIOGRAPHY
 % ============================================================================
-
+\bibliographystyle{unsrtnat}
 \bibliography{Project2_Polypharmacology_MD_Validation}
 
 \end{document}
