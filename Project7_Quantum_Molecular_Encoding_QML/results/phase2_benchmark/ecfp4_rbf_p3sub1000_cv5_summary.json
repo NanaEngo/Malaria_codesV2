@@ -1,0 +1,103 @@
+{
+  "method": "ECFP4-RBF-SVM (C=10.0, gamma=scale)",
+  "phase": "Phase 4 \u2014 P3 benchmark baseline (stratified subsample)",
+  "script": "scripts/p7_phase4_ecfp4_baseline_p3.py",
+  "timestamp": "2026-10-03T06:14:02.546186",
+  "execution": {
+    "device": "cpu",
+    "total_time_sec": 12.206291675567627
+  },
+  "data": {
+    "source": "data/p3_benchmark/p3_benchmark_19849.csv",
+    "n_full": 19849,
+    "n_subsample": 1000,
+    "n_active": 759,
+    "n_inactive": 241,
+    "subsample_sha256": "d781d9c43923e3d5bbbbbb78dd572c6b091cbceea8946110c3e1dc5e980b5f0a",
+    "seed": 42,
+    "cv_strategy": "StratifiedKFold(n_splits=5, shuffle=True, seed=42)"
+  },
+  "hyperparameters": {
+    "kernel": "rbf",
+    "C": 10.0,
+    "gamma": "scale",
+    "fp_size": 2048
+  },
+  "results": {
+    "mean_auc": 0.8693225346953002,
+    "std_auc": 0.02654887856916087,
+    "mean_brier": 0.11498399279319271,
+    "std_brier": 0.013748478564682727,
+    "mean_accuracy": 0.8400000000000001,
+    "std_accuracy": 0.0207364413533277,
+    "mean_f1": 0.8992853479191323,
+    "std_f1": 0.013700178536986345,
+    "per_fold": [
+      {
+        "fold": 0,
+        "n_train": 800,
+        "n_test": 200,
+        "auc": 0.8943100418975537,
+        "brier_score": 0.10587040826131684,
+        "accuracy": 0.85,
+        "f1": 0.9074074074074074,
+        "precision": 0.8497109826589595,
+        "recall": 0.9735099337748344,
+        "elapsed_sec": 2.274770736694336
+      },
+      {
+        "fold": 1,
+        "n_train": 800,
+        "n_test": 200,
+        "auc": 0.8806195175438597,
+        "brier_score": 0.11101929664379241,
+        "accuracy": 0.85,
+        "f1": 0.9050632911392406,
+        "precision": 0.8719512195121951,
+        "recall": 0.9407894736842105,
+        "elapsed_sec": 2.2476613521575928
+      },
+      {
+        "fold": 2,
+        "n_train": 800,
+        "n_test": 200,
+        "auc": 0.8216831140350876,
+        "brier_score": 0.1409065474673259,
+        "accuracy": 0.805,
+        "f1": 0.8761904761904762,
+        "precision": 0.8466257668711656,
+        "recall": 0.9078947368421053,
+        "elapsed_sec": 2.3069658279418945
+      },
+      {
+        "fold": 3,
+        "n_train": 800,
+        "n_test": 200,
+        "auc": 0.8898026315789473,
+        "brier_score": 0.10178466804645915,
+        "accuracy": 0.865,
+        "f1": 0.9153605015673981,
+        "precision": 0.874251497005988,
+        "recall": 0.9605263157894737,
+        "elapsed_sec": 2.361706018447876
+      },
+      {
+        "fold": 4,
+        "n_train": 800,
+        "n_test": 200,
+        "auc": 0.8601973684210524,
+        "brier_score": 0.11533904354706927,
+        "accuracy": 0.83,
+        "f1": 0.8924050632911392,
+        "precision": 0.8597560975609756,
+        "recall": 0.9276315789473685,
+        "elapsed_sec": 2.283924102783203
+      }
+    ]
+  },
+  "p3_canonical_reference": {
+    "auc": 0.9475,
+    "auc_std": 0.0045,
+    "note": "full 19849 molecules"
+  }
+}
