@@ -1,12 +1,157 @@
 \section{Discussion}
 
-\PENDING{Discussion section: Cannot draft until Results available. Will interpret quantum vs. classical comparison, mechanistic analysis of when/why quantum encoding succeeds or fails, ANP structural class stratification, limitations, and future directions.}
+\subsection{Scenario B: Competitive but Not Superior}
 
-% Planned structure:
-% 1. Summary of central finding (advantage/equivalence/underperformance)
-% 2. Mechanistic interpretation: Why quantum encoding captures ANP stereochemistry
-% 3. ANP structural class stratification (indole alkaloids, prenylated flavonoids, quassinoids, phenolics)
-% 4. Comparison to P3 quantum-inspired results (why direct encoding matters)
-% 5. Comparison to P5 GNN results (1-WL bottleneck vs. quantum Hilbert space)
-% 6. Limitations: small sample size, class imbalance, LOO-CV, computational cost
-% 7. Future work: Phase 2 (P3 benchmark 19,849 molecules), hybrid architectures (QFE, Q-GNN, QKT), IBM hardware validation
+Across all three evaluation scales — a \num{17}-molecule proof-of-concept
+under LOO-CV, a \num{1000}-molecule P3-benchmark subsample under 5-fold CV,
+and a \num{10000}-molecule external scaffold-split validation — the quantum
+feature extractor (QFE) positioned consistently within the Scenario~B
+envelope: competitive with the matched classical baseline but not
+statistically superior. At P3-benchmark scale, the QFE
+($0.8474 \pm 0.0129$) fell \qty{2.5}{\percent} below the matched
+ECFP4-RBF SVM ($0.8693 \pm 0.0265$), and \qty{5.8}{\percent} below the
+classical baseline under the more stringent scaffold split
+($0.7831$ vs.\ $0.8413$). These results are consistent with the
+honest-negative pattern established in Project~3\cite{sao2026p3}, where
+quantum-inspired kernel methods ($\text{AUC} = 0.8385$) also fell short
+of ECFP4-based classifiers. Crucially, QFE slightly outperformed QKS
+(P3 quantum-inspired baseline, $0.8385$) at matched scale, suggesting
+that direct structure encoding provides a marginal gain over classical-feature
+quantum encoding — but neither crosses the ECFP4 threshold.
+
+\subsection{Why ECFP4 Remains the Dominant Representation}
+
+The ECFP4 fingerprint's persistence as the strongest representation across
+this project series (P3, P5, and now P7) is consistent with an
+information-theoretic argument: for binary antimalarial activity classification
+derived from docking-score thresholding — itself a function of molecular shape
+complementarity with a fixed protein binding pocket — the topological
+neighbourhood structure encoded by radius-2 ECFP4 hashing is
+precisely the information the task requires. Substructure identity, not
+three-dimensional stereoelectronic detail, largely determines whether a
+molecule docks favourably against PfDHFR, PfCRT, PfATP4, or PfClpP.
+
+The QFE's encoding pipeline — ECFP4 $\to$ classical encoder $\to$ 4-qubit
+parameterised circuit — is constrained by this same starting point: it
+inherits ECFP4's topological representation and then projects it through
+a low-dimensional quantum layer ($n = 4$ qubits, $2^4 = 16$-dimensional
+Hilbert space). The quantum layer adds expressibility relative to a linear
+projection but cannot inject stereochemical information absent from the
+ECFP4 input. The BondOrderMatrix encoding route (encoding molecular structure
+\emph{directly} into quantum states, as described in Boy et al.\cite{boy2025})
+would genuinely test whether quantum encoding captures information ECFP4
+discards; however, that approach requires per-molecule qubit counts
+proportional to heavy-atom number (12--28 qubits for the P1 Set~A panel),
+which is not tractable on statevector simulation for the P3-benchmark
+($n \approx 19849$) or external scale. The QFE design represents a
+pragmatic NISQ-era compromise, and its performance ceiling is bounded by
+the classical encoder that precedes it.
+
+\subsection{The Expressibility--Trainability Trade-off at Increasing Qubit Count}
+
+The ablation study (4q, 6q, 8q; all depth~1, RZZ) revealed a non-monotonic
+relationship between qubit count and performance: 4-qubit (AUC~$0.8474$)
+$>$ 8-qubit ($0.8316$) $>$ 6-qubit ($0.8230$). The performance degradation
+with wider circuits is consistent with the expressibility--trainability
+trade-off documented in the variational quantum eigensolver (VQE) and
+variational quantum classifier literature\cite{tilly2022variational}: for
+fixed circuit depth and fixed training-set size, wider circuits introduce
+more parameters than can be reliably optimised, leading to flatter loss
+landscapes and higher variance across folds. The lack of a barren
+plateau signal at any qubit count (all mean $\|\nabla_\theta L\| \approx 0.293$)
+indicates that gradient vanishing is not the cause; instead, the degradation
+reflects insufficient training data per parameter rather than a
+circuit-structure failure.
+
+\subsection{Barren Plateau Risk at Training Scale}
+
+The marginal barren-plateau signal observed at Phase~5 scale
+(\qty{8.24}{\percent} of batches with $\|\nabla_\theta L\| < 10^{-6}$,
+vs.\ \qty{0.0}{\percent} at $n = 800$) warrants attention as training scale
+increases. The cause is most plausibly \emph{not} circuit-structure-induced
+barren plateau (which would require exponentially vanishing gradients in
+circuit width\cite{mcclean2018barren}) but rather input-induced near-zero
+gradients: scaffold-novel test molecules with atypical fingerprint profiles
+produce near-zero ECFP4-encoder activations, causing near-zero
+quantum-layer inputs and near-zero losses for already-correctly-ranked
+molecules. Mitigation strategies include adaptive batch sampling (oversampling
+scaffold-novel molecules), larger hidden-dimension encoders, or circuit
+expressibility augmentation through additional depth — all of which are
+natural candidates for the Phase~6 Optuna hyperparameter optimisation
+(Section~\ref{sec:conclusion}).
+
+\subsection{Scaffold Generalisation Gap}
+
+Both ECFP4 and QFE degraded substantially when all test scaffolds were novel
+($-0.108$ and $-0.064$ AUC points respectively). The smaller absolute
+degradation for QFE does not indicate superior generalisation: starting from
+a lower Phase~4 baseline, QFE had less room to degrade. The finding
+replicates the scaffold-split pattern established in P3 and P5: antimalarial
+activity prediction from docking-derived labels does not generalise well
+across chemotype boundaries, consistent with activity cliff distributions
+in the Malaria Box and related phenotypic screening datasets. Neither
+classical nor quantum representations provide a generalisation pathway
+to completely unseen scaffolds at the current training scales.
+
+\subsection{Comparison with P3 and P5 Quantum-Inspired Benchmarks}
+
+The QFE result fits coherently into the P3--P5--P7 trajectory
+(Table~\ref{tab:summary}). Project~3 established that ECFP4 $\to$
+IQPEmbedding (quantum-inspired kernel on \emph{classical} features) does
+not exceed ECFP4 directly\cite{sao2026p3}. Project~5 showed that
+GNNs and pretrained transformers also fail to surpass ECFP4 under
+scaffold split\cite{sao2026p5}. P7 now extends this finding to
+structure-informed hybrid quantum circuits: ECFP4-derived features, when
+encoded through a quantum layer, achieve QKS-level or slightly above-QKS
+performance, but do not surpass ECFP4 itself. The consistent pattern
+across three distinct representation strategies — quantum-inspired kernels,
+graph neural networks, and hybrid quantum-classical circuits — points to a
+dataset-level boundary: the docking-score-derived activity labels used across
+P3, P5, and P7 encode predominantly topological (substructure) information
+that ECFP4 already captures near-optimally. A different activity label
+source — experimental IC$_{50}$ or EC$_{50}$ — or a different task
+(e.g., selectivity ratio prediction, which requires differentiation of
+stereoisomers) may constitute a more discriminating test of quantum
+advantage.
+
+\subsection{Limitations}
+
+Several limitations constrain the strength of conclusions that can be
+drawn from this study.
+
+\textbf{Activity label provenance.} Binary labels throughout P7 are derived
+from docking-score thresholding, not experimental bioassay data. Docking
+scores reflect molecular shape and electrostatic complementarity with
+protein binding pockets rather than thermodynamic free energies of binding;
+they are a useful proxy for prioritisation but not a validated surrogate
+for biological activity.
+
+\textbf{Small n at PoC scale.} The Phase~1 cohort of $n = 17$ is
+severely underpowered for statistical inference. The LOO-CV result
+(QFE $0.933 > $ ECFP4-MLP $0.833$) cannot be distinguished from
+sampling variability at this size; it motivates Phase~4 scale-up but
+does not constitute independent evidence.
+
+\textbf{Simulation vs.\ hardware.} All quantum computations were performed
+on PennyLane's \texttt{default.qubit} statevector simulator. Statevector
+simulation is exact (no noise, no decoherence) and systematically optimistic
+relative to NISQ hardware, where gate error rates of $10^{-2}$--$10^{-3}$
+per two-qubit gate rapidly degrade circuit fidelity for the entangling layers
+in the QFE. IBM Quantum hardware validation (Phase~6B) is required before
+any hardware-realistic performance claim can be made.
+
+\textbf{Encoder bottleneck.} The classical ECFP4 $\to$ 4-dimensional encoder
+compresses a \num{2048}-bit fingerprint to \num{4} values; this compression
+is constrained by the qubit count and may discard information relevant to
+activity. Expanding the encoder (larger hidden dimension, additional layers)
+at fixed qubit count is the most direct architectural improvement available
+within the NISQ constraint.
+
+\textbf{Subsample representativeness.} Phase~4 results are based on a
+\num{1000}-molecule stratified subsample rather than the full
+$n = \num{19849}$-molecule P3 benchmark. The expected $\approx \qty{8}{\percent}$
+AUC degradation from subsampling (confirmed by comparing local ECFP4
+$0.8693$ to canonical ECFP4 $0.9475$) means that Phase~4 QFE
+($0.8474$) and Phase~4 ECFP4 ($0.8693$) are the correct apples-to-apples
+comparison; the P3 canonical ECFP4 ($0.9475$) is a scale reference, not a
+direct comparator.

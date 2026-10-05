@@ -1,0 +1,88 @@
+{
+  "phase": "Phase 6 \u2014 Optuna HPO",
+  "script": "scripts/p7_phase6_qfe_optuna_hpo.py",
+  "timestamp": "2026-10-05T11:12:27.659207",
+  "data": {
+    "source": "data/p3_benchmark/p3_benchmark_19849.csv",
+    "n_sample": 1000,
+    "subsample_sha256": "5cb8adb6835a243d3299420052c80ca87a5b34b7e6ebe116d04e5110574bfa71",
+    "sha256_verified": false,
+    "seed": 42
+  },
+  "search_config": {
+    "backend": "default.qubit",
+    "cv_folds": 2,
+    "n_trials_qfe": 2,
+    "n_trials_ecfp4": 2,
+    "sampler": "TPESampler",
+    "pruner": "MedianPruner(n_startup=5, n_warmup=10)",
+    "direction": "maximize AUC"
+  },
+  "qfe_search": {
+    "n_completed": 2,
+    "n_pruned": 0,
+    "n_failed": 0,
+    "best_auc": 0.8371651812783885,
+    "best_params": {
+      "n_qubits": 8,
+      "n_layers": 1,
+      "entangling": "cz",
+      "hidden_dim": 256,
+      "dropout_rate": 0.40419867405823057,
+      "lr": 0.0004066563313514797,
+      "batch_size": 16,
+      "epochs": 80,
+      "weight_decay": 0.0005345166110646819
+    },
+    "delta_vs_phase4_qfe": -0.0102,
+    "delta_vs_phase4_ecfp4": -0.0321,
+    "delta_vs_p3_canonical": -0.1103,
+    "runtime_sec": 5783.0,
+    "top_5_trials": [
+      {
+        "trial_number": 1,
+        "auc_mean": 0.8371651812783885,
+        "param_n_qubits": 8,
+        "param_n_layers": 1,
+        "param_entangling": "cz",
+        "param_hidden_dim": 256,
+        "param_dropout_rate": 0.40419867405823057,
+        "param_lr": 0.0004066563313514797,
+        "param_batch_size": 16,
+        "param_epochs": 80,
+        "param_weight_decay": 0.0005345166110646819
+      },
+      {
+        "trial_number": 0,
+        "auc_mean": 0.7871413129460899,
+        "param_n_qubits": 6,
+        "param_n_layers": 1,
+        "param_entangling": "cnot",
+        "param_hidden_dim": 128,
+        "param_dropout_rate": 0.10616955533913808,
+        "param_lr": 0.0002310201887845295,
+        "param_batch_size": 32,
+        "param_epochs": 100,
+        "param_weight_decay": 2.62108787826544e-06
+      }
+    ],
+    "status": "EXPLORATORY"
+  },
+  "ecfp4_oracle": {
+    "best_auc": 0.8111677133054294,
+    "best_params": {
+      "C": 0.09169770785664828,
+      "gamma": "auto"
+    },
+    "delta_vs_phase4_ecfp4": -0.0581,
+    "runtime_sec": 33.6,
+    "status": "EXPLORATORY"
+  },
+  "phase4_references": {
+    "QFE_4q_d1_rzz_cv5_AUC": 0.8474,
+    "ECFP4_local_cv5_AUC": 0.8693,
+    "ECFP4_P3_canonical_AUC": 0.9475
+  },
+  "next_step": "Re-run best QFE params with canonical 5-fold CV (same subsample, n_splits=5, seed=42) to produce a CANONICAL result comparable to Phase 4 AUC 0.8474 \u00b1 0.0129.",
+  "total_runtime_sec": 5818.8
+}

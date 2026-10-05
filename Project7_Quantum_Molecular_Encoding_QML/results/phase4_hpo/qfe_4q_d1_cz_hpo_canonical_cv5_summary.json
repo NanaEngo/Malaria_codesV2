@@ -1,0 +1,152 @@
+{
+  "method": "QFE-4q-depth1-cz (HPO trial 7 best)",
+  "phase": "Phase 6 \u2014 Canonical 5-fold re-run of HPO best config",
+  "script": "scripts/p7_phase6_canonical_rerun.py",
+  "timestamp": "2026-10-05T21:43:34.520749",
+  "status": "CANONICAL",
+  "hpo_source": {
+    "trial_number": 7,
+    "n_qubits": 4,
+    "n_layers": 1,
+    "entangling": "cz",
+    "hidden_dim": 64,
+    "dropout_rate": 0.07190807861903264,
+    "lr": 0.0022058553307173516,
+    "batch_size": 32,
+    "epochs": 80,
+    "weight_decay": 1.366245839650027e-05,
+    "hpo_2fold_auc": 0.8486996576066624,
+    "source": "results/phase4_hpo/qfe_hpo_study.db study=p7_qfe_hpo"
+  },
+  "execution": {
+    "backend": "default.qubit",
+    "device": "cpu",
+    "total_time_sec": 3122.421056032181
+  },
+  "data": {
+    "source": "data/p3_benchmark/p3_benchmark_19849.csv",
+    "n_full": 19849,
+    "n_subsample": 1000,
+    "n_active": 759,
+    "n_inactive": 241,
+    "subsample_sha256": "d781d9c43923e3d5bbbbbb78dd572c6b091cbceea8946110c3e1dc5e980b5f0a",
+    "sha256_verified": true,
+    "phase4_expected_sha256": "d781d9c43923e3d5bbbbbb78dd572c6b091cbceea8946110c3e1dc5e980b5f0a",
+    "seed": 42,
+    "cv_strategy": "StratifiedKFold(n_splits=5, shuffle=True, seed=42)"
+  },
+  "hyperparameters": {
+    "trial_number": 7,
+    "n_qubits": 4,
+    "n_layers": 1,
+    "entangling": "cz",
+    "hidden_dim": 64,
+    "dropout_rate": 0.07190807861903264,
+    "lr": 0.0022058553307173516,
+    "batch_size": 32,
+    "epochs": 80,
+    "weight_decay": 1.366245839650027e-05,
+    "hpo_2fold_auc": 0.8486996576066624,
+    "source": "results/phase4_hpo/qfe_hpo_study.db study=p7_qfe_hpo"
+  },
+  "results": {
+    "fold_aucs": [
+      0.868630896067036,
+      0.8442982456140351,
+      0.8079769736842104,
+      0.8549890350877193,
+      0.8582785087719298
+    ],
+    "mean_auc": 0.8468347318449861,
+    "std_auc": 0.020923119261734385,
+    "fold_details": [
+      {
+        "fold": 0,
+        "n_train": 800,
+        "n_test": 200,
+        "auc": 0.868630896067036,
+        "brier_score": 0.10564261633547012,
+        "accuracy": 0.855,
+        "f1": 0.9079365079365079,
+        "precision": 0.8719512195121951,
+        "recall": 0.9470198675496688,
+        "mean_grad_norm": 0.19914228164618275,
+        "elapsed_sec": 616.2663943767548
+      },
+      {
+        "fold": 1,
+        "n_train": 800,
+        "n_test": 200,
+        "auc": 0.8442982456140351,
+        "brier_score": 0.12458803144137892,
+        "accuracy": 0.835,
+        "f1": 0.8952380952380953,
+        "precision": 0.8650306748466258,
+        "recall": 0.9276315789473685,
+        "mean_grad_norm": 0.22775842716202713,
+        "elapsed_sec": 584.3923006057739
+      },
+      {
+        "fold": 2,
+        "n_train": 800,
+        "n_test": 200,
+        "auc": 0.8079769736842104,
+        "brier_score": 0.14175384127674756,
+        "accuracy": 0.81,
+        "f1": 0.8766233766233766,
+        "precision": 0.8653846153846154,
+        "recall": 0.8881578947368421,
+        "mean_grad_norm": 0.30330748797462737,
+        "elapsed_sec": 602.4942762851715
+      },
+      {
+        "fold": 3,
+        "n_train": 800,
+        "n_test": 200,
+        "auc": 0.8549890350877193,
+        "brier_score": 0.12150706517632408,
+        "accuracy": 0.84,
+        "f1": 0.8980891719745223,
+        "precision": 0.8703703703703703,
+        "recall": 0.9276315789473685,
+        "mean_grad_norm": 0.2476630980306744,
+        "elapsed_sec": 671.3570909500122
+      },
+      {
+        "fold": 4,
+        "n_train": 800,
+        "n_test": 200,
+        "auc": 0.8582785087719298,
+        "brier_score": 0.11682748162948027,
+        "accuracy": 0.85,
+        "f1": 0.9056603773584906,
+        "precision": 0.8674698795180723,
+        "recall": 0.9473684210526315,
+        "mean_grad_norm": 0.2632238986687409,
+        "elapsed_sec": 624.2216956615448
+      }
+    ]
+  },
+  "gradient_diagnostics": {
+    "mean": 0.24706164751502335,
+    "std": 0.2987714936306714,
+    "min": 0.003557464119546281,
+    "max": 1.9194029561723496,
+    "pct_below_1e6": 0.0,
+    "barren_plateau_risk": false
+  },
+  "decision_gate": {
+    "phase4_canonical_auc": 0.8474,
+    "threshold": 0.8574,
+    "canonical_auc": 0.8468347318449861,
+    "delta_vs_phase4": -0.0006,
+    "gate_pass": false,
+    "interpretation": "Phase 4 4q-d1-rzz remains optimal; HPO confirms manual ablation finding"
+  },
+  "phase4_references": {
+    "QFE_4q_d1_rzz_cv5_AUC": 0.8474,
+    "QFE_4q_d1_rzz_cv5_AUC_std": 0.0129,
+    "ECFP4_local_cv5_AUC": 0.8693,
+    "ECFP4_P3_canonical_AUC": 0.9475
+  }
+}

@@ -1,0 +1,88 @@
+\documentclass[11pt,a4paper]{letter}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[
+  group-minimum-digits = 5,
+  per-mode             = symbol,
+]{siunitx}
+
+\signature{Myke Vital Sao Temgoua\\
+  (on behalf of all authors)\\
+  Department of Physics, Faculty of Science\\
+  University of Yaound\'e I, Cameroon\\
+  \texttt{myke-vital.sao@facsciences-uy1.cm}}
+
+\address{Department of Physics\\
+  Faculty of Science\\
+  University of Yaound\'e I\\
+  P.O.\ Box 812, Yaound\'e, Cameroon}
+
+\date{\today}
+
+\begin{document}
+
+\begin{letter}{The Editorial Board\\
+  \textit{RSC Digital Discovery}\\
+  Royal Society of Chemistry}
+
+\opening{Dear Editors,}
+
+We submit for consideration the manuscript entitled \textbf{``Quantum Molecular
+Encoding Captures Stereochemical Complexity of African Natural Products for
+Antimalarial Drug Discovery''} by Myke Vital Sao Temgoua, Jean-Pierre Tchapet
+Njafa, Penabei Samafou, Fon Wilfred Mbacham, and Serge Guy Nana Engo.
+
+\textbf{Scientific content and significance.}
+African natural products (ANPs) present a longstanding challenge for
+computational antimalarial drug discovery: their polycyclic, stereochemically
+rich frameworks are systematically misrepresented by two-dimensional molecular
+fingerprints that collapse stereoisomers into identical bit patterns. We
+investigate whether hybrid quantum-classical feature extraction (QFE)~---
+encoding ECFP4-compressed molecular representations into parameterised 4-qubit
+variational circuits~--- captures information sufficient to improve activity
+prediction for ANP-derived antimalarial candidates relative to classical ECFP4-RBF
+support vector machines.
+
+Experiments were conducted at three rigorously controlled scales using frozen,
+SHA-256-verified subsamples: a 17-molecule African natural product-derived
+proof-of-concept cohort (leave-one-out CV), a \num{1000}-molecule P3-benchmark
+subsample (5-fold stratified CV), and a \num{10000}-molecule external
+scaffold-split validation with \qty{100}{\percent} novel test scaffolds. A
+50-trial Optuna TPE hyperparameter search additionally confirmed circuit
+configuration optimality.
+
+\textbf{Principal finding.}
+The central result is a transparent Scenario~B honest-negative: QFE
+($\text{AUC} = 0.8474 \pm 0.0129$ at benchmark scale; $0.7831$ under scaffold
+split) is competitive with, and consistently outperforms the P3 quantum-inspired
+kernel baseline ($0.8385$), but does not surpass the matched ECFP4-RBF classifier
+($0.8693 \pm 0.0265$; $0.8413$ scaffold split) at any scale. Gradient diagnostics
+confirmed healthy optimisation at moderate scale (no barren plateau at $n = 800$)
+with a marginal signal emerging only at $n = 8000$. Hyperparameter optimisation
+confirmed the 4-qubit, depth-1 architecture as robust (canonical re-run
+$\text{AUC} = 0.8468 \pm 0.0209$; predeclared improvement gate not met).
+
+\textbf{Fit for \textit{RSC Digital Discovery}.}
+This work falls squarely within the journal's scope: it applies quantum machine
+learning to a high-impact drug discovery problem, provides reproducible
+benchmarks with full provenance (SHA-256-frozen datasets, versioned scripts,
+gradient diagnostics), and adopts the transparent honest-negative reporting
+framework that the journal explicitly encourages. The consistent
+Scenario~B pattern observed across quantum-inspired (Project~3),
+GNN/Transformer (Project~5), and hybrid quantum (this work) methods advances
+the collective understanding of when and why quantum or learned representations
+fail to surpass established fingerprint baselines~--- a timely and actionable
+finding for the QML-in-drug-discovery community.
+
+We confirm that this manuscript is original, has not been published elsewhere,
+and is not under consideration by any other journal. All authors have approved
+the final version. Data and analysis scripts will be deposited on Zenodo upon
+acceptance.
+
+\closing{We look forward to your response.}
+
+\end{letter}
+\end{document}

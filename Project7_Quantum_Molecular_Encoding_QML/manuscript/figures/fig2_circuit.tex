@@ -1,0 +1,186 @@
+\documentclass[tikz,border=6pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit,
+                backgrounds, calc, matrix}
+
+% ─────────────────────────────────────────────────────────────────────────────
+% Figure 2 — QFE Quantum Circuit Diagram (4 qubits, depth 1, RZZ entangling)
+%
+% Drawn with standard TikZ only (no quantikz2 dependency).
+% Shows: classical encoder → angle encoding (RY) → variational (RX/RZ)
+%        → entangling (RZZ) → Pauli-Z measurement → decoder.
+% ─────────────────────────────────────────────────────────────────────────────
+
+\definecolor{colEnc} {RGB}{33,102,172}    % blue  — encoding gates
+\definecolor{colVar} {RGB}{214,96,77}     % red   — variational gates
+\definecolor{colEnt} {RGB}{140,81,10}     % brown — entangling gates
+\definecolor{colMeas}{RGB}{35,139,69}     % green — measurement
+\definecolor{colWire}{RGB}{60,60,60}      % dark grey — qubit wires
+
+%% Gate style helpers
+\tikzset{
+  gate/.style={
+    rectangle, rounded corners=2pt,
+    draw=#1!80, fill=#1!14, thick,
+    minimum width=0.80cm, minimum height=0.55cm,
+    font=\scriptsize\sffamily, align=center, inner sep=2pt
+  },
+  twogate/.style={
+    rectangle, rounded corners=2pt,
+    draw=#1!80, fill=#1!12, thick,
+    minimum width=0.80cm,
+    font=\scriptsize\sffamily, align=center, inner sep=2pt
+  },
+  mgate/.style={
+    rectangle, rounded corners=2pt,
+    draw=colMeas!80, fill=colMeas!12, thick,
+    minimum width=0.90cm, minimum height=0.55cm,
+    font=\scriptsize\sffamily, align=center, inner sep=2pt
+  },
+  qwire/.style={draw=colWire, thick},
+  qubitlabel/.style={font=\small\sffamily, anchor=east},
+}
+
+% Wire row heights
+\def\rowA{0.0}    % q0
+\def\rowB{-1.0}   % q1
+\def\rowC{-2.0}   % q2
+\def\rowD{-3.0}   % q3
+
+% Gate column x positions
+\def\xInit{0.6}   % |0⟩ ket
+\def\xRY{1.8}     % RY (angle encoding)
+\def\xRX{3.1}     % RX (variational)
+\def\xRZ{4.4}     % RZ (variational)
+\def\xRZZa{5.9}   % RZZ q0-q1
+\def\xRZZb{7.2}   % RZZ q1-q2
+\def\xRZZc{8.5}   % RZZ q2-q3
+\def\xMeas{10.2}  % measurement
+\def\xEnd{11.2}   % end of wire
+
+\begin{document}
+\begin{tikzpicture}
+
+%% ── Qubit wires ──────────────────────────────────────────────────────────────
+\foreach \row/\qi in {\rowA/0, \rowB/1, \rowC/2, \rowD/3} {
+  \draw[qwire] (\xInit-0.35, \row) -- (\xEnd, \row);
+  \node[qubitlabel] at (\xInit-0.5, \row) {$|0\rangle$};
+}
+
+%% ── |0⟩ kets (already implicit from labels above) ───────────────────────────
+
+%% ── RY gates (angle encoding) ────────────────────────────────────────────────
+\foreach \row/\qi in {\rowA/0, \rowB/1, \rowC/2, \rowD/3} {
+  \node[gate=colEnc, minimum height=0.58cm] (ry\qi)
+    at (\xRY, \row) {$R_Y(\phi_{\qi})$};
+}
+
+%% ── RX gates (variational single-qubit) ─────────────────────────────────────
+\foreach \row/\qi in {\rowA/0, \rowB/1, \rowC/2, \rowD/3} {
+  \node[gate=colVar] (rx\qi)
+    at (\xRX, \row) {$R_X(\theta_{\qi 0})$};
+}
+
+%% ── RZ gates (variational single-qubit) ─────────────────────────────────────
+\foreach \row/\qi in {\rowA/0, \rowB/1, \rowC/2, \rowD/3} {
+  \node[gate=colVar] (rz\qi)
+    at (\xRZ, \row) {$R_Z(\theta_{\qi 1})$};
+}
+
+%% ── RZZ two-qubit entangling gates ──────────────────────────────────────────
+% Helper: draw a two-qubit box spanning rows \yA and \yB
+% RZZ(ϑ₀): q0–q1
+\def\halfH{0.48}
+\def\boxW{0.78}
+
+% Gate q0-q1 (ϑ₀)
+\draw[twogate=colEnt, minimum height={abs(\rowA-\rowB)+\halfH*2}]
+  (\xRZZa-\boxW/2, \rowB-\halfH)
+  rectangle
+  (\xRZZa+\boxW/2, \rowA+\halfH);
+\node[font=\scriptsize\sffamily\bfseries, text=colEnt!85]
+  at (\xRZZa, (\rowA+\rowB)/2) {$R_{ZZ}(\vartheta_0)$};
+% Dots on wires
+\fill[colEnt] (\xRZZa, \rowA) circle (2.5pt);
+\fill[colEnt] (\xRZZa, \rowB) circle (2.5pt);
+
+% Gate q1-q2 (ϑ₁)
+\draw[twogate=colEnt, minimum height={abs(\rowB-\rowC)+\halfH*2}]
+  (\xRZZb-\boxW/2, \rowC-\halfH)
+  rectangle
+  (\xRZZb+\boxW/2, \rowB+\halfH);
+\node[font=\scriptsize\sffamily\bfseries, text=colEnt!85]
+  at (\xRZZb, (\rowB+\rowC)/2) {$R_{ZZ}(\vartheta_1)$};
+\fill[colEnt] (\xRZZb, \rowB) circle (2.5pt);
+\fill[colEnt] (\xRZZb, \rowC) circle (2.5pt);
+
+% Gate q2-q3 (ϑ₂)
+\draw[twogate=colEnt, minimum height={abs(\rowC-\rowD)+\halfH*2}]
+  (\xRZZc-\boxW/2, \rowD-\halfH)
+  rectangle
+  (\xRZZc+\boxW/2, \rowC+\halfH);
+\node[font=\scriptsize\sffamily\bfseries, text=colEnt!85]
+  at (\xRZZc, (\rowC+\rowD)/2) {$R_{ZZ}(\vartheta_2)$};
+\fill[colEnt] (\xRZZc, \rowC) circle (2.5pt);
+\fill[colEnt] (\xRZZc, \rowD) circle (2.5pt);
+
+%% ── Measurement gates ───────────────────────────────────────────────────────
+\foreach \row/\qi in {\rowA/0, \rowB/1, \rowC/2, \rowD/3} {
+  \node[mgate] (meas\qi) at (\xMeas, \row)
+    {$\langle Z_{\qi}\rangle$};
+}
+
+%% ── Column section labels ────────────────────────────────────────────────────
+\def\labelY{0.85}
+\node[font=\scriptsize\sffamily, text=colEnc, align=center]
+  at (\xRY,   \labelY) {Angle\\encoding};
+\node[font=\scriptsize\sffamily, text=colVar, align=center]
+  at ((\xRX+\xRZ)/2, \labelY) {Variational\\layer};
+\node[font=\scriptsize\sffamily, text=colEnt, align=center]
+  at ((\xRZZa+\xRZZc)/2, \labelY) {Entangling\\(IsingZZ)};
+\node[font=\scriptsize\sffamily, text=colMeas, align=center]
+  at (\xMeas, \labelY) {Meas.};
+
+%% ── Left label: classical encoder ───────────────────────────────────────────
+\node[align=right, font=\footnotesize\sffamily, text=colEnc]
+  at (-0.5, (\rowA+\rowD)/2) {
+    ECFP4\,(2048\,bits)\\[2pt]
+    $\xrightarrow{\text{MLP encoder}}$\\[2pt]
+    $\phi_q = \pi\tanh(h_q)$\\[2pt]
+    $h_q\!\in\!\mathbb{R}$
+  };
+
+%% ── Right label: decoder ────────────────────────────────────────────────────
+\node[align=left, font=\footnotesize\sffamily, text=colMeas]
+  at (\xEnd+0.85, (\rowA+\rowD)/2) {
+    $\xrightarrow{\text{decoder}}$\\[2pt]
+    Linear$(4\!\to\!32\!\to\!1)$\\[2pt]
+    Sigmoid\\[2pt]
+    $\hat{y}\in[0,1]$
+  };
+
+%% ── Parameter count annotation ──────────────────────────────────────────────
+\node[draw=colVar!50, fill=colVar!6, rounded corners=3pt,
+      font=\scriptsize\sffamily, inner sep=5pt,
+      text width=8.5cm, align=center]
+  at ((\xRY+\xMeas)/2, \rowD-1.1) {
+    \textbf{Trainable parameters:}~
+    $\boldsymbol{\theta}_\mathrm{sq}\in\mathbb{R}^{4\times2}$
+    (8 single-qubit RX/RZ) $+$
+    $\boldsymbol{\vartheta}\in\mathbb{R}^3$
+    (3 RZZ entangling) $=$ \textbf{11 quantum params}
+    $+$ classical encoder/decoder weights
+  };
+
+%% ── Background: group the variational section ───────────────────────────────
+\begin{pgfonlayer}{background}
+  \fill[colVar!4, rounded corners=4pt]
+    (\xRX-0.5, \rowD-0.38) rectangle (\xRZ+0.5, \rowA+0.38);
+  \fill[colEnc!4, rounded corners=4pt]
+    (\xRY-0.5, \rowD-0.38) rectangle (\xRY+0.5, \rowA+0.38);
+  \fill[colEnt!4, rounded corners=4pt]
+    (\xRZZa-0.5, \rowD-0.60) rectangle (\xRZZc+0.5, \rowA+0.38);
+\end{pgfonlayer}
+
+\end{tikzpicture}
+\end{document}
