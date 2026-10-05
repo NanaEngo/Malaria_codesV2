@@ -1,0 +1,162 @@
+%% ============================================================================
+%% Paper 7: Quantum Molecular Encoding for African Natural Products
+%% Preprint Version (following P2 ChemRxiv format)
+%% Target: RSC Digital Discovery (provisional) / ChemRxiv preprint
+%% Article source — September 2026 (Phase 1 proof-of-concept)
+%% ============================================================================
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+
+% Fonts and encoding
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+% Mathematics
+\usepackage{amsmath, amsfonts, amssymb, mathtools}
+
+% Figures and tables
+\usepackage{graphicx}
+\usepackage{booktabs, tabularx, array, multirow, longtable}
+\usepackage{tikz}
+
+% ORCID icon defined locally for the article class
+\providecommand{\textorcid}{%
+	\begin{tikzpicture}[baseline=0.0ex,line width=0.6,scale=0.65]
+		\fill[rounded corners=0.5,fill=green!60!black,draw=green!50!black] (0,0) circle (0.65ex);
+		\node[white,font=\bfseries\sffamily\tiny] at (0,0) {iD};
+	\end{tikzpicture}%
+}
+
+\usepackage{rotating}
+\usepackage[table]{xcolor}
+\usepackage[labelfont=bf,textfont={footnotesize,it}]{caption}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{microtype}
+\usepackage[numbers,sort&compress]{natbib}
+
+% Units and SI
+\usepackage[
+  group-minimum-digits = 5,
+  per-mode             = symbol,
+  range-phrase         = {--},
+  range-units          = single,
+  separate-uncertainty = true,
+  retain-explicit-plus = true,
+]{siunitx}
+\DeclareSIUnit\molar{M}
+\DeclareSIUnit\angstrom{\text{\AA}}
+\DeclareSIUnit\kcalmol{kcal\,mol^{-1}}
+
+% Cross-referencing
+\usepackage[nameinlink,noabbrev]{cleveref}
+
+% cleveref names
+\crefname{table}{Table}{Tables}
+\Crefname{table}{Table}{Tables}
+\crefname{figure}{Figure}{Figures}
+\Crefname{figure}{Figure}{Figures}
+\crefname{equation}{Eq.}{Eqs.}
+\crefname{section}{Section}{Sections}
+\crefname{subsection}{Section}{Sections}
+
+% Path configuration
+\graphicspath{{figures/}}
+
+% Placeholder for results
+\newcommand{\PENDING}[1]{\textcolor{red}{[PENDING: #1]}}
+\newcommand{\LED}[1]{\textcolor{blue}{[LED-#1]}}
+
+% ============================================================================
+% TITLE AND AUTHOR INFORMATION
+% ============================================================================
+
+\title{Quantum Molecular Encoding Captures Stereochemical Complexity of African Natural Products for Antimalarial Drug Discovery}
+
+\date{}
+
+% ============================================================================
+% BEGIN DOCUMENT
+% ============================================================================
+
+\begin{document}
+
+{\centering\Large\bfseries Quantum Molecular Encoding Captures Stereochemical Complexity of African Natural Products for Antimalarial Drug Discovery\par}
+\vspace{1em}
+{\centering
+	Myke Vital Sao Temgoua\href{https://orcid.org/0009-0004-5170-2309}{\textsuperscript{\textorcid}}\footnotemark[1]$^{1}$,
+	Jean-Pierre Tchapet Njafa\href{https://orcid.org/0000-0002-1936-8353}{\textsuperscript{\textorcid}}$^{1}$,
+	Penabei Samafou\href{https://orcid.org/0000-0002-9683-7678}{\textsuperscript{\textorcid}}$^{2}$,
+	Fon Wilfred Mbacham\href{https://orcid.org/0000-0002-3934-3233}{\textsuperscript{\textorcid}}$^{3}$,
+	Serge Guy Nana Engo\href{https://orcid.org/0000-0002-7484-3508}{\textsuperscript{\textorcid}}$^{1}$\\[0.5em]
+	{\small $^{1}$Department of Physics, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}\\
+	{\small $^{2}$Department of Medical Imaging and Radiation Sciences, Universit\'e de Sherbrooke, Sherbrooke, QC, Canada}\\
+	{\small $^{3}$Department of Biochemistry, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon}\par}
+
+\footnotetext[1]{Corresponding author: \texttt{myke-vital.sao@facsciences-uy1.cm}}
+
+% ============================================================================
+% ABSTRACT
+% ============================================================================
+
+\begin{abstract}
+\PENDING{Abstract: Write last after Results are complete. Target: ~200 words. Structure: (1) Challenge: ANP stereochemical complexity + classical fingerprint limitations; (2) Approach: BondOrderMatrix quantum encoding + quantum kernel SVM on 17 ANP-derived candidates; (3) Results: quantum vs. ECFP4 comparison with statistical test; (4) Interpretation: advantage/equivalence/underperformance + mechanistic analysis; (5) Scope: Phase 1 proof-of-concept, honest-negative framework.}
+\end{abstract}
+
+\vspace{1em}
+
+\noindent\textbf{Keywords:} quantum machine learning, African natural products, antimalarial drug discovery, drug resistance, molecular encoding, quantum kernels, stereochemistry, BondOrderMatrix
+
+\vspace{1em}
+
+% ============================================================================
+% MAIN TEXT
+% ============================================================================
+\input{sections/introduction}
+\input{sections/methods}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+% ============================================================================
+% SUPPORTING INFORMATION
+% ============================================================================
+
+\section*{Supporting Information}
+
+Supplementary Information contains: Extended computational details, full ANP metadata tables (ACSI, Fsp³, stereocenter counts), quantum circuit diagrams, kernel matrix heatmaps, LOO-CV fold-by-fold predictions, software environment specifications, and data/code availability statement.
+
+% ============================================================================
+% ACKNOWLEDGEMENTS
+% ============================================================================
+
+\section*{Acknowledgements}
+
+\PENDING{Acknowledgements: Funding sources, computational resources (HPC/cloud), collaborators, and AI assistance disclosure per journal policy.}
+
+% ============================================================================
+% CONFLICTS OF INTEREST
+% ============================================================================
+
+\section*{Conflicts of Interest}
+
+The authors declare no conflicts of interest.
+
+% ============================================================================
+% DATA AVAILABILITY
+% ============================================================================
+
+\section*{Data Availability}
+
+\PENDING{Data and code availability: GitHub repository URL or Zenodo DOI upon acceptance. Quantum circuit parameters, kernel matrices, and analysis scripts will be made publicly available.}
+
+% ============================================================================
+% BIBLIOGRAPHY
+% ============================================================================
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}
