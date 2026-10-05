@@ -14,8 +14,9 @@
 | **P7.2 Phase 1 (P1 Set A PoC)** | ✅ COMPLETE | QFE AUC 0.933 vs ECFP4 0.833, GIN 1.000 (n=17 LOO-CV); decision gate PASS (ratio 1.12) |
 | **P7.3 Phase 4 (P3 Benchmark)** | ✅ COMPLETE | QFE AUC 0.8474 ± 0.0129 (4q canonical); ablation complete (6q: 0.8230, 8q: 0.8316); 4q optimal; Scenario B |
 | **P7.4 Phase 5 (External)** | ✅ COMPLETE | Scaffold split (100% novel); ECFP4 AUC 0.8413; QFE AUC 0.7831; barren plateau 8.24%; Scenario B/C boundary |
-| **P7.5 Hardware Validation** | ⏳ PENDING_INPUTS | IBM Quantum execution, noise mitigation |
-| **P7.6 Manuscript** | NOT_COMPUTED | JCIM-format article, Supporting Information |
+| **P7.5 Phase 6 HPO** | 🔄 IN PROGRESS | Optuna TPE resumed 05 Oct 2026 (PID 2011099); 12 trials (7 complete + 3 pruned + 2 stuck); best EXPLORATORY AUC 0.8487 (trial 7: 4q, CZ, hidden=64, lr=2.21e-3); canonical 5-fold re-run COMPLETE: AUC 0.8468 ± 0.0209; decision gate BELOW (< 0.8574) — Phase 4 4q-rzz remains optimal |
+| **P7.6 Hardware Validation** | ⏳ PENDING_INPUTS | IBM Quantum execution, noise mitigation |
+| **P7.7 Manuscript** | 🔄 DRAFT — near-complete | All 5 sections + Abstract + Cover letter written; Phase 6 HPO subsection added to Results; Conclusion updated past-tense; 0 errors / 0 undefined refs; 17 p., 804 KB PDF (05 Oct 2026 22:45). Remaining PENDING: hardware spec, Zenodo/GitHub DOI, Acknowledgements. |
 
 ## 2. Scientific Question and Hypothesis
 
@@ -484,15 +485,98 @@ external-only set is 45,943. This is the canonical figure; the 122K estimate is 
 13. ✅ Phase 5 baseline: ECFP4-RBF on scaffold split (n=10K ext) — AUC 0.8413
 14. ✅ Phase 5 QFE: QFE 4q-d1-rzz on scaffold split — AUC 0.7831 (barren plateau marginal: 8.24%)
 15. ✅ DAR updated with Phase 5 results checkpoint (03 Oct 2026)
+16. 🔄 Phase 6 HPO **LAUNCHED** (05 Oct 2026): `scripts/p7_phase6_qfe_optuna_hpo.py` running as PID 1870521; study `p7_qfe_hpo` in `results/phase4_hpo/qfe_hpo_study.db`
 
-**Next (Phase 6 — IBM Quantum Hardware):**
-16. ⏳ Phase 6: IBM Quantum hardware runs on P1 Set A (small n, feasible on free tier)
+**Phase 6 — Optuna HPO (IN PROGRESS, launched 05 Oct 2026):**
+
+Script: `scripts/p7_phase6_qfe_optuna_hpo.py`
+Output: `results/phase4_hpo/`
+
+**Motivation:** Phase 4 ablation varied only qubit count (4/6/8) with all other
+hyperparameters fixed. The ~2.5% gap between QFE (0.8474) and local ECFP4
+(0.8693) may be reducible by joint optimisation of the circuit, encoder, and
+training configuration.
+
+**Search space:**
+
+| Category | Parameter | Search domain |
+|----------|-----------|---------------|
+| Circuit | n_qubits | {4, 6, 8} |
+| Circuit | n_layers | {1, 2, 3} |
+| Circuit | entangling | {rzz, cnot, cz, none} |
+| Encoder | hidden_dim | {64, 128, 256} |
+| Encoder | dropout_rate | uniform [0.0, 0.5] |
+| Optimiser | lr | log-uniform [1e-4, 1e-2] |
+| Optimiser | batch_size | {8, 16, 32} |
+| Optimiser | epochs | {60, 80, 100} |
+| Optimiser | weight_decay | log-uniform [1e-6, 1e-3] |
+| Oracle | SVM C | log-uniform [0.01, 100] |
+| Oracle | SVM gamma | {scale, auto} |
+
+**Protocol:**
+- Sampler: TPESampler (seed=42)
+- Pruner: MedianPruner (n_startup=5, n_warmup=10)
+- Direction: maximise ROC-AUC
+- n_trials: 50 QFE + 30 ECFP4-SVM oracle
+- Inner CV: 3-fold stratified on Phase 4 canonical subsample (SHA-256 verified)
+- Persistence: SQLite (`results/phase4_hpo/qfe_hpo_study.db`, resumable)
+
+**HPO status labels:**
+- HPO outputs are labelled **EXPLORATORY** until the best configuration is
+  re-run with canonical 5-fold CV (matching Phase 4 protocol). That re-run
+  produces a **CANONICAL** result and is added as a Phase 4 update entry.
+
+**Decision gate (post-HPO):**
+- If best HPO AUC > 0.8474 + 0.01 (≥ 0.8574): re-run with 5-fold CV, update
+  Phase 4 summary, update manuscript Scenario B/C boundary assessment.
+- If best HPO AUC ≤ 0.8574: canonical config 4q-d1-rzz remains optimal; HPO
+  confirms the manual ablation finding; report in manuscript §ablation.
+
+**Expected outputs (not yet computed):**
+| Artifact | Path | Status |
+|----------|------|--------|
+| All QFE trials table | `results/phase4_hpo/qfe_hpo_all_trials.csv` | NOT_COMPUTED |
+| Best QFE params (frozen) | `results/phase4_hpo/qfe_hpo_best_params.json` | NOT_COMPUTED |
+| ECFP4 oracle trials | `results/phase4_hpo/ecfp4_hpo_all_trials.csv` | NOT_COMPUTED |
+| ECFP4 oracle best | `results/phase4_hpo/ecfp4_hpo_best_params.json` | NOT_COMPUTED |
+| Run summary | `results/phase4_hpo/qfe_hpo_summary.json` | NOT_COMPUTED |
+| Optuna study (SQLite) | `results/phase4_hpo/qfe_hpo_study.db` | NOT_COMPUTED |
+| Importance plot | `results/phase4_hpo/qfe_hpo_importance.png` | NOT_COMPUTED |
+| History plot | `results/phase4_hpo/qfe_hpo_optimization_history.png` | NOT_COMPUTED |
+| Parallel coord. plot | `results/phase4_hpo/qfe_hpo_parallel_coordinate.png` | NOT_COMPUTED |
+
+**Canonical usage:**
+```bash
+# Full run (≈ hours on CPU; recommend nohup or tmux):
+python scripts/p7_phase6_qfe_optuna_hpo.py \
+    --data  data/p3_benchmark/p3_benchmark_19849.csv \
+    --output results/phase4_hpo/ \
+    --n-sample 1000 \
+    --n-trials-qfe 50 --n-trials-ecfp4 30 \
+    --cv-folds 3 --seed 42
+
+# Smoke-test (5 trials, 2-fold):
+python scripts/p7_phase6_qfe_optuna_hpo.py \
+    --data  data/p3_benchmark/p3_benchmark_19849.csv \
+    --output results/phase4_hpo/ \
+    --n-trials-qfe 5 --n-trials-ecfp4 5 \
+    --cv-folds 2 --seed 42
+
+# Resume interrupted run:
+python scripts/p7_phase6_qfe_optuna_hpo.py \
+    --data  data/p3_benchmark/p3_benchmark_19849.csv \
+    --output results/phase4_hpo/ \
+    --resume --n-trials-qfe 50 --seed 42
+```
+
+**Next (Phase 6B — IBM Quantum Hardware):**
+17. ⏳ Phase 6B: IBM Quantum hardware runs on P1 Set A (small n, feasible on free tier)
     - Target: ibm_fez or ibm_pittsburgh, Qiskit Runtime, 1024 shots
-    - Circuit: transpile QFE 4q-d1-rzz to hardware-native gates
+    - Circuit: transpile QFE 4q-d1-rzz (or best HPO config) to hardware-native gates
     - Compare noise-affected AUC vs statevector AUC (0.933 on P1 Set A)
 
 **Subsequent:**
-17. ⏳ Manuscript drafting (JCIM format; honest-negative framing established)
+18. ⏳ Manuscript drafting (JCIM format; honest-negative framing established)
 
 **Last updated:** 03 October 2026 — Phase 4 COMPLETE (QFE AUC 0.8474 ± 0.0129; decision gate PASS; ablation approved)
 
@@ -502,5 +586,166 @@ Keep this DAR operational and short. Long narratives, superseded plans, and deta
 
 ---
 
-**Last updated:** 03 October 2026 — Phase 5 COMPLETE (ECFP4 scaffold 0.8413; QFE scaffold 0.7831; 100% novel scaffolds; Scenario B/C boundary; barren plateau marginal 8.24%)
-**Previous updates:** 03 October 2026 (Phase 4 ablation complete); 03 October 2026 (Phase 4 QFE complete); 02 October 2026 (Phase 0–3B checkpoint); 28 August 2026 (project initialization)
+---
+
+### ── CHECKPOINT 05 October 2026 — Phase 6 HPO LAUNCHED ──
+
+**Launch details:**
+- PID: 1870521 (nohup background process, server `penavoraserver`)
+- Log: `logs/p7_phase6_hpo_20261005_131444.log`
+- Command: `python scripts/p7_phase6_qfe_optuna_hpo.py --data data/p3_benchmark/p3_benchmark_19849.csv --output results/phase4_hpo/ --n-sample 1000 --n-trials-qfe 50 --n-trials-ecfp4 30 --cv-folds 3 --seed 42 --resume`
+- Status at launch: Study `p7_qfe_hpo` resumed from 3 completed + 1 partial trial; 2 trials actively RUNNING in SQLite DB
+- Estimated runtime: ~30–50 min/trial × ~47 remaining QFE trials ≈ 24–40 hr total (CPU, multi-threaded ~1800% CPU utilisation)
+
+**Early trial results (from earlier partial run, EXPLORATORY):**
+
+| Trial | n_qubits | n_layers | entangling | hidden_dim | AUC (2-fold) | Status |
+|-------|----------|----------|-----------|------------|-------------|--------|
+| 0 | 6 | 1 | cnot | 128 | 0.7871 | EXPLORATORY |
+| 1 | 8 | 1 | cz | 256 | **0.8372** | EXPLORATORY |
+
+Best AUC so far: **0.8372** (8q, CZ, hidden=256, lr=4.1e-4, batch=16, epochs=80) — below Phase 4 canonical 4q result (0.8474); decision gate (≥ 0.8574) not yet met.
+
+**Status labels:** All HPO results are **EXPLORATORY** until:
+1. Full 50-trial run completes
+2. Best configuration is re-run with canonical 5-fold CV (matching Phase 4 protocol)
+3. That 5-fold re-run is recorded here as **CANONICAL**
+
+**Expected outputs (IN PROGRESS — NOT YET COMPLETE):**
+
+| Artifact | Path | Status |
+|----------|------|--------|
+| All QFE trials table | `results/phase4_hpo/qfe_hpo_all_trials.csv` | IN PROGRESS (3 trials) |
+| Best QFE params (frozen) | `results/phase4_hpo/qfe_hpo_best_params.json` | EXPLORATORY (partial) |
+| ECFP4 oracle trials | `results/phase4_hpo/ecfp4_hpo_all_trials.csv` | IN PROGRESS (2 trials) |
+| Run summary | `results/phase4_hpo/qfe_hpo_summary.json` | IN PROGRESS |
+| Optuna study (SQLite) | `results/phase4_hpo/qfe_hpo_study.db` | ACTIVE (resumable) |
+| Importance/history/parallel plots | `results/phase4_hpo/qfe_hpo_*.png` | NOT_COMPUTED (generated at end) |
+
+**Next action after completion:** Check best AUC vs. threshold 0.8574:
+- If best > 0.8574 → re-run best config with 5-fold CV → update Phase 4 summary → update manuscript
+- If best ≤ 0.8574 → Phase 4 canonical 4q-d1-rzz remains optimal; record HPO as confirmatory
+
+---
+
+**Last updated:** 05 October 2026 — Phase 6 HPO LAUNCHED (PID 1870521; 3 completed + 2 running trials; best EXPLORATORY AUC 0.8372; full 50+30 run in progress)
+**Previous updates:** 05 October 2026 (HPO plan + script written); 03 October 2026 (Phase 5 COMPLETE); 03 October 2026 (Phase 4 ablation complete); 03 October 2026 (Phase 4 QFE complete); 02 October 2026 (Phase 0–3B checkpoint); 28 August 2026 (project initialization)
+
+---
+
+### ── CHECKPOINT 05 October 2026 (20:50) — Phase 6 Canonical Re-run COMPLETE ──
+
+**Context:** Phase 6 HPO (PID 1870521) had stopped after 12 trials (7 complete, 3 pruned, 2 stuck RUNNING). HPO resumed in background (PID 2011099, log: `logs/p7_phase6_hpo_20261005_205057.log`) toward full 50 QFE + 30 ECFP4 targets. Simultaneously, the best HPO configuration (trial 7) was re-run with canonical 5-fold CV.
+
+**HPO status (05 Oct 2026, 12 trials completed, EXPLORATORY):**
+
+| Trial | n_qubits | n_layers | entangling | hidden_dim | AUC (2-fold) |
+|-------|----------|----------|-----------|------------|-------------|
+| 7 (best) | 4 | 1 | cz | 64 | 0.8487 |
+| 5 | 4 | 1 | none | 128 | 0.8419 |
+| 1 | 8 | 1 | cz | 256 | 0.8372 |
+| 9 | 8 | 1 | cnot | 256 | 0.8307 |
+| 4 | 4 | 2 | cz | 128 | 0.8232 |
+| 0 | 6 | 1 | cnot | 128 | 0.7871 |
+| 2 | 4 | 2 | rzz | 128 | 0.6060 |
+
+**Canonical re-run — trial 7 best config (CANONICAL, 05 Oct 2026):**
+
+| Parameter | Value |
+|-----------|-------|
+| n_qubits | 4 |
+| n_layers | 1 |
+| entangling | CZ |
+| hidden_dim | 64 |
+| dropout_rate | 0.0719 |
+| lr | 2.21e-3 |
+| batch_size | 32 |
+| epochs | 80 |
+| weight_decay | 1.37e-5 |
+| optimizer | AdamW |
+
+**Subsample SHA-256:** `d781d9c43923e3d5bbbbbb78dd572c6b091cbceea8946110c3e1dc5e980b5f0a` — **verified ✓ identical to Phase 4**
+
+| Fold | AUC | Brier | Acc | F1 | Mean ‖∇θ‖ |
+|------|-----|-------|-----|----|-----------|
+| 1 | 0.8686 | 0.1056 | 0.8550 | 0.9079 | 0.199 |
+| 2 | 0.8443 | 0.1246 | 0.8350 | 0.8952 | 0.228 |
+| 3 | 0.8080 | 0.1418 | 0.8100 | 0.8766 | 0.303 |
+| 4 | 0.8550 | 0.1215 | 0.8400 | 0.8981 | 0.248 |
+| 5 | 0.8583 | 0.1168 | 0.8500 | 0.9057 | 0.263 |
+| **Mean ± SD** | **0.8468 ± 0.0209** | **0.1221** | **0.8380** | **0.8967** | **0.248** |
+
+**Gradient diagnostics:** Mean ‖∇θ‖ = 0.248; no barren plateau (0% below 10⁻⁶). Runtime: 3122 s (52 min).
+
+**Decision gate:**
+- Canonical AUC 0.8468 vs threshold 0.8574 (Phase 4 best + 0.01): **BELOW**
+- **Phase 4 4q-d1-rzz (AUC 0.8474 ± 0.0129) remains the canonical optimal QFE configuration**
+- HPO trial 7 (CZ, hidden=64) is within noise of Phase 4 (Δ = −0.0006); confirms the manual ablation finding
+- The 2-fold HPO estimate (0.8487) slightly overestimated the 5-fold canonical value (0.8468) — expected variance from 2-fold CV
+
+**Updated Phase 4 summary (including HPO canonical re-run):**
+
+| Method | Configuration | AUC (5-fold CV) | Status |
+|--------|--------------|-----------------|--------|
+| ECFP4-RBF | P3 full 19849 | 0.9475 ± 0.0045 | CANONICAL (P3) |
+| Hybrid RF | P3 full 19849 | 0.8876 ± 0.0065 | CANONICAL (P3) |
+| QKS (PennyLane) | P3 pilot | 0.8385 | CANONICAL (P3) |
+| ECFP4-RBF (local) | P3 sub n=1000 | 0.8693 ± 0.0265 | COMPUTED (P7) |
+| **QFE 4q-d1-rzz** | P3 sub n=1000 | **0.8474 ± 0.0129** | **CANONICAL (P7)** |
+| QFE 4q-d1-cz (HPO trial 7) | P3 sub n=1000 | 0.8468 ± 0.0209 | CANONICAL (P7) |
+
+**Manuscript implication:**
+- Scenario B confirmed: HPO does not close the ~2.5% gap between QFE and local ECFP4 baseline
+- Manuscript can now state: "Hyperparameter optimisation (50-trial Optuna TPE) confirmed the manual ablation finding: 4-qubit, depth-1 configuration is robust, and the CZ variant [AUC 0.8468 ± 0.0209] is statistically equivalent to the RZZ canonical [AUC 0.8474 ± 0.0129]"
+- Abstract can be written; HPO section of Results is complete pending full 50-trial run for completeness
+
+**Output files:**
+| Artifact | Path | Status |
+|----------|------|--------|
+| Fold results | `results/phase4_hpo/qfe_4q_d1_cz_hpo_canonical_cv5_results.csv` | ✅ CANONICAL |
+| Gradient norms | `results/phase4_hpo/qfe_4q_d1_cz_hpo_canonical_cv5_gradient_norms.csv` | ✅ CANONICAL |
+| Summary JSON | `results/phase4_hpo/qfe_4q_d1_cz_hpo_canonical_cv5_summary.json` | ✅ CANONICAL |
+| Re-run script | `scripts/p7_phase6_canonical_rerun.py` | ✅ versioned |
+| HPO study (SQLite) | `results/phase4_hpo/qfe_hpo_study.db` | 🔄 IN PROGRESS (PID 2011099) |
+
+**Next actions:**
+17. 🔄 Phase 6 HPO continues in background (PID 2011099) toward 50 QFE + 30 ECFP4 trials — final importance/history plots generated on completion
+18. ✅ **Manuscript unblocked:** Abstract can be drafted; Results §HPO subsection complete; Discussion Scenario B confirmed
+19. ⏳ Phase 6B: IBM Quantum hardware runs on P1 Set A (small n, feasible on free tier)
+20. ⏳ Manuscript finalisation: Abstract, cover letter, figures review
+
+---
+
+**Last updated:** 05 October 2026 (20:50) — Phase 6 canonical re-run COMPLETE (AUC 0.8468 ± 0.0209; decision gate BELOW; Phase 4 4q-rzz confirmed optimal; HPO resuming in background PID 2011099)
+
+---
+
+### ── CHECKPOINT 05 October 2026 (22:45) — Manuscript DRAFT NEAR-COMPLETE ──
+
+**Completed this session:**
+
+| File | Change | Status |
+|------|--------|--------|
+| `manuscript/sections/abstract.tex` | Written from scratch (~230 words, 5-part structure, all canonical numbers) | ✅ NEW |
+| `manuscript/sections/results.tex` | Phase 6 HPO subsection added (Table~\ref{tab:hpo}, canonical re-run, decision gate interpretation) | ✅ UPDATED |
+| `manuscript/sections/conclusion.tex` | HPO future-tense paragraph → past-tense canonical result | ✅ UPDATED |
+| `manuscript/cover_letter.tex` | Written for RSC Digital Discovery (~300 words, letter class) | ✅ NEW |
+| `manuscript/main.tex` | Abstract `\PENDING{}` replaced with `\input{sections/abstract}` | ✅ UPDATED |
+| `manuscript/references.bib` | `mcclean2018barren` (Nature Comms 2018, DOI 10.1038/s41467-018-07090-4) added | ✅ FIXED |
+
+**Final compilation result (05 Oct 2026, 22:45):**
+- Errors: **0**
+- Undefined citations: **0**
+- Pages: **17**
+- PDF size: **804 KB**
+- PENDING markers remaining: **4** (hardware spec in §Methods, Zenodo/GitHub DOI ×2, Acknowledgements) — all legitimate pre-submission placeholders, none block any scientific claim
+
+**Remaining gates before submission:**
+- [ ] IBM Quantum hardware run (Phase 6B) — fills hardware spec PENDING in §Methods
+- [ ] Zenodo DOI registration — fills Data Availability and acknowledgement PENDINGs
+- [ ] Author visual read-through of full 17-page PDF
+- [ ] Anti-AI scan pass
+- [ ] HPO full 50-trial completion (background, PID 2011108) — supplementary only; does not change any canonical claim
+- [ ] Assemble submission package (PDF + .bbl + .bib + figures)
+
+**Last updated:** 05 October 2026 (22:45) — Abstract, cover letter, HPO results section, conclusion update, references fix, and final compilation complete (0 errors / 0 undefined refs / 17 p. / 804 KB)

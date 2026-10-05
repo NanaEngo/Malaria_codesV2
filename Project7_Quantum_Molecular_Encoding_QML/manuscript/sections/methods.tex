@@ -8,7 +8,7 @@ We extracted \num{17} antimalarial candidate molecules from Project 1 Set A\cite
 
 To quantify ANP structural identity, we computed three descriptors for each molecule:
 
-\textbf{(i) Fraction sp\textsuperscript{3} carbons ($F_{sp^3}$):} Calculated as the ratio of sp\textsuperscript{3}-hybridized carbons to total carbons. ANPs typically exhibit $F_{sp^3} > 0.5$ due to saturated ring systems and polycyclic frameworks, contrasting with synthetic drugs ($F_{sp^3} \sim 0.3$--0.4$)\cite{lovering2009escape}.
+\textbf{(i) Fraction sp\textsuperscript{3} carbons ($F_{sp^3}$):} Calculated as the ratio of sp\textsuperscript{3}-hybridized carbons to total carbons. ANPs typically exhibit $F_{sp^3} > 0.5$ due to saturated ring systems and polycyclic frameworks, contrasting with synthetic drugs ($F_{sp^3} \sim 0.3$--$0.4$)\cite{lovering2009escape}.
 
 \textbf{(ii) Stereocenter count:} Enumerated using RDKit's \texttt{FindMolChiralCenters} function after stereochemistry assignment. ANP alkaloids, triterpenoids, and macrolides frequently contain 4--10 stereocenters\cite{newman2020natural}.
 
@@ -63,6 +63,26 @@ U_{\text{ent}} = \prod_{\langle i,j \rangle} R_{ZZ}(\phi_{ij}), \quad \phi_{ij} 
 where $R_{ZZ}(\phi) = \exp(-i \phi Z \otimes Z / 2)$ creates two-qubit entanglement encoding off-diagonal matrix elements.
 
 The circuit depth was set to 1 layer (encoding only) for the proof-of-concept Phase 1 study. The number of qubits was determined by the number of heavy atoms (C, N, O, S, P) in each molecule, resulting in circuits ranging from 12 to 28 qubits for the 17-molecule panel.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\linewidth]{fig2_circuit}
+\caption{
+  \textbf{Figure 2. QFE quantum circuit architecture (canonical 4-qubit configuration).}
+  Schematic of the hybrid quantum-classical circuit used in Phases~4 and~5.
+  Four qubit wires (initialised to $|0\rangle$) pass through:
+  (blue) $R_Y(\phi_q)$ angle-encoding gates, where $\phi_q\!=\!\pi\tanh(h_q)$
+  are the classical encoder outputs;
+  (red) variational single-qubit $R_X(\theta_{q,0})$ and $R_Z(\theta_{q,1})$ gates;
+  (brown) nearest-neighbour $R_{ZZ}(\vartheta_i)$ IsingZZ entangling gates on
+  pairs $(q_0,q_1)$, $(q_1,q_2)$, $(q_2,q_3)$;
+  (green) Pauli-$Z$ expectation-value measurements $\langle Z_q\rangle$ fed into
+  the classical decoder.  Total variational parameters: 11 quantum (8 single-qubit
+  + 3 entangling) plus classical encoder/decoder weights.
+  Simulated on PennyLane \texttt{default.qubit} (CPU statevector, exact).
+}
+\label{fig:circuit}
+\end{figure}
 
 \subsubsection{Quantum Kernel Computation}
 

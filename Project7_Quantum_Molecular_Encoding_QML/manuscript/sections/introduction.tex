@@ -9,3 +9,19 @@ Quantum machine learning (QML) offers a fundamentally different encoding strateg
 Here we investigate whether quantum molecular encoding preserves African natural product structural complexity sufficiently to improve antimalarial activity prediction relative to classical baselines. We encode \num{17} candidate molecules from a curated ANP-derived panel (sourced from the upstream P1 library of \num{65856} computationally expanded structures\cite{sao2026p1}) using BondOrderMatrix representations\cite{boy2025}, where bond orders, Z/E stereochemistry, and R/S chirality are embedded directly into parameterized quantum circuits. Classification via quantum kernel support vector machines is compared against ECFP4-SVM under leave-one-out cross-validation on an intentionally small, class-imbalanced cohort designed to stress-test generalization to unseen scaffolds. This proof-of-concept Phase 1 study addresses three questions: (i) Does quantum encoding capture ANP stereochemistry that ECFP4 discards? (ii) Does this encoding translate to measurable classification advantage, or do quantum and classical kernels yield equivalent performance on real-world antimalarial screening data? (iii) For which ANP structural classes—indole alkaloids, prenylated flavonoids, polycyclic quassinoids, or simple phenolics—does quantum enhancement provide advantage versus equivalence?
 
 Following the transparent reporting precedent established in prior quantum-inspired benchmarks\cite{sao2026p3}, we adopt an honest-negative framework: statistical equivalence or quantum underperformance are reported with identical rigor to quantum advantage, accompanied by mechanistic analysis of when and why quantum encoding succeeds or fails. This approach prioritizes falsifiable claims over promotional framing, aligning with recent calls for reproducible quantum machine learning benchmarks in drug discovery\cite{cao2022quantum}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig1_workflow}
+\caption{
+  \textbf{Figure 1. P7 hybrid quantum-classical pipeline.}
+  Workflow from ANP candidate library through ECFP4 fingerprinting, classical
+  encoder, 4-qubit parameterised QFE circuit, and decoder to activity score
+  $\hat{y}\in[0,1]$.  Three evaluation phases are shown below: Phase~1
+  proof-of-concept (LOO-CV, $n=17$), Phase~4 P3-benchmark subsample
+  (5-fold CV, $n=1000$), and Phase~5 external scaffold-split validation
+  ($n=10\,000$).  All quantum computations used PennyLane
+  \texttt{default.qubit} (statevector, exact, CPU).
+}
+\label{fig:workflow}
+\end{figure}

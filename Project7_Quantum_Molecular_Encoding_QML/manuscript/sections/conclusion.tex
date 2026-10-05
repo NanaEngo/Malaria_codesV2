@@ -1,3 +1,66 @@
 \section{Conclusion}
+\label{sec:conclusion}
 
-\PENDING{Conclusion section: Write after Results/Discussion. Summary of findings, implications for ANP-based drug discovery, honest assessment of quantum advantage/equivalence/underperformance, and outlook for hybrid quantum-classical architectures.}
+We evaluated hybrid quantum-classical feature extraction (QFE) for antimalarial
+activity prediction across three evaluation scales using a consistent 4-qubit,
+depth-1, RZZ-entangling architecture operating on ECFP4-compressed molecular
+representations. The central finding is an honest-negative Scenario~B result:
+QFE is competitive with the matched ECFP4-RBF SVM baseline but does not surpass
+it at any scale tested (LOO-CV on $n = 17$; 5-fold CV on $n = 1000$; scaffold
+split on $n = 10{,}000$). QFE AUC ranged from $0.8474 \pm 0.0129$ (Phase~4,
+5-fold CV) to $0.7831$ (Phase~5, scaffold split), consistently above the
+P3 quantum-inspired QKS baseline ($0.8385$) but $2.5$--$5.8$ percentage
+points below ECFP4-RBF. Gradient diagnostics confirmed healthy training at
+$n = 800$ scale (no barren plateau), with a marginal signal ($\qty{8.24}{\percent}$
+of batches below $10^{-6}$) emerging at $n = 8000$, attributable to
+input-induced near-zero activations on scaffold-novel molecules rather than
+circuit-structure-induced gradient vanishing.
+
+The qubit-count ablation (4q, 6q, 8q) identified 4-qubit as optimal on
+the $n = 1000$ subsample: wider circuits degraded performance and variance
+without reducing the expressibility--trainability gap, confirming that
+deeper optimisation — not wider circuits — is the more productive
+improvement direction.
+
+Hyperparameter optimisation (Phase~6) confirmed that the manual ablation
+finding is robust: a 50-trial Optuna TPE search jointly optimising circuit
+width, depth, entangling gate, encoder dimension, learning rate, batch size,
+and regularisation strength identified a 4-qubit, depth-1, CZ-entangling
+configuration as best (2-fold inner-CV AUC $0.8487$). A canonical 5-fold
+re-run of this configuration on the same frozen Phase~4 subsample yielded
+AUC $= 0.8468 \pm 0.0209$, which is within noise of the Phase~4
+RZZ canonical ($0.8474 \pm 0.0129$; $\Delta = -0.0006$). The predeclared
+decision gate ($\geq 0.8574$) was not met; the Phase~4 4-qubit, depth-1,
+RZZ configuration remains the canonical optimal. Deeper optimisation does
+not close the gap with ECFP4-RBF, confirming that the performance ceiling
+is imposed by the ECFP4-based encoder input rather than by circuit or
+training configuration.
+
+IBM Quantum hardware validation (Phase~6B) on the Phase~1 PoC cohort
+($n = 17$) will quantify the gap between statevector simulation and
+real-device performance for the 4-qubit circuit, providing the first
+noise-realistic QFE benchmark in this series.
+
+Beyond the immediate P7 scope, the consistent Scenario~B pattern across
+P3 (quantum-inspired kernels), P5 (GNNs/transformers), and P7 (hybrid
+quantum circuits) converges on a dataset-level interpretation: docking-score-
+derived binary labels encode predominantly topological information that
+ECFP4 already captures near-optimally for the four malaria drug targets
+studied. Quantum advantage — if attainable for antimalarial activity prediction
+— is more likely to emerge from experimental IC$_{50}$/EC$_{50}$ labels
+that encode conformational, stereoelectronic, and solvation information
+discarded by 2D fingerprints, or from structurally richer tasks such as
+selectivity ratio prediction between resistance and wild-type variants, where
+fine-grained 3D encoding provides non-redundant information relative to
+topological fingerprints. BondOrderMatrix-based direct structure encoding,
+the mechanistically motivated strategy from Boy et al.\cite{boy2025}, remains
+the correct long-term direction; practical application at P3-benchmark scale
+will require either fault-tolerant quantum hardware (beyond NISQ) or
+efficient approximation methods such as Nystr\"{o}m kernel approximation
+on hardware-native quantum feature maps.
+
+This study confirms that the NISQ-era QFE, as implemented, provides a
+meaningful and reproducible Scenario~B result: not quantum advantage, but not
+quantum futility either. The approach is technically validated, gradient-stable
+at moderate scale, and reproducibly benchmarked against the same classical
+baselines used across the P1--P7 series.

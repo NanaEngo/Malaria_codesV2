@@ -10,29 +10,45 @@
 ## Status
 
 **Active Loop:** L2 — DRAFT  
-**Beat Counter:** 3  
+**Beat Counter:** 5  
 **Model:** Claude Sonnet 4.5  
-**Status:** Methods complete; Introduction complete; waiting for full quantum results (LED-PENDING-001) before Results/Discussion
+**Status:** Introduction ✅ · Methods ✅ · Results ✅ · Discussion ✅ · Conclusion ✅ · HPO canonical re-run ✅ — Phase 6 canonical result recorded (AUC 0.8468 ± 0.0209; 05 Oct 2026). Abstract now unblocked. HPO full 50-trial run continuing in background (PID 2011099). Pending: Abstract, IBM hardware section, final review passes.
 
 ---
 
 ## Sprint Plan
 
-### Phase 1: Evidence Gathering (L1)
-- [ ] Read Phase 1 results (ECFP4 baseline, quantum kernel test)
-- [ ] Create analysis ledger entries
-- [ ] Interpret ECFP4 AUC = 0.467 (worse than random)
-- [ ] Document quantum kernel technical demo (3 molecules)
-- [ ] Identify missing results (17-molecule quantum comparison)
-- [ ] Create claims-evidence matrix
+### Phase 1: Evidence Gathering (L1) ✅ COMPLETE
+- [x] Read Phase 1 results (ECFP4 baseline, quantum kernel test)
+- [x] Create analysis ledger entries
+- [x] Document quantum kernel technical demo
+- [x] Identify missing results → resolved via Phase 4/5 execution
+- [x] Create claims-evidence matrix
 
-### Phase 2: Drafting (L2)
+### Phase 2: Drafting (L2) ✅ COMPLETE (core sections)
 - [x] Methods section (complete, 8 subsections)
 - [x] Introduction section (complete, ANP-centered narrative)
-- [ ] Results section (waiting for LED-PENDING-001: 17-molecule quantum kernel)
-- [ ] Discussion (waiting for quantum vs. classical comparison)
-- [ ] Abstract (needs central finding from Results)
+- [x] **Results section** (complete, 05 Oct 2026 — 5 tables, 4 subsections, all numbers from DAR)
+- [x] **Discussion section** (complete, 05 Oct 2026 — 6 subsections, 5 limitations)
+- [x] **Conclusion section** (complete, 05 Oct 2026 — Scenario B, HPO gate, hardware outlook)
+- [ ] Abstract (write after Phase 6 HPO results, as finding may update)
 - [ ] Cover letter (final step)
+
+### Phase 3: Figures & SI
+- [ ] Figure 1: workflow schematic
+- [ ] Figure 2: QFE circuit diagram
+- [ ] Figure 3: Phase 4 ROC curves (5 folds)
+- [ ] Figure 4: ablation bar chart (4q / 6q / 8q)
+- [ ] Figure 5: Phase 5 scaffold-split AUC + gradient norms
+- [ ] SI: gradient norm distributions, per-fold tables
+
+### Phase 4: Review & Finalize
+- [ ] Execute Phase 6 HPO (p7_phase6_qfe_optuna_hpo.py) — incorporate results
+- [ ] IBM Quantum hardware section (Phase 6B)
+- [ ] Independent review passes
+- [ ] Anti-AI scan
+- [ ] Audit checklist
+- [ ] Cover letter
 
 ---
 
@@ -40,40 +56,38 @@
 
 | Claim | Evidence (Ledger ID) | Citation | Status |
 |-------|---------------------|----------|--------|
-| ECFP4 baseline on P1 Set A | LED-001 | - | ✓ |
-| Quantum kernel technical feasibility | LED-002 | Boy et al. 2025 | ✓ |
-| Quantum vs. ECFP4 comparison (17 mol) | PENDING | - | ⏳ |
-| ANP stereochemistry preservation | PENDING | - | ⏳ |
-| Scaffold generalization | NOT_COMPUTED | - | Future |
+| QFE achieves AUC 0.933 on P1 Set A (LOO-CV) | DAR Phase 1 PoC | — | ✅ COMPUTED |
+| ECFP4-MLP achieves AUC 0.833 on P1 Set A | DAR Phase 1 PoC | — | ✅ COMPUTED |
+| QFE 4q AUC 0.8474 ± 0.0129 on P3 sub n=1000 | DAR Phase 4 | — | ✅ COMPUTED |
+| 4-qubit optimal vs 6q/8q (ablation) | DAR Phase 4 ablation | — | ✅ COMPUTED |
+| QFE AUC 0.7831 under scaffold split (n=10K) | DAR Phase 5 | — | ✅ COMPUTED |
+| Barren plateau marginal at n=8K (8.24%) | DAR Phase 5 gradient diag. | — | ✅ COMPUTED |
+| No barren plateau at n=800 (0.0%) | DAR Phase 4 gradient diag. | — | ✅ COMPUTED |
+| Scenario B: competitive, not superior | DAR Phase 4–5 | — | ✅ CONFIRMED |
+| HPO (12 trials): best 2-fold AUC 0.8487 (trial 7: 4q, CZ, hidden=64) | DAR Phase 6 HPO; `results/phase4_hpo/qfe_hpo_study.db` | — | ✅ EXPLORATORY |
+| HPO canonical 5-fold re-run (trial 7): AUC 0.8468 ± 0.0209 | DAR Phase 6; `results/phase4_hpo/qfe_4q_d1_cz_hpo_canonical_cv5_summary.json` | — | ✅ CANONICAL |
+| CZ variant equiv. to RZZ; Phase 4 4q-rzz remains optimal | DAR Phase 6 decision gate (Δ = −0.0006, below 0.8574 threshold) | — | ✅ CONFIRMED |
+| IBM hardware noise-affected AUC | NOT_COMPUTED | — | ⏳ Phase 6B pending |
 
 ---
 
 ## Missing Inputs
 
-### Critical (Blocks Manuscript)
-1. **Full 17-molecule quantum kernel results**
-   - Status: Computation running or pending?
-   - ETA: Unknown
-   - Blocker: Cannot write Results/Discussion without this
+### Now Resolved (previously blocked)
+- [x] **Full QFE results across scales** — Phases 1, 4, 5 all complete (DAR canonical)
+- [x] **Statistical comparison** — Scenario B confirmed at all scales
+- [x] **ANP metadata** — Fsp³ 0.217, ACSI 0.213, 10 stereocenters, 16 synthetic analogues
+- [x] **Ablation study** — 4q optimal documented
+- [x] **Phase 6 HPO canonical result** — trial 7 best config (4q, CZ, hidden=64) AUC 0.8468 ± 0.0209 (5-fold CANONICAL, 05 Oct 2026); decision gate BELOW; Phase 4 4q-rzz confirmed optimal
 
-2. **Statistical comparison**
-   - Paired test: quantum vs. ECFP4
-   - Effect size
-   - Interpretation: advantage/equivalence/underperformance
-
-### Important (Strengthens Manuscript)
-3. **ANP metadata analysis**
-   - ACSI distribution
-   - Fsp³ distribution
-   - Correlation with quantum kernel performance
-
-4. **Kernel target alignment**
-   - Does quantum kernel correlate with activity labels?
-
-### Optional (Future Phases)
-5. P3 benchmark (19,849 molecules)
-6. Ablation studies
-7. IBM Quantum hardware validation
+### Still Pending
+1. **Full HPO 50-trial completion** (running in background, PID 2011099)
+   - Will provide importance plots and history — supplements manuscript §HPO
+   - Does NOT block abstract or any current claims (canonical re-run already done)
+2. **IBM Quantum hardware run** (Phase 6B)
+   - Required for hardware-realistic performance claim
+3. **Manuscript figures** (5 main figures + SI — PDFs already generated)
+4. **Abstract** (NOW UNBLOCKED — write from current canonical results)
 
 ---
 
@@ -178,5 +192,5 @@ manuscript/
 
 ---
 
-**Last Updated:** 2026-09-24  
-**Next Action:** Wait for LED-PENDING-001 (17-molecule quantum kernel) before drafting Results
+**Last Updated:** 2026-10-05 — Results, Discussion, Conclusion drafted from DAR canonical data; Sprint Plan updated; Claims–Evidence Matrix resolved; Phase 6 HPO script ready to execute
+**Previous:** 2026-09-24 — Introduction complete; Methods complete; portfolio review applied

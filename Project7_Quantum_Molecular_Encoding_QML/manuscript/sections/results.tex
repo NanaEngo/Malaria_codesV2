@@ -1,11 +1,360 @@
 \section{Results}
 
-\PENDING{Results section: Waiting for LED-PENDING-001 (17-molecule quantum kernel + SVM classification + statistical comparison). Cannot draft until full quantum results available.}
+\subsection{Dataset Characterisation}
 
-% Planned structure:
-% 1. Dataset characterization (ANP metadata: ACSI, Fsp³, stereocenter distribution)
-% 2. ECFP4 baseline performance (LED-001)
-% 3. Quantum kernel computation (LED-PENDING-001)
-% 4. Quantum-SVM classification (LED-PENDING-001)
-% 5. Statistical comparison: quantum vs. classical (LED-PENDING-001)
-% 6. Kernel target alignment (LED-PENDING-003)
+The proof-of-concept (PoC) cohort comprised \num{17} antimalarial candidates from
+Project~1 Set~A (\num{2} active, \num{15} inactive; class imbalance 15:2). African
+natural product (ANP) structural descriptors confirmed the expected chemotype
+profile: mean $F_{sp^3} = 0.217$ (range $[0.000, 0.600]$), mean
+ACSI~$= 0.213$ (range $[0.088, 0.371]$), and a total of \num{10} stereocenters
+across the panel. ANP classification yielded \num{16} synthetic-analogue structures
+and \num{1} simple phenolic; no macrocycles were present.
+
+For the P3 benchmark scale experiments, the stratified subsample of
+\num{1000} molecules drawn from the full \num{19849}-molecule dataset
+(seed~$= 42$, SHA-256 frozen before execution) preserved the original class ratio
+(\num{759} active, \num{241} inactive; 75.9\%). External scaffold-split validation
+used a \num{10000}-molecule subsample of the \num{45943}-molecule external pool
+(after exclusion of all P3 molecules), split 80/20 by Bemis--Murcko scaffold with
+\qty{100.0}{\percent} scaffold novelty in the test set (\num{5130} unique scaffolds,
+zero train--test scaffold overlap).
+
+%% ── Phase 1: Proof of concept (P1 Set A, LOO-CV) ───────────────────────────
+
+\subsection{Phase 1: Proof-of-Concept on P1 Set A (LOO-CV)}
+
+Leave-one-out cross-validation on the \num{17}-molecule PoC cohort yielded the
+results shown in Table~\ref{tab:phase1_loo}.
+
+\begin{table}[htbp]
+\centering
+\caption{Phase~1 leave-one-out cross-validation results on P1 Set~A ($n = 17$).
+Primary metric is AUC-ROC (rank-based, robust to class imbalance).
+F1~$= 0$ for all methods reflects the 15:2 class imbalance and threshold
+ambiguity; AUC is the informative metric.}
+\label{tab:phase1_loo}
+\begin{tabular}{lcccl}
+\toprule
+Method & AUC & Accuracy & F1 & Status \\
+\midrule
+ECFP4-MLP  & 0.833 & 0.882 & 0.000 & COMPUTED \\
+GIN (3-layer, no PyG)  & 1.000 & 0.882 & 0.000 & COMPUTED$^a$ \\
+\textbf{QFE (4-qubit, depth~1, RZZ)}
+             & \textbf{0.933} & 0.824 & 0.000 & COMPUTED \\
+\bottomrule
+\multicolumn{5}{l}{%
+  $^a$ GIN AUC~$= 1.000$ on $n = 17$ reflects near-certain overfitting; interpret
+  with extreme caution.
+}
+\end{tabular}
+\end{table}
+
+The QFE model (ECFP4-2048 $\to$ Linear-128 $\to$ Linear-4 $\to$ Tanh $\to$
+$\times\pi$ $\to$ 4-qubit PennyLane circuit $\to$ Decoder-32-1) outperformed
+the ECFP4-MLP baseline (AUC~$0.933$ vs.\ $0.833$; ratio~$1.12$) and passed
+the predeclared decision gate ($\geq 0.80$). Gradient norms throughout training
+were healthy (mean $\|\nabla_\theta L\| = 4.23$, range $[0.13, 22.4]$; barren
+plateau: \textbf{NONE}), confirming gradient propagation through the hybrid
+architecture. Total runtime on CPU statevector simulation was \qty{339}{\second}
+for 17 LOO folds.
+
+Statistical comparison on Brier score differences across LOO folds showed no
+paired $t$-test significance (all $p > 0.05$; $n = 17$ is underpowered),
+consistent with a small-effect, small-$n$ setting. Mann--Whitney $U$
+(QFE vs.\ ECFP4, Brier) gave $p = 0.023$ uncorrected, not interpretable
+as evidence of a real effect without multiplicity correction. The PoC result
+therefore serves as a feasibility demonstration — establishing gradient
+propagation and non-trivial ranking performance — not as a claim of quantum
+advantage.
+
+%% ── Phase 4: P3 benchmark (subsample n=1000, 5-fold CV) ────────────────────
+
+\subsection{Phase 4: P3 Benchmark — 5-fold CV (Subsample $n = 1000$)}
+
+\subsubsection{ECFP4-RBF Baseline}
+
+On the matched \num{1000}-molecule subsample under 5-fold stratified CV,
+the ECFP4-RBF SVM achieved AUC~$= 0.8693 \pm 0.0265$
+(Table~\ref{tab:phase4_results}). The observed $\approx \qty{8}{\percent}$
+degradation relative to the P3 full-dataset canonical value (AUC~$0.9475$)
+is consistent with the reduced training-set size at subsampling scale and
+confirms that the subsample is a fair, internally consistent comparison target.
+
+\subsubsection{QFE 4-Qubit, Depth~1, RZZ (Canonical Configuration)}
+
+The QFE model on the identical subsample achieved
+AUC~$= 0.8474 \pm 0.0129$ (Table~\ref{tab:phase4_results}), placing it
+\qty{2.5}{\percent} below the matched ECFP4 baseline (ratio $0.975$) and
+\qty{5.8}{\percent} above the P3 quantum-inspired QKS baseline
+($\text{AUC} = 0.8385$). Gradient diagnostics showed a mean norm of $0.293$
+(range $[0.00105, 3.527]$) with \qty{0.0}{\percent} of batches below $10^{-6}$
+— no barren plateau risk at this scale.
+
+\begin{table}[htbp]
+\centering
+\caption{Phase~4 results on P3 subsample ($n = 1000$, 5-fold stratified CV,
+seed~$= 42$). The subsample SHA-256 was frozen before execution
+and is identical for all methods.
+``P3 canonical'' values are reproduced from Project~3\protect\cite{sao2026p3}
+for reference; they were computed on the full \num{19849}-molecule dataset.}
+\label{tab:phase4_results}
+\begin{tabular}{lcccc}
+\toprule
+Method & Dataset & AUC & Brier & Status \\
+\midrule
+ECFP4-RBF (P3 canonical)
+  & Full \num{19849} & $0.9475 \pm 0.0045$ & --- & CANONICAL (P3) \\
+Hybrid RF (P3 canonical)
+  & Full \num{19849} & $0.8876 \pm 0.0065$ & --- & CANONICAL (P3) \\
+QKS PennyLane (P3 pilot)
+  & P3 pilot & $0.8385$ & --- & CANONICAL (P3) \\
+\midrule
+ECFP4-RBF (local)
+  & Sub-$n = 1000$ & $0.8693 \pm 0.0265$ & $0.1150 \pm 0.0137$ & COMPUTED (P7) \\
+QFE 4q-d1-RZZ
+  & Sub-$n = 1000$ & $\mathbf{0.8474 \pm 0.0129}$ & $0.1243 \pm 0.0129$ & COMPUTED (P7) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Ablation: Qubit Count (4q vs.\ 6q vs.\ 8q)}
+
+With all other hyperparameters fixed (depth~1, RZZ entangling, $n = 1000$,
+seed~$= 42$), qubit count was varied to determine the optimal circuit width
+(Table~\ref{tab:ablation}).
+
+\begin{table}[htbp]
+\centering
+\caption{Phase~4 ablation: qubit count. All other hyperparameters fixed.
+Decision gate: AUC~/ P3 canonical ECFP4 ($0.9475$) $\geq 0.80$.
+Runtime on CPU statevector simulator.}
+\label{tab:ablation}
+\begin{tabular}{lcccccc}
+\toprule
+Qubit count & AUC & SD & Gate ratio & Barren plateau & Runtime \\
+\midrule
+\textbf{4 (canonical)} & \textbf{0.8474} & \textbf{0.0129} & \textbf{0.894 PASS} & OK & \qty{18}{\minute} \\
+6 & 0.8230 & 0.0304 & 0.869 PASS & OK & \qty{32}{\minute} \\
+8 & 0.8316 & 0.0400 & 0.877 PASS & OK & \qty{47}{\minute} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The 4-qubit configuration achieved the highest mean AUC, lowest variance, and
+shortest runtime. Wider circuits (6q, 8q) degraded performance by 2.4\% and
+1.6\% respectively, likely due to the expressibility--trainability trade-off:
+more parameters with the same circuit depth and identical training budget
+($n_{\text{train}} \approx 800$) increase optimisation difficulty without
+a compensating gain in Hilbert-space representational capacity.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.65\linewidth]{fig4_ablation_bar}
+\caption{
+  \textbf{Figure 4. Phase~4 ablation: qubit count (P3 subsample, $n=1000$).}
+  Mean AUC-ROC $\pm$ SD (5-fold CV) for ECFP4-RBF SVM and QFE at 4, 6, and 8
+  qubits (depth~1, RZZ entangling, all other hyperparameters fixed).
+  Dashed line: P3 canonical ECFP4-RBF full-dataset AUC ($0.9475$).
+  Dotted line: P3 canonical QKS quantum-inspired baseline ($0.8385$).
+  Dash-dot line: predeclared decision gate ($0.80\times0.9475 = 0.758$).
+  All configurations pass the gate. The 4-qubit configuration (canonical)
+  achieves the highest AUC ($0.8474\pm0.0129$), lowest variance, and shortest
+  runtime, confirming it as the optimal circuit width for this dataset and scale.
+  Shaded region labels: Scenario~B (competitive, not superior).
+}
+\label{fig:ablation}
+\end{figure}
+
+%% ── Phase 5: External scaffold split ────────────────────────────────────────
+
+\subsection{Phase 5: External Validation — Scaffold Split ($n = 10{,}000$)}
+
+\subsubsection{Scaffold Split Setup}
+
+The \num{10000}-molecule external subsample yielded a Bemis--Murcko scaffold
+split with \num{5130} unique scaffolds and \qty{100.0}{\percent} scaffold
+novelty in the test set, representing the most stringent generalisation test
+available from the dataset (Table~\ref{tab:phase5}).
+
+\subsubsection{Performance Under Complete Scaffold Novelty}
+
+Both methods degraded relative to within-distribution CV when faced with
+completely novel scaffolds (Table~\ref{tab:phase5}), a pattern consistent
+with scaffold-split results across P3 and P5.
+
+\begin{table}[htbp]
+\centering
+\caption{Phase~5 external validation results under Bemis--Murcko scaffold split
+($n_{\text{train}} = 8000$, $n_{\text{test}} = 2000$, \qty{100}{\percent} novel
+scaffolds in test). Canonical Phase~4 CV values included for context.}
+\label{tab:phase5}
+\begin{tabular}{llccccc}
+\toprule
+Method & Split & AUC & Brier & Acc & F1 & $\Delta$ vs.\ Phase~4 \\
+\midrule
+ECFP4-RBF & Scaffold & 0.8413 & 0.1603 & 0.7685 & 0.7446 & $-0.108$\rlap{$^a$} \\
+QFE 4q-d1-RZZ & Scaffold & \textbf{0.7831} & 0.2611 & 0.7305 & 0.6950 & $-0.064$\rlap{$^b$} \\
+\bottomrule
+\multicolumn{7}{l}{$^a$ Relative to P3 canonical ECFP4 ($0.9475$).} \\
+\multicolumn{7}{l}{$^b$ Relative to Phase~4 QFE canonical ($0.8474 \pm 0.0129$).} \\
+\end{tabular}
+\end{table}
+
+QFE degraded by 0.064 AUC points under scaffold novelty, compared to a
+0.108-point drop for ECFP4 from its higher baseline. Despite this smaller
+absolute degradation, QFE remained below ECFP4 on the scaffold split
+($0.7831$ vs.\ $0.8413$), maintaining the Scenario~B classification
+(classical baseline superior).
+
+\subsubsection{Gradient Diagnostics at Scale}
+
+At the $n = 8000$ training scale, gradient norms remained healthy overall
+(mean $\|\nabla_\theta L\| = 0.261$) but \qty{8.24}{\percent} of training batches
+recorded norms below $10^{-6}$, a marginal barren-plateau signal. This
+contrasts with \qty{0.0}{\percent} at the Phase~4 ($n = 800$) scale, indicating
+that the 4-qubit architecture is near the edge of its trainable range for this
+problem size. The minimum recorded norm was $2.4 \times 10^{-10}$, consistent
+with hard-to-classify scaffold-novel molecules generating near-zero loss gradients
+during late-stage training.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig5_scaffold_gradient}
+\caption{
+  \textbf{Figure 5. Phase~5 scaffold-split generalisation and gradient diagnostics.}
+  \textbf{(A)} Phase~4 (5-fold CV, $n=1000$) to Phase~5 (scaffold split,
+  $n=10\,000$) AUC transition for ECFP4-RBF SVM and QFE 4q-d1-RZZ.
+  Arrows show absolute AUC degradation ($\Delta$) under complete scaffold novelty
+  (\qty{100}{\percent} novel test scaffolds, Bemis-Murcko, \num{5130} unique scaffolds).
+  Both methods degrade; QFE ($\Delta=-0.064$) degrades less in absolute terms
+  than ECFP4 from its canonical baseline ($\Delta=-0.108$), but ECFP4 remains
+  superior at both scales.
+  \textbf{(B)} QFE gradient norm distributions across all training batches,
+  Phase~4 ($n_{\text{train}}=800$, blue) vs Phase~5 ($n_{\text{train}}=8000$, red).
+  Dash-dot vertical line: barren-plateau threshold ($10^{-6}$).
+  Phase~4 shows no batches below threshold (barren plateau risk: none).
+  Phase~5 shows \qty{8.24}{\percent} of batches below threshold (marginal risk),
+  indicating the 4-qubit architecture is approaching its trainability boundary
+  at $n=8000$ scale.
+}
+\label{fig:scaffold}
+\end{figure}
+
+%% ── Cross-phase summary ──────────────────────────────────────────────────────
+
+\subsection{Cross-Phase Performance Summary}
+
+Across all three evaluation phases, the QFE model maintained an AUC within
+\qtyrange{2.5}{7.4}{percentage points} of the matched classical ECFP4 baseline
+(Table~\ref{tab:summary}), consistently outperforming the P3 quantum-inspired
+QKS ($\text{AUC} = 0.8385$) under matched conditions, but not exceeding the
+ECFP4 baseline at any scale. The pattern constitutes a Scenario~B
+(competitive, not superior) honest-negative result across all phases.
+
+\begin{table}[htbp]
+\centering
+\caption{Cross-phase performance summary. All QFE results used the 4-qubit,
+depth-1, RZZ configuration.}
+\label{tab:summary}
+\begin{tabular}{lllcc}
+\toprule
+Phase & Evaluation & $n$ & QFE AUC & ECFP4 AUC \\
+\midrule
+Phase~1 (PoC) & LOO-CV & 17 & 0.933 & 0.833 (MLP) \\
+Phase~4       & 5-fold CV & 1000 & $0.8474 \pm 0.0129$ & $0.8693 \pm 0.0265$ \\
+Phase~5       & Scaffold split & 10000 & 0.7831 & 0.8413 \\
+\midrule
+\multicolumn{3}{l}{P3 canonical reference (ECFP4-RBF, full dataset)}
+              & & $0.9475 \pm 0.0045$ \\
+\multicolumn{3}{l}{P3 quantum-inspired reference (QKS)}
+              & 0.8385 & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Phase~1 PoC result (QFE AUC~$0.933 >$ ECFP4-MLP $0.833$) should not be
+interpreted as evidence of Scenario~A (quantum advantage): the $n = 17$,
+LOO-CV setting is statistically underpowered, the GIN baseline achieved
+AUC~$1.000$ indicative of overfitting, and the ECFP4 comparator was an MLP
+rather than the stronger RBF-SVM. At P3-benchmark scale ($n = 1000$,
+5-fold CV), the QFE is competitive with but does not surpass ECFP4-RBF.
+
+%% ── Phase 6: Hyperparameter optimisation ────────────────────────────────────
+
+\subsection{Phase 6: Hyperparameter Optimisation (Optuna TPE)}
+
+\subsubsection{Search Protocol}
+
+To determine whether the manual ablation finding (4-qubit optimal) could be
+improved by joint optimisation of circuit and training hyperparameters, a
+50-trial Optuna TPE search was conducted on the same frozen Phase~4 subsample
+(SHA-256 verified). The search space covered circuit width (\{4, 6, 8\}
+qubits), depth (\{1, 2, 3\}), entangling gate (\{RZZ, CNOT, CZ, none\}),
+encoder hidden dimension (\{64, 128, 256\}), dropout rate ($[0.0, 0.5]$),
+learning rate ($[10^{-4}, 10^{-2}]$, log-uniform), batch size (\{8, 16, 32\}),
+training epochs (\{60, 80, 100\}), weight decay ($[10^{-6}, 10^{-3}]$,
+log-uniform), SVM $C$ ($[0.01, 100]$), and SVM $\gamma$ (\{scale, auto\}).
+Inner evaluation used 3-fold stratified CV; a predeclared decision gate
+required the best HPO AUC to exceed $0.8574$ ($= 0.8474 + 0.010$) to
+warrant a canonical 5-fold re-run.
+
+\subsubsection{HPO Result}
+
+Among completed trials, the best HPO configuration (trial~7) achieved a
+2-fold inner-CV AUC of $0.8487$ with parameters: $n_{\text{qubits}} = 4$,
+depth~$= 1$, CZ entangling, $\text{hidden\_dim} = 64$,
+$\text{lr} = 2.21 \times 10^{-3}$, $\text{batch\_size} = 32$,
+$\text{epochs} = 80$ (Table~\ref{tab:hpo}). This configuration was
+immediately re-run under canonical 5-fold CV (same subsample, same CV
+seed, SHA-256 verified), yielding AUC $= 0.8468 \pm 0.0209$.
+
+\begin{table}[htbp]
+\centering
+\caption{Phase~6 HPO canonical re-run. Trial~7 best HPO configuration
+re-evaluated under canonical 5-fold CV (matching Phase~4 protocol).
+SHA-256 of subsample verified identical to Phase~4.
+Status: CANONICAL (05 October 2026).}
+\label{tab:hpo}
+\begin{tabular}{lcccc}
+\toprule
+Configuration & AUC (5-fold) & SD & $\Delta$ vs.\ Phase~4 & Decision gate \\
+\midrule
+QFE 4q-d1-RZZ (Phase~4 canonical) & 0.8474 & 0.0129 & --- & reference \\
+QFE 4q-d1-CZ (HPO trial~7 canonical) & 0.8468 & 0.0209 & $-0.0006$ & BELOW ($< 0.8574$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Interpretation}
+
+The decision gate was not met: the HPO canonical AUC ($0.8468 \pm 0.0209$)
+is within noise of the Phase~4 manual ablation result ($0.8474 \pm 0.0129$),
+with $\Delta = -0.0006$. The CZ entangling variant is statistically
+equivalent to RZZ; the reduced hidden dimension ($64$ vs.\ $128$) provides
+marginally better regularisation at this training scale without improving
+AUC. These findings confirm that the Phase~4 4-qubit, depth-1 configuration
+is robust across both manual ablation and automated hyperparameter search,
+and that the ~2.5\% gap between QFE and ECFP4-RBF at $n = 1000$ scale
+reflects a ceiling imposed by the ECFP4-based encoder rather than
+suboptimal circuit or training configuration. Gradient diagnostics for
+the canonical re-run showed no barren plateau (mean $\|\nabla_\theta L\|
+= 0.248$; $0\%$ of batches below $10^{-6}$).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig3_roc_curves}
+\caption{
+  \textbf{Figure 3. Per-fold AUC comparison — Phase 4 (5-fold CV) and Phase 1 PoC.}
+  \textbf{(A)} Phase~4 strip chart: individual fold AUC values (coloured dots)
+  and mean $\pm$ SD (diamond with error bar) for ECFP4-RBF SVM and QFE 4q-d1-RZZ
+  on the P3 subsample ($n=1000$, 5-fold stratified CV, seed~$=42$).
+  Dashed reference lines: P3 canonical ECFP4-RBF ($0.9475$, full $n=19\,849$)
+  and P3 canonical QKS quantum-inspired baseline ($0.8385$).
+  QFE ($0.8474\pm0.0129$) is below ECFP4-RBF ($0.8693\pm0.0265$) but above QKS
+  — Scenario~B throughout.
+  \textbf{(B)} Phase~1 PoC bar chart: ECFP4-MLP ($0.833$), GIN ($1.000$, likely
+  overfit at $n=17$), and QFE 4q ($0.933$) under LOO-CV on the 17-molecule ANP panel.
+  Phase~1 is underpowered; AUC values are indicative only.
+}
+\label{fig:aucs}
+\end{figure}

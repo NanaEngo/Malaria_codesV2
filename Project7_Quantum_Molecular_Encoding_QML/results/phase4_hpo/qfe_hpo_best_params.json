@@ -1,0 +1,24 @@
+{
+  "trial_number": 1,
+  "auc_mean": 0.8371651812783885,
+  "auc_std": 0.010773415212839588,
+  "fold_aucs": [
+    0.8263917660655489,
+    0.847938596491228
+  ],
+  "params": {
+    "n_qubits": 8,
+    "n_layers": 1,
+    "entangling": "cz",
+    "hidden_dim": 256,
+    "dropout_rate": 0.40419867405823057,
+    "lr": 0.0004066563313514797,
+    "batch_size": 16,
+    "epochs": 80,
+    "weight_decay": 0.0005345166110646819
+  },
+  "grad_mean": 0.1683158885225728,
+  "barren_plateau": false,
+  "frozen_timestamp": "2026-10-05T11:11:54.030428",
+  "status": "EXPLORATORY \u2014 requires canonical 5-fold CV re-run to become CANONICAL"
+}
