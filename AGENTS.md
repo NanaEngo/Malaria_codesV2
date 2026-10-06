@@ -28,6 +28,7 @@ Il n'existe **qu'un seul arbre de travail** : `/home/nanaengo/Malaria_codesV2` s
 - **P4:** `Project4_Advanced_Monte_CarloV2607_V2/`
 - **P5:** `Project5_GNN_Transformer_DrugDiscovery_V2609/`
 - **P6:** `Project6_LISH_MoA_Structure_Phenotype/` (follow-up LISH-MoA; structure arm blocked pending mapping)
+- **P7 DAR:** `Project7_Quantum_Molecular_Encoding_QML/P7_DATA_ANALYSIS_REPORT.md`
 
 Read the relevant DAR before changing code, parameters, protocols, or manuscript claims.
 
@@ -41,6 +42,7 @@ Read the relevant DAR before changing code, parameters, protocols, or manuscript
 | P4 | v12 benchmark complete | Random 0.6724 > MCTS 0.6649; Pareto front is a separate pre-activity artifact; JCAMD manuscript ready |
 | P5 | **V2609 DD claim-calibration applied (commit `46926a4bd`); target journal now RSC Digital Discovery** | ECFP4-RF dominates under scaffold split; topological fusion is modestly complementary (descriptive); phenotype-only LISH-MoA baseline complete; remaining gates: Zenodo upload/DOI, package rebuild, ACSI mapping check, visual read |
 | P6 | Planned follow-up | LISH-MoA structure–phenotype study; no molecular arm until a versioned drug_id→SMILES mapping passes audit |
+| P7 | **REFOCUSED (06 Oct 2026)** | Prior ECFP4-VQC phases (AUC 0.8474 canonical, HPO-confirmed) archived as EXPLORATORY (different estimand). New canonical pipeline: structure-direct QMSE (Boy et al., *Mach. Learn.: Sci. Technol.* 6, 045076, 2025) — BondOrderMatrix/CoulombMatrix → PennyLane QMSE circuit → `qml.qnn.KerasLayer` → TensorFlow Dense head, end-to-end trainable. Central question reformulated to overcome stereochemical blind spots (P1/P3) and scaffold-extrapolation failures (P5). New phases: (A) QMSE preprocessing; (B) TF hybrid QNN smoke-test on P1 Set A; (C) Optuna HPO; (D) canonical benchmark + manuscript rewrite. DAR §2 refocus checkpoint 06 Oct 2026. |
 
 ## 3. Live P2 jobs
 

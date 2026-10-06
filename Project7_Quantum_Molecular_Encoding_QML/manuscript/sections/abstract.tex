@@ -1,32 +1,32 @@
-%% abstract.tex — P7 Quantum Molecular Encoding
-%% Status: CANONICAL — all numbers from DAR (02–05 Oct 2026)
-%% Word target: ~200 words
+%% abstract.tex — P7 Quantum Molecular Encoding (REFOCUSED)
+%% Status: STUB — pending canonical Phase D results
+%% Last updated: 06 October 2026 (refocus checkpoint)
+%% All \PENDING{} markers must be filled from DAR before submission.
 
-African natural products (ANPs) present a stereochemical encoding challenge
-for classical molecular fingerprints: ECFP4 collapses stereoisomers into
-identical bit patterns, discarding the three-dimensional information
-central to ANP bioactivity. We investigated whether hybrid quantum-classical
-feature extraction (QFE), encoding ECFP4-compressed molecular representations
-into parameterised 4-qubit circuits, captures information that improves
-antimalarial activity prediction relative to ECFP4-RBF support vector machines.
-Experiments spanned three scales: a \num{17}-molecule African natural
-product-derived proof-of-concept cohort under leave-one-out cross-validation,
-a \num{1000}-molecule P3-benchmark subsample under 5-fold stratified
-cross-validation, and a \num{10000}-molecule external scaffold-split validation
-with \qty{100}{\percent} novel test scaffolds. Hyperparameter optimisation
-via Optuna TPE sampling (50 trials, 3-fold inner CV) additionally confirmed
-circuit configuration optimality. The central finding is a Scenario~B
-honest-negative result: QFE is competitive with the matched ECFP4-RBF
-baseline (AUC $0.8474 \pm 0.0129$ vs.\ $0.8693 \pm 0.0265$ at P3-benchmark
-scale; $0.7831$ vs.\ $0.8413$ under scaffold split) and consistently
-outperforms the P3 quantum-inspired kernel baseline ($\text{AUC} = 0.8385$),
-but does not surpass ECFP4 at any scale. Gradient diagnostics confirmed
-healthy training at moderate scale (no barren plateau at $n = 800$;
-marginal signal at $n = 8000$). Hyperparameter optimisation confirmed the
-4-qubit, depth-1 configuration as optimal (canonical re-run AUC
-$0.8468 \pm 0.0209$; decision gate not met). The consistent Scenario~B
-pattern across quantum-inspired (P3), GNN/Transformer (P5), and hybrid
-quantum (P7) methods indicates that docking-score-derived binary labels
-are near-optimally captured by topological fingerprints at current
-dataset scales; quantum advantage is more plausibly accessible with
-experimental activity labels or stereoelectronically richer prediction targets.
+African natural products (ANPs) present a persistent representation challenge
+for computational antimalarial screening: ECFP4 fingerprints collapse
+stereoisomers into identical bit vectors, and graph neural network message-passing
+cannot distinguish cis/trans double bonds or polycyclic ring geometries across
+novel scaffolds — limitations documented across Projects 1, 3, and 5 of this
+series. Quantum molecular structure encoding (QMSE), introduced by Boy et al.
+(\textit{Mach.\ Learn.: Sci.\ Technol.}\ \textbf{6}, 045076, 2025), encodes
+bond orders, Z/E stereochemistry, and R/S chirality directly as one- and
+two-qubit rotation angles in parameterised quantum circuits — bypassing
+fingerprint hashing entirely. We investigate whether a hybrid quantum-classical
+model coupling QMSE circuits (PennyLane \texttt{default.qubit}) to a TensorFlow
+dense head, trained end-to-end via automatic differentiation through both
+components, can overcome these structural encoding limitations for antimalarial
+activity prediction on African natural product-enriched datasets.
+
+We encode \PENDING{n\_valid} molecules from the \num{19849}-compound P3 benchmark
+using \PENDING{BondOrderMatrix / CoulombMatrix} and evaluate the hybrid QNN under
+stratified 5-fold cross-validation and 100\% novel-scaffold holdout, comparing
+against ECFP4-RBF SVM (\text{AUC} = 0.9475, P3 canonical), the P3 quantum-inspired
+kernel (\text{AUC} = 0.8385), and the prior ECFP4-VQC exploratory baseline
+(\text{AUC} = 0.8474, P7 Phase 4 archived). Hyperparameter optimisation via
+Optuna TPE (\PENDING{n\_trials} trials, 3-fold inner CV) identifies the optimal
+configuration across encoding type, circuit depth, entangling gate, and classical
+head architecture. The central finding is \PENDING{Scenario~A/B/C}: \PENDING{one-line
+result statement and canonical AUC}. Gradient diagnostics confirm \PENDING{barren
+plateau status}. \PENDING{Closing sentence: implication for quantum advantage,
+limitations, and next step toward hardware validation.}

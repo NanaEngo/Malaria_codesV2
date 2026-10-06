@@ -8,27 +8,103 @@
 
 ## 1. Executive Status
 
+### ECFP4-VQC estimand (EXPLORATORY — archived 06 Oct 2026)
+
+These phases used ECFP4 → linear encoder → VQC → SVM. They answer a different estimand
+(ECFP4+quantum feature extraction) and are retained as honest-negative evidence for that
+question. They do NOT inform the new canonical central question.
+
 | Phase | Status | Key Result |
 |---|---|---|
-| **P7.1 Setup** | ✅ COMPLETE | Environment OK (Python 3.10.21, PennyLane 0.42.3, PyTorch 2.13.0, RDKit 2025.03.3, scikit-learn 1.7.1, Qiskit 1.2.4) |
-| **P7.2 Phase 1 (P1 Set A PoC)** | ✅ COMPLETE | QFE AUC 0.933 vs ECFP4 0.833, GIN 1.000 (n=17 LOO-CV); decision gate PASS (ratio 1.12) |
-| **P7.3 Phase 4 (P3 Benchmark)** | ✅ COMPLETE | QFE AUC 0.8474 ± 0.0129 (4q canonical); ablation complete (6q: 0.8230, 8q: 0.8316); 4q optimal; Scenario B |
-| **P7.4 Phase 5 (External)** | ✅ COMPLETE | Scaffold split (100% novel); ECFP4 AUC 0.8413; QFE AUC 0.7831; barren plateau 8.24%; Scenario B/C boundary |
-| **P7.5 Phase 6 HPO** | 🔄 IN PROGRESS | Optuna TPE resumed 05 Oct 2026 (PID 2011099); 12 trials (7 complete + 3 pruned + 2 stuck); best EXPLORATORY AUC 0.8487 (trial 7: 4q, CZ, hidden=64, lr=2.21e-3); canonical 5-fold re-run COMPLETE: AUC 0.8468 ± 0.0209; decision gate BELOW (< 0.8574) — Phase 4 4q-rzz remains optimal |
-| **P7.6 Hardware Validation** | ⏳ PENDING_INPUTS | IBM Quantum execution, noise mitigation |
-| **P7.7 Manuscript** | 🔄 DRAFT — near-complete | All 5 sections + Abstract + Cover letter written; Phase 6 HPO subsection added to Results; Conclusion updated past-tense; 0 errors / 0 undefined refs; 17 p., 804 KB PDF (05 Oct 2026 22:45). Remaining PENDING: hardware spec, Zenodo/GitHub DOI, Acknowledgements. |
+| **P7.1 Setup** | ✅ EXPLORATORY | Environment OK (Python 3.10.21, PennyLane 0.42.3, PyTorch 2.13.0, RDKit 2025.03.3) |
+| **P7.2 Phase 1 (P1 Set A PoC)** | ✅ EXPLORATORY | QFE AUC 0.933 vs ECFP4 0.833, GIN 1.000 (n=17 LOO-CV); decision gate PASS 1.12 |
+| **P7.3 Phase 4 (P3 Benchmark)** | ✅ EXPLORATORY | QFE AUC 0.8474 ± 0.0129 (4q canonical); 4q optimal; Scenario B (−2.5% vs ECFP4) |
+| **P7.4 Phase 5 (External)** | ✅ EXPLORATORY | Scaffold split (100% novel); ECFP4 AUC 0.8413; QFE AUC 0.7831; 8.24% barren plateau |
+| **P7.5 Phase 6 HPO** | ✅ EXPLORATORY | Best canonical re-run AUC 0.8468 ± 0.0209; decision gate BELOW; 4q-rzz confirmed optimal |
+| **P7.6 Hardware** | ⏳ DEFERRED | Deferred pending QMSE Phase B completion |
+| **P7.7 Manuscript (old)** | 🗄️ ARCHIVED | 17 p. draft (05 Oct 2026); superseded by refocus; PDF preserved at `manuscript/main.pdf` |
+
+### QMSE + TF hybrid estimand (NEW CANONICAL — 06 Oct 2026)
+
+| Phase | Status | Key Result |
+|---|---|---|
+| **Phase A: QMSE preprocessing** | ✅ COMPLETE | 19,849/19,849 valid (100%, 0 failures); NPZ frozen — see §6 Phase A checkpoint |
+| **Phase B: TF hybrid QNN** | ✅ PIPELINE CONFIRMED | `p7_qmse_tf_hybrid.py` runs end-to-end; LOO-CV smoke-test on P1 Set A (17 mol): AUC 0.733 (30 epochs, untuned) |
+| **Phase B-smoke: PoC on P1 Set A** | ✅ PASS | 17/17 folds, 0 encoding failures, runtime 200s |
+| **Phase C: Optuna HPO** | 🔄 IN PROGRESS | PID 2371462, nohup, 60 trials, 3-fold CV, n=1000, seed=42; trial 0 AUC=0.5591 |
+| **Phase D: Canonical benchmark** | ⏳ PENDING | After HPO completes |
+| **Phase E: Manuscript** | ⏳ PENDING | Full rewrite with new central question; target journal RSC Digital Discovery |
 
 ## 2. Scientific Question and Hypothesis
 
-**Question:** Can quantum molecular structure encoding (QMSE) improve antimalarial activity prediction compared to classical fingerprints and quantum-inspired methods?
+### ── REFOCUS CHECKPOINT 06 October 2026 ──
 
-**Hypothesis:** Direct encoding of molecular graph topology (bond orders, atomic charges, stereochemistry) into parameterized quantum circuits will capture structural features that classical fingerprints miss.
+**Refocus rationale:** The original P7 pipeline (Phases 1–6, archived below as EXPLORATORY) did not implement QMSE. It encoded ECFP4-compressed vectors into shallow VQC circuits and used an SVM oracle — the quantum component received no structural information beyond what ECFP4 already captured. This is a different estimand from Boy et al. (2025) QMSE and cannot answer whether structure-direct quantum encoding overcomes the limitations documented in P1/P3/P5. The project is refocused as follows.
 
-**Critical distinction from P3:**
+**Archived (EXPLORATORY, different estimand):** All Phase 1–6 results (AUC 0.8474 canonical, Optuna HPO, scaffold split AUC 0.7831) are retained as evidence for "ECFP4+shallow VQC+SVM" behavior and are NOT superseded — they answer a narrower question. They are relabelled `EXPLORATORY (ECFP4-VQC estimand)` and do not inform the new canonical central question.
+
+---
+
+**New central question (06 Oct 2026):**
+
+> Can quantum molecular structure encoding (QMSE), using bond-order and Coulomb-adjacency representations embedded directly into parameterized quantum circuits and combined with a TensorFlow classical head in an end-to-end hybrid QNN, overcome the stereochemical encoding blind spots and scaffold-extrapolation failures documented in P1, P3, and P5 for antimalarial activity prediction on African natural product-enriched datasets?
+
+**Why this is the right question:** The submitted projects converge on a shared limitation — no method encodes stereochemistry, bond polarity, or 3D geometry directly into its feature space:
+
+| Project | Documented limitation | How QMSE addresses it |
+|---|---|---|
+| **P1** | ECFP4 collapses stereoisomers; null DEKOIS validation (AUC 0.45) | BondOrderMatrix encodes R/S via diagonal sign; Z/E via bond-order sign |
+| **P2** | 87.5% static/MD estimand divergence; docking ignores conformational flexibility | QMSE diagonal = 0.5Z^2.4 (nuclear charge), off-diagonal = Zi·Zj/bond_order — captures bonding topology, not 3D pose; complementary not redundant |
+| **P3** | QKS ≈ RBF because ECFP4 was still the input; no structure in the quantum layer | QMSE bypasses ECFP4 entirely — quantum circuit IS the molecular representation |
+| **P5** | GNN/Transformer scaffold split AUC drops to ~0.65 (1-WL cannot distinguish ring geometry across unseen scaffolds) | Coulomb-adjacency matrix encodes ring strain and bond polarity explicitly; entangling gates capture atom-pair correlations across the molecule |
+
+**Hypothesis:** QMSE + TF hybrid QNN will show measurable improvement over ECFP4-SVM on the scaffold-split evaluation (the strictest test), even if within-distribution CV shows equivalence, because the structural features preserved by BondOrderMatrix/CoulombMatrix are precisely those that scaffold-novel molecules share via bond topology rather than substructure hash.
+
+**All three outcome scenarios remain scientifically valid:**
+- **Scenario A** (QMSE > ECFP4 scaffold split): quantum structure encoding transfers across unseen scaffolds
+- **Scenario B** (QMSE ≈ ECFP4): bond topology captures the same information as topological fingerprints for this prediction target
+- **Scenario C** (QMSE < ECFP4): NISQ hardware/simulator depth is insufficient; identify bottleneck
+
+**New architecture:**
+```
+SMILES
+  ↓  qmse_lib: BondOrderMatrix / CoulombMatrix → n×n matrix
+  ↓  flatten: diagonal (single-qubit angles) + upper-triangle off-diagonal (two-qubit angles)
+  ↓
+┌──────────────────────────────────────────────────┐
+│  QMSE Circuit (PennyLane, default.qubit / Aer)   │
+│  Initial layer: RX/RY/RZ(diag_i) per qubit       │
+│  Entangling layer: RXX/RYY/RZZ(off_diag_ij)      │
+│  Variational ansatz: trainable θ                  │
+│  Measurement: ⟨Z_i⟩ expectation values           │
+│  Wrapped as: qml.qnn.KerasLayer                  │
+└──────────────────────────────────────────────────┘
+  ↓  quantum feature vector (dim = n_qubits)
+┌──────────────────────────────────────────────────┐
+│  TensorFlow classical head (Keras)               │
+│  Dense(hidden_dim, 'relu') + BatchNorm + Dropout  │
+│  Dense(1, 'sigmoid')                             │
+│  End-to-end trainable via tf.GradientTape        │
+└──────────────────────────────────────────────────┘
+  ↓  p(active) ∈ [0,1]
+```
+
+**New implementation phases:**
+- **Phase A:** QMSE preprocessing — encode all P3 benchmark SMILES with BondOrderMatrix/CoulombMatrix; log failures; freeze valid subset
+- **Phase B:** TF+PennyLane hybrid QNN (`p7_qmse_tf_hybrid.py`) — smoke-test on P1 Set A (17 mol, LOO-CV)
+- **Phase C:** Optuna HPO (`p7_qmse_hpo_optuna.py`) — joint search over encoding type, circuit params, TF head
+- **Phase D:** Canonical benchmark — 5-fold CV on P3 subsample + scaffold split on external set; comparison to P3 baselines
+- **Phase E:** Manuscript rewrite with new central question and results
+
+---
+
+**Previous question (EXPLORATORY, archived):** "Can quantum feature extraction (ECFP4+VQC) improve over ECFP4-SVM?" — answered Scenario B at all scales (canonical AUC 0.8474, HPO-confirmed). This is a valid honest-negative for its own estimand and is retained in the DAR record.
+
+**Critical distinction from P3 (unchanged):**
 - **P3:** Classical features (ECFP4) → UMAP → IQPEmbedding → PennyLane simulator
-- **P7:** Molecular structure → BondOrderMatrix → BondFeatureMap → IBM Quantum hardware
+- **P7 (new):** Molecular structure → BondOrderMatrix/CoulombMatrix → QMSE circuit → TF head
 
-P3 encodes *classical fingerprints* into quantum states; P7 encodes *molecular structure directly* into quantum states.
+P3 encodes classical fingerprints into quantum states; P7 (new) encodes molecular structure directly — no ECFP4 at any stage.
 
 ## 3. Methodology Summary
 
@@ -469,6 +545,50 @@ external-only set is 45,943. This is the canonical figure; the 122K estimate is 
 
 ## 9. Next Actions
 
+### QMSE + TF hybrid — new canonical pipeline (06 Oct 2026)
+
+**Phase A — QMSE preprocessing (PENDING):**
+```bash
+python scripts/p7_qmse_preprocess.py \
+    --data data/p3_benchmark/p3_benchmark_19849.csv \
+    --output data/p3_benchmark/p3_benchmark_qmse_encoded.npz \
+    --matrix-type both \
+    --n-qubits 4 \
+    --log logs/p7_qmse_preprocess.log
+```
+Expected output: `data/p3_benchmark/p3_benchmark_qmse_encoded.npz` (n_valid, n_qubits² features),
+`logs/p7_qmse_preprocess.log` (failure counts by error type).
+
+**Phase B — TF+PennyLane hybrid QNN (PENDING):**
+```bash
+# Smoke-test on P1 Set A (LOO-CV, 17 mol)
+python scripts/p7_qmse_tf_hybrid.py \
+    --data data/p1_set_a/p1_set_a_17_candidates.csv \
+    --mode loo \
+    --matrix-type bond_order \
+    --n-qubits 4 \
+    --output results/phase_b_smoke/
+```
+
+**Phase C — Optuna HPO (PENDING):**
+```bash
+python scripts/p7_qmse_hpo_optuna.py \
+    --data data/p3_benchmark/p3_benchmark_19849.csv \
+    --output results/phase_c_hpo/ \
+    --n-sample 1000 \
+    --n-trials 60 \
+    --cv-folds 3 \
+    --seed 42
+```
+
+**Phase D — Canonical benchmark (PENDING, after HPO):**
+5-fold CV on P3 subsample (n=1000) + scaffold split on external (n=10K).
+Compare to: ECFP4-RBF canonical (0.9475 P3), QKS (0.8385 P3), ECFP4-VQC exploratory (0.8474 P7).
+
+---
+
+### ECFP4-VQC estimand — completed history (EXPLORATORY)
+
 **Completed (Phase 0–5, 02–03 Oct 2026):**
 1. ✅ Phase 0: Environment verified, directory structure created
 2. ✅ Phase 1.1: P1 Set A normalized (17 mol, 2 active / 15 inactive)
@@ -749,3 +869,112 @@ Best AUC so far: **0.8372** (8q, CZ, hidden=256, lr=4.1e-4, batch=16, epochs=80)
 - [ ] Assemble submission package (PDF + .bbl + .bib + figures)
 
 **Last updated:** 05 October 2026 (22:45) — Abstract, cover letter, HPO results section, conclusion update, references fix, and final compilation complete (0 errors / 0 undefined refs / 17 p. / 804 KB)
+
+---
+
+### ── CHECKPOINT 06 October 2026 — Phase A COMPLETE + Phase C HPO LAUNCHED ──
+
+**Refocus applied (see §2):** All prior ECFP4-VQC results archived as EXPLORATORY.
+New canonical pipeline: structure-direct QMSE (Boy et al.) + TF hybrid QNN.
+
+---
+
+#### Phase A — QMSE Preprocessing (06 Oct 2026)
+
+**Script:** `scripts/p7_qmse_preprocess.py`  
+**Input:** `data/p3_benchmark/p3_benchmark_19849.csv`  
+**Input SHA-256:** `04d6caa8cffd3af5d2e47afac6e8b7326f7b25f494ce675dec7c5849cf25ff35`
+
+**Bond-length table extension (qmse_lib/matrix.py):**  
+The original `AVERAGE_BOND_LENGTHS` dict was missing 24 bond pair entries covering
+halogenated (C-F, C-Cl, C-Br, C-I) and heteroatom-rich medicinal-chemistry motifs
+(N-S sulfonamide, O-S=O sulfonyl, C-P, P=O, P-Cl, B-C/N/O, B-B, C-P aromatic).
+All 24 pairs were added using IUPAC/CRC Handbook average values. After extension:
+0 bond-length-missing failures on the full 19,849-molecule P3 benchmark.
+
+**Result:**
+
+| Metric | Value |
+|--------|-------|
+| Total rows | 19,849 |
+| Valid | **19,849 (100.00%)** |
+| Failed | **0 (0.00%)** |
+| Failure breakdown | rdkit_parse=0, bond_length_missing=0, bond_order_missing=0, other=0 |
+| Active labels | 15,063 |
+| Inactive labels | 4,786 |
+| Runtime | 36.8s |
+
+**Frozen output:**
+
+| Artifact | Path | SHA-256 |
+|----------|------|---------|
+| NPZ (BondOrder + Coulomb angles) | `data/p3_benchmark/p3_benchmark_qmse_encoded.npz` | `aa586c55ebbf83c4549a6552db5da21652ad23c85a8f112710d633622e9274ab` |
+| Provenance JSON | `data/p3_benchmark/p3_benchmark_qmse_encoded.json` | (auto-generated) |
+
+**Array shapes (n_qubits=4, no explicit H):**
+
+| Array | Shape | Description |
+|-------|-------|-------------|
+| `bond_order_diag` | (19849, 4) | BondOrderMatrix diagonal → single-qubit RX angles |
+| `bond_order_off`  | (19849, 6) | BondOrderMatrix upper-triangle → two-qubit RZZ angles |
+| `coulomb_diag`    | (19849, 4) | CoulombMatrix diagonal → single-qubit RX angles |
+| `coulomb_off`     | (19849, 6) | CoulombMatrix upper-triangle → two-qubit RZZ angles |
+
+**DECISION GATE: PASS** (failure rate 0.00% ≤ 5.0%)
+
+---
+
+#### Phase B — TF Hybrid QNN PoC (06 Oct 2026)
+
+**Script:** `scripts/p7_qmse_tf_hybrid.py`  
+**Architecture:** SMILES → BondOrderMatrix → angle vector → custom `QMSELayer`
+(PennyLane 0.42.3 `interface='tf'`, `diff_method='backprop'`, `tf.map_fn` per sample)
+→ TF Dense head (AdamW + EarlyStopping), end-to-end trainable.
+
+**Note on KerasLayer:** `qml.qnn.KerasLayer` was removed from PennyLane ≥0.39;
+replaced by a custom `tf.keras.Layer` subclass (`QMSELayer`) that calls the QNode
+directly via the TF interface. Equivalent functionality, fully supported.
+
+**Smoke-test (P1 Set A, LOO-CV, 17 mol, 30 epochs, untuned):**
+
+| Metric | Value |
+|--------|-------|
+| n molecules | 17 |
+| Encoding failures | 0 |
+| LOO AUC | 0.7333 |
+| Runtime | 200.6s |
+| Output | `results/phase_b_smoke/qmse_bond_4q_d1_rzz_loo_summary.json` |
+
+Pipeline confirmed running end-to-end. AUC is untuned — HPO will find the right configuration.
+
+---
+
+#### Phase C — Optuna HPO (06 Oct 2026, IN PROGRESS)
+
+**Script:** `scripts/p7_qmse_hpo_optuna.py`  
+**Launch:** `nohup` background, PID 2371462  
+**Log:** `logs/p7_phase_c_hpo_20261006_101253.log`  
+**Study DB:** `results/phase_c_hpo/qmse_hpo_study.db` (SQLite, resumable)
+
+| Parameter | Value |
+|-----------|-------|
+| n_trials | 60 |
+| cv_folds | 3 |
+| n_sample | 1000 (stratified, per trial) |
+| seed | 42 |
+| Sampler | TPESampler (multivariate) |
+| Pruner | MedianPruner (n_startup=5) |
+
+**Early result (trial 0, EXPLORATORY):** AUC=0.5591 (coulomb, 4q, d1, rxx, h256×2)  
+Note: early random-sampling trials are expected to show sub-optimal AUC; TPE
+focuses on better regions from trial 5 onward.
+
+**Decision gate:** best canonical AUC must exceed 0.8574 (ECFP4-VQC exploratory + 0.01)
+to trigger the "quantum structure advantage" claim. Any result below = Scenario B/C
+honest-negative (still scientifically valid — see §2).
+
+**Status labels:** All HPO outputs are EXPLORATORY until canonical 5-fold re-run of
+the best config (auto-runs at HPO completion).
+
+**Last updated:** 06 October 2026 — Phase A COMPLETE (19849/19849, 0 failures, NPZ frozen);
+Phase B pipeline confirmed; Phase C HPO LAUNCHED (PID 2371462, 60 trials, in progress).

@@ -14,7 +14,7 @@ Multi-project research codebase for computational antimalarial drug discovery, c
 | P4 — Advanced Monte Carlo | `Project4_Advanced_Monte_CarloV2607_V2/` | [P4 DAR](Project4_Advanced_Monte_CarloV2607_V2/P4_DATA_ANALYSIS_REPORT.md) | v12 benchmark complete; **submitted to JCAMD** (2026-08-30) |
 | P5 — GNN/Transformer drug discovery | `Project5_GNN_Transformer_DrugDiscovery_V2609/` | [P5 DAR](Project5_GNN_Transformer_DrugDiscovery_V2609/P5_DATA_ANALYSIS_REPORT.md) | Benchmark complete; Zenodo staged |
 | P6 — LISH-MoA structure-phenotype | `Project6_LISH_MoA_Structure_Phenotype/` | [P6 DAR](Project6_LISH_MoA_Structure_Phenotype/P6_DATA_ANALYSIS_REPORT.md) | 7-arm scaffold complete; calibration + QKS computed |
-| P7 — Quantum molecular encoding QML | `Project7_Quantum_Molecular_Encoding_QML/` | [P7 DAR](Project7_Quantum_Molecular_Encoding_QML/P7_DATA_ANALYSIS_REPORT.md) | Project init |
+| P7 — Quantum molecular encoding QML | `Project7_Quantum_Molecular_Encoding_QML/` | [P7 DAR](Project7_Quantum_Molecular_Encoding_QML/P7_DATA_ANALYSIS_REPORT.md) | **REFOCUSED (06 Oct 2026)** — structure-direct QMSE (Boy et al. 2025) + TF hybrid QNN; Phase A–C in progress |
 
 ## Central questions
 
@@ -28,7 +28,7 @@ One-line scientific question per project, with the currently-supported evidence-
 | **P4** | Does chemistry-informed Pareto-guided MCTS provide useful multi-objective candidate-set exploration beyond a single scalar ranking in a constrained antimalarial fragment space? | Partially, but split by estimand. Scalar benchmark: Random 0.6724 > MCTS 0.6649 (honest-negative). Pareto geometry: 4 non-dominated profiles, HV 1.2366 — trade-offs hidden by any single scalar. |
 | **P5** | Do GNNs and pretrained sequence transformers improve antimalarial activity prediction beyond a compact ECFP4–random-forest baseline when chemical scaffolds are held out? | No. ECFP4–RF 0.8300 > GIN–TFP 0.8138 > GIN–TNE 0.8090 > GIN 0.8047 > ChemBERTa 0.7867 (scaffold split). All learned arms significantly below ECFP4 after multiplicity correction. Representation–task alignment > model scale on this panel. |
 | **P6** | Can a scaffold-aware multi-modal LISH-MoA model predict phenotype from structure with calibration evidence competitive with single-modal baselines? | Mixed. 7-arm scaffold benchmark complete; pooled calibration ECE 0.0006–0.0074; phenotype arm AUC 0.6402; QKS phenotype-vs-both Spearman 0.283. Scaffold-held-out GNN arms near chance (0.5008–0.5064). Cross-modal attention-fusion deferred (GPU contention). |
-| **P7** | Quantum molecular encoding for QML — formulation stage. | No canonical results yet; environment setup in progress. |
+| **P7** | Can quantum molecular structure encoding (QMSE — BondOrderMatrix/CoulombMatrix → parameterized quantum circuits → TF hybrid QNN) overcome the stereochemical encoding blind spots and scaffold-extrapolation failures documented in P1, P3, and P5 for antimalarial activity prediction? | No canonical QMSE results yet (Phase A–C in progress; prior ECFP4-VQC results archived as EXPLORATORY). |
 
 ## Key documents
 
