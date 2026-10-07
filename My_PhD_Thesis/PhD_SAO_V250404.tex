@@ -71,10 +71,10 @@
 %
 % sections avec rule
 \titleformat{\section}{\vspace{0mm plus 1cm}\addpenalty{-1000}\color{blue} 
-	\Large\bfseries\sffamily}{\thesection}{1em}{}[{\color{blue}\titlerule[0.5pt]}]
+	\Large\bfseries\sffamily\emergencystretch 1em}{\thesection}{1em}{}[{\color{blue}\titlerule[0.5pt]}]
 %
 % sous-sections
-\titleformat{\subsection}{\addpenalty{-500}\large\bfseries\sffamily}{
+\titleformat{\subsection}{\addpenalty{-500}\large\bfseries\sffamily\emergencystretch 1em}{
 	\thesubsection}{1em}{} 
 %
 % sous-sous-sections 
