@@ -1,0 +1,64 @@
+% ============================================================================
+% Cover Letter — Paper 5 (RSC Advances, Transfer from Digital Discovery)
+% Target: RSC Advances (Royal Society of Chemistry), Full Paper
+% ============================================================================
+\documentclass[11pt,a4paper]{letter}
+
+\usepackage[top=1.3cm,bottom=1.3cm,left=1.6cm,right=1.6cm]{geometry}
+\setlength{\parskip}{0.18em}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{siunitx}
+\sisetup{
+  detect-all           = true,
+  group-minimum-digits = 4,
+  retain-explicit-plus = true,
+}
+
+\signature{Myke Vital Sao Temgoua \\ \small Corresponding Author}
+\address{%
+  University of Yaound\'{e} I \\
+  Department of Physics, Faculty of Science \\
+  P.O. Box 812, Yaound\'{e}, Cameroon \\
+  \href{mailto:myke-vital.sao@facsciences-uy1.cm}{myke-vital.sao@facsciences-uy1.cm}
+}
+
+\begin{document}
+
+\begin{letter}{%
+  The Editors \\
+  \textit{RSC Advances} \\
+  Royal Society of Chemistry
+}
+
+\opening{Dear Editors,}
+
+\noindent 6 October 2026
+
+We are pleased to accept the transfer of our manuscript \textbf{``Chemical distribution shift in antimalarial natural products: fingerprint dominance and localized topological complementarity in molecular representation learning''} from \textit{Digital Discovery} to \textit{RSC Advances}. We thank the editors for facilitating this transfer and for the opportunity to have our work considered by your journal.
+
+Our study addresses a fundamental challenge in antimalarial drug discovery: how molecular representation learning methods perform under chemical distribution shift when moving from established synthetic compounds to structurally distinct African natural products. Using a frozen panel of \num{19836} compounds evaluated across \num{25} fold--seed replicates, we provide three key contributions that align well with \textit{RSC Advances}' broad scope in chemical sciences and interdisciplinary research:
+
+\textbf{First,} we characterise the structural extrapolation landscape: through nearest-neighbour Tanimoto decile stratification, we show that classical ECFP4--RF baselines maintain their largest advantages in the low-similarity tail (Tanimoto \num{<0.40}), with margins narrowing in mid-range interpolation zones. Graph isomorphism networks fused with persistent-homology topological features (GIN--TFP) recover \qty{36}{\percent} of the scaffold-split deficit --- a localized topological complementarity pattern consistent with, but not uniquely attributable to, message-passing expressivity limits.
+
+\textbf{Second,} we propose a testable operational framework: a Distance-Aware Conformal Triage Filter that routes compounds to model arms based on structural novelty. Post-hoc split-conformal coverage meets the nominal \qty{90}{\percent} target across five arms, and isotonic recalibration reduces expected calibration error \numrange{3}{5}-fold. We state explicitly that prospective virtual-screening validation on independent low-prevalence libraries remains future work.
+
+\textbf{Third,} we demonstrate that fold-independent weight restoration in molecular transformers mitigates cross-fold information leakage during cross-validation --- a reproducibility safeguard with broader applicability to transformer benchmarking.
+
+\textbf{Data and code:} all splits, predictions, and analysis scripts are archived on Zenodo (DOI: \url{https://doi.org/10.5281/zenodo.22787438}, record reserved pending upload completion). 
+
+The work is original, is not under consideration elsewhere, has been approved by all authors, and there are no conflicts to declare. We confirm that the manuscript fits within the scope of \textit{RSC Advances} as it combines chemical informatics, machine learning methodology, and natural product research with potential impact on antimalarial drug discovery.
+
+%\vspace{0.4em}
+%\noindent\textbf{Suggested reviewers:}
+%\begin{enumerate}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+%    \item \textbf{Prof. Kelin Xia} (Nanyang Technological University, Singapore) --- Topological deep learning, persistent homology, molecular graph representations. Email: \texttt{xiakelin@ntu.edu.sg}
+%    \item \textbf{Prof. Fidele Ntie-Kang} (University of Buea, Cameroon / Martin Luther University Halle-Wittenberg, Germany) --- African Natural Products Database (ANPDB), natural product cheminformatics. Email: \texttt{fidele.ntie-kang@uni-halle.de}
+%    \item \textbf{Prof. Carsten Eickhoff} (University of T\"ubingen, Germany) --- Molecular representation benchmarking, out-of-distribution generalisation. Email: \texttt{c.eickhoff@uni-tuebingen.de}
+%\end{enumerate}
+
+\vspace{0.3em}
+\closing{We thank you for your consideration and look forward to the review process.}
+
+\end{letter}
+\end{document}
