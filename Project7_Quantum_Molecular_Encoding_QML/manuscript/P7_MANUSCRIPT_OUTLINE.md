@@ -4,6 +4,8 @@
 **Purpose:** Comprehensive section-by-section outline before drafting  
 **Pattern:** Following P1-P6 JCIM structure
 
+> **⚠ REFOCUS NOTICE (08 Oct 2026):** This outline was authored before the 06 Oct 2026 QMSE refocus (P7 DAR §2). Sections describing the ECFP4-compressed VQC + SVM-oracle pipeline, the "UnitaryOverlap kernel" as the primary architecture, and the P1 Set A (20/17-molecule) cohort as the benchmark describe the **superseded exploratory estimand** and must not be reused for Phase E. The canonical architecture is SMILES → BondOrderMatrix/CoulombMatrix → PennyLane QMSE circuit → `qml.qnn.KerasLayer` → TensorFlow head, end-to-end trained, benchmarked on the frozen 19,849-molecule P3 panel with P1 Set A only as a pipeline smoke test. The research questions in ¶6 have been updated below to the canonical formulation; the active manuscript files are `manuscript/sections/*.tex` (abstract stub updated 06 Oct). Target journal: RSC Digital Discovery.
+
 ---
 
 ## Provisional Title Options
@@ -89,14 +91,19 @@ Findings represent computational benchmarks on a focused candidate set; experime
 - **Test cohort:** P1 Set A (20 candidates) with known docking profiles
 - **Baseline:** ECFP4 + classical kernel
 
-**¶6 — Research questions:**  
-1. Does QMSE quantum kernel outperform classical ECFP4 kernel for antimalarial activity prediction?
-2. Is BondOrderMatrix encoding more effective than CoulombMatrix (geometry-based)?
-3. Can hybrid VQC achieve competitive performance despite gradient vanishing risks?
-4. What is the computational cost trade-off?
+**¶6 — Research questions (canonical, aligned to thesis RQ5, 08 Oct 2026):**
 
-**Honest-negative framing:**  
+Framing question (answers thesis research question 5): *Do the stereochemical blind spots and scaffold-extrapolation failures of hash-based fingerprint prioritization persist when molecular structure is encoded directly into quantum feature space?*
+
+1. Does the QMSE hybrid QNN (BondOrderMatrix/CoulombMatrix → QMSE circuit → TensorFlow head, end-to-end trained) improve over the ECFP4 baseline on the frozen 19,849-molecule panel under scaffold-separated evaluation — the strictest test — even if within-distribution cross-validation shows only equivalence?
+2. Does the encoding choice matter: is the stereochemistry-carrying BondOrderMatrix (signed stereocentre/Z-E parameters) more effective than the geometry-based CoulombMatrix?
+3. Under the three predeclared outcome scenarios — (A) advantage under scaffold separation, (B) equivalence within sampling limits, (C) deficit attributable to simulator depth — which is supported by the Phase D benchmark, and what bottleneck does each outcome imply?
+4. What is the measured compute-cost trade-off (compute-only statement; no time-or-cost reduction claim for drug discovery)?
+
+**Honest-negative framing (retained):**
 "We designed this study to test quantum advantage claims rigorously, with the understanding that negative or neutral results constitute valid scientific contributions documenting when and why quantum encoding does not improve classical methods."
+
+**Status note:** Phase C (Optuna HPO) in progress; Phase D (canonical benchmark) pending. No comparative result exists yet; all three scenarios remain valid outcomes.
 
 ---
 

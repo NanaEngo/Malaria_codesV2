@@ -1,6 +1,12 @@
 # Central Questions of the Projects
 
-This document states the scientific questions addressed by Projects P1–P5 and the evidence-bounded answers currently supported by the canonical analyses. Docking, scoring functions, molecular descriptors, and model outputs are computational evidence; they do not by themselves establish experimental potency, target engagement, binding, or resistance circumvention.
+## Thesis umbrella (refined 08 Oct 2026)
+
+Under a single frozen evaluation protocol on African natural-product chemical space, do quantum, quantum-inspired, and learned molecular representations improve antimalarial candidate prioritization over strong classical baselines — and what must a structure-direct quantum implementation demonstrate before any hardware-based advantage claim?
+
+Clause 1 is answered by P1–P6 below; clause 2 is instantiated by P7's fifth research question (blind spots under structure-direct quantum encoding) and sixth (the evaluation standard). Refined wording is canonical in `My_PhD_Thesis/Chapters/Gen_intro.tex` (Research questions, 6 items).
+
+This document states the scientific questions addressed by Projects P1–P7 and the evidence-bounded answers currently supported by the canonical analyses. Docking, scoring functions, molecular descriptors, and model outputs are computational evidence; they do not by themselves establish experimental potency, target engagement, binding, or resistance circumvention.
 
 ## P1: Polypharmacology and Mutational Resilience
 
@@ -128,12 +134,31 @@ Do graph neural networks and pretrained sequence transformers improve antimalari
 
 P5 supports ECFP4–RF as a strong baseline and treats TFP/TNE fusion as complementary descriptive modelling rather than an automatic route to higher predictive performance. The scaffold split is the principal generalisation test; the results do not establish universal superiority of fingerprints or universal inferiority of deep models.
 
+## P7: Quantum Molecular Structure Encoding (true QML)
+
+### Central question (refocus 06 Oct 2026)
+
+Can quantum molecular structure encoding (QMSE), using bond-order and Coulomb-adjacency representations embedded directly into parameterized quantum circuits and combined with a TensorFlow classical head in an end-to-end hybrid QNN, overcome the stereochemical encoding blind spots and scaffold-extrapolation failures documented in P1, P3, and P5 for antimalarial activity prediction on African natural product-enriched datasets?
+
+This is the thesis-level fifth research question. The prior ECFP4-VQC phases (AUC 0.8474) are archived as `EXPLORATORY (ECFP4-VQC estimand)` and do not answer it.
+
+### Answering results
+
+- Phase A: QMSE preprocessing complete (19,849/19,849 valid, NPZ frozen).
+- Phase B: hybrid pipeline confirmed; LOO-CV smoke test on P1 Set A passed (untuned AUC 0.733, PoC only).
+- Phases C–D (HPO, canonical benchmark): `IN PROGRESS` / `PENDING`. All three outcome scenarios (advantage / equivalence / deficit) are predeclared and valid. No answer to the central question is claimed until Phase D is canonical.
+
+### Scientific interpretation and limits
+
+P7 is the only true-QML arm (structure enters the circuit, not classical features). Its canonical benchmark inherits the frozen partitions, label provenance, and multiplicity machinery of P1–P5. The prior ECFP4-compressed VQC results remain valid evidence for a narrower estimand and must not be conflated with the QMSE question.
+
 ## Cross-project synthesis
 
-Across P1–P5, the programme produces a consistent methodological message:
+Across P1–P7, the programme produces a consistent methodological message:
 
 1. **Separate evidence layers.** Docking scores, RRS, PNS, ACSI, MD, MM-GBSA, molecular descriptors, and predictive AUCs answer different questions.
 2. **Use strong baselines.** ECFP4 remains difficult to exceed in P3 and P5; random search remains difficult to exceed on P4’s scalar objective.
 3. **Treat negative results as results.** Null DEKOIS enrichment, non-significant PNS–RRS association, no quantum advantage, and the failure of larger models to beat ECFP4 define the limits of the tested approaches.
 4. **Prioritise transparent decision support.** P1/P2 provide target- and mutation-aware hypotheses; P4 provides Pareto trade-off visibility; P3/P5 identify when complex representations do not improve prediction.
 5. **Bound all claims.** The projects generate computational hypotheses and reproducible comparisons; experimental potency, target engagement, resistance circumvention, and prospective clinical utility remain to be tested.
+6. **The umbrella question stays answerable under any P7 outcome.** Clause 1 of the thesis umbrella is settled by the honest negatives above; clause 2 is answered whichever scenario P7 lands on, because the predeclared scenarios and claim ledger make advantage, equivalence, and deficit equally reportable results.
