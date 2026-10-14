@@ -33,7 +33,8 @@
 \usepackage[nottoc]{tocbibind}
 \bibliography{Bib_thesis_SAO.bib}
 % Pour la gestion des chiffres et unités
-\usepackage[detect-all=true, group-minimum-digits=4]{siunitx}
+\usepackage[detect-all=true, group-minimum-digits=5]
+{siunitx}
 % Le package physics définit \qty comme un délimiteur extensible. siunitx recommande
 % ce renommage pour rendre \qty{nombre}{unité} opérationnel dans les chapitres de résultats.
 \AtBeginDocument{\RenewCommandCopy\qty\SI}
@@ -143,6 +144,9 @@
 \cfoot{\textbf{\thepage}}
 \rfoot{\textbf{\footnotesize M. V. SAO TEMGOUA}}
 
+% Per-chapter table of contents — exactly as in ThèseMbokop_V260112/Mbokop_ThesisV2509.tex
+\usepackage[english]{minitoc}
+
 % Quelques macros
 \input{tikzmacros.tex}
 \input{latexdefs_SAO.tex}
@@ -152,6 +156,7 @@
 	\input{cover_pageV250404}
 	\frontmatter
 	{\setlength{\parskip}{0pt plus 1pt}
+		\dominitoc % enables the per-chapter mini tables of contents
 		\tableofcontents
 		\listoffigures
 		\listoftables
