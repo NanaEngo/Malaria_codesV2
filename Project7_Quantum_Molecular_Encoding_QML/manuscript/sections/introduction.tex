@@ -14,14 +14,21 @@ Following the transparent reporting precedent established in prior quantum-inspi
 \centering
 \includegraphics[width=\linewidth]{fig1_workflow}
 \caption{
-  \textbf{Figure 1. P7 hybrid quantum-classical pipeline.}
-  Workflow from ANP candidate library through ECFP4 fingerprinting, classical
-  encoder, 4-qubit parameterised QFE circuit, and decoder to activity score
-  $\hat{y}\in[0,1]$.  Three evaluation phases are shown below: Phase~1
-  proof-of-concept (LOO-CV, $n=17$), Phase~4 P3-benchmark subsample
-  (5-fold CV, $n=1000$), and Phase~5 external scaffold-split validation
-  ($n=10\,000$).  All quantum computations used PennyLane
-  \texttt{default.qubit} (statevector, exact, CPU).
+  \textbf{Figure 1. P7 QMSE hybrid quantum-classical pipeline (Phase~D architecture).}
+  Workflow from ANP candidate SMILES through quantum molecular structure
+  encoding (QMSE; BondOrderMatrix or CoulombMatrix), an 8-qubit parameterised
+  circuit (depth~2, IsingYY entangling, PennyLane \texttt{default.qubit}),
+  and a TensorFlow dense head (Dense$\times$3, BatchNorm, Dropout, Sigmoid)
+  to activity score $\hat{y}\in[0,1]$.
+  The encoding box shows how stereochemistry is embedded directly as rotation
+  angles: S-configuration stereocenters produce negative diagonal elements
+  ($\mathbf{M}_{ii} < 0$); Z-configuration double bonds produce negative
+  off-diagonal elements ($\mathbf{M}_{ij} < 0$) — no fingerprint hashing.
+  Three evaluation phases are shown: Phase~B smoke-test (P1 Set~A,
+  LOO-CV, untuned AUC $0.733$); Phase~C/D canonical benchmark
+  (P3 subsample $n=1000$, 5-fold CV, AUC $0.640\pm0.044$, Scenario~C);
+  and the Qiskit Aer stereo probe (full-molecule encoding, 5/5 R/S
+  pairs discriminated $\Delta K = 0.990$, 3/3 Z/E pairs $\Delta K = 0.017$).
 }
 \label{fig:workflow}
 \end{figure}

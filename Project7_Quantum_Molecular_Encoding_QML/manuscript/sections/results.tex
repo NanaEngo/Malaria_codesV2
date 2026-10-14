@@ -358,3 +358,161 @@ the canonical re-run showed no barren plateau (mean $\|\nabla_\theta L\|
 }
 \label{fig:aucs}
 \end{figure}
+
+%% ── Phase D: QMSE-TF Hybrid Canonical Benchmark (08 October 2026) ───────────
+
+\subsection{Phase D: QMSE--TF Hybrid Canonical Benchmark}
+\label{sec:phased}
+
+\subsubsection{Stereochemistry Encoding Verification}
+
+Before evaluating the QMSE--TF hybrid on the P3 benchmark, we established a
+key architectural fact via a Qiskit Aer statevector probe: does the QMSE
+BondOrderMatrix encoding actually discriminate stereoisomers in the quantum
+kernel?
+
+For five R/S pairs and three Z/E pairs, we computed the exact quantum kernel
+$K(A,B) = |\langle\psi_A|\psi_B\rangle|^2$ using full-molecule encoding
+($n_{\text{qubits}} = n_{\text{atoms}}$, no truncation) at circuit depth 2
+(Table~\ref{tab:stereo_probe}).
+
+\begin{table}[htbp]
+\centering
+\caption{Stereo-discrimination probe: quantum kernel fidelity for paired
+stereoisomers, computed via Qiskit Aer exact statevector simulation.
+Full-molecule encoding: $n_{\text{qubits}} = n_{\text{atoms}}$, depth~2,
+IsingZZ entangling.
+Truncated: QMSE--TF hybrid pipeline ($n_{\text{qubits}} = 8$, first 8 atoms only).
+Status: CANONICAL (08 October 2026).}
+\label{tab:stereo_probe}
+\begin{tabular}{lccccccc}
+\toprule
+& & \multicolumn{3}{c}{Full molecule} & \multicolumn{2}{c}{Truncated ($n_q=8$)} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-7}
+Pair & $n_{\text{atoms}}$ & $K(R,R)$ & $K(R,S)$ & $\Delta K$ & $K(R,S)$ & Signal lost? \\
+\midrule
+Alanine (R/S) & 6 & 1.000 & 0.010 & \textbf{0.990} & 0.010 & No \\
+Lactic acid (R/S) & 6 & 1.000 & 0.010 & \textbf{0.990} & 0.010 & No \\
+2-Bromobutane (R/S) & 5 & 1.000 & 0.010 & \textbf{0.990} & 0.010 & No \\
+Ibuprofen (R/S) & 15 & 1.000 & 0.010 & \textbf{0.990} & 1.000 & \textbf{Yes} \\
+Naproxen (R/S) & 15 & 1.000 & 0.010 & \textbf{0.990} & 1.000 & \textbf{Yes} \\
+\midrule
+& & $K(E,E)$ & $K(E,Z)$ & $\Delta K$ & $K(E,Z)$ & Signal lost? \\
+\midrule
+2-Butene (E/Z) & 4 & 1.000 & 0.983 & 0.017 & 0.983 & No \\
+2-Pentene (E/Z) & 5 & 1.000 & 0.983 & 0.017 & 0.983 & No \\
+Stilbene (E/Z) & 15 & 1.000 & 0.983 & 0.017 & 0.983 & No \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+With full-molecule encoding, \emph{all} 5/5 R/S pairs are discriminated
+($K(R,S) = 0.010$; $\Delta K = 0.990$) and all 3/3 Z/E pairs are discriminated
+($K(E,Z) = 0.983$; $\Delta K = 0.017$). The BondOrderMatrix encoding is
+therefore confirmed to embed genuine stereochemical information into the
+quantum state.
+
+With the $n_{\text{qubits}} = 8$ truncation used in the QMSE--TF hybrid pipeline,
+small molecules (alanine, lactic acid, 2-bromobutane) with stereocenters
+in atoms 0--4 retain the signal. However, larger drug-sized molecules
+(ibuprofen, naproxen; stereocenter at atom index 10--12) yield $K(R,S) = 1.000$
+after truncation --- their enantiomers are \emph{indistinguishable}. This is
+the primary architectural bottleneck: the 8-qubit register encodes fewer
+than half the heavy atoms in typical ANP scaffolds ($12$--$28$ atoms).
+
+\subsubsection{Canonical 5-fold CV with Best HPO Configuration}
+
+Following Phase~C Optuna hyperparameter optimisation (30~trials, 3-fold inner CV,
+$n = 1{,}000$, seed~$=42$), the best configuration at trial~9 was:
+CoulombMatrix, 8~qubits, depth~2, IsingYY entangling, $h = 128 \times 3$,
+$\text{lr} = 3.17 \times 10^{-4}$, $\text{batch\_size} = 16$, epochs~$= 80$,
+$\text{dropout} = 0.204$, batch normalisation, patience~$= 10$
+(inner-CV AUC $= 0.653$).
+
+This configuration was re-run under canonical 5-fold stratified CV on the
+frozen $n = 1{,}000$ P3 subsample (seed~$= 42$; NPZ SHA-256 verified;
+identical subsample to Phase~4/C). The QMSE--TF hybrid P3 benchmark used the
+re-encoded 8-qubit NPZ
+(\texttt{p3\_benchmark\_qmse\_encoded\_8q.npz};
+SHA-256 \texttt{dff5cc71...}; 19{,}849/19{,}849 valid molecules, 0 failures,
+35.9~s encoding time).
+
+Results are reported in Table~\ref{tab:phased_results}.
+
+\begin{table}[htbp]
+\centering
+\caption{Phase~D canonical benchmark: QMSE--TF hybrid vs.\ baselines.
+All P7 results evaluated on the frozen $n = 1{,}000$ P3 subsample
+(5-fold stratified CV, seed~$= 42$, SHA-256 verified).
+P3 canonical values from Project~3 (full $n = 19{,}849$).
+Status: CANONICAL (08 October 2026, timestamp \texttt{2026-10-08T11:26:19Z}).}
+\label{tab:phased_results}
+\begin{tabular}{lllccc}
+\toprule
+Method & Encoding & Dataset & AUC & SD & Status \\
+\midrule
+ECFP4-RBF SVM & ECFP4 & Full 19{,}849 & 0.9475 & 0.0045 & CANONICAL (P3) \\
+Hybrid RF & ECFP4+TFP & Full 19{,}849 & 0.8876 & 0.0065 & CANONICAL (P3) \\
+QKS IQP & ECFP4$\to$IQP & P3 pilot & 0.8385 & --- & CANONICAL (P3) \\
+\midrule
+ECFP4-RBF SVM & ECFP4 & Sub-$n$=1000 & 0.8693 & 0.0265 & COMPUTED (P7 Phase~4) \\
+QFE 4q-d1-RZZ & ECFP4$\to$VQC & Sub-$n$=1000 & 0.8474 & 0.0129 & EXPLORATORY (P7 Phase~4) \\
+\midrule
+\textbf{QMSE--TF hybrid} & \textbf{CoulombMatrix} & \textbf{Sub-}$n$\textbf{=1000}
+  & $\mathbf{0.640}$ & \textbf{0.044} & \textbf{CANONICAL (P7 Phase~D)} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Per-fold results: AUC$_1 = 0.670$, AUC$_2 = 0.675$, AUC$_3 = 0.629$,
+AUC$_4 = 0.558$, AUC$_5 = 0.668$ (mean $0.640 \pm 0.044$).
+Brier score: $0.178 \pm 0.005$. Accuracy: $0.754 \pm 0.004$.
+F1: $0.856 \pm 0.001$. Runtime: 586~s (5 folds).
+
+The QMSE--TF hybrid result is a Scenario~C outcome:
+$\Delta\text{AUC} = -0.229$ below the matched ECFP4-RBF SVM
+($0.869 \pm 0.027$; paired $t$-test $t = -9.40$, $p = 0.0009$).
+It falls below the archived ECFP4-VQC exploratory result ($0.847$)
+and below the P3 quantum-inspired QKS baseline ($0.839$).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{fig6_phased_results}
+\caption{
+  \textbf{Figure 6. Phase D QMSE canonical results and stereo-discrimination probe.}
+  \textbf{(A)} AUC-ROC comparison across all methods evaluated on the P3 subsample
+  ($n=1000$, 5-fold stratified CV, seed~$=42$; SHA-256 verified).
+  Error bars: $\pm$ SD across folds (absent for single-run references).
+  Hatched bars: P3 canonical references (computed on full $n=19{,}849$; not
+  directly comparable to $n=1000$ subsample scale) and ECFP4-VQC exploratory
+  (different estimand, ECFP4 encoder, archived).
+  The QMSE--TF hybrid (dark red, $0.640\pm0.044$) is a Scenario~C result:
+  significantly below the matched ECFP4-RBF SVM ($\Delta\text{AUC}=-0.229$,
+  $p=0.0009$).
+  \textbf{(B)} Stereo-discrimination probe: kernel discrimination $\Delta K$
+  for five R/S pairs and three Z/E pairs.
+  Orange-red bars: full-molecule QMSE encoding ($n_q = n_{\text{atoms}}$,
+  Qiskit Aer statevector exact).
+  Light-blue bars: truncated 8-qubit encoding (QMSE--TF hybrid pipeline).
+  \textbf{LOST} labels indicate pairs where the 8-qubit truncation produces
+  $\Delta K = 0$ (S-centre at atom index $\geq 8$, outside the encoding window).
+  Full-molecule QMSE discriminates all 5/5 R/S pairs ($\Delta K = 0.990$)
+  and all 3/3 Z/E pairs ($\Delta K = 0.017$).
+  The 8-qubit truncation loses the stereochemistry signal for ibuprofen and
+  naproxen, whose stereocenters fall at atom index~10--12.
+  Status: CANONICAL (08 October 2026).
+}
+\label{fig:phased}
+\end{figure}
+
+\subsubsection{IBM Quantum Kernel SVM --- P1 Set A}
+
+As a complementary evaluation, the BondOrderMatrix quantum kernel was computed
+for the 17-molecule P1 Set A cohort using the Qiskit Aer statevector
+simulator ($n_{\text{qubits, max}} = 17$, depth~2, IsingZZ entangling;
+runtime 72~s). The full $17 \times 17$ kernel matrix has a Kernel Target
+Alignment of $0.242$ --- positive and non-trivial, confirming that the
+quantum kernel matrix has structure aligned with the activity labels.
+The LOO-CV SVM AUC ($0.067$) is not interpretable as a performance metric
+due to the extreme class imbalance ($15$ inactive, $2$ active); the KTA
+is the informative quantity here.

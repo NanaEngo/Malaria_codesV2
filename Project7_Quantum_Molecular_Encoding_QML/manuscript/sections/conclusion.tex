@@ -1,66 +1,65 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-We evaluated hybrid quantum-classical feature extraction (QFE) for antimalarial
-activity prediction across three evaluation scales using a consistent 4-qubit,
-depth-1, RZZ-entangling architecture operating on ECFP4-compressed molecular
-representations. The central finding is an honest-negative Scenario~B result:
-QFE is competitive with the matched ECFP4-RBF SVM baseline but does not surpass
-it at any scale tested (LOO-CV on $n = 17$; 5-fold CV on $n = 1000$; scaffold
-split on $n = 10{,}000$). QFE AUC ranged from $0.8474 \pm 0.0129$ (Phase~4,
-5-fold CV) to $0.7831$ (Phase~5, scaffold split), consistently above the
-P3 quantum-inspired QKS baseline ($0.8385$) but $2.5$--$5.8$ percentage
-points below ECFP4-RBF. Gradient diagnostics confirmed healthy training at
-$n = 800$ scale (no barren plateau), with a marginal signal ($\qty{8.24}{\percent}$
-of batches below $10^{-6}$) emerging at $n = 8000$, attributable to
-input-induced near-zero activations on scaffold-novel molecules rather than
-circuit-structure-induced gradient vanishing.
+This study evaluated quantum molecular structure encoding (QMSE) --- using
+BondOrderMatrix and CoulombMatrix representations embedded directly into
+parameterised quantum circuits coupled to a TensorFlow dense head ---
+for antimalarial activity prediction on the 19{,}849-molecule P3 benchmark.
 
-The qubit-count ablation (4q, 6q, 8q) identified 4-qubit as optimal on
-the $n = 1000$ subsample: wider circuits degraded performance and variance
-without reducing the expressibility--trainability gap, confirming that
-deeper optimisation — not wider circuits — is the more productive
-improvement direction.
+\textbf{The stereo probe establishes a principal positive finding}: with
+full-molecule encoding ($n_{\text{qubits}} = n_{\text{atoms}}$), QMSE
+discriminates all five R/S stereoisomer pairs tested ($K(R,S) = 0.010$ vs.\
+$K(R,R) = 1.000$; $\Delta K = 0.990$) and all three Z/E pairs
+($K(E,Z) = 0.983$; $\Delta K = 0.017$) under exact Aer statevector
+simulation. This is the first direct kernel-level verification that
+BondOrderMatrix encoding encodes chirality and geometric isomerism into
+distinguishable quantum states. The Kernel Target Alignment ($= 0.242$)
+on the P1 Set~A 17-molecule panel confirms non-trivial label alignment
+of the QMSE kernel matrix.
 
-Hyperparameter optimisation (Phase~6) confirmed that the manual ablation
-finding is robust: a 50-trial Optuna TPE search jointly optimising circuit
-width, depth, entangling gate, encoder dimension, learning rate, batch size,
-and regularisation strength identified a 4-qubit, depth-1, CZ-entangling
-configuration as best (2-fold inner-CV AUC $0.8487$). A canonical 5-fold
-re-run of this configuration on the same frozen Phase~4 subsample yielded
-AUC $= 0.8468 \pm 0.0209$, which is within noise of the Phase~4
-RZZ canonical ($0.8474 \pm 0.0129$; $\Delta = -0.0006$). The predeclared
-decision gate ($\geq 0.8574$) was not met; the Phase~4 4-qubit, depth-1,
-RZZ configuration remains the canonical optimal. Deeper optimisation does
-not close the gap with ECFP4-RBF, confirming that the performance ceiling
-is imposed by the ECFP4-based encoder input rather than by circuit or
-training configuration.
+\textbf{The canonical Phase~D benchmark yields a Scenario~C result}: the
+QMSE--TF hybrid (CoulombMatrix, 8~qubits, depth~2, IsingYY, $h = 128 \times 3$,
+Optuna best configuration) achieves AUC $= 0.640 \pm 0.044$ under canonical
+5-fold CV on the frozen $n = 1{,}000$ P3 subsample, $\Delta = -0.229$
+below the matched ECFP4-RBF SVM ($0.869 \pm 0.027$; $p = 0.0009$).
+This underperformance is mechanistically attributable to the qubit-count
+ceiling ($n_{\text{qubits}} = 8$), which retains fewer than half the heavy
+atoms of typical ANP scaffolds and places stereocenters at indices $\geq 8$
+outside the encoding window. The expressibility--trainability trade-off at
+8 qubits and the limited training budget ($\approx 800$ samples, 80 epochs)
+further constrain convergence.
 
-IBM Quantum hardware validation (Phase~6B) on the Phase~1 PoC cohort
-($n = 17$) will quantify the gap between statevector simulation and
-real-device performance for the 4-qubit circuit, providing the first
-noise-realistic QFE benchmark in this series.
+An archived ECFP4-VQC result ($0.847 \pm 0.013$, Phase~4) provides a
+Scenario~B (competitive, not superior) baseline for the classical-feature
+encoding estimand. The comparison table is:
+ECFP4-RBF (P3 canonical) $0.9475$;
+Hybrid RF $0.8876$;
+ECFP4-VQC ($0.8474$, archived EXPLORATORY);
+QKS $0.8385$;
+QMSE--TF hybrid $0.640$ (CANONICAL).
 
-Beyond the immediate P7 scope, the consistent Scenario~B pattern across
-P3 (quantum-inspired kernels), P5 (GNNs/transformers), and P7 (hybrid
-quantum circuits) converges on a dataset-level interpretation: docking-score-
-derived binary labels encode predominantly topological information that
-ECFP4 already captures near-optimally for the four malaria drug targets
-studied. Quantum advantage — if attainable for antimalarial activity prediction
-— is more likely to emerge from experimental IC$_{50}$/EC$_{50}$ labels
-that encode conformational, stereoelectronic, and solvation information
-discarded by 2D fingerprints, or from structurally richer tasks such as
-selectivity ratio prediction between resistance and wild-type variants, where
-fine-grained 3D encoding provides non-redundant information relative to
-topological fingerprints. BondOrderMatrix-based direct structure encoding,
-the mechanistically motivated strategy from Boy et al.\cite{boy2025}, remains
-the correct long-term direction; practical application at P3-benchmark scale
-will require either fault-tolerant quantum hardware (beyond NISQ) or
-efficient approximation methods such as Nystr\"{o}m kernel approximation
-on hardware-native quantum feature maps.
+Taken together, the P3/P5/P7 series now documents three distinct
+representation strategies --- quantum-inspired kernels on ECFP4 inputs (P3,
+Scenario~B), GNNs/transformers on scaffold split (P5, Scenario~C),
+and structure-direct QMSE hybrid circuits (P7, Scenario~C) --- all
+yielding honest-negative results at the current NISQ/statevector scale.
+The common bottleneck is the qubit-count ceiling, not the encoding
+principle: QMSE \emph{does} discriminate stereoisomers in the quantum
+kernel; the TF hybrid cannot leverage this because the $n_{\text{qubits}} = 8$
+truncation erases most stereocenter information for drug-sized ANP molecules.
 
-This study confirms that the NISQ-era QFE, as implemented, provides a
-meaningful and reproducible Scenario~B result: not quantum advantage, but not
-quantum futility either. The approach is technically validated, gradient-stable
-at moderate scale, and reproducibly benchmarked against the same classical
-baselines used across the P1--P7 series.
+\textbf{Recommended next steps.}
+The two complementary paths for overcoming the qubit ceiling are:
+(i) quantum kernel SVM with Nystr\"{o}m approximation on IBM Quantum hardware,
+using $n_{\text{qubits}} = n_{\text{atoms}}$ (full-molecule encoding, no truncation)
+on a landmark set of $\approx 500$ P3 molecules --- this directly exploits the
+stereo-discriminating capability confirmed here at the kernel level; and
+(ii) atom-selection strategy for the TF hybrid, encoding the
+$n_{\text{qubits}} = 8$ atoms adjacent to the stereocenter rather than the
+first 8 atoms, which would restore stereochemical signal for the majority
+of ANP scaffolds without requiring additional qubits.
+
+Hardware validation on IBM Quantum devices remains an open task. The IBM
+token and circuit infrastructure are in place; access depends on hardware
+allocation. The stereo-probe circuits (circuit depth 22 at $n_q = 17$) and
+the P1 Set~A kernel matrix are validated and ready for hardware submission.

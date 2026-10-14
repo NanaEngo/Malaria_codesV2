@@ -418,15 +418,20 @@ def main(args):
     print(f"Error Mitigation: {args.error_mitigation}")
     
     # Load data
+    # Try both possible paths for p1_set_a_20_candidates.csv
+    _p1_candidates = DATA_DIR / "p1_set_a_20_candidates.csv"
+    if not _p1_candidates.exists():
+        _p1_candidates = DATA_DIR / "p1_set_a" / "p1_set_a_20_candidates.csv"
+
     if args.phase == 'validation':
         # Phase 1: 3 molecules for circuit validation
-        data_file = DATA_DIR / "p1_set_a" / "p1_set_a_20_candidates.csv"
+        data_file = _p1_candidates
         df = pd.read_csv(data_file).head(3)
         output_subdir = "phase1_validation"
         
     elif args.phase == 'p1_set_a':
         # Phase 2: 17 molecules (full P1 Set A)
-        data_file = DATA_DIR / "p1_set_a" / "p1_set_a_20_candidates.csv"
+        data_file = _p1_candidates
         df = pd.read_csv(data_file).head(17)
         output_subdir = "phase2_p1_set_a"
         
