@@ -1,4 +1,25 @@
-\chapter{Literature Review}\label{Chap:1}
+\chapter{LITERATURE REVIEW}
+\label{Chap:1}
+% \adjustmtc with [3]: our frontmatter (TOC/LOF/LOT) consumes write-slots 0--2 while the
+% mtc counter nets to 0, so Ch1 needs +3 (Mbokop's thesis needs the bare \adjustmtc there)
+\adjustmtc[3]
+% This mini-TOC is the longest of the thesis (41 entries, ~37 lines): at the
+% default size the whole box no longer fits under the chapter heading, so the
+% unbreakable tcolorbox was deferred to the next page, leaving this chapter
+% opening page almost empty. minitoc typesets every entry with
+% \reset@font\mtcfont/\mtcSfont (which discards any font set outside the box),
+% so the entry fonts are shrunk here; breakable is a safety net so the box can
+% never push itself off the chapter opening page again, as in Chapters 2 and 3.
+\begin{tcolorbox}[beamer,breakable,top=1mm,bottom=1mm,boxsep=0.5mm]
+	\begingroup
+	\renewcommand{\mtcfont}{\footnotesize\rmfamily\upshape\mdseries}%
+	\renewcommand{\mtcSfont}{\footnotesize\rmfamily\upshape\bfseries}%
+	\let\mtcSSfont\mtcfont \let\mtcSSSfont\mtcfont
+	\minitoc
+	\endgroup
+\end{tcolorbox}
+
+\newpage
 
 \section{Introduction}\label{sec:ch1_intro}
 
