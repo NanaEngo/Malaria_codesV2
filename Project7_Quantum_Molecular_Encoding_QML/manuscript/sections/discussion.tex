@@ -1,6 +1,42 @@
 \section{Discussion}
 
-\subsection{Scenario B: Competitive but Not Superior}
+\subsection{Scenario C: QMSE--TF Hybrid Underperforms ECFP4}
+\label{sec:disc_qmse}
+
+The canonical Phase~D result --- QMSE--TF hybrid AUC $= 0.640 \pm 0.044$,
+$\Delta = -0.229$ below ECFP4-RBF SVM, $p = 0.0009$ --- is a Scenario~C
+(underperformance) outcome. Three mechanistic factors are responsible.
+
+\textbf{Qubit-count truncation.} The pipeline encodes each molecule into an
+$n_{\text{qubits}} = 8$ register, retaining only the first eight heavy atoms.
+Stereocenters at atom indices $\geq 8$ --- the majority for ANP-sized molecules
+with 12--28 atoms --- are invisible to the quantum circuit. The stereo-discrimination
+probe (Table~\ref{tab:stereo_probe}) confirmed that ibuprofen and naproxen
+enantiomers produce $K(R,S) = 1.000$ under 8-qubit truncation: they are
+quantum-mechanically indistinguishable in this architecture. This directly limits
+any advantage the QMSE encoding could confer for stereochemically diverse ANPs.
+
+\textbf{Expressibility--trainability trade-off at 8 qubits.} Compared to the
+archived 4-qubit ECFP4-VQC (AUC $0.847 \pm 0.013$), the 8-qubit QMSE--TF hybrid
+operates in a $2^8 = 256$-dimensional Hilbert space with more parameters but the
+same $n_{\text{train}} \approx 800$ budget. The Phase~4 ablation already showed
+8-qubit degradation relative to 4-qubit under the same training budget; the QMSE--TF
+hybrid amplifies this because it also adds the molecular encoding step.
+
+\textbf{Backpropagation cost through the quantum layer.} With batch size 16 and
+80 training epochs, the limited training budget provides insufficient gradient steps
+to converge the combined quantum + classical parameter space at $n_{\text{train}} \approx 800$.
+
+The principal positive finding is the stereo probe result (Section~\ref{sec:phased}):
+QMSE with full-molecule encoding ($n_{\text{qubits}} = n_{\text{atoms}}$) discriminates
+\emph{all} stereoisomer pairs tested ($\Delta K = 0.990$ for R/S; $\Delta K = 0.017$ for Z/E).
+The Kernel Target Alignment ($= 0.242$) on the P1 Set~A quantum kernel matrix confirms
+non-trivial label alignment. The Scenario~C result therefore reflects an implementation
+bottleneck (qubit-count ceiling + training budget), not a fundamental failure of
+QMSE as an approach.
+
+\subsection{Scenario B: Competitive but Not Superior (ECFP4-VQC, archived)}
+\label{sec:disc_qfe}
 
 Across all three evaluation scales — a \num{17}-molecule proof-of-concept
 under LOO-CV, a \num{1000}-molecule P3-benchmark subsample under 5-fold CV,

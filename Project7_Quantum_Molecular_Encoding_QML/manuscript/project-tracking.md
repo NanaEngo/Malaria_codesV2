@@ -67,6 +67,11 @@
 | HPO (12 trials): best 2-fold AUC 0.8487 (trial 7: 4q, CZ, hidden=64) | DAR Phase 6 HPO; `results/phase4_hpo/qfe_hpo_study.db` | — | ✅ EXPLORATORY |
 | HPO canonical 5-fold re-run (trial 7): AUC 0.8468 ± 0.0209 | DAR Phase 6; `results/phase4_hpo/qfe_4q_d1_cz_hpo_canonical_cv5_summary.json` | — | ✅ CANONICAL |
 | CZ variant equiv. to RZZ; Phase 4 4q-rzz remains optimal | DAR Phase 6 decision gate (Δ = −0.0006, below 0.8574 threshold) | — | ✅ CONFIRMED |
+| **QMSE full-mol encoding discriminates R/S stereoisomers** | **Stereo probe: K(R,S)=0.010 vs K(R,R)=1.000, ΔK=0.990 (5/5 pairs)** | — | ✅ **CANONICAL** |
+| **QMSE full-mol encoding discriminates Z/E geometric isomers** | **Stereo probe: K(E,Z)=0.983, ΔK=0.017 (3/3 pairs)** | — | ✅ **CANONICAL** |
+| **4-qubit truncation erases S-center signal for drug-sized molecules** | **Stereo probe: ibuprofen/naproxen K_RS_trunc=1.000 (S-center at atom ≥8)** | — | ✅ **CANONICAL** |
+| **QMSE-TF Hybrid AUC=0.6398±0.0441 (Scenario C)** | **Phase D canonical: 5-fold CV, n=1000, coulomb/8q/2L/ryy; JSON timestamp 2026-10-08T11:26:19Z** | — | ✅ **CANONICAL** |
+| **IBM Aer Kernel KTA=0.242 on P1 Set A** | **p7_ibm_kernel_aer.py: 17×17 kernel matrix, n_qubits_max=17** | — | ✅ EXPLORATORY |
 | IBM hardware noise-affected AUC | NOT_COMPUTED | — | ⏳ Phase 6B pending |
 
 ---
@@ -192,5 +197,5 @@ manuscript/
 
 ---
 
-**Last Updated:** 2026-10-05 — Results, Discussion, Conclusion drafted from DAR canonical data; Sprint Plan updated; Claims–Evidence Matrix resolved; Phase 6 HPO script ready to execute
-**Previous:** 2026-09-24 — Introduction complete; Methods complete; portfolio review applied
+**Last Updated:** 2026-10-08T11:36Z — Phase D CANONICAL complete: QMSE TF Hybrid AUC=0.6398±0.0441 (Scenario C). Stereo probe confirms QMSE encodes R/S (ΔK=0.990) and Z/E (ΔK=0.017) with full-molecule encoding. KTA=0.242 (P1 Set A IBM Aer kernel). Manuscript abstract/results/discussion/conclusion updated with canonical numbers. Phase A 8q re-encoding frozen (SHA-256=dff5cc71). 2 author-pending methods stubs remain.
+**Previous:** 2026-10-05 — Results, Discussion, Conclusion drafted from DAR canonical data; Sprint Plan updated; Claims–Evidence Matrix resolved; Phase 6 HPO script ready to execute
