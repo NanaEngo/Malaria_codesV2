@@ -3,7 +3,7 @@
 **Date:** 16 October 2026
 **Auditor Frameworks:** BMAD Multi-Layer Code & Scientific Review (`bmad-code-review`), Scientific Critical Thinking (`scientific-critical-thinking`), Hypothesis Generation (`hypothesis-generation`), Experimental Design (`experimental-design`), Peer Review (`peer-review`)
 **Key Literature Anchors:**
-- Soares et al., *"For the Good of All: Essential Standards for Molecular Dynamics Simulations in JCIM"*, *J. Chem. Inf. Model.* 63, 6959–6962 (2023).
+- Soares, Cournia, Naidoo, Amaro, Wahab, Merz, *"Guidelines for Reporting Molecular Dynamics Simulations in JCIM Publications"*, *J. Chem. Inf. Model.* 63(11), 3227–3229 (2023) [corrected 16 Oct 2026 after web verification; confirm pagination on the ACS page before citing].
 - Kim et al., *"Structure and drug resistance of the Plasmodium falciparum transporter PfCRT"*, *Nature* 576, 315–320 (2019).
 - Gapsys et al., *"Large scale relative protein ligand binding affinities using non-equilibrium alchemy"*, *Chem. Sci.* 11, 1140–1152 (2020).
 - Smallbone et al. / Wicht et al., *"Mechanistic basis of PfCRT-mediated chloroquine and piperaquine resistance in Plasmodium falciparum"*, *Nat. Microbiol.* / *ACS Infect. Dis.* (2022–2025).
@@ -31,7 +31,7 @@ Applying the BMAD adversarial review framework to the P2 codebase, trajectory ou
 ## 2. Deep Diagnosis of the Fatal Flaws
 
 ### 2.1 The "10 ns Single-Replicate" Wall vs. JCIM Editorial Policy
-- In 2023, *JCIM* instituted strict mandatory guidelines for molecular dynamics studies (Soares et al., *JCIM* 2023): single-trajectory $10\text{ ns}$ runs without independent velocity-seeded replicates and without experimental or rigorous free-energy validation are desk-rejected or rejected in review.
+- In 2023, *JCIM* published reporting guidelines for MD studies (Soares et al., *JCIM* 2023): **at least three replicas**, ideally from independent coordinates/velocities, with **random seeds disclosed**, variance across replicas discussed, and simulations of "suitable length" with convergence shown. The editorial sets **no fixed ns cutoff**; a single $10\text{ ns}$ trajectory therefore fails the replica requirement, not a length requirement.
 - In P2's parent cohort (4 systems, $10\text{ ns}$), 2 of 4 ligands completely dissociated ($67.4\text{ \AA}$ and $78.2\text{ \AA}$), and 1 of the remaining 2 (`PfATP4-438`) suffered a $+473\text{ kcal/mol}$ CHARMM36-to-AMBER van der Waals conversion corruption.
 - In the Set-C pilot (16 systems, $10\text{ ns}$ each), all 16 systems remained within $5\text{ \AA}$ (giving a trivial binary retention ceiling of $1.000$). When replaced by continuous minimum heavy-atom distance ($\text{MD-RRS}_d$), no mutant showed a reproducible weakening signature ($72.2\text{--}102.8\%$). A $10\text{ ns}$ window only samples local side-chain jitter around the initial docked pose—it cannot sample binding-mode transitions or resistance-induced dissociation.
 
@@ -133,4 +133,44 @@ Using BMAD `hypothesis-generation` and `experimental-design`, we redesign Projec
 | **2. Triplicate & $\text{pH } 5.2$ Integration** | Finalize the `penavoraserver` triplicate MD runs and $\text{pH } 5.2$ vacuolar `PfCRT` protonation audit; replace single-replicate $10\text{ ns}$ tables with 3-replicate ensemble statistics. | Violation of Soares et al. (2023) JCIM MD standards | Complete $3\times$ replicate tables + $\text{pH } 5.2$ vs $\text{pH } 7.4$ electrostatic pore profiles | **In-progress** — daemon already running per AGENTS.md |
 | **3. Physical Mechanism Analysis** | Extract active-site $\chi_1/\chi_2$ rotamer shifts (`S108N`, `I164L`) and bridging water occupancy from trajectories to physically prove *why* rigid docking and MD diverge. | Unsubstantiated causal claims in `V2609C` Discussion | Quantitative decomposition figure (Steric relief + Water bridges + pH shift) | **Medium effort** — can be extracted from existing 10 ns trajectories |
 | **4. Manuscript Consolidation** | Fix the broken `.bib` reference and 12 missing citation keys in `V2609C`, harmonize `SD_prop` vs `SEM` in Table S8, and remove unverified Zenodo DOI claims until published. | Immediate editorial desk-rejection triggers | Single clean, compilable `V2610` package (0 errors, 0 orphan citations) | **Low effort** — 1-2 hour fix |
-| **5. Literature Context (NEW)** | Add citations to Gapsys et al. *Chem. Sci.* 2020 (NEQ-FEP), Pandas et al. *JCTC* 2023 (MM-GBSA bootstrap), and Soares et al. *JCIM* 2023 (3-replicate minimum). | R1 Major #6 (methodological rigor) | Integrated methods paragraph | **Low effort** — 3 citations, 2-3 sentences |
+| **5. Literature Context (NEW)** | Add citations to Gapsys et al. *Chem. Sci.* 2020 (NEQ-FEP), [MM-GBSA bootstrap reference: UNVERIFIED — locate and verify before citing], and Soares et al. *JCIM* 2023 (3-replicate minimum). | R1 Major #6 (methodological rigor) | Integrated methods paragraph | **Low effort** — 3 citations, 2-3 sentences |
+
+
+---
+
+# Addendum v2 — Web-Verified Deep Refinement (16 Oct 2026)
+
+## A. Verification ledger
+
+| Claim | Status | Note |
+|---|---|---|
+| JCIM MD guidelines require ≥ 3 replicas, disclosed seeds, discussed variance, "suitable length" | ✅ Verified (Soares et al., *JCIM* 63(11), 3227–3229) | **Earlier draft was wrong in two ways**: wrong title/pagination, and it implied a "3 × 50 ns" requirement. No ns cutoff exists. 3 × 50 ns is our *design choice*. |
+| `6UKJ` is 7G8 (already T76) | ✅ Verified | WT 3D7 (K76) must be built, not assumed. |
+| MM-GBSA single-trajectory ignores reorganization and (usually) conformational entropy; works better for ranking congeneric ligands | ✅ Verified (general literature) | Supports the RRS > 100% diagnosis; mutant-vs-WT comparison is a *different protein*, so error does not cancel the way it does across congeneric ligands. |
+| pmx NEQ-FEP (Gapsys et al. 2020) | ✅ Exists; ⚠️ scope limits below | |
+| MM-GBSA bootstrap citation | ⚠️ Unverified | Removed from the to-do list until located. |
+
+## B. Scope limits of the proposed NEQ-FEP (new)
+
+1. **Charge-changing mutations.** `K76T` (ΔQ = −1) and `C59R` (ΔQ = +1) change net charge. Alchemical protocols need a **co-alchemical ion** and finite-size/PME corrections (e.g. Rocklin et al., *J. Chem. Phys.* 139, 184103, 2013); in a membrane dimer the correction is large and uncertain. **Recommendation:** run NEQ-FEP first on the *neutral* PfDHFR substitutions (`S108N`, `I164L`; `N51I` is also neutral→neutral), and treat PfCRT `K76T` FEP as exploratory.
+2. **Ligand FEP is not the same estimand as RRS.** NEQ-FEP gives ΔΔG(WT→Mut) for each ligand; compare to RRS only after defining the mapping RRS ↔ ΔΔG explicitly.
+3. **Equilibration of protein mutation legs.** Protein-mutation FEP needs end-state sampling of side-chain rotamers (S108N/I164L); 3 independent replicas of the NEQ ensemble, not one.
+4. **Controls decide validity.** Require experimental ΔΔG-consistent signs for pyrimethamine (loses potency with S108N and more with the quadruple mutant) and WR99210 (retains). If controls fail, no claim is made for the ANP leads.
+
+## C. Statistical hygiene (new)
+
+* **Pseudo-replication.** The 8 mutant comparisons come from only 2 ligands; they are not 8 independent trials. The Wilson CI [52.9%, 97.8%] for 7/8 overstates information. Report per-ligand results and the cluster-aware (ligand-level) interval; label the divergence **descriptive**.
+* **Convergence evidence.** Add block-averaged ΔG with autocorrelation time, replica-to-replica SD, and a pre-set exclusion rule for the first N ns.
+* **Compute budget.** Measure ns/day for each system on the RTX A4000 *before* committing to 3 × 50 ns × 16 systems (+ FEP legs); write the budget into the DAR. Don't assume it fits.
+
+## D. Revised plan and gates
+
+| Step | Deliverable | Gate |
+|---|---|---|
+| 1 | Merge into one manuscript (`V2610`) with reconciled `.bib` | 0 unresolved citations |
+| 2 | Triplicate 10 ns (already running) analysed with seeds listed | RRS_MD ± SD across replicas |
+| 3 | Extend to 3 × 50 ns for PP-01/PP-02 only | Convergence criteria met or reported as not met |
+| 4 | NEQ-FEP on neutral PfDHFR mutations with controls | Controls reproduce known resistance ordering |
+| 5 | pH 5.2 vs 7.4 PfCRT protonation audit (exploratory) | Reported as exploratory; no mechanistic claim |
+
+Per `AGENTS.md` rule 8, **no manuscript claim changes from incomplete runs.**
