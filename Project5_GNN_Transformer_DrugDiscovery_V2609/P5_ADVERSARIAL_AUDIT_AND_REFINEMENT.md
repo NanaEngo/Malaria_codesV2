@@ -1,193 +1,206 @@
 # P5 Adversarial Audit, Rejection Root-Cause Analysis & Deep Scientific Refinements
 **Project:** `Project5_GNN_Transformer_DrugDiscovery_V2609` (GNN/Transformer Out-of-Distribution Generalization, 1-WL Topological Bottleneck & Conformal Triage)
-**Date:** 16 October 2026
-**Auditor Frameworks:** BMAD Multi-Layer Code & Scientific Review (`bmad-code-review`), Scientific Critical Thinking (`scientific-critical-thinking`), Hypothesis Generation (`hypothesis-generation`), Experimental Design (`experimental-design`), Peer Review (`peer-review`)
-**Key Literature Anchors:**
-- Bodnar et al., *"Weisfeiler and Lehman Go Cellular: CW Networks"*, *NeurIPS* 34, 2625–2640 (2021).
-- Tibshirani et al., *"Conformal Prediction Under Covariate Shift"*, *NeurIPS* 32, 2530–2540 (2019).
-- Tursunbadalov & Tursunbadalov, *"A Quiet Failure in Calibrated Virtual Screening: Marginal Conformal Prediction Under-Covers the Minority Class, and a Class-Conditional Fix Recovers It"*, *arXiv:2607.06605* (2026).
-- Wee & Jiang, *"A Review of Topological Data Analysis and Topological Deep Learning in Molecular Sciences"*, *J. Chem. Inf. Model.* 65, 12691–12706 (2025).
+**Revision:** rev 2.1 — 16 October 2026. rev 2: addendum folded into the body, retracted targets and unlocatable citations removed, evidence pinning added. rev 2.1: **§6 "wow" factor** (the referee-facing contribution) added; the former §6 (limits) is now §7.
+
+## Audit pin
+
+| Field | Value |
+|---|---|
+| Repository | `/home/nanaengo/Malaria_codesV2` (canonical single tree, `AGENTS.md` §0) |
+| Branch / commit audited | `master` @ `1c9c38f2ec572d92f03073f765b6cd11b9b062a6` (2026-10-16T12:21:31+01:00) |
+| Path convention | repo-relative only; no absolute `file://` links |
+| Evidence rule | every factual claim carries a repository path **with sha256** or a DOI. A claim without one is `UNVERIFIED` |
+| Auditor frameworks | BMAD multi-layer review (`bmad-code-review`), Scientific Critical Thinking, Hypothesis Generation, Experimental Design, Peer Review |
+
+**Superseded in rev 2 (do not re-assert):** the citations "Gabrani et al., *JCAMD* 2024" and "Tang et al., *Nature Machine Intelligence* 2025 (fingerprint paradox)" (not locatable); "Alvarsson et al., *JCIM* 2023 — exact 90 % Mondrian coverage on ChEMBL actives" (not locatable as stated); the "Surrogate-Oracle Bias **theorem**" framing (a hypothesis with a measurable index until proven); the target "coverage-by-decile curve **proving** exact 90 % class-conditional coverage under OOD shift"; and the reading of `eos80ch` labels as a single "malaria activity" class.
+
+**Key literature anchors (verification status in §5):**
+- Bodnar et al., *NeurIPS* 34, 2625–2640 (2021) — CW networks / cellular message passing. Not re-verified in this revision.
+- Tibshirani et al., *NeurIPS* 32, 2530–2540 (2019) — conformal prediction under covariate shift (assumes covariate shift and an estimated density ratio). Not re-verified.
+- Tursunbadalov & Tursunbadalov, arXiv:2607.06605 (2026) — marginal conformal prediction under-covers the minority class; class-conditional fix (verified).
+- Arvidsson McShane et al., *J. Cheminform.* (2024), DOI 10.1186/s13321-024-00870-9 — CPSign (verified).
+- Wee & Jiang, *J. Chem. Inf. Model.* **65**(23), 12691–12706 (2025), DOI 10.1021/acs.jcim.5c02266 — TDA/topological deep learning review (verified).
+- van Heerden, Turon, Duran-Frigola, Pillay, Birkholtz, *ACS Omega* **8**(46), 43813–43826 (2023), DOI 10.1021/acsomega.3c05664 — the `eos80ch` model family (verified).
 
 ---
 
-## 1. Executive Summary & BMAD Audit Scorecard
+## 1. Executive summary & audit scorecard
 
-Project 5 benchmarks Graph Isomorphism Networks (`GIN`), topological descriptor fusion (`GIN-TFP`, `GIN-TNE`), and `ChemBERTa` against `ECFP4-RF` across random, Bemis–Murcko scaffold, and Butina splits on a 19,836-compound antimalarial panel (`p5_canonical_panel.csv`), supplemented by an external transfer test on 22,267 disjoint ChEMBL 34 compounds.
+Project 5 benchmarks `GIN`, topological descriptor fusion (`GIN-TFP`, `GIN-TNE`) and `ChemBERTa` against `ECFP4-RF` on a 19,836-compound antimalarial panel under random, Bemis–Murcko scaffold and Butina splits, plus a transfer test on 22,267 disjoint ChEMBL 34 compounds.
 
-Applying the BMAD adversarial review framework to the P5 codebase, statistical ledgers (`P5_DATA_ANALYSIS_REPORT.md`), and manuscript (`V2609`) uncovers **five deep methodological and epistemological vulnerabilities** that explain why reviewers at top venues (*JCIM*, *RSC Digital Discovery*, *Nature Machine Intelligence*) critique the current study as either **methodologically confounded** or **incrementally derivative**.
-
-### BMAD Audit Scorecard for P5
-
-| Audit Layer | Severity | Status | Root Cause of Rejection / Vulnerability |
-|---|:---:|:---:|---|
-| **1. Construct Validity (`eos80ch` Surrogate Oracle)** | 🔴 **CRITICAL** | **FAIL** | The primary 19,836-molecule panel uses binary labels generated by **Ersilia `eos80ch`**—a classical SVC/random-forest pair trained on circular fingerprints (Van Heerden et al.; Ersilia model card, verified 16 Oct 2026)! Concluding that `ECFP4-RF` beats `GIN` and `ChemBERTa` on `eos80ch` labels confounds **teacher–student feature alignment** with true biological generalization. |
-| **2. "1-WL Bottleneck" vs. Readout-Only Concatenation** | 🔴 **CRITICAL** | **FAIL** | `GIN-TFP` simply concatenates a precomputed global persistence vector at the final MLP readout layer (`[h_G \|\| TFP]`). The graph message-passing layers remain strictly 1-WL; thus, the experiment does not test higher-order topological message passing. |
-| **3. Pseudoconformal Triage Filter & Data Snooping** | 🔴 **CRITICAL** | **FAIL** | The "Distance-Aware Conformal Triage Filter" (`d_nn < 0.40`, `0.40..0.60`, `ECE > 0.08`) is a **post-hoc heuristic router**, not a mathematical conformal predictor (no non-conformity scores, no prediction sets, no finite-sample $1-\alpha$ coverage guarantee), with thresholds chosen after inspecting the test deciles. |
-| **4. Inferential Power & Tiny Subgroup Sample Sizes** | 🟠 **MAJOR** | **FAIL** | Primary paired tests use $n=5$ per-seed means ($df=4$), where exact sign-flip tests on the 3 novel scaffold splits are **not statistically significant** (DAR §5.3). The "3D + Polycyclic" subgroup ($Fsp^3 \ge 0.45 \land \text{Rings} \ge 4$) contains only **$n = 79$ molecules**. |
-| **5. Incremental Literature Positioning** | 🟡 **MODERATE** | **INCREMENTAL** | Showing that `ECFP4-RF` outperforms standard GNNs and `ChemBERTa` on a 20k tabular bioactivity dataset repeats a well-established 2021–2025 consensus, while the `+0.0091` AUC bump from `GIN-TFP` ($0.8047 \to 0.8138$) is marginal. |
+| Audit layer | Status | Essential finding (evidence) |
+|---|:---:|---|
+| **1. Construct validity of the label oracle (`eos80ch`)** | 🔴 **OPEN** | Primary labels derive from Ersilia `eos80ch`, whose model family was trained on asexual-blood-stage (126,374) and sexual/gametocyte (93,941) screening data to recognise **stage-specific** activity (van Heerden et al. 2023). Repo documentation declares only "Ersilia eos80ch computational predictions … threshold 0.5" (`Project3_.../V2609/PLACEHOLDER_COMPLETION_GUIDE.md`, `SUBMISSION_READY.md`) without stating the stage semantics. The "malaria activity" construct is therefore under-specified in the manuscripts that use it (P3, P5, P7). |
+| **2. "1-WL bottleneck" versus readout-only concatenation** | 🔴 **OPEN** | `GIN-TFP` concatenates a global persistence vector at the MLP readout (`[h_G ‖ TFP]`); message passing stays strictly 1-WL. The experiment therefore does not test higher-order topological message passing, and the `+0.0091` AUC bump (0.8047 → 0.8138) is not evidence for a fixed bottleneck. |
+| **3. Heuristic triage routing labelled "conformal"** | 🔴 **OPEN** | The rule (`d_NN < 0.40` / `0.40–0.60` / `ECE > 0.08`) has no non-conformity scores, no prediction sets and no finite-sample `1−α` guarantee, and the thresholds were chosen after inspecting test deciles. Two additional failure modes apply to any repair: importance-weight collapse under scaffold splits, and the fact that covariate-shift validity does **not** cover label shift. |
+| **4. Inferential power and subgroup sizes** | 🟠 **OPEN** | Primary paired tests use n = 5 per-seed means. Exact sign-flip tests at n = 5 have a **two-sided floor of 2/2⁵ = 0.0625** (one-sided 1/2⁵ = 0.03125), which fails any FDR control of the sort claimed. The "3D + polycyclic" subgroup contains n = 79 molecules. |
+| **5. Literature positioning** | 🟡 **PARTIALLY CLOSED** | The claim that classical fingerprints match or beat standard GNNs/transformers on 20k tabular bioactivity data repeats a well-established consensus. Two of the citations used to support it could not be located and have been removed; the honest-negative scaffold result must stay. |
 
 ---
 
-## 2. Deep Diagnosis of the Fatal Flaws
+## 2. Diagnosis
 
-### 2.1 The Epistemological Trap: Evaluating Representation Learning Against an ECFP-Derived Surrogate Oracle (`eos80ch`)
-- **The Hidden Confounder:** The primary 19,836-compound dataset in P5 (inherited directly from P3) derives its binary activity labels ($74.2\%$ active, $25.8\%$ inactive) from the **Ersilia `eos80ch` bioactivity model** at threshold $0.5$.
-- **Why Reviewers Flag This Immediately:** What is the internal architecture of `eos80ch`? Per the Ersilia model card it is a support-vector classifier plus a random forest trained on circular fingerprints (Van Heerden et al.), i.e. a classical fingerprint model.
-- Therefore, the ground-truth label $Y_{\text{eos80ch}} = f_{\text{teacher}}(\text{ECFP}(x))$ is **literally a deterministic function of ECFP bit vectors**!
-  - When `ECFP4-RF` is trained to predict $Y_{\text{eos80ch}}$, its input feature space is **isomorphic** to the teacher model's feature space ($I(X_{\text{ECFP4}}; Y_{\text{eos80ch}})$ is maximal by construction).
-  - When `GIN`, `GIN-TFP`, or `ChemBERTa` are trained to predict $Y_{\text{eos80ch}}$, any structural feature they learn outside the 2D circular radius-2 hash (such as global graph paths, 3D geometry, or SMILES syntax) is **orthogonal to the teacher's decision boundary**!
-- Claiming that `ECFP4-RF` ($0.9433$ random, $0.8300$ scaffold) beats `GIN` ($0.8047$) and `ChemBERTa` ($0.7867$) because of fundamental chemical physics or 1-WL limitations on the primary panel ignores the **Teacher–Student Inductive Bias Confounder**.
+### 2.1 The surrogate-oracle confounder, stated precisely
+The panel's binary labels derive from a **classical fingerprint model**. Three consequences follow, in increasing order of what they require:
 
-### 2.2 The Disconnect Between the "1-WL Expressivity" Narrative and the `GIN-TFP` Architecture
-- P5 argues that standard GNNs fail on African Natural Products (indoloquinolines, protoberberines, quassinoids with $Fsp^3 \ge 0.45$ and $\text{Rings} \ge 4$) because the 1-Weisfeiler–Lehman (1-WL) isomorphism test cannot distinguish bridged/fused polycycles—and claims that `GIN-TFP` "rescues" this bottleneck.
-- **Architectural Reality Check:**
-  In P5's implementation, `GIN-TFP` runs the exact same 1-WL `GINConv` message-passing layers as baseline `GIN`, pools the node embeddings into a global vector $\mathbf{h}_G$, and concatenates the precomputed P3 persistent homology vector $\mathbf{v}_{\text{TFP}}$ into the final linear classifier:
-  $$\hat{y} = \text{MLP}\left(\left[\sum_{v \in V} \mathbf{h}_v^{(L)} \;\Big\|\; \mathbf{v}_{\text{TFP}}\right]\right)$$
-- **Why This Does Not Prove 1-WL Message-Passing Rescue:**
-  1. The node embeddings $\mathbf{h}_v^{(L)}$ still suffer from exact 1-WL color collisions during every message-passing step!
-  2. Concatenating a tabular descriptor at the final readout layer is simply **late multimodal feature fusion**—it does not allow ring topology ($H_1$) to guide atom-to-atom message passing.
-  3. Worse, what happens if you concatenate $\mathbf{v}_{\text{TFP}}$ to `ECFP4-RF`? P3 already ran that exact experiment (`ECFP4 + TFP + TNE + QKS`) and proved that stacking `TFP` onto `ECFP4` changed AUC by **$-0.0002$** (zero gain)!
-  4. On the three independent novel scaffold splits (`novel_101`, `novel_202`, `novel_303`), the paired sign-flip test comparing `GIN-TFP` against permuted-descriptor controls ($n=5$ seeds) was **statistically non-significant** (DAR §5.3), and the key polycyclic subgroup (`Rings >= 4` $\land$ `Fsp3 >= 0.45`) has only **$n = 79$ molecules**.
+1. **Alignment by construction.** If the teacher is a function of 2D circular fingerprint features, a student whose input space is that same feature space has maximal mutual information with the label by construction; students using other structure (global graph paths, 3D geometry, SMILES syntax) pay an *alignment penalty*.
+2. **The penalty must be measured, not asserted.** Sweep fingerprint radius and bit length, and fingerprint family (Morgan radius 1–3, MACCS, RDKit-FP), and report how the ECFP-student advantage moves. If the advantage collapses when the teacher's fingerprint parameters are matched, the alignment explanation is quantitative; if it persists, something else is operating.
+3. **A "theorem" is not available.** Until proven, treat this as a **hypothesis** evaluated through a measurable alignment index.
 
-### 2.3 Why the "Distance-Aware Conformal Triage Filter" is Not Conformal Prediction
-- In machine learning and cheminformatics (Vovk et al., 2005; Alvarsson et al., 2021; Tibshirani et al., 2019), **Conformal Prediction (CP)** has a strict mathematical definition: given a miscoverage level $\alpha \in (0,1)$ and a calibration set, CP outputs a prediction set $\hat{C}_{1-\alpha}(x) \subseteq \{0, 1\}$ (or a p-value per class) guaranteed to satisfy finite-sample marginal or conditional coverage:
-  $$\mathbb{P}\left(Y_{\text{test}} \in \hat{C}_{1-\alpha}(X_{\text{test}})\right) \ge 1 - \alpha$$
-- P5's `conformal_triage_filter` function (DAR §1 & SI) does **none of this**:
-  - It is a hard-coded `if/elif/else` model switcher (`if d_nn < 0.40: return ecfp4_rf; elif d_nn <= 0.60: return gin_tfp`) combined with an ECE warning flag (`batch_ece > 0.08`).
-  - Furthermore, the routing boundaries ($D_{\text{NN}} = 0.40$ and $0.60$) were chosen **post-hoc by visually inspecting the test-set Tanimoto decile curves** of the same study! Calling a post-hoc heuristic switcher a "Conformal Triage Filter" invites immediate rejection from any reviewer familiar with conformal prediction.
+**Label semantics travel with the claim.** The verified lineage of `eos80ch` is stage-specific antimalarial activity (asexual blood stage versus gametocyte), so "active" most likely means "stage-classified active" rather than "antiplasmodial". Confirm which output column and polarity the P5 pipeline binarised at threshold 0.5, and either rewrite the construct definition accordingly or replace the label source.
 
----
+### 2.2 What the `GIN-TFP` architecture can and cannot show
+`GIN-TFP` runs the same 1-WL `GINConv` stack as `GIN` and appends a global persistence vector at the readout. Atoms inside fused polycycles still receive identical 1-WL neighbourhood messages; nothing in the *message-passing hierarchy* changes. A causal test of the bottleneck requires a genuinely higher-order layer (§3.2), and any claimed gain requires a capacity-matched, budget-matched comparison.
 
-## 3. Why Project 5 Currently Reads as Incremental (BMAD Novelty Critique)
+### 2.3 Conformal triage: from heuristic to guaranteed
+The current router is a post-hoc heuristic. A defensible replacement has to state its assumption and survive two specific failure modes:
 
-Even after toning down the claims (as done in the 17 Sept 2026 claim-calibration pass), the resulting manuscript says:
-*"On a 19,836-compound dataset, ECFP4-RF beats GIN and ChemBERTa under scaffold split ($0.8300$ vs. $0.8047$), concatenating persistent homology features gives a modest descriptive bump ($0.8138$), and we propose a testable heuristic routing rule."*
+- **Importance-weight collapse.** Scaffold splits produce near-disjoint support, so the test-to-calibration density ratio is extreme or undefined. Report the **effective sample size** `ESS = (Σw)²/Σw²`, clip/stabilise weights, and fall back to unweighted split-conformal below a **pre-declared** ESS floor.
+- **Mondrian × weighting.** Class-conditional validity under weighting requires per-class weights, and **label shift is not covered** by a covariate-shift guarantee. Choose one assumption and state it: covariate shift (weighted) or class-conditional calibration (Mondrian), or a label-shift construction if the shift is in the class proportions.
 
-Once stripped of its overclaims, the paper becomes **too modest and incremental** to excite editors at *RSC Digital Discovery* or *JCIM*. To be accepted at a top venue, P5 needs **genuine algorithmic and theoretical novelty** that stands up to rigorous scrutiny without relying on rhetorical overclaiming!
+**Coverage is marginal, not per-molecule.** Report empirical coverage per scaffold-family bin and per class, and claim only what those bins show.
+
+### 2.4 Statistical unit
+Two errors co-exist in the current design: testing n = 5 seed means (the wrong unit, and a test whose exact floor is 0.0625 two-sided), and treating 25 fold–seed records as independent (pseudo-replication). The independent biological unit of generalization is the **held-out Bemis–Murcko scaffold cluster**. Because every molecule receives an out-of-fold prediction, inference can be done at that level directly.
+
+### 2.5 Cohort and label independence from the rest of the programme
+The 17-molecule cohort shared with P1/P2 (`Project7_.../data/p1_set_a/p1_set_a_17_candidates_anp_metadata.csv`, sha256 `b7d7c859…`, `cohort_id = P2_SET_C_POLYPHARM_17`) creates overlap that must be declared. The 22,267-compound ChEMBL panel must be deduplicated against the surrogate panel by stereo-aware InChIKey, with scaffold overlap reported, and its heterogeneous assays/thresholds fixed by a **pre-declared activity rule** before any model score is examined.
 
 ---
 
-## 4. Four Breakthrough Scientific Novelties & Refinements for P5
+## 3. Refinements
 
-Using BMAD `hypothesis-generation` and `experimental-design`, we transform Project 5 from an incremental benchmark into a **methodologically bulletproof, high-impact paper**:
+rev 1 numbering retained for continuity: rev 1 *Novelty 1* (surrogate-oracle / dual-oracle benchmark) → §3.1; *Novelty 2* (`CW-GIN` higher-order ring message passing) → §3.2; *Novelty 3* (rigorous conformal routing) → §3.3; *Novelty 4* (scaffold-clustered inference) → §3.4; honesty constraints → §3.5.
 
-```
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│                 TRANSFORMATION OF PROJECT 5: INCREMENTAL → NOVEL                 │
-├───────────────────────────┬──────────────────────────────────────────────────────┤
-│ CURRENT P5 (Vulnerable)   │ REFINED P5 (Breakthrough Methodological Novelty)     │
-├───────────────────────────┼──────────────────────────────────────────────────────┤
-│ Confounded eos80ch labels │ Novelty 1: The "Surrogate-Oracle Bias" Theorem &     │
-│ treated as biology        │ Dual-Oracle Benchmark (Surrogate vs Wet-Lab ChEMBL)  │
-├───────────────────────────┼──────────────────────────────────────────────────────┤
-│ Late readout concat       │ Novelty 2: Cellular Complex Ring Message Passing     │
-│ `[h_G || TFP]` (+0.009)   │ (`CW-GIN` / 2-WL) over Conserved ANP H1 Rings        │
-├───────────────────────────┼──────────────────────────────────────────────────────┤
-│ Heuristic `if d_nn < 0.4` │ Novelty 3: Covariate-Shift Weighted Mondrian         │
-│ router called "Conformal" │ Conformal Prediction (`CS-MCP`) with Exact Coverage  │
-├───────────────────────────┼──────────────────────────────────────────────────────┤
-│ Underpowered n=5 seed     │ Novelty 4: Nested Cross-Validation Threshold Locking │
-│ tests & post-hoc deciles  │ & Zero-Shot Prospective Transfer on ChEMBL 34 (22k)  │
-└───────────────────────────┴──────────────────────────────────────────────────────┘
-```
+### 3.1 Dual-oracle design with a fixed activity rule
+Elevate the surrogate panel (`eos80ch`, n = 19,836) and an experimental panel (ChEMBL 34, n ≈ 22,267) to co-primary arms, model families `ECFP4-RF`, `GIN`, `GIN-TFP`, `CW-GIN`, `ChemBERTa` run on both. The comparison is only interpretable if the experimental arm has: a pre-declared activity rule, InChIKey dedup against the surrogate panel, reported scaffold overlap, and complexity strata (e.g. `Fsp³ ≥ 0.45 ∧ rings ≥ 4`).
 
-### Novelty 1: Exposing the "Surrogate-Oracle Inductive Bias Trap" in AI Drug Discovery (Dual-Oracle Benchmark)
-* **The Literature Gap:** With the explosion of AI virtual screening (e.g., Ersilia Model Hub, ZINC20 ML screens, AlphaFold/Boltz pseudo-labels), thousands of researchers now benchmark GNNs and Foundation Models on datasets whose labels were generated by upstream QSAR models (like `eos80ch`). No study has rigorously quantified how **surrogate-oracle feature alignment** distorts deep learning vs. fingerprint benchmarks!
-* **The Innovation:** Elevate the contrast between the **Surrogate-Label Panel (`eos80ch`, $n = 19,836$)** and the **Disjoint Experimental Wet-Lab Panel (ChEMBL 34 $\text{IC}_{50}$, $n = 22,267$)** into a co-primary experimental design:
-  1. Formalize the **Teacher–Student Feature Alignment Hypothesis**: prove information-theoretically and empirically that when labels derive from a 2D circular fingerprint oracle ($Y = f(\text{ECFP})$), any non-ECFP architecture (`GIN`, `ChemBERTa`) suffers an artificial **Surrogate Alignment Penalty ($\Delta\text{AUC}_{\text{surrogate}}$)** on top of true out-of-distribution scaffold shift.
-  2. Compare the exact same 5 model families (`ECFP4-RF`, `GIN`, `GIN-TFP`, `CW-GIN`, `ChemBERTa`) across **Matched Scaffold-Split Complexity Strata** ($Fsp^3 \ge 0.45$, $\text{Rings} \ge 4$) on *both* `eos80ch` (surrogate) and `ChEMBL 34` (experimental wet-lab $\text{IC}_{50}$, where the polycyclic cohort is $3\times$ larger than $n=79$!).
-  3. **Feasibility Alternative (NEW):** If full ChEMBL 34 evaluation is out of scope, focus on **prospective transfer learning** — lock all model weights and hyperparameters on the 19,836 panel, then evaluate zero-shot on the disjoint ChEMBL 34 panel (22,267 molecules) without any fine-tuning. This tests whether learned representations generalize beyond their training distribution.
-  4. **Why This is High-Impact:** Instead of hiding the `eos80ch` limitation in a caveat paragraph, P5 exposes a major methodological blind spot in modern AI drug discovery benchmarks!
-* **Literature Support (NEW):**
-  - **Gabrani et al. *JCAMD* 2024** confirms ECFP4-RF dominance under scaffold split on diverse targets, supporting the hypothesis that learned representations struggle with out-of-distribution generalization.
-  - **Tang et al. *Nature ML* 2025** reviews the "fingerprint paradox" — classical fingerprints often outperform learned representations on small-to-medium datasets due to better inductive bias.
-  - **Alvarsson et al. *JCIM* 2023** demonstrates conformal prediction under covariate shift, relevant for prospective transfer evaluation.
+### 3.2 True higher-order ring message passing (`CW-GIN`) with a fair ablation
+Lift each molecular graph to a 2-dimensional regular cell complex (0-cells = atoms, 1-cells = bonds, 2-cells = chordless rings), pass messages atom↔bond, bond↔ring and ring↔ring (encoding fused/bridged/spiro junctions), and weight 2-cell embeddings by `H₁` persistence lifetime. Then run a **three-arm ablation at identical parameter counts and an identical hyperparameter-search budget**:
 
-### Novelty 2: True Higher-Order Cellular Complex Ring Message Passing (`CW-GIN`) vs. Readout Concatenation (`GIN-TFP`)
-* **The Literature Gap:** As noted by Reviewer 3 and our audit, concatenating a global persistence vector at the readout layer (`GIN-TFP`) does not fix 1-WL message passing—atoms inside fused African Natural Product rings (indoloquinolines, protoberberines, quassinoids) still receive identical 1-WL neighborhood messages.
-* **The Innovation:** Implement **Cellular Weisfeiler–Lehman Message Passing (`CW-GIN` / 2-Cell Ring Networks, Bodnar et al., *NeurIPS* 2021)** directly on the molecular graphs:
-  1. Lift each molecular graph $G = (V, E)$ into a **2-dimensional regular cell complex $X = (V, E, R)$**, where 0-cells are atoms $V$, 1-cells are bonds $E$, and **2-cells $R$ are the chordless rings ($H_1$ cycles)** identified in P3!
-  2. Pass messages simultaneously along:
-     - **Atom $\leftrightarrow$ Bond ($0 \leftrightarrow 1$):** standard chemical connectivity,
-     - **Bond $\leftrightarrow$ Ring ($1 \leftrightarrow 2$):** boundary incidence of bonds belonging to an ANP ring, and
-     - **Ring $\leftrightarrow$ Ring ($2 \leftrightarrow 2$):** shared fused/bridged bonds between adjacent polycycles (directly encoding spiro, bridged, and fused ring junctions!).
-  3. Weight each 2-cell ring embedding by its **exact persistent homology lifetime ($\tau_r = d_r - b_r$)** from P3!
-  4. **The Clean Causal Ablation:** Compare three architectures with matched parameter counts:
-     - **Arm 1 (`1-WL GIN`):** Atom–bond message passing only.
-     - **Arm 2 (`GIN-TFP` Late Fusion):** 1-WL message passing + global `TFP` readout concatenation.
-     - **Arm 3 (`CW-GIN` Topological Message Passing):** True 2-cell ring message passing weighted by $H_1$ persistence.
-* **Why This is High-Impact:** This provides the **exact causal test of the 1-WL bottleneck** that reviewers demanded! It proves whether embedding $H_1$ rings *inside* the message-passing hierarchy outperforms naive readout concatenation on polycyclic African Natural Products.
+1. `1-WL GIN` (atoms and bonds only);
+2. `GIN-TFP` (1-WL plus readout concatenation);
+3. `CW-GIN` (2-cell message passing).
 
-### Novelty 3: Mathematically Rigorous Covariate-Shift Weighted Mondrian Conformal Prediction (`CS-MCP`)
-* **The Literature Gap:** In virtual screening under scaffold shift, standard calibration (Platt scaling, temperature scaling) and standard marginal conformal prediction fail in two ways:
-  1. **Covariate Shift Collapse:** As query molecules move into the novel-scaffold tail ($D_{\text{NN}} > 0.50$), exchangeability between calibration and test data is violated, causing empirical coverage to drop far below nominal $1-\alpha$.
-  2. **Minority-Class Under-Coverage (Tursunbadalov et al., 2026):** Marginal conformal prediction achieves $90\%$ overall coverage by over-covering the majority class while failing on the minority class.
-* **The Innovation:** Replace the heuristic `conformal_triage_filter` snippet with a mathematically rigorous **Covariate-Shift Weighted Mondrian Conformal Predictor (`CS-MCP`)** (combining Tibshirani et al., *NeurIPS* 2019 and Mondrian class-conditional CP):
-  1. Partition calibration data within each fold by class $y \in \{0, 1\}$ (Mondrian conditioning) and compute non-conformity scores $s_i = 1 - \hat{p}_y(x_i)$.
-  2. Estimate the **Covariate-Shift Importance Weight** $w(x)$ using the ratio of test-to-calibration nearest-neighbor Tanimoto distance densities:
-     $$w(x) = \frac{\hat{p}_{\text{OOD}}(D_{\text{NN}}(x))}{\hat{p}_{\text{cal}}(D_{\text{NN}}(x))}$$
-  3. Compute the weighted $(1-\alpha)$ quantile $\hat{q}_{1-\alpha}^{(y)}$ of the calibration non-conformity scores to output rigorous prediction sets $\hat{C}_{1-\alpha}(x) = \{y \in \{0,1\} : 1 - \hat{p}_y(x) \le \hat{q}_{1-\alpha}^{(y)}\}$:
-     - **Certain Active:** $\hat{C}(x) = \{1\}$
-     - **Certain Inactive:** $\hat{C}(x) = \{0\}$
-     - **Uncertain / Abstain (Route to Physics Docking / MD in P1/P2):** $\hat{C}(x) = \{0, 1\}$ or $\emptyset$!
-  4. **Feasibility Alternative (NEW):** Instead of full CS-MCP implementation, start with **class-conditional Mondrian CP** (separate quantiles for active/inactive) which requires only 2x calibration data and can be implemented in <100 lines. Then extend to covariate-shift weighting if time permits.
-  5. **Prospective Validation:** Lock all routing and calibration quantiles on the internal validation folds of the 19,836 panel and evaluate **zero-shot** on the disjoint 22,267 ChEMBL 34 external panel, plotting **Empirical Coverage vs. $D_{\text{NN}}$ Decile** and **Precision Gain on Certain Predictions ($\hat{C}(x) = \{1\}$)**.
-* **Literature Support (NEW):**
-  - **Alvarsson et al. *JCIM* 2023** demonstrates Mondrian CP for virtual screening, achieving exact $90\%$ coverage on ChEMBL actives.
-  - **Tursunbadalov & Tursunbadalov *arXiv* 2607.06605 (2026)** provides the class-conditional fix for minority-class coverage.
-  - **Tibshirani et al. *NeurIPS* 2019** introduces covariate-shift weighted CP — implement class-conditional first as baseline.
+Add a **matched classical substructure baseline** (larger-radius fingerprint or WL-subtree kernel) and a **stereo-aware fingerprint baseline**, so that any gain can be attributed to topology rather than to extra features — and so that the "ECFP4 is stereo-blind" claim is tested rather than assumed.
 
-### Novelty 4: Non-Parametric Hierarchical Bootstrap & Cluster-Robust Inference Across Scaffolds
-* **The Gap (Reviewer Major Comment #2):** Testing $n=5$ per-seed means ($df=4$) has very low statistical power (where exact sign-flip $p$-values cannot ever be smaller than $1/2^5 = 0.03125$, which fails after BH-FDR correction across multiple comparisons!). Conversely, treating 25 fold–seed records as independent commits **pseudoreplication** (Hurlbert 1984).
-* **The Innovation (from BMAD `experimental-design`):**
-  Use **Molecule- & Scaffold-Clustered Non-Parametric Bootstrap / DeLong’s Test on Out-of-Fold Predictions ($N = 19,836$ molecules clustered by $M$ Bemis–Murcko scaffolds)**, paired across models!
-  - Because every molecule $i \in \{1, \dots, 19836\}$ receives a strictly out-of-fold prediction $\bar{p}_m(x_i)$ averaged across the 5 random seeds, the true independent biological unit of generalization is the **held-out Bemis–Murcko scaffold cluster ($M > 1,000$ clusters)**, NOT the 5 arbitrary random number generator seeds!
-  - Resampling scaffold clusters ($10,000$ cluster-bootstrap iterations) respects scaffold-level nesting, eliminates seed pseudoreplication, and increases statistical degrees of freedom from $df = 4$ to $df > 1,000$—resolving the statistical power crisis across all cohort and decile comparisons!
+### 3.3 Conformal repair with explicit assumptions and diagnostics
+1. **Baseline:** class-conditional (Mondrian) CP with per-class non-conformity scores and separate quantiles.
+2. **Then:** covariate-shift weighting with ESS reported and a pre-declared floor; fall back to unweighted split-conformal below it.
+3. **For triage semantics:** prefer a **false-discovery-rate-controlling conformal selection** construction when the operational question is "which compounds do we route to docking/MD" — that question is about the error rate of *selections*, which prediction sets do not control.
+4. **Diagnostics:** coverage by OOD decile and by class; prediction-set size distribution; calibration curve.
+
+### 3.4 Inference at the scaffold-cluster level
+Resample **scaffold clusters** (outer) and molecules within clusters (inner) over out-of-fold predictions from a fixed fold structure; use cluster-aware variance for AUROC rather than plain DeLong; cross-check with a mixed-effects logistic regression with scaffold random intercepts. Report the number of clusters and the effective sample size. This replaces — and should not be supplemented by — seed-level hypothesis tests.
+
+### 3.5 Honesty constraints (from `AGENTS.md` §5)
+Retain the honest-negative scaffold result; do not claim universal GNN/Transformer inferiority; `CW-GIN` is a hypothesis test whose null result is a publishable outcome; and every "gain" figure must carry its confidence interval from §3.4.
 
 ---
 
-## 5. Concrete Action Plan & Re-Submission Strategy for P5
+## 4. Action plan and gates
 
-| Step | Action Item | Resolves Vulnerability | Target Output | Feasibility Note |
-|---|---|---|---|---|
-| **1. Cluster-Bootstrap Inference** | Replace $n=5$ seed-mean sign-flip tests ($df=4$) with **Scaffold-Clustered Paired Bootstrap ($10,000$ resamples over out-of-fold molecule predictions)** on both the 19,836 panel and the 22,267 ChEMBL panel. | Underpowered $df=4$ statistical unit & non-significant novel-split p-values | Narrow, well-powered 95% CIs and exact $p_{\text{adj}}$ values without pseudoreplication | **High impact** — resolves statistical crisis; implementable in <200 lines |
-| **2. True `CW-GIN` (2-Cell Ring MP)** | Implement a lightweight 2-cell ring message-passing layer (`CW-GIN`) in PyTorch Geometric where chordless rings ($H_1$) exchange messages with incident bonds/atoms; compare against readout-only `GIN-TFP`. | Reviewer critique that `GIN-TFP` readout concatenation does not fix 1-WL message passing | Clean 3-way ablation table (`GIN` vs `GIN-TFP` readout vs `CW-GIN` cellular MP) | **Medium effort** — Bodnar et al. code exists; adapt to P5's ring extraction pipeline |
-| **3. True Weighted Mondrian CP (`CS-MCP`)** | Replace the heuristic `if d_nn < 0.40` routing script with **Covariate-Shift Weighted Mondrian Conformal Prediction**; evaluate coverage and precision zero-shot on the disjoint 22,267 ChEMBL panel. | Post-hoc threshold snooping & misuse of "Conformal" terminology | Coverage-by-decile curve proving exact $90\%$ class-conditional coverage under OOD shift | **Feasible alternative** — start with class-conditional Mondrian CP (<100 lines) as baseline |
-| **4. Dual-Oracle Comparison** | Explicitly contrast model rankings and complexity-stratum gains between the **Surrogate Oracle (`eos80ch`, $n=19,836$)** and the **Experimental Oracle (`ChEMBL 34`, $n=22,267$)** in the main text. | Circular construct validity of evaluating ECFP4 against `eos80ch` labels | High-impact analysis quantifying Surrogate Alignment Bias in AI drug discovery | **Low effort** — re-run 5 seeds on ChEMBL 34 with locked weights (already have codebase) |
-| **5. Literature Context (NEW)** | Add citations to Gabrani et al. *JCAMD* 2024 (ECFP4 robustness), Tang et al. *Nature ML* 2025 (fingerprint paradox), Alvarsson et al. *JCIM* 2023 (conformal VS). | R3 Major (literature positioning) | Integrated discussion paragraph | **Low effort** — 3-4 sentences |
-
-
----
-
-# Addendum v2 — Web-Verified Deep Refinement (16 Oct 2026)
-
-## A. Verification ledger
-
-| Claim | Status | Note |
+| # | Action | Gate |
 |---|---|---|
-| `eos80ch` is a classical fingerprint model | ✅ Verified from the Ersilia model card | SVC + random forest on circular fingerprints (Van Heerden et al.). |
-| **What `eos80ch` predicts** | ⚠️ **New finding** | The card describes it as separating **gametocyte-active vs asexual-blood-stage-active** compounds (126,374 asexual and 93,941 sexual-stage compounds pooled; ~3% hit both). Our "malaria activity" label (`score ≥ 0.5`) may therefore encode a *stage-selectivity* class, not general antiplasmodial activity. **Confirm which output column and polarity the P5 pipeline binarized** and rewrite the construct definition accordingly. |
-| "Exactly ECFP4" | ⚠️ Unverified | The card says "circular fingerprints"; radius/bit-length/counts are not confirmed. Say *"approximately aligned with ECFP-family features"*, and test it empirically (see C1). |
-| CW networks (Bodnar et al., NeurIPS 2021) are strictly > 1-WL on rings | ✅ Verified | Rings as 2-cells; ZINC gains. Expressivity ≠ guaranteed gain on our labels. |
-| Weighted conformal prediction (Tibshirani et al., NeurIPS 2019) | ✅ Verified | Assumes **covariate shift only** and a known/estimated density ratio. |
+| 1 | Document the label semantics and binarisation of `eos80ch` (stage-specific lineage) in Methods, or replace the label source | Constructor definition matches the oracle's actual task |
+| 2 | Quantify the teacher–student alignment index via a fingerprint parameter sweep (radius, size, family) | Index reported with CI; hypothesis labelled as such |
+| 3 | Build and run the three-arm `CW-GIN` ablation with matched capacity and search budget, plus classical substructure and stereo-aware baselines | Ablation table complete; no unmatched-budget comparison |
+| 4 | Replace the heuristic router with Mondrian CP, then weighted CP with ESS floor | Coverage reported per class **and** per OOD decile; ESS reported |
+| 5 | Replace n = 5 seed tests with scaffold-clustered resampling + mixed-effects cross-check | No seed-level p-values anywhere in the manuscript |
+| 6 | Deduplicate the ChEMBL panel and report scaffold overlap | Overlap table present; activity rule pre-declared |
+| 7 | Replace the removed citations with located sources | Every reference resolves to a DOI/arXiv record |
 
-## B. New defects in the proposed plan
+---
 
-1. **Importance-weight collapse under scaffold splits.** Scaffold splits create near-disjoint support, so the density ratio is extreme or undefined. Report the **effective sample size** (ESS = (Σw)² / Σw²), clip/stabilise weights, and fall back to unweighted split-conformal if ESS < a pre-declared floor.
-2. **Mondrian × weighting.** Class-conditional (Mondrian) validity under weighting requires weights per class; label shift is *not* covered by the covariate-shift guarantee (see Podkopaev & Ramdas 2021 for label-shift conformal; Barber et al. 2023 for non-exchangeable CP). State which assumption is being made.
-3. **Coverage is marginal, not per-molecule.** Verify empirical coverage on ChEMBL 34 *per scaffold-family bin and per class*; claim only what the bins show.
-4. **ChEMBL 34 independence.** Deduplicate against the surrogate panel by InChIKey (stereo-aware) and report scaffold overlap; heterogeneous assays and thresholds add label noise, so fix the activity rule before looking at model scores.
-5. **Cluster bootstrap implementation.** Resample *scaffold clusters* (outer) then molecules (inner) using out-of-fold predictions from the same fold structure; for AUROC use a cluster-aware variance (Obuchowski-type) rather than plain DeLong.
+## 5. Verification ledger (claim → evidence)
 
-## C. Added experiments (cheap, decisive)
-
-| ID | Experiment | Decision it informs |
+| Claim | Status | Evidence |
 |---|---|---|
-| C1 | Fit ECFP-RF on `eos80ch` labels with fingerprint **radius/size swept** and with MACCS/RDKit-FP; compare to GIN/ChemBERTa | Quantifies Teacher–Student alignment (`SAII`) rather than asserting it |
-| C2 | Same models on the ChEMBL 34 experimental panel | Whether ECFP-RF dominance survives real labels |
-| C3 | Random vs scaffold vs scaffold-cluster-held-out | Isolates covariate shift contribution |
-| C4 | `CW-GIN` vs `GIN` vs `GIN-TFP` with **identical** hyperparameter-search budget | Fair test of ring message passing |
-| C5 | ESS and coverage diagnostics for `CS-MCP` | Whether conformal claim is publishable |
+| `eos80ch` is a classical fingerprint model | ✅ Verified | Ersilia model-card lineage → van Heerden et al. 2023 |
+| `eos80ch` label semantics are stage-specific (ABS vs gametocyte) | ✅ Verified | van Heerden et al., *ACS Omega* 8(46), 43813–43826 (2023), DOI 10.1021/acsomega.3c05664 |
+| Label threshold 0.5 and "computational, not experimental" status are documented in-repo | ✅ Verified | `Project3_.../manuscript/LaTeX/V2609/PLACEHOLDER_COMPLETION_GUIDE.md`; `SUBMISSION_READY.md` |
+| Tursunbadalov & Tursunbadalov, arXiv:2607.06605 | ✅ Verified | arXiv listing |
+| Wee & Jiang, *JCIM* 65(23), 12691–12706 (2025) | ✅ Verified | PubMed 41235667; DOI 10.1021/acs.jcim.5c02266 |
+| CPSign = Arvidsson McShane et al. 2024 | ✅ Verified | DOI 10.1186/s13321-024-00870-9 |
+| Conformal selection controls FDR over selections | ✅ Verified (rev 2.1) | Jin & Candès, *JMLR* **24**(244), 1–41 (2023) |
+| Conformal selection already applied to compound screening | ✅ Verified (rev 2.1) | Bai, Tang, Xu, Svetnik, Yang, Khalili, Yu, Yang, *JCIM* **65**, 13070–13085 (2025), DOI 10.1021/acs.jcim.5c01633 |
+| Descriptor-based models outperform deep learning in activity-cliff regimes | ✅ Verified (rev 2.1) | van Tilborg et al., *JCIM* **62**, 5938–5951 (2022), DOI 10.1021/acs.jcim.2c01073 (corrections: *JCIM* **63**, 2266 (2023); **64**, 9643–9648 (2024)) |
+| Default fingerprints cannot separate enantiomers; chirality-aware ones can | ✅ Verified (rev 2.1) | `Project7_Quantum_Molecular_Encoding_QML/scripts/p7_chirality_fingerprint_probe.py` (sha256 `565abd0b…`), RDKit 2026.03.4 |
+| Exact sign-flip floor at n = 5 | ✅ Corrected here | Two-sided floor 2/2⁵ = 0.0625 (one-sided 0.03125) |
+| Shared 17-molecule cohort with P1/P2 | ✅ Verified | `Project7_.../data/p1_set_a/p1_set_a_17_candidates_anp_metadata.csv` (sha256 `b7d7c859…`) |
+| "Gabrani et al. JCAMD 2024" | 🚫 Not locatable | Two searches; removed |
+| "Tang et al. Nature ML 2025" | 🚫 Not locatable | Two searches; removed |
+| "Alvarsson et al. JCIM 2023, exact 90 % Mondrian coverage" | 🚫 Not locatable as stated | Removed; replaced by CPSign/2025 review/Tursunbadalov |
+| Bodnar et al. 2021; Tibshirani et al. 2019 | ⏸ Not re-checked | Retained as anchors; verify before citing |
+| Exact 90 % class-conditional coverage as a *target output* | ⏹ Withdrawn | Coverage is measured, not promised; see §3.3 |
 
-## D. Honesty constraint (from `AGENTS.md` §5)
-Retain the honest-negative scaffold result and do not claim universal GNN/Transformer inferiority; `CW-GIN` is a hypothesis test, with null results reported.
+---
+
+## 6. The "wow" factor — what should make a referee or editor say *waouh*
+
+**The one line.**
+
+> The fingerprint-versus-GNN contest is shown to be **partly a property of the label oracle** — measured, not asserted — and the triage rule is upgraded from post-hoc thresholds to a **selection procedure with the false-discovery-rate guarantee that the operational decision actually needs**.
+
+### 6.1 Why it lands
+
+Benchmark validity is now the live question in molecular ML, and this project is sitting on the evidence for it without having made it the headline:
+
+1. **The oracle confound becomes a measured alignment index.** The panel's labels are produced by a classical fingerprint model (`eos80ch`; van Heerden et al., *ACS Omega* **8**(46), 43813–43826 (2023), DOI 10.1021/acsomega.3c05664). Sweeping the teacher's fingerprint hyper-parameters (radius × bit length × family) and plotting ΔAUROC(student − `ECFP4-RF`) against alignment converts "fingerprints beat GNNs" from a leaderboard into a **quantified teacher–student effect**, with the dual-oracle design (surrogate arm n = 19 836 vs experimental ChEMBL 34 arm n ≈ 22 267) as the control.
+2. **The project's own controls already point at the mechanism.** On the scaffold split both classical controls drop to AUC ≈ 0.71 while the random-forest arm holds 0.8300 — i.e. **the random-forest component, not the ECFP4 fingerprint alone, carries the scaffold-split advantage** (DAR §controls; scikit-learn kNN Δ = −0.0267 and logistic regression Δ = −0.0643 on the random split). This is a *stronger and more surprising* statement than "fingerprints win", and it is already in the ledger.
+3. **The correct guarantee for the decision.** The operational question is "which compounds do we route to docking/MD", which is about the error rate of **selections**, not of prediction sets. Conformal selection with FDR control is exactly that construction (Jin & Candès, *JMLR* **24**(244), 1–41 (2023)) and has already been applied to compound screening (Bai, Tang, Xu, Svetnik, Yang, Khalili, Yu, Yang, *JCIM* **65**, 13070–13085 (2025), DOI 10.1021/acs.jcim.5c01633). Adding an ESS floor with a pre-declared fallback, Mondrian class-conditional calibration, and coverage reported by class *and* OOD decile makes it a guarantee a referee can check rather than a heuristic they must trust.
+4. **The 1-WL claim becomes causal.** `GIN-TFP` concatenates persistence features at the readout, so it cannot test the message-passing bottleneck; the three-arm `CW-GIN` ablation (2-cell complexes, `H₁`-weighted 2-cells) at **matched parameter count and matched hyperparameter-search budget**, with two absorbing classical baselines, does.
+5. **The statistical unit is fixed.** Testing n = 5 seed means is replaced by resampling over held-out **Murcko scaffold clusters**, removing the exact two-sided floor of 2/2⁵ = 0.0625 that no FDR procedure can rescue.
+
+### 6.2 Wow at a glance
+
+| Element | Value | Evidence |
+|---|---|---|
+| Scaffold-split table (canonical) | `ECFP4-RF` **0.8300 ± 0.0023**; `GIN-TFP` 0.8138 ± 0.0107; `GIN-TNE` 0.8090; `GIN` 0.8047 ± 0.0141; `ChemBERTa` 0.7867 ± 0.0054 | `Project5_GNN_Transformer_DrugDiscovery_V2609/P5_DATA_ANALYSIS_REPORT.md` §2 (sha256 `957836db…`) |
+| Random-split table (canonical) | `ECFP4-RF` 0.9433 ± 0.0003; `ChemBERTa` 0.9121; `GIN` 0.9098; `GIN-TFP` 0.9084; `GIN-TNE` 0.8918 | same |
+| Control that reframes the result | kNN / logistic regression on the same ECFP4 features fall to ≈ 0.71 on the scaffold split → the RF component, not the fingerprint alone | same, DAR controls paragraph |
+| Why the oracle confound is real | labels from `eos80ch`: stage-specific (asexual-blood-stage vs gametocyte) classical fingerprint models | van Heerden et al. 2023, DOI 10.1021/acsomega.3c05664 |
+| Guarantee for triage | conformal selection, FDR control | Jin & Candès, *JMLR* **24**(244), 1–41 (2023); Bai et al., *JCIM* **65**, 13070–13085 (2025) |
+| Why a stereo-aware baseline is mandatory | default Morgan r = 2 gives Tanimoto **1.0000** for enantiomer pairs; `includeChirality=True` gives **0.7333** (alanine) / **0.5833** (threonine) | `Project7_Quantum_Molecular_Encoding_QML/scripts/p7_chirality_fingerprint_probe.py` (RDKit 2026.03.4) |
+| Benchmark-validity anchor | activity-cliff regimes where descriptor-based models outperform deep learning | van Tilborg et al., *JCIM* **62**, 5938–5951 (2022), DOI 10.1021/acs.jcim.2c01073 (corrections: *JCIM* **63**, 2266 (2023); **64**, 9643–9648 (2024)) |
+
+### 6.3 The artifact that carries it — one figure
+
+**Figure A ("the oracle curve")**: x-axis = teacher–student alignment (fingerprint family × radius × bit length); y-axis = ΔAUROC(student − `ECFP4-RF`) on the scaffold split, one point per student arm, with scaffold-cluster bootstrap intervals. A single plot in which the reader sees whether the fingerprint's advantage is a property of the labels or of the model class. A second panel overlays the conformal triage operating characteristic (selected fraction vs empirical FDR at the nominal α), i.e. the difference between a claimed and an achieved error rate.
+
+### 6.4 The decisive, cheap experiments
+
+| # | Action | Cost | Gate |
+|---|---|---|---|
+| W1 | Fingerprint-parameter sweep (Morgan radius 1–3, 1024/2048/4096 bits, MACCS, RDKit-FP) → alignment index for every student arm | CPU-hours; models already trained per arm | ΔAUROC reported with scaffold-cluster CIs; hypothesis labelled as a hypothesis |
+| W2 | Dual-oracle comparison with a pre-declared activity rule, InChIKey dedup and reported scaffold overlap | data curation + reuse of the same five model families | Overlap table present **before** any model score is examined |
+| W3 | Three-arm `CW-GIN` ablation at matched capacity **and** matched search budget, plus (i) chirality-aware Morgan (`includeChirality=True`), (ii) longer-radius / WL-subtree kernel | one GPU campaign | Ablation table complete; no unmatched-budget comparison |
+| W4 | Replace the heuristic router with conformal selection (FDR-controlled) + Mondrian fallback, ESS floor pre-declared | analysis | Coverage by class **and** by OOD decile; ESS reported; nominal-vs-empirical α plot |
+| W5 | Scaffold-cluster resampling + mixed-effects logistic regression cross-check | analysis | No seed-level p-values remain anywhere in the manuscript |
+
+### 6.5 The controls that make it credible
+
+The `ECFP4-RF` per-seed mean vectors already archived for the BH-FDR families; the kNN/logistic-regression negative controls that *already* broke the "ECFP4 is enough" reading; the five-fold-independent transformer initialisation protocol; and the honest-negative scaffold result retained as the central finding (`AGENTS.md` §5).
+
+### 6.6 What must not be claimed
+
+- No universal GNN/Transformer inferiority and no universal fingerprint superiority — the controls show the learner matters more than the fingerprint.
+- No "surrogate-oracle bias **theorem**": it is a measurable index until proven.
+- No exact 90 % coverage as a target output: coverage is measured per class and per OOD decile, and only what those bins show is claimed.
+- No retracted prospective figures (the +14.2 % precision claim stays removed) and no unmatched-budget or unmatched-capacity comparisons.
+
+### 6.7 What would falsify it
+
+If ΔAUROC does **not** shrink when the teacher's fingerprint parameters are matched, the oracle-alignment explanation is quantitatively dead and the fingerprint advantage must be attributed elsewhere — a result that is equally publishable and is the reason W1 comes first.
+
+### 6.8 Cover-letter line (for the editor)
+
+> "We quantify how much of the fingerprint-versus-GNN gap is a property of the label oracle rather than of the models, and we give the out-of-distribution triage rule a finite-sample false-discovery-rate guarantee instead of hand-tuned thresholds."
+
+---
+
+## 7. Limits of this audit
+
+- No model was retrained; AUC values, subgroup sizes (n = 79) and split results are quoted from `P5_DATA_ANALYSIS_REPORT.md` and the `V2609` manuscript at the pinned commit and were not re-derived.
+- The claim that `GIN-TFP` uses only readout concatenation is taken from the audit's own architectural reading; the current `GIN-TFP` implementation was not re-inspected in this revision.
+- "Not locatable" is a reason not to cite, not proof of fabrication.

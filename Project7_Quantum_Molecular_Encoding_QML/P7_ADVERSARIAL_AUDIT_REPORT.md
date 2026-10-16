@@ -1,519 +1,365 @@
 # P7 Adversarial Audit & Scientific Refinement Report
 **Project:** `Project7_Quantum_Molecular_Encoding_QML` (Quantum Molecular Structure Encoding & Hybrid QML)
-**Date:** 16 October 2026
-**Auditor Frameworks:** BMAD Multi-Layer Review (`bmad-code-review`), Scientific Critical Thinking, Peer Review
-**Cross-Project Context:** Integrated with findings from **P1** (Chemical Space & Polypharmacology), **P3** (Quantum-Inspired Representations & Scaffold Paradox), and **P5** (Scaffold Generalization in GNNs/Transformers).
-**Literature Anchors:**
-- Boy, Altamura, Manawadu, Tavernelli, Mensa, Wales, *"Encoding molecular structures in quantum machine learning"*, *Mach. Learn.: Sci. Technol.* 6, 045076 (2025) / [arXiv:2507.20422](https://arxiv.org/abs/2507.20422).
-- Havlíček et al., *"Supervised learning with quantum-enhanced feature spaces"*, *Nature* 567, 209–212 (2019).
-- Huang et al., *"Quantum advantage in learning from experiments"*, *Science* 376, 1182–1186 (2022).
-- Thanasilp et al., *"Exponential concentration and untrainability in quantum kernel methods"*, *Quantum* 8, 1481 (2024).
+**Revision:** rev 2.1 — 16 October 2026. rev 2: addendum folded into the body, retracted targets removed, mis-attributed citations corrected, absolute `file://` links replaced by repo-relative paths, evidence pinning added. rev 2.1: **§8 "wow" factor** added with the new, committed `scripts/p7_chirality_fingerprint_probe.py` measurement (CHECK A and CHECK B); the former §8 (limits) is now §9.
+
+## Audit pin
+
+| Field | Value |
+|---|---|
+| Repository | `/home/nanaengo/Malaria_codesV2` (canonical single tree, `AGENTS.md` §0) |
+| Branch / commit audited | `master` @ `1c9c38f2ec572d92f03073f765b6cd11b9b062a6` (2026-10-16T12:21:31+01:00) |
+| Path convention | repo-relative only. rev 1 used `file:///home/taamangtchu/Documents/Malaria_codesV2/...`, which is **not** the canonical tree; those links are removed |
+| Evidence rule | every factual claim carries a repository path **with sha256** or a DOI. A claim without one is `UNVERIFIED` |
+| Auditor frameworks | BMAD multi-layer review (`bmad-code-review`), Scientific Critical Thinking, Peer Review |
+| Cross-project context | P1 (chemical space, polypharmacology), P3 (quantum-inspired representations, scaffold paradox), P5 (scaffold generalization, surrogate-oracle caveat) |
+
+**Superseded in rev 2 (do not re-assert):** "Thanasilp et al., *Quantum* 8, 1481 (2024)" (the paper is *Nature Communications* **15**, 5200 (2024)); "Huang et al., *Science* 2021" for projected quantum kernels (the paper is *Nature Communications* **12**, 2631 (2021)); the pre-registered superiority targets `AUC_PQK ≥ 0.70`, `ΔAUC ≥ +0.15` over 8-atom truncation, and "Var[PQK] decays polynomially"; "`PH-QMSE` solves the #1 bottleneck" (the ring-contraction theorem is unproven and needs its own fidelity analysis); and any "quantum advantage" framing.
+
+**Key literature anchors (verification status in §6):**
+- Boy, Altamura, Manawadu, Tavernelli, Mensa, Wales, *Mach. Learn.: Sci. Technol.* **6**, 045076 (2025), DOI 10.1088/2632-2153/ae304f / arXiv:2507.20422 — QMSE; reference implementation `stfc/quantum-molecular-encodings`.
+- Thanasilp, Wang, Cerezo, Holmes, *Nature Communications* **15**, 5200 (2024) — exponential concentration in quantum kernels.
+- Huang et al., *Nature Communications* **12**, 2631 (2021) — "Power of data in quantum machine learning" (projected quantum kernels, 1-RDM/2-RDM).
+- Cerezo et al., *Nature Communications* **16**, 7907 (2025), DOI 10.1038/s41467-025-63099-6 — provable absence of barren plateaus implies (often) classical simulability.
+- Bowles, Ahmed, Schuld, arXiv:2403.07059 (2024) — out-of-the-box classical models match or beat popular QML models; removing entanglement often did not hurt.
+- Havlíček et al., *Nature* **567**, 209–212 (2019) — inversion test for fidelity kernels.
 
 ---
 
-## 1. Executive Summary & Audit Scorecard
+## 1. Executive summary & audit scorecard
 
-Project 7 refocused on 06 October 2026 from an ECFP4-VQC architecture (archived as exploratory) to **Quantum Molecular Structure Encoding (QMSE)** directly embedded into parameterized quantum circuits with a classical head. The reported benchmark outcome is **Scenario C** (AUC $0.6398 \pm 0.0441$ vs. ECFP4-SVM $0.8693 \pm 0.0265$, paired $t$-test $p = 0.0009$).
+Project 7 refocused on 06 October 2026 from an ECFP4-VQC architecture (archived as exploratory) to **Quantum Molecular Structure Encoding (QMSE)** embedded directly into parameterised circuits with a classical head. Reported outcome: **Scenario C** — AUC `0.6398 ± 0.0441` versus ECFP4-SVM `0.8693 ± 0.0265` (paired t-test p = 0.0009).
 
-An adversarial code and scientific audit was conducted across the entire codebase (`scripts/`, `qmse_lib/`), data manifests, the Data Analysis Report (`P7_DATA_ANALYSIS_REPORT.md`), the manuscript (`manuscript/`), and the structural empirical observations from **P1** and **P3** regarding **African Natural Products (ANP)**.
-
-The audit reveals that Project 7's central hypothesis—that structure-direct quantum encoding can overcome the representation blind spots documented in P1, P3, and P5—is fundamentally compromised by implementation bugs and representation pathologies that specifically destroy African Natural Product molecular architectures.
-
-### Audit Scorecard
-
-| Layer | Severity | Status | Summary of Core Finding |
-|---|:---:|:---:|---|
-| **1. ANP Structural & Chemical Reality** | 🔴 **CRITICAL** | **FAIL** | ANP features identified in P1/P3 (multi-chiral centers, persistent $H_1$ ring cycles, bridged polycycles) are systematically destroyed by an RDKit traversal parity bug, 2D-only lookup matrices, and blind 8-qubit truncation. |
-| **2. Quantum Architecture & Circuit Design** | 🔴 **CRITICAL** | **FAIL** | `p7_qmse_hybrid.py` applies independent 1-qubit $R_z$ rotations instead of 2-qubit entanglers for bonds; IBM hardware script employs a 51-qubit CSWAP test rather than an $n$-qubit inversion test. |
-| **3. Provenance & Codebase Integrity** | 🟠 **MAJOR** | **FAIL** | Canonical scripts (`p7_qmse_preprocess.py`, `p7_phase_d_canonical.py`, `p7_stereo_probe.py`, `p7_ibm_kernel_aer.py`, `p7_generate_fig6.py`) and result JSONs claimed in DAR are **missing from Git**. |
-| **4. Manuscript & Build Reproducibility** | 🟠 **MAJOR** | **FAIL** | LaTeX compilation aborts: `fig6_phased_results` is missing and a raw unicode character (`Δ` in `methods.tex`) causes pdflatex to crash. |
-| **5. Scientific Claim Calibration** | 🟡 **MODERATE** | **FLAGGED** | Scenario C underperformance (AUC 0.640) is framed as a quantum limitation, but is largely an artifact of 8-atom arbitrary truncation and broken bond entangling. |
+| Layer | Status | Summary |
+|---|:---:|---|
+| **1. ANP structural reality** | 🔴 **OPEN — implementation defects reproduced below** | The reported underperformance is produced by a CIP-parity bug, 2D-only bond-length matrices, and blind 8-atom truncation — not by an intrinsic limit of structure-direct quantum encoding. |
+| **2. Quantum architecture** | 🔴 **OPEN — primary risk** | `p7_qmse_hybrid.py` applies independent 1-qubit `R_z` rotations where bond entanglers are required, so the "molecular bond encoding" is a product-state feature map and classically simulable by construction; the IBM script uses an `(2n+1)`-qubit SWAP test instead of an `n`-qubit inversion test. |
+| **3. Provenance & codebase integrity** | 🟠 **CONFIRMED FAIL** | Five canonical scripts, three result directories and one figure claimed in the DAR are absent from the pinned commit (listing in §5). |
+| **4. Manuscript & build reproducibility** | 🟠 **CONFIRMED FAIL** | `pdflatex` aborts on a raw `Δ` at `manuscript/sections/methods.tex:284` and on the missing `fig6_phased_results`. |
+| **5. Claim calibration** | 🟡 **REVISED** | Scenario C must be reported as the combined effect of truncation and a non-entangling encoding; the publishable ceiling is parity or non-inferiority against matched classical baselines. |
 
 ---
 
-## 2. Cross-Project Context: ANP Structural Discoveries in P1 and P3
+## 2. Cross-project context
 
-To understand why Project 7 failed to achieve its goals, we must contextualize it within the structural discoveries of the companion projects:
+### 2.1 ANP chemical space (P1/P2)
+ANP sets (NANPDB/EANPDB) show high `Fsp³` and 4–10+ stereocentres in rigid fused networks. P1's generative expansion of 396 ANP seeds (STONED-SELFIES + CHEESE) produced a 65,856-compound library in which 92.6 % of molecules were ECFP4-unreachable (Tanimoto distance > 0.30 from classical synthetic drug space) while 69.3 % of Bemis–Murcko natural-product cores were retained.
 
-### 2.1 The Nature of African Natural Product Chemical Space (P1 & P2 Findings)
-1. **High 3D Complexity & Saturation:**
-   African natural products (isolated from databases such as NANPDB and EANPDB, analyzed in P1/P2) exhibit substantially higher fractions of $sp^3$ carbons ($Fsp^3 \approx 0.22 - 0.60$) and high chiral center counts compared to synthetic screening libraries.
-2. **Dense Stereocenters:**
-   Typical antimalarial natural product scaffolds (e.g. artemisinin, quinine, secosteroids, voacamine, naphthylisoquinolines) contain between **4 and 10+ chiral centers** arranged in rigid, stereodefined fused ring networks.
-3. **The "ECFP4-Unreachable" Space:**
-   In P1, generative expansion of 396 ANP seeds via STONED-SELFIES and CHEESE yielded a 65,856-compound library where **92.6% of molecules were ECFP4-unreachable** (Tanimoto distance $> 0.30$ from classical synthetic drug space), yet retained **69.3% of the Bemis–Murcko natural product cores**. Classical 2D fingerprints flatten stereocenters and struggle with bridged/caged natural product topologies.
+### 2.2 Topological persistence and the scaffold paradox (P3)
+Persistent homology separated conserved 1D cycles (`H₁`, mean 3.61 cycles — the polycyclic/macrocyclic signature) from divergent 0D connectivity (`H₀` — peripheral substitution). P3's quantum-kernel arm took **ECFP4 compressed via UMAP** as input, so the circuit never had access to the chiral/3D/polycyclic features it was meant to exploit (AUC 0.8385 vs ECFP4-SVM 0.9475).
 
-### 2.2 Topological Persistence & The "Scaffold Paradox" (P3 Findings)
-1. **The Scaffold Paradox ($H_1$ vs. $H_0$):**
-   In P3, Topological Data Analysis (TDA) using persistent homology decomposed the ANP library into:
-   - **Persistent 1D cycles ($H_1$ features):** Strongly conserved between ANP seeds and generated candidates (mean $H_1 = 3.61$). These represent the rigid polycyclic and macrocyclic rings characteristic of African antimalarials.
-   - **0D connectivity ($H_0$ features):** Substantially divergent, capturing side-chain mutations and functional group substitutions.
-2. **Why P3 Quantum-Inspired Kernels (QKS) Collapsed to Classical RBF:**
-   In P3, PennyLane simulated quantum kernels (QKS via `IQPEmbedding`) failed to beat classical ECFP4-SVM (AUC 0.8385 vs. 0.9475; stacking $\Delta\text{AUC} = -0.0002$).
-   **The root cause discovered in P3:** QKS took **ECFP4 compressed via UMAP** as its input! Because the classical input had already flattened the chiral, 3D, and polycyclic features of the ANP space, the quantum circuit was powerless to reconstruct them.
+### 2.3 Structural limitations of the encoding (new in rev 2)
+Project 7 inherits the surrogate-oracle problem documented in P5: the benchmark panel's labels come from Ersilia `eos80ch`, whose model family was trained on stage-specific antimalarial screening data (asexual blood stage vs gametocyte; van Heerden et al., *ACS Omega* 8(46), 43813–43826, 2023). A stereochemistry-sensitive encoder evaluated against a stereochemistry-blind surrogate measures alignment with the teacher, not chemical fidelity. Any Tier-A/B/C benchmark must therefore be built on experimental labels.
 
 ---
 
-## 3. Layer 1: Chemical & Representation Audit — How P7 Collides with ANP Architecture
+## 3. Chemical and representation audit
 
-Project 7 refocused on QMSE (Boy et al. 2025) with the explicit goal of bypassing ECFP4 and encoding molecular graphs directly into quantum states. However, an adversarial audit reveals that P7's implementation creates a catastrophic mismatch with ANP structural reality:
-
-### 3.1 The RDKit Chirality Tag Parity Bug (Critical Flaw)
-
-In [`scripts/qmse_lib/processing.py`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/scripts/qmse_lib/processing.py#L33-L52) and [`test_qmse_stereochemistry.py`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/test_qmse_stereochemistry.py#L22-L25):
+### 3.1 RDKit chirality parity bug (critical)
+In `scripts/qmse_lib/processing.py` (`find_rs_stereoisomers`) the CIP label returned by `Chem.FindMolChiralCenters` is discarded (`for idx, _ in chiral_cc:`) and replaced by `atom.GetChiralTag()`, which encodes **SMILES traversal parity**, not configuration:
 
 ```python
-def find_rs_stereoisomers(smiles):
-    mol = Chem.MolFromSmiles(smiles)
-    Chem.AssignAtomChiralTagsFromStructure(mol)
-    chiral_cc = Chem.FindMolChiralCenters(mol, includeUnassigned=True)
-    rs_stereoisomers = {'R': [], 'S': [], 'U': []}
-
-    for idx, _ in chiral_cc:               # <--- BUG: Discards the CIP label!
-        atom = mol.GetAtomWithIdx(idx)
-        chiral_tag = atom.GetChiralTag()
-        if chiral_tag == Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CCW:
-            rs_stereoisomers['R'].append(idx)
-        elif chiral_tag == Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CW:
-            rs_stereoisomers['S'].append(idx)
+for idx, _ in chiral_cc:                       # BUG: discards the CIP label
+    atom = mol.GetAtomWithIdx(idx)
+    if atom.GetChiralTag() == Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CCW:
+        rs_stereoisomers['R'].append(idx)
+    elif atom.GetChiralTag() == Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CW:
+        rs_stereoisomers['S'].append(idx)
 ```
 
-#### Collision with ANP Complexity:
-1. `Chem.FindMolChiralCenters(mol)` outputs `[(atom_idx, 'R'), (atom_idx, 'S')]`. The code discards the true Cahn-Ingold-Prelog (CIP) label with `_` and uses `atom.GetChiralTag()` instead.
-2. In RDKit, `CHI_TETRAHEDRAL_CW` (`@@`) and `CHI_TETRAHEDRAL_CCW` (`@`) represent **internal atom ordering parity along the SMILES traversal**, NOT the invariant CIP $(R/S)$ configuration:
-   - For $(S)$-alanine (`N[C@@H](C)C(=O)O`): tag is `CW` (`@@`), assigned `'S'`.
-   - For $(S)$-alanine (`C[C@H](N)C(=O)O`): tag is `CCW` (`@`), assigned `'R'`.
-   - For $(R)$-cysteine (`N[C@@H](CS)C(=O)O`): tag is `CW` (`@@`), erroneously assigned `'S'`.
-3. In [`scripts/qmse_lib/matrix.py`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/scripts/qmse_lib/matrix.py#L161-L163), this flips the sign of `diagonal_elements[idx]` for all atoms assigned to `'S'`:
-   $$\text{Matrix}[i, i] = -0.5 \cdot Z_i^3$$
-4. **Impact on ANPs:** ANPs carry 4–10+ chiral centers. When traversing complex polycyclic ANP SMILES, RDKit's internal node ordering changes depending on where the string begins or whether salts/side-chains are reordered. Because the parity tag flips arbitrarily between `@` and `@@`, the quantum feature map produces **exponentially corrupt state vectors** ($2^k$ parity combinations across $k$ stereocenters) for identical natural products.
+For (S)-alanine the tag is `CW` under `N[C@@H](C)C(=O)O` but `CCW` under the equivalent `C[C@H](N)C(=O)O`, so the assigned `R`/`S` label depends on where the SMILES string starts. `scripts/qmse_lib/matrix.py` converts that label into a sign flip on the diagonal (`Matrix[i,i] = −0.5·Z_i³`), so for molecules with `k` stereocentres the state vector can differ in `2^k` parity combinations between equivalent SMILES. ANPs carry 4–10+ stereocentres, which is exactly the regime where this is fatal.
 
-### 3.2 Blind 8-Qubit Truncation Amputates ANP $H_1$ Ring Systems
+**Fix (adopted):** keep the CIP descriptor returned by `Chem.FindMolChiralCenters` after `Chem.AssignStereochemistry(mol, cleanIt=True, force=True)`, and route `'U'` (unassigned) to its own bucket instead of guessing.
 
-- In Phase D, molecules were truncated to `n_qubits = 8` (the first 8 heavy atoms in the SMILES string).
-- In P3, the mean $H_1$ ring feature count for ANPs was **3.61 cycles**, requiring 18–35 heavy atoms to form the complete polycyclic core.
-- **The Pathology:** Truncating to 8 atoms in SMILES order literally slices through the middle of the fused ring system. For example:
-  - In an artemisinin analogue (15+ heavy atoms, 7 stereocenters, endoperoxide bridge), an 8-atom truncation retains an arbitrary aliphatic or ester fragment and amputates the endoperoxide pharmacophore and 5 of the 7 chiral centers.
-  - In a quinoline/acridine alkaloid, 8 atoms leaves a broken pyridine fragment and discards the antimalarial basic side-chain.
-- **Divergence from Boy et al. (2025):** Boy et al.'s primary theoretical contribution was the **Fidelity-Preserving Chain-Contraction Theorem**, specifically formulated for long linear alkyl chains (e.g. fatty acids) where repetitive linear groups can be mathematically compressed. Applying blind 8-qubit truncation to rigid polycyclic ANPs violates the mathematics of QMSE, destroying both $H_1$ ring topology and stereochemical integrity.
+**Verified at the pinned commit (rev 2.1).** The defect is present, and so is a second, more serious one:
 
-### 3.3 The 2D-Lookup CoulombMatrix Blind Spot on 3D Conformations
+1. `scripts/qmse_lib/processing.py` (sha256 `3163b80d…`) defines `find_rs_stereoisomers` at line 33 and reads `atom.GetChiralTag()` at line 44 — the parity-based mapping is exactly as quoted above. `scripts/qmse_lib/matrix.py` (sha256 `7da75402…`) imports it (line 6), builds `diagonal_elements = 0.5 * atomic_numbers ** exponent` (line 151), and **multiplies the diagonal by −1 for every atom the function labels `'S'`** (lines 154–161). An ordering-dependent label therefore flips diagonal signs, i.e. up to `2^k` diagonal-sign patterns for the same molecule with `k` stereocentres.
+2. **The project's own stereochemistry test encodes the same bug.** `test_qmse_stereochemistry.py` (repo root, sha256 `a50bd1be…`) re-implements `find_rs_stereoisomers` with the identical `CCW → 'R' / CW → 'S'` mapping (lines 12–30) and exercises it at lines 59 and 120–121. A regression test that asserts the wrong invariant cannot detect the defect it was written to protect, which is why the bug survived to the reported Scenario C. The replacement test is CHECK B of `scripts/p7_chirality_fingerprint_probe.py` (§8.2), which asserts the **CIP** invariant instead of the tag.
 
-In [`scripts/qmse_lib/matrix.py`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/scripts/qmse_lib/matrix.py#L244-L261), `CoulombMatrix` does NOT compute physical 3D interatomic distances ($r_{ij} = \|\mathbf{R}_i - \mathbf{R}_j\|$) from a generated conformer. Instead, it queries an `AVERAGE_BOND_LENGTHS` dictionary of 2D bonded pairs:
-$$\text{Matrix}[i, j] = \frac{Z_i \cdot Z_j}{d_{ij}^{\text{avg}}} \quad \text{if bonded, else } 0$$
+### 3.2 Blind 8-atom truncation amputates the `H₁` core
+Phase D truncated molecules to the first 8 heavy atoms in SMILES order. ANP polycyclic cores need 18–35 heavy atoms; an 8-atom cut slices through the fused ring system, removing pharmacophoric features (e.g. the artemisinin endoperoxide bridge) and most stereocentres. Because STONED-SELFIES mutates the periphery preferentially, truncation in SMILES order systematically encodes the **mutated periphery** (`H₀`) while discarding the **conserved core** (`H₁`).
 
-#### Impact on ANPs:
-- ANPs function biologically through 3D conformational shape, transannular interactions, and cavity electrostatics (e.g. binding deep inside the PfCRT transporter pore or the PfDHFR catalytic cleft, as shown in P1/P2).
-- Setting non-bonded interatomic matrix elements to zero transforms the Coulomb matrix into a glorified 2D bond-length graph. Through-space electrostatic fields and chiral pocket geometries are completely lost.
+**Fix:** replace linear slicing with an explicit, fidelity-checked reduction, and report the contraction fidelity (see §4.4) before scaling to 25–40-atom molecules.
 
-### 3.4 The Role & Pitfalls of STONED-SELFIES in P7
+*(rev 2.1 note: the truncation logic reproduced above is in the Phase-D script `scripts/p7_phase_d_canonical.py`, which remains ABSENT from the tree — see §5. This defect therefore stays an inference from the audit's excerpt.)*
 
-While STONED-SELFIES is not executed directly inside `Project7_Quantum_Molecular_Encoding_QML`, it is the **foundational generative engine that created P7's entire data universe**:
+### 3.3 2D bond-length "Coulomb matrix"
+`scripts/qmse_lib/matrix.py` fills off-diagonal elements only for bonded pairs, using an `AVERAGE_BOND_LENGTHS` lookup and zero elsewhere:
+`Matrix[i,j] = Z_i·Z_j / d_ij^avg` if bonded, else `0`.
+Setting non-bonded elements to zero discards through-space electrostatics and chiral pocket geometry — the features that distinguish polycyclic natural products in a binding site.
 
-#### 1. Upstream Data Provenance
-- P7's canonical benchmark panel (`p3_benchmark_19849.csv`, 19,849 molecules) and external evaluation pool (`eos80ch_malaria_final_activity.csv`, 65,856 molecules) are direct outputs of the **STONED-SELFIES expansion** performed in P1 from 396 African Natural Product seeds and 454 synthetic antimalarials.
-- Therefore, every model evaluated in P7 inherits the structural, topological, and stereochemical artifacts of STONED-SELFIES.
+**Fix:** compute true 3D distances from an ETKDGv3 conformer (`Z_i·Z_j / ‖R_i − R_j‖` for all pairs within the truncation window), and, if a 2D-only fallback is retained for speed, report both matrices side by side rather than silently substituting one for the other.
 
-#### 2. The Core vs. Periphery Conflict (The "Scaffold Paradox" Collision)
-- In P3, persistent homology demonstrated that STONED-SELFIES mutates peripheral functional groups (divergent $H_0$ connectivity, whole-molecule Tanimoto distance 0.206) while strictly conserving the rigid cyclic macro-structures and polycycles (conserved $H_1$ ring topology, mean 3.61 cycles, scaffold Tanimoto 0.379).
-- **The Fatal Conflict with 8-Qubit Truncation:**
-  When P7 truncated molecules to `n_qubits = 8` using RDKit's linear SMILES sequence, RDKit's serializer frequently began indexing at the mutated terminal side-chains. Slicing at atom index 8 means **P7 systematically encoded the mutated peripheral side-chain noise ($H_0$) while discarding the conserved natural product core scaffold ($H_1$)!**
-  This explains why the QNN model's predictive performance plummeted to AUC 0.640: the model was trained on the stochastic side-chain permutations of STONED-SELFIES, while remaining completely blind to the antimalarial natural product scaffold.
+### 3.4 Chirality must be parity-odd, and provably so
+Distance-only representations (including `Z_i Z_j / r_ij`) are invariant under spatial inversion, so enantiomers are indistinguishable. The heuristic of flipping diagonal signs breaks continuity. A physically coherent alternative is the parity-odd pseudoscalar at each tetrahedral centre,
+$$\chi_i = \frac{\det[\mathbf{r}_1-\mathbf{r}_4,\ \mathbf{r}_2-\mathbf{r}_4,\ \mathbf{r}_3-\mathbf{r}_4]}{\|\mathbf{r}_1-\mathbf{r}_4\|\,\|\mathbf{r}_2-\mathbf{r}_4\|\,\|\mathbf{r}_3-\mathbf{r}_4\|} \in [-1, +1],$$
+encoded as an azimuthal phase `R_z(π χ_i / 2)`. This is `SO(3)`-invariant and flips sign under reflection.
 
-#### 3. Stereochemical Incompatibility of Unconstrained SELFIES Mutations
-- Standard STONED-SELFIES operates via string-level insertions, deletions, and substitutions on SELFIES tokens. While this guarantees 100% chemical validity (no valence violations), it **does not preserve or constrain 3D tetrahedral stereochemistry**:
-  - Random SELFIES mutations frequently introduce undefined or inverted stereocenters (`CHI_UNSPECIFIED`).
-  - In `qmse_lib/processing.py`, the `add_rs_stereochemistry()` function attempts to brute-force all combinations of `@` and `@@` for unspecified stereocenters ($2^k$ combinations), which compounds with the RDKit parity bug to generate dozens of unphysical stereoisomers.
-  - If P7 claims to be the first architecture to evaluate structure-direct quantum stereochemical sensitivity, testing on uncurated STONED-SELFIES variants with scrambled stereocenters fundamentally compromises the experimental estimand.
-
-#### 4. Prospective Recommendation: Should STONED-SELFIES Be Used Inside P7?
-- **NOT as an unconstrained generative explorer:** Random SELFIES mutation will continue to scramble the delicate chiral networks of ANP polycycles.
-- **ONLY as a chirality-locked perturbation probe:** STONED-SELFIES can be refined into an adversarial probe for quantum kernels by restricting mutations to achiral peripheral chains while freezing the core $H_1$ scaffold and CIP-verified stereocenters. This would test whether the quantum kernel $K(A, B)$ smoothly reflects structural edits or collapses into exponential concentration.
+**Requirement:** prove it numerically before any ML run — the feature must flip sign for known enantiomer pairs and be invariant under random rotations — and benchmark against a **classical** 3D chirality baseline so that any gain is attributable.
 
 ---
 
-## 4. Layer 2: Quantum Architecture & Circuit Design Audit
+## 4. Quantum architecture audit
 
-### 4.1 Non-Entangling Bond Encodings in `p7_qmse_hybrid.py`
+### 4.1 Non-entangling "bond" encoding (the central risk)
+`scripts/p7_qmse_hybrid.py` applies `R_z(θ)` to wire `i` and separately to wire `j` for each bonded pair, i.e. `U_ij = R_z(θ)_i ⊗ R_z(θ)_j`. That is a product of local rotations: **no entanglement is generated**, the diagonal elements (`Z_i` and the stereochemical sign) are omitted, and the circuit is a parameter-free product-state feature map followed by a variational ansatz. Any reported result from such an encoder is classically simulable by construction — cf. Cerezo et al. (2025) and the benchmark result that removing entanglement often did not hurt classical comparisons (Bowles et al. 2024).
 
-In [`scripts/p7_qmse_hybrid.py`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/scripts/p7_qmse_hybrid.py#L159-L164):
-```python
-# CURRENT IMPLEMENTATION:
-for i in range(self.n_qubits):
-    for j in range(i+1, self.n_qubits):
-        angle = np.arctan(submatrix[i, j]) if submatrix[i, j] != 0 else 0
-        qml.RZ(angle, wires=i)
-        qml.RZ(angle, wires=j)
-```
-- Applying $R_z(\theta)$ to wire $i$ and $R_z(\theta)$ to wire $j$ is a product of local single-qubit rotations: $U_{ij} = R_z(\theta)_i \otimes R_z(\theta)_j$.
-- **Zero quantum entanglement is generated between bonded atoms.**
-- Furthermore, the diagonal elements $\text{submatrix}[i, i]$ (atomic charges $Z_i$ and stereochemical signs) are completely omitted from the circuit.
-- As written, the circuit is merely a parameter-free tensor product of local $Z$-rotations followed by a variational ansatz. The claim that molecular bond topology is encoded into the quantum state is mathematically incorrect for this script.
+**Verified at the pinned commit (rev 2.1), with one correction to the paragraph above.** `scripts/p7_qmse_hybrid.py` (sha256 `648892b9…`) contains the encoding loop at lines 156–163: for each pair `i < j` it computes `angle = arctan(submatrix[i,j])` and applies `qml.RZ(angle, wires=i)` and `qml.RZ(angle, wires=j)`. Two facts follow, and one over-claim must be withdrawn:
 
-### 4.2 SWAP Test Scalability Disaster in `p7_ibm_quantum_kernel_svm.py`
+- **Confirmed:** every piece of matrix information enters through *single-qubit* Z rotations on each wire, so the QMSE encoding is a product-state feature map; and the loop never touches `submatrix[i,i]`, so **the diagonal — atomic number and the stereochemical sign flip — is never encoded at all**.
+- **Withdrawn as too strong:** “no entanglement is generated”. The variational ansatz (lines 166–181) does contain an entangling layer, selectable as `cnot`, `cz`, or `IsingZZ(0.1, …)`. The correct statement is narrower and stronger: the entangler is **fixed at strength 0.1** and applied only between **adjacent wires** (`qubit, qubit + 1`), i.e. on a linear topology unrelated to the molecular bond graph. The circuit therefore carries entanglement that is *molecularly uninformative*, while all molecular information is injected without entanglement.
 
-In [`scripts/p7_ibm_quantum_kernel_svm.py`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/scripts/p7_ibm_quantum_kernel_svm.py#L255-L277):
-- To compute fidelity $K(A, B) = |\langle\psi_A|\psi_B\rangle|^2$, the code implements a **SWAP test**:
-  $$2n + 1 \text{ qubits, with } n \text{ controlled-SWAP (Fredkin) gates}$$
-- For a 25-atom ANP pair, this requires 51 qubits.
-- On physical IBM heavy-hex processors (e.g. `ibm_brisbane`), a Fredkin gate decomposes into 7+ CNOT gates. Over 25 non-adjacent physical qubits, SWAP routing requires hundreds of two-qubit gates, causing total state decoherence and exponential concentration.
-- **The Standard Solution:** In quantum kernel methods (Havlíček et al., *Nature* 2019), fidelity is computed via the **inversion test** ($U_B^\dagger U_A |0\rangle$):
-  $$K(A, B) = |\langle 0| U_B^\dagger U_A |0\rangle|^2 = P(|00\dots0\rangle)$$
-  This uses **$n$ qubits** instead of $2n+1$, and **zero CSWAP gates**.
+**Fix:** single-qubit rotations from the diagonal (atomic number and CIP/stereo phase) plus genuine two-qubit entanglers **driven by the off-diagonal matrix elements on the bond graph**, with an **entanglement ablation** (with vs without entangler layers, and fixed vs matrix-driven strength) reported as a first-class result.
+
+### 4.2 SWAP test instead of inversion test
+`scripts/p7_ibm_quantum_kernel_svm.py` computes `K(A,B) = |⟨ψ_A|ψ_B⟩|²` with a SWAP test: `2n+1` qubits and `n` Fredkin gates; for a 25-atom pair that is 51 qubits, and each Fredkin expands to 7+ CNOTs, with SWAP routing across non-adjacent physical qubits. The standard construction is the **inversion test** (Havlíček et al. 2019): `K(A,B) = |⟨0|U_B†U_A|0⟩|² = P(|0…0⟩)` on **n** qubits and **zero** CSWAP gates.
+
+### 4.3 Kernel diagnostics and the concentration check
+Report, before any AUC: kernel-target alignment, effective dimension, and the **off-diagonal kernel variance as a function of qubit count** for `n ∈ {8, 12, 16, 20}`. Exponential concentration toward `2^{-n}` is a diagnosable property (Thanasilp et al. 2024), and a projected-kernel construction (1-RDM/2-RDM local Pauli expectations, Huang et al. 2021) reduces circuit executions from `O(N²)` to `O(N)`. Any claimed reduction must come with a cost table (circuits × shots × wall-clock), not a ratio.
+
+### 4.4 Contraction fidelity: no appeal to an unproven theorem
+Boy et al.'s fidelity-preserving chain-contraction theorem is stated for repeated **linear** substructures, with an application to long-chain fatty acids (abstract of arXiv:2507.20422). Extending contraction to fused/bridged/spiro ring systems is a **new, unproven** statement.
+
+**Requirement:** on molecules small enough for the uncontracted circuit, report the fidelity `‖⟨ψ_full|ψ_contracted⟩‖²` (or kernel-matrix agreement) and its decay with the number of contracted rings, before applying ring contraction to 25–40-atom ANPs.
 
 ---
 
-## 5. Layer 3: Provenance & Repository Integrity Audit
+## 5. Provenance and build audit (confirmed)
 
-A strict audit against Git history (`git status`, `git log`) reveals significant provenance divergence:
+| Claimed in DAR §6 (08–14 Oct) | State at pinned commit |
+|---|---|
+| `scripts/p7_qmse_preprocess.py` | ❌ ABSENT |
+| `scripts/p7_phase_d_canonical.py` | ❌ ABSENT |
+| `scripts/p7_stereo_probe.py` | ❌ ABSENT |
+| `scripts/p7_ibm_kernel_aer.py` | ❌ ABSENT |
+| `scripts/p7_generate_fig6.py` | ❌ ABSENT |
+| `results/phase_d_canonical/*` | ❌ ABSENT |
+| `results/stereo_probe/*` | ❌ ABSENT |
+| `results/phase_c_hpo/*` | ❌ ABSENT |
+| `manuscript/figures/fig6_phased_results.pdf` | ❌ ABSENT (compilation aborts) |
 
-```
-Claimed in DAR §6 (08-14 Oct)                  Actual State in Git Repository
------------------------------------------       ------------------------------------
-scripts/p7_qmse_preprocess.py                   ❌ MISSING (not in tree)
-scripts/p7_phase_d_canonical.py                 ❌ MISSING (not in tree)
-scripts/p7_stereo_probe.py                      ❌ MISSING (not in tree)
-scripts/p7_ibm_kernel_aer.py                    ❌ MISSING (not in tree)
-scripts/p7_generate_fig6.py                     ❌ MISSING (not in tree)
-results/phase_d_canonical/*.json                ❌ MISSING (not in tree)
-results/stereo_probe/*.json                     ❌ MISSING (not in tree)
-results/phase_c_hpo/*.csv                       ❌ MISSING (not in tree)
-manuscript/figures/fig6_phased_results.pdf      ❌ MISSING (compilation crashes)
-```
+`manuscript/sections/methods.tex:284` contains a raw U+0394: `(Δ~$= 0.003$`. Both defects reproduce at the pinned commit.
 
-**Audit Verdict:** Commit `9d55bea60` updated the DAR narrative and LaTeX text with Phase D results, but the scripts and data outputs were never committed to git.
+**Repair requirements:** re-commit the scripts and result JSONs (or withdraw the affected DAR claims); hash the benchmark CSVs into the manifest; fix the raw `Δ`; generate the figure or remove the `\includegraphics`; add a CI LaTeX build that fails on errors and undefined references.
 
 ---
 
-## 6. Layer 4: Manuscript & Build Reproducibility Audit
+## 6. Verification ledger (claim → evidence)
 
-Testing `pdflatex` directly on [`manuscript/main.tex`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/manuscript/main.tex) reveals two immediate fatal errors:
-
-1. **LaTeX Error:** `Unicode character Δ (U+0394)` at [`manuscript/sections/methods.tex:284`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/manuscript/sections/methods.tex#L284).
-   - Needs replacement with `$\Delta$`.
-2. **LaTeX Error:** `File 'fig6_phased_results' not found` at [`manuscript/sections/results.tex:480`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/manuscript/sections/results.tex#L480).
-   - `fig6_phased_results.pdf` is missing from the `figures/` directory.
-
----
-
-## 7. Layer 5: Re-calibrating "Scenario C" in Light of ANP Chemistry
-
-In Phase D, the reported AUC is $0.6398 \pm 0.0441$ compared to classical ECFP4-SVM $0.8693 \pm 0.0265$ ($p = 0.0009$).
-The manuscript frames this as an inherent limitation of quantum computing for molecular representations ("Scenario C honest negative").
-
-**Critical Scientific Re-assessment:**
-This underperformance is NOT proof that quantum molecular representations cannot encode chemistry. It is the deterministic mathematical outcome of:
-1. **Truncation Amputation:** Slicing off 70% of each ANP molecule, breaking the conserved $H_1$ ring cycles identified in P3.
-2. **Chiral Randomization:** The RDKit parity bug randomly assigning inverted diagonal signs to multi-chiral ANP stereocenters based on atom-traversal order.
-3. **Pseudo-Entanglement:** Omitting two-qubit entangling gates for bonds in the hybrid model.
-
-Framing an implementation artifact as an intrinsic quantum limitation misleads the drug discovery community. The manuscript must clarify that 8-atom truncation and 2D bond approximations destroy the pharmacophore of complex natural products.
-
----
-
-## 8. Actionable Refinements & Complete Code Patches
-
-### Refinement 1: Fix CIP Stereochemistry in `qmse_lib/processing.py`
-
-Modify [`scripts/qmse_lib/processing.py`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/scripts/qmse_lib/processing.py) to guarantee that absolute stereochemistry is invariant to SMILES atom ordering:
-
-```python
-def find_rs_stereoisomers(smiles: str) -> dict:
-    """
-    Accurately identify R/S stereocenters using Cahn-Ingold-Prelog (CIP) descriptors.
-    Essential for African Natural Products with dense chiral centers.
-    """
-    mol = Chem.MolFromSmiles(smiles)
-    if mol is None:
-        return {'R': [], 'S': [], 'U': []}
-
-    Chem.AssignStereochemistry(mol, cleanIt=True, force=True, flagPossibleStereoCenters=True)
-    chiral_centers = Chem.FindMolChiralCenters(mol, includeUnassigned=True)
-
-    rs_stereoisomers = {'R': [], 'S': [], 'U': []}
-    for idx, cip in chiral_centers:
-        if cip == 'R':
-            rs_stereoisomers['R'].append(idx)
-        elif cip == 'S':
-            rs_stereoisomers['S'].append(idx)
-        else:
-            rs_stereoisomers['U'].append(idx)
-
-    return rs_stereoisomers
-```
-
-### Refinement 2: True 3D Conformer Coulomb Matrix for ANPs
-
-Modify [`scripts/qmse_lib/matrix.py`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/scripts/qmse_lib/matrix.py) to compute physical 3D through-space distances, capturing the chiral pockets and spatial cavities of ANPs:
-
-```python
-def compute_3d_coulomb_matrix(smiles: str, num_atoms_max: int = 24) -> np.ndarray:
-    """
-    Computes true 3D Coulomb matrix using ETKDGv3 conformer coordinates.
-    Captures non-bonded through-space interactions vital for polycyclic ANPs.
-    """
-    mol = Chem.MolFromSmiles(smiles)
-    mol = Chem.AddHs(mol)
-    params = AllChem.ETKDGv3()
-    params.randomSeed = 42
-    if AllChem.EmbedMolecule(mol, params) != 0:
-        AllChem.EmbedMolecule(mol, useRandomCoords=True)
-
-    mol = Chem.RemoveHs(mol)
-    conf = mol.GetConformer()
-    n_atoms = mol.GetNumAtoms()
-
-    matrix = np.zeros((num_atoms_max, num_atoms_max))
-    limit = min(n_atoms, num_atoms_max)
-
-    # 1. Diagonal: 0.5 * Z_i^2.4
-    for i in range(limit):
-        Zi = mol.GetAtomWithIdx(i).GetAtomicNum()
-        matrix[i, i] = 0.5 * (Zi ** 2.4)
-
-    # 2. Off-diagonal: Physical 3D Coulomb potential Z_i * Z_j / ||R_i - R_j||
-    for i in range(limit):
-        pos_i = np.array(conf.GetAtomPosition(i))
-        Zi = mol.GetAtomWithIdx(i).GetAtomicNum()
-        for j in range(i + 1, limit):
-            pos_j = np.array(conf.GetAtomPosition(j))
-            Zj = mol.GetAtomWithIdx(j).GetAtomicNum()
-            dist = np.linalg.norm(pos_i - pos_j)
-            val = (Zi * Zj) / max(dist, 0.1)
-            matrix[i, j] = val
-            matrix[j, i] = val
-
-    return matrix
-```
-
-### Refinement 3: Replace SWAP Test with Inversion Test in `p7_ibm_quantum_kernel_svm.py`
-
-Modify [`scripts/p7_ibm_quantum_kernel_svm.py`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/scripts/p7_ibm_quantum_kernel_svm.py):
-
-```python
-def build_inversion_circuit(qc_A: QuantumCircuit, qc_B: QuantumCircuit) -> QuantumCircuit:
-    """
-    Computes |<ψ_B|ψ_A>|^2 using exactly n qubits (Inversion Test):
-    |0> ---> U_A ---> U_B^† ---> Measure in |0...0> basis.
-    Eliminates 2n+1 qubit overhead and destructive CSWAP gates on IBM hardware.
-    """
-    n_qubits = qc_A.num_qubits
-    qc_inv = QuantumCircuit(n_qubits, n_qubits)
-
-    # 1. Apply U_A
-    qc_inv.compose(qc_A, inplace=True)
-
-    # 2. Apply U_B^\dagger (inverse unitary)
-    qc_inv.compose(qc_B.inverse(), inplace=True)
-
-    # 3. Measure in computational basis
-    qc_inv.measure(range(n_qubits), range(n_qubits))
-    return qc_inv
-
-def compute_fidelity_from_counts(counts: dict, total_shots: int) -> float:
-    """Fidelity is the exact probability of measuring the all-zero state."""
-    num_qubits = len(next(iter(counts.keys())))
-    zero_key = '0' * num_qubits
-    return counts.get(zero_key, 0) / float(total_shots)
-```
-
-### Refinement 4: Genuine Bond Entanglement for Hybrid Models
-
-Modify [`scripts/p7_qmse_hybrid.py`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/scripts/p7_qmse_hybrid.py):
-
-```python
-def encode_qmse_circuit(submatrix: np.ndarray, wires: list):
-    """
-    Proper QMSE encoding following Boy et al. (2025):
-    - Single-qubit rotations for atomic numbers and CIP stereochemistry.
-    - Two-qubit IsingZZ entangling gates for chemical bonds.
-    """
-    n_qubits = len(wires)
-
-    # 1. Diagonal: Single-qubit rotation from atomic charges
-    for i in range(n_qubits):
-        angle_diag = submatrix[i, i]
-        qml.RY(angle_diag, wires=wires[i])
-
-    # 2. Off-diagonal: Two-qubit entangling gates for chemical bonds
-    for i in range(n_qubits):
-        for j in range(i + 1, n_qubits):
-            val = submatrix[i, j]
-            if abs(val) > 1e-5:
-                # IsingZZ creates genuine two-qubit entanglement for bond (i, j)
-                qml.IsingZZ(val, wires=[wires[i], wires[j]])
-```
-
-### Refinement 5: Fix LaTeX Manuscript Compilation
-1. In [`manuscript/sections/methods.tex:284`](file:///home/taamangtchu/Documents/Malaria_codesV2/Project7_Quantum_Molecular_Encoding_QML/manuscript/sections/methods.tex#L284):
-   - Replace `(Δ~$= 0.003$` with `($\Delta = 0.003$`.
-2. Generate `manuscript/figures/fig6_phased_results.pdf` from DAR canonical values to satisfy `\includegraphics[width=\linewidth]{fig6_phased_results}` in `manuscript/sections/results.tex`.
-
----
-
-## 9. Prioritized Implementation Roadmap
-
-```
-Step 1: Chemical Core & ANP Geometry Alignment
- ├── Patch qmse_lib/processing.py with true CIP stereochemistry
- ├── Introduce 3D conformer generation in qmse_lib/matrix.py for CoulombMatrix
- └── Replace linear atom slicing with a pharmacophore-aware subgraph reduction
-
-Step 2: Quantum Circuit & Protocol Repairs
- ├── Update p7_qmse_hybrid.py with true IsingZZ bond entanglers
- └── Replace CSWAP test with Inversion test in p7_ibm_quantum_kernel_svm.py
-
-Step 3: Manuscript Build & Provenance Recovery
- ├── Patch unicode Δ in manuscript/sections/methods.tex
- ├── Generate missing fig6_phased_results.pdf
- ├── Re-commit missing canonical scripts (p7_qmse_preprocess.py, p7_phase_d_canonical.py, etc.)
- └── Verify clean pdflatex build (0 errors)
-
-Step 4: Manuscript Narrative Realignment
- └── Contextualize Scenario C: explain how 8-atom truncation amputated the conserved H_1
-     polycyclic cores of African Natural Products documented in P1 and P3.
-```
-
----
-
-## 10. BMAD Novelty Audit: Why Project 7 Currently Reads as Incremental
-
-Applying the BMAD `scientific-critical-thinking` (Construct Validity & Logical Fallacy Analysis) and `peer-review` frameworks exposes **four structural reasons** why Project 7, in its current form, would be judged by Q1 journal reviewers (*JCIM*, *RSC Digital Discovery*, *Machine Learning: Science and Technology*) as an **incremental derivative study**:
-
-### 10.1 The "Method X on Dataset Y" Trap
-- Project 7 directly imports the `qmse_lib` repository from Boy et al. (*Mach. Learn.: Sci. Technol.* 6, 045076, 2025) and applies it—with an arbitrary 8-qubit truncation—to the P3 antimalarial dataset.
-- No new mathematical theorem, no new quantum circuit ansatz, and no domain-specific encoding adaptation for complex polycyclic natural products was introduced beyond adding 24 average bond lengths to a lookup dictionary.
-- **Deep Literature Context (NEW):** **Huang et al. *Science* 2022** demonstrated quantum advantage only on carefully constructed synthetic problems; **Thanasilp et al. *Quantum* 2024** proved exponential concentration in generic quantum kernels, explaining why naive QMSE fails on real molecules. P7's results align with these theoretical bounds.
-
-### 10.2 The Circular Construct Validity Fallacy (`eos80ch` Surrogate Labels)
-- **Fatal Epistemological Flaw:** P7 evaluates whether a stereochemically sensitive quantum encoding (QMSE) can outperform ECFP4 at predicting binary activity labels generated by **Ersilia `eos80ch`** (`p3_benchmark_19849.csv`).
-- **Why this is circular:** `eos80ch` is itself a classical machine learning model trained on 2D Morgan/ECFP fingerprints! Because `eos80ch` is 100% blind to 3D stereochemistry ($R/S$ enantiomers receive the exact same `eos80ch` prediction), **ECFP4 is mathematically guaranteed to have maximal mutual information with `eos80ch` labels.**
-- Any chiral or 3D conformational variance injected by QMSE acts as *orthogonal label noise* when evaluated against an ECFP-derived surrogate oracle. Testing a stereochemical quantum model on a stereochemistry-blind surrogate label is a classic **Construct Validity Failure**.
-- **Feasible Alternative (NEW):** Instead of claiming "QML beats ECFP4 on `eos80ch`", pivot to: **"QML resolves ECFP4-blind stereoisomer cliffs on experimental ChEMBL 34"** — this is falsifiable, biologically meaningful, and aligns with the project's stereochemical innovation.
-
-### 10.3 Redundant "Honest-Negative" Conclusion
-- P3 already established that quantum-inspired kernels (QKS) on compressed fingerprints do not surpass classical ECFP4-RBF.
-- P5 already established that deep graph/transformer representations degrade under scaffold splitting relative to ECFP4.
-- Reporting a third negative result (AUC $0.640 < 0.869$) that is trivially explained by slicing off 70% of the molecule (8-atom truncation) does not advance quantum chemical theory.
-- **Reframing Opportunity (NEW):** Frame the negative result as a **validation of theoretical bounds** — Thanasilp et al. *Quantum* 2024 predicted exponential concentration in generic quantum kernels; P7's AUC $0.640$ is consistent with this bound when using naive 8-qubit truncation on complex polycyclics.
-
-### 10.4 Failure to Leverage the Unique Biophysical Assets of P1–P5
-- Across P1–P5, this research program generated rare, high-value biophysical data: multi-target resistance resilience ratios (RRS) across wild-type and mutant *P. falciparum* targets (`PfDHFR`, `PfCRT`, `PfATP4`, `PfClpP`), explicit-solvent MD trajectories showing 87.5% static-vs-dynamic *Estimand Divergence* (P2), vacuolar pH 5.2 protonation states (P2), and $H_1$ persistent homology decompositions of African Natural Products (P3).
-- P7 ignores all of these biophysical endpoints, regressing to a generic 1,000-compound binary classification benchmark.
-- **Strategic Alignment (NEW):** Use P1/P2 biophysical data as the *gold-standard validation* for P7:
-  - **Tier B** (experimental RRS across WT/mutant + pH 5.2 vs 7.4) directly tests whether quantum encoding captures the *same* biophysical signals that explain resistance in P1/P2.
-  - **Tier C** (static-vs-MD estimand triage) uses P2's 87.5% discordance rate as the *ground truth* for what quantum methods should improve upon.
-
----
-
-## 11. Four Breakthrough Scientific Gaps & Novelties (BMAD Hypothesis Generation)
-
-To transform Project 7 from an incremental replication into a **high-impact, genuinely novel contribution**, we formulate four competing/complementary methodological innovations grounded in the 2024–2026 QML literature:
-
-```
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│                 TRANSFORMATION OF PROJECT 7: INCREMENTAL → NOVEL                 │
-├───────────────────────────┬──────────────────────────────────────────────────────┤
-│ CURRENT P7 (Incremental)  │ PROPOSED P7 (Breakthrough Novelty)                   │
-├───────────────────────────┼──────────────────────────────────────────────────────┤
-│ Naive 8-atom slicing      │ Novelty 1: Topology-Guided Ring Contraction (PH-QMSE)│
-│ (destroys H1 ANP cores)   │ Maps 1 qubit = 1 persistent H1 ring/pharmacophore    │
-├───────────────────────────┼──────────────────────────────────────────────────────┤
-│ Global fidelity K(A,B)    │ Novelty 2: Projected Quantum Kernels (1-RDM / 2-RDM) │
-│ (O(N²) cost + exp. conc.) │ O(N) Classical Shadows; defeats barren plateaus      │
-├───────────────────────────┼──────────────────────────────────────────────────────┤
-│ 2D-lookup Coulomb & buggy │ Novelty 3: Parity-Odd 3D Chiral Volume Determinant   │
-│ @/@@ traversal parity     │ SO(3)-invariant signed tetrahedral volume encoding   │
-├───────────────────────────┼──────────────────────────────────────────────────────┤
-│ Circular eos80ch labels   │ Novelty 4: Stereoisomer Activity Cliffs (ChEMBL 34)  │
-│ (2D fingerprint surrogate)│ & P2 MD-RRS / pH 5.2 Vacuolar Transport Benchmarks   │
-└───────────────────────────┴──────────────────────────────────────────────────────┘
-```
-
-### Novelty 1: Persistent-Homology Coarse-Grained QMSE (`PH-QMSE`) — Extending Boy et al. from 1D Chains to Polycyclic Natural Products
-* **The Literature Gap:** Boy et al. (2025) proved a *Fidelity-Preserving Chain-Contraction Theorem* that compresses repetitive 1D linear alkyl chains ($-\text{CH}_2-$) into a single effective qubit rotation. However, their theorem breaks down on **2D/3D fused, bridged, and spiro polycyclic ring systems ($H_1 \ge 3$)**, which P1 and P3 proved are the defining topological signature of African Natural Products (mean $H_1 = 3.61$ cycles).
-* **The Proposed Innovation:** Formulate **Topological Ring-Contraction QMSE (`PH-QMSE`)**, directly uniting P3 and P7:
-  1. Decompose each molecule into its **Junction Tree / Persistent Homology $H_1$ ring cliques** and **chiral pharmacophore nodes** (typically 6–12 nodes per 35-atom ANP).
-  2. Assign **1 qubit per $H_1$ ring cycle or chiral center** (instead of 1 qubit per arbitrary atom).
-  3. Encode ring aromaticity, heteroatom count, and persistent homology birth–death lifetime $(\text{persistence } \tau = d - b)$ into single-qubit rotations $R_y(\theta_i), R_z(\phi_i)$.
-  4. Encode ring-fusion bonds, spiro junctions, and inter-ring 3D dihedral angles into two-qubit entangling gates (`RXX`, `RYY`, `RZZ`).
-* **Why This is High-Impact:** It solves the #1 bottleneck in quantum drug discovery—**how to fit a 35-heavy-atom natural product onto an 8–12 qubit NISQ processor without truncating a single pharmacophoric feature.**
-
-### Novelty 2: Chiral Projected Quantum Kernels (`Chiral-PQK`) via Reduced Density Matrix Classical Shadows
-* **The Literature Gap:** Standard fidelity quantum kernels $K(A,B) = |\langle\psi_A|\psi_B\rangle|^2$ suffer from two fatal flaws on drug datasets:
-  1. **Exponential Concentration (Thanasilp et al., *Quantum* 2024):** As qubit count $n$ and entanglement grow, inner products between distinct states concentrate exponentially toward $2^{-n}$, turning the Gram matrix into $K \approx I$ (already observed in P7's 17-qubit Aer run where off-diagonal mean dropped to $0.059$ and AUC collapsed to $0.067$).
-  2. **Quadratic Circuit Scaling ($O(N^2)$):** Computing a kernel for $N = 19,849$ molecules requires $\sim 1.97 \times 10^8$ pairwise circuit executions—impossible on IBM Quantum hardware.
-* **The Proposed Innovation:** Replace global fidelity overlap with **Projected Quantum Kernels (PQK)** (Huang et al., *Science* 2021) using 1-qubit and 2-qubit **Reduced Density Matrices (1-RDM / 2-RDM)**:
-  1. Execute the $n$-qubit QMSE circuit **only once per molecule ($O(N)$ scaling!)** and measure local Pauli expectation values $\mathbf{s}_i(M) = \left(\langle X_i \rangle, \langle Y_i \rangle, \langle Z_i \rangle\right)$ and bonded two-qubit correlators $\mathbf{c}_{ij}(M) = \left(\langle X_i X_j \rangle, \langle Y_i Y_j \rangle, \langle Z_i Z_j \rangle\right)$.
-  2. Construct the Projected Quantum Kernel in classical post-processing:
-     $$K_{\text{PQK}}(A, B) = \exp\left(-\gamma \sum_{i} \|\rho_i^{(1)}(A) - \rho_i^{(1)}(B)\|_F^2 - \beta \sum_{\langle i,j \rangle} \|\rho_{ij}^{(2)}(A) - \rho_{ij}^{(2)}(B)\|_F^2\right)$$
-* **Why This is High-Impact:**
-  - Reduces quantum hardware circuit executions on P3 ($N = 19,849$) from **197,000,000 circuits to 19,849 circuits** (a $10,000\times$ reduction!).
-  - Mathematically provable immunity to global exponential kernel concentration while preserving genuine two-body quantum entanglement correlations across stereocenters.
-
-### Novelty 3: $SO(3)$-Invariant, Parity-Odd Chiral Volume Determinant Encoding
-* **The Literature Gap:** Standard GNNs (1-WL in P5), ECFP4 (P1/P3), and distance-only 3D Coulomb matrices ($Z_i Z_j / r_{ij}$) are **even under spatial inversion ($O(3)$-invariant)**—meaning a right-handed $(R)$-enantiomer and a left-handed $(S)$-enantiomer have identical distance matrices! Boy et al.'s ad-hoc heuristic (multiplying diagonal elements by $-1$) breaks continuity and fails on conformational ensembles.
-* **The Proposed Innovation:** Introduce a physically rigorous **Parity-Odd Chiral Pseudoscalar Phase** at every tetrahedral center $i$ using the 3D coordinates of its four bonded neighbors $(\mathbf{r}_1, \mathbf{r}_2, \mathbf{r}_3, \mathbf{r}_4)$ ordered by CIP priority:
-  $$\chi_i = \frac{\det\left[\mathbf{r}_1 - \mathbf{r}_4, \, \mathbf{r}_2 - \mathbf{r}_4, \, \mathbf{r}_3 - \mathbf{r}_4\right]}{\|\mathbf{r}_1 - \mathbf{r}_4\| \|\mathbf{r}_2 - \mathbf{r}_4\| \|\mathbf{r}_3 - \mathbf{r}_4\|} \in [-1, +1]$$
-  - Encode symmetric electrostatics into polar qubit rotations $R_y(\theta_i)$ and the parity-odd chiral volume $\chi_i$ into the **azimuthal quantum phase** $R_z(\pi \chi_i / 2)$.
-  - Under spatial reflection $\mathbf{r} \mapsto -\mathbf{r}$, $\chi_i \mapsto -\chi_i$, which applies the exact complex conjugation operator $\mathcal{K}$ to the quantum state $|\psi(R)\rangle = \mathcal{K}|\psi(S)\rangle$, while remaining strictly invariant under 3D rigid rotations $SO(3)$!
-* **Why This is High-Impact:** Provides a rigorous group-theoretic ($SO(3)$-invariant, $O(3)$-covariant) quantum encoding of molecular chirality, directly linking 3D stereochemical geometry to Bloch-sphere phase coherence.
-
-### Novelty 4: Eliminating the Surrogate Oracle — Benchmarking on Experimental Stereoisomer Cliffs & Biophysical RRS
-* **The Methodological Gap:** As diagnosed in §10.2, benchmarking on `eos80ch` tests whether QML can imitate an ECFP4 model.
-* **The Proposed Innovation:** Establish a three-tier **Stereochemically & Biophysically Grounded Benchmark** using data already curated in the repository:
-  1. **Tier A — ChEMBL 34 Stereoisomer Activity Cliffs (The "ECFP4-Blind" Regime):**
-     Extract all stereoisomer pairs (enantiomers and diastereomers, e.g., quinine vs. quinidine, artemisinin epimers, mefloquine erythro/threo isomers) from the 22,447 ChEMBL 34 experimental antimalarial dataset (`IC50` $\le 10\,\mu\text{M}$).
-     - On these pairs, **ECFP4 Tanimoto similarity is 1.000**, so ECFP4-SVM and 1-WL GNNs achieve **exact random chance (AUC = 0.500)** on pair-ranking!
-     - Demonstrate that `Chiral-PQK` / `PH-QMSE` achieves statistically significant discrimination ($\text{AUC} > 0.75$) on experimental stereoisomer activity cliffs.
-  2. **Tier B — P1/P2 Resistance Resilience Score (RRS) & Vacuolar pH 5.2 Protonation:**
-     Use `PH-QMSE` to predict target-specific RRS across `PfDHFR` (WT vs. quadruple mutant) and `PfCRT` (WT vs. `K76T` at digestive vacuole pH 5.2 vs. cytosolic pH 7.4), encoding pH-dependent formal charges into the diagonal qubit rotations.
-  3. **Tier C — P2 Static-vs-MD *Estimand Divergence* Triage:**
-     Test whether 3D conformational ensemble quantum shadows can distinguish the 12.5% true MD-stable polypharmacological leads from the 87.5% static-docking false positives identified in P2.
-
----
-
-## 12. BMAD Experimental Design & Falsifiable Hypotheses for the Upgraded P7
-
-Following the `hypothesis-generation` and `experimental-design` skills, we structure the upgraded Project 7 around three falsifiable hypotheses with pre-specified decision gates:
-
-| Hypothesis | Mechanistic Claim | Control / Baseline | Primary Metric & Falsification Gate |
-|---|---|---|---|
-| **H1: Stereoisomer Cliff Resolution** | $SO(3)$-invariant parity-odd phase encoding ($R_z(\pi\chi_i/2)$) separates experimental ChEMBL 34 stereoisomer pairs that collide in 2D fingerprint space. | ECFP4-SVM & 1-WL GIN (both structurally locked at AUC = 0.50 on pure stereoisomer pairs). | Pairwise concordance / AUC on ChEMBL stereoisomer cliffs. **Gate:** $\text{AUC}_{\text{PQK}} \ge 0.70$ ($p < 0.01$, permutation test). |
-| **H2: Topological Ring Contraction (`PH-QMSE`)** | Coarse-graining 25–40 atom ANPs into 8–12 $H_1$ ring/pharmacophore qubits preserves whole-molecule predictive signal lost by 8-atom SMILES truncation. | Naive 8-atom truncated QMSE (Phase D baseline, AUC $0.640$) & Boy et al. 1D chain contraction. | 5-fold CV AUC on experimental ChEMBL 34 & P3 panels. **Gate:** $\Delta\text{AUC} \ge +0.15$ over naive 8-qubit truncation ($p < 0.001$). |
-| **H3: Projected Quantum Kernel (`PQK`) vs. Fidelity Kernel** | Local 1-RDM/2-RDM classical shadows prevent exponential kernel concentration as qubit count scales from $n=8$ to $n=20$. | Standard global overlap kernel $K(A,B) = |\langle\psi_A|\psi_B\rangle|^2$. | Off-diagonal kernel variance $\text{Var}[K_{ij}]$ and KTA across $n \in \{8, 12, 16, 20\}$. **Gate:** $\text{Var}[K_{\text{PQK}}]$ decays polynomially, whereas $\text{Var}[K_{\text{Fid}}] \propto 2^{-n}$. |
-
-
----
-
-# Addendum v2 — Web-Verified Deep Refinement (16 Oct 2026)
-
-## A. Verification ledger
-
-| Claim | Status | Note |
+| Claim | Status | Evidence |
 |---|---|---|
-| Boy et al., *Encoding molecular structures in quantum machine learning*, *Mach. Learn.: Sci. Technol.* 6, 045076 (2025); arXiv:2507.20422; DOI 10.1088/2632-2153/ae304f | ✅ Verified | First author *Choy Boy*; QMSE benchmarks were state-phase classification and boiling-point regression on small molecules, not drug-like natural products. |
-| Fidelity-Preserving Chain-Contraction Theorem is for repeated linear substructures | ✅ Verified | Our extension to ring systems (`PH-QMSE`) is therefore a *new, unproven* statement; it needs its own fidelity analysis, not an appeal to Boy et al. |
-| STONED/SELFIES discards stereo; needs external RDKit handling | ✅ Verified | Keep core-locked stereo-enumerated exploration. Partial SELFIES stereo tokens exist; don't rely on them. |
-| "Better than classical?" (Bowles, Ahmed, Schuld, arXiv:2403.07059, 2024) | ✅ Verified | Out-of-the-box classical models matched or beat popular QML models, and **removing entanglement often did not hurt**. |
-| Cerezo et al., *Does provable absence of barren plateaus imply classical simulability?* (*Nat. Commun.* 2025) | ✅ Exists; confirm volume/page | Trainable ⇒ often classically simulable. |
+| Boy et al. 2025, *MLST* 6, 045076 | ✅ Verified | DOI 10.1088/2632-2153/ae304f; arXiv:2507.20422 |
+| Chain-contraction theorem applies to repeated **linear** substructures | ✅ Verified | arXiv abstract ("…with an application to long-chain fatty acids"); ring extension is a new statement |
+| Reference QMSE implementation is public | ✅ Verified | `stfc/quantum-molecular-encodings` (GitHub) |
+| Thanasilp et al. exponential concentration | ✅ **Corrected citation** | *Nature Communications* **15**, 5200 (2024) — previously cited as *Quantum* 8, 1481 |
+| Projected quantum kernels (1-RDM/2-RDM) | ✅ **Corrected citation** | Huang et al., *Nature Communications* **12**, 2631 (2021) — previously cited as *Science* 2021 |
+| Cerezo et al. barren plateaus ⇒ simulability | ✅ Verified | *Nature Communications* **16**, 7907 (2025), DOI 10.1038/s41467-025-63099-6 |
+| "Better than classical?" benchmarking | ✅ Verified | arXiv:2403.07059 (2024) |
+| `eos80ch` labels are stage-specific | ✅ Verified (cross-project) | van Heerden et al., *ACS Omega* 8(46), 43813–43826 (2023); see P5 audit §5 |
+| STONED/SELFIES does not preserve stereo by default | ✅ Verified | Static string mutation; stereo must be handled externally in RDKit |
+| Canonical scripts/results missing; `Δ` breaks the build | ✅ **Confirmed** | Direct tree inspection at the pinned commit (table in §5) |
+| "PH-QMSE solves the #1 bottleneck" | ⏹ Withdrawn target | Requires its own fidelity proof (§4.4) |
+| `AUC_PQK ≥ 0.70`; `ΔAUC ≥ +0.15` over 8-atom truncation; polynomial `Var[PQK]` decay | ⏹ Withdrawn targets | Outcome is **measured**; the comparator must be a matched classical baseline, not a broken one |
+| Default Morgan/ECFP4-class fingerprints cannot separate enantiomers; chirality-aware ones can | ✅ **Verified (measured, rev 2.1)** | `scripts/p7_chirality_fingerprint_probe.py` CHECK A (sha256 `565abd0b…`, RDKit 2026.03.4): Tanimoto 1.0000 (default) vs 0.7333 / 0.5833 (chirality-aware) |
+| CIP labels are invariant to SMILES re-rooting; raw `ChiralTag` is not | ✅ **Verified (measured, rev 2.1)** | same probe, CHECK B: CIP preserved 71/71 variants; tag flipped in 22, incl. artemisinin 15/20 |
+| Encoder reads the QMSE diagonal? | ❌ **No — source-confirmed (rev 2.1)** | `scripts/p7_qmse_hybrid.py` lines 156–163 use only `submatrix[i,j]`, `i < j` (sha256 `648892b9…`) |
+| “No entanglement is generated” (rev 2 §4.1 headline) | ⏹ **Withdrawn as too strong (rev 2.1)** | lines 166–181 contain a `cnot`/`cz`/`IsingZZ(0.1,…)` layer between adjacent wires; the accurate statement is *molecularly uninformative, fixed-strength* entanglement |
+| SWAP test with `2n+1` qubits and CSWAPs (rev 2 §4.2) | ✅ **Source-confirmed (rev 2.1)** | `scripts/p7_ibm_quantum_kernel_svm.py` lines 226–276 (sha256 `eb96cc7c…`): `QuantumCircuit(2*n_qubits + 1, 1)`, `cswap(0, i+1, i+n_qubits+1)` |
+| Code defects in §3.1–§4.2 | 🟡 §3.1, §4.1, §4.2 source-confirmed (§3.1 also measured); §3.2–§3.4, §4.3, §4.4 ⏸ assessed from quoted code | §3.1: `processing.py:33/44` + `matrix.py:151/154–161` + `test_qmse_stereochemistry.py:12–30`; §4.1: `p7_qmse_hybrid.py:156–181`; §4.2: `p7_ibm_quantum_kernel_svm.py:226–276` |
 
-## B. Consequences for the P7 plan
+---
 
-1. **Non-entangling circuit is the central risk, not a footnote.** With only R_z-type encodings and no entanglers, the model is a product-state feature map and is classically simulable by construction. Any reported result must be accompanied by (i) an **entanglement ablation** (with vs without CNOT/CZ layers) and (ii) a **classical kernel matched on the same features** (e.g. an RBF/cosine kernel on the identical Coulomb/bond-order features).
-2. **Claim ceiling.** Following the benchmark literature, the realistic publishable outcome is: *parity with, or no advantage over, matched classical baselines*, with a clear statement of *where the encoding fails* (e.g. polycyclic natural products). Do not write "quantum advantage".
-3. **Dequantization check.** Estimate the Lie-algebra/gradient-variance scaling of the final ansatz (even at 8–12 qubits, report the observed gradient variance vs qubit count) to document trainability and classical simulability honestly.
-4. **Label circularity.** The `eos80ch` surrogate-label caveat from P5 applies unchanged here: evaluate on experimental ChEMBL labels and on the stereoisomer-cliff set, not only surrogate labels. Also note `eos80ch` models gametocyte-vs-asexual selectivity; confirm the label semantics.
-5. **`PH-QMSE` fidelity test.** Define fidelity as |⟨ψ_full|ψ_contracted⟩|² (or kernel-matrix agreement) on molecules small enough for the uncontracted circuit; report the decay with number of contracted rings before applying it to 25–40-atom ANPs.
-6. **Stereo parity.** Verify the sign-flip behavior of the chiral volume feature on a set of known enantiomer pairs (feature must flip sign, kernel invariant under rotation) before any ML run.
+## 7. Refinement programme
 
-## C. Minimal decisive experiment ladder
+rev 1 numbering retained for continuity: rev 1 §8 code patches → Appendix A; rev 1 §10 novelty audit → §1 and §7.4; rev 1 §11 novelties 1–4 (PH-QMSE, Chiral-PQK, parity-odd encoding, benchmark tiers) → §4.4, §4.3, §3.4 and §7.3 respectively; rev 1 §12 hypotheses H1–H3 → §7.5 below; rev 1 addendum C ladder R1–R4 → §7.1.
+
+### 7.1 Decisive experiment ladder (each rung has a stop rule)
 
 | Rung | Test | Stop rule |
 |---|---|---|
-| R1 | Product-state QMSE vs matched classical kernel (8 qubits) | If equal ⇒ report parity; proceed only for the chirality question |
-| R2 | + entanglers; ablate | If no gain ⇒ drop entanglement claims |
-| R3 | `PH-QMSE` on ring-bearing molecules vs 8-atom truncation vs ECFP4 | Scaffold-held-out; report CI via scaffold-cluster bootstrap |
-| R4 | Chiral features on ChEMBL stereoisomer pairs | Report AUROC of "which enantiomer is more active", with a classical 3D baseline |
+| **R1** | Product-state QMSE versus a **matched classical kernel on the identical hybrid Coulomb-adjacency features** (8 qubits) | Parity ⇒ report parity; proceed only for the chirality question |
+| **R2** | Add entangler layers; ablate with/without | No gain ⇒ drop all entanglement claims |
+| **R3** | Ring/chain contraction versus 8-atom truncation versus ECFP4, scaffold-held-out; report contraction fidelity (§4.4) | Fidelity decay unacceptable ⇒ contraction withdrawn |
+| **R4** | Chirality features on experimental stereoisomer pairs (ChEMBL), against a classical 3D baseline | Report AUROC of "which enantiomer is more active" with CI |
 
-Any positive result goes to the P7 DAR first (per `AGENTS.md`), and manuscript claims follow only from completed, QC-passed runs.
+### 7.2 Port validation before application
+Run the published Boy et al. benchmarks (state-phase classification, boiling-point regression) with the **reference implementation** as a regression test of the local port. This is the cheapest way to separate "our encoding is broken" from "QMSE is limited".
+
+### 7.3 Benchmark design
+Build the three-tier benchmark on **experimental** labels, not the `eos80ch` surrogate:
+- **Tier A — stereoisomer activity cliffs** (enantiomer/diastereomer pairs from curated experimental antimalarial data; ECFP4 similarity 1.000, so fingerprint and 1-WL baselines sit at chance on pair ranking);
+- **Tier B — resistance/biophysical endpoints** (P1/P2 sets), framed as **estimand-relative** comparisons;
+- **Tier C — static-versus-MD divergence triage**, framed as a consistency study.
+
+**Constraint:** P2's RRS and the static-vs-MD divergence are contested measurements (see the P1/P2 audits). They may be used as *targets of a consistency question*, not as ground truth for validating a new estimator.
+
+### 7.4 Report ceiling
+Following Cerezo et al. (2025) and Bowles et al. (2024), the realistic publishable outcome is **parity with, or no advantage over, matched classical baselines**, with a clear statement of where the encoding fails. Do not write "quantum advantage". Any positive result goes to the P7 DAR first, and manuscript claims follow only from completed, QC-passed runs (`AGENTS.md` rule 8).
+
+---
+
+### 7.5 Falsifiable hypotheses (rev 1 table, gates corrected)
+
+| Hypothesis | Mechanistic claim | Control / baseline | Metric and decision rule (no pre-claimed values) |
+|---|---|---|---|
+| **H1 — Stereoisomer cliff resolution** | `SO(3)`-invariant, parity-odd phase encoding separates experimental stereoisomer pairs that collide in 2D fingerprint space | ECFP4-SVM and 1-WL GIN (structurally at chance on pure stereoisomer pairs) **plus a classical 3D chirality baseline** | Pairwise concordance/AUROC with CI. Decision: the **classical 3D baseline** must be beaten with a CI excluding zero. An absolute AUC target is not pre-claimed |
+| **H2 — Topological ring contraction** | Coarse-graining 25–40-atom ANPs into 8–12 `H₁`-ring/chiral nodes preserves whole-molecule signal lost by 8-atom SMILES truncation | Naive 8-atom QMSE (Phase D baseline), Boy et al. 1D chain contraction, **and ECFP4** | Scaffold-held-out AUC with CI, after the contraction-fidelity check (§4.4). Decision: contraction beats naive truncation **and** is not worse than its matched classical kernel. The rev 1 gate `ΔAUC ≥ +0.15` is withdrawn |
+| **H3 — Projected vs fidelity kernel** | Local 1-RDM/2-RDM features avoid the exponential concentration of global overlap kernels as qubit count grows | Global fidelity kernel `K(A,B) = ‖⟨ψ_A\|ψ_B⟩‖²` | Measured off-diagonal kernel variance across `n ∈ {8, 12, 16, 20}`, plus KTA and effective dimension. Decision: report the scaling **as measured**; the rev 1 claim of polynomial `Var[PQK]` decay is withdrawn |
+
+---
+
+## 8. The "wow" factor — what should make a referee or editor say *waouh*
+
+**The one line.**
+
+> A **refutation-ready quantum encoder**: its invariances are proved numerically *before* any ML claim, the published reference implementation is reproduced as a regression test so a null result can be attributed to physics rather than to a broken port, and the experiment that would end the programme is pre-registered.
+
+### 8.1 Why it lands
+
+Quantum machine learning has a credibility problem of its own making: benchmark claims against unverified baselines and undisclosed classical comparators, in a literature that has already shown out-of-the-box classical models matching or beating popular QML models (Bowles, Ahmed, Schuld, arXiv:2403.07059 (2024)) and that provable absence of barren plateaus tends to imply classical simulability (Cerezo et al., *Nat. Commun.* **16**, 7907 (2025), DOI 10.1038/s41467-025-63099-6). The paper's credibility therefore cannot come from a larger AUC; it has to come from **measurement hygiene that a referee can re-run**. Four things deliver that, and all four are cheap:
+
+1. **The encoder's own defects are located in the tree *and* measured.** The claims in §3.1 are now both source-confirmed (`processing.py:33/44`, `matrix.py:151/154–161`) and numerically reproduced by a committed, read-only probe; §4.1–§4.2 were source-confirmed in the same pass, and one rev 2 headline was corrected in the process (“no entanglement is generated” → *fixed-strength, molecule-independent entanglement*, because the encoding uses only `i < j` off-diagonals and never reads the matrix diagonal). See §8.2. The finding that should worry a reviewer most is that **the project's own `test_qmse_stereochemistry.py` re-implements the same parity-based mapping**, so the test suite could not have caught the defect. The CIP/tag finding is not a code-reading opinion: the raw chiral tag **changed in 22 of 71 equivalent-SMILES variants**, and for **artemisinin** (7 stereocentres, the flagship polycyclic natural-product-like case) it changed in **15 of 20** — while the CIP descriptor was preserved in **71/71**. That is precisely the regime P7 operates in, and it converts the project's most damaging implementation finding into a quantified, reproducible statement about stereochemical encodings of ANP-like chemistry.
+2. **A port regression test instead of an unverified implementation.** Running the published Boy et al. benchmarks (state-phase classification, boiling-point regression) with the public reference implementation `stfc/quantum-molecular-encodings` inside CI is the cheapest way to separate "our encoding is broken" from "QMSE is limited" (Boy et al., *Mach. Learn.: Sci. Technol.* **6**, 045076 (2025), DOI 10.1088/2632-2153/ae304f). Almost no QML paper does this; reviewers' first question is exactly whether the port is faithful.
+3. **The seam is defined by the task, not by a race.** A stereo/chirality benchmark only means something when the strongest classical comparator is included — and the probe shows why: a *default* Morgan fingerprint cannot see chirality at all (Tanimoto 1.0000 on enantiomer pairs), whereas `includeChirality=True` separates them (0.7333 / 0.5833). A stereo result benchmarked against the default fingerprint is therefore vacuous, and the matched classical comparator must be the chirality-aware fingerprint **plus** a 3D shape/pharmacophore or 3D-chirality descriptor computed from the same conformers.
+4. **Pre-registered stop rules and a declared ceiling.** The R1–R4 ladder (§7.1) states in advance which observation terminates which claim, and §7.4 states the publishable ceiling as **parity with matched classical baselines**. Saying up front what result would end the project is the single least common, most trust-generating sentence in this literature.
+
+### 8.2 Wow at a glance (measured on 16 Oct 2026)
+
+Command: `python3 scripts/p7_chirality_fingerprint_probe.py` → exit status **0** (script sha256 `565abd0b…`; RDKit **2026.03.4**; read-only, writes nothing).
+
+| Result | Value | Evidence |
+|---|---|---|
+| Default fingerprint cannot rank enantiomers | Morgan r = 2, 2048 bits, count fingerprints: Tanimoto **1.0000** for alanine, threonine and lactic-acid pairs | `scripts/p7_chirality_fingerprint_probe.py` CHECK A |
+| Chirality-aware fingerprint can | `includeChirality=True`: **0.7333** (alanine), **0.5833** (threonine), **0.7333** (lactic acid) | same |
+| CIP label is ordering-invariant | preserved in **71/71** re-rooted SMILES variants (5 molecules, 1–7 stereocentres) | same, CHECK B |
+| Raw chiral tag is not | flipped in **22** variants; artemisinin **15/20**; threonine 2/8; quinine 4/25 | same, CHECK B |
+| The bug in the tree (source locations) | `scripts/qmse_lib/processing.py` line 33 / line 44 (sha256 `3163b80d…`); `scripts/qmse_lib/matrix.py` lines 151, 154–161 (sha256 `7da75402…`) | tree inspection at the pinned commit |
+| The same bug in the project's own test | `test_qmse_stereochemistry.py` lines 12–30, used at 59 and 120–121 (sha256 `a50bd1be…`) — the regression test asserts the wrong invariant | tree inspection at the pinned commit |
+| The bug's consequence in the encoder | `matrix.py` builds `diagonal = 0.5·Z^exponent` (line 151) and multiplies it by **−1** for every atom labelled `'S'` (lines 154–161), so equivalent SMILES can differ in up to `2^k` diagonal-sign patterns | report §3.1 |
+| …and the encoder never reads that diagonal | the encoding loop covers only `i < j` (`submatrix[i,j]`), so the charge/stereo diagonal never reaches the circuit at all | `scripts/p7_qmse_hybrid.py` lines 156–163 (sha256 `648892b9…`) |
+| Entanglement in the circuit is molecularly uninformative | the entangler is fixed at strength `0.1` and applied only between adjacent wires, independent of bonds or matrix values | `scripts/p7_qmse_hybrid.py` lines 166–181 (sha256 `648892b9…`) |
+| Port test target | `stfc/quantum-molecular-encodings`; Boy et al. 2025 | report §6 |
+| Executions saved by the inversion test | `n` qubits / 0 CSWAP instead of `2n+1` qubits / `n` Fredkin gates | Havlíček et al., *Nature* **567**, 209–212 (2019) |
+| Concentration diagnostic | off-diagonal kernel variance vs `n`; PQK (1-RDM/2-RDM) cuts executions `O(N²)` → `O(N)` | Thanasilp et al., *Nat. Commun.* **15**, 5200 (2024); Huang et al., *Nat. Commun.* **12**, 2631 (2021) |
+| Declared ceiling | parity with, or no advantage over, matched classical baselines | Cerezo 2025; Bowles 2024; §7.4 |
+
+**Scope note:** `scripts/p7_chirality_fingerprint_probe.py` is **new work added by this revision**, not one of the five scripts reported ABSENT in §5; that table remains accurate and unchanged.
+
+### 8.3 The artifact that carries it — one panel
+
+**Figure P7-F ("the falsification panel"), four tiles**: (i) the committed probe table (default vs chirality-aware separability, CIP/tag invariance) with the CI exit status; (ii) the port regression result against the published QMSE benchmarks; (iii) the R1 parity plot — quantum versus **matched classical kernel on identical hybrid Coulomb-adjacency features** at 8 qubits; (iv) off-diagonal kernel variance as a function of qubit count `n ∈ {8, 12, 16, 20}`. Caption line: *"Our first result is a harness that fails the encoder when the physics is wrong."*
+
+### 8.4 The decisive, cheap experiments
+
+| # | Action | Cost | Gate |
+|---|---|---|---|
+| W1 | Run the probe in CI; fail the build if the CIP/tag invariance behaviour changes | minutes | Exit 0 on PASS; the probe is the regression test for the §3.1 fix |
+| W2 | Port regression: reproduce the published QMSE benchmarks with the reference implementation | days | Published metric reported side by side with ours, with tolerance |
+| W3 | **R1**: matched classical kernel on the *identical* hybrid Coulomb-adjacency features, 8 qubits | simulator hours | Parity ⇒ report parity, and the programme continues only on the chirality question |
+| W4 | **R2**: entanglement ablation (with vs without entangler layers), reported as a first-class result | simulator hours | No gain ⇒ drop all entanglement claims |
+| W5 | Numeric proof harness for the parity-odd `χ_i` (sign flip on known enantiomer pairs; invariance under random `SO(3)` rotations) *before* any ML run | minutes | Both properties must hold, else the stereochemistry programme stops here |
+| W6 | **R3**: ring/chain contraction vs 8-atom truncation vs `ECFP4`, scaffold-held-out, with the contraction-fidelity check (§4.4) | simulator hours | Fidelity decay reported; unacceptable decay ⇒ contraction withdrawn |
+
+### 8.5 The controls that make it credible
+
+Matched classical kernel on identical features; classical comparators on the same conformers (chirality-aware fingerprint + 3D shape/pharmacophore + 3D chirality descriptor); the reference-implementation regression test; `n`-qubit inversion test rather than a `2n+1`-qubit SWAP test; explicit entanglement ablation; fidelity check before any contraction claim; and experimental (not surrogate) labels for the stereochemistry tier (§7.3).
+
+### 8.6 What must not be claimed
+
+- No "quantum advantage" framing; the declared ceiling is parity.
+- No pre-claimed `AUC_PQK ≥ 0.70` or `ΔAUC ≥ +0.15` (withdrawn).
+- No extension of Boy et al.'s chain-contraction theorem to fused/bridged/spiro rings without its own fidelity proof.
+- No stereo claim benchmarked against a constitution-only fingerprint — the separator must be the chirality-aware classical comparator (measured in §8.2).
+- No new manuscript claim from a run that has not passed QC (`AGENTS.md` rule 8).
+
+### 8.7 What would falsify it
+
+If **R1** reaches parity on *identical* features, the encoding contributes nothing beyond the classical kernel and the paper reduces to the chirality question; if the parity-odd `χ_i` fails the reflection/rotation harness (**W5**), the stereochemistry programme stops there; and if the port regression fails, no benchmark claim in the manuscript is admissible until it passes.
+
+### 8.8 Cover-letter line (for the editor)
+
+> "Our first quantum result is a falsification harness: we measure our own encoder's stereochemical defect (CIP preserved in 71/71 equivalent SMILES writes, raw parity not — 15/20 variants for artemisinin), we reproduce the published reference implementation as a regression test, and we pre-register the experiment whose parity outcome would end the claim."
+
+---
+
+## Appendix A — Code patches retained from rev 1
+
+These are the rev 1 repair patches, kept for continuity. None of them may be claimed to improve performance until the §7.1 ladder has been run; they fix correctness first.
+
+**A1 — CIP stereochemistry invariant to SMILES ordering** (`scripts/qmse_lib/processing.py`):
+
+```python
+def find_rs_stereoisomers(smiles: str) -> dict:
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return {'R': [], 'S': [], 'U': []}
+    Chem.AssignStereochemistry(mol, cleanIt=True, force=True, flagPossibleStereoCenters=True)
+    rs = {'R': [], 'S': [], 'U': []}
+    for idx, cip in Chem.FindMolChiralCenters(mol, includeUnassigned=True):
+        rs[cip if cip in ('R', 'S') else 'U'].append(idx)
+    return rs
+```
+
+**A2 — True 3D Coulomb matrix from an ETKDGv3 conformer** (`scripts/qmse_lib/matrix.py`):
+
+```python
+def compute_3d_coulomb_matrix(smiles: str, num_atoms_max: int = 24) -> np.ndarray:
+    mol = Chem.AddHs(Chem.MolFromSmiles(smiles))
+    params = AllChem.ETKDGv3(); params.randomSeed = 42
+    if AllChem.EmbedMolecule(mol, params) != 0:
+        AllChem.EmbedMolecule(mol, useRandomCoords=True)
+    mol = Chem.RemoveHs(mol)
+    conf, n = mol.GetConformer(), mol.GetNumAtoms()
+    m = np.zeros((num_atoms_max, num_atoms_max))
+    lim = min(n, num_atoms_max)
+    for i in range(lim):
+        Zi = mol.GetAtomWithIdx(i).GetAtomicNum()
+        m[i, i] = 0.5 * (Zi ** 2.4)
+        for j in range(i + 1, lim):
+            Zj = mol.GetAtomWithIdx(j).GetAtomicNum()
+            d = np.linalg.norm(np.array(conf.GetAtomPosition(i)) - np.array(conf.GetAtomPosition(j)))
+            m[i, j] = m[j, i] = (Zi * Zj) / max(d, 0.1)
+    return m
+```
+
+**A3 — Inversion test instead of SWAP test** (`scripts/p7_ibm_quantum_kernel_svm.py`):
+
+```python
+def build_inversion_circuit(qc_A, qc_B):
+    n = qc_A.num_qubits
+    qc = QuantumCircuit(n, n)
+    qc.compose(qc_A, inplace=True)
+    qc.compose(qc_B.inverse(), inplace=True)
+    qc.measure(range(n), range(n))
+    return qc
+
+def compute_fidelity_from_counts(counts: dict, total_shots: int) -> float:
+    n = len(next(iter(counts)))
+    return counts.get('0' * n, 0) / float(total_shots)
+```
+
+**A4 — Genuine two-qubit bond entanglement** (`scripts/p7_qmse_hybrid.py`):
+
+```python
+def encode_qmse_circuit(submatrix, wires):
+    n = len(wires)
+    for i in range(n):                      # diagonal: charge + stereo phase
+        qml.RY(float(submatrix[i, i]), wires=wires[i])
+    for i in range(n):                      # off-diagonal: bonds entangle
+        for j in range(i + 1, n):
+            v = submatrix[i, j]
+            if abs(v) > 1e-5:
+                qml.IsingZZ(float(v), wires=[wires[i], wires[j]])
+```
+
+**A5 — Manuscript build repairs:** replace the raw `Δ` at `manuscript/sections/methods.tex:284` with `$\Delta$`; generate `manuscript/figures/fig6_phased_results.{pdf,png}` from the canonical DAR values or remove the `\includegraphics`; add a CI `pdflatex` build that fails on errors and undefined references.
+
+---
+
+## 9. Limits of this audit
+
+- No quantum circuit was executed and no model retrained. The Scenario C numbers (AUC 0.6398 ± 0.0441 vs 0.8693 ± 0.0265) are quoted from the DAR at the pinned commit.
+- **Source-confirmed at the pinned commit in this revision:** §3.1 (`scripts/qmse_lib/processing.py:33/44`; `scripts/qmse_lib/matrix.py:151/154–161`; `test_qmse_stereochemistry.py:12–30`) — and measured by the committed probe (§8.2); §4.1 (`scripts/p7_qmse_hybrid.py:156–181`), where the rev 2 headline “no entanglement is generated” is withdrawn as too strong; §4.2 (`scripts/p7_ibm_quantum_kernel_svm.py:226–276`).
+- **Not re-inspected in this revision:** §3.2 and §3.3 (the truncation and 2-D-matrix code lives in `scripts/p7_phase_d_canonical.py` and the preprocessing scripts, which remain ABSENT from the tree) and §4.3–§4.4 (diagnostics and contraction fidelity are proposals, not implemented code). Their verdicts remain inferences from the excerpts quoted in this report.
+- The probe's CHECK B was run on five molecules (1–7 stereocentres, including artemisinin). It shows that the raw chiral tag is ordering-dependent and the CIP label is not; it does not, and cannot, quantify the resulting end-to-end AUC effect of the encoder bug.
+- "PH-QMSE", `Chiral-PQK` and the Tier A/B/C benchmarks are proposals, not results.
+- The reference-implementation regression test (§7.2) has not been run.

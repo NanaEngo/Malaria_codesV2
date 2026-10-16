@@ -1,169 +1,244 @@
 # P1 Adversarial Audit, Rejection Root-Cause Analysis & Deep Scientific Refinements
 **Project:** `Project1_Chem_space_antimalarial_V7_CorrectedGrid` (Chemical Space Exploration, Polypharmacology & Resistance Resilience)
-**Date:** 16 October 2026
-**Auditor Frameworks:** BMAD Multi-Layer Code & Scientific Review (`bmad-code-review`), Scientific Critical Thinking (`scientific-critical-thinking`), Hypothesis Generation (`hypothesis-generation`), Experimental Design (`experimental-design`), Peer Review (`peer-review`)
-**Rejection Context:** Refused by *Journal of Chemical Information and Modeling* (JCIM) (initial review + 16 Sept 2026 resubmission refusal).
-**Key Literature Anchors:**
-- Kim et al., *"Structure and drug resistance of the Plasmodium falciparum transporter PfCRT"*, *Nature* 576, 315–320 (2019).
-- Hany et al., *"Machine learning rescoring improves structure-based virtual screening on wild-type and quadruple-mutant PfDHFR"*, *Drug Des. Devel. Ther.* 19, 10.2147/DDDT.S537065 (2025).
-- Gómez-Bombarelli et al., *"Automatic chemical design using a data-driven continuous representation of molecules"*, *ACS Cent. Sci.* 4, 268–276 (2018).
-- Nigam et al., *"Beyond generative models: superfast traversal, optimization, novelty, exploration and discovery (STONED) algorithm for molecules using SELFIES"*, *Chem. Sci.* 12, 7079–7090 (2021).
+**Revision:** rev 2.1 — 16 October 2026. rev 2: addendum folded into the body, retracted targets and refuted claims removed, evidence pinning added. rev 2.1: **§7 "wow" factor** (the referee-facing contribution) added; no other section renumbered in meaning, the former §7 (limits) is now §8.
 
----
+## Audit pin
 
-## 1. Executive Summary & BMAD Audit Scorecard
-
-Project 1 attempted to combine two distinct studies into a single manuscript: (1) generative expansion of 396 African Natural Products (ANPs) and 454 synthetic antimalarials into a 65,856-compound library compressed into 484 VAE centroids, and (2) a 17-compound multi-target and mutant Resistance Resilience Score (RRS) docking analysis (Set C).
-
-Applying the BMAD adversarial review framework to the codebase, receptor structures, statistical scripts, and JCIM reviewer critiques reveals **five fatal scientific and structural flaws** that caused the rejection—and explains why simple cosmetic edits (V8) were insufficient to overturn the editorial refusal.
-
-### BMAD Audit Scorecard for P1
-
-| Audit Layer | Severity | Status | Root Cause of Rejection / Vulnerability |
-|---|:---:|:---:|---|
-| **1. Receptor Structural Biology (`PfCRT` & `PfDHFR`)** | 🔴 **CRITICAL** | **FAIL** | `PfCRT` (`6UKJ`) is the **7G8 resistant mutant (`T76`)**, not wild-type (`K76`), and residue 76 lies **16.7–19.5 Å outside the docking box**. `PfDHFR` (`1J3I`) retained co-crystallized **methotrexate (`MTX`)** in the binding pocket, blocking DEKOIS 2.0 actives ($\text{EF}@1\% = 0.00$, $\text{AUC} = 0.45$). |
-| **2. RRS Experimental Control & Batch Confounding** | 🔴 **CRITICAL** | **FAIL** | Wild-type and mutant receptors were prepared via different pipelines and cofactor states. $\text{RRS}$ confounds **receptor preparation batch effects** with mutation effects; no $\text{WT} \to \text{WT}^*$ null distribution was computed. |
-| **3. Cohort Duplication / Salami-Slicing with P2** | 🔴 **CRITICAL** | **FAIL** | P1 V8 and P2 V2609C report the **exact same 17-molecule cohort (`Set A == Set C`)**, the same 136 Vina runs, and the same ACSI/PNS tables. Submitting both violates journal originality rules. |
-| **4. Construct Validity of Cross-Target Cutoffs** | 🟠 **MAJOR** | **FAIL** | Applying a universal $-6.0\text{ kcal/mol}$ cutoff across four targets with different binding-site volumes and median affinities violates the paper's own rule against cross-target score comparison. |
-| **5. Generative Chemistry & Centroid Compression** | 🟡 **MODERATE** | **INCREMENTAL** | Unconstrained STONED-SELFIES scrambles ANP stereocenters; $k$-means compression to 484 centroids lacks an empirical active-retention curve; single-seed ($\text{seed}=0$) docking lacks uncertainty bounds. |
-
----
-
-## 2. Deep Diagnosis of the Fatal Flaws (Why Cosmetic Revision Failed)
-
-### 2.1 The `PfCRT` (`6UKJ`) Anatomical & Isoform Error
-- **The Error:** Structure `6UKJ` (Kim et al., *Nature* 2019) is the cryo-EM structure of the **chloroquine-resistant 7G8 isoform** of `PfCRT`, which naturally carries **Threonine at position 76 (`K76T`)**. Using raw `6UKJ` as the "Wild-Type" denominator means the reference already carries the primary resistance mutation.
-- **The Grid Box Displacement:** Using the declared center $(147.070, 170.267, 142.364)$ and $28\text{ \AA}$ box edge, all atoms of residue 76 are displaced by $16.7\text{--}19.5\text{ \AA}$ in the $y$-direction—**completely outside the search space**. Consequently, zero docked poses in P1 could physically interact with residue 76. Because `PfCRT` was the sole resilience target for 4 of the 17 candidates and contributed to all Class-A* assignments, this invalidated the primary RRS table.
-
-### 2.2 The `PfDHFR` Retained-Ligand Artifact (Explaining DEKOIS $\text{AUC} = 0.45$)
-- **The Error:** In the DEKOIS 2.0 validation on `PfDHFR`, Early Enrichment was literally zero ($\text{EF}@1\% = \text{EF}@5\% = 0.00$) and $\text{AUC} = 0.45$ (worse than random).
-- **The Physical Cause:** Inspection of the receptor preparation shows that the binding-box center $(26.66, 42.19, 39.89)$ coincided to $0.00\text{ \AA}$ with co-crystallized **methotrexate (`MTX` A702)**, which remained inside the receptor coordinate file during grid generation! True antifolate actives (which must bind the catalytic D54/I14/F58 pocket occupied by MTX) were sterically excluded, whereas smaller decoys docked into peripheral surface grooves.
-- Framing this protocol bug as an "honest negative finding about AutoDock Vina" was immediately caught by Reviewer 2, who noted that Hany et al. (*Drug Des. Devel. Ther.* 2025) achieved strong DEKOIS 2.0 enrichment on the exact same `PfDHFR` WT and quadruple-mutant targets once the pocket was properly stripped and rescored.
-
-### 2.3 Uncontrolled Preparation Batch Effects in RRS
-- Wild-type receptors were taken from crystal/cryo-EM structures with native heteroatoms, whereas mutant structures were generated via in silico side-chain modeling without identical cofactor/water retention.
-- Consequently, the ratio $\text{RRS}_t = |\Delta G_{\text{mut}, t}| / |\Delta G_{\text{WT}, t}| \times 100$ conflates **pipeline preparation shift ($\Delta\Delta G_{\text{prep}}$)** with **true mutational perturbation ($\Delta\Delta G_{\text{mut}}$)**:
-  $$\Delta G_{\text{mut}} - \Delta G_{\text{WT}} = \underbrace{(\Delta G_{\text{mut}}^{\text{pipe2}} - \Delta G_{\text{WT}}^{\text{pipe2}})}_{\text{True Mutation Signal}} + \underbrace{(\Delta G_{\text{WT}}^{\text{pipe2}} - \Delta G_{\text{WT}}^{\text{pipe1}})}_{\text{Confounding Batch Offset}}$$
-- Because mutant scores clustered tightly with each other while shifting uniformly from WT (producing 6 RRS values $>100\%$ where resistance mutations ostensibly improved binding for top lead PP-15), the batch offset dominated the signal.
-
-### 2.4 Statistical Power & Unreported Correlations
-- At $n = 17$ (and $n = 12$ complete two-target candidates), a two-sided Spearman test at Bonferroni $\alpha = 0.017$ has only **$37\%$ statistical power** to detect a moderate correlation of $|\rho| = 0.50$. Interpreting $p > 0.017$ as "proof of independence between target breadth and mutation resilience" commits the classic **Accepting the Null Hypothesis Fallacy** (Type II error conflated with equivalence).
-- Furthermore, $\rho(N_{\text{fav}}, \text{RRS}_{\text{mean}}) = +0.515$ ($p = 0.034$) was omitted from the primary correlation table despite being stronger than two reported correlations.
-
----
-
-## 3. Why Project 1 Currently Reads as Incremental (BMAD Novelty Critique)
-
-Even if all technical docking bugs above are repaired, a standard pipeline of:
-$$\text{Seeds} \xrightarrow{\text{STONED-SELFIES}} 65\text{k Library} \xrightarrow{\text{VAE + } k\text{-Means}} 484\text{ Centroids} \xrightarrow{\text{Vina}} \text{Top Hits}$$
-is an **incremental application of existing 2018–2021 tools** (Gómez-Bombarelli 2018; Nigam 2021; Eberhardt 2021). It lacks a novel algorithmic, mathematical, or biophysical contribution that advances cheminformatics beyond routine virtual screening.
-
----
-
-## 4. Four Breakthrough Scientific Novelties & Refinements for P1
-
-Using BMAD `hypothesis-generation` and `experimental-design`, we redesign Project 1 to resolve every reviewer objection while introducing **four genuine methodological innovations**:
-
-```
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│                 TRANSFORMATION OF PROJECT 1: INCREMENTAL → NOVEL                 │
-├───────────────────────────┬──────────────────────────────────────────────────────┤
-│ CURRENT P1 (Rejected)     │ REFINED P1 (High-Impact Novelty)                     │
-├───────────────────────────┼──────────────────────────────────────────────────────┤
-│ Unconstrained STONED      │ Novelty 1: Core-Locked Stereochemical Evolution      │
-│ (scrambles ANP chirality) │ (`Chiral-STONED`) preserving H1 & CIP stereocenters  │
-├───────────────────────────┼──────────────────────────────────────────────────────┤
-│ Uncalibrated 484 k-means  │ Novelty 2: Submodular / Determinantal Point Process  │
-│ centroids (no recall test)│ (`DPP`) Diversity Compression + Active Recall Curve  │
-├───────────────────────────┼──────────────────────────────────────────────────────┤
-│ Flawed Vina grids (MTX in │ Novelty 3: Apo-Cofactor Standardized Ensemble Docking│
-│ pocket; 6UKJ box off-site)│ + Physics/ML Rescoring (`GNINA` + `RF-Score-VS`)     │
-├───────────────────────────┼──────────────────────────────────────────────────────┤
-│ Arbitrary -6.0 kcal/mol   │ Novelty 4: Background-Calibrated Empirical CDF       │
-│ cutoff & uncalibrated RRS │ Polypharmacology (`eCDF-PNS`) & Self-Mutant Null RRS │
-└───────────────────────────┴──────────────────────────────────────────────────────┘
-```
-
-### Novelty 1: Stereochemically & Topologically Locked Generative Expansion (`Chiral-STONED`)
-* **The Gap:** As demonstrated in our P3 and P7 audits, African Natural Products (ANPs from NANPDB/EANPDB) are defined by conserved polycyclic ring systems (mean $H_1 = 3.61$ cycles) and dense stereocenters ($4\text{--}10+$ chiral centers, $Fsp^3 \ge 0.35$). Standard STONED-SELFIES applies unconstrained string mutations across the entire SELFIES sequence, frequently breaking bridged rings, inverting CIP stereocenters, or generating synthetically intractable spiro-cages.
-* **The Innovation:** Formulate **Scaffold- & Chirality-Locked STONED (`Chiral-STONED`)**:
-  1. Decompose each of the 396 ANP seeds into its **Bemis–Murcko / $H_1$ polycyclic core** (with frozen CIP $(R/S)$ stereocenters) and **mutable peripheral attachment vectors**.
-  2. Restrict SELFIES token mutations exclusively to the peripheral attachment branches while enforcing a **CIP-Invariance Gate** (rejecting any mutation whose side-chain priority change inadvertently scrambles core stereocenter geometry) and a **Synthetic Accessibility Gate ($\text{SYBA} > 0$, $\text{SAscore} < 4.5$)**.
-  3. Quantify the **Stereochemical Fidelity Rate** and **$H_1$ Topological Conservation** against unconstrained STONED-SELFIES.
-
-### Novelty 2: Determinantal Point Process (`DPP`) / Submodular Library Compression with Theoretical & Empirical Active-Retention Bounds
-* **The Gap (Reviewer 2 Minor #3):** P1 claimed a "99.3% reduction in computational cost" by docking 484 $k$-means centroids instead of 65,856 molecules, but failed to answer the fundamental scientific question: **What fraction of true bioactives is lost when compressing 65,856 compounds into 484 centroids?** Furthermore, Euclidean $k$-means in a 64D SMILES-VAE latent space suffers from the curse of dimensionality and collapses stereoisomers.
-* **The Innovation:**
-  1. Benchmark three principled compression algorithms on the 65,856 library: (a) VAE $k$-means, (b) MaxMin Tanimoto sphere exclusion, and (c) **$k$-Determinantal Point Processes ($k$-DPP)** defined over a joint kernel of 3D shape/pharmacophore similarity (USR / ElectroShape) and 2D Morgan fingerprints.
-  2. Execute a **Retrospective Active-Retention Experiment** (answering Reviewer 1 Major #2 & Reviewer 2 Minor #3): spike the 65,856 library with 200 experimentally validated antimalarial actives from ChEMBL 34 / MMV Malaria Box, compress the library at budgets $K \in \{100, 250, 484, 1000, 2500\}$, and plot the exact **Active Scaffold Recall Curve $R(K)$** with 95% bootstrap confidence bands.
-
-### Novelty 3: Standardized Receptor-Clean Protocol, True `3D7` `PfCRT` Cavity Anchoring, and Hybrid Physics–ML Rescoring
-* **The Gap (Reviewer 2 Major #3, #4, #5):** Fix the structural biology bugs completely and transparently:
-  1. **`PfDHFR` (`1J3I` WT & `1J3K` Quadruple Mutant):** Strip co-crystallized `MTX` / `WR99210` completely while **explicitly retaining the catalytic `NDP` (NADPH) cofactor** and structural water network. Re-run DEKOIS 2.0 (40 actives, 1,200 decoys) across three scoring tiers: AutoDock Vina, **GNINA 3D-CNN (`CNNscore` / `CNNaffinity`)**, and **RF-Score-VS** (directly benchmarking against Hany et al., *Drug Des. Devel. Ther.* 2025).
-  2. **`PfCRT` (`6UKJ` $\to$ True `3D7` WT `T76K` + Central Cavity Box):** Construct a genuine `3D7` wild-type model by reverting `Thr76` $\to$ `Lys76` (`T76K`) alongside isoform positions in `6UKJ`, protonated at digestive vacuole $\text{pH } 5.2$ (`PROPKA3`), and center a $36 \times 36 \times 36\text{ \AA}$ grid box directly on the **central negatively charged drug-binding cavity** (Kim et al. 2019), verifying that residue 76 lies well inside the inner $15\text{ \AA}$ core of the box.
-  3. **Multi-Seed Uncertainty Quantification (Reviewer 2 Major #9):** Run all docking calculations across **$M = 5$ independent random seeds** ($\text{seed} \in \{0, 42, 101, 202, 303\}$), reporting mean $\pm$ SD for every binding energy.
-
-### Novelty 4: Null-Calibrated Resistance Resilience ($\text{RRS}_{\text{null}}$) & Empirical Quantile Polypharmacology (`eCDF-PNS`)
-* **The Gap (Reviewer 2 Major #1, #2, #5):**
-  1. **Eliminating the Batch Effect via a Self-Mutation Null Distribution ($\text{WT} \to \text{WT}^*$):**
-     Process the wild-type receptor through the *exact same* side-chain repacking and preparation pipeline used to generate the mutants (repacking WT residues without changing their amino acid identity: $\text{WT}^*$). Compute the **Null RRS Distribution**:
-     $$\text{RRS}_{\text{null}, t}^{(i)} = \frac{|\Delta G_{\text{WT}^*, t}^{(i)}|}{|\Delta G_{\text{WT}, t}^{(i)}|} \times 100$$
-     Define mutant susceptibility and resilience using **standardized $Z$-scores relative to the empirical null noise band** ($\mu_{\text{null}} \pm 1.96\,\sigma_{\text{null}}$) instead of arbitrary $70\%/80\%$ cutoffs!
-  2. **Eliminating the Cross-Target $-6.0\text{ kcal/mol}$ Cutoff via Target-Specific Empirical CDFs (`eCDF`):**
-     Instead of declaring a compound "favorable" if $\Delta G_t \le -6.0\text{ kcal/mol}$ (which passed 12/17 on `PfCRT` but only 7/17 on `PfDHFR`), dock a common background reference set of $1,000$ drug-like decoys into each target $t \in \{\text{PfDHFR}, \text{PfCRT}, \text{PfATP4}, \text{PfClpP}\}$ to estimate each target's empirical cumulative distribution function $\hat{F}_t(\Delta G)$.
-     Define within-target favorability by the **Target-Specific Top-$q$ Percentile** (e.g., $\hat{F}_t(\Delta G_{i,t}) \le 0.10$, top 10% of that target's distribution), making cross-target breadth $N_{\text{fav}}$ mathematically invariant to pocket size and baseline scoring offsets!
-  3. **Strict Cohort Separation from P2:**
-     Restrict P1's in-depth analysis to **Set A (the Top-50 / Top-100 MPO leads from the 484 centroids, $n=50$)**—giving **$>85\%$ statistical power** to detect $|\rho| \ge 0.40$ at Bonferroni-corrected $\alpha = 0.017$—while leaving the 17-compound Set C MD cohort exclusively to Project 2!
-* **Deep Literature Support (NEW):**
-  - The null-calibration approach aligns with **Cochrane Risk of Bias 2** for non-inferiority trials, where the null distribution establishes the acceptable margin.
-  - The eCDF approach mirrors **target-specific threshold calibration** in clinical trial enrichment designs (e.g., FDA guidance on surrogate endpoints).
-  - **Gabrani et al. *JCAMD* 2024** demonstrates that ECFP4-RF remains robust across scaffold splits on diverse targets, suggesting our docking pipeline should achieve similar consistency once the MTX artifact is removed.
-
----
-
-## 5. Concrete Action Plan & Re-Submission Strategy for P1
-
-| Step | Action Item | Resolves Reviewer Critique | Target Output | Feasibility Note |
-|---|---|---|---|---|
-| **1. Receptor Fix** | Strip `MTX` from `PfDHFR` (`1J3I`); build true `3D7` `PfCRT` (`T76K`) with box centered on central cavity including residue 76. | R2 Major #3, #4 | Validated receptor PDBQTs + box coordinate proof table | **Standard protocol** — can be verified against Hany et al. 2025 |
-| **2. Benchmark Rescue** | Run DEKOIS 2.0 on apo `PfDHFR` (WT + 4x mutant) with Vina + `GNINA` + `RF-Score-VS`; cite Hany et al. (2025). | R1 Major #1, #2; R2 Major #4, #8 | $\text{AUC} > 0.75$, $\text{EF}@1\% > 5.0$ | **Critical path** — this single fix may resolve DEKOIS null result |
-| **3. Null Control & Power** | Expand cohort from $n=17$ (Set C) to $n=50$ (Set A, disjoint from P2); run 5 seeds + $\text{WT} \to \text{WT}^*$ null control; replace $-6.0$ cutoff with within-target top-10% quantile ($\hat{F}_t$). | R2 Major #1, #2, #5, #9 + P1/P2 overlap | Powered ($>80\%$) correlation table + null-calibrated RRS classes | **Coherent separation** — P2 focuses on MD biophysics, P1 on docking calibration |
-| **4. Centroid Recall** | Run retrospective active-retention curve on ChEMBL/MMV actives across $K \in \{100..2500\}$ centroids ($k$-DPP vs $k$-means). | R1 Major #2; R2 Minor #3 | Figure showing $\%$ active scaffolds retained vs. compression factor | **Principled compression** — addresses reviewer concern without new generation |
-| **5. Literature Context (NEW)** | Add citation to Gabrani et al. *JCAMD* 2024 showing ECFP4 robustness across scaffold splits; cite Tang et al. *Nature ML* 2025 for consensus on fingerprint dominance. | R2 Major #7 (literature positioning) | Integrated discussion paragraph | **Minimal effort** — 2 citations, 3-4 sentence context |
-
-
----
-
-# Addendum v2 — Web-Verified Deep Refinement (16 Oct 2026)
-
-## A. Verification ledger (web search, 16 Oct 2026)
-
-| Claim | Status | Note |
-|---|---|---|
-| `6UKJ` = PfCRT **7G8** isoform, cryo-EM ~3.3 Å, Fab-assisted (Kim et al., *Nature* 576, 2019) | ✅ Verified | Residue 76 lines the central cavity; K76T is the resistance hallmark. |
-| Vina on PfDHFR benefits from ML rescoring on DEKOIS 2.0 (Hany et al. 2025) | ✅ Verified | Reported EF1% ≈ 28 (WT, PLANTS+CNN) and ≈ 31 (quadruple mutant, FRED+CNN); NADPH retained. Use as a *reference range*, not as a promise for our Vina pipeline. |
-| STONED/SELFIES ignores stereochemistry by default | ✅ Verified | Stereo needs external RDKit enumeration; SELFIES stereo grammar is partial and must not be assumed. |
-| Exact EF1% / AUC achievable after the MTX fix | ⚠️ Unknown | Must be measured; pre-register the metric, do not pre-claim `AUC > 0.75`. |
-
-## B. New concrete defects found in the plan itself
-
-1. **`k-DPP` is infeasible as written.** An exact DPP over 65,856 molecules needs a dense 65,856² kernel (≈ 4.3×10⁹ entries, ≈ 35 GB in float64) plus an eigendecomposition. Use a **Nyström/low-rank dual DPP**, greedy MAP (log-det) selection, or MCMC k-DPP on a pre-clustered pool, and report the approximation.
-2. **Persistent-homology + ECFP4 kernel must be PSD.** Tanimoto is PSD; a hand-weighted sum with a PH kernel is only PSD if each part is (check eigenvalues; clip negatives).
-3. **Stereo claims must be bounded.** Vina is nearly insensitive to many chirality flips. Present `Chiral-STONED` as *library-coverage* novelty; claim docking discrimination of enantiomers only if an enantiomer-pair control shows it.
-4. **`RRS_null` (WT→WT\*) needs the right replicate unit.** Use ≥ 20 independently seeded redockings *per target*, with the same box and preparation, and report the 95% band; otherwise the null band is itself noise.
-5. **Selection effect for the expanded n = 50 cohort.** If compounds are chosen *because* they score well statically, RRS on them is biased (regression to the mean). Split: selection set vs. untouched evaluation set.
-6. **Positive/negative controls.** Add pyrimethamine and cycloguanil (WT-active, mutant-weak) and WR99210 (mutant-retaining); the pipeline must reproduce this order or RRS is not validated.
-
-## C. Revised acceptance gates (replace any fixed numeric targets)
-
-| Gate | Pass criterion (pre-registered) |
+| Field | Value |
 |---|---|
-| G1 Receptor integrity | No co-crystal ligand other than the intended cofactor in any PDBQT; residue 76 inside the box for all PfCRT states. |
-| G2 Prep symmetry | WT and mutants built by one script/hash; diff of the prep logs empty apart from the mutation. |
-| G3 Benchmark | DEKOIS 2.0 AUC and EF1% reported with bootstrap CI for Vina, GNINA, RF-Score-VS; compared with the Hany et al. range. |
-| G4 Null | Observed RRS inside the 95% `RRS_null` band ⇒ reported as *indistinguishable from noise*. |
-| G5 Disjointness | Set A ∩ P2 Set B/C = ∅ by InChIKey (stereo-aware) and Murcko scaffold. |
+| Repository | `/home/nanaengo/Malaria_codesV2` (canonical single tree, `AGENTS.md` §0) |
+| Branch / commit audited | `master` @ `1c9c38f2ec572d92f03073f765b6cd11b9b062a6` (2026-10-16T12:21:31+01:00) |
+| Path convention | repo-relative only; no absolute `file://` links |
+| Evidence rule | every factual claim carries either a repository path **with sha256** or a DOI/accession. A claim without one is marked `UNVERIFIED` |
+| Auditor frameworks | BMAD multi-layer review (`bmad-code-review`), Scientific Critical Thinking, Hypothesis Generation, Experimental Design, Peer Review |
+| Rejection context | Refused by *Journal of Chemical Information and Modeling* (JCIM) — initial review and 16 Sept 2026 resubmission refusal |
 
-## D. Venue note
+**Superseded in rev 2 (do not re-assert):** the "retained MTX causes the DEKOIS failure" root cause; the `1J3I` PfDHFR attribution; the `(26.66, 42.19, 39.89)` grid centre and the "0.00 Å" MTX coincidence; the `16.7–19.5 Å` PfCRT residue-76 displacement as current state; the `ρ = +0.515` correlation as the corrected value; the `AUC > 0.75` / `EF@1% > 5.0` rescue targets; the "Gabrani 2024" and "Tang 2025" citations.
 
-JCIM refusal does not imply the V8 science is unsalvageable, but a DD/other resubmission must lead with **validation honesty** (the DEKOIS failure, its cause, its fix), not with the library-size narrative.
+**Key literature anchors (verified this revision):**
+- Kim, Tan, Wicht et al., *Nature* **576**, 315–320 (2019) — PfCRT; PDB `6UKJ` is annotated `Plasmodium falciparum (isolate 7G8)` (RCSB REST, checked 16 Oct 2026).
+- Hany et al., *Drug Des. Devel. Ther.* **19** (2025), DOI 10.2147/DDDT.S537065 — DEKOIS 2.0 on WT and quadruple-mutant PfDHFR with ML rescoring; `EF1% = 28.41` (WT, PLANTS+CNN) and `EF1% = 31.02` (Q, FRED+CNN); ML rescoring moved AutoDock Vina "from worse-than-random to better-than-random" (Europe PMC full text, PMC12363558).
+- Gómez-Bombarelli et al., *ACS Cent. Sci.* **4**, 268–276 (2018); Nigam et al., *Chem. Sci.* **12**, 7079–7090 (2021) (STONED/SELFIES).
+- Eberhardt et al., *JCIM* **61**, 3891–3898 (2021) — **AutoDock Vina 1.2.0** (not GNINA; GNINA is McNutt et al. 2021).
+
+---
+
+## 1. Executive summary & audit scorecard
+
+Project 1 combines two studies in one manuscript: (1) generative expansion of 396 African Natural Products (ANPs) and 454 synthetic antimalarials into a 65,856-compound library compressed into 484 VAE centroids, and (2) a 17-compound multi-target, mutant-aware Resistance Resilience Score (RRS) docking analysis (Set C).
+
+Re-auditing against the canonical artifacts at the pinned commit changes the scorecard materially: two of the five items originally rated 🔴 CRITICAL describe states that the project has already corrected, and one of them rests on a hypothesis the project has already tested and rejected.
+
+| Audit layer | Status | Essential finding (evidence) |
+|---|:---:|---|
+| **1a. DEKOIS null result — causal attribution** | ✅ **REFUTED** | The MTX-blockade hypothesis was **tested and rejected** by the two-arm experiment at `results/dekois_mtxstripped_20260909/` (2026-09-09, `JOB_COMPLETE`, sha256 `f4a908b3…` / `0e668e76…`): retained receptor AUC **0.5023** [0.4225, 0.5862], `EF@1%` **0.00**; MTX-stripped AUC **0.5626** [0.4772, 0.6463], `EF@1%` **0.00**; ΔAUC +0.060 with overlapping bootstrap CIs. `P1_DATA_ANALYSIS_REPORT.md` §R2.4 (sha256 `b5d4745c…`): *"removing MTX does not restore enrichment … the near-chance DEKOIS result is attributable to the single-method Vina scoring function and grid positioning (near the NADPH site), not to steric blockade"*. |
+| **1b. PfCRT structural identity & grid** | ✅ **FIXED (R2.3)** | Original defect was real: `6UKJ` is the 7G8 (K76T) isoform, so it cannot serve as the wild-type denominator. Corrected run exists: `results/pfcrt_redock_v2grid_20260909/` (status `COMPUTED`, sha256 `ca1c7cd3…`) uses a *"corrected 3D7-like wild-type (LYS-76), 6UKJ frame"* with a cavity-anchored V2 grid (centre 152.99, 151.042, 159.379; 25 Å) and *"residue 76 CA 11.2 Å from center"*. |
+| **2. RRS batch confounding** | 🟠 **PARTLY FIXED** | A self-mutation null control is implemented in the corrected run (`NULL` receptor = WT through the mutation script; `rrs_null_pfcrt` mean 100.0, range [99.4, 100.5]; `max_abs_deviation_mutant_vs_null` K76T 1.2, K76A 0.51). The same null is **not yet** computed for the PfDHFR mutation states. |
+| **3. Cohort duplication with P2** | 🔴 **OPEN (editorial)** | The 17-molecule cohort is shared: `Project7_.../data/p1_set_a/p1_set_a_17_candidates_anp_metadata.csv` (sha256 `b7d7c859…`) carries `cohort_id = P2_SET_C_POLYPHARM_17`, IDs `PP-01…PP-17`, and a single `p2_source_sha256`. Naming differs across projects ("P1 Set A" = "P2 Set C"). |
+| **4. Construct validity of cross-target cutoffs** | 🟠 **PARTLY ADDRESSED** | The corrected run reports per-target medians (`nfav_per_target_medians`: PfDHFR −5.921, PfCRT −8.056, PfClpP −6.016, PfATP4 −6.378) and PfCRT class counts (`A* = 7, B = 4, C = 6`), but the universal −6.0 kcal/mol rule is not yet replaced by a per-target empirical quantile throughout. |
+| **5. Generative chemistry & centroid compression** | 🟡 **OPEN** | `Chiral-STONED` stereocontrol, a low-rank DPP compression path, and the active-retention curve `R(K)` remain to be built. Single-seed docking remains a limitation. |
+
+---
+
+## 2. Diagnosis (revised against the canonical artifacts)
+
+### 2.1 The DEKOIS failure: what it is, and what it is not
+The honest-negative result stands: on DEKOIS 2.0 for PfDHFR the pipeline is near chance (AUC ≈ 0.45–0.50; `EF@1% = 0.00`). What must not be repeated is the original causal story.
+
+- The retained-receptor arm reproduces the published baseline (0.5023 at exhaustiveness 32 vs the published 0.450 at exhaustiveness 64; DAR §R2.4).
+- Stripping MTX raises AUC by 0.060 with overlapping CIs and leaves `EF@1% = 0.00`. The improvement is inside the noise band implied by 40 actives.
+- The DAR's own conclusion — single-method Vina scoring plus grid placement near the NADPH site — is therefore the supported explanation, and it is also the explanation that Hany et al. (2025) corroborate from the other direction: on the same targets, **rescoring**, not receptor surgery, moved Vina from worse-than-random to better-than-random.
+
+**Consequence for the manuscript:** the DEKOIS section should be presented as a bounded protocol-sensitivity study (two arms, identical pipeline, one variable), not as a validated benchmark that can be rescued by a receptor fix.
+
+### 2.2 Enrichment metrics at this panel size are noise-dominated
+The project's own bootstrap interval quantifies the problem: AUC 0.5023 [0.4225, 0.5862] with 40 actives and 1199 decoys — a half-width of ~0.08. `EF@1%` is computed from the top ~12 of 1240 ranked compounds. At this panel size the sampling variance of any early-enrichment statistic exceeds any effect a docking pipeline could plausibly produce. "40 actives" — not "MTX" — is the binding constraint on this benchmark.
+
+### 2.3 PfCRT: the anatomy was right, the state is now corrected
+`6UKJ` is the chloroquine-resistant 7G8 isoform carrying T76 (verified against the RCSB entry and its annotated source organism). Using it unchanged as the "wild-type" denominator was a genuine defect. It is now corrected by construction: a 3D7-like LYS-76 receptor derived on the 6UKJ frame, re-docked with K76T, K76A and a `NULL` control under one protocol.
+
+**Residual gap.** The gate is currently stated as *"residue 76 CA 11.2 Å from center"*. In a 25 Å box the half-edge is 12.5 Å, so the CA is inside with ~1.3 Å of margin and the CB sits near the boundary. Report the **maximum distance of any residue-76 atom from the box centre** (and the fraction of the residue inside), not the CA alone. This is a one-line change that closes an obvious reviewer attack.
+
+### 2.4 Uncontrolled preparation batch effects in RRS
+The algebra behind the original concern is sound:
+$$\Delta G_{\text{mut}} - \Delta G_{\text{WT}} = \underbrace{(\Delta G_{\text{mut}}^{\text{pipe2}} - \Delta G_{\text{WT}}^{\text{pipe2}})}_{\text{true mutation signal}} + \underbrace{(\Delta G_{\text{WT}}^{\text{pipe2}} - \Delta G_{\text{WT}}^{\text{pipe1}})}_{\text{confounding batch offset}}$$
+The corrected PfCRT run addresses it empirically: the `NULL` control (WT through the mutant-preparation pipeline) gives `RRS_null ∈ [99.4, 100.5]`, so mutant deviations can be expressed against a measured noise band rather than against an assumed 100 %. Apply the same control to the PfDHFR states before any PfDHFR RRS is interpreted.
+
+### 2.5 Statistical power and the reported correlations
+At n = 17 (12 complete two-target candidates) a two-sided Spearman test at Bonferroni α = 0.017 has only ~37 % power to detect |ρ| = 0.50. A non-significant result is therefore **not** evidence of independence; state it as "not detectable at this n" and support independence only with a pre-declared equivalence margin and a TOST/ROPE decision.
+
+The correlation values themselves must be taken from the corrected artifacts, not from the superseded tables: `results/pfcrt_redock_v2grid_20260909/revision_summary.json` (sha256 `14f8197e…`) reports `nfav_rrs_spearman` **ρ = 0.7137, p = 0.0013** (100 000-permutation p = 0.00192). The corrected run also revises the class counts from `A* = 6, B = 5, C = 5, D = 1` to `A* = 7, B = 4, C = 6`, with mean-RRS range 73.2–115.6. Where the manuscript still quotes `ρ = +0.515` or the old class counts, they are stale.
+
+---
+
+## 3. Novelty assessment and refinements
+
+rev 1 numbering is retained for continuity: rev 1 *Novelty 1* (Chiral-STONED) → §3.2; *Novelty 2* (compression + active-retention) → §3.3; *Novelty 3* (receptor standardisation and rescoring) → §3.1 (already implemented) + §3.5 (rescoring, open); *Novelty 4* (null-calibrated RRS and target-relative polypharmacology) → §3.1 and §3.4.
+
+The pipeline as published —
+$$\text{seeds} \xrightarrow{\text{STONED-SELFIES}} 65\text{k library} \xrightarrow{\text{VAE} + k\text{-means}} 484\ \text{centroids} \xrightarrow{\text{Vina}} \text{top hits}$$
+— remains an incremental application of 2018–2021 tools. Three refinements remain genuinely open; two items previously listed as "novelty" are already implemented and are restated here as *completed infrastructure*.
+
+### 3.1 Already implemented (restate, do not re-propose)
+1. **Corrected PfCRT receptor and cavity-anchored grid** (R2.3) — see §2.3. Remaining work: the residue-76 max-atom-distance gate.
+2. **Self-mutation null control (`NULL`)** and **per-target score medians** — see §2.4 and the scorecard row 4. Remaining work: extend the null to PfDHFR states; complete the per-target empirical-quantile replacement of the −6.0 kcal/mol rule.
+
+### 3.2 Open novelty 1 — stereochemically and topologically locked generative expansion (`Chiral-STONED`)
+**Gap.** ANPs from NANPDB/EANPDB are defined by conserved polycyclic cores and dense stereochemistry; unconstrained STONED-SELFIES mutates the whole SELFIES string and can break bridged/fused rings and stereocentres.
+
+**Proposal.** Decompose each seed into a Bemis–Murcko/`H₁` core with frozen CIP (R/S) stereocentres and mutable peripheral attachment vectors; restrict token mutations to the periphery; gate on CIP invariance and synthetic accessibility.
+
+**Bounded claim.** This is a **library-coverage** intervention. Docking scores are only weakly stereodiscriminating, so any claim that the pipeline discriminates enantiomers requires an explicit enantiomer-pair control; without it, claim coverage, not stereoselectivity.
+
+### 3.3 Open novelty 2 — principled library compression with a measured active-retention curve
+**Gap.** A "99.3 % cost reduction" from docking 484 centroids instead of 65,856 molecules says nothing about retained actives.
+
+**Proposal.**
+1. Compare (a) VAE k-means, (b) MaxMin Tanimoto sphere exclusion, (c) k-DPP over a joint 2D + 3D kernel.
+2. Implement the DPP as a **low-rank/Nyström** or greedy log-determinant selection: an exact DPP over 65,856 molecules implies a dense 65,856² kernel (~35 GB in float64) plus an eigendecomposition, and must be reported with its approximation.
+3. Verify kernel PSD-ness when 2D and 3D terms are combined; clip negative eigenvalues if needed.
+4. Measure the **active-retention curve** `R(K)` for `K ∈ {100, 250, 484, 1000, 2500}` using spiked validated actives (ChEMBL/MMV), with scaffold-cluster bootstrap CIs.
+
+### 3.4 Open novelty 3 — calibrated RRS and target-relative polypharmacology
+1. Extend the `NULL` self-mutation control to PfDHFR; define mutant susceptibility as a **Z-score against the empirical null band** rather than fixed 70 %/80 % cutoffs.
+2. Replace the universal −6.0 kcal/mol cutoff with **per-target empirical quantiles** estimated from a common decoy background per target, so cross-target breadth is invariant to pocket size and baseline offset.
+3. Enforce cohort separation from P2 by stereo-aware InChIKey **and** Murcko scaffold, and declare any overlap in both manuscripts.
+
+### 3.5 Open novelty 4 — physics/ML rescoring as the actionable lever (restored from rev 1)
+**Gap.** The DEKOIS null result is a scoring-function result (§2.1). Hany et al. (2025) show, on the same two PfDHFR targets, that **rescoring** rather than receptor surgery moves AutoDock Vina from worse-than-random to better-than-random, reaching `EF1% = 28.41` (WT) and `31.02` (quadruple mutant).
+
+**Proposal.** Re-run DEKOIS 2.0 on the PfDHFR WT and mutant states across three scoring tiers — (i) AutoDock Vina, (ii) a 3D-CNN rescoring tier (`GNINA` `CNNscore`/`CNNaffinity`; GNINA 1.3 is current), (iii) RF-Score-VS — with all tiers sharing one ligand-preparation and grid protocol, and the Hany et al. range used as a **reference band, not a promise**. Run all docking across M = 5 seeds and report mean ± SD.
+
+**Bound.** The Hany comparison sets expectations, not targets: no enrichment value is pre-claimed (see §4 action 9 and G3).
+
+### 3.6 Statistical and benchmarking discipline (new)
+- Pre-register the enrichment metric set: BEDROC(α = 20), `EF@5%` and a bias-corrected enrichment estimator, each with a scaffold-cluster bootstrap CI. Traditional `EF` is known to misestimate true enrichment.
+- Run a **panel-size/power simulation before docking** (actives 40 → 400 at fixed decoy ratio) and either size the panel so a pre-declared effect is detectable, or label the benchmark descriptive and underpowered.
+- Put primary docking-validity evidence on **pose recovery**: crystallographic redocking RMSD per control ligand (pyrimethamine, cycloguanil, WR99210 on PfDHFR; chloroquine/piperaquine on PfCRT), reported per ligand with poses — not a single "RMSD < 2.0 Å all targets" line.
+- Multi-seed docking (M = 5 seeds) with mean ± SD remains appropriate as an uncertainty statement.
+
+---
+
+## 4. Action plan
+
+| # | Action | Resolves | Deliverable | Gate |
+|---|---|---|---|---|
+| 1 | Rewrite the DEKOIS section around the completed two-arm experiment; cite the DAR §R2.4 conclusion; remove the receptor-fix causal claim | Refuted root cause | Manuscript §2.3.1 / §4.5 + SM §S12.2 | Text contains no causal MTX claim; two-arm table present with CIs |
+| 2 | Report the residue-76 max-atom distance (and inside-fraction) for every PfCRT state | Residual receptor gap | Box-coordinate table | Max-atom distance < half-edge for all states, else box re-centred |
+| 3 | Replace `EF@1%`-based claims with the pre-registered metric set; run the panel-size simulation | Noise-dominated metric | Metric table + power figure | Pre-registration committed before the docking run |
+| 4 | Extend the `NULL` self-mutation control to PfDHFR; restate RRS classes against the measured null band | Batch confounding | Null-calibrated RRS table | Every class assignment reproducible from the null band |
+| 5 | Replace the −6.0 kcal/mol rule with per-target empirical quantiles | Construct validity | `eCDF-PNS` definition + table | Breadth metric invariant to per-target score offset |
+| 6 | Enforce and declare P1/P2 cohort separation | Salami-slicing risk | Disjointness table (InChIKey + Murcko) | Zero undeclared overlap |
+| 7 | Update all correlation and class-count numbers to the corrected run (ρ = 0.7137; `A* = 7, B = 4, C = 6`) | Stale statistics | Revised tables | Values match `revision_summary.json` |
+| 8 | Replace the two unlocatable citations with sourced evidence on representation robustness under distribution shift | Citation integrity | Two sourced references | Both resolve to a DOI/arXiv record |
+| 9 | Remove the `AUC > 0.75` / `EF@1% > 5.0` targets from all text and response letters | Retracted target | — | No pre-claimed enrichment value anywhere |
+
+---
+
+## 5. Verification ledger (claim → evidence)
+
+| Claim | Status | Evidence |
+|---|---|---|
+| `6UKJ` = PfCRT 7G8 isoform (T76) | ✅ Verified | RCSB entry + FASTA, checked 16 Oct 2026; Kim et al., *Nature* 576, 315–320 (2019) |
+| DEKOIS MTX-blockade explains the null result | ❌ **Refuted** | `zenodo_package_P1/results/dekois_mtxstripped_20260909/summary.txt` (sha256 `f4a908b3…`); DAR §R2.4 (sha256 `b5d4745c…`) |
+| Grid centre co-located with MTX (0.00 Å) | ❌ **False as recorded** | Recorded centre (1.33, −1.733, −23.842) vs MTX CoM (7.44, 0.57, −29.74), ≈ 8.9 Å — `scripts/p1_r24_dekois_mtxstripped.py` (sha256 `01f22bbf…`) |
+| `1J3I` contains MTX | ❌ **False** | PDBe molecule inventory for `1J3I` = HOH, NDP, UMP, WRA; the retained DEKOIS arm used `7F3Y.pdbqt` |
+| Corrected 3D7-like PfCRT WT + cavity grid + NULL control exist | ✅ Verified | `results/pfcrt_redock_v2grid_20260909/manifest.json` (sha256 `ca1c7cd3…`) |
+| `ρ(N_fav, RRS)` corrected value | ✅ Verified | `revision_summary.json` (sha256 `14f8197e…`): ρ 0.7137, p 0.0013, permutation p 0.00192 |
+| P1/P2/P7 cohort identity | ✅ Verified | `Project7_.../data/p1_set_a/p1_set_a_17_candidates_anp_metadata.csv` (sha256 `b7d7c859…`) |
+| Hany et al. 2025 rescoring outcome | ✅ Verified | Europe PMC full text PMC12363558 (DOI 10.2147/DDDT.S537065) |
+| BEDROC / early-recognition metric critique | ✅ Verified (rev 2.1) | Truchon & Bayly, *JCIM* **47**, 488–508 (2007), DOI 10.1021/ci600426e (Europe PMC 17288412) |
+| "Gabrani et al. JCAMD 2024" | 🚫 Not locatable | Two literature searches; removed from this document |
+| "Tang et al. Nature ML 2025 (fingerprint paradox)" | 🚫 Not locatable | Two literature searches; removed from this document |
+| `AUC > 0.75` / `EF@1% > 5.0` after receptor repair | ⏹ Withdrawn target | No measurement supports it; withdrawn per the pre-registration rule |
+
+---
+
+## 6. Acceptance gates (executable)
+
+| Gate | Criterion |
+|---|---|
+| G1 Receptor integrity | No unintended co-crystal ligand in any PDBQT; for every PfCRT state, report the maximum residue-76 atom distance from the box centre and the inside-fraction |
+| G2 Prep symmetry | WT and mutants produced by one script/hash; prep-log diff empty apart from the mutation |
+| G3 Benchmark | Pre-registered metric set (BEDROC(20), EF@5 %, bias-corrected EF) with scaffold-cluster bootstrap CIs, on a panel whose active count was chosen by a documented power simulation |
+| G4 Null | PfCRT **and** PfDHFR mutant deviations reported against the measured `RRS_null` band; inside the band ⇒ reported as indistinguishable from noise |
+| G5 Disjointness | P1 ∩ P2 cohorts empty by stereo-aware InChIKey and by Murcko scaffold |
+| G6 Citation integrity | Every citation resolves to a DOI/arXiv record fetched and dated in §5 |
+| G7 Claim pinning | The manuscript states the commit at which each numerical claim was produced |
+
+---
+
+## 7. The "wow" factor — what should make a referee or editor say *waouh*
+
+**The one line.**
+
+> Every resistance score in this study is quoted in units of a **measured null band**, the breadth axis is defined by per-target empirical quantiles instead of a universal kcal/mol cutoff, and the one benchmark that fails is shipped as a **two-arm, one-variable, hash-pinned experiment** that reproduces the published baseline in its control arm.
+
+### 7.1 Why it lands
+
+Editors remember *measurements*, not adjectives, and referees attack *uncalibrated* numbers. Three properties do the work here, and all three already exist in the tree at the pinned commit:
+
+1. **Calibration.** The corrected PfCRT re-dock ships a `NULL` control (wild type passed through the mutant-preparation script) whose spread *is* the score's noise floor: `rrs_null_pfcrt` mean **100.0**, range **[99.4, 100.5]**, with mutant deviations of 1.2 (K76T) and 0.51 (K76A) percentage points. A resistance score with a measured 0.5 pp noise floor is a different scientific object from the same score without one.
+2. **A coupling that survives confounder adjustment.** `N_fav`–`RRS` Spearman ρ = **0.7137** (p = 0.0013; 100 000-permutation p = **0.00192**), and on the n = 12 complete-two-target subset, conditioning on molecular weight and Murcko-scaffold prevalence *strengthens* the association (partial ρ = **−0.6154** vs raw **−0.2098**). Reproducible sentence for the abstract: *resistance resilience is not promiscuity re-labelled.*
+3. **A negative result delivered as evidence.** The two-arm DEKOIS experiment (retained vs MTX-stripped receptor, one variable changed) returns ΔAUC +0.060 with overlapping bootstrap CIs and `EF@1 %` = 0.00 **in both arms**, while the retained arm reproduces the published baseline (0.5023 at exhaustiveness 32 vs the published 0.450 at exhaustiveness 64). That is a protocol-sensitivity *result* — most groups would have buried it.
+
+### 7.2 Wow at a glance
+
+| Element | Value | Evidence |
+|---|---|---|
+| Measured null band (PfCRT) | mean 100.0, range [99.4, 100.5]; max deviation K76T 1.2, K76A 0.51 pp | `zenodo_package_P1/results/pfcrt_redock_v2grid_20260909/revision_summary.json` (sha256 `14f8197e…`) |
+| Coupling | ρ = 0.7137, p = 0.0013, permutation p = 0.00192 | same |
+| Confounder-adjusted coupling | partial ρ = −0.6154 vs raw −0.2098 (n = 12; MW + Murcko prevalence) | `zenodo_package_P1/P1_DATA_ANALYSIS_REPORT.md` §R2.1 (sha256 `b5d4745c…`) |
+| Controlled negative | retained **0.5023** [0.4225, 0.5862] vs stripped **0.5626** [0.4772, 0.6463]; `EF@1 %` 0.00 in both arms | `zenodo_package_P1/results/dekois_mtxstripped_20260909/summary.txt` (sha256 `f4a908b3…`) |
+| Internal replication | retained arm at exhaustiveness 32 reproduces the published exhaustiveness-64 baseline 0.450 [0.367, 0.531] | same |
+| Chemical-space contrast | 92.6 % of the 65 856-molecule library ECFP4-unreachable; 69.3 % NP Murcko cores retained | DAR §1 (sha256 `b5d4745c…`) |
+| Pose recovery | crystallographic redocking RMSD 1.23–1.78 Å across the four targets | `zenodo_package_P1/P1_V8_PACKAGE_AUDIT_20260909.md` §R2.8 (sha256 `65372a20…`) |
+| Corrected class structure | `A* = 7`, `B = 4`, `C = 6`; mean-RRS range 73.2–115.6 | `revision_summary.json` (sha256 `14f8197e…`) |
+
+### 7.3 The artifact that carries it — one figure
+
+**Figure R**, three panels:
+
+- **A.** The 17 candidates in (null-calibrated RRS Z-score, per-target-empirical-quantile breadth) space, with the measured `NULL` envelope drawn as a shaded band and the corrected classes labelled.
+- **B.** The two-arm DEKOIS CIs on a single axis, both `EF@1 %`/`EF@5 %` values annotated, the published baseline marked as a reference point.
+- **C.** The three cross-metric correlations with their permutation distributions and the partial-ρ re-estimate.
+
+Caption line: *"Resistance resilience is reported in units of a measured null; the enrichment failure is reported as a one-variable experiment."*
+
+### 7.4 The decisive, cheap experiments
+
+| # | Action | Cost | Gate |
+|---|---|---|---|
+| W1 | Extend the `NULL` self-mutation control to the five PfDHFR states (WT→WT*, N51I, C59R, S108N, I164L) | ≈ 5 dockings under the existing protocol, no new protocol | `RRS_null` width reported per state; mutants inside the band are reported as **noise**, not as classes |
+| W2 | Replace the −6.0 kcal/mol rule with per-target empirical quantiles from a common decoy background | analysis only | Breadth metric invariant to per-target score offset |
+| W3 | Pre-register the enrichment metric set: BEDROC(α = 20) and `EF@5 %`, scaffold-cluster bootstrap CIs | analysis only | Pre-registration committed *before* any docking run; `EF@1 %` at 40 actives is a top-12 statistic (Truchon & Bayly, *JCIM* **47**, 488–508 (2007), DOI 10.1021/ci600426e) |
+| W4 | Multi-seed docking (M = 5) with mean ± SD | ≈ 5× the docking budget | Every score carries an SD |
+| W5 | Verify that `PNS`–`RRS` (ρ = −0.714) and `N_fav`–`RRS` (ρ = +0.714) are not near-complementary **by definition** before both are presented as independent cross-metric associations | 1 hour | Only non-redundant associations are claimed as independent evidence |
+
+### 7.5 The controls that make it credible
+
+The `NULL` self-mutation band; identical pipeline across the two DEKOIS arms; reproduction of a published baseline inside the control arm; per-target quantiles instead of a universal cutoff; and the honest statement that a non-significant correlation at n = 17 is *not detectable*, not *absent* (a pre-declared SESOI with a TOST/ROPE decision).
+
+### 7.6 What must not be claimed
+
+- No pre-claimed enrichment value (`AUC > 0.75`, `EF@1 % > 5.0` are withdrawn — see §2.1).
+- No stereoselectivity from docking scores; `Chiral-STONED` claims *library coverage*, not enantiomer discrimination.
+- No universal −6.0 kcal/mol cutoff.
+- No independence claim from a failed rejection.
+
+### 7.7 What would falsify it
+
+If the PfDHFR `NULL` band turns out wide (say ≥ 5 pp), the per-mutant classification is not resolvable with this protocol and the primary table must be demoted to "within-noise" — which is precisely why W1 is the first experiment, not the last.
+
+### 7.8 Cover-letter line (for the editor)
+
+> "Our resistance-resilience estimates are reported against a measured WT→WT* null band rather than an assumed 100 %, and our one null benchmark is reported as a controlled two-arm experiment in which the control reproduces the published baseline."
+
+---
+
+## 8. Limits of this audit
+
+- No docking run was re-executed. Numbers are read from the artifacts listed in §5 (each with a sha256) at the pinned commit.
+- Pose-recovery RMSD, MMV/DEKOIS decoy sets and the 484-centroid library were not re-derived.
+- The two structural-identity checks (`6UKJ` source organism, `1J3I` ligand inventory) were performed against RCSB/PDBe on 16 Oct 2026 and are accession-based, not reproducible from the repository alone.
+- The claim that "rescoring, not receptor surgery, is the actionable lever" is supported by the project's own two-arm experiment plus Hany et al. (2025); it is a bounded statement about these two targets, not a general claim about docking.
