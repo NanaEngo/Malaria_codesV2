@@ -1,0 +1,44 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{times} 
+\textwidth160mm
+\textheight247mm
+\oddsidemargin0cm
+\topmargin-0.5in
+\pagestyle{empty}
+\renewcommand{\baselinestretch}{1}
+\begin{document}
+\begin{center}
+% TITLE
+{\large{\bf Complex Systems Dynamics in Antimalarial Drug Discovery: Polypharmacology, Resistance Networks, and Molecular Neural Network Expressivity Limits} }
+% AUTHORS
+\vskip0.5\baselineskip{\bf \underline {Myke Vital Sao Temgoua}$^{1}$, Jean-Pierre Tchapet Njafa$^{1}$, Penabei Samafou$^{2}$, Fon Wilfred Mbacham$^{3}$, and Serge Guy Nana Engo$^{1}$ }
+% AFFILIATION
+\vskip0.5\baselineskip{\em$^{1}$Department of Physics, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon \\$^{2}$Department of Medical Imaging and Radiation Sciences, Universit\'e de Sherbrooke, Sherbrooke, QC, Canada \\$^{3}$Department of Biochemistry, Faculty of Science, University of Yaound\'e I, P.O. Box 812, Yaound\'e, Cameroon }\\
+
+\end{center}
+
+\noindent
+% ABSTRACT BODY
+Malaria drug discovery confronts two intertwined complex systems: the multi-target polypharmacology network of \textit{Plasmodium falciparum} resistance-associated proteins, and the high-dimensional chemical space of African natural product scaffolds exhibiting non-trivial topological complexity. This work bridges statistical physics, stochastic dynamics, and machine learning theory to address three fundamental questions: (1) How does stochastic configurational dynamics (molecular dynamics simulations) diverge from static potential-energy estimates (molecular docking) under mutation-induced perturbations? (2) Can topological descriptors (persistent homology) rescue graph neural network failures on complex molecular structures? (3) What are the expressivity limits of learned representations under distribution shift?\\
+%
+We construct a 65,856-molecule library via scaffold-based generation anchored to 396 African natural products, revealing 92.6\% global chemical novelty yet 69.3\% conservation of privileged pharmacophores (indoloquinolines, protoberberine alkaloids, quassinoids) \cite{p1chemrxiv}. Polypharmacology profiling across four resistance-associated targets identifies 17 multi-target candidates stratified by a Resistance Retention Score (RRS). Molecular dynamics validation (10~ns explicit-solvent trajectories, MM-GBSA free energies) uncovers \textbf{87.5\% estimand divergence}: static docking predicts attenuated mutant binding, yet short-timescale dynamics show retention in 7/8 systems \cite{p2chemrxiv}.\\
+%
+Graph neural network benchmarks on 19,836 molecules demonstrate ECFP4 dominance under scaffold split (AUC 0.830 vs GIN 0.805), with topological feature projection modestly rescuing performance on high-$Fsp^3$ polycyclic structures \cite{p3chemrxiv}. 1-Weisfeiler-Leman expressivity bottlenecks emerge on complex natural products, resolvable through distance-aware conformal triage combining nearest-neighbor Tanimoto distance and expected calibration error. The interplay between chemical topology, stochastic transport, and network learning limits defines a frontier where statistical-physics frameworks directly inform resource-constrained drug discovery.\\
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begingroup
+\renewcommand{\section}[2]{}
+\begin{thebibliography}{0}
+\setlength{\parskip}{0mm}
+\setlength{\itemsep}{-0.3mm}
+\small
+\bibitem{p1chemrxiv} M.V. Sao Temgoua, J.-P. Tchapet Njafa, P. Samafou, F.W. Mbacham, S.G. Nana Engo. Computational discovery of antimalarial candidates from African natural product chemical space. \textit{ChemRxiv} (2026). DOI: 10.26434/chemrxiv.15006437/v1
+\bibitem{p2chemrxiv} M.V. Sao Temgoua, J.-P. Tchapet Njafa, P. Samafou, F.W. Mbacham, S.G. Nana Engo. Estimand divergence: static docking versus dynamics for antimalarial triage. \textit{ChemRxiv} (2026). DOI: 10.26434/chemrxiv.15009345/v2
+\bibitem{p3chemrxiv} M.V. Sao Temgoua, J.-P. Tchapet Njafa, P. Samafou, F.W. Mbacham, S.G. Nana Engo. Scaffold-controlled evaluation of molecular representations for antimalarial activity prediction. \textit{ChemRxiv} (2026). DOI: 10.26434/chemrxiv.15008517/v1
+\end{thebibliography}
+\endgroup
+
+
+\end{document}

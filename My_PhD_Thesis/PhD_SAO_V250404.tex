@@ -11,7 +11,7 @@
 
 \usepackage{amsmath,amsfonts,amssymb,mathtools,graphicx,textcomp,xcolor,colortbl,color,
 	caption,floatrow,hyperref,geometry,enumerate,fancyhdr,multirow,here,longtable,
-	csquotes,setspace,physics,svg,array, here, textalpha, tabularx, lscape}
+	csquotes,setspace,physics,svg,array, here, textalpha, tabularx, lscape,threeparttable}
 
 \usepackage{cleveref}
 \crefname{chapter}{Chapter}{Chapters}
@@ -26,6 +26,15 @@
 \usetikzlibrary{quotes}
 
 \usepackage[most]{tcolorbox}
+%-------------------------------------------------------------------------------
+% Équations dans des boîtes colorées (motif : ThèseMbokop_V260112 — tcolorbox).
+% Une boîte personnalisée \eqbox, harmonisée avec les titres bleus du manuscrit,
+% enveloppe automatiquement le corps de chaque équation numérotée
+\newtcbox{\eqbox}{on line, enhanced, math upper, tcbox raise base,
+	colback=blue!4!white, colframe=blue!55!black,
+	boxrule=0.6pt, arc=2pt,
+	left=4pt, right=4pt, top=2pt, bottom=2pt,
+	drop fuzzy shadow=black!50!white}
 \usepackage[section]{algorithm}
 \usepackage{algpseudocode}
 
@@ -59,6 +68,14 @@
 
 %\rowcolors{1}{gray!20}{white}
 \arrayrulecolor{green!50!black}\renewcommand{\arraystretch}{1.2}
+
+% Collection automatique du corps des équations et boîte colorée.
+\makeatletter
+\let\oldequation\equation
+\let\endoldequation\endequation
+\newcommand*{\eq@boxedinner}[1]{\begin{oldequation}\eqbox{#1}\end{oldequation}}
+\renewenvironment{equation}{\collect@body\eq@boxedinner}{}
+\makeatother
 
 %-----------------------------------------------------------------------------
 %

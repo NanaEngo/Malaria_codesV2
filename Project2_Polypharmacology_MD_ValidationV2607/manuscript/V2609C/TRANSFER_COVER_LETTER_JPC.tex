@@ -1,0 +1,142 @@
+%% ============================================================================
+%% Transfer Cover Letter: JCIM → The Journal of Physical Chemistry
+%% Manuscript ID: ci-2026-03544b
+%% Date: November 2026
+%% ============================================================================
+
+\documentclass[11pt]{letter}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+\signature{%
+    Myke Vital Sao Temgoua \\
+    Department of Physics \\
+    Faculty of Science \\
+    University of Yaoundé I \\
+    P.O. Box 812, Yaoundé, Cameroon \\
+    Email: myke-vital.sao@facsciences-uy1.cm
+}
+
+\address{%
+    Myke Vital Sao Temgoua \\
+    Department of Physics, Faculty of Science \\
+    University of Yaoundé I \\
+    P.O. Box 812, Yaoundé, Cameroon
+}
+
+\begin{document}
+
+\begin{letter}{%
+    Editor-in-Chief \\
+    The Journal of Physical Chemistry \\
+    American Chemical Society \\
+    1155 Sixteenth Street, N.W. \\
+    Washington, DC 20036, USA
+}
+
+\opening{Dear Editor:}
+
+I am writing to transfer our manuscript \textbf{ci-2026-03544b}, titled \textbf{``Estimand Divergence Between Static Docking and Molecular Dynamics as a Triage Filter for Antimalarial Leads,''} from the \textit{Journal of Chemical Information and Modeling} (JCIM) to \textit{The Journal of Physical Chemistry} following the recommendation of the JCIM editorial team.
+
+\section*{Manuscript Overview}
+
+This work presents a systematic comparison of static molecular docking and explicit-solvent molecular dynamics simulations for prioritizing antimalarial lead compounds across clinically relevant resistance mutations. We report estimand divergence---directional disagreement in 87.5\% (7/8) of matched mutant states---demonstrating that rigid-grid scoring and dynamic pocket accommodation measure complementary, non-equivalent quantities. The study evaluates 136 protein--ligand systems spanning wild-type and mutant PfDHFR and PfCRT targets, with a 17-candidate cohort derived from 396 African natural products and 454 synthetic antimalarials.
+
+\section*{Relevance to The Journal of Physical Chemistry}
+
+Our manuscript is well-suited to \textit{The Journal of Physical Chemistry} for the following reasons:
+
+\begin{enumerate}
+    \item \textbf{Molecular Dynamics Methodology:} The study employs explicit-solvent MD simulations (GROMACS 2025.4, CHARMM36m/OpenFF 2.2.0 force fields, 10~ns production trajectories per system) with rigorous quality control, trajectory analysis, and MM-GBSA endpoint free-energy estimates. This aligns with JPC's scope in computational molecular biophysics.
+    
+    \item \textbf{Statistical Thermodynamics:} We address a fundamental question about the relationship between static energy landscapes (rigid-receptor docking scores) and dynamic ensemble averages (trajectory-based geometric retention), a core theme in physical chemistry.
+    
+    \item \textbf{Force Field Comparison:} The manuscript documents a policy-approved force field substitution (OpenFF 2.2.0 AM1-BCC for small molecules instead of CGenFF/GAFF2), providing methodological transparency relevant to the force field development community.
+    
+    \item \textbf{Implicit Solvent Models:} We employ the Generalized Born OBC2 model (igb=5) for MM-GBSA calculations and explicitly justify the choice of GB over Poisson--Boltzmann in the context of computational efficiency and sampling adequacy---a methodological consideration central to JPC's readership.
+    
+    \item \textbf{Protocol-Dependent Behavior:} The manuscript quantifies scoring-function dependence through external validation (DEKOIS 2.0 enrichment at chance level, ROC-AUC 0.450) and CNN-based rescoring (GNINA), demonstrating that computational outcomes are protocol-local calibration signals rather than universal physical predictions.
+\end{enumerate}
+
+\section*{Key Findings}
+
+\begin{itemize}
+    \item \textbf{Estimand divergence:} Static docking predicted weaker mutant binding (docking-RRS 83.9--94.6\%), while 10-ns MD showed geometric retention above wild-type reference (MD-RRS 106.4--133.9\%) in 7/8 comparable states.
+    
+    \item \textbf{External validation boundaries:} Rigid $\Delta\Delta G$ calculations failed to reproduce published experimental fold-shifts (direction agreement 28.6--41.7\%, 24--28 compounds per genotype), and DEKOIS 2.0 benchmarking confirmed scoring-function limitations.
+    
+    \item \textbf{Multi-metric independence:} Docking-derived Resistance-Resilience Score (RRS), Polypharmacological Network Score (PNS), and Antimalarial Chemical Space Index (ACSI) showed weak pairwise correlations (Spearman $\rho = -0.210$ to $-0.531$, adjusted $p \geq 0.233$), confirming they capture distinct triage dimensions.
+    
+    \item \textbf{Honest negative results:} We report null enrichment, directional mismatches, and single-replicate limitations transparently, framing MD as a structural stress test rather than a validated affinity predictor.
+\end{itemize}
+
+\section*{Methodological Rigor and Transparency}
+
+The manuscript adheres to best practices for computational drug discovery reporting:
+
+\begin{itemize}
+    \item \textbf{Provenance:} All docking grids, force field parameters, MD protocols, and analysis scripts are documented with version numbers and software citations.
+    
+    \item \textbf{Quality control:} Trajectory-level QC gates (RMSD, minimum distance, contact count, H-bond occupancy) are predeclared; all 16 Set-C pilot systems passed geometric acceptance criteria.
+    
+    \item \textbf{Statistical treatment:} Uncertainty propagation distinguishes within-trajectory standard errors from replicate variability; Wilson confidence intervals account for small sample sizes.
+    
+    \item \textbf{Scope boundaries:} The manuscript explicitly distinguishes computational estimands (docking scores, trajectory-averaged geometry, endpoint MM-GBSA) from unobserved biological quantities (experimental affinity, cellular activity, resistance phenotype).
+\end{itemize}
+
+\section*{Why the Transfer is Appropriate}
+
+While our original submission to JCIM emphasized computational triage workflows and multi-target polypharmacology scoring, the reviewers and editors recognized that the central contribution---quantifying estimand divergence between static and dynamic computational methods---aligns more closely with the physical chemistry foundations that underpin molecular simulation. \textit{The Journal of Physical Chemistry} provides the ideal venue for a methods-comparison study grounded in statistical mechanics, force field physics, and the interpretation of free-energy approximations.
+
+\section*{Author Contributions and Declarations}
+
+All coauthors have approved this transfer. The manuscript reports no conflicts of interest, no prior publication or preprint overlap, and no ethical concerns. Data availability and computational reproducibility statements are included in the Supporting Information.
+
+%\section*{Suggested Reviewers}
+%
+%We respectfully suggest the following experts in molecular dynamics methodology, computational drug discovery, and antimalarial therapeutics (contact information available upon request):
+%
+%\begin{enumerate}
+%    \item \textbf{Dr. Gareth A. Tribello} (Queen's University Belfast, UK) --- expertise in enhanced sampling, free-energy methods, and open-source MD tools.
+%    
+%    \item \textbf{Dr. David L. Mobley} (University of California, Irvine, USA) --- force field development, binding free-energy calculations, and benchmarking studies.
+%    
+%    \item \textbf{Dr. Jana Shen} (University of Maryland, USA) --- pH-coupled molecular dynamics and scoring function validation.
+%    
+%    \item \textbf{Dr. Carlos Simmerling} (Stony Brook University, USA) --- AMBER force fields, protein dynamics, and drug discovery applications.
+%\end{enumerate}
+
+\section*{Closing Statement}
+
+We are grateful for JCIM's constructive editorial guidance and excited to submit this work to \textit{The Journal of Physical Chemistry}, where we believe the physical chemistry and computational biophysics community will find the estimand divergence framework valuable for interpreting docking--MD concordance in their own systems. We look forward to your editorial decision and remain available for any clarifications.
+
+Thank you for considering our manuscript.
+
+\closing{Sincerely,}
+
+\vspace{1cm}
+
+\noindent
+\textbf{On behalf of all coauthors:}
+
+\begin{tabular}{@{}l}
+Myke Vital Sao Temgoua (Corresponding Author) \\
+Dr. Jean-Pierre Tchapet Njafa \\
+Dr. Penabei Samafou \\
+Prof. Fon Wilfred Mbacham \\
+Prof. Serge Guy Nana Engo
+\end{tabular}
+
+\end{letter}
+
+\end{document}
