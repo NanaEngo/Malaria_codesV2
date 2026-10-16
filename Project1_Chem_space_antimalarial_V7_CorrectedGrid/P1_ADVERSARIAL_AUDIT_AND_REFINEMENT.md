@@ -130,3 +130,40 @@ Using BMAD `hypothesis-generation` and `experimental-design`, we redesign Projec
 | **3. Null Control & Power** | Expand cohort from $n=17$ (Set C) to $n=50$ (Set A, disjoint from P2); run 5 seeds + $\text{WT} \to \text{WT}^*$ null control; replace $-6.0$ cutoff with within-target top-10% quantile ($\hat{F}_t$). | R2 Major #1, #2, #5, #9 + P1/P2 overlap | Powered ($>80\%$) correlation table + null-calibrated RRS classes | **Coherent separation** — P2 focuses on MD biophysics, P1 on docking calibration |
 | **4. Centroid Recall** | Run retrospective active-retention curve on ChEMBL/MMV actives across $K \in \{100..2500\}$ centroids ($k$-DPP vs $k$-means). | R1 Major #2; R2 Minor #3 | Figure showing $\%$ active scaffolds retained vs. compression factor | **Principled compression** — addresses reviewer concern without new generation |
 | **5. Literature Context (NEW)** | Add citation to Gabrani et al. *JCAMD* 2024 showing ECFP4 robustness across scaffold splits; cite Tang et al. *Nature ML* 2025 for consensus on fingerprint dominance. | R2 Major #7 (literature positioning) | Integrated discussion paragraph | **Minimal effort** — 2 citations, 3-4 sentence context |
+
+
+---
+
+# Addendum v2 — Web-Verified Deep Refinement (16 Oct 2026)
+
+## A. Verification ledger (web search, 16 Oct 2026)
+
+| Claim | Status | Note |
+|---|---|---|
+| `6UKJ` = PfCRT **7G8** isoform, cryo-EM ~3.3 Å, Fab-assisted (Kim et al., *Nature* 576, 2019) | ✅ Verified | Residue 76 lines the central cavity; K76T is the resistance hallmark. |
+| Vina on PfDHFR benefits from ML rescoring on DEKOIS 2.0 (Hany et al. 2025) | ✅ Verified | Reported EF1% ≈ 28 (WT, PLANTS+CNN) and ≈ 31 (quadruple mutant, FRED+CNN); NADPH retained. Use as a *reference range*, not as a promise for our Vina pipeline. |
+| STONED/SELFIES ignores stereochemistry by default | ✅ Verified | Stereo needs external RDKit enumeration; SELFIES stereo grammar is partial and must not be assumed. |
+| Exact EF1% / AUC achievable after the MTX fix | ⚠️ Unknown | Must be measured; pre-register the metric, do not pre-claim `AUC > 0.75`. |
+
+## B. New concrete defects found in the plan itself
+
+1. **`k-DPP` is infeasible as written.** An exact DPP over 65,856 molecules needs a dense 65,856² kernel (≈ 4.3×10⁹ entries, ≈ 35 GB in float64) plus an eigendecomposition. Use a **Nyström/low-rank dual DPP**, greedy MAP (log-det) selection, or MCMC k-DPP on a pre-clustered pool, and report the approximation.
+2. **Persistent-homology + ECFP4 kernel must be PSD.** Tanimoto is PSD; a hand-weighted sum with a PH kernel is only PSD if each part is (check eigenvalues; clip negatives).
+3. **Stereo claims must be bounded.** Vina is nearly insensitive to many chirality flips. Present `Chiral-STONED` as *library-coverage* novelty; claim docking discrimination of enantiomers only if an enantiomer-pair control shows it.
+4. **`RRS_null` (WT→WT\*) needs the right replicate unit.** Use ≥ 20 independently seeded redockings *per target*, with the same box and preparation, and report the 95% band; otherwise the null band is itself noise.
+5. **Selection effect for the expanded n = 50 cohort.** If compounds are chosen *because* they score well statically, RRS on them is biased (regression to the mean). Split: selection set vs. untouched evaluation set.
+6. **Positive/negative controls.** Add pyrimethamine and cycloguanil (WT-active, mutant-weak) and WR99210 (mutant-retaining); the pipeline must reproduce this order or RRS is not validated.
+
+## C. Revised acceptance gates (replace any fixed numeric targets)
+
+| Gate | Pass criterion (pre-registered) |
+|---|---|
+| G1 Receptor integrity | No co-crystal ligand other than the intended cofactor in any PDBQT; residue 76 inside the box for all PfCRT states. |
+| G2 Prep symmetry | WT and mutants built by one script/hash; diff of the prep logs empty apart from the mutation. |
+| G3 Benchmark | DEKOIS 2.0 AUC and EF1% reported with bootstrap CI for Vina, GNINA, RF-Score-VS; compared with the Hany et al. range. |
+| G4 Null | Observed RRS inside the 95% `RRS_null` band ⇒ reported as *indistinguishable from noise*. |
+| G5 Disjointness | Set A ∩ P2 Set B/C = ∅ by InChIKey (stereo-aware) and Murcko scaffold. |
+
+## D. Venue note
+
+JCIM refusal does not imply the V8 science is unsalvageable, but a DD/other resubmission must lead with **validation honesty** (the DEKOIS failure, its cause, its fix), not with the library-size narrative.

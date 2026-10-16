@@ -482,3 +482,38 @@ Following the `hypothesis-generation` and `experimental-design` skills, we struc
 | **H1: Stereoisomer Cliff Resolution** | $SO(3)$-invariant parity-odd phase encoding ($R_z(\pi\chi_i/2)$) separates experimental ChEMBL 34 stereoisomer pairs that collide in 2D fingerprint space. | ECFP4-SVM & 1-WL GIN (both structurally locked at AUC = 0.50 on pure stereoisomer pairs). | Pairwise concordance / AUC on ChEMBL stereoisomer cliffs. **Gate:** $\text{AUC}_{\text{PQK}} \ge 0.70$ ($p < 0.01$, permutation test). |
 | **H2: Topological Ring Contraction (`PH-QMSE`)** | Coarse-graining 25–40 atom ANPs into 8–12 $H_1$ ring/pharmacophore qubits preserves whole-molecule predictive signal lost by 8-atom SMILES truncation. | Naive 8-atom truncated QMSE (Phase D baseline, AUC $0.640$) & Boy et al. 1D chain contraction. | 5-fold CV AUC on experimental ChEMBL 34 & P3 panels. **Gate:** $\Delta\text{AUC} \ge +0.15$ over naive 8-qubit truncation ($p < 0.001$). |
 | **H3: Projected Quantum Kernel (`PQK`) vs. Fidelity Kernel** | Local 1-RDM/2-RDM classical shadows prevent exponential kernel concentration as qubit count scales from $n=8$ to $n=20$. | Standard global overlap kernel $K(A,B) = |\langle\psi_A|\psi_B\rangle|^2$. | Off-diagonal kernel variance $\text{Var}[K_{ij}]$ and KTA across $n \in \{8, 12, 16, 20\}$. **Gate:** $\text{Var}[K_{\text{PQK}}]$ decays polynomially, whereas $\text{Var}[K_{\text{Fid}}] \propto 2^{-n}$. |
+
+
+---
+
+# Addendum v2 — Web-Verified Deep Refinement (16 Oct 2026)
+
+## A. Verification ledger
+
+| Claim | Status | Note |
+|---|---|---|
+| Boy et al., *Encoding molecular structures in quantum machine learning*, *Mach. Learn.: Sci. Technol.* 6, 045076 (2025); arXiv:2507.20422; DOI 10.1088/2632-2153/ae304f | ✅ Verified | First author *Choy Boy*; QMSE benchmarks were state-phase classification and boiling-point regression on small molecules, not drug-like natural products. |
+| Fidelity-Preserving Chain-Contraction Theorem is for repeated linear substructures | ✅ Verified | Our extension to ring systems (`PH-QMSE`) is therefore a *new, unproven* statement; it needs its own fidelity analysis, not an appeal to Boy et al. |
+| STONED/SELFIES discards stereo; needs external RDKit handling | ✅ Verified | Keep core-locked stereo-enumerated exploration. Partial SELFIES stereo tokens exist; don't rely on them. |
+| "Better than classical?" (Bowles, Ahmed, Schuld, arXiv:2403.07059, 2024) | ✅ Verified | Out-of-the-box classical models matched or beat popular QML models, and **removing entanglement often did not hurt**. |
+| Cerezo et al., *Does provable absence of barren plateaus imply classical simulability?* (*Nat. Commun.* 2025) | ✅ Exists; confirm volume/page | Trainable ⇒ often classically simulable. |
+
+## B. Consequences for the P7 plan
+
+1. **Non-entangling circuit is the central risk, not a footnote.** With only R_z-type encodings and no entanglers, the model is a product-state feature map and is classically simulable by construction. Any reported result must be accompanied by (i) an **entanglement ablation** (with vs without CNOT/CZ layers) and (ii) a **classical kernel matched on the same features** (e.g. an RBF/cosine kernel on the identical Coulomb/bond-order features).
+2. **Claim ceiling.** Following the benchmark literature, the realistic publishable outcome is: *parity with, or no advantage over, matched classical baselines*, with a clear statement of *where the encoding fails* (e.g. polycyclic natural products). Do not write "quantum advantage".
+3. **Dequantization check.** Estimate the Lie-algebra/gradient-variance scaling of the final ansatz (even at 8–12 qubits, report the observed gradient variance vs qubit count) to document trainability and classical simulability honestly.
+4. **Label circularity.** The `eos80ch` surrogate-label caveat from P5 applies unchanged here: evaluate on experimental ChEMBL labels and on the stereoisomer-cliff set, not only surrogate labels. Also note `eos80ch` models gametocyte-vs-asexual selectivity; confirm the label semantics.
+5. **`PH-QMSE` fidelity test.** Define fidelity as |⟨ψ_full|ψ_contracted⟩|² (or kernel-matrix agreement) on molecules small enough for the uncontracted circuit; report the decay with number of contracted rings before applying it to 25–40-atom ANPs.
+6. **Stereo parity.** Verify the sign-flip behavior of the chiral volume feature on a set of known enantiomer pairs (feature must flip sign, kernel invariant under rotation) before any ML run.
+
+## C. Minimal decisive experiment ladder
+
+| Rung | Test | Stop rule |
+|---|---|---|
+| R1 | Product-state QMSE vs matched classical kernel (8 qubits) | If equal ⇒ report parity; proceed only for the chirality question |
+| R2 | + entanglers; ablate | If no gain ⇒ drop entanglement claims |
+| R3 | `PH-QMSE` on ring-bearing molecules vs 8-atom truncation vs ECFP4 | Scaffold-held-out; report CI via scaffold-cluster bootstrap |
+| R4 | Chiral features on ChEMBL stereoisomer pairs | Report AUROC of "which enantiomer is more active", with a classical 3D baseline |
+
+Any positive result goes to the P7 DAR first (per `AGENTS.md`), and manuscript claims follow only from completed, QC-passed runs.
