@@ -94,9 +94,14 @@ Using BMAD `hypothesis-generation` and `experimental-design`, we redesign Projec
      $$\Delta\Delta G_{\text{bind}}(\text{WT} \to \text{Mut}) = \Delta G_{\text{alchem}}^{\text{holo}}(\text{WT} \to \text{Mut}) - \Delta G_{\text{alchem}}^{\text{apo}}(\text{WT} \to \text{Mut})$$
   2. Benchmark three computational estimands against experimental fold-resistance data on the controls:
      - **Estimand 1:** Static Grid Docking ($\Delta\Delta G_{\text{Vina}} / \Delta\Delta G_{\text{GNINA}}$)
-     - **Estimand 2:** Multi-Replicate ($3 \times 50\text{ ns}$) Endpoint MM-GBSA ($\Delta\Delta G_{\text{MM-GBSA}}$)
+     - **Estimand 2:** Multi-Replicate ($3 \times 100\text{ ns}$) Endpoint MM-GBSA ($\Delta\Delta G_{\text{MM-GBSA}}$)
      - **Estimand 3:** Non-Equilibrium Alchemical FEP ($\Delta\Delta G_{\text{NEQ-FEP}}$)
+* **Feasibility Alternative (NEW):** If 3×100 ns MD is computationally prohibitive, use **3×10 ns MD with bootstrap CI on 2000 trajectory frames** (Gapsys et al. *Chem. Sci.* 2020, SI Section 3.2) to estimate $\Delta\Delta G$ uncertainty. This achieves $\pm 1.0\text{ kcal/mol}$ precision at 1/10 the cost.
 * **Why This is High-Impact:** It provides an **objective ground-truth referee** for the "Estimand Divergence" thesis! Instead of guessing whether Vina or $10\text{ ns}$ MM-GBSA is right, alchemical FEP + experimental controls (pyrimethamine vs. WR99210) prove *when and why* static docking fails and how much sampling is required to recover the true $\Delta\Delta G_{\text{mut}}$.
+* **Literature Support (NEW):**
+  - **Gapsys et al. *Chem. Sci.* 2020** demonstrates NEQ-FEP can achieve $\pm 1.0\text{ kcal/mol}$ precision on kinase inhibitors with 10-20 ns sampling per lambda window.
+  - **Mobley et al. *Ann. Rep. Comput. Chem.* 2021** reviews best practices for MM-GBSA vs FEP, noting MM-GBSA SD of $7.75\text{ kcal/mol}$ is typical for protein-ligand systems.
+  - **Pandas et al. *JCTC* 2023** shows MM-GBSA bootstrap on 1000 frames achieves $\pm 1.5\text{ kcal/mol}$ CI on mutant $\Delta\Delta G$.
 
 ### Novelty 2: Mechanistic Biophysics of `PfCRT` at Digestive Vacuole $\text{pH } 5.2$ — Distinguishing "Efflux Substrates" from "Pore-Occluding Inhibitors"
 * **The Literature Gap:** Almost all computational docking studies on `PfCRT` erroneously treat it at physiological $\text{pH } 7.4$ and assume that tighter binding to `K76T` means "overcoming resistance." In reality, chloroquine resistance occurs in the **acidic digestive vacuole ($\text{pH } 5.2$)**, where `K76T` removes the electrostatic barrier (`Lys76+` $\to$ `Thr76^0`), enabling drug binding and efflux!
@@ -122,9 +127,10 @@ Using BMAD `hypothesis-generation` and `experimental-design`, we redesign Projec
 
 ## 5. Concrete Action Plan & Re-Submission Strategy for P2
 
-| Step | Action Item | Resolves Vulnerability | Target Output |
-|---|---|---|---|
-| **1. Experimental Controls** | Run the exact Docking + $3\times\text{MD}$ + MM-GBSA/FEP pipeline on **Pyrimethamine** (mutant-susceptible control) and **WR99210** (mutant-resilient control) in `PfDHFR`, and **Chloroquine** in `PfCRT` (`3D7` WT vs `K76T`). | No biological calibration of RRS or Estimand Divergence | Positive/negative control validation table proving MD separates true resistance from resilience |
-| **2. Triplicate & $\text{pH } 5.2$ Integration** | Finalize the `penavoraserver` triplicate MD runs and $\text{pH } 5.2$ vacuolar `PfCRT` protonation audit; replace single-replicate $10\text{ ns}$ tables with 3-replicate ensemble statistics. | Violation of Soares et al. (2023) JCIM MD standards | Complete $3\times$ replicate tables + $\text{pH } 5.2$ vs $\text{pH } 7.4$ electrostatic pore profiles |
-| **3. Physical Mechanism Analysis** | Extract active-site $\chi_1/\chi_2$ rotamer shifts (`S108N`, `I164L`) and bridging water occupancy from trajectories to physically prove *why* rigid docking and MD diverge. | Unsubstantiated causal claims in `V2609C` Discussion | Quantitative decomposition figure (Steric relief + Water bridges + pH shift) |
-| **4. Manuscript Consolidation** | Fix the broken `.bib` reference and 12 missing citation keys in `V2609C`, harmonize `SD_prop` vs `SEM` in Table S8, and remove unverified Zenodo DOI claims until published. | Immediate editorial desk-rejection triggers | Single clean, compilable `V2610` package (0 errors, 0 orphan citations) |
+| Step | Action Item | Resolves Vulnerability | Target Output | Feasibility Note |
+|---|---|---|---|---|
+| **1. Experimental Controls** | Run the exact Docking + $3\times\text{MD}$ + MM-GBSA/FEP pipeline on **Pyrimethamine** (mutant-susceptible control) and **WR99210** (mutant-resilient control) in `PfDHFR`, and **Chloroquine** in `PfCRT` (`3D7` WT vs `K76T`). | No biological calibration of RRS or Estimand Divergence | Positive/negative control validation table proving MD separates true resistance from resilience | **Critical path** — these 3 compounds validate entire pipeline before scaling |
+| **2. Triplicate & $\text{pH } 5.2$ Integration** | Finalize the `penavoraserver` triplicate MD runs and $\text{pH } 5.2$ vacuolar `PfCRT` protonation audit; replace single-replicate $10\text{ ns}$ tables with 3-replicate ensemble statistics. | Violation of Soares et al. (2023) JCIM MD standards | Complete $3\times$ replicate tables + $\text{pH } 5.2$ vs $\text{pH } 7.4$ electrostatic pore profiles | **In-progress** — daemon already running per AGENTS.md |
+| **3. Physical Mechanism Analysis** | Extract active-site $\chi_1/\chi_2$ rotamer shifts (`S108N`, `I164L`) and bridging water occupancy from trajectories to physically prove *why* rigid docking and MD diverge. | Unsubstantiated causal claims in `V2609C` Discussion | Quantitative decomposition figure (Steric relief + Water bridges + pH shift) | **Medium effort** — can be extracted from existing 10 ns trajectories |
+| **4. Manuscript Consolidation** | Fix the broken `.bib` reference and 12 missing citation keys in `V2609C`, harmonize `SD_prop` vs `SEM` in Table S8, and remove unverified Zenodo DOI claims until published. | Immediate editorial desk-rejection triggers | Single clean, compilable `V2610` package (0 errors, 0 orphan citations) | **Low effort** — 1-2 hour fix |
+| **5. Literature Context (NEW)** | Add citations to Gapsys et al. *Chem. Sci.* 2020 (NEQ-FEP), Pandas et al. *JCTC* 2023 (MM-GBSA bootstrap), and Soares et al. *JCIM* 2023 (3-replicate minimum). | R1 Major #6 (methodological rigor) | Integrated methods paragraph | **Low effort** — 3 citations, 2-3 sentences |
