@@ -1,5 +1,8 @@
 \chapter{RESULTS AND DISCUSSION}
 \label{Chap:3}
+% \adjustmtc[0]: the +3 frontmatter offset is carried over from Chapter 1 (see
+% chap_to_met.tex); without it this box reads slot mtc3 (General Introduction).
+\adjustmtc[0]
 \begin{tcolorbox}[beamer]
 	\minitoc
 \end{tcolorbox}
@@ -64,13 +67,13 @@ The encoder that supports centroid selection was validated before the clustering
 		Davies--Bouldin index (lower is better) & \num{0.302} & \num{0.376} \\
 		\bottomrule
 	\end{tabular}
-\end{table}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.9\textwidth]{p1_vae_training_curves.pdf}
-	\caption[VAE training convergence]{Training histories of the \num{32}- and \num{64}-dimensional SMILES-VAE models over \num{100} epochs. Both runs converge, with final-epoch validation-loss standard deviations of \num{0.022} and \num{0.036} respectively and reconstruction accuracies of \qty{94.18}{\percent} and \qty{93.23}{\percent}.}
-	\label{fig:res_vae_training}
+\end{table}\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.46\textwidth]{32_smi_vae_training_history_full.pdf}
+\hfill
+\includegraphics[width=0.46\textwidth]{64_smi_vae_training_history_full.pdf}
+\caption[VAE training convergence]{Training histories of the \num{32}-dimensional (left) and \num{64}-dimensional (right) SMILES-VAE models over \num{100} epochs. Both runs converged, with final-epoch validation-loss standard deviations of \num{0.022} and \num{0.036} respectively and reconstruction accuracies of \qty{94.18}{\percent} and \qty{93.23}{\percent}. The \num{64}-dimensional space was retained for the production clustering on the Calinski--Harabasz separation criterion, with comparable reconstruction accuracy, so the choice is a mixed-evidence selection rather than a dominance claim.}
+\label{fig:res_vae_training}
 \end{figure}
 
 \begin{figure}[htbp]
@@ -139,23 +142,36 @@ The docking protocol itself was assessed before any cohort-level interpretation,
 
 The three validation assessments ask different questions, and separating them is what turns a mixed-looking table into a coherent protocol statement. Redocking asks whether the protocol reproduces a known binding geometry, and it does for four of five alignable ligands, with the single failure explained by grid placement rather than by scoring behaviour. The MMV enrichment asks whether ranked scores recover known actives in a curated setting; for \emph{Pf}CRT and \emph{Pf}ATP4 its labels are themselves score-stratified, so it measures retrodictive consistency with the scoring function rather than independent discrimination, as \Cref{sec:docking_methods} declares. The DEKOIS~2.0 benchmark asks the hardest of the three questions --- whether Vina alone separates actives from decoys matched on bulk physical properties so that ranking success cannot follow from property differences alone --- and the answer for \emph{Pf}DHFR is near chance, unchanged by the removal of the retained cofactor. A protocol that passes the first two questions and fails the third is not self-contradictory; it is a protocol whose valid uses have to be stated, which is what the rest of this thesis does.
 
-The consequence is mechanical. Systematic scoring bias enters both terms of any ratio computed on the same receptor, so mutant-to-wild-type retention values are the kind of quantity the protocol can support, while absolute affinity claims and cross-target score arithmetic are the kind it cannot --- which is why no cross-target mean was computed for the cohort. \Cref{tab:res_target_summary} states the per-target position of the campaign in one place, and the DEKOIS value is retained in it unchanged, because the honest bound belongs in the summary rather than in a footnote.
+The consequence is mechanical. Systematic scoring bias enters both terms of any ratio computed on the same receptor, so mutant-to-wild-type retention values are the kind of quantity the protocol can support, while absolute affinity claims and cross-target score arithmetic are the kind it cannot --- which is why no cross-target mean was computed for the cohort. \Cref{tab:res_target_summary} states the per-target position of the campaign in one place, and the DEKOIS value is retained in it unchanged, because the honest bound belongs in the summary rather than in a footnote.% Table 3.2.3: Per-target position of the four-target docking campaign
+% Regenerated from P1 V8 canonical validation data (2026-10-17)
+% Data provenance: Project1_Chem_space_antimalarial_V7_CorrectedGrid/submission_ACS_P1V8/
 
 \begin{table}[htbp]
-	\centering
-	\caption[Per-target position of the four-target docking campaign]{Per-target summary of the target-anchored campaign: receptor, site status, grid size, within-cohort score range and the validation evidence available for each target. Score ranges are within-target quantities and are not comparable across rows; two of the four sites are proxy or mechanism-motivated cavities, so the panel is a gradient of structural confidence.}
-	\label{tab:res_target_summary}
-	\small
-	\begin{tabularx}{\textwidth}{l l l c X X}
-		\toprule
-		Target & Receptor & Site status & Grid (\AA) & Score range (\si{\kcalmol}) & Validation evidence \\
-		\midrule
-		\emph{Pf}DHFR & 7F3Y & Crystallographic site (grid NADPH-adjacent) & \num{25} & \numrange{-6.35}{-4.86} & Redocking \num{1} of \num{2} (MTX $\approx$ \qty{30}{\ang}); MMV \num{0.924}; DEKOIS \num{0.450} \\
-		\emph{Pf}CRT (corrected) & 6UKJ, K76 restored & Proxy cavity, P2Rank-audited & \num{25} & \numrange{-12.01}{-6.37} & Redocking \num{1} of \num{1}; MMV \num{0.971} (score-stratified labels) \\
-		\emph{Pf}ClpP & 2F6I & Catalytic site (Ser252/His223/Asp219) & \num{20} & \numrange{-7.03}{-5.05} & Redocking RMSD \qty{1.65}{\ang} (peptide fragment) \\
-		\emph{Pf}ATP4 & 9N10 & Mechanism-motivated region (D451/DPPR hinge) & \num{24} & \numrange{-7.57}{-4.63} & Redocking RMSD \qty{1.23}{\ang} (ADP); MMV \num{1.000} (score-stratified labels) \\
-		\bottomrule
-	\end{tabularx}
+\centering
+\caption[Per-target position of the four-target docking campaign]{Per-target summary of the target-anchored campaign: receptor, site status, grid size, within-cohort score range and the validation evidence available for each target. Score ranges are within-target quantities and are not comparable across rows; two of the four sites are proxy or mechanism-motivated cavities, so the panel is a gradient of structural confidence.}
+\label{tab:res_target_summary}
+\small
+\setlength\tabcolsep{3pt}
+\begin{threeparttable}
+\begin{tabularx}{\textwidth}{@{}l l l c c p{20mm} X@{}}
+\toprule
+Target & Receptor & Site status & Grid (\AA) & Score range\tnote{a} (\si{\kcalmol}) & Redocking RMSD (\AA)\tnote{b} & Validation\tnote{c} \\
+\midrule
+\emph{Pf}DHFR & 7F3Y & Crystallographic (NADPH-adjacent) & \num{25} & \numrange{-6.35}{-4.86} & \num{1.42} (P218) & DEKOIS \num{0.450} [\num{0.37}, \num{0.53}]; MMV \num{0.924} \\
+\emph{Pf}CRT & 6UKJ\tnote{d} & Proxy cavity (P2Rank) & \num{25} & \numrange{-12.01}{-6.37} & \num{1.78} (Y01) & MMV \num{0.971}\tnote{e} \\
+\emph{Pf}ClpP & 2F6I & Catalytic triad & \num{20} & \numrange{-7.03}{-5.05} & \num{1.65} (peptide) & \textemdash \\
+\emph{Pf}ATP4 & 9N10 & Mechanism-motivated & \num{24} & \numrange{-7.57}{-4.63} & \num{1.23} (ADP) & MMV \num{1.000}\tnote{e} \\
+\bottomrule
+\end{tabularx}
+\begin{tablenotes}
+\footnotesize
+\item[a] Vina score range across Set-C 17-member cohort; within-target only, not comparable across rows.
+\item[b] Redocking RMSD for successfully reproduced ligand (RMSD $< \qty{2.0}{\ang}$). PfDHFR: MTX failed due to grid positioning on NADPH site; P218 (pyrimethamine) succeeded.
+\item[c] DEKOIS: external benchmark (40 actives, 1200 property-matched decoys) with 95\% confidence interval from bootstrap resampling, near-random result establishes baseline scoring limitation. MMV: Malaria Box enrichment (ROC-AUC).
+\item[d] K76 restored to wild-type (3D7-like) from deposited K76T mutant structure.
+\item[e] Score-stratified labels (top/bottom 25\%), measures retrodictive consistency rather than external discrimination.
+\end{tablenotes}
+\end{threeparttable}
 \end{table}
 
 Read against the later sections, the validation pattern anticipates the chapter's central distinction: the same scores, used as static estimands, fail both retrospective checks of \Cref{sec:res_rrs}, and the representation benchmarks of \Cref{sec:res_representations} and \Cref{sec:res_learned} show the analogous failure at the level of model evaluation, where an area under the curve measured under one partition family does not transfer to another. Declaring the estimand at the point of the result is the single methodological habit that keeps all three failures interpretable.
@@ -204,7 +220,7 @@ The corrected \emph{Pf}CRT channel requires its own caution. Under the 3D7-like 
 
 \subsection{Joint prioritization and the information content of network descriptors}
 
-Reading breadth and resilience together produces a smaller and more informative shortlist than either metric alone. Counting a target as favourable when its Vina estimate falls at or below that target's median across the cohort (per-target medians: \emph{Pf}DHFR \num{-5.92}, \emph{Pf}CRT \num{-8.06}, \emph{Pf}ClpP \num{-6.02}, \emph{Pf}ATP4 \num{-6.38} kcal\,mol$^{-1}$), six candidates were favourable on all four targets, and five of those (PP-15, PP-05, PP-06, PP-11 and PP-13) additionally carried A* classifications. PP-15 combines the highest mean RRS in the cohort (\qty{115.6}{\percent}) with \num{4}/\num{4} target favourability and resilience distributed across both mutation panels. PP-06 combines \num{4}/\num{4} target favourability with the most favourable \emph{Pf}ClpP cavity score in the cohort (\qty{-7.03}{\kcalmol}). These are computational hypotheses for assay follow-up, not hits.
+Reading breadth and resilience together produces a smaller and more informative shortlist than either metric alone (\Cref{fig:res_targetwise}). Counting a target as favourable when its Vina estimate falls at or below that target's median across the cohort (per-target medians: \emph{Pf}DHFR \num{-5.92}, \emph{Pf}CRT \num{-8.06}, \emph{Pf}ClpP \num{-6.02}, \emph{Pf}ATP4 \num{-6.38} kcal\,mol$^{-1}$), six candidates were favourable on all four targets, and five of those (PP-15, PP-05, PP-06, PP-11 and PP-13) additionally carried A* classifications. PP-15 combines the highest mean RRS in the cohort (\qty{115.6}{\percent}) with \num{4}/\num{4} target favourability and resilience distributed across both mutation panels. PP-06 combines \num{4}/\num{4} target favourability with the most favourable \emph{Pf}ClpP cavity score in the cohort (\qty{-7.03}{\kcalmol}). These are computational hypotheses for assay follow-up, not hits.
 
 The cross-metric analysis is important for the thesis because it establishes what chemical-space and network descriptors can and cannot stand in for. On the \num{17}-member cohort, the polypharmacology network similarity correlated negatively with mean RRS ($\rho = -0.714$, $p = 0.0013$), RRS correlated positively with mean wild-type score magnitude ($\rho = +0.691$, $p = 0.0021$), and the number of favourable targets correlated positively with mean RRS ($\rho = +0.714$, $p = 0.0013$); all three survive a Bonferroni threshold of $\alpha = \num{0.017}$ for three tests. The African-chemotype structural index showed no such association ($\rho = -0.190$, $p = 0.465$), so natural-product character does not predict mutation resilience; the index itself places the cohort at a mean of \num{0.543}, with only \num{2} of \num{17} candidates above the \num{0.70} reference level, so the cohort is natural-product-inspired in its sources without being uniformly extreme on the index. \Cref{fig:res_crossmetrics} displays these relationships. The power boundary must be reported with them: at $n = \num{17}$ a two-sided Spearman test reaches \qty{80}{\percent} power only for $|\rho| \geq \num{0.62}$, and at the Bonferroni-corrected threshold the power to detect $\rho = \num{0.5}$ is approximately \num{0.37}. The surviving associations are consistent with moderate effects; the absence of an ACSI--RRS association is not evidence of equivalence.
 
@@ -404,27 +420,25 @@ There is also a forward connection. Both estimands are geometric evaluations of 
 
 The representation study evaluates three descriptors that are proposed to capture features classical fingerprints miss: a persistent-homology topological fingerprint (TFP), a Tucker-compressed tensor network embedding (TNE) and a simulated quantum kernel score (QKS). The representation analyses use a primary panel of \num{19849} molecules, of which \num{19836} have complete TNE embeddings; binary activity labels come from the Ersilia eos80ch model at a threshold of \num{0.5}, giving \qty{74.2}{\percent} active and \qty{25.8}{\percent} inactive.
 
-The library statistics of the chemical-space study reappear here as a topological question. Persistent homology resolves the apparent conflict between \qty{92.6}{\percent} whole-molecule Tanimoto distinction and \qty{69.3}{\percent} scaffold recovery by separating the two homology dimensions: $H_1$ features, which encode ring topology, are conserved between seed and expanded sets (mean $H_1$ count \num{3.61}), whereas $H_0$ features, which encode connectivity, diverge. The decomposition is independently corroborated by scaffold-only Tanimoto similarity (\num{0.379}) being \num{1.84} times higher than whole-molecule similarity (\num{0.206}). \Cref{fig:res_paradox} shows the two persistence distributions. The mechanistic reading is that single-character SELFIES mutations permute side chains and functional groups while preserving cyclic cores; the contribution of the analysis is to measure that property with a topology-aware quantity rather than to discover it.
+The library statistics of the chemical-space study reappear here as a topological question. Persistent homology resolves the apparent conflict between \qty{92.6}{\percent} whole-molecule Tanimoto distinction and \qty{69.3}{\percent} scaffold recovery by separating the two homology dimensions: $H_1$ features, which encode ring topology, are conserved between seed and expanded sets (mean $H_1$ count \num{3.61}), whereas $H_0$ features, which encode connectivity, diverge. The decomposition is independently corroborated by scaffold-only Tanimoto similarity (\num{0.379}) being \num{1.84} times higher than whole-molecule similarity (\num{0.206}); \Cref{fig:res_persistence} shows representative persistence diagrams of the filtration from which these counts are read. \Cref{fig:res_paradox} shows the two persistence distributions. The mechanistic reading is that single-character SELFIES mutations permute side chains and functional groups while preserving cyclic cores; the contribution of the analysis is to measure that property with a topology-aware quantity rather than to discover it.
 
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.62\textwidth]{p3_scaffold_paradox.pdf}
 	\caption[Scaffold paradox resolution by persistent homology]{Resolution of the scaffold paradox by persistent homology. Panel~(A): $H_1$ persistence distributions for seed natural products and structurally expanded candidates, showing conserved ring topology. Panel~(B): $H_0$ persistence distributions, showing diverging connectivity. Together the two panels account for the \qty{92.6}{\percent} whole-molecule Tanimoto distinction alongside \qty{69.3}{\percent} scaffold recovery.}
 	\label{fig:res_paradox}
-\end{figure}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.85\textwidth]{p3_persistence_diagrams.pdf}
-	\caption[Persistence diagrams of the molecular graph filtration]{Representative persistence diagrams underlying the topological fingerprint. Vietoris--Rips persistence was computed up to homology dimension two on weighted molecular graphs whose edge weights are $w_{ij} = d_{ij}(1 + Z_i Z_j / 100)$, so that interactions involving heavier atoms contribute more strongly. The primary activity analysis uses a \num{78}-feature vector combining homology summaries, persistence-image and Betti-curve components.}
-	\label{fig:res_persistence}
+\end{figure}\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.85\textwidth]{persistence_diagrams.png}
+\caption[Persistence diagrams of the molecular graph filtration]{Representative persistence diagrams underlying the topological fingerprint. Vietoris--Rips persistence was computed up to homology dimension two on weighted molecular graphs whose edge weights are $w_{ij} = d_{ij}(1 + Z_i Z_j / 100)$, so that interactions involving heavier atoms contribute more strongly. The primary activity analysis uses a \num{78}-feature vector combining homology summaries, persistence-image and Betti-curve components. (The three panels show, by homology dimension: $H_0$ connected-component densities with median/quartiles; $H_1$ birth--death hexagonal binning on log scales with the two highlighted ANP and synthetic-like representatives; $H_2$ cavities/voids with mean-persistence colouring and the $3.0\%$ of molecules carrying at least one cavity.)}
+\label{fig:res_persistence}
 \end{figure}
 
 \subsection{Compression retains docking-relevant information on the derivation panel}
 
 Tucker decomposition at bond dimension $d = \num{8}$ compresses each molecular tensor to a \num{192}-element core, which at a mean of \num{39} atoms corresponds to a \num{6.1}-fold compression of the real-atom representation with a mean relative reconstruction error of \num{0.113}. Compression is not uniform across chemical space: molecules with common ring systems compress better (mean reconstruction error \num{0.098}) than structurally atypical molecules (\num{0.137}), and the atom-coordinate factor matrix correlates with molecular volume ($\rho = \num{0.71}$). In a $k = \num{484}$ $k$-means analysis, TNE produced a higher Silhouette coefficient (\num{0.35}) than ECFP4 (\num{0.18}) or the VAE latent representation (\num{0.229}). \Cref{fig:res_tne} shows the compression behaviour and its regression against docking scores.
 
-Whether that cluster separation translates into predictive information was tested directly. In cross-validated regression against Tartarus docking scores, TNE reached $R^2 = \num{0.473}$ for \emph{Pf}DHFR against \num{0.461} for ECFP4, while ECFP4 was stronger for \emph{Pf}ATP4 and \emph{Pf}CRT. This is a genuine retention-of-information result, and it is bounded in the same sentence: the regression uses the same molecular set from which the embeddings were derived, so it demonstrates information retention on the derivation panel rather than generalisation to novel compounds.
+Whether that cluster separation translates into predictive information was tested directly. In cross-validated regression against Tartarus docking scores, TNE reached $R^2 = \num{0.473}$ for \emph{Pf}DHFR against \num{0.461} for ECFP4, while ECFP4 was stronger for \emph{Pf}ATP4 and \emph{Pf}CRT. This is a genuine retention-of-information result, and it is bounded in the same sentence: the regression uses the same molecular set from which the embeddings were derived, so it demonstrates information retention on the derivation panel rather than generalisation to novel compounds (\Cref{fig:res_tne_reg}).
 
 \begin{figure}[htbp]
 	\centering
@@ -435,7 +449,7 @@ Whether that cluster separation translates into predictive information was teste
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.85\textwidth]{p3_tne_regression_summary.png}
+	\includegraphics[width=0.85\textwidth]{p3_tne_regression_summary.pdf}
 	\caption[Tensor network embedding versus docking score]{Cross-validated regression of docking scores on molecular representations. The tensor network embedding is competitive with ECFP4 on \emph{Pf}DHFR but not on the remaining targets. Because embeddings and regression endpoint come from the same molecular set, this quantifies information retention rather than prospective transfer.}
 	\label{fig:res_tne_reg}
 \end{figure}
@@ -493,7 +507,7 @@ Transfer to a ChEMBL~34 label-source-shift panel (\num{22447} antimalarials, IC$
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.85\textwidth]{p3_extval_internal_vs_external.png}
+	\includegraphics[width=0.85\textwidth]{p3_extval_internal_vs_external.pdf}
 	\caption[Internal versus ChEMBL label-source-shift performance]{Internal versus ChEMBL label-source-shift performance in the descriptor benchmark. Descriptor methods were evaluated with random forests and kernel methods with support-vector machines, so the two families are shown descriptively rather than as a direct model-to-model comparison. The tensor network embedding loses the most under the label-source shift, while the topological fingerprint transfers with a smaller deficit.}
 	\label{fig:res_extval}
 \end{figure}
@@ -516,14 +530,14 @@ Second, topological features do connect to the docking evidence of the chemical-
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.85\textwidth]{p3_tda_promiscuity.png}
+	\includegraphics[width=0.85\textwidth]{p3_tda_promiscuity.pdf}
 	\caption[Topological features and multi-target docking profiles]{Topological features against multi-target docking profiles ($N = \num{17011}$ molecules docked against four \emph{P.~falciparum} targets). Persistence-derived features correlate negatively but weakly with the number of targets meeting the $\Delta G \leq \qty{-7.0}{\kcalmol}$ threshold. The endpoint is a docking-derived count, so this is a hypothesis-generating association rather than a mechanistic polypharmacology rule.}
 	\label{fig:res_promiscuity}
 \end{figure}
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.80\textwidth]{p3_h1_rrs_violin.png}
+	\includegraphics[width=0.85\textwidth]{p3_h1_rrs_violin.pdf}
 	\caption[$H_1$ persistence against resistance class]{Distribution of $H_1$ cycle persistence across resistance-resilience classes. The apparent association between topological complexity and resistance resilience is size-mediated and does not survive control for molecular size and structural covariates, so $H_1$ persistence is not an independent topological predictor of the resistance-resilience score.}
 	\label{fig:res_h1rrs}
 \end{figure}
@@ -566,7 +580,7 @@ The learned-representation study extends the representation comparison to graph 
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.85\textwidth]{p5_auc_benchmark.png}
+	\includegraphics[width=0.85\textwidth]{p5_auc_benchmark.pdf}
 	\caption[Representation performance under random and scaffold splits]{Molecular representation performance under random and Bemis--Murcko scaffold splits in the learned-representation study (\num{25} fold--seed replicates per model). Classical ECFP4--RF maintains the highest discrimination under scaffold separation. The collapse of every model between the two panels, rather than the ordering within either panel, is the result that matters for prospective screening.}
 	\label{fig:res_p5_auc}
 \end{figure}
@@ -597,7 +611,7 @@ Stratifying by structural complexity sharpens the picture and also disciplines i
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.95\textwidth]{p5_structural_complexity.png}
+	\includegraphics[width=0.95\textwidth]{p5_structural_complexity.pdf}
 	\caption[Structural-complexity cohorts]{Performance by structural-complexity cohort in the learned-representation study under the recomputed per-seed estimand (per-seed points, mean $\pm$ SD over five seeds). The GIN--TFP gain over GIN is positive in every cohort, with bootstrap 95\% intervals annotated per panel, but it does not increase with structural complexity and the polycyclic interval includes zero. Base GIN shows its largest deficit against ECFP4--RF on the stereochemically rich cohorts.}
 	\label{fig:res_p5_complexity}
 \end{figure}
@@ -612,7 +626,7 @@ Two further boundaries belong to the learned-representation result itself. First
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.85\textwidth]{p5_salience.png}
+	\includegraphics[width=0.85\textwidth]{p5_salience.pdf}
 	\caption[Topological descriptor salience]{Mean projection salience of descriptor blocks in the topological and tensor fusion heads of the learned-representation study. The persistent-image dimensions carry the largest mean weight magnitude, yet the corresponding aggregate scaffold-split gain remains \num{0.0091} AUC points, so salience is not evidence of predictive contribution.}
 	\label{fig:res_salience}
 \end{figure}
@@ -635,11 +649,36 @@ This section reports the quantum machine learning programme of the thesis, which
 
 The first implementation of the programme compressed extended-connectivity fingerprint vectors into shallow variational quantum circuits scored by a support-vector oracle. On the \num{1000}-molecule subsample of the descriptor panel under five-fold cross-validation it reached an area under the ROC curve of \num{0.8474 \pm 0.0129} in its canonical four-qubit, depth-one configuration, a result confirmed by a fifty-trial hyperparameter search; on the same subsample the matched classical comparator, a radial basis function kernel on the same fingerprint, reached \num{0.8693 \pm 0.0265}, so the quantum feature extractor sat \qty{2.5}{\percent} below its own classical baseline, and under scaffold separation it fell to \num{0.7831}. The diagnosis is the one this thesis predicts from the representation studies: the quantum component received no structural information beyond what the fingerprint had already captured, so it could not recover the stereochemistry the fingerprint discarded --- garbage in, garbage out. On 6 October 2026 we archived the entire phase as \emph{exploratory} under a different estimand: it answers the narrow question of whether quantum feature extraction adds value to a fingerprint-fed pipeline on this panel, it does not answer the structure-direct question, and it informs none of the claims of this thesis. It is reported here because an archived result with its estimand named is part of the record, not because it supports the programme.
 
+The completed phase spans five execution scales, and the pattern across them is the pattern the representation studies predict. At the proof-of-concept scale, on the seventeen-molecule panel under leave-one-out cross-validation, the quantum arm reached \num{0.933} against \num{0.833} for a fingerprint-fed multilayer perceptron, while a graph network reached \num{1.000} --- an underpowered panel on which a perfect score is read as overfitting rather than as evidence, and the paired comparison of quantum arm against fingerprint baseline returned a failure to detect ($p = \num{0.250}$). At the benchmark scale, an ablation over circuit width placed the four-qubit configuration (\num{0.8474}) above the eight-qubit (\num{0.8316}) and six-qubit (\num{0.8230}) configurations, all three above the predeclared gate of $\num{0.80} \times \num{0.9475} = \num{0.758}$, which is the expressibility--trainability trade-off in its observable form: widening the circuit added parameters without adding the structural information the encoding never received. A subsequent hyperparameter search returned a best configuration of \num{0.8468} against the canonical \num{0.8474}, a difference of \num{0.0006} that confirms the configuration rather than improving it. At the external scale, both methods degraded under complete scaffold novelty, the quantum arm falling to \num{0.7831} against \num{0.8413} for its classical comparator, so neither representation was robust to unseen ring systems. \Cref{fig:res_p7_auc,fig:res_p7_ablation,fig:res_p7_scaffold} report these results. The gradient diagnostics complete the picture: no training batch fell below the barren-plateau threshold at the benchmark scale, while \qty{8.24}{\percent} of batches fell below it at the eight-thousand-molecule scale, so the architecture was approaching its trainability boundary as the training set grew --- a property of the circuit, not of the data.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.92\textwidth]{p7_exploratory_auc_folds}
+	\caption[Per-fold performance of the archived exploratory phase]{Results of the archived exploratory (fingerprint-fed quantum feature extraction) phase. (a)~Individual fold areas under the ROC curve and their mean with standard deviation on the thousand-molecule subsample under five-fold cross-validation, against the descriptor-study references of \num{0.9475} for the fingerprint baseline and \num{0.8385} for the quantum-inspired kernel: the quantum arm sits below its own classical comparator and above the quantum-inspired reference. (b)~Proof-of-concept areas under the ROC curve on the seventeen-molecule panel under leave-one-out cross-validation, where the graph network's perfect score is underpowered rather than superior.}
+	\label{fig:res_p7_auc}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{p7_exploratory_ablation}
+	\caption[Ablation over circuit width in the archived phase]{Ablation over circuit width for the archived exploratory phase on the thousand-molecule subsample (mean area under the ROC curve with standard deviation over five-fold cross-validation). The four-qubit configuration is highest and least variable; all widths clear the predeclared gate. Widening the circuit therefore did not recover the structural information that the fingerprint input had already discarded.}
+	\label{fig:res_p7_ablation}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.95\textwidth]{p7_exploratory_scaffold_gradient}
+	\caption[Scaffold-split generalisation and gradient diagnostics of the archived phase]{Scaffold-split generalisation and gradient diagnostics of the archived phase. (a)~Transition from the five-fold cross-validation to the scaffold-split evaluation under complete novelty of the test scaffolds: both the fingerprint baseline and the quantum arm degrade, and the quantum arm remains below its comparator at both scales. (b)~Gradient-norm distributions across training batches at the two training-set sizes, with the barren-plateau threshold marked: no batch falls below the threshold at the smaller scale, while \qty{8.24}{\percent} do at the larger one.}
+	\label{fig:res_p7_scaffold}
+\end{figure}
+
+The three panels are consistent with one another and with the diagnosis given above, and they are reported together because none of them is interpretable alone: the quantum arm is competitive within a distribution, it is uniformly below its own classical comparator, and the difference widens where structural novelty is greatest. A manuscript for this estimand exists in the project record as a draft; it is a separate artefact under a different estimand from the one this thesis asks about, and its existence is recorded here as status rather than as evidence.
+
 \subsection{The structure-direct pipeline and its confirmed phases}\label{sec:res_qmse_pipeline}
 
 The canonical pipeline replaces the fingerprint input with quantum molecular structure encoding: bond-order and Coulomb-adjacency matrices derived from the molecular graph are flattened into one- and two-qubit rotation angles, and the resulting circuit is trained end to end behind a classical TensorFlow head (\Cref{sec:qmse_methods}). Four phases are declared with frozen inputs at each boundary, and their status is as follows.
 
-The encoding phase is complete: all \num{19849} molecules of the representation panel encoded successfully with zero failures, and the resulting angle datasets are frozen with recorded hashes, so the substrate on which any later comparison rests is fixed before training. The pipeline-confirmation phase is complete: the full hybrid stack ran end to end on a leave-one-out smoke test of the \num{17}-molecule Set-A panel, completing \num{17} of \num{17} folds with zero encoding failures and returning an area under the ROC curve of \num{0.733} at thirty untuned epochs in approximately \num{200} seconds. That number is a pipeline confirmation and not a benchmark: seventeen molecules at untuned settings support no performance claim, and none is made. The hyperparameter-search phase, a joint search over encoding type, circuit depth, entangling gate and classical-head configuration, is in progress. The canonical benchmark phase, defined on the frozen panel under the partition families, label provenance and multiplicity machinery of \Cref{sec:stats_methods}, is pending. The comparative status of the programme is therefore \textsc{not computed}, and no comparative quantum result appears in this thesis.
+The encoding phase is recorded as complete in the project record: all \num{19849} molecules of the representation panel encoded successfully with zero failures, and the resulting angle datasets are recorded as frozen with hashes, so that the substrate on which any later comparison rests is fixed before training. That record is a declaration, and the thesis treats it as one: the independent calculation review of 14 October 2026 could not locate the encoded artifact in the working tree, so the substrate is held as pending re-verification rather than as verified, and no statement here depends on it. The pipeline-confirmation phase is recorded as complete: the full hybrid stack is reported to have run end to end on a leave-one-out smoke test of the \num{17}-molecule Set-A panel, completing \num{17} of \num{17} folds with zero encoding failures and returning an area under the ROC curve of \num{0.733} at thirty untuned epochs in approximately \num{200} seconds, and, like the encoding phase, its output could not be located at the same audit, so it is treated as recorded rather than verified. Either way, that number is a pipeline confirmation and not a benchmark: seventeen molecules at untuned settings support no performance claim, and none is made. The hyperparameter-search phase, a joint search over encoding type, circuit depth, entangling gate and classical-head configuration, was launched on 6 October 2026 and had produced no result files at the same audit, so it is recorded as launched without results rather than as progressing. The canonical benchmark phase, defined on the frozen panel under the partition families, label provenance and multiplicity machinery of \Cref{sec:stats_methods}, is pending. The comparative status of the programme is therefore \textsc{not computed}, and no comparative quantum result appears in this thesis.
 
 \subsection{The reformulated question and its predeclared benchmark}\label{sec:res_qmse_benchmark}
 
@@ -649,7 +688,7 @@ Three design choices make that question answerable rather than rhetorical. First
 
 \subsection{What the programme has established, and what it remains}\label{sec:res_qmse_status_discussion}
 
-Two things are established at this point, and both are procedural in kind. The first is a frozen substrate: all \num{19849} molecules of the representation panel encoded with zero failures and their angle datasets fixed with recorded hashes before any model was trained, so that no encoding choice can be revised after results are seen. The second is an engineering result: the hybrid quantum--classical stack trains end to end, with gradients flowing through the circuit simulation and the classical head, on \num{17} of \num{17} leave-one-out folds without encoding failure. Together these answer the question of whether the benchmark can be run at all and whether it will be run on inputs fixed in advance --- the procedural counterpart, at the level of one programme, to the frozen-partition discipline that \Cref{sec:stats_methods} imposes on the completed studies.
+Two things are established at this point, and both are procedural in kind. The first is a declared frozen substrate: all \num{19849} molecules of the representation panel are recorded as encoded with zero failures and their angle datasets as fixed with hashes before any model was trained, so that no encoding choice can be revised after results are seen --- a declaration whose artifact verification remains open for the reason stated above. The second is recorded as an engineering result: the hybrid quantum--classical stack is reported to train end to end, with gradients flowing through the circuit simulation and the classical head, on \num{17} of \num{17} leave-one-out folds without encoding failure. Together these answer the question of whether the benchmark can be run at all and whether it will be run on inputs fixed in advance --- the procedural counterpart, at the level of one programme, to the frozen-partition discipline that \Cref{sec:stats_methods} imposes on the completed studies --- and they answer it at the level of the project record, since neither the encoded substrate nor the smoke-test output was independently located at the audit.
 
 What is not established is any performance statement, and the distinction is kept deliberately. The smoke-test area under the ROC curve of \num{0.733} was obtained on seventeen molecules at untuned settings and supports no claim about comparative performance; the archived fingerprint-fed phase answers a different question under a different estimand and informs no claim here; and until the canonical benchmark completes, the fifth research question of the introduction remains \emph{open} in the claim-ledger sense --- the blind spots it targets are documented, and the test that would decide whether structure-direct encoding overcomes them is specified and frozen.
 
@@ -665,7 +704,7 @@ Read as one argument, the completed studies converge on a single answer to the q
 
 The four results that carry that conclusion are quantitative and mutually reinforcing. Adding topological and tensor representations to ECFP4 as a stacked ensemble changed AUC by \num{-0.0002} under a test whose power is limited ($p = \num{0.084}$), and feature-level fusions were worse than ECFP4 alone. The quantum kernel was indistinguishable from a gamma-tuned RBF kernel internally ($p = \num{0.060}$) and lower than it under a ChEMBL label-source shift (\num{0.817} against \num{0.847}), despite a fourfold higher kernel--target alignment. Graph networks and a molecular transformer remained below ECFP4--RF under scaffold, Butina and decile-stratified partitions, with the deficit localized in the low-similarity extrapolation tail and not attributable to model capacity. Persistent homology did not predict mutation resilience once molecular size was controlled. The complementary role the topological descriptors do play is diagnostic rather than predictive: they decompose the scaffold paradox, expose compression behaviour and expose where a learned model's advantage disappears.
 
-That conclusion is the standing baseline for the quantum machine learning programme, which is the only part of this thesis that uses genuine quantum machine learning and which \Cref{sec:res_qmse} reports as work in progress. The programme was refocused on quantum molecular structure encoding\cite{Boy2025QMSE}: bond-order and Coulomb-adjacency matrices are encoded directly as one- and two-qubit rotation angles, with stereochemistry carried by signed rotation parameters, and trained end to end with a classical TensorFlow head, so that the circuit itself, not a fingerprint, is the molecular representation. The refocus follows directly from the results above. The descriptor benchmark showed that a quantum kernel can match a tuned classical comparator yet fail to convert a fourfold kernel--target alignment into classification performance, because its input had already passed through the fingerprint whose information ceiling it inherited; and the learned-representation benchmark localized the deficit of every architecture in the low-similarity extrapolation tail, where structural distinctions are least represented. The two failure modes that this chapter documents, stereochemical collapse in hashed fingerprints and scaffold-extrapolation loss in learned models, are precisely what a structure-direct encoding is designed to address. Its encoding substrate is frozen on the full \num{19849}-molecule panel, its training pipeline is confirmed end to end, and its canonical benchmark is pending; three outcome scenarios are predeclared, and no comparative result from it is reported here. What the completed studies supply is the comparison standard. A quantum model on this library must be measured against the same frozen panel, the same scaffold-grouped partitions, the same label source and the same multiplicity correction as ECFP4--RF, and must be compared against a tuned classical kernel rather than an untuned one, because the one clear lesson of the descriptor benchmark is that kernel---target alignment and Hilbert-space expressivity do not translate into classification performance. The representational bottlenecks this thesis documents are real: dictionaries that describe local atom environments saturate the available label signal on a scaffold-poor panel, hybrid descriptors dilute a sparse fingerprint, and topological invariants are informative about structure without being predictive about activity. Whether structure-direct quantum encoding escapes those bottlenecks is an empirical question, and the honest-negative record assembled in this chapter is the reason the question can be asked without assuming the answer.
+That conclusion is the standing baseline for the quantum machine learning programme, which is the only part of this thesis that uses genuine quantum machine learning and which \Cref{sec:res_qmse} reports as work in progress. The programme was refocused on quantum molecular structure encoding\cite{Boy2025QMSE}: bond-order and Coulomb-adjacency matrices are encoded directly as one- and two-qubit rotation angles, with stereochemistry carried by signed rotation parameters, and trained end to end with a classical TensorFlow head, so that the circuit itself, not a fingerprint, is the molecular representation. The refocus follows directly from the results above. The descriptor benchmark showed that a quantum kernel can match a tuned classical comparator yet fail to convert a fourfold kernel--target alignment into classification performance, because its input had already passed through the fingerprint whose information ceiling it inherited; and the learned-representation benchmark localized the deficit of every architecture in the low-similarity extrapolation tail, where structural distinctions are least represented. The two failure modes that this chapter documents, stereochemical collapse in hashed fingerprints and scaffold-extrapolation loss in learned models, are precisely what a structure-direct encoding is designed to address. Its encoding substrate is declared frozen on the full \num{19849}-molecule panel, with artifact verification still open as recorded in \Cref{sec:res_qmse_pipeline}, its training pipeline is recorded as confirmed end to end, and its canonical benchmark is pending; three outcome scenarios are predeclared, and no comparative result from it is reported here. What the completed studies supply is the comparison standard. A quantum model on this library must be measured against the same frozen panel, the same scaffold-grouped partitions, the same label source and the same multiplicity correction as ECFP4--RF, and must be compared against a tuned classical kernel rather than an untuned one, because the one clear lesson of the descriptor benchmark is that kernel---target alignment and Hilbert-space expressivity do not translate into classification performance. The representational bottlenecks this thesis documents are real: dictionaries that describe local atom environments saturate the available label signal on a scaffold-poor panel, hybrid descriptors dilute a sparse fingerprint, and topological invariants are informative about structure without being predictive about activity. Whether structure-direct quantum encoding escapes those bottlenecks is an empirical question, and the honest-negative record assembled in this chapter is the reason the question can be asked without assuming the answer.
 
 \section{Conclusion}\label{sec:ch3_conclusion}
 

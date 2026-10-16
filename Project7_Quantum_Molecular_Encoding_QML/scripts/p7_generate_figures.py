@@ -172,11 +172,11 @@ def figure3_roc_curves() -> None:
                       elinewidth=1.2, zorder=5,
                       label=f"{label}\n{mean_auc:.4f} ± {std_auc:.4f}")
 
-    # Reference lines
+    # Reference lines (baselines from full dataset)
     ax_l.axhline(P3_ECFP4, color=C_ECFP4, ls="--", lw=0.9, alpha=0.55,
-                 label=f"P3 canonical ECFP4 ({P3_ECFP4})")
+                 label=f"Full dataset ECFP4 ({P3_ECFP4})")
     ax_l.axhline(P3_QKS,   color=C_REF,   ls=":",  lw=0.9, alpha=0.65,
-                 label=f"P3 canonical QKS ({P3_QKS})")
+                 label=f"Quantum-inspired baseline ({P3_QKS})")
 
     ax_l.set_xticks([0, 1])
     ax_l.set_xticklabels(["ECFP4-RBF", "QFE 4q-d1-RZZ"], fontsize=7.5)
@@ -227,9 +227,7 @@ def figure3_roc_curves() -> None:
               bbox=dict(boxstyle="round,pad=0.2", facecolor="white",
                         edgecolor="#BBBBBB", alpha=0.85, lw=0.6))
 
-    fig.suptitle(
-        "Figure 3.  Phase 4 five-fold CV AUC (left) and Phase 1 PoC LOO-CV (right)",
-        fontsize=8, y=1.01)
+    # No suptitle — caption in LaTeX handles figure title
     save_fig(fig, "fig3_roc_curves")
     plt.close(fig)
 
@@ -287,11 +285,11 @@ def figure4_ablation_bar() -> None:
                 f"{a:.4f}", ha="center", va="bottom",
                 fontsize=6.2, color="#222222")
 
-    # Reference lines
+    # Reference lines (full dataset baseline and quantum-inspired baseline)
     ax.axhline(P3_ECFP4, color=C_ECFP4, ls="--", lw=0.9, alpha=0.60, zorder=2,
-               label=f"P3 canonical ECFP4-RBF ({P3_ECFP4})")
+               label=f"Full dataset ECFP4-RBF ({P3_ECFP4})")
     ax.axhline(P3_QKS, color=C_REF, ls=":", lw=0.9, alpha=0.70, zorder=2,
-               label=f"P3 canonical QKS ({P3_QKS})")
+               label=f"Quantum-inspired baseline ({P3_QKS})")
     ax.axhline(GATE, color="#B87333", ls="-.", lw=0.8, alpha=0.55, zorder=2,
                label=f"Decision gate (×0.80 = {GATE:.3f})")
 
@@ -312,7 +310,7 @@ def figure4_ablation_bar() -> None:
     ax.grid(True, axis="y", which="minor", alpha=0.15, zorder=0)
     ax.legend(loc="lower left", fontsize=6.2,
               handlelength=1.5, handletextpad=0.4, borderpad=0.5)
-    ax.set_title("Figure 4.  Ablation: qubit count (P3 subsample, $n=1000$)",
+    ax.set_title("Ablation: qubit count (subsample, $n=1000$)",
                  fontsize=8, pad=4)
 
     save_fig(fig, "fig4_ablation_bar")
@@ -326,9 +324,9 @@ def figure4_ablation_bar() -> None:
 def figure5_scaffold_gradient() -> None:
     """
     Fig 5: Two-panel figure.
-      Panel A (left):  Phase 4 vs Phase 5 AUC comparison per method.
+      Panel A (left):  CV vs scaffold-split AUC comparison per method.
                        Arrows show generalisation drop under scaffold novelty.
-      Panel B (right): QFE gradient norm distribution (Phase 4 vs Phase 5)
+      Panel B (right): QFE gradient norm distribution (CV vs scaffold split)
                        as overlapping histograms; barren-plateau threshold marked.
     """
     print("[Fig 5] Scaffold-split AUC + gradient norms")
@@ -357,18 +355,18 @@ def figure5_scaffold_gradient() -> None:
     gn5 = pd.read_csv(
         RESULTS / "phase3_scaffold"  / "qfe_4q_d1_ext10k_scaffold_gradient_norms.csv")
 
-    # Phase 4: cols fold, epoch, grad_norm → all values across all folds
+    # CV: cols fold, epoch, grad_norm → all values across all folds
     g4_vals = gn4["grad_norm"].values
-    # Phase 5: cols step, grad_norm
+    # Scaffold split: cols step, grad_norm
     g5_vals = gn5["grad_norm"].values
 
     BP_THRESH = 1e-6
     bp4 = 100.0 * (g4_vals < BP_THRESH).mean()
     bp5 = 100.0 * (g5_vals < BP_THRESH).mean()
 
-    # ── Plot ─────────────────────────────────────────────────────────────────
-    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(7.2, 3.3))
-    fig.subplots_adjust(wspace=0.30)
+    # ── Plot (reduced height to prevent page overflow) ────────────────────────
+    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(7.2, 2.8))
+    fig.subplots_adjust(wspace=0.30, top=0.92, bottom=0.14)
 
     # ── Panel A: AUC comparison across phases ─────────────────────────────────
     # x positions: ECFP4-P4, QFE-P4 in group 1; ECFP4-P5, QFE-P5 in group 2
@@ -414,9 +412,9 @@ def figure5_scaffold_gradient() -> None:
                   fontsize=6.2, color=col, ha="left", va="center",
                   rotation=90, rotation_mode="anchor")
 
-    # P3 canonical reference line
+    # Full dataset reference line
     ax_a.axhline(P3_CANONICAL, color=C_ECFP4, ls="--", lw=0.8, alpha=0.50,
-                 zorder=2, label=f"P3 canonical ECFP4 ({P3_CANONICAL})")
+                 zorder=2, label=f"Full dataset ECFP4 ({P3_CANONICAL})")
 
     # x-axis labels & group labels
     xticks = [x_e4 + bar_w/2, x_q4 + bar_w/2,
@@ -424,14 +422,7 @@ def figure5_scaffold_gradient() -> None:
     ax_a.set_xticks(xticks)
     ax_a.set_xticklabels(["ECFP4", "QFE", "ECFP4", "QFE"], fontsize=6.5)
 
-    # Group labels below
-    mid_p4 = (x_e4 + x_q4 + bar_w) / 2
-    mid_p5 = (x_e5 + x_q5 + bar_w) / 2
-    y_label = ax_a.get_ylim()[0] - 0.028
-    ax_a.text(mid_p4, y_label, "Phase 4\n(5-fold CV, $n$=1000)",
-              ha="center", va="top", fontsize=6.2, color="#333333")
-    ax_a.text(mid_p5, y_label, "Phase 5\n(scaffold split, $n$=10 000)",
-              ha="center", va="top", fontsize=6.2, color="#333333")
+    # Group labels removed to prevent text appearing below figure in manuscript
     ax_a.axvline((x_q4 + bar_w + x_e5) / 2, color="#BBBBBB",
                  ls="--", lw=0.6, alpha=0.6, zorder=1)
 
@@ -441,7 +432,7 @@ def figure5_scaffold_gradient() -> None:
     ax_a.grid(True, axis="y", zorder=0)
     ax_a.legend(loc="upper right", fontsize=6.2,
                 handlelength=1.4, handletextpad=0.4)
-    ax_a.set_title("(A) Phase 4 → Phase 5 generalisation", fontsize=8, pad=4)
+    ax_a.set_title("(A) CV → scaffold-split generalisation", fontsize=8, pad=4)
 
     # ── Panel B: Gradient norm distributions ──────────────────────────────────
     # Clip display at 2.0 (long tail); show overflow note
@@ -457,11 +448,11 @@ def figure5_scaffold_gradient() -> None:
 
     ax_b.hist(g4_clip, bins=bins, density=True, alpha=0.55, color=C_ECFP4,
               zorder=3,
-              label=(f"Phase 4  ($n_{{train}}$=800)\n"
+              label=(f"CV  ($n_{{train}}$=800)\n"
                      f"mean={p4_mean:.3f},  bp={bp4:.1f}%"))
     ax_b.hist(g5_clip, bins=bins, density=True, alpha=0.45, color=C_QFE,
               zorder=3,
-              label=(f"Phase 5  ($n_{{train}}$=8000)\n"
+              label=(f"Scaffold  ($n_{{train}}$=8000)\n"
                      f"mean={p5_mean:.3f},  bp={bp5:.1f}%"))
 
     # Barren-plateau threshold line
@@ -482,11 +473,9 @@ def figure5_scaffold_gradient() -> None:
     ax_b.legend(loc="upper right", fontsize=6,
                 handlelength=1.4, handletextpad=0.4, labelspacing=0.4)
     ax_b.grid(True, axis="y", zorder=0)
-    ax_b.set_title("(B) QFE gradient norms — P4 vs P5", fontsize=8, pad=4)
+    ax_b.set_title("(B) QFE gradient norms — CV vs scaffold split", fontsize=8, pad=4)
 
-    fig.suptitle(
-        "Figure 5.  Phase 5 scaffold-split generalisation and gradient diagnostics",
-        fontsize=8, y=1.01)
+    # No suptitle — caption in LaTeX handles figure title
     save_fig(fig, "fig5_scaffold_gradient")
     plt.close(fig)
 
