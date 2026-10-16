@@ -3,55 +3,68 @@
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc}
 
 % ─────────────────────────────────────────────────────────────────────────────
-% Figure 1 — P7 Workflow Schematic
+% Figure 1 — P7 Workflow Schematic  (QMSE Phase D architecture)
 %
-% Pipeline: ANP Library → SMILES → ECFP4 fingerprints → Classical encoder
-%           → Quantum circuit (4-qubit QFE) → Decoder → Activity prediction
+% Pipeline: ANP Library → SMILES → QMSE encoding (BondOrderMatrix /
+%           CoulombMatrix) → 8-qubit parameterised QMSE circuit (PennyLane)
+%           → TF Dense head → Activity prediction
 %
-% Three evaluation phases shown as a row at the bottom.
+% Three evaluation phases shown as a row at the bottom:
+%   Phase B smoke-test (P1 Set A, LOO-CV)
+%   Phase C/D canonical benchmark (P3 sub n=1000, 5-fold CV)
+%   Stereo probe (Qiskit Aer, n_qubits=n_atoms)
+%
+% Rewritten 14 October 2026 for QMSE (Phase D) refocus.
 % ─────────────────────────────────────────────────────────────────────────────
 
-% Colour palette (colour-blind safe, matches matplotlib figures)
+% Colour palette (colour-blind safe, consistent with matplotlib figures)
 \definecolor{colANP}    {RGB}{33,102,172}   % blue   — data/input
-\definecolor{colClassic}{RGB}{140,81,10}    % brown  — classical block
+\definecolor{colEnc}    {RGB}{140,81,10}    % brown  — encoding step
 \definecolor{colQML}    {RGB}{214,96,77}    % red    — quantum block
+\definecolor{colTF}     {RGB}{77,146,33}    % green  — TF classical head
 \definecolor{colOut}    {RGB}{35,139,69}    % green  — output
 \definecolor{colPhase}  {RGB}{117,112,179}  % purple — evaluation phases
 \definecolor{colBg}     {RGB}{247,247,247}  % light grey background
 
 \tikzset{
-  % Main pipeline nodes
+  % ── Main pipeline node styles ──────────────────────────────────────────────
   datanode/.style={
     rectangle, rounded corners=3pt,
     draw=colANP!80, fill=colANP!12, thick,
     text width=2.0cm, align=center,
     font=\small\sffamily, inner sep=5pt, minimum height=1.0cm
   },
-  classicnode/.style={
+  encnode/.style={
     rectangle, rounded corners=3pt,
-    draw=colClassic!80, fill=colClassic!10, thick,
-    text width=2.0cm, align=center,
+    draw=colEnc!80, fill=colEnc!10, thick,
+    text width=2.2cm, align=center,
     font=\small\sffamily, inner sep=5pt, minimum height=1.0cm
   },
   qnode/.style={
     rectangle, rounded corners=3pt,
     draw=colQML!80, fill=colQML!12, thick,
+    text width=2.4cm, align=center,
+    font=\small\sffamily, inner sep=5pt, minimum height=1.0cm
+  },
+  tfnode/.style={
+    rectangle, rounded corners=3pt,
+    draw=colTF!80, fill=colTF!10, thick,
     text width=2.2cm, align=center,
     font=\small\sffamily, inner sep=5pt, minimum height=1.0cm
   },
   outnode/.style={
     rectangle, rounded corners=5pt,
     draw=colOut!80, fill=colOut!12, thick,
-    text width=2.0cm, align=center,
+    text width=1.8cm, align=center,
     font=\small\sffamily\bfseries, inner sep=5pt, minimum height=1.0cm
   },
   phasenode/.style={
     rectangle, rounded corners=3pt,
     draw=colPhase!70, fill=colPhase!10,
-    text width=2.8cm, align=center,
-    font=\footnotesize\sffamily, inner sep=4pt, minimum height=0.9cm
+    text width=3.0cm, align=center,
+    font=\footnotesize\sffamily, inner sep=4pt, minimum height=0.95cm
   },
-  % Arrows
+  % ── Arrows ─────────────────────────────────────────────────────────────────
   mainarrow/.style={
     -{Stealth[length=5pt,width=4pt]},
     thick, color=black!55
@@ -60,9 +73,10 @@
     -{Stealth[length=4pt,width=3pt]},
     thick, color=colPhase!70, dashed
   },
-  % Labels on arrows
-  arrowlabel/.style={font=\scriptsize\sffamily, color=black!55,
-                      fill=white, inner sep=1.5pt}
+  arrowlabel/.style={
+    font=\scriptsize\sffamily, color=black!55,
+    fill=white, inner sep=1.5pt
+  }
 }
 
 \begin{document}
@@ -72,95 +86,96 @@
 
 \node[datanode] (anp) {
   \textbf{ANP Library}\\[2pt]
-  {\footnotesize P1 Set A\\$n=17$}
+  {\footnotesize SMILES}
 };
 
-\node[classicnode, right=1.1cm of anp] (ecfp4) {
-  \textbf{ECFP4}\\[2pt]
-  {\footnotesize Morgan fp\\2048 bits}
+\node[encnode, right=1.1cm of anp] (qmse) {
+  \textbf{QMSE}\\
+  \textbf{Encoding}\\[2pt]
+  {\footnotesize BondOrderMatrix\\or CoulombMatrix\\$n\!\times\!n$ matrix}
 };
 
-\node[classicnode, right=1.0cm of ecfp4] (encoder) {
-  \textbf{Encoder}\\[2pt]
-  {\footnotesize Linear(2048\\$\!\to$128$\!\to n_q$)\\Tanh$\,\times\pi$}
+\node[qnode, right=1.0cm of qmse] (circuit) {
+  \textbf{QMSE Circuit}\\[2pt]
+  {\footnotesize $n_q\!=\!8$ qubits\\depth 2, RYY\\PennyLane}
 };
 
-\node[qnode, right=1.0cm of encoder] (circuit) {
-  \textbf{QFE Circuit}\\[2pt]
-  {\footnotesize $n_q\!=\!4$ qubits\\depth\,1, RZZ\\PennyLane}
+\node[tfnode, right=1.0cm of circuit] (tfhead) {
+  \textbf{TF Dense}\\
+  \textbf{Head}\\[2pt]
+  {\footnotesize Dense(128)$\times$3\\BatchNorm\\Dropout}
 };
 
-\node[classicnode, right=1.0cm of circuit] (decoder) {
-  \textbf{Decoder}\\[2pt]
-  {\footnotesize Linear(4\\$\!\to$32$\!\to$1)\\Sigmoid}
-};
-
-\node[outnode, right=1.0cm of decoder] (pred) {
+\node[outnode, right=1.0cm of tfhead] (pred) {
   \textbf{Activity}\\
   \textbf{Score}\\[2pt]
   {\footnotesize $\hat{y}\in[0,1]$}
 };
 
 % Main pipeline arrows
-\draw[mainarrow] (anp)     -- node[arrowlabel, above] {SMILES}   (ecfp4);
-\draw[mainarrow] (ecfp4)   -- node[arrowlabel, above] {$\mathbf{x}$}     (encoder);
-\draw[mainarrow] (encoder) -- node[arrowlabel, above] {$\theta_\text{in}$} (circuit);
-\draw[mainarrow] (circuit) -- node[arrowlabel, above] {$\langle Z_q\rangle$} (decoder);
-\draw[mainarrow] (decoder) -- node[arrowlabel, above] {} (pred);
+\draw[mainarrow] (anp)     -- node[arrowlabel, above] {SMILES}             (qmse);
+\draw[mainarrow] (qmse)    -- node[arrowlabel, above] {angles}             (circuit);
+\draw[mainarrow] (circuit) -- node[arrowlabel, above] {$\langle Z_q\rangle$} (tfhead);
+\draw[mainarrow] (tfhead)  -- node[arrowlabel, above] {}                   (pred);
 
-% ── Row 2: evaluation phases ──────────────────────────────────────────────────
+% ── Circuit encoding detail (zoom box below QMSE + circuit) ──────────────────
 
-\node[phasenode, below=1.5cm of anp] (p1) {
-  \textbf{Phase 1 (PoC)}\\[2pt]
-  $n=17$, LOO-CV\\
-  AUC $0.933$
-};
-
-\node[phasenode, below=1.5cm of circuit, xshift=-0.3cm] (p4) {
-  \textbf{Phase 4 (P3 sub)}\\[2pt]
-  $n=1000$, 5-fold CV\\
-  AUC $0.847\!\pm\!0.013$
-};
-
-\node[phasenode, right=0.8cm of p4] (p5) {
-  \textbf{Phase 5 (external)}\\[2pt]
-  $n=10\,000$, scaffold\\
-  AUC $0.783$
-};
-
-% Vertical dashed connectors from pipeline to phases
-\draw[phasearrow] (anp.south)     |- (p1.north);
-\draw[phasearrow] (pred.south)    |- (p4.north);
-\draw[phasearrow] (pred.south)    |- (p5.north);
-
-% ── Quantum circuit zoom-in box ───────────────────────────────────────────────
-
-\node[below=1.5cm of encoder, xshift=0.4cm,
-      draw=colQML!60, fill=colQML!5,
+\node[below=1.35cm of qmse, xshift=1.5cm,
+      draw=colEnc!55, fill=colEnc!5,
       rounded corners=3pt, inner sep=7pt,
-      text width=4.6cm, align=left,
+      text width=5.2cm, align=left,
       font=\scriptsize\sffamily] (zoom) {
-  \textbf{QFE circuit (1 layer, 4 qubits):}\\[3pt]
-  $|0\rangle\!-\!\mathrm{RY}(\phi_0)\!-\!\mathrm{RX}\!-\!\mathrm{RZ}\!-\!\mathrm{RZZ}-$\\[1pt]
-  $|0\rangle\!-\!\mathrm{RY}(\phi_1)\!-\!\mathrm{RX}\!-\!\mathrm{RZ}\!-\!\mathrm{RZZ}-$\\[1pt]
-  $|0\rangle\!-\!\mathrm{RY}(\phi_2)\!-\!\mathrm{RX}\!-\!\mathrm{RZ}\!-\!\mathrm{RZZ}-$\\[1pt]
-  $|0\rangle\!-\!\mathrm{RY}(\phi_3)\!-\!\mathrm{RX}\!-\!\mathrm{RZ}\!\quad\quad\quad\!-$\\[3pt]
-  {\footnotesize\color{black!55}$\phi_q$: encoder outputs; $\theta$: variational}
+  \textbf{Encoding angles (8-qubit register):}\\[3pt]
+  Single-qubit: $\phi_i = \mathbf{M}_{ii}$\quad(diagonal)\\[1pt]
+  Two-qubit:\quad $\phi_{ij} = \mathbf{M}_{ij}$\quad(off-diagonal)\\[4pt]
+  \textbf{Circuit (depth 2):}\\[2pt]
+  $|0\rangle\!-\!R_X(\phi_0)\!-\!\mathrm{RYY}(\phi_{01})\!-\!\cdots$\\[1pt]
+  $|0\rangle\!-\!R_X(\phi_1)\!-\!\mathrm{RYY}(\phi_{12})\!-\!\cdots$\\[1pt]
+  $\;\vdots$\\[1pt]
+  $|0\rangle\!-\!R_X(\phi_7)\!-\!\cdots$\\[3pt]
+  {\color{black!50} Stereo:\ S-centre $\Rightarrow$
+    $\mathbf{M}_{ii}\!<\!0$;\quad
+    Z-bond $\Rightarrow$ $\mathbf{M}_{ij}\!<\!0$}
 };
 
 % Connector from circuit node to zoom box
-\draw[phasearrow, color=colQML!60]
-  (circuit.south) -- ++(0,-0.35) -| (zoom.north);
+\draw[phasearrow, color=colEnc!55]
+  (circuit.south) -- ++(0,-0.3) -| (zoom.north);
 
-% ── Background fit boxes for groups ──────────────────────────────────────────
+% ── Row 3: evaluation phases ─────────────────────────────────────────────────
+
+\node[phasenode, below=5.0cm of anp] (pb) {
+  \textbf{Phase B (smoke)}\\[2pt]
+  P1 Set A, LOO-CV\\
+  AUC $0.733$ (untuned)
+};
+
+\node[phasenode, right=0.5cm of pb] (pcd) {
+  \textbf{Phase C/D (canonical)}\\[2pt]
+  P3 sub $n\!=\!1000$, 5-fold\\
+  AUC $0.640\!\pm\!0.044$
+};
+
+\node[phasenode, right=0.5cm of pcd] (stereo) {
+  \textbf{Stereo probe (Aer)}\\[2pt]
+  5/5 R/S: $\Delta K\!=\!0.990$\\
+  3/3 Z/E: $\Delta K\!=\!0.017$
+};
+
+% Connectors from output node to phases
+\draw[phasearrow] (pred.south) -- ++(0,-0.4) -| (pb.north);
+\draw[phasearrow] (pred.south) -- ++(0,-0.4) -| (pcd.north);
+\draw[phasearrow] (circuit.south) -- ++(0,-4.35) -| (stereo.north);
+
+% ── Background fit boxes ──────────────────────────────────────────────────────
 
 \begin{pgfonlayer}{background}
-  % Classical group
-  \node[fit=(ecfp4)(encoder)(decoder),
-        draw=colClassic!30, fill=colClassic!4,
+  % Encoding group
+  \node[fit=(qmse),
+        draw=colEnc!30, fill=colEnc!4,
         rounded corners=5pt, inner sep=6pt,
-        label={[font=\scriptsize\sffamily\color{colClassic!80},
-                yshift=2pt]above:Classical components}] {};
+        label={[font=\scriptsize\sffamily\color{colEnc!80},
+                yshift=2pt]above:Structure encoding}] {};
 
   % Quantum group
   \node[fit=(circuit),
@@ -169,8 +184,15 @@
         label={[font=\scriptsize\sffamily\color{colQML!80},
                 yshift=2pt]above:Quantum layer}] {};
 
+  % TF head group
+  \node[fit=(tfhead),
+        draw=colTF!30, fill=colTF!4,
+        rounded corners=5pt, inner sep=6pt,
+        label={[font=\scriptsize\sffamily\color{colTF!80},
+                yshift=2pt]above:Classical head}] {};
+
   % Evaluation phases group
-  \node[fit=(p1)(p4)(p5),
+  \node[fit=(pb)(pcd)(stereo),
         draw=colPhase!30, fill=colPhase!5,
         rounded corners=5pt, inner sep=6pt,
         label={[font=\scriptsize\sffamily\color{colPhase!80},
